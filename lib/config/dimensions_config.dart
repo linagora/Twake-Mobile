@@ -6,7 +6,7 @@ const double _BLOCK_SIZE_HORZ = 100;
 
 /// Configuration of screen dimensions, should be initialized
 /// from the root of the application, when it's run.
-class SizeConfig {
+class DimensionsConfig {
   static double _screenWidth;
   static double _screenHeight;
 
@@ -20,7 +20,7 @@ class SizeConfig {
     if (_blockHeight != null) {
       return _blockHeight;
     } else {
-      throw Exception('SizeConfig object must be initialized first');
+      throw Exception('DimensionsConfig object must be initialized first');
     }
   }
 
@@ -30,7 +30,7 @@ class SizeConfig {
     if (_blockWidth != null) {
       return _blockWidth;
     } else {
-      throw Exception('SizeConfig object must be initialized first');
+      throw Exception('DimensionsConfig object must be initialized first');
     }
   }
 
@@ -40,7 +40,7 @@ class SizeConfig {
     if (_blockHeight != null) {
       return _blockHeight;
     } else {
-      throw Exception('SizeConfig object must be initialized first');
+      throw Exception('DimensionsConfig object must be initialized first');
     }
   }
 
@@ -50,20 +50,40 @@ class SizeConfig {
     if (_blockWidth != null) {
       return _blockWidth;
     } else {
-      throw Exception('SizeConfig object must be initialized first');
+      throw Exception('DimensionsConfig object must be initialized first');
     }
   }
 
-  // static bool isPortrait = true;
+  /// Available screen height
+  static double get maxScreenHeight {
+    if (_screenHeight != null) {
+      return isPortrait ? _screenHeight : _screenWidth;
+    } else {
+      throw Exception('DimensionsConfig object must be initialized first');
+    }
+  }
+
+  /// Available screen width
+  static double get maxScreenWidth {
+    if (_screenWidth != null) {
+      return isPortrait ? _screenWidth : _screenHeight;
+    } else {
+      throw Exception('DimensionsConfig object must be initialized first');
+    }
+  }
+
+  static bool isPortrait = true;
   // static bool isMobilePortrait = false;
 
   void init(BoxConstraints constraints, Orientation orientation) {
     if (orientation == Orientation.portrait) {
       _screenWidth = constraints.maxWidth;
       _screenHeight = constraints.maxHeight;
+      isPortrait = true;
     } else {
       _screenWidth = constraints.maxHeight;
       _screenHeight = constraints.maxWidth;
+      isPortrait = false;
     }
 
     // Calculating number of blocks, in order to determine values

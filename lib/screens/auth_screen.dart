@@ -1,41 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/widgets/auth/auth_form.dart';
 
 class AuthScreen extends StatelessWidget {
   static const route = '/auth';
   @override
   Widget build(BuildContext context) {
-    final deviceDimensions = MediaQuery.of(context);
     return Scaffold(
       body: Stack(
         children: [
           Container(
-            /// Calculating
-            height: deviceDimensions.size.height -
-                deviceDimensions.padding.top -
-                deviceDimensions.padding.bottom,
-            width: deviceDimensions.size.width,
+            height: DimensionsConfig.maxScreenHeight,
+            width: DimensionsConfig.maxScreenWidth,
           ),
           ClipPath(
-            clipper: DiagonalClipper(),
+            clipper: _DiagonalClipper(),
             child: Container(
               color: Theme.of(context).primaryColor,
-
-              // Calculating the height
-              height: deviceDimensions.size.height -
-                  deviceDimensions.padding.top -
-                  deviceDimensions.padding.bottom,
-              width: deviceDimensions.size.width,
+              height: DimensionsConfig.maxScreenHeight,
+              width: DimensionsConfig.maxScreenWidth,
             ),
           ),
-          Center(child: AuthForm()),
+          Center(child: SingleChildScrollView(child: AuthForm())),
         ],
       ),
     );
   }
 }
 
-class DiagonalClipper extends CustomClipper<Path> {
+class _DiagonalClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     final path = Path();
@@ -47,5 +40,5 @@ class DiagonalClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(DiagonalClipper oldClipper) => true;
+  bool shouldReclip(_DiagonalClipper oldClipper) => true;
 }

@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
 
 class AuthForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
     return Card(
       elevation: 2,
       child: Container(
-        width: deviceSize.width * 0.8,
-        height: deviceSize.height * 0.39,
+        width: 83 * DimensionsConfig.widthMultiplier,
+        height: 47 * DimensionsConfig.heightMultiplier,
         child: Padding(
-          padding: const EdgeInsets.all(23.0),
+          padding: EdgeInsets.symmetric(
+              horizontal: 7 * DimensionsConfig.widthMultiplier,
+              vertical: 0.3 * DimensionsConfig.heightMultiplier),
           child: Form(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Center(
-                  child: const Text(
+                  child: Text(
                     'Sign in to Twake',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
                 Center(
-                  child: const Text(
+                  child: Text(
                     'Happy to see you \u{1F607}',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ),
+                SizedBox(height: 3 * DimensionsConfig.heightMultiplier),
                 const _AuthTextForm(label: 'Username or e-mail'),
                 const _AuthTextForm(label: 'Password', obscured: true),
                 SizedBox(
@@ -43,13 +41,13 @@ class AuthForm extends StatelessWidget {
                     ),
                     padding: EdgeInsets.symmetric(
                       horizontal: 20,
-                      vertical: 14,
+                      vertical: 0.7 * DimensionsConfig.heightMultiplier,
                     ),
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
                     child: Text(
                       'Log in',
-                      style: TextStyle(fontSize: 22),
+                      style: Theme.of(context).textTheme.button,
                     ),
                     // allows to login no matter what, have to implement authentication logic first
                     onPressed: () {
