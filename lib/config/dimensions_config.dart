@@ -90,7 +90,5 @@ class DimensionsConfig {
     // of scaling multipliers
     _blockWidth = _screenWidth / _BLOCK_SIZE_HORZ;
     _blockHeight = _screenHeight / _BLOCK_SIZE_VERT;
-
-    print(_screenWidth);
   }
 }
