@@ -8,8 +8,9 @@ const DUMMY = {
   "companies": [
     {
       "id": "ac1a0544-1dcc-11eb-bf9f-0242ac120004",
-      "name": "TestCompany",
-      "logo": "",
+      "name": "Test Company",
+      "logo":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/wslogo/d145031a8ddb373c897187d43268038e.jpg",
       "workspaces": [
         {
           "id": "ac6c84e0-1abc-11eb-82c8-0242ac120004",
@@ -51,8 +52,9 @@ const DUMMY = {
     },
     {
       "id": "4c1a0544-1dcc-11eb-bf9f-0242ac120004",
-      "name": "TestCompany",
-      "logo": "",
+      "name": "Awesome company",
+      "logo":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/wslogo/d145031a8ddb373c897187d43268038e.jpg",
       "workspaces": [
         {
           "id": "ac6c84e0-1abc-11eb-82c8-0242ac120004",
@@ -94,8 +96,9 @@ const DUMMY = {
     },
     {
       "id": "1c1a0544-1dcc-11eb-bf9f-0242ac120004",
-      "name": "TestCompany",
-      "logo": "",
+      "name": "Weird Company",
+      "logo":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/wslogo/d145031a8ddb373c897187d43268038e.jpg",
       "workspaces": [
         {
           "id": "ac6c84e0-1abc-11eb-82c8-0242ac120004",

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:twake_mobile/models/user.dart';
 
-class CompaniesProvider with ChangeNotifier {
+class UserProvider with ChangeNotifier {
   User _currentUser;
 
   User get currentUser => _currentUser;

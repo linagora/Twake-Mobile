@@ -10,6 +10,8 @@ class Company {
   @JsonKey(required: true)
   final String name;
   final String logo;
+  @JsonKey(ignore: true)
+  int workspaceCount;
 
   Company({
     @required this.id,
@@ -19,7 +21,10 @@ class Company {
 
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory Company.fromJson(Map<String, dynamic> json) =>
-      _$CompanyFromJson(json);
+  factory Company.fromJson(Map<String, dynamic> json) {
+    return _$CompanyFromJson(json)
+      ..workspaceCount =
+          (json['workspaces'] as List<Map<String, dynamic>>).length;
+  }
   Map<String, dynamic> toJson() => _$CompanyToJson(this);
 }
