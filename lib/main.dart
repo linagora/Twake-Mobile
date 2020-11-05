@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/styles_config.dart';
 import 'package:twake_mobile/screens/auth_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
-import 'package:twake_mobile/config/styles_config.dart';
 
 void main() {
   runApp(TwakeMobileApp());
