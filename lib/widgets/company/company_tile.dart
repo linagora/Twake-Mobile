@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/company.dart';
+import 'package:twake_mobile/screens/workspaces_screen.dart';
 
 class CompanyTile extends StatelessWidget {
   final Company company;
@@ -8,7 +9,10 @@ class CompanyTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context)
+            .pushNamed(WorkspacesScreen.route, arguments: company.id);
+      },
       child: Card(
         elevation: 1,
         child: ListTile(
@@ -23,7 +27,7 @@ class CompanyTile extends StatelessWidget {
                           'image/jpg, image/png, image/jpeg, application/octet-stream'
                     },
                   )
-                : AssetImage('empty-image.png'),
+                : AssetImage('assets/images/empty-image.png'),
           ),
           title: Text(
             company.name,
