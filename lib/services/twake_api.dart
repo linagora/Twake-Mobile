@@ -24,18 +24,21 @@ class TwakeApi with ChangeNotifier {
       );
       var authData = jsonDecode(response.body);
       _authJWToken = authData['token'];
+      if (_authJWToken == null) {
+        throw Exception('Authorization failed');
+      }
       isAuthorized = true;
       notifyListeners();
     } catch (error) {
-      print('ERROR ON API CALL');
+      print('ERROR ON API CALL $error');
       throw error;
     }
   }
 
-  Future<Map<String, dynamic>> currentUserGet() async {
+  Future<Map<String, dynamic>> currentProfileGet() async {
     try {
       var response = await http.get(
-        _TwakeApiConfig.currentUserMethod,
+        _TwakeApiConfig.currentProfileMethod,
         headers: {
           'Authorization': 'Bearer $_authJWToken',
         },
@@ -59,7 +62,7 @@ class _TwakeApiConfig {
     return _HOST + _authorize;
   }
 
-  static String get currentUserMethod {
+  static String get currentProfileMethod {
     return _HOST + _usersCurrentGet;
   }
 

@@ -43,8 +43,12 @@ class _AuthFormState extends State<AuthForm> {
           .authenticate(username, password);
     } catch (error) {
       print(error);
-      Scaffold.of(ctx)
-          .showSnackBar(SnackBar(content: Text('Failed to authorize')));
+      Scaffold.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text('Failed to authorize! Check credentials and try again'),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
     }
   }
 

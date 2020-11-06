@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/config/styles_config.dart';
-import 'package:twake_mobile/providers/companies_provider.dart';
-import 'package:twake_mobile/providers/init_provider.dart';
-import 'package:twake_mobile/providers/user_provider.dart';
+import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/screens/auth_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
@@ -22,25 +20,12 @@ class TwakeMobileApp extends StatelessWidget {
         ChangeNotifierProvider<TwakeApi>(
           create: (ctx) => TwakeApi(),
         ),
-        ChangeNotifierProxyProvider<TwakeApi, InitProvider>(
+        ChangeNotifierProxyProvider<TwakeApi, ProfileProvider>(
           create: (ctx) {
-            return InitProvider();
+            return ProfileProvider();
           },
-          update: (ctx, api, init) => init..init(api),
+          update: (ctx, api, user) => user..loadProfile(api),
         ),
-        ChangeNotifierProxyProvider<InitProvider, UserProvider>(
-          create: (ctx) {
-            return UserProvider();
-          },
-          update: (ctx, init, user) => user..loadUser(init.userData),
-        ),
-        ChangeNotifierProxyProvider<InitProvider, CompaniesProvider>(
-            create: (ctx) {
-          return CompaniesProvider();
-        }, update: (ctx, init, companies) {
-          final c = init.companies;
-          return companies..loadCompanies(c);
-        }),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) => OrientationBuilder(
