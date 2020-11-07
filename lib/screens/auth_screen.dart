@@ -6,23 +6,26 @@ class AuthScreen extends StatelessWidget {
   static const route = '/auth';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            height: DimensionsConfig.maxScreenHeight,
-            width: DimensionsConfig.maxScreenWidth,
-          ),
-          ClipPath(
-            clipper: _DiagonalClipper(),
-            child: Container(
-              color: Theme.of(context).primaryColor,
+    print('DEBUG: building auth screen');
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Container(
               height: DimensionsConfig.maxScreenHeight,
               width: DimensionsConfig.maxScreenWidth,
             ),
-          ),
-          Center(child: SingleChildScrollView(child: AuthForm())),
-        ],
+            ClipPath(
+              clipper: _DiagonalClipper(),
+              child: Container(
+                color: Theme.of(context).primaryColor,
+                height: DimensionsConfig.maxScreenHeight,
+                width: DimensionsConfig.maxScreenWidth,
+              ),
+            ),
+            Center(child: SingleChildScrollView(child: AuthForm())),
+          ],
+        ),
       ),
     );
   }
