@@ -35,7 +35,7 @@ class TwakeApi with ChangeNotifier {
       isAuthorized = true;
       notifyListeners();
     } catch (error) {
-      print('ERROR ON API CALL $error');
+      print('Error occured during authentication\n$error');
       throw error;
     }
   }
@@ -43,13 +43,13 @@ class TwakeApi with ChangeNotifier {
   Future<Map<String, dynamic>> currentProfileGet() async {
     try {
       final response = await http.get(
-        _TwakeApiConfig.currentProfileMethod,
+        _TwakeApiConfig.currentProfileMethod, // url
         headers: _TwakeApiConfig.authHeader(_authJWToken),
       );
       final Map<String, dynamic> userData = jsonDecode(response.body);
       return userData;
     } catch (error) {
-      print('WARNING! $error');
+      print('Error occured while loading user profile\n$error');
       throw error;
     }
   }
@@ -57,14 +57,29 @@ class TwakeApi with ChangeNotifier {
   Future<List<dynamic>> workspaceChannelsGet(String workspaceId) async {
     try {
       final response = await http.get(
-        _TwakeApiConfig.workspaceChannelsMethod(workspaceId),
+        _TwakeApiConfig.workspaceChannelsMethod(workspaceId), // url
         headers: _TwakeApiConfig.authHeader(_authJWToken),
       );
       final channels = jsonDecode(response.body);
       // Some processing ...
       return channels;
     } catch (error) {
-      print('Error occured while getting channels\n$error');
+      print('Error occured while getting workspace channels\n$error');
+      throw error;
+    }
+  }
+
+  Future<List<dynamic>> channelMessagesGet(String channelId) async {
+    try {
+      final response = await http.get(
+        _TwakeApiConfig.channelMessagesMethod(channelId), // url
+        headers: _TwakeApiConfig.authHeader(_authJWToken),
+      );
+      final messages = jsonDecode(response.body);
+      // Some processing ...
+      return messages;
+    } catch (error) {
+      print('Error occured while getting channel messages\n$error');
       throw error;
     }
   }
@@ -75,6 +90,7 @@ class _TwakeApiConfig {
   static const String _authorize = '/authorize';
   static const String _usersCurrentGet = '/users/current/get';
   static const String _workspaceChannels = '/workspace/%s/channels';
+  static const String _channelMessages = '/channels/%s/messages';
 
   static Map<String, String> authHeader(token) {
     return {
@@ -87,10 +103,27 @@ class _TwakeApiConfig {
   }
 
   static String get currentProfileMethod {
-    return _HOST + _usersCurrentGet;
+    final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
+    return _HOST + _usersCurrentGet + '?timezoneoffset=$timeZoneOffset';
   }
 
   static String workspaceChannelsMethod(String id) {
-    return _HOST + sprintf(_workspaceChannels, id);
+    return _HOST + sprintf(_workspaceChannels, [id]);
+  }
+
+  static String channelMessagesMethod(
+    String channelId, {
+    String beforeId,
+    int limit,
+  }) {
+    var url = _HOST + sprintf(_channelMessages, [channelId]) + '?';
+    if (beforeId != null) {
+      url = url + 'before=$beforeId&';
+    }
+    if (limit != null) {
+      url = url + 'limit=$limit&';
+    }
+
+    return url;
   }
 }

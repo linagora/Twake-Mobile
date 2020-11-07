@@ -7,6 +7,7 @@ class CompaniesListScreen extends StatelessWidget {
   static const route = '/companies/list';
   @override
   Widget build(BuildContext context) {
+    print('DEBUG: building companies screen');
     final profile = Provider.of<ProfileProvider>(context);
     return Scaffold(
       appBar: AppBar(
