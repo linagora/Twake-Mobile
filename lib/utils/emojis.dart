@@ -21,6 +21,7 @@ class Emojis {
     return res ?? _EMOJIS['100'];
   }
 
+  // https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json
   static const Map<String, String> _EMOJIS = {
     "100": "💯",
     "1234": "🔢",
