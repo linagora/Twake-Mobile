@@ -27,9 +27,12 @@ class Profile {
     this.thumbnail,
   });
 
-  /// Convenience methods to avoid serializing this class to/from JSON
+  /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Profile.fromJson(Map<String, dynamic> json) =>
       _$ProfileFromJson(json);
+
+  /// Convenience methods to avoid serializing this class to JSON
+  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 }
