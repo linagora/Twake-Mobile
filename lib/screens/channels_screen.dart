@@ -12,7 +12,6 @@ class ChannelsScreen extends StatelessWidget {
     final workspaceId = ModalRoute.of(context).settings.arguments as String;
     final api = Provider.of<TwakeApi>(context, listen: false);
     final channels = Provider.of<ChannelsProvider>(context, listen: false);
-    final items = channels.items;
     return Scaffold(
       appBar: AppBar(
         title: Text('Workspace channels'),
@@ -20,6 +19,8 @@ class ChannelsScreen extends StatelessWidget {
       body: FutureBuilder(
         future: channels.loadChannels(api, workspaceId),
         builder: (ctx, snapshot) {
+          final items =
+              Provider.of<ChannelsProvider>(context, listen: false).items;
           return snapshot.connectionState == ConnectionState.done
               ? ListView.builder(
                   itemCount: items.length,

@@ -12,6 +12,8 @@ class ProfileProvider with ChangeNotifier {
 
   List<Company> get companies => _currentProfile.companies;
 
+  bool isMe(String id) => _currentProfile.userId == id;
+
   List<Workspace> companyWorkspaces(String companyId) {
     return _currentProfile.companies
         .firstWhere((c) => c.id == companyId)

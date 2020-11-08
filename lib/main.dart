@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/config/styles_config.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
+import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/screens/auth_screen.dart';
 import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
+import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
@@ -41,6 +43,9 @@ class TwakeMobileApp extends StatelessWidget {
         ChangeNotifierProvider<ChannelsProvider>(
           create: (ctx) => ChannelsProvider(),
         ),
+        ChangeNotifierProvider<MessagesProvider>(
+          create: (ctx) => MessagesProvider(),
+        ),
       ],
       child: LayoutBuilder(
         builder: (context, constraints) => OrientationBuilder(
@@ -63,6 +68,7 @@ class TwakeMobileApp extends StatelessWidget {
                     CompaniesListScreen(),
                 WorkspacesScreen.route: (BuildContext _) => WorkspacesScreen(),
                 ChannelsScreen.route: (BuildContext _) => ChannelsScreen(),
+                MessagesScreen.route: (BuildContext _) => MessagesScreen(),
               },
             );
           },

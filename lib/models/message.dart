@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -6,7 +8,7 @@ part 'message.g.dart';
 // TODO document the model
 
 @JsonSerializable(explicitToJson: true)
-class Message {
+class Message extends JsonSerializable {
   @JsonKey(required: true)
   String id;
 
@@ -22,8 +24,9 @@ class Message {
   @JsonKey(required: true)
   MessageTwacode content;
 
-  Map<String, dynamic> reactions;
-
+  // @JsonKey(fromJson: jsonDecode)
+  dynamic reactions;
+  //
   List<Message> responses;
 
   Message({
@@ -33,7 +36,7 @@ class Message {
     @required this.creationDate,
     @required this.content,
     this.reactions,
-    this.responses,
+    // this.responses,
   });
 
   /// Convenience methods to avoid serializing this class from JSON
