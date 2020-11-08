@@ -23,11 +23,13 @@ class Company {
 
   int get workspaceCount => workspaces.length;
 
-  /// Convenience methods to avoid serializing this class to/from JSON
+  /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Company.fromJson(Map<String, dynamic> json) {
-    return _$CompanyFromJson(json); // ..workspaceCount =
-    //(json['workspaces'] as List<Map<String, dynamic>>).length;
+    return _$CompanyFromJson(json);
   }
+
+  /// Convenience methods to avoid serializing this class to JSON
+  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() => _$CompanyToJson(this);
 }

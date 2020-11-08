@@ -7,6 +7,7 @@ class WorkspacesScreen extends StatelessWidget {
   static const String route = '/workspaces';
   @override
   Widget build(BuildContext context) {
+    print('DEBUG: building workspaces screen');
     String companyId = ModalRoute.of(context).settings.arguments as String;
     return Consumer<ProfileProvider>(
       builder: (ctx, profile, _) {

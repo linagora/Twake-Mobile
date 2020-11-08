@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/config/styles_config.dart';
+import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/screens/auth_screen.dart';
+import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
@@ -24,7 +26,20 @@ class TwakeMobileApp extends StatelessWidget {
           create: (ctx) {
             return ProfileProvider();
           },
-          update: (ctx, api, user) => user..loadProfile(api),
+          update: (ctx, api, user) {
+            user.loadProfile(api).catchError((error) {
+              print('Error on profile update\n$error');
+              Scaffold.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text('Failed to load user profile!'),
+                ),
+              );
+            });
+            return user;
+          },
+        ),
+        ChangeNotifierProvider<ChannelsProvider>(
+          create: (ctx) => ChannelsProvider(),
         ),
       ],
       child: LayoutBuilder(
@@ -47,6 +62,7 @@ class TwakeMobileApp extends StatelessWidget {
                 CompaniesListScreen.route: (BuildContext _) =>
                     CompaniesListScreen(),
                 WorkspacesScreen.route: (BuildContext _) => WorkspacesScreen(),
+                ChannelsScreen.route: (BuildContext _) => ChannelsScreen(),
               },
             );
           },

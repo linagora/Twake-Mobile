@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/workspace.dart';
 import 'package:mime/mime.dart';
+import 'package:twake_mobile/screens/channels_screen.dart';
 
 class WorkspaceTile extends StatelessWidget {
   final Workspace workspace;
@@ -11,8 +12,8 @@ class WorkspaceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigator.of(context)
-        //     .pushNamed(WorkspacesScreen.route, arguments: workspace.id);
+        Navigator.of(context)
+            .pushNamed(ChannelsScreen.route, arguments: workspace.id);
       },
       child: Card(
         elevation: 1,
