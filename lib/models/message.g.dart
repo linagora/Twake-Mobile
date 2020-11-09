@@ -18,10 +18,11 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
         ? null
         : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
     reactions: json['reactions'],
-  )..responses = (json['responses'] as List)
-      ?.map(
-          (e) => e == null ? null : Message.fromJson(e as Map<String, dynamic>))
-      ?.toList();
+    responses: (json['responses'] as List)
+        ?.map((e) =>
+            e == null ? null : Message.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -35,7 +36,6 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
     };
 
 MessageTwacode _$MessageTwacodeFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['original_str', 'prepared']);
   return MessageTwacode(
     originalStr: json['original_str'] as String,
     prepared: json['prepared'] as List,

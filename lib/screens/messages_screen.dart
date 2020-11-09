@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
+import 'package:twake_mobile/widgets/message/message_tile.dart';
 
 class MessagesScreen extends StatelessWidget {
   static const String route = '/messages';
@@ -23,7 +24,7 @@ class MessagesScreen extends StatelessWidget {
                   children:
                       Provider.of<MessagesProvider>(context, listen: false)
                           .items
-                          .map((m) => Text(m.content.originalStr))
+                          .map((m) => MessageTile(m))
                           .toList(),
                 )
               : Center(child: CircularProgressIndicator());

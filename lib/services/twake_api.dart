@@ -76,7 +76,6 @@ class TwakeApi with ChangeNotifier {
         headers: _TwakeApiConfig.authHeader(_authJWToken),
       );
       final messages = jsonDecode(response.body);
-      print('GOT MESSAGES FOR CHANNEL:\n$messages');
       // Some processing ...
       return messages;
     } catch (error) {

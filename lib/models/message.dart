@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -24,19 +22,18 @@ class Message extends JsonSerializable {
   @JsonKey(required: true)
   MessageTwacode content;
 
-  // @JsonKey(fromJson: jsonDecode)
   dynamic reactions;
-  //
+
   List<Message> responses;
 
   Message({
     @required this.id,
     this.responsesCount,
-    @required this.sender,
-    @required this.creationDate,
-    @required this.content,
+    this.sender,
+    this.creationDate,
+    this.content,
     this.reactions,
-    // this.responses,
+    this.responses,
   });
 
   /// Convenience methods to avoid serializing this class from JSON
@@ -51,15 +48,15 @@ class Message extends JsonSerializable {
 
 @JsonSerializable()
 class MessageTwacode {
-  @JsonKey(required: true, name: 'original_str')
+  @JsonKey(name: 'original_str')
   final String originalStr;
 
-  @JsonKey(required: true)
+  // @JsonKey(required: true)
   final List<dynamic> prepared;
 
   MessageTwacode({
-    @required this.originalStr,
-    @required this.prepared,
+    this.originalStr,
+    this.prepared,
   });
 
   /// Convenience methods to avoid serializing this class from JSON
