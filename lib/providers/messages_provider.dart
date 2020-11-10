@@ -26,6 +26,7 @@ class MessagesProvider extends ChangeNotifier {
     }
     _items.clear();
     for (var i = 0; i < list.length; i++) {
+      print(list[i]);
       _items.add(Message.fromJson(list[i]));
     }
     loaded = true;

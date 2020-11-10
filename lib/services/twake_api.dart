@@ -12,6 +12,9 @@ class TwakeApi with ChangeNotifier {
   TwakeApi() {
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
+
+  String get token => _authJWToken;
+
   Future<void> authenticate(String username, String password) async {
     try {
       final response = await http.post(

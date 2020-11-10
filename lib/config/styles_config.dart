@@ -30,6 +30,7 @@ class StylesConfig {
     headline3: _searchLight,
     bodyText2: _selectedTabLight,
     bodyText1: _unSelectedTabLight,
+    headline2: _mainTitleLight,
   );
 
   static final TextTheme darkTextTheme = TextTheme(
@@ -47,6 +48,12 @@ class StylesConfig {
     fontSize: 3.5 * DimensionsConfig.textMultiplier,
   );
 
+  static final TextStyle _mainTitleLight = TextStyle(
+    color: Color.fromRGBO(126, 120, 251, 1),
+    fontSize: 4.6 * DimensionsConfig.textMultiplier,
+    fontWeight: FontWeight.bold,
+  );
+
   static final TextStyle _subTitleLight = TextStyle(
     color: subTitleTextColor,
     fontSize: 2 * DimensionsConfig.textMultiplier,
@@ -59,8 +66,8 @@ class StylesConfig {
   );
 
   static final TextStyle _greetingLight = TextStyle(
-    color: Colors.black,
-    fontSize: 2.0 * DimensionsConfig.textMultiplier,
+    color: Color.fromRGBO(126, 120, 251, 1),
+    fontSize: 2.7 * DimensionsConfig.textMultiplier,
   );
 
   static final TextStyle _searchLight = TextStyle(

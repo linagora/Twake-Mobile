@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/widgets/company/company_tile.dart';
+import 'package:twake_mobile/widgets/drawer/drawer.dart';
 
 class CompaniesListScreen extends StatelessWidget {
   static const route = '/companies/list';
@@ -9,15 +10,18 @@ class CompaniesListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print('DEBUG: building companies screen');
     final profile = Provider.of<ProfileProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Your companies'),
+    return SafeArea(
+      child: Scaffold(
+        drawer: TwakeDrawer(),
+        appBar: AppBar(
+          title: Text('Your companies'),
+        ),
+        body: profile.loaded
+            ? ListView(
+                children: profile.companies.map((c) => CompanyTile(c)).toList(),
+              )
+            : Center(child: LinearProgressIndicator()),
       ),
-      body: profile.loaded
-          ? ListView(
-              children: profile.companies.map((c) => CompanyTile(c)).toList(),
-            )
-          : Center(child: LinearProgressIndicator()),
     );
   }
 }

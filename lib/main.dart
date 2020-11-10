@@ -11,6 +11,7 @@ import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+// import 'package:twake_mobile/services/twake_socket.dart';
 
 void main() {
   runApp(TwakeMobileApp());

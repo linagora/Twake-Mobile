@@ -23,7 +23,12 @@ class AuthScreen extends StatelessWidget {
                 width: DimensionsConfig.maxScreenWidth,
               ),
             ),
-            Center(child: SingleChildScrollView(child: AuthForm())),
+            Align(
+              child: SingleChildScrollView(
+                child: AuthForm(),
+              ),
+              alignment: Alignment.bottomCenter,
+            ),
           ],
         ),
       ),
@@ -32,11 +37,16 @@ class AuthScreen extends StatelessWidget {
 }
 
 class _DiagonalClipper extends CustomClipper<Path> {
+  static const int CURVATURE = 80;
   @override
   Path getClip(Size size) {
     final path = Path();
-    path.lineTo(0.0, size.height * (3 / 5));
-    path.lineTo(size.width, size.height * (2 / 5));
+    path.lineTo(0.0, size.height * (1 / 6));
+    path.lineTo(
+        size.width / 2 - CURVATURE, size.height * (1 / 3) - CURVATURE / 2);
+    path.quadraticBezierTo(size.width / 2, size.height * (1 / 3),
+        size.width / 2 + CURVATURE, size.height * (1 / 3) - CURVATURE / 2);
+    path.lineTo(size.width, size.height * (1 / 6));
     path.lineTo(size.width, 0.0);
     path.close();
     return path;

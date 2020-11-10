@@ -8,23 +8,23 @@ part 'message.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Message extends JsonSerializable {
   @JsonKey(required: true)
-  String id;
+  final String id;
 
   @JsonKey(name: 'responses_count')
-  int responsesCount;
+  final int responsesCount;
 
   @JsonKey(required: true)
-  String sender;
+  final Sender sender;
 
   @JsonKey(required: true, name: 'creation_date')
-  int creationDate;
+  final int creationDate;
 
   @JsonKey(required: true)
-  MessageTwacode content;
+  final MessageTwacode content;
 
-  dynamic reactions;
+  final dynamic reactions;
 
-  List<Message> responses;
+  final List<Message> responses;
 
   Message({
     @required this.id,
@@ -67,4 +67,36 @@ class MessageTwacode {
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() => _$MessageTwacodeToJson(this);
+}
+
+@JsonSerializable()
+class Sender {
+  @JsonKey(required: true)
+  final String username;
+
+  final String img;
+
+  final String id;
+
+  @JsonKey(name: 'firstname')
+  final String firstName;
+
+  @JsonKey(name: 'lastname')
+  final String lastName;
+
+  Sender({
+    this.username,
+    this.img,
+    this.id,
+    this.firstName,
+    this.lastName,
+  });
+
+  /// Convenience methods to avoid serializing this class from JSON
+  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  factory Sender.fromJson(Map<String, dynamic> json) => _$SenderFromJson(json);
+
+  /// Convenience methods to avoid serializing this class to JSON
+  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  Map<String, dynamic> toJson() => _$SenderToJson(this);
 }
