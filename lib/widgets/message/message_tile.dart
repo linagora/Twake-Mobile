@@ -31,7 +31,7 @@ class MessageTile extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        message.sender ?? '',
+                        message.sender.username ?? '',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],

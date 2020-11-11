@@ -85,7 +85,7 @@ class Sender {
   final String lastName;
 
   Sender({
-    this.username,
+    @required this.username,
     this.img,
     this.id,
     this.firstName,
