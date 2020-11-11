@@ -20,10 +20,13 @@ class ProfileProvider with ChangeNotifier {
         .workspaces;
   }
 
+  String get firstWorkspaceId {
+    return _currentProfile.companies[0].workspaces[0].id;
+  }
+
   Future<void> loadProfile(TwakeApi api) async {
     try {
       final response = await api.currentProfileGet();
-      print(response);
       _currentProfile = Profile.fromJson(response);
       loaded = true;
       notifyListeners();

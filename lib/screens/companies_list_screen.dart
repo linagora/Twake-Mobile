@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/widgets/company/company_tile.dart';
-import 'package:twake_mobile/widgets/drawer/drawer.dart';
+import 'package:twake_mobile/widgets/drawer/twake_drawer.dart';
 
 class CompaniesListScreen extends StatelessWidget {
   static const route = '/companies/list';
@@ -20,7 +20,7 @@ class CompaniesListScreen extends StatelessWidget {
             ? ListView(
                 children: profile.companies.map((c) => CompanyTile(c)).toList(),
               )
-            : Center(child: LinearProgressIndicator()),
+            : Center(child: CircularProgressIndicator()),
       ),
     );
   }

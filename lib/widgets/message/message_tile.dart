@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/message.dart';
+import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
 class MessageTile extends StatelessWidget {
   final Message message;
@@ -18,11 +19,7 @@ class MessageTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              backgroundColor: Colors.grey[200],
-              child: Text('P') // TODO replace with user image
-              ,
-            ),
+            ImageAvatar(message.sender.img),
             Padding(
               padding: EdgeInsets.only(left: DimensionsConfig.widthMultiplier),
               child: Column(

@@ -46,9 +46,6 @@ class MessagesScreen extends StatelessWidget {
 // StreamBuilder(
 // stream: socket.stream,
 // builder: (ctx, snapshot) {
-// print('got data');
-// print(snapshot.error);
-// print(snapshot.data);
 // return Center(
 // child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
 // );

@@ -11,10 +11,15 @@ import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+import 'package:flutter/services.dart';
 // import 'package:twake_mobile/services/twake_socket.dart';
 
 void main() {
-  runApp(TwakeMobileApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(TwakeMobileApp());
+  });
 }
 
 class TwakeMobileApp extends StatelessWidget {
@@ -30,14 +35,15 @@ class TwakeMobileApp extends StatelessWidget {
             return ProfileProvider();
           },
           update: (ctx, api, user) {
-            user.loadProfile(api).catchError((error) {
-              print('Error on profile update\n$error');
-              Scaffold.of(ctx).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to load user profile!'),
-                ),
-              );
-            });
+            if (api.isAuthorized)
+              user.loadProfile(api).catchError((error) {
+                print('Error on profile update\n$error');
+                Scaffold.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text('Failed to load user profile!'),
+                  ),
+                );
+              });
             return user;
           },
         ),
@@ -58,11 +64,16 @@ class TwakeMobileApp extends StatelessWidget {
             /// of new values.
             DimensionsConfig().init(constraints, orientation);
             final api = Provider.of<TwakeApi>(context);
+            final profile = Provider.of<ProfileProvider>(context);
             return MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Twake',
               theme: StylesConfig.lightTheme,
-              home: api.isAuthorized ? CompaniesListScreen() : AuthScreen(),
+              home: api.isAuthorized
+                  ? (profile.loaded
+                      ? ChannelsScreen()
+                      : Center(child: CircularProgressIndicator()))
+                  : AuthScreen(),
               routes: {
                 AuthScreen.route: (BuildContext _) => AuthScreen(),
                 CompaniesListScreen.route: (BuildContext _) =>

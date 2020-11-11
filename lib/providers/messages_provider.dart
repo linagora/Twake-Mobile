@@ -8,9 +8,6 @@ import 'package:twake_mobile/services/twake_api.dart';
 class MessagesProvider extends ChangeNotifier {
   List<Message> _items = List();
   bool loaded = false;
-  MessagesProvider() {
-    print('MessagesProvider is instantiated');
-  }
 
   List<Message> get items => [..._items];
 
