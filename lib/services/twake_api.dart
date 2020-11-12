@@ -7,13 +7,20 @@ import 'package:sprintf/sprintf.dart';
 
 class TwakeApi with ChangeNotifier {
   String _authJWToken;
-  bool isAuthorized = false;
+  bool _isAuthorized = false;
   String _platform;
   TwakeApi() {
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
 
   String get token => _authJWToken;
+
+  bool get isAuthorized => _isAuthorized;
+
+  set isAuthorized(value) {
+    _isAuthorized = value;
+    notifyListeners();
+  }
 
   Future<void> authenticate(String username, String password) async {
     try {
@@ -35,7 +42,7 @@ class TwakeApi with ChangeNotifier {
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
       }
-      isAuthorized = true;
+      _isAuthorized = true;
       notifyListeners();
     } catch (error) {
       print('Error occured during authentication\n$error');
@@ -89,7 +96,7 @@ class TwakeApi with ChangeNotifier {
 }
 
 class _TwakeApiConfig {
-  static const String _HOST = 'http://purecode.ru:3123';
+  static const String _HOST = 'http://10.0.2.2:3123';
   static const String _authorize = '/authorize';
   static const String _usersCurrentGet = '/users/current/get';
   static const String _workspaceChannels = '/workspace/%s/channels';

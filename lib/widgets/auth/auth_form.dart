@@ -42,7 +42,6 @@ class _AuthFormState extends State<AuthForm> {
       await Provider.of<TwakeApi>(ctx, listen: false)
           .authenticate(username, password);
     } catch (error) {
-      print(error);
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
           content: Text('Failed to authorize! Check credentials and try again'),
@@ -101,7 +100,7 @@ class _AuthFormState extends State<AuthForm> {
                     horizontal: 20,
                     vertical: 0.7 * DimensionsConfig.heightMultiplier,
                   ),
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).accentColor,
                   textColor: Colors.white,
                   child: Text(
                     'Log in',

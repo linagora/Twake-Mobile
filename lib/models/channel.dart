@@ -11,7 +11,7 @@ class Channel {
   @JsonKey(required: true)
   final String name;
 
-  @JsonKey(required: true)
+  // @JsonKey(required: true)
   final String icon;
 
   final String description;
