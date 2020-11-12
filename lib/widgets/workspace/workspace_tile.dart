@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/workspace.dart';
-import 'package:mime/mime.dart';
 import 'package:twake_mobile/screens/channels_screen.dart';
+import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
 class WorkspaceTile extends StatelessWidget {
   final Workspace workspace;
@@ -18,20 +17,7 @@ class WorkspaceTile extends StatelessWidget {
       child: Card(
         elevation: 1,
         child: ListTile(
-          leading: CircleAvatar(
-            radius: 5 * DimensionsConfig.widthMultiplier,
-            backgroundImage: workspace.logo.isNotEmpty
-                ? NetworkImage(
-                    workspace.logo,
-                    headers: {
-                      'Content-Type':
-                          lookupMimeType(workspace.logo.split('/').last),
-                      'Accept':
-                          'image/jpg, image/png, image/jpeg, application/octet-stream'
-                    },
-                  )
-                : AssetImage('assets/images/empty-image.png'),
-          ),
+          leading: ImageAvatar(workspace.logo),
           title: Text(
             workspace.name,
             style: Theme.of(context).textTheme.headline3,

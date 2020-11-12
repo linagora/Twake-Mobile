@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/company.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
-import 'package:mime/mime.dart';
+import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
 class CompanyTile extends StatelessWidget {
   final Company company;
@@ -17,20 +16,7 @@ class CompanyTile extends StatelessWidget {
       child: Card(
         elevation: 1,
         child: ListTile(
-          leading: CircleAvatar(
-            radius: 5 * DimensionsConfig.widthMultiplier,
-            backgroundImage: company.logo.isNotEmpty
-                ? NetworkImage(
-                    company.logo,
-                    headers: {
-                      'Content-Type':
-                          lookupMimeType(company.logo.split('/').last),
-                      'Accept':
-                          'image/jpg, image/png, image/jpeg, application/octet-stream'
-                    },
-                  )
-                : AssetImage('assets/images/empty-image.png'),
-          ),
+          leading: ImageAvatar(company.logo),
           title: Text(
             company.name,
             style: Theme.of(context).textTheme.headline3,
