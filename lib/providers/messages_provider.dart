@@ -13,6 +13,11 @@ class MessagesProvider extends ChangeNotifier {
 
   int get messagesCount => _items.length;
 
+  void clearMessages() {
+    _items.clear();
+    loaded = false;
+  }
+
   Future<void> loadMessages(TwakeApi api, String channelId) async {
     var list;
     try {
@@ -21,7 +26,6 @@ class MessagesProvider extends ChangeNotifier {
       // TODO implement proper error handling
       throw error;
     }
-    _items.clear();
     for (var i = 0; i < list.length; i++) {
       _items.add(Message.fromJson(list[i]));
     }

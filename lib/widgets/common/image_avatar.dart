@@ -12,7 +12,6 @@ class ImageAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mime = lookupMimeType(imageUrl.split('/').last);
-    print('MIME IS: $mime');
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         DimensionsConfig.widthMultiplier * 0.5,
@@ -37,6 +36,6 @@ class ImageAvatar extends StatelessWidget {
 
 Widget onErrorFallbackImg() => Image.asset(
       _FALLBACK_IMG,
-      width: DimensionsConfig.widthMultiplier * 9,
-      height: DimensionsConfig.widthMultiplier * 9,
+      width: DimensionsConfig.widthMultiplier * 7,
+      height: DimensionsConfig.widthMultiplier * 7,
     );

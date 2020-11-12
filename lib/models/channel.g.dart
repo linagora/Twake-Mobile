@@ -10,7 +10,6 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const [
     'id',
     'name',
-    'icon',
     'members_count',
     'private',
     'direct',

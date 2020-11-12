@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 
 class StylesConfig {
-  static const Color lightAppColor = Color.fromRGBO(126, 120, 251, 1.0);
+  static const Color accentColor = Color.fromRGBO(126, 120, 251, 1.0);
+  static const Color lightAppColor = Colors.white;
 
   static const Color subTitleTextColor = Color(0xFF9F988F);
 
   static final ThemeData lightTheme = ThemeData(
     primaryColor: lightAppColor,
+    accentColor: accentColor,
     brightness: Brightness.light,
     textTheme: lightTextTheme,
     fontFamily: 'PT',

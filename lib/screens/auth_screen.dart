@@ -20,7 +20,7 @@ class AuthScreen extends StatelessWidget {
                 ? ClipPath(
                     clipper: _DiagonalClipper(),
                     child: Container(
-                      color: Theme.of(context).primaryColor,
+                      color: Theme.of(context).accentColor,
                       height: DimensionsConfig.maxScreenHeight,
                       width: DimensionsConfig.maxScreenWidth,
                     ),

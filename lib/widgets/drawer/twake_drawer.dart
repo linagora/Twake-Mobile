@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
+import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
-
-import 'package:twake_mobile/widgets/workspace/workspace_tile.dart';
 
 const double ICON_SIZE_MULTIPLIER = 4.5;
 
@@ -100,17 +99,23 @@ class TwakeDrawer extends StatelessWidget {
                 child: ListView.separated(
                     separatorBuilder: (ctx, i) => Divider(),
                     itemCount: workspaces.length,
-                    itemBuilder: (ctx, i) => Row(
-                          children: [
-                            ImageAvatar(workspaces[i].logo),
-                            SizedBox(
-                              width: DimensionsConfig.widthMultiplier * 2,
-                            ),
-                            Text(
-                              workspaces[i].name,
-                              style: Theme.of(context).textTheme.headline5,
-                            ),
-                          ],
+                    itemBuilder: (ctx, i) => InkWell(
+                          onTap: () {
+                            profile.currentWorkspaceSet(workspaces[i].id);
+                            Navigator.of(context).pop();
+                          },
+                          child: Row(
+                            children: [
+                              ImageAvatar(workspaces[i].logo),
+                              SizedBox(
+                                width: DimensionsConfig.widthMultiplier * 2,
+                              ),
+                              Text(
+                                workspaces[i].name,
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                            ],
+                          ),
                         )),
               ),
               Spacer(),
@@ -132,7 +137,11 @@ class TwakeDrawer extends StatelessWidget {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              final api =
+                                  Provider.of<TwakeApi>(context, listen: false);
+                              profile.logout(api);
+                            },
                             icon: Icon(
                               Icons.login_outlined,
                               size: DimensionsConfig.textMultiplier *
