@@ -42,9 +42,9 @@ class TwakeMobileApp extends StatelessWidget {
           create: (ctx) {
             return ProfileProvider();
           },
-          update: (ctx, api, user) {
+          update: (ctx, api, profile) {
             if (api.isAuthorized)
-              user.loadProfile(api).catchError((error) {
+              profile.loadProfile(api).catchError((error) {
                 print('Error on profile update\n$error');
                 Scaffold.of(ctx).showSnackBar(
                   SnackBar(
@@ -52,7 +52,7 @@ class TwakeMobileApp extends StatelessWidget {
                   ),
                 );
               });
-            return user;
+            return profile;
           },
         ),
         ChangeNotifierProvider<ChannelsProvider>(

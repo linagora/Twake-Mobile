@@ -30,11 +30,14 @@ dependencies:
   #  flutter_emoji: ^2.2.1+1 # to convert emoji shortcodes to unicode
   intl: ^0.16.1
   web_socket_channel: ^1.1.0
-  sqflite_sqlcipher: ^1.1.1
+  # sqflite_sqlcipher: ^1.1.1
+  sembast: ^2.4.8
+  path_provider: ^1.6.24
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -48,8 +51,8 @@ flutter_icons:
   android: true
   ios: true
   image_path: 'dev_assets/logo.png'
-  adaptive_icon_background: '#191919'
-  adaptive_icon_foreground: 'dev_assets/logo.png'
+  adaptive_icon_background: '#FFFFFF'
+  adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
 
 
 

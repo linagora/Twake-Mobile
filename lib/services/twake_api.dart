@@ -26,6 +26,7 @@ class TwakeApi with ChangeNotifier {
 
   set isAuthorized(value) {
     _isAuthorized = value;
+    DB.authClean();
     notifyListeners();
   }
 
