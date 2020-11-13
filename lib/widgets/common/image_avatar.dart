@@ -12,6 +12,8 @@ class ImageAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mime = lookupMimeType(imageUrl.split('/').last);
+    final insecure = imageUrl.replaceFirst('https', 'http');
+    print(insecure);
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         DimensionsConfig.widthMultiplier * 0.5,
@@ -19,14 +21,14 @@ class ImageAvatar extends StatelessWidget {
       child: imageUrl == null
           ? onErrorFallbackImg()
           : Image.network(
-              imageUrl,
+              insecure,
               // 'https://lh3.googleusercontent.com/proxy/vVnrKCKFprDeQb4UqVOn_E_iK-BoUYb7BuV6p9hN0Vd9V3GbvTK8dOLyidagUGfHSaqmtlEt9DGUSt8fo4mCzXRthXJwJ8BFzUTpZ0bs2AM0quP6_bjzOOJHV9zytpQmtZG07Jxn',
-              width: DimensionsConfig.widthMultiplier * 9,
-              height: DimensionsConfig.widthMultiplier * 9,
+              width: DimensionsConfig.widthMultiplier * 8,
+              height: DimensionsConfig.widthMultiplier * 8,
               errorBuilder: (ctx, obj, _) => onErrorFallbackImg(),
               headers: {
-                'content-type': mime,
-                'accept':
+                'CONTENT-TYPE': mime,
+                'ACCEPT':
                     'image/png, image/jpeg, image/jpg, application/octet-stream'
               },
             ),

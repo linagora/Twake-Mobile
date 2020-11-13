@@ -21,6 +21,19 @@ class ChannelsScreen extends StatelessWidget {
       child: Scaffold(
         drawer: TwakeDrawer(),
         appBar: AppBar(
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (choice) {},
+              itemBuilder: (BuildContext context) {
+                return {'Star channel', 'Unstar channel'}.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              },
+            ),
+          ],
           shadowColor: Colors.grey[300],
           title: Row(
             children: [
