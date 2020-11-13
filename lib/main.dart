@@ -10,15 +10,23 @@ import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
+import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:flutter/services.dart';
 // import 'package:twake_mobile/services/twake_socket.dart';
 
 void main() {
+  /// Wait for flutter to initialize
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(TwakeMobileApp());
+
+  /// Initialize the databse handler
+  DB.init().then((_) {
+    /// And disable landscape mode
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {
+      /// And finally run the application
+      runApp(TwakeMobileApp());
+    });
   });
 }
 
