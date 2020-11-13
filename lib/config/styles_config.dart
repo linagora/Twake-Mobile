@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 
 class StylesConfig {
-  /// This class should not be instantiated !!!
-  StylesConfig._();
+  static const Color accentColor = Color.fromRGBO(126, 120, 251, 1.0);
+  static const Color lightAppColor = Colors.white;
 
-  static const Color lightAppColor = Color.fromRGBO(126, 120, 251, 1.0);
   static const Color subTitleTextColor = Color(0xFF9F988F);
 
   static final ThemeData lightTheme = ThemeData(
     primaryColor: lightAppColor,
+    accentColor: accentColor,
     brightness: Brightness.light,
     textTheme: lightTextTheme,
+    fontFamily: 'PT',
   );
 
-  // Almost identical to light theme, should discuss with
-  // with designers about the best color pallete
   static final ThemeData darkTheme = ThemeData(
     primaryColor: lightAppColor,
     brightness: Brightness.dark,
@@ -30,8 +29,12 @@ class StylesConfig {
     headline3: _searchLight,
     bodyText2: _selectedTabLight,
     bodyText1: _unSelectedTabLight,
+    headline2: _mainTitleLight,
+    headline5: _headline5,
   );
 
+  // Almost identical to light theme, should discuss with
+  // with designers about the best color pallete
   static final TextTheme darkTextTheme = TextTheme(
     headline6: _titleDark,
     subtitle2: _subTitleDark,
@@ -47,6 +50,17 @@ class StylesConfig {
     fontSize: 3.5 * DimensionsConfig.textMultiplier,
   );
 
+  static final TextStyle _mainTitleLight = TextStyle(
+    color: Color.fromRGBO(126, 120, 251, 1),
+    fontSize: 4.6 * DimensionsConfig.textMultiplier,
+    fontWeight: FontWeight.bold,
+  );
+
+  static final TextStyle _headline5 = TextStyle(
+    color: Colors.white,
+    fontSize: 3.3 * DimensionsConfig.textMultiplier,
+  );
+
   static final TextStyle _subTitleLight = TextStyle(
     color: subTitleTextColor,
     fontSize: 2 * DimensionsConfig.textMultiplier,
@@ -54,13 +68,13 @@ class StylesConfig {
   );
 
   static final TextStyle _buttonLight = TextStyle(
-    color: Colors.white70,
+    color: Colors.white,
     fontSize: 2.5 * DimensionsConfig.textMultiplier,
   );
 
   static final TextStyle _greetingLight = TextStyle(
-    color: Colors.black,
-    fontSize: 2.0 * DimensionsConfig.textMultiplier,
+    color: Color.fromRGBO(126, 120, 251, 1),
+    fontSize: 2.7 * DimensionsConfig.textMultiplier,
   );
 
   static final TextStyle _searchLight = TextStyle(
@@ -98,4 +112,7 @@ class StylesConfig {
 
   static final TextStyle _unSelectedTabDark =
       _selectedTabDark.copyWith(color: Colors.white70);
+
+  /// This class should not be instantiated !!!
+  StylesConfig._();
 }

@@ -28,12 +28,16 @@ dependencies:
   provider: ^4.3.2+2 # easier state management
   mime: ^0.9.7 # dynamically identify content-type
   #  flutter_emoji: ^2.2.1+1 # to convert emoji shortcodes to unicode
-
-
+  intl: ^0.16.1
+  web_socket_channel: ^1.1.0
+  # sqflite_sqlcipher: ^1.1.1
+  sembast: ^2.4.8
+  path_provider: ^1.6.24
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
+
 
 dev_dependencies:
   flutter_test:
@@ -41,6 +45,15 @@ dev_dependencies:
   build_runner: ^1.10.4
   json_serializable: ^3.5.0
   sprintf: ^4.0.0
+  flutter_launcher_icons: ^0.8.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: 'dev_assets/logo.png'
+  adaptive_icon_background: '#FFFFFF'
+  adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
+
 
 
 # For information on the generic Dart part of this file, see the
@@ -70,6 +83,17 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: PT
+      fonts:
+        - asset: assets/fonts/PTSans-Regular.ttf
+        - asset: assets/fonts/PTSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/PTSans-Italic.ttf
+          style: italic
+        - asset: assets/fonts/PTSans-BoldItalic.ttf
+          style: italic
+          weight: 700
+
     - family: Twake-Fontastic
       fonts:
         - asset: assets/fonts/twake-fontastic.ttf

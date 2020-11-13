@@ -4,14 +4,47 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:sprintf/sprintf.dart';
+import 'package:twake_mobile/services/db.dart';
 
+/// Main class for interacting with Twake api
+/// Contains all neccessary methods and error handling
 class TwakeApi with ChangeNotifier {
   String _authJWToken;
-  bool isAuthorized = false;
+  bool _isAuthorized = false;
   String _platform;
   TwakeApi() {
+    DB.authLoad().then((map) {
+      fromMap(map);
+      notifyListeners();
+    }).catchError((e) => print('Error loading auth data from database\n$e'));
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
+
+  String get token => _authJWToken;
+
+  bool get isAuthorized => _isAuthorized;
+
+  set isAuthorized(value) {
+    _isAuthorized = value;
+    DB.authClean();
+    notifyListeners();
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'authjwtoken': _authJWToken,
+      'isauthorized': _isAuthorized ? 1 : 0,
+      'platform': _platform,
+    };
+  }
+
+  fromMap(Map<String, dynamic> map) {
+    print('GOT DATA FOR AUTH:\n$map');
+    _authJWToken = map['authjwtoken'];
+    _isAuthorized = map['isauthorized'] == 1;
+    _platform = map['platform'];
+  }
+
   Future<void> authenticate(String username, String password) async {
     try {
       final response = await http.post(
@@ -32,7 +65,8 @@ class TwakeApi with ChangeNotifier {
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
       }
-      isAuthorized = true;
+      _isAuthorized = true;
+      DB.authSave(this);
       notifyListeners();
     } catch (error) {
       print('Error occured during authentication\n$error');

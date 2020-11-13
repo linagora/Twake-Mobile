@@ -42,7 +42,6 @@ class _AuthFormState extends State<AuthForm> {
       await Provider.of<TwakeApi>(ctx, listen: false)
           .authenticate(username, password);
     } catch (error) {
-      print(error);
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
           content: Text('Failed to authorize! Check credentials and try again'),
@@ -54,67 +53,64 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Container(
-        width: 83 * DimensionsConfig.widthMultiplier,
-        height: 47 * DimensionsConfig.heightMultiplier,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 7 * DimensionsConfig.widthMultiplier,
-            vertical: 0.3 * DimensionsConfig.heightMultiplier,
-          ),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Center(
+    return Container(
+      width: 83 * DimensionsConfig.widthMultiplier,
+      height: 47 * DimensionsConfig.heightMultiplier,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 4 * DimensionsConfig.widthMultiplier,
+          vertical: 0.5 * DimensionsConfig.heightMultiplier,
+        ),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Center(
+                child: Text(
+                  'Let\'s get started',
+                  style: Theme.of(context).textTheme.headline2,
+                ),
+              ),
+              Center(
+                child: Text(
+                  'Sign in to continue',
+                  style: Theme.of(context).textTheme.headline4,
+                ),
+              ),
+              SizedBox(height: 3 * DimensionsConfig.heightMultiplier),
+              _AuthTextForm(
+                label: 'Username or e-mail',
+                validator: validatePassword,
+                onSaved: onUsernameSaved,
+              ),
+              _AuthTextForm(
+                label: 'Password',
+                obscured: true,
+                validator: validateUsername,
+                onSaved: onPasswordSaved,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.0),
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 0.7 * DimensionsConfig.heightMultiplier,
+                  ),
+                  color: Theme.of(context).accentColor,
+                  textColor: Colors.white,
                   child: Text(
-                    'Sign in to Twake',
-                    style: Theme.of(context).textTheme.headline6,
+                    'Log in',
+                    style: Theme.of(context).textTheme.button,
                   ),
+                  // allows to login no matter what, have to implement authentication logic first
+                  onPressed: () => onSubmit(context),
                 ),
-                Center(
-                  child: Text(
-                    'Happy to see you \u{1F607}',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                ),
-                SizedBox(height: 3 * DimensionsConfig.heightMultiplier),
-                _AuthTextForm(
-                  label: 'Username or e-mail',
-                  validator: validatePassword,
-                  onSaved: onUsernameSaved,
-                ),
-                _AuthTextForm(
-                  label: 'Password',
-                  obscured: true,
-                  validator: validateUsername,
-                  onSaved: onPasswordSaved,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6.0),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 0.7 * DimensionsConfig.heightMultiplier,
-                    ),
-                    color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
-                    child: Text(
-                      'Log in',
-                      style: Theme.of(context).textTheme.button,
-                    ),
-                    // allows to login no matter what, have to implement authentication logic first
-                    onPressed: () => onSubmit(context),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

@@ -11,6 +11,7 @@ class ChannelsProvider with ChangeNotifier {
   int get channelCount => _items.length;
 
   Future<void> loadChannels(TwakeApi api, String workspaceId) async {
+    loaded = false;
     var list;
     try {
       list = await api.workspaceChannelsGet(workspaceId);
@@ -20,7 +21,7 @@ class ChannelsProvider with ChangeNotifier {
     }
     _items.clear();
     for (var i = 0; i < list.length; i++) {
-      _items.add(Channel.fromJson(list[i]));
+      _items.add(Channel.fromJson(list[i], workspaceId));
     }
     loaded = true;
     notifyListeners();

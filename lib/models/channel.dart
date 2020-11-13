@@ -28,6 +28,9 @@ class Channel {
   @JsonKey(required: true, name: 'last_activity')
   final int lastActivity;
 
+  @JsonKey(ignore: true)
+  String workspaceId;
+
   Channel({
     @required this.id,
     @required this.name,
@@ -39,12 +42,16 @@ class Channel {
     @required this.lastActivity,
   });
 
-  /// Convenience methods to avoid serializing this class from JSON
+  /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory Channel.fromJson(Map<String, dynamic> json) =>
-      _$ChannelFromJson(json);
+  factory Channel.fromJson(Map<String, dynamic> json, String workspaceId) =>
+      _$ChannelFromJson(json)..workspaceId = workspaceId;
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  Map<String, dynamic> toJson() => _$ChannelToJson(this);
+  Map<String, dynamic> toJson() {
+    var map = _$ChannelToJson(this);
+    map['workspaceId'] = this.workspaceId;
+    return map;
+  }
 }

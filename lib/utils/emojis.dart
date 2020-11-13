@@ -15,12 +15,16 @@ class Emojis {
       for (var i = 0; i < parts.length; i++) {
         final emoji = _EMOJIS.keys
             .firstWhere((k) => k.contains(parts[i]), orElse: () => null);
-        if (emoji != null) break;
+        if (emoji != null) {
+          res = _EMOJIS[emoji];
+          break;
+        }
       }
     }
     return res ?? _EMOJIS['100'];
   }
 
+  // https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json
   static const Map<String, String> _EMOJIS = {
     "100": "💯",
     "1234": "🔢",
