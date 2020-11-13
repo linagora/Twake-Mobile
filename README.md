@@ -1,7 +1,7 @@
 # Twake-mobile
 
 This is a mobile version of [Twake app](https://github.com/TwakeApp/Twake),
-developed in using Flutter framework.
+developed using Flutter framework.
 
 ## Getting started
 
