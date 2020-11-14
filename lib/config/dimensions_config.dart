@@ -4,6 +4,9 @@ import 'package:flutter/widgets.dart';
 const double _BLOCK_SIZE_VERT = 100;
 const double _BLOCK_SIZE_HORZ = 100;
 
+// Multiplier for icons used in buttons
+const double ICON_SIZE_MULTIPLIER = 4.5;
+
 /// Configuration of screen dimensions, should be initialized
 /// from the root of the application, when it's run.
 class DimensionsConfig {
