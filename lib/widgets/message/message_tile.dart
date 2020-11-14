@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
@@ -13,15 +13,14 @@ class MessageTile extends StatelessWidget {
       elevation: 1,
       child: Padding(
         padding: EdgeInsets.symmetric(
-          vertical: 0.3 * DimensionsConfig.heightMultiplier,
-          horizontal: DimensionsConfig.widthMultiplier,
+          horizontal: Dim.widthMultiplier,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ImageAvatar(message.sender.img),
             Padding(
-              padding: EdgeInsets.only(left: DimensionsConfig.widthMultiplier),
+              padding: EdgeInsets.only(left: Dim.widthMultiplier),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -41,7 +40,7 @@ class MessageTile extends StatelessWidget {
                     softWrap: true,
                   ),
                   Container(
-                    width: 70 * DimensionsConfig.widthMultiplier,
+                    width: Dim.widthPercent(70),
                     child: Text(
                       message.content.originalStr ?? '',
                       softWrap: true,

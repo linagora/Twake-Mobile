@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
@@ -14,8 +14,8 @@ class TwakeDrawer extends StatelessWidget {
     final workspaces = profile.companyWorkspaces(profile.companies[0].id);
     final user = profile.currentProfile;
     final padding = EdgeInsets.symmetric(
-      horizontal: DimensionsConfig.widthMultiplier * 3,
-      vertical: DimensionsConfig.heightMultiplier,
+      horizontal: Dim.wm3,
+      vertical: Dim.heightMultiplier,
     );
     final shadow = BoxShadow(
       offset: Offset(-10, 10),
@@ -23,7 +23,7 @@ class TwakeDrawer extends StatelessWidget {
       color: Color.fromRGBO(0, 21, 53, 1),
     );
     return Container(
-      width: DimensionsConfig.widthMultiplier * 80,
+      width: Dim.widthPercent(80),
       child: Drawer(
         child: Container(
           decoration: BoxDecoration(
@@ -43,7 +43,7 @@ class TwakeDrawer extends StatelessWidget {
                     children: [
                       ImageAvatar(profile.companies[0].logo),
                       SizedBox(
-                        width: DimensionsConfig.widthMultiplier * 2,
+                        width: Dim.wm2,
                       ),
                       Text(
                         profile.companies[0].name,
@@ -54,8 +54,7 @@ class TwakeDrawer extends StatelessWidget {
                           alignment: Alignment.centerRight,
                           child: IconButton(
                             onPressed: () {},
-                            iconSize: DimensionsConfig.textMultiplier *
-                                ICON_SIZE_MULTIPLIER,
+                            iconSize: Dim.tm4(),
                             icon: Icon(
                               Icons.settings_outlined,
                               color: Colors.white,
@@ -65,7 +64,7 @@ class TwakeDrawer extends StatelessWidget {
                       ),
                     ]),
               ),
-              SizedBox(height: DimensionsConfig.heightMultiplier * 3),
+              SizedBox(height: Dim.hm3),
               Padding(
                 padding: padding,
                 child: Row(
@@ -80,8 +79,7 @@ class TwakeDrawer extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: IconButton(
                           onPressed: () {},
-                          iconSize: DimensionsConfig.textMultiplier *
-                              ICON_SIZE_MULTIPLIER,
+                          iconSize: Dim.tm4(),
                           icon: Icon(
                             Icons.add_sharp,
                             color: Colors.white,
@@ -92,9 +90,9 @@ class TwakeDrawer extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: DimensionsConfig.heightMultiplier * 2),
+              SizedBox(height: Dim.hm2),
               Container(
-                height: 50 * DimensionsConfig.heightMultiplier,
+                height: Dim.heightPercent(55),
                 padding: padding,
                 child: ListView.separated(
                     separatorBuilder: (ctx, i) => Divider(),
@@ -108,7 +106,7 @@ class TwakeDrawer extends StatelessWidget {
                             children: [
                               ImageAvatar(workspaces[i].logo),
                               SizedBox(
-                                width: DimensionsConfig.widthMultiplier * 2,
+                                width: Dim.wm2,
                               ),
                               Text(
                                 workspaces[i].name,
@@ -127,7 +125,7 @@ class TwakeDrawer extends StatelessWidget {
                     children: [
                       ImageAvatar(user.thumbnail),
                       SizedBox(
-                        width: DimensionsConfig.widthMultiplier * 2,
+                        width: Dim.wm2,
                       ),
                       Text(
                         '${user.firstName} ${user.lastName}',
@@ -144,8 +142,7 @@ class TwakeDrawer extends StatelessWidget {
                             },
                             icon: Icon(
                               Icons.login_outlined,
-                              size: DimensionsConfig.textMultiplier *
-                                  ICON_SIZE_MULTIPLIER,
+                              size: Dim.tm4(),
                               color: Colors.white,
                             ),
                           ),

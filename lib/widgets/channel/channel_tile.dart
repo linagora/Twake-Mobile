@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/models/channel.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
@@ -25,10 +25,10 @@ class ChannelTile extends StatelessWidget {
             );
       },
       child: ListTile(
-        contentPadding:
-            EdgeInsets.symmetric(vertical: DimensionsConfig.heightMultiplier),
+        contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
         leading: TextAvatar(
-            channel.icon == null ? '' : Emojis.getClosestMatch(channel.icon)),
+          channel.icon == null ? '' : Emojis.getClosestMatch(channel.icon),
+        ),
         title: Text(
           channel.name,
           style: Theme.of(context).textTheme.headline6,

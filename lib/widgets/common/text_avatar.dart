@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
 class TextAvatar extends StatelessWidget {
   final String text;
@@ -9,12 +9,12 @@ class TextAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(
-        DimensionsConfig.widthMultiplier * 0.5,
+        Dim.widthMultiplier * 0.5,
       ),
       child: Container(
         color: Colors.grey[200],
-        width: DimensionsConfig.widthMultiplier * 9,
-        height: DimensionsConfig.widthMultiplier * 9,
+        width: Dim.wm9,
+        height: Dim.wm9,
         child: Align(
           alignment: Alignment.center,
           child: Text(

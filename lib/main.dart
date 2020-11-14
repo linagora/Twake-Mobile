@@ -70,7 +70,7 @@ class TwakeMobileApp extends StatelessWidget {
             /// If screen orientation changes, OrientationBuilder will reinitialize
             /// the configuration again, so other widgets can make use
             /// of new values.
-            DimensionsConfig().init(constraints, orientation);
+            Dim.init(constraints, orientation);
             final api = Provider.of<TwakeApi>(context);
             final profile = Provider.of<ProfileProvider>(context);
             return MaterialApp(

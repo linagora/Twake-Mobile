@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
   @override
@@ -54,12 +54,11 @@ class _AuthFormState extends State<AuthForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 83 * DimensionsConfig.widthMultiplier,
-      height: 47 * DimensionsConfig.heightMultiplier,
+      width: Dim.widthPercent(83),
+      height: Dim.heightPercent(47),
       child: Padding(
         padding: EdgeInsets.symmetric(
-          horizontal: 4 * DimensionsConfig.widthMultiplier,
-          vertical: 0.5 * DimensionsConfig.heightMultiplier,
+          horizontal: Dim.wm4,
         ),
         child: Form(
           key: formKey,
@@ -78,7 +77,7 @@ class _AuthFormState extends State<AuthForm> {
                   style: Theme.of(context).textTheme.headline4,
                 ),
               ),
-              SizedBox(height: 3 * DimensionsConfig.heightMultiplier),
+              SizedBox(height: Dim.hm3),
               _AuthTextForm(
                 label: 'Username or e-mail',
                 validator: validatePassword,
@@ -97,8 +96,7 @@ class _AuthFormState extends State<AuthForm> {
                     borderRadius: BorderRadius.circular(6.0),
                   ),
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 0.7 * DimensionsConfig.heightMultiplier,
+                    horizontal: Dim.wm4,
                   ),
                   color: Theme.of(context).accentColor,
                   textColor: Colors.white,
@@ -106,7 +104,6 @@ class _AuthFormState extends State<AuthForm> {
                     'Log in',
                     style: Theme.of(context).textTheme.button,
                   ),
-                  // allows to login no matter what, have to implement authentication logic first
                   onPressed: () => onSubmit(context),
                 ),
               ),
