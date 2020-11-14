@@ -23,6 +23,7 @@ class ChannelsProvider with ChangeNotifier {
     for (var i = 0; i < list.length; i++) {
       _items.add(Channel.fromJson(list[i], workspaceId));
     }
+    _items.sort((a, b) => a.name.compareTo(b.name));
     loaded = true;
     notifyListeners();
   }

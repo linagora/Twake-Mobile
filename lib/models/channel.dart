@@ -28,6 +28,12 @@ class Channel {
   @JsonKey(required: true, name: 'last_activity')
   final int lastActivity;
 
+  @JsonKey(required: true, name: 'messages_total')
+  final int messageTotal;
+
+  @JsonKey(required: true, name: 'messages_unread')
+  final int messageUnread;
+
   @JsonKey(ignore: true)
   String workspaceId;
 
@@ -40,6 +46,8 @@ class Channel {
     @required this.isPrivate,
     @required this.isDirect,
     @required this.lastActivity,
+    @required this.messageTotal,
+    @required this.messageUnread,
   });
 
   /// Convenience methods to avoid deserializing this class from JSON
