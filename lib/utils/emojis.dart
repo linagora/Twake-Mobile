@@ -21,7 +21,7 @@ class Emojis {
         }
       }
     }
-    return res ?? _EMOJIS['100'];
+    return res ?? _EMOJIS['question'];
   }
 
   // https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json

@@ -47,7 +47,8 @@ class StylesConfig {
 
   static final TextStyle _titleLight = TextStyle(
     color: Colors.black,
-    fontSize: 3.5 * DimensionsConfig.textMultiplier,
+    fontWeight: FontWeight.w500,
+    fontSize: 2.9 * DimensionsConfig.textMultiplier,
   );
 
   static final TextStyle _mainTitleLight = TextStyle(
@@ -58,7 +59,7 @@ class StylesConfig {
 
   static final TextStyle _headline5 = TextStyle(
     color: Colors.white,
-    fontSize: 3.3 * DimensionsConfig.textMultiplier,
+    fontSize: 3.0 * DimensionsConfig.textMultiplier,
   );
 
   static final TextStyle _subTitleLight = TextStyle(
