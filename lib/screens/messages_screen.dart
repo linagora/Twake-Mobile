@@ -11,6 +11,7 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final api = Provider.of<TwakeApi>(context, listen: false);
     final channelId = ModalRoute.of(context).settings.arguments as String;
+
     final messagesProvider =
         Provider.of<MessagesProvider>(context, listen: false);
     messagesProvider.loadMessages(api, channelId);

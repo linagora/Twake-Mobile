@@ -77,12 +77,13 @@ class ChannelsScreen extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: Dim.wm3,
-                        vertical: Dim.hm3,
+                        vertical: Dim.heightMultiplier,
                       ),
                       child: Column(
                         children: [
-                          StarredChannelsBlock([]),
-                          Divider(height: Dim.hm5),
+                          // Starred channels will be implemented in version 2
+                          // StarredChannelsBlock([]),
+                          // Divider(height: Dim.hm5),
                           ChannelsBlock(items),
                           Divider(height: Dim.hm5),
                           DirectMessagesBlock([]),

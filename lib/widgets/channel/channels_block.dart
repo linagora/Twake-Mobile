@@ -15,7 +15,7 @@ class ChannelsBlock extends StatelessWidget {
           children: [
             Text(
               'Channels',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline3,
             ),
             Expanded(
               child: Align(

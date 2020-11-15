@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   json_annotation: ^3.1.0 # serialization/deserialization auto code generation
   http: ^0.12.2 # http client library
   provider: ^4.3.2+2 # easier state management

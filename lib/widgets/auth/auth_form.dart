@@ -68,7 +68,7 @@ class _AuthFormState extends State<AuthForm> {
               Center(
                 child: Text(
                   'Let\'s get started',
-                  style: Theme.of(context).textTheme.headline2,
+                  style: Theme.of(context).textTheme.headline1,
                 ),
               ),
               Center(

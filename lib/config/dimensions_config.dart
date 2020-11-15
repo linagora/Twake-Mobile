@@ -164,7 +164,7 @@ class Dim {
     return textMultiplier * 2 + decimal;
   }
 
-  /// Convenience method for getting multiple of text multiplier
+  /// Convenience method for getting multiple of text multiplierfi;
   /// [decimal] parameter is there for adjustments and should not exceed 1
   static double tm3({double decimal: 0}) {
     return textMultiplier * 3 + decimal;

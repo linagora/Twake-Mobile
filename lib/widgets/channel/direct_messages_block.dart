@@ -15,7 +15,7 @@ class DirectMessagesBlock extends StatelessWidget {
           children: [
             Text(
               'Direct Messages',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.headline3,
             ),
             Expanded(
               child: Align(
