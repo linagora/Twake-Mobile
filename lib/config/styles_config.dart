@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
-  static const Color accentColor = Color.fromRGBO(126, 120, 251, 1.0);
+  static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
   static const Color lightAppColor = Colors.white;
 
   StylesConfig._();
@@ -32,6 +32,7 @@ class StylesConfig {
     headline6: _headline6,
     bodyText1: _bodyText1,
     bodyText2: _bodyText2,
+    subtitle1: _subtitle1,
     subtitle2: _subtitle2,
     button: _button,
   );
@@ -66,9 +67,13 @@ class StylesConfig {
     fontSize: Dim.tm3(),
   );
 
+  static final TextStyle _subtitle1 = TextStyle(
+    color: Colors.white,
+    fontSize: Dim.tm2(decimal: -.3),
+  );
   static final TextStyle _subtitle2 = TextStyle(
     color: subTitleTextColor,
-    fontSize: Dim.tm2(decimal: -1.0),
+    fontSize: Dim.tm2(decimal: -.3),
   );
 
   static final TextStyle _button = TextStyle(

@@ -19,9 +19,10 @@ class ImageAvatar extends StatelessWidget {
       child: imageUrl == null || imageUrl.isEmpty
           ? onErrorFallbackImg()
           : FadeInImage.assetNetwork(
+              fit: BoxFit.cover,
               image: imageUrl,
-              width: Dim.wm7,
-              height: Dim.wm7,
+              width: Dim.wm8,
+              height: Dim.wm8,
               placeholder: _FALLBACK_IMG,
               // headers: {
               // 'CONTENT-TYPE': mime,
@@ -35,8 +36,10 @@ class ImageAvatar extends StatelessWidget {
 
 Widget onErrorFallbackImg() => Image.asset(
       _FALLBACK_IMG,
-      width: Dim.wm7,
-      height: Dim.wm7,
+      isAntiAlias: true,
+      fit: BoxFit.scaleDown,
+      width: Dim.wm8,
+      height: Dim.wm8,
     );
 
 // 'https://lh3.googleusercontent.com/proxy/vVnrKCKFprDeQb4UqVOn_E_iK-BoUYb7BuV6p9hN0Vd9V3GbvTK8dOLyidagUGfHSaqmtlEt9DGUSt8fo4mCzXRthXJwJ8BFzUTpZ0bs2AM0quP6_bjzOOJHV9zytpQmtZG07Jxn',

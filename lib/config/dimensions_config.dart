@@ -161,25 +161,25 @@ class Dim {
   /// Convenience method for getting multiple of text multiplier
   /// [decimal] parameter is there for adjustments and should not exceed 1
   static double tm2({double decimal: 0}) {
-    return textMultiplier * 2 + decimal;
+    return textMultiplier * (2 + decimal);
   }
 
   /// Convenience method for getting multiple of text multiplierfi;
   /// [decimal] parameter is there for adjustments and should not exceed 1
   static double tm3({double decimal: 0}) {
-    return textMultiplier * 3 + decimal;
+    return textMultiplier * (3 + decimal);
   }
 
   /// Convenience method for getting multiple of text multiplier
   /// [decimal] parameter is there for adjustments and should not exceed 1
   static double tm4({double decimal: 0}) {
-    return textMultiplier * 4 + decimal;
+    return textMultiplier * (4 + decimal);
   }
 
   /// Convenience method for getting multiple of text multiplier
   /// [decimal] parameter is there for adjustments and should not exceed 1
   static double tm5({double decimal: 0}) {
-    return textMultiplier * 5 + decimal;
+    return textMultiplier * (5 + decimal);
   }
 
   /// Convenience method for getting percentage of available screen width

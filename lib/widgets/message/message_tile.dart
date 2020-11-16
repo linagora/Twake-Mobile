@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/models/message.dart';
+import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
 class MessageTile extends StatelessWidget {
@@ -9,48 +10,39 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: Dim.widthMultiplier,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ImageAvatar(message.sender.img),
-            Padding(
-              padding: EdgeInsets.only(left: Dim.widthMultiplier),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        message.sender.username ?? '',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    DateTime.fromMillisecondsSinceEpoch(
-                          message.creationDate * 1000, // TODO format with intl
-                        ).toString() ??
-                        '',
-                    softWrap: true,
-                  ),
-                  Container(
-                    width: Dim.widthPercent(70),
-                    child: Text(
-                      message.content.originalStr ?? '',
-                      softWrap: true,
-                    ),
-                  ),
-                ],
+    return Container(
+      width: Dim.maxScreenWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: Dim.wm2,
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: ImageAvatar(message.sender.img),
+            title: Row(children: [
+              Text(
+                message.sender.username ?? '',
+                style: Theme.of(context).textTheme.bodyText1,
               ),
-            )
-          ],
-        ),
+              Text(
+                ' - Online', // TODO figure out how to get status of user
+                style: Theme.of(context).textTheme.subtitle2,
+              )
+            ]),
+            trailing: Text(
+              DateFormatter.getVerboseDateTime(message.creationDate),
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+          Container(
+            child: Text(
+              message.content.originalStr ?? '',
+              softWrap: true,
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
+          ),
+        ],
       ),
     );
   }

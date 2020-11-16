@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:twake_mobile/utils/emojis.dart';
 
 class TextAvatar extends StatelessWidget {
   final String text;
-  TextAvatar(this.text);
+  final bool emoji;
+  TextAvatar(this.text, {this.emoji: false});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class TextAvatar extends StatelessWidget {
         child: Align(
           alignment: Alignment.center,
           child: Text(
-            text,
+            emoji ? Emojis.getClosestMatch(text) : text,
             style: Theme.of(context).textTheme.headline6,
           ),
         ),

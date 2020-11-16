@@ -5,7 +5,6 @@ import 'package:twake_mobile/models/channel.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/services/dateformatter.dart';
-import 'package:twake_mobile/utils/emojis.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 
 class ChannelTile extends StatelessWidget {
@@ -28,7 +27,8 @@ class ChannelTile extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: 0),
         leading: TextAvatar(
-          channel.icon == null ? '' : Emojis.getClosestMatch(channel.icon),
+          channel.icon,
+          emoji: true,
         ),
         title: Text(
           channel.name,
