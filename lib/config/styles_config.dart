@@ -2,19 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
-  static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
-  static const Color lightAppColor = Colors.white;
+  // static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
+  // static const Color lightAppColor = Colors.white;
 
   StylesConfig._();
 
   static const Color subTitleTextColor = Color(0xFF9F988F);
-
+  static const accentColorRGB = Color.fromRGBO(131, 125, 255, 1);
   static final ThemeData lightTheme = ThemeData(
-    primaryColor: lightAppColor,
-    accentColor: accentColor,
-    brightness: Brightness.light,
+    primaryColor: Colors.blue,
+    accentColor: accentColorRGB,
+    // brightness: Brightness.light,
     textTheme: lightTextTheme,
-    fontFamily: 'PT',
+    appBarTheme: AppBarTheme(
+      color: Colors.white,
+      shadowColor: Colors.grey[300],
+    ),
+    fontFamily: 'Lato',
   );
 
   /// For future use
@@ -57,10 +61,9 @@ class StylesConfig {
   );
 
   static final TextStyle _headline1 = TextStyle(
-    color: Color.fromRGBO(126, 120, 251, 1),
-    fontSize: Dim.tm4(decimal: .6),
-    fontWeight: FontWeight.bold,
-  );
+      color: accentColorRGB,
+      fontSize: Dim.tm4(decimal: .9),
+      fontWeight: FontWeight.normal);
 
   static final TextStyle _headline5 = TextStyle(
     color: Colors.white,
@@ -68,7 +71,7 @@ class StylesConfig {
   );
 
   static final TextStyle _subtitle1 = TextStyle(
-    color: Colors.white,
+    color: Colors.black,
     fontSize: Dim.tm2(decimal: -.3),
   );
   static final TextStyle _subtitle2 = TextStyle(
@@ -78,12 +81,12 @@ class StylesConfig {
 
   static final TextStyle _button = TextStyle(
     color: Colors.white,
-    fontSize: Dim.tm2(decimal: .5),
+    fontSize: Dim.tm2(decimal: .7),
   );
 
   static final TextStyle _headline4 = TextStyle(
-    color: Color.fromRGBO(126, 120, 251, 1),
-    fontSize: Dim.tm2(decimal: .7),
+    color: accentColorRGB,
+    fontSize: Dim.tm2(decimal: .3),
   );
 
   static final TextStyle _headline3 = TextStyle(
@@ -100,6 +103,11 @@ class StylesConfig {
   static final TextStyle _bodyText2 = TextStyle(
     color: Colors.grey,
     fontSize: Dim.tm2(),
+  );
+
+  static final miniPurple = TextStyle(
+    color: accentColorRGB,
+    fontSize: Dim.tm2(decimal: -.1),
   );
 
   /// For future use in dark theme

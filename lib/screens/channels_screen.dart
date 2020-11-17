@@ -6,7 +6,7 @@ import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/widgets/channel/channels_block.dart';
 import 'package:twake_mobile/widgets/channel/direct_messages_block.dart';
-import 'package:twake_mobile/widgets/channel/starred_channels_block.dart';
+// import 'package:twake_mobile/widgets/channel/starred_channels_block.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/drawer/twake_drawer.dart';
 
@@ -59,7 +59,6 @@ class ChannelsScreen extends StatelessWidget {
               },
             ),
           ],
-          shadowColor: Colors.grey[300],
           title: Row(
             children: [
               ImageAvatar(workspace.logo),
