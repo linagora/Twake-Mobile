@@ -34,5 +34,19 @@ class DateFormatter {
     // by default return 'year/month/day, time'
     return '${DateFormat('d MMMM y').format(dateTime)}';
   }
+
+  static String getVerboseDate(DateTime dateTime) {
+    dateTime = dateTime.toLocal();
+    DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
+    if (!dateTime.difference(justNow).isNegative) {
+      return 'Now';
+    }
+    if (dateTime.year == justNow.year &&
+        dateTime.month == justNow.month &&
+        dateTime.day == justNow.day) {
+      return 'Today';
+    }
+    return '${DateFormat('d MMMM y').format(dateTime)}';
+  }
 }
 // TODO localize everything

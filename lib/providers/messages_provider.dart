@@ -8,10 +8,14 @@ import 'package:twake_mobile/services/twake_api.dart';
 class MessagesProvider extends ChangeNotifier {
   List<Message> _items = List();
   bool loaded = false;
+  String _channelId;
+  TwakeApi api;
 
   List<Message> get items => [..._items];
 
   int get messagesCount => _items.length;
+
+  String get firstMessageId => _items[0].id;
 
   void clearMessages() {
     _items.clear();
@@ -20,6 +24,8 @@ class MessagesProvider extends ChangeNotifier {
 
   Future<void> loadMessages(TwakeApi api, String channelId) async {
     var list;
+    this.api = api;
+    this._channelId = channelId;
     try {
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
@@ -29,6 +35,31 @@ class MessagesProvider extends ChangeNotifier {
     for (var i = 0; i < list.length; i++) {
       _items.add(Message.fromJson(list[i]));
     }
+    loaded = true;
+    notifyListeners();
+  }
+
+  Future<void> loadMoreMessages() async {
+    print('FIRST MESSAGE: $_channelId');
+    List<Message> tmp = List();
+    var list;
+    // List<Message> tmp = List();
+    try {
+      list = await api.channelMessagesGet(
+        _channelId,
+        beforeMessageId: firstMessageId,
+      );
+    } catch (error) {
+      // TODO implement proper error handling
+      throw error;
+    }
+    if (list.length < 2) {
+      return;
+    }
+    for (var i = 0; i < list.length; i++) {
+      tmp.add(Message.fromJson(list[i]));
+    }
+    _items = tmp + _items;
     loaded = true;
     notifyListeners();
   }

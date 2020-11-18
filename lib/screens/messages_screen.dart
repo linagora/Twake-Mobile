@@ -9,6 +9,7 @@ import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 import 'package:collection/collection.dart';
+import 'package:twake_mobile/widgets/archived/messages_groupped_list.dart';
 
 // import 'package:twake_mobile/services/twake_socket.dart';
 
@@ -40,7 +41,7 @@ class MessagesScreen extends StatelessWidget {
         body: Consumer<MessagesProvider>(
           builder: (ctx, messagesProvider, _) {
             return messagesProvider.loaded
-                ? MessagesScrollView(
+                ? MessagesGrouppedList(
                     Provider.of<MessagesProvider>(context, listen: false).items,
                   )
                 : Center(child: CircularProgressIndicator());
@@ -70,6 +71,7 @@ class MessagesScrollView extends StatefulWidget {
 
 class _MessagesScrollViewState extends State<MessagesScrollView> {
   List<MessageGroup> groups = [];
+
   @override
   Widget build(BuildContext context) {
     final g = groupBy(widget.messages, (Message m) {
@@ -80,13 +82,23 @@ class _MessagesScrollViewState extends State<MessagesScrollView> {
       groups.add(MessageGroup(e.key, messages: e.value));
     });
 
-    return ListView(
-      children: groups.map((g) {
-        return Column(children: [
-          Text(DateFormatter.getVerboseDateTime(g.messages[0].creationDate)),
-          ...g.messages.map((m) => MessageTile(m)).toList(),
-        ]);
-      }).toList(),
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+          Provider.of<MessagesProvider>(context, listen: false)
+              .loadMoreMessages();
+        }
+        return true;
+      },
+      child: ListView.builder(
+        itemCount: groups.length,
+        itemBuilder: (ctx, i) {
+          return Column(children: [
+            Text(DateFormatter.getVerboseDate(groups[i].datetime)),
+            ...groups[i].messages.map((m) => MessageTile(m)).toList(),
+          ]);
+        },
+      ),
     );
   }
 }
