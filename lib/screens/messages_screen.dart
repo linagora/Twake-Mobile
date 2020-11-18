@@ -26,6 +26,8 @@ class MessagesScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           shadowColor: Colors.grey[300],
+          toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
+              .round()), // taking into account current appBar height to calculate a new one
           title: Row(
             children: [
               TextAvatar(channel.icon, emoji: true),
@@ -64,7 +66,7 @@ class MessagesGrouppedList extends StatelessWidget {
     return StickyGroupedListView<Message, DateTime>(
       reverse: true,
       elements: messages,
-      floatingHeader: true,
+      // floatingHeader: true,
       order: StickyGroupedListOrder.ASC,
       groupBy: (Message m) {
         final DateTime dt =
@@ -83,24 +85,25 @@ class MessagesGrouppedList extends StatelessWidget {
           margin: EdgeInsets.symmetric(vertical: Dim.hm2),
           child: Stack(
             children: [
-              // Align(
-              // alignment: Alignment.center,
-              // child: Divider(
-              // thickness: 0.0,
-              // color: Theme.of(context).accentColor,
-              // ),
-              // ),
+              Align(
+                alignment: Alignment.center,
+                child: Divider(
+                  thickness: 0.0,
+                  // color: Theme.of(context).accentColor,
+                ),
+              ),
               Align(
                 // alignment: Alignment.center,
                 child: Container(
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   width: Dim.widthPercent(30),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(Dim.widthMultiplier),
-                    color: Theme.of(context).accentColor,
-                    // border: Border.all(
-                    // color: Theme.of(context).accentColor.withOpacity(0.5),
-                    // ),
-                  ),
+                  // decoration: BoxDecoration(
+                  // borderRadius: BorderRadius.circular(Dim.widthMultiplier),
+                  // color: Theme.of(context).accentColor,
+                  // border: Border.all(
+                  // color: Theme.of(context).accentColor.withOpacity(0.5),
+                  // ),
+                  // ),
                   child: Padding(
                     padding: const EdgeInsets.all(1.0),
                     child: Text(

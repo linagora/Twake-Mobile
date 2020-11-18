@@ -26,6 +26,7 @@ class ChannelsScreen extends StatelessWidget {
         drawer: TwakeDrawer(),
         appBar: AppBar(
           leading: IconButton(
+            padding: EdgeInsets.only(left: Dim.wm3),
             onPressed: () {
               _scaffoldKey.currentState.openDrawer();
             },
@@ -38,6 +39,7 @@ class ChannelsScreen extends StatelessWidget {
               .round()), // taking into account current appBar height to calculate a new one
           actions: [
             PopupMenuButton<String>(
+              padding: EdgeInsets.only(right: Dim.wm3),
               icon: Icon(
                 Icons.more_vert,
                 size: Dim.tm4(),

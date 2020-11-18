@@ -15,34 +15,41 @@ class MessageTile extends StatelessWidget {
       padding: EdgeInsets.symmetric(
         horizontal: Dim.wm2,
       ),
-      child: Column(
-        children: [
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: ImageAvatar(message.sender.img),
-            title: Row(children: [
-              Text(
-                message.sender.username ?? '',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              Text(
-                ' - Online', // TODO figure out how to get status of user
-                style: Theme.of(context).textTheme.subtitle2,
-              )
-            ]),
-            trailing: Text(
-              DateFormatter.getVerboseDateTime(message.creationDate),
-              style: Theme.of(context).textTheme.subtitle2,
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: ImageAvatar(message.sender.img),
+        title: Padding(
+          padding: EdgeInsets.only(top: Dim.tm2(decimal: -.5)),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: message.sender.firstName != null
+                      ? '${message.sender.firstName} ${message.sender.lastName}'
+                      : (message.sender.username ?? ''),
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                TextSpan(
+                  text:
+                      ' - Online', // TODO figure out how to get status of user
+                  style: Theme.of(context).textTheme.subtitle2,
+                )
+              ],
             ),
           ),
-          Container(
-            child: Text(
-              message.content.originalStr ?? '',
-              softWrap: true,
-              style: Theme.of(context).textTheme.bodyText2,
-            ),
+        ),
+        subtitle: Container(
+          padding: EdgeInsets.only(top: Dim.heightMultiplier),
+          child: Text(
+            message.content.originalStr ?? '',
+            softWrap: true,
+            style: Theme.of(context).textTheme.bodyText2,
           ),
-        ],
+        ),
+        // trailing: Text(
+        // DateFormatter.getVerboseDateTime(message.creationDate),
+        // style: Theme.of(context).textTheme.subtitle2,
+        // ),
       ),
     );
   }

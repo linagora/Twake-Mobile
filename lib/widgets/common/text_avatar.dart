@@ -14,7 +14,10 @@ class TextAvatar extends StatelessWidget {
         Dim.widthMultiplier * 0.5,
       ),
       child: Container(
-        color: Colors.grey[200],
+        // color: Colors.grey[200],
+        margin: EdgeInsets.symmetric(
+          vertical: Dim.heightMultiplier,
+        ),
         width: Dim.wm9,
         height: Dim.wm9,
         child: Align(

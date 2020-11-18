@@ -15,6 +15,9 @@ class StylesConfig {
     // brightness: Brightness.light,
     textTheme: lightTextTheme,
     appBarTheme: AppBarTheme(
+      iconTheme: IconThemeData(
+        color: Colors.black87,
+      ),
       color: Colors.white,
       shadowColor: Colors.grey[300],
     ),
@@ -66,8 +69,9 @@ class StylesConfig {
       fontWeight: FontWeight.normal);
 
   static final TextStyle _headline5 = TextStyle(
-    color: Colors.white,
-    fontSize: Dim.tm3(),
+    color: Colors.black87,
+    fontSize: Dim.tm3(decimal: -.2),
+    fontWeight: FontWeight.bold,
   );
 
   static final TextStyle _subtitle1 = TextStyle(
@@ -80,7 +84,7 @@ class StylesConfig {
   );
 
   static final TextStyle _button = TextStyle(
-    color: Colors.white,
+    color: Colors.black,
     fontSize: Dim.tm2(decimal: .7),
   );
 
@@ -91,7 +95,8 @@ class StylesConfig {
 
   static final TextStyle _headline3 = TextStyle(
     color: Colors.black,
-    fontSize: Dim.tm3(decimal: .9),
+    fontSize: Dim.tm3(decimal: 0),
+    fontWeight: FontWeight.bold,
   );
 
   static final TextStyle _bodyText1 = TextStyle(
@@ -101,7 +106,7 @@ class StylesConfig {
   );
 
   static final TextStyle _bodyText2 = TextStyle(
-    color: Colors.grey,
+    color: Colors.black87,
     fontSize: Dim.tm2(),
   );
 

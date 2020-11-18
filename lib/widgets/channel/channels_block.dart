@@ -11,26 +11,29 @@ class ChannelsBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Text(
-              'Channels',
-              style: Theme.of(context).textTheme.headline3,
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  onPressed: () {},
-                  iconSize: Dim.tm4(),
-                  icon: Icon(
-                    Icons.add,
-                    color: Colors.black,
+        Padding(
+          padding: EdgeInsets.only(left: Dim.wm2, bottom: Dim.hm2),
+          child: Row(
+            children: [
+              Text(
+                'Channels',
+                style: Theme.of(context).textTheme.headline3,
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    onPressed: () {},
+                    iconSize: Dim.tm4(),
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         ...channels.map((c) => ChannelTile(c)).toList(),
       ],
