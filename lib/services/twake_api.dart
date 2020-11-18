@@ -103,10 +103,16 @@ class TwakeApi with ChangeNotifier {
     }
   }
 
-  Future<List<dynamic>> channelMessagesGet(String channelId) async {
+  Future<List<dynamic>> channelMessagesGet(
+    String channelId, {
+    String beforeMessageId,
+  }) async {
     try {
       final response = await http.get(
-        TwakeApiConfig.channelMessagesMethod(channelId), // url
+        TwakeApiConfig.channelMessagesMethod(
+          channelId,
+          beforeId: beforeMessageId,
+        ), // url
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final messages = jsonDecode(response.body);

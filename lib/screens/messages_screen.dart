@@ -5,10 +5,11 @@ import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
-import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake_mobile/models/message.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
+import 'package:collection/collection.dart';
+
 // import 'package:twake_mobile/services/twake_socket.dart';
 
 class MessagesScreen extends StatelessWidget {
@@ -39,8 +40,9 @@ class MessagesScreen extends StatelessWidget {
         body: Consumer<MessagesProvider>(
           builder: (ctx, messagesProvider, _) {
             return messagesProvider.loaded
-                ? MessagesGrouppedList(
-                    Provider.of<MessagesProvider>(context, listen: false).items)
+                ? MessagesScrollView(
+                    Provider.of<MessagesProvider>(context, listen: false).items,
+                  )
                 : Center(child: CircularProgressIndicator());
           },
         ));
@@ -58,69 +60,41 @@ class MessagesScreen extends StatelessWidget {
 // ),
 //
 
-class MessagesGrouppedList extends StatelessWidget {
+class MessagesScrollView extends StatefulWidget {
   final List<Message> messages;
-  MessagesGrouppedList(this.messages);
+  MessagesScrollView(this.messages);
+
+  @override
+  _MessagesScrollViewState createState() => _MessagesScrollViewState();
+}
+
+class _MessagesScrollViewState extends State<MessagesScrollView> {
+  List<MessageGroup> groups = [];
   @override
   Widget build(BuildContext context) {
-    return StickyGroupedListView<Message, DateTime>(
-      reverse: true,
-      elements: messages,
-      // floatingHeader: true,
-      order: StickyGroupedListOrder.ASC,
-      groupBy: (Message m) {
-        final DateTime dt =
-            DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
-        return DateTime(dt.year, dt.month, dt.day);
-      },
-      groupComparator: (DateTime value1, DateTime value2) =>
-          value2.compareTo(value1),
-      itemComparator: (Message m1, Message m2) {
-        return m1.creationDate.compareTo(m2.creationDate);
-      },
-      // floatingHeader: true,
-      groupSeparatorBuilder: (Message message) {
-        return Container(
-          height: Dim.hm3,
-          margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-          child: Stack(
-            children: [
-              Align(
-                alignment: Alignment.center,
-                child: Divider(
-                  thickness: 0.0,
-                  // color: Theme.of(context).accentColor,
-                ),
-              ),
-              Align(
-                // alignment: Alignment.center,
-                child: Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  width: Dim.widthPercent(30),
-                  // decoration: BoxDecoration(
-                  // borderRadius: BorderRadius.circular(Dim.widthMultiplier),
-                  // color: Theme.of(context).accentColor,
-                  // border: Border.all(
-                  // color: Theme.of(context).accentColor.withOpacity(0.5),
-                  // ),
-                  // ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(1.0),
-                    child: Text(
-                      DateFormatter.getVerboseDateTime(message.creationDate),
-                      style: Theme.of(context).textTheme.subtitle1,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-      itemBuilder: (_, Message message) {
-        return MessageTile(message);
-      },
+    final g = groupBy(widget.messages, (Message m) {
+      final date = DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
+      return DateTime(date.year, date.month, date.day);
+    });
+    g.entries.forEach((e) {
+      groups.add(MessageGroup(e.key, messages: e.value));
+    });
+
+    return ListView(
+      children: groups.map((g) {
+        return Column(children: [
+          Text(DateFormatter.getVerboseDateTime(g.messages[0].creationDate)),
+          ...g.messages.map((m) => MessageTile(m)).toList(),
+        ]);
+      }).toList(),
     );
   }
+}
+
+class MessageGroup {
+  final DateTime datetime;
+  List<Message> messages;
+  MessageGroup(this.datetime, {this.messages});
+
+  void addMessage(Message message) => messages.add(message);
 }
