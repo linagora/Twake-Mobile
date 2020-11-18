@@ -472,7 +472,7 @@ packages:
     source: hosted
     version: "2.1.4+1"
   scrollable_positioned_list:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: scrollable_positioned_list
       url: "https://pub.dartlang.org"

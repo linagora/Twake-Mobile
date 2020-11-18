@@ -40,8 +40,6 @@ class MessagesProvider extends ChangeNotifier {
   }
 
   Future<void> loadMoreMessages() async {
-    print('FIRST MESSAGE: $_channelId');
-    List<Message> tmp = List();
     var list;
     // List<Message> tmp = List();
     try {
@@ -53,9 +51,13 @@ class MessagesProvider extends ChangeNotifier {
       // TODO implement proper error handling
       throw error;
     }
-    if (list.length < 2) {
+    // This is checks are neccessary because of how often
+    // Notifications on scroll end might fire, and trigger
+    // refetch of data which is already present
+    if (list.length < 2 || list[0]['id'] == firstMessageId) {
       return;
     }
+    List<Message> tmp = List();
     for (var i = 0; i < list.length; i++) {
       tmp.add(Message.fromJson(list[i]));
     }
