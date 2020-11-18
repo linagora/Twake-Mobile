@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations: # Used for localizing different in app strings
+    sdk: flutter
   json_annotation: ^3.1.0 # serialization/deserialization auto code generation
   http: ^0.12.2 # http client library
   provider: ^4.3.2+2 # easier state management
@@ -33,6 +35,8 @@ dependencies:
   # sqflite_sqlcipher: ^1.1.1
   sembast: ^2.4.8
   path_provider: ^1.6.24
+  sticky_grouped_list: ^1.3.0
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -70,6 +74,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/empty-image.png
+    - assets/images/logo-white.png
     - assets/images/1024x1024.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -94,6 +99,31 @@ flutter:
         - asset: assets/fonts/PTSans-BoldItalic.ttf
           style: italic
           weight: 700
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+          style: normal
+        - asset: assets/fonts/Lato-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/Lato-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/Lato-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Lato-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/Lato-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Lato-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: assets/fonts/Lato-Black.ttf
+          weight: 900
+        - asset: assets/fonts/Lato-BoldItalic.ttf
+          weight: 900
+          style: italic
+
 
     - family: Twake-Fontastic
       fonts:

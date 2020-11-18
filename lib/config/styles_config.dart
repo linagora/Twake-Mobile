@@ -1,119 +1,140 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
-  static const Color accentColor = Color.fromRGBO(126, 120, 251, 1.0);
-  static const Color lightAppColor = Colors.white;
+  // static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
+  // static const Color lightAppColor = Colors.white;
+
+  StylesConfig._();
 
   static const Color subTitleTextColor = Color(0xFF9F988F);
-
+  static const accentColorRGB = Color.fromRGBO(131, 125, 255, 1);
   static final ThemeData lightTheme = ThemeData(
-    primaryColor: lightAppColor,
-    accentColor: accentColor,
-    brightness: Brightness.light,
+    primaryColor: Colors.blue,
+    accentColor: accentColorRGB,
+    // brightness: Brightness.light,
     textTheme: lightTextTheme,
-    fontFamily: 'PT',
+    appBarTheme: AppBarTheme(
+      iconTheme: IconThemeData(
+        color: Colors.black87,
+      ),
+      color: Colors.white,
+      shadowColor: Colors.grey[300],
+    ),
+    fontFamily: 'Lato',
   );
 
-  static final ThemeData darkTheme = ThemeData(
-    primaryColor: lightAppColor,
-    brightness: Brightness.dark,
-    textTheme: darkTextTheme,
-  );
+  /// For future use
+  // static final ThemeData darkTheme = ThemeData(
+  // primaryColor: lightAppColor,
+  // brightness: Brightness.dark,
+  // textTheme: darkTextTheme,
+  // );
 
   static final TextTheme lightTextTheme = TextTheme(
-    headline6: _titleLight,
-    subtitle2: _subTitleLight,
-    button: _buttonLight,
-    headline4: _greetingLight,
-    headline3: _searchLight,
-    bodyText2: _selectedTabLight,
-    bodyText1: _unSelectedTabLight,
-    headline2: _mainTitleLight,
+    headline1: _headline1,
+    headline3: _headline3,
+    headline4: _headline4,
     headline5: _headline5,
+    headline6: _headline6,
+    bodyText1: _bodyText1,
+    bodyText2: _bodyText2,
+    subtitle1: _subtitle1,
+    subtitle2: _subtitle2,
+    button: _button,
   );
 
   // Almost identical to light theme, should discuss with
   // with designers about the best color pallete
-  static final TextTheme darkTextTheme = TextTheme(
-    headline6: _titleDark,
-    subtitle2: _subTitleDark,
-    button: _buttonDark,
-    headline4: _greetingDark,
-    headline3: _searchDark,
-    bodyText2: _selectedTabDark,
-    bodyText1: _unSelectedTabDark,
-  );
+  /// Dark theme not implemented yet
+  // static final TextTheme darkTextTheme = TextTheme(
+  // headline6: _titleDark,
+  // subtitle2: _subTitleDark,
+  // button: _buttonDark,
+  // headline4: _greetingDark,
+  // headline3: _searchDark,
+  // bodyText2: _selectedTabDark,
+  // bodyText1: _unSelectedTabDark,
+  // );
 
-  static final TextStyle _titleLight = TextStyle(
+  static final TextStyle _headline6 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w500,
-    fontSize: 2.9 * DimensionsConfig.textMultiplier,
+    fontSize: Dim.tm2(decimal: .6),
   );
 
-  static final TextStyle _mainTitleLight = TextStyle(
-    color: Color.fromRGBO(126, 120, 251, 1),
-    fontSize: 4.6 * DimensionsConfig.textMultiplier,
-    fontWeight: FontWeight.bold,
-  );
+  static final TextStyle _headline1 = TextStyle(
+      color: accentColorRGB,
+      fontSize: Dim.tm4(decimal: .9),
+      fontWeight: FontWeight.normal);
 
   static final TextStyle _headline5 = TextStyle(
-    color: Colors.white,
-    fontSize: 3.0 * DimensionsConfig.textMultiplier,
+    color: Colors.black87,
+    fontSize: Dim.tm3(decimal: -.2),
+    fontWeight: FontWeight.bold,
   );
 
-  static final TextStyle _subTitleLight = TextStyle(
-    color: subTitleTextColor,
-    fontSize: 2 * DimensionsConfig.textMultiplier,
-    height: 1.5,
-  );
-
-  static final TextStyle _buttonLight = TextStyle(
-    color: Colors.white,
-    fontSize: 2.5 * DimensionsConfig.textMultiplier,
-  );
-
-  static final TextStyle _greetingLight = TextStyle(
-    color: Color.fromRGBO(126, 120, 251, 1),
-    fontSize: 2.7 * DimensionsConfig.textMultiplier,
-  );
-
-  static final TextStyle _searchLight = TextStyle(
+  static final TextStyle _subtitle1 = TextStyle(
     color: Colors.black,
-    fontSize: 2.3 * DimensionsConfig.textMultiplier,
+    fontSize: Dim.tm2(decimal: -.3),
+  );
+  static final TextStyle _subtitle2 = TextStyle(
+    color: subTitleTextColor,
+    fontSize: Dim.tm2(decimal: -.3),
   );
 
-  static final TextStyle _selectedTabLight = TextStyle(
+  static final TextStyle _button = TextStyle(
+    color: Colors.black,
+    fontSize: Dim.tm2(decimal: .7),
+  );
+
+  static final TextStyle _headline4 = TextStyle(
+    color: accentColorRGB,
+    fontSize: Dim.tm2(decimal: .3),
+  );
+
+  static final TextStyle _headline3 = TextStyle(
+    color: Colors.black,
+    fontSize: Dim.tm3(decimal: 0),
+    fontWeight: FontWeight.bold,
+  );
+
+  static final TextStyle _bodyText1 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
-    fontSize: 2 * DimensionsConfig.textMultiplier,
+    fontSize: Dim.tm2(),
   );
 
-  static final TextStyle _unSelectedTabLight = TextStyle(
-    color: Colors.grey,
-    fontSize: 2 * DimensionsConfig.textMultiplier,
+  static final TextStyle _bodyText2 = TextStyle(
+    color: Colors.black87,
+    fontSize: Dim.tm2(),
   );
 
-  static final TextStyle _titleDark = _titleLight.copyWith(color: Colors.white);
+  static final miniPurple = TextStyle(
+    color: accentColorRGB,
+    fontSize: Dim.tm2(decimal: -.1),
+  );
 
-  static final TextStyle _subTitleDark =
-      _subTitleLight.copyWith(color: Colors.white70);
-
-  static final TextStyle _buttonDark =
-      _buttonLight.copyWith(color: Colors.black);
-
-  static final TextStyle _greetingDark =
-      _greetingLight.copyWith(color: Colors.black);
-
-  static final TextStyle _searchDark =
-      _searchDark.copyWith(color: Colors.black);
-
-  static final TextStyle _selectedTabDark =
-      _selectedTabDark.copyWith(color: Colors.white);
-
-  static final TextStyle _unSelectedTabDark =
-      _selectedTabDark.copyWith(color: Colors.white70);
-
+  /// For future use in dark theme
+  // static final TextStyle _titleDark = _titleLight.copyWith(color: Colors.white);
+//
+  // static final TextStyle _subTitleDark =
+  // _subTitleLight.copyWith(color: Colors.white70);
+//
+  // static final TextStyle _buttonDark =
+  // _buttonLight.copyWith(color: Colors.black);
+//
+  // static final TextStyle _greetingDark =
+  // _greetingLight.copyWith(color: Colors.black);
+//
+  // static final TextStyle _searchDark =
+  // _searchDark.copyWith(color: Colors.black);
+//
+  // static final TextStyle _selectedTabDark =
+  // _selectedTabDark.copyWith(color: Colors.white);
+//
+  // static final TextStyle _unSelectedTabDark =
+  // _selectedTabDark.copyWith(color: Colors.white70);
+//
   /// This class should not be instantiated !!!
-  StylesConfig._();
 }

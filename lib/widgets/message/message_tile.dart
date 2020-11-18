@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/models/message.dart';
+import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
 class MessageTile extends StatelessWidget {
@@ -9,49 +10,46 @@ class MessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 0.3 * DimensionsConfig.heightMultiplier,
-          horizontal: DimensionsConfig.widthMultiplier,
+    return Container(
+      width: Dim.maxScreenWidth,
+      padding: EdgeInsets.symmetric(
+        horizontal: Dim.wm2,
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: ImageAvatar(message.sender.img),
+        title: Padding(
+          padding: EdgeInsets.only(top: Dim.tm2(decimal: -.5)),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: message.sender.firstName != null
+                      ? '${message.sender.firstName} ${message.sender.lastName}'
+                      : (message.sender.username ?? ''),
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                TextSpan(
+                  text:
+                      ' - Online', // TODO figure out how to get status of user
+                  style: Theme.of(context).textTheme.subtitle2,
+                )
+              ],
+            ),
+          ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ImageAvatar(message.sender.img),
-            Padding(
-              padding: EdgeInsets.only(left: DimensionsConfig.widthMultiplier),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        message.sender.username ?? '',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    DateTime.fromMillisecondsSinceEpoch(
-                          message.creationDate * 1000, // TODO format with intl
-                        ).toString() ??
-                        '',
-                    softWrap: true,
-                  ),
-                  Container(
-                    width: 70 * DimensionsConfig.widthMultiplier,
-                    child: Text(
-                      message.content.originalStr ?? '',
-                      softWrap: true,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
+        subtitle: Container(
+          padding: EdgeInsets.only(top: Dim.heightMultiplier),
+          child: Text(
+            message.content.originalStr ?? '',
+            softWrap: true,
+            style: Theme.of(context).textTheme.bodyText2,
+          ),
         ),
+        // trailing: Text(
+        // DateFormatter.getVerboseDateTime(message.creationDate),
+        // style: Theme.of(context).textTheme.subtitle2,
+        // ),
       ),
     );
   }

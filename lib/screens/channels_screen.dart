@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/widgets/channel/channels_block.dart';
 import 'package:twake_mobile/widgets/channel/direct_messages_block.dart';
-import 'package:twake_mobile/widgets/channel/starred_channels_block.dart';
+// import 'package:twake_mobile/widgets/channel/starred_channels_block.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/drawer/twake_drawer.dart';
 
@@ -26,21 +26,23 @@ class ChannelsScreen extends StatelessWidget {
         drawer: TwakeDrawer(),
         appBar: AppBar(
           leading: IconButton(
+            padding: EdgeInsets.only(left: Dim.wm3),
             onPressed: () {
               _scaffoldKey.currentState.openDrawer();
             },
             icon: Icon(
               Icons.menu,
-              size: DimensionsConfig.textMultiplier * 4,
+              size: Dim.tm4(),
             ),
           ),
-          toolbarHeight:
-              DimensionsConfig.heightMultiplier * kToolbarHeight * 0.15,
+          toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
+              .round()), // taking into account current appBar height to calculate a new one
           actions: [
             PopupMenuButton<String>(
+              padding: EdgeInsets.only(right: Dim.wm3),
               icon: Icon(
                 Icons.more_vert,
-                size: DimensionsConfig.textMultiplier * 4,
+                size: Dim.tm4(),
               ),
               onSelected: (choice) {},
               itemBuilder: (BuildContext context) {
@@ -50,7 +52,7 @@ class ChannelsScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(Icons.star_outline),
-                        SizedBox(width: DimensionsConfig.widthMultiplier * 2),
+                        SizedBox(width: Dim.wm2),
                         Text(choice),
                       ],
                     ),
@@ -59,11 +61,10 @@ class ChannelsScreen extends StatelessWidget {
               },
             ),
           ],
-          shadowColor: Colors.grey[300],
           title: Row(
             children: [
               ImageAvatar(workspace.logo),
-              SizedBox(width: DimensionsConfig.widthMultiplier * 2),
+              SizedBox(width: Dim.wm2),
               Text(workspace.name,
                   style: Theme.of(context).textTheme.headline6),
             ],
@@ -76,17 +77,16 @@ class ChannelsScreen extends StatelessWidget {
                 ? SingleChildScrollView(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: DimensionsConfig.widthMultiplier * 3,
-                        vertical: DimensionsConfig.heightMultiplier * 3,
+                        horizontal: Dim.wm3,
+                        vertical: Dim.heightMultiplier,
                       ),
                       child: Column(
                         children: [
-                          StarredChannelsBlock([]),
-                          Divider(
-                              height: DimensionsConfig.heightMultiplier * 5),
+                          // Starred channels will be implemented in version 2
+                          // StarredChannelsBlock([]),
+                          // Divider(height: Dim.hm5),
                           ChannelsBlock(items),
-                          Divider(
-                              height: DimensionsConfig.heightMultiplier * 5),
+                          Divider(height: Dim.hm5),
                           DirectMessagesBlock([]),
                         ],
                       ),
