@@ -5,6 +5,7 @@ import 'package:twake_mobile/config/styles_config.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/screens/thread_screen.dart';
+import 'package:twake_mobile/utils/twacode.dart';
 // import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/reaction.dart';
@@ -59,11 +60,12 @@ class MessageTile extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.only(top: Dim.heightMultiplier),
                   width: Dim.widthPercent(73),
-                  child: Text(
-                    message.content.originalStr ?? '',
-                    softWrap: true,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                  child: Parser(message.content.prepared).render(context)
+                  // child: Text(
+                  //   message.content.originalStr ?? '',
+                  //   softWrap: true,
+                  //   style: Theme.of(context).textTheme.bodyText2,
+                  // ),
                 ),
                 SizedBox(height: Dim.hm2),
                 Wrap(
