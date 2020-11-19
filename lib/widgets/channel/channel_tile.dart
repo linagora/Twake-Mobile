@@ -48,12 +48,12 @@ class ChannelTile extends StatelessWidget {
                 Chip(
                   label: Text(
                     '${channel.messageUnread}',
-                    style: Theme.of(context).textTheme.button,
+                    style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  backgroundColor: Colors.red,
+                  backgroundColor: Color.fromRGBO(255, 81, 84, 1),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
             ],

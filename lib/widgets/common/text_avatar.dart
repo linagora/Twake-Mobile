@@ -5,10 +5,13 @@ import 'package:twake_mobile/utils/emojis.dart';
 class TextAvatar extends StatelessWidget {
   final String text;
   final bool emoji;
-  TextAvatar(this.text, {this.emoji: false});
+  final double fontSize;
+  TextAvatar(this.text, {this.emoji: false, this.fontSize});
 
   @override
   Widget build(BuildContext context) {
+    var style = Theme.of(context).textTheme.headline6;
+    if (fontSize != null) style = style.copyWith(fontSize: fontSize);
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         Dim.widthMultiplier * 0.5,
@@ -24,7 +27,7 @@ class TextAvatar extends StatelessWidget {
           alignment: Alignment.center,
           child: Text(
             emoji ? Emojis.getClosestMatch(text) : text,
-            style: Theme.of(context).textTheme.headline6,
+            style: style,
           ),
         ),
       ),

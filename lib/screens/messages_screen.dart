@@ -28,9 +28,17 @@ class MessagesScreen extends StatelessWidget {
               .round()), // taking into account current appBar height to calculate a new one
           title: Row(
             children: [
-              TextAvatar(channel.icon, emoji: true),
-              SizedBox(width: Dim.wm2),
-              Text(channel.name, style: Theme.of(context).textTheme.headline6),
+              TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
+              SizedBox(width: Dim.widthMultiplier),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(channel.name,
+                      style: Theme.of(context).textTheme.headline6),
+                  Text('${channel.membersCount} members',
+                      style: Theme.of(context).textTheme.bodyText2),
+                ],
+              ),
             ],
           ),
         ),

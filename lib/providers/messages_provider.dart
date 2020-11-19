@@ -23,6 +23,7 @@ class MessagesProvider extends ChangeNotifier {
   }
 
   Future<void> loadMessages(TwakeApi api, String channelId) async {
+    clearMessages();
     var list;
     this.api = api;
     this._channelId = channelId;

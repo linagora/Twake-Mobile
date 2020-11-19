@@ -37,6 +37,7 @@ class MessagesGrouppedList extends StatelessWidget {
           return m1.creationDate.compareTo(m2.creationDate);
         },
         // floatingHeader: true,
+        separator: SizedBox(height: Dim.hm2),
         groupSeparatorBuilder: (Message message) {
           return Container(
             height: Dim.hm3,
@@ -65,7 +66,7 @@ class MessagesGrouppedList extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Text(
-                        DateFormatter.getVerboseDateTime(message.creationDate),
+                        DateFormatter.getVerboseDate(message.creationDate),
                         style: Theme.of(context).textTheme.subtitle1,
                         textAlign: TextAlign.center,
                       ),
