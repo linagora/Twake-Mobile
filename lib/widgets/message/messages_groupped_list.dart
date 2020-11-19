@@ -9,8 +9,9 @@ import 'package:twake_mobile/providers/messages_provider.dart';
 
 class MessagesGrouppedList extends StatelessWidget {
   final List<Message> messages;
+  final bool isThread;
 
-  MessagesGrouppedList(this.messages);
+  MessagesGrouppedList(this.messages, {this.isThread: false});
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
@@ -78,7 +79,7 @@ class MessagesGrouppedList extends StatelessWidget {
           );
         },
         itemBuilder: (_, Message message) {
-          return MessageTile(message);
+          return MessageTile(message, isThread: isThread);
         },
       ),
     );
