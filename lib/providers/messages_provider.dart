@@ -8,7 +8,7 @@ import 'package:twake_mobile/services/twake_api.dart';
 class MessagesProvider extends ChangeNotifier {
   List<Message> _items = List();
   bool loaded = false;
-  String _channelId;
+  String channelId;
   TwakeApi api;
 
   List<Message> get items => [..._items];
@@ -17,15 +17,20 @@ class MessagesProvider extends ChangeNotifier {
 
   String get firstMessageId => _items[0].id;
 
+  Message getMessageById(String messageId) {
+    return _items.firstWhere((m) => m.id == messageId);
+  }
+
   void clearMessages() {
     _items.clear();
     loaded = false;
   }
 
   Future<void> loadMessages(TwakeApi api, String channelId) async {
+    clearMessages();
     var list;
     this.api = api;
-    this._channelId = channelId;
+    this.channelId = channelId;
     try {
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
@@ -44,7 +49,7 @@ class MessagesProvider extends ChangeNotifier {
     // List<Message> tmp = List();
     try {
       list = await api.channelMessagesGet(
-        _channelId,
+        channelId,
         beforeMessageId: firstMessageId,
       );
     } catch (error) {

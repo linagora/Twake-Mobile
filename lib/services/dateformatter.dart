@@ -35,11 +35,18 @@ class DateFormatter {
     return '${DateFormat('d MMMM y').format(dateTime)}';
   }
 
-  static String getVerboseDate(DateTime dateTime) {
-    dateTime = dateTime.toLocal();
+  static String getVerboseDate(int timestamp) {
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toLocal();
     DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
     if (!dateTime.difference(justNow).isNegative) {
       return 'Now';
+    }
+    DateTime yesterday = justNow.subtract(Duration(days: 1));
+    if (dateTime.year == yesterday.year &&
+        dateTime.month == yesterday.month &&
+        dateTime.day == yesterday.day) {
+      return 'Yesterday';
     }
     if (dateTime.year == justNow.year &&
         dateTime.month == justNow.month &&
