@@ -41,8 +41,10 @@ class MessageTile extends StatelessWidget {
       },
       child: Container(
         width: Dim.maxScreenWidth,
-        padding: EdgeInsets.symmetric(
-          horizontal: Dim.wm2,
+        padding: EdgeInsets.only(
+          left: Dim.wm2,
+          right: Dim.wm2,
+          bottom: Dim.hm2,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,7 +99,7 @@ class MessageTile extends StatelessWidget {
                       Text(
                         'See all answers (${message.responsesCount})',
                         style: StylesConfig.miniPurple,
-                      )
+                      ),
                   ],
                 ),
                 // trailing: Text(

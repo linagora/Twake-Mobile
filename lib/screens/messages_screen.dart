@@ -6,6 +6,7 @@ import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 import 'package:twake_mobile/widgets/message/messages_groupped_list.dart';
+import 'package:twake_mobile/widgets/message/reply_field.dart';
 
 // import 'package:twake_mobile/services/twake_socket.dart';
 
@@ -45,8 +46,15 @@ class MessagesScreen extends StatelessWidget {
         body: Consumer<MessagesProvider>(
           builder: (ctx, messagesProvider, _) {
             return messagesProvider.loaded
-                ? MessagesGrouppedList(
-                    Provider.of<MessagesProvider>(context, listen: false).items,
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      MessagesGrouppedList(
+                        Provider.of<MessagesProvider>(context, listen: false)
+                            .items,
+                      ),
+                      ReplyField(),
+                    ],
                   )
                 : Center(child: CircularProgressIndicator());
           },
