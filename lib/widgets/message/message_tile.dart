@@ -9,22 +9,34 @@ import 'package:twake_mobile/utils/twacode.dart';
 // import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/reaction.dart';
+import 'package:twake_mobile/widgets/message/message_modal_sheet.dart';
 
 class MessageTile extends StatelessWidget {
   final Message message;
   final bool isThread;
   MessageTile(this.message, {this.isThread: false});
 
+  void onReply(context) {
+    Navigator.of(context).pushNamed(ThreadScreen.route, arguments: {
+      'channelId':
+          Provider.of<MessagesProvider>(context, listen: false).channelId,
+      'messageId': message.id,
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onLongPress: () {
+        showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return MessageModalSheet(message, onReply: onReply);
+            });
+      },
       onTap: () {
         if (!isThread && message.responsesCount != null) {
-          Navigator.of(context).pushNamed(ThreadScreen.route, arguments: {
-            'channelId':
-                Provider.of<MessagesProvider>(context, listen: false).channelId,
-            'messageId': message.id,
-          });
+          onReply(context);
         }
       },
       child: Container(
@@ -46,7 +58,7 @@ class MessageTile extends StatelessWidget {
                       TextSpan(
                         text: message.sender.firstName != null
                             ? '${message.sender.firstName} ${message.sender.lastName}'
-                            : (message.sender.username ?? ''),
+                            : message.sender.username,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       TextSpan(
@@ -58,15 +70,15 @@ class MessageTile extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(top: Dim.heightMultiplier),
-                  width: Dim.widthPercent(73),
-                  child: Parser(message.content.prepared).render(context)
-                  // child: Text(
-                  //   message.content.originalStr ?? '',
-                  //   softWrap: true,
-                  //   style: Theme.of(context).textTheme.bodyText2,
-                  // ),
-                ),
+                    padding: EdgeInsets.only(top: Dim.heightMultiplier),
+                    width: Dim.widthPercent(83),
+                    child: Parser(message.content.prepared).render(context)
+                    // child: Text(
+                    //   message.content.originalStr ?? '',
+                    //   softWrap: true,
+                    //   style: Theme.of(context).textTheme.bodyText2,
+                    // ),
+                    ),
                 SizedBox(height: Dim.hm2),
                 Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,

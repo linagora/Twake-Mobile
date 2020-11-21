@@ -15,11 +15,34 @@ class _AuthFormState extends State<AuthForm> {
   final GlobalKey<FormState> formKey = GlobalKey();
 
   /// Closure to store the username from form field
-  void onUsernameSaved(value) => username = value;
+  void onUsernameSaved() {
+    username = usernameController.text;
+    // triggering ui rebuild
+    setState(() {});
+  }
 
   /// Closure to store the password from form field
-  void onPasswordSaved(value) {
-    password = value;
+  void onPasswordSaved() {
+    password = passwordController.text;
+    // triggering ui rebuild
+    setState(() {});
+  }
+
+  var passwordController = TextEditingController();
+  var usernameController = TextEditingController();
+
+  @override
+  initState() {
+    passwordController.addListener(onPasswordSaved);
+    usernameController.addListener(onUsernameSaved);
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    passwordController.dispose();
+    usernameController.dispose();
+    super.dispose();
   }
 
   String validateUsername(String value) {
@@ -85,15 +108,17 @@ class _AuthFormState extends State<AuthForm> {
               SizedBox(height: Dim.hm8),
               _AuthTextForm(
                 label: 'Email',
-                validator: validatePassword,
-                onSaved: onUsernameSaved,
+                validator: validateUsername,
+                // onSaved: onUsernameSaved,
+                controller: usernameController,
               ),
               SizedBox(height: Dim.hm4),
               _AuthTextForm(
                 label: 'Password',
                 obscured: true,
-                validator: validateUsername,
-                onSaved: onPasswordSaved,
+                validator: validatePassword,
+                // onSaved: onPasswordSaved,
+                controller: passwordController,
               ),
               SizedBox(height: Dim.heightMultiplier),
               Align(
@@ -156,11 +181,11 @@ class _AuthFormState extends State<AuthForm> {
 class _AuthTextForm extends StatefulWidget {
   final String label;
   final bool obscured;
-  final void Function(String) onSaved;
+  final TextEditingController controller;
   final String Function(String) validator;
   const _AuthTextForm({
     @required this.label,
-    @required this.onSaved,
+    @required this.controller,
     this.validator,
     this.obscured: false,
   });
@@ -176,8 +201,8 @@ class __AuthTextFormState extends State<_AuthTextForm> {
     return TextFormField(
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
-      onChanged: widget.onSaved,
-      onFieldSubmitted: widget.onSaved,
+      // onFieldSubmitted: widget.onSaved,
+      controller: widget.controller,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         fillColor: Color.fromRGBO(239, 239, 245, 1),

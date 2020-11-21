@@ -2,6 +2,8 @@ library twacode;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/utils/emojis.dart';
 
 const Color defaultColor = Colors.blueGrey;
 const Color linkColor = Colors.blue;
@@ -10,15 +12,16 @@ const Color quoteColor = Colors.grey;
 
 TextStyle generateStyle(
     {Color color = defaultColor,
-      bool bold = false,
-      bool underline = false,
-      bool italic = false,
-      bool strikethrough = false,
-      bool monospace = false}) {
+    bool bold = false,
+    bool underline = false,
+    bool italic = false,
+    bool strikethrough = false,
+    bool monospace = false}) {
   return TextStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
+      fontSize: Dim.tm3(),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -58,9 +61,7 @@ class Twacode extends StatelessWidget {
       spans.add((element as TwacodeItem).render());
     });
     return RichText(
-      text: TextSpan(
-        children: spans
-      ),
+      text: TextSpan(children: spans),
     );
   }
 }
@@ -227,8 +228,9 @@ class TwacodeItem {
   InlineSpan render() {
     if (this.type == TwacodeType.image) {
       return WidgetSpan(child: Image.network(this.content));
+    } else if (this.type == TwacodeType.emoji) {
+      this.content = Emojis.getClosestMatch(this.content);
     }
-
     var content = this.newLine ? '\n' + this.content + '\n' : this.content;
 
     return TextSpan(

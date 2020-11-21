@@ -88,6 +88,7 @@ class ChannelsScreen extends StatelessWidget {
                           ChannelsBlock(items),
                           Divider(height: Dim.hm5),
                           DirectMessagesBlock([]),
+                          SizedBox(height: Dim.hm2),
                         ],
                       ),
                     ),
