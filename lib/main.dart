@@ -9,6 +9,7 @@ import 'package:twake_mobile/screens/auth_screen.dart';
 import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
+import 'package:twake_mobile/screens/thread_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/services/twake_api.dart';
@@ -70,7 +71,7 @@ class TwakeMobileApp extends StatelessWidget {
             /// If screen orientation changes, OrientationBuilder will reinitialize
             /// the configuration again, so other widgets can make use
             /// of new values.
-            DimensionsConfig().init(constraints, orientation);
+            Dim.init(constraints, orientation);
             final api = Provider.of<TwakeApi>(context);
             final profile = Provider.of<ProfileProvider>(context);
             return MaterialApp(
@@ -83,12 +84,12 @@ class TwakeMobileApp extends StatelessWidget {
                       : Center(child: CircularProgressIndicator()))
                   : AuthScreen(),
               routes: {
-                AuthScreen.route: (BuildContext _) => AuthScreen(),
-                CompaniesListScreen.route: (BuildContext _) =>
-                    CompaniesListScreen(),
-                WorkspacesScreen.route: (BuildContext _) => WorkspacesScreen(),
-                ChannelsScreen.route: (BuildContext _) => ChannelsScreen(),
-                MessagesScreen.route: (BuildContext _) => MessagesScreen(),
+                AuthScreen.route: (_) => AuthScreen(),
+                CompaniesListScreen.route: (_) => CompaniesListScreen(),
+                WorkspacesScreen.route: (_) => WorkspacesScreen(),
+                ChannelsScreen.route: (_) => ChannelsScreen(),
+                MessagesScreen.route: (_) => MessagesScreen(),
+                ThreadScreen.route: (_) => ThreadScreen(),
               },
             );
           },

@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:twake_mobile/utils/emojis.dart';
 
 class TextAvatar extends StatelessWidget {
   final String text;
-  TextAvatar(this.text);
+  final bool emoji;
+  final double fontSize;
+  TextAvatar(this.text, {this.emoji: false, this.fontSize});
 
   @override
   Widget build(BuildContext context) {
+    var style = Theme.of(context).textTheme.headline6;
+    if (fontSize != null) style = style.copyWith(fontSize: fontSize);
     return ClipRRect(
       borderRadius: BorderRadius.circular(
-        DimensionsConfig.widthMultiplier * 0.5,
+        Dim.widthMultiplier * 0.5,
       ),
       child: Container(
-        color: Colors.grey[200],
-        width: DimensionsConfig.widthMultiplier * 9,
-        height: DimensionsConfig.widthMultiplier * 9,
+        // color: Colors.grey[200],
+        margin: EdgeInsets.symmetric(
+          vertical: Dim.heightMultiplier,
+        ),
+        width: Dim.wm9,
+        height: Dim.wm9,
         child: Align(
           alignment: Alignment.center,
           child: Text(
-            text,
-            style: Theme.of(context).textTheme.headline6,
+            emoji ? Emojis.getClosestMatch(text) : text,
+            style: style,
           ),
         ),
       ),
