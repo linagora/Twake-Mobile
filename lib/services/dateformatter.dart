@@ -32,7 +32,7 @@ class DateFormatter {
     }
 
     // by default return 'year/month/day, time'
-    return '${DateFormat('d MMMM y').format(dateTime)}';
+    return '${DateFormat('d MMM y H:m').format(dateTime)}';
   }
 
   static String getVerboseDate(int timestamp) {
@@ -54,6 +54,13 @@ class DateFormatter {
       return 'Today';
     }
     return '${DateFormat('d MMMM y').format(dateTime)}';
+  }
+
+  // Return just time
+  static String getVerboseTime(int timestamp) {
+    DateTime dateTime =
+        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toLocal();
+    return '${DateFormat('jm').format(dateTime)}';
   }
 }
 // TODO localize everything

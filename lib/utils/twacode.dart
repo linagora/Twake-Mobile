@@ -21,7 +21,7 @@ TextStyle generateStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: Dim.tm3(),
+      fontSize: Dim.tm2(decimal: .5),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/models/message.dart';
 
 class ReplyField extends StatefulWidget {
+  // Optional value to edit in text field
+  final Message message;
+  final bool autofocus;
+  ReplyField({this.message, this.autofocus: false});
   @override
   _ReplyFieldState createState() => _ReplyFieldState();
 }
@@ -9,9 +14,14 @@ class ReplyField extends StatefulWidget {
 class _ReplyFieldState extends State<ReplyField> {
   bool _isFocused = false;
   final _focus = FocusNode();
+  final _controller = TextEditingController();
   @override
   void initState() {
     _focus.addListener(onFocusChange);
+    if (widget.message != null) {
+      _controller.text = widget.message.content.originalStr;
+    }
+
     super.initState();
   }
 
@@ -24,20 +34,25 @@ class _ReplyFieldState extends State<ReplyField> {
   @override
   void dispose() {
     _focus.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: _isFocused ? Dim.heightPercent(13) : Dim.hm7,
+      // height: _isFocused ? Dim.heightPercent(13) : Dim.hm7,
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300], width: 2.0)),
       ),
       child: Column(
         children: [
           TextField(
+            maxLines: 3,
+            minLines: 1,
+            autofocus: widget.autofocus,
             focusNode: _focus,
+            controller: _controller,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.all(Dim.widthMultiplier),
               floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -55,7 +70,7 @@ class _ReplyFieldState extends State<ReplyField> {
                   IconButton(
                     iconSize: Dim.tm3(),
                     icon: Icon(
-                      Icons.alternate_email,
+                      Icons.tag_faces,
                       color: Colors.grey,
                     ),
                     onPressed: () {},
@@ -64,7 +79,7 @@ class _ReplyFieldState extends State<ReplyField> {
                   IconButton(
                     iconSize: Dim.tm3(),
                     icon: Icon(
-                      Icons.tag_faces,
+                      Icons.alternate_email,
                       color: Colors.grey,
                     ),
                     onPressed: () {},
