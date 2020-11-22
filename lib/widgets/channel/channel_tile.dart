@@ -25,13 +25,14 @@ class ChannelTile extends StatelessWidget {
             );
       },
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 0),
+        contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
         leading: TextAvatar(
           channel.icon,
           emoji: true,
         ),
         title: Text(
           channel.name,
+          overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.headline6,
         ),
         trailing: FittedBox(
@@ -46,6 +47,8 @@ class ChannelTile extends StatelessWidget {
               if (channel.messageUnread != 0) SizedBox(width: Dim.wm2),
               if (channel.messageUnread != 0)
                 Chip(
+                  labelPadding:
+                      EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
                   label: Text(
                     '${channel.messageUnread}',
                     style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),

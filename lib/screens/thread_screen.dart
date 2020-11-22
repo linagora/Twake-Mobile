@@ -6,7 +6,9 @@ import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
-import 'package:twake_mobile/widgets/message/messages_groupped_list.dart';
+import 'package:twake_mobile/widgets/message/message_tile.dart';
+import 'package:twake_mobile/widgets/message/reply_field.dart';
+import 'package:twake_mobile/widgets/thread/thread_messages_list.dart';
 
 class ThreadScreen extends StatelessWidget {
   static const String route = '/thread';
@@ -52,7 +54,29 @@ class ThreadScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: MessagesGrouppedList(message.responses, isThread: true),
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: SingleChildScrollView(
+                  child: MessageTile(message, isThread: true)),
+              padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+              height: Dim.heightPercent(19),
+            ),
+            Divider(color: Colors.grey[200]),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: Dim.heightMultiplier,
+                horizontal: Dim.wm4,
+              ),
+              child: Text('${message.responsesCount} responses'),
+            ),
+            Divider(color: Colors.grey[200]),
+            ThreadMessagesList(message.responses.reversed.toList()),
+            ReplyField(),
+          ],
+        ),
       ),
     );
   }

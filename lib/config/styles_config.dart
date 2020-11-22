@@ -60,7 +60,7 @@ class StylesConfig {
   static final TextStyle _headline6 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w500,
-    fontSize: Dim.tm2(decimal: .6),
+    fontSize: Dim.tm2(decimal: .9),
   );
 
   static final TextStyle _headline1 = TextStyle(
@@ -84,7 +84,7 @@ class StylesConfig {
   );
 
   static final TextStyle _button = TextStyle(
-    color: Colors.black,
+    color: Colors.white,
     fontSize: Dim.tm2(decimal: .7),
   );
 
@@ -95,14 +95,14 @@ class StylesConfig {
 
   static final TextStyle _headline3 = TextStyle(
     color: Colors.black,
-    fontSize: Dim.tm3(decimal: 0),
+    fontSize: Dim.tm3(decimal: .3),
     fontWeight: FontWeight.bold,
   );
 
   static final TextStyle _bodyText1 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
-    fontSize: Dim.tm2(),
+    fontSize: Dim.tm2(decimal: .8),
   );
 
   static final TextStyle _bodyText2 = TextStyle(
