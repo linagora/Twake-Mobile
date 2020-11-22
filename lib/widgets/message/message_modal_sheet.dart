@@ -38,6 +38,7 @@ class MessageModalSheet extends StatelessWidget {
             leading: Icon(Icons.reply_sharp),
             title: Text('Reply'),
             onTap: () {
+              Navigator.of(context).pop();
               onReply(context);
             },
           ),

@@ -18,7 +18,6 @@ class MessageTile extends StatelessWidget {
   MessageTile(this.message, {this.isThread: false});
 
   void onReply(context) {
-    Navigator.of(context).pop();
     Navigator.of(context).pushNamed(ThreadScreen.route, arguments: {
       'channelId':
           Provider.of<MessagesProvider>(context, listen: false).channelId,

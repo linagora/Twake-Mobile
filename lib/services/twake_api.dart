@@ -95,6 +95,7 @@ class TwakeApi with ChangeNotifier {
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final channels = jsonDecode(response.body);
+      print(channels);
       // Some processing ...
       return channels;
     } catch (error) {
