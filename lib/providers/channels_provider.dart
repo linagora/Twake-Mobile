@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:twake_mobile/models/channel.dart';
+import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
 class ChannelsProvider with ChangeNotifier {
@@ -17,17 +18,20 @@ class ChannelsProvider with ChangeNotifier {
     loaded = false;
     var list;
     try {
+      /// try to get channels from api
       list = await api.workspaceChannelsGet(workspaceId);
     } catch (error) {
-      print('Error occured while loading channels\n$error');
-      throw error;
+      /// if we fail (network issue), then load channels from local store
+      list = await DB.channelsLoad(workspaceId);
+    } finally {
+      _items.clear();
+      for (var i = 0; i < list.length; i++) {
+        _items.add(Channel.fromJson(list[i], workspaceId));
+      }
+      _items.sort((a, b) => a.name.compareTo(b.name));
+      loaded = true;
+      DB.channelsSave(_items);
+      notifyListeners();
     }
-    _items.clear();
-    for (var i = 0; i < list.length; i++) {
-      _items.add(Channel.fromJson(list[i], workspaceId));
-    }
-    _items.sort((a, b) => a.name.compareTo(b.name));
-    loaded = true;
-    notifyListeners();
   }
 }

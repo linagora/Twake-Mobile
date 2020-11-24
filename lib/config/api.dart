@@ -7,6 +7,7 @@ class TwakeApiConfig {
   static const String _usersCurrentGet = '/users/current/get';
   static const String _workspaceChannels = '/workspace/%s/channels';
   static const String _channelMessages = '/channels/%s/messages';
+  static const String _tokenProlong = '/authorization/prolong';
 
   static Map<String, String> authHeader(token) {
     return {
@@ -19,25 +20,28 @@ class TwakeApiConfig {
   }
 
   static String get currentProfileMethod {
-    final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
-    return _HOST + _usersCurrentGet + '?timezoneoffset=$timeZoneOffset';
+    return _HOST + _usersCurrentGet;
   }
 
   static String workspaceChannelsMethod(String id) {
     return _HOST + sprintf(_workspaceChannels, [id]);
   }
 
-  static String channelMessagesMethod(
-    String channelId, {
-    String beforeId,
-    int limit,
-  }) {
+  static String channelMessagesMethod(String channelId,
+      {String beforeId, int limit, bool isPost: false}) {
     var url = _HOST + sprintf(_channelMessages, [channelId]) + '?';
     if (beforeId != null) {
       url = url + 'before=$beforeId&';
     }
-    url = url + 'limit=${limit ?? _MESSAGES_PER_PAGE}&';
+    if (!isPost) {
+      url = url + 'limit=${limit ?? _MESSAGES_PER_PAGE}&';
+    }
 
     return url;
+  }
+
+  /// Method for getting url, in order to prolong JWToken
+  static String get tokenProlongMethod {
+    return _HOST + _tokenProlong;
   }
 }

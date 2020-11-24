@@ -10,6 +10,9 @@ import 'package:twake_mobile/config/api.dart' show TwakeApiConfig;
 /// Contains all neccessary methods and error handling
 class TwakeApi with ChangeNotifier {
   String _authJWToken;
+  String _refreshToken;
+  DateTime _tokenExpiration;
+  DateTime _refreshExpiration;
   bool _isAuthorized = false;
   String _platform;
   TwakeApi() {
@@ -17,6 +20,9 @@ class TwakeApi with ChangeNotifier {
       fromMap(map);
       notifyListeners();
     }).catchError((e) => print('Error loading auth data from database\n$e'));
+    if (_authJWToken != null) {
+      validate(); // Make sure we have an active token
+    }
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
 
@@ -32,20 +38,78 @@ class TwakeApi with ChangeNotifier {
 
   Map<String, dynamic> toMap() {
     return {
-      'authjwtoken': _authJWToken,
-      'isauthorized': _isAuthorized ? 1 : 0,
+      'authJWToken': _authJWToken,
+      'refreshToken': _refreshToken,
+      'isAuthorized': _isAuthorized,
       'platform': _platform,
+      'tokenExpiration': _tokenExpiration.toIso8601String(),
+      'refreshExpiration': _refreshExpiration.toIso8601String(),
     };
   }
 
-  fromMap(Map<String, dynamic> map) {
+  void fromMap(Map<String, dynamic> map) {
     print('GOT DATA FOR AUTH:\n$map');
-    _authJWToken = map['authjwtoken'];
-    _isAuthorized = map['isauthorized'] == 1;
+    _authJWToken = map['authJWToken'];
+    _refreshToken = map['refreshToken'];
+    _tokenExpiration = DateTime.parse(map['tokenExpiration'] as String);
+    _refreshExpiration = DateTime.parse(map['refreshExpiration'] as String);
+    _isAuthorized = map['isAuthorized'];
     _platform = map['platform'];
   }
 
+  void fromJson(String json) {
+    final map = jsonDecode(json);
+    _authJWToken = map['token'];
+    _tokenExpiration = map['expiration'];
+    _refreshToken = map['refresh_token'];
+    _refreshExpiration = map['refresh_expiration'];
+  }
+
+  void validate() {
+    final now = DateTime.now();
+    if (now.isAfter(_tokenExpiration)) {
+      if (now.isAfter(_refreshExpiration)) {
+        _authJWToken = null;
+        _refreshToken = null;
+        _tokenExpiration = null;
+        _refreshExpiration = null;
+        _isAuthorized = false;
+        DB.fullClean(); // clean up any data from store
+        notifyListeners();
+      } else {
+        prolongToken(_refreshToken);
+      }
+    }
+  }
+
+  Future<void> prolongToken(String refreshToken) async {
+    try {
+      print('Trying to authenticate');
+      final response = await http.post(
+        TwakeApiConfig.tokenProlongMethod,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+          {
+            'refresh_token': prolongToken,
+          },
+        ),
+      );
+      if (_authJWToken == null) {
+        throw Exception('Authorization failed');
+      }
+      _isAuthorized = true;
+      DB.authSave(this);
+      notifyListeners();
+    } catch (error) {
+      print('Error occured during authentication\n$error');
+      throw error;
+    }
+  }
+
   Future<void> authenticate(String username, String password) async {
+    final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
     try {
       final response = await http.post(
         TwakeApiConfig.authorizeMethod,
@@ -57,11 +121,14 @@ class TwakeApi with ChangeNotifier {
             'username': username,
             'password': password,
             'device': _platform,
+            'timezoneoffset': '$timeZoneOffset'
           },
         ),
       );
-      final authData = jsonDecode(response.body);
-      _authJWToken = authData['token'];
+      print('Got auth response');
+      fromJson(response.body);
+      print(response.body);
+      fromJson(response.body);
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
       }
@@ -75,6 +142,7 @@ class TwakeApi with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> currentProfileGet() async {
+    validate();
     try {
       final response = await http.get(
         TwakeApiConfig.currentProfileMethod, // url
@@ -89,6 +157,7 @@ class TwakeApi with ChangeNotifier {
   }
 
   Future<List<dynamic>> workspaceChannelsGet(String workspaceId) async {
+    validate();
     try {
       final response = await http.get(
         TwakeApiConfig.workspaceChannelsMethod(workspaceId), // url
@@ -108,6 +177,7 @@ class TwakeApi with ChangeNotifier {
     String channelId, {
     String beforeMessageId,
   }) async {
+    validate();
     try {
       final response = await http.get(
         TwakeApiConfig.channelMessagesMethod(
@@ -123,5 +193,17 @@ class TwakeApi with ChangeNotifier {
       print('Error occured while getting channel messages\n$error');
       throw error;
     }
+  }
+
+  Future<void> messageSend(String channelId, String content,
+      {String parentMessageId}) async {
+    validate();
+    try {
+      final response = await http.post(
+        TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
+        headers: TwakeApiConfig.authHeader(_authJWToken),
+        body: jsonEncode(content),
+      );
+    } catch (error) {}
   }
 }
