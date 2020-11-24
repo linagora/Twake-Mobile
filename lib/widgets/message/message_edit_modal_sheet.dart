@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/message.dart';
-import 'package:twake_mobile/widgets/message/reply_field.dart';
+import 'package:twake_mobile/widgets/message/message_edit_field.dart';
 
 class MessageEditModalSheet extends StatelessWidget {
   final Message message;
@@ -27,7 +26,7 @@ class MessageEditModalSheet extends StatelessWidget {
             Text('Edit'),
           ]),
           // Divider(),
-          ReplyField(message: message, autofocus: true),
+          MessageEditField(message: message, autofocus: true),
         ],
       ),
     );

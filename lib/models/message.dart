@@ -26,6 +26,9 @@ class Message extends JsonSerializable {
 
   final List<Message> responses;
 
+  @JsonKey(ignore: true)
+  String channelId;
+
   Message({
     @required this.id,
     this.responsesCount,
@@ -38,12 +41,19 @@ class Message extends JsonSerializable {
 
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  /// channelId is saved on per message basis in order to save and retrieve
+  /// messages from data store later.
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  Map<String, dynamic> toJson() => _$MessageToJson(this);
+  Map<String, dynamic> toJson() {
+    var map = _$MessageToJson(this);
+    // Channel Id should be set explicitly, because of ignore JSONKEY
+    map['channelId'] = this.channelId;
+    return map;
+  }
 }
 
 @JsonSerializable()

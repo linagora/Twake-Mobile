@@ -52,6 +52,8 @@ class Channel {
 
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  /// workspaceId is saved on per channel basis in order to save and retrieve
+  /// channels from data store later.
   factory Channel.fromJson(Map<String, dynamic> json, String workspaceId) =>
       _$ChannelFromJson(json)..workspaceId = workspaceId;
 
@@ -59,6 +61,7 @@ class Channel {
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
     var map = _$ChannelToJson(this);
+    // Channel Id should be set explicitly, because of ignore JSONKEY
     map['workspaceId'] = this.workspaceId;
     return map;
   }

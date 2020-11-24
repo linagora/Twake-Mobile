@@ -7,7 +7,7 @@ import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
-import 'package:twake_mobile/widgets/message/reply_field.dart';
+import 'package:twake_mobile/widgets/message/message_edit_field.dart';
 import 'package:twake_mobile/widgets/thread/thread_messages_list.dart';
 
 class ThreadScreen extends StatelessWidget {
@@ -74,7 +74,7 @@ class ThreadScreen extends StatelessWidget {
             ),
             Divider(color: Colors.grey[200]),
             ThreadMessagesList(message.responses.reversed.toList()),
-            ReplyField(),
+            MessageEditField(),
           ],
         ),
       ),
