@@ -99,6 +99,10 @@ class DB {
     await channelsClean();
   }
 
+  /// Method for saving all the channels, that are downloaded during
+  /// user's session, if there's an active internet connection, channels
+  /// are always loaded over internet. Data store is used only when no connection
+  /// to the server can be established
   static Future<void> channelsSave(List<Channel> channels) async {
     initCheck();
     for (int i = 0; i < channels.length; i++) {
@@ -110,6 +114,7 @@ class DB {
     }
   }
 
+  /// Load channels from data store in case if twake api is not available
   static Future<List<Map<String, dynamic>>> channelsLoad(
       String workspaceId) async {
     initCheck();
@@ -124,9 +129,16 @@ class DB {
     return records.map((r) => r.value).toList();
   }
 
+  /// Remove all the channels downloaded during user's session, usually
+  /// the method is invoked on logout
   static Future<void> channelsClean() async {
     await channelStore.delete(db);
   }
+
+  /// Save messages that are downloaded during user's session
+  /// data store is only accessed if connection to twake api cannot
+  /// be established
+  static Future<void> messagesSave() async {}
 }
 
 const String _DATABASE_FILE = 'twake.db';
