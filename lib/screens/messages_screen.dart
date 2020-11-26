@@ -21,6 +21,7 @@ class MessagesScreen extends StatelessWidget {
 
     final messagesProvider =
         Provider.of<MessagesProvider>(context, listen: false);
+    print('Loading messages');
     messagesProvider.loadMessages(api, channelId);
     return Scaffold(
         appBar: AppBar(

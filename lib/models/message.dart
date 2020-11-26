@@ -3,8 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'message.g.dart';
 
-// TODO document the model
-
 @JsonSerializable(explicitToJson: true)
 class Message extends JsonSerializable {
   @JsonKey(required: true)

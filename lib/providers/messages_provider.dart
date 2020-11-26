@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:twake_mobile/data/dummy.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
@@ -31,6 +32,8 @@ class MessagesProvider extends ChangeNotifier {
     var list;
     this.api = api;
     this.channelId = channelId;
+    // list = DUMMY_MESSAGES;
+    // await Future.delayed(Duration(milliseconds: 1000));
     try {
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
