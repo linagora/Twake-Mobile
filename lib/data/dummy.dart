@@ -585,682 +585,6 @@ const DUMMY_CHANNNELS = [
 
 const DUMMY_MESSAGES = [
   {
-    "id": "7691d992-2597-11eb-8fef-0242ac120004",
-    "responses_count": 1,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-    "creation_date": 1605261802,
-    "content": {
-      "original_str":
-          "@benoit:f5407788-47d8-11e9-9635-0242ac120005 Can you send me a link to the issue you want me to fix for the Q3 patch ?",
-      "prepared": [
-        {
-          "type": "user",
-          "content": "benoit",
-          "id": "f5407788-47d8-11e9-9635-0242ac120005"
-        },
-        {
-          "type": "text",
-          "content":
-              " Can you send me a link to the issue you want me to fix for the Q3 patch ?"
-        }
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "a1559e84-2597-11eb-9333-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "f5407788-47d8-11e9-9635-0242ac120005"},
-        "creation_date": 1605261874,
-        "content": {
-          "original_str":
-              "https://github.com/TwakeApp/Twake/pull/480\nYou're already assign :)",
-          "prepared": [
-            {
-              "type": "url",
-              "content": "https://github.com/TwakeApp/Twake/pull/480"
-            },
-            {"type": "br"},
-            {"type": "text", "content": "You're already assign "},
-            {"type": "emoji", "content": "slight_smile"}
-          ]
-        },
-        "reactions": {
-          ":pray:": {
-            "users": ["4db463b4-4745-11e9-8c59-0242ac120005"],
-            "count": 1
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "11346a54-25a3-11eb-9366-0242ac120004",
-    "responses_count": 2,
-    "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
-    "creation_date": 1605266786,
-    "content": {
-      "original_str": "Bon week-end tous le monde :)",
-      "prepared": [
-        {"type": "text", "content": "Bon week-end tous le monde "},
-        {"type": "emoji", "content": "slight_smile"}
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "f084309a-25a3-11eb-814e-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605267161,
-        "content": {
-          "prepared": [
-            {
-              "type": "system",
-              "content": [
-                "@romaricmourgues sent a GIF ",
-                {"type": "bold", "content": "#weekend"}
-              ]
-            },
-            {"type": "br"},
-            {
-              "type": "image",
-              "src":
-                  "https://media3.giphy.com/media/l2JhBoNin9yhqSDLO/giphy.gif"
-            }
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "204054aa-25a7-11eb-85d1-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "d3f576e6-6dca-11ea-ae8e-0242ac120004"},
-        "creation_date": 1605268529,
-        "content": {
-          "prepared": [
-            {
-              "type": "system",
-              "content": [
-                "@aduprat sent a GIF ",
-                {"type": "bold", "content": "#fiesta"}
-              ]
-            },
-            {"type": "br"},
-            {
-              "type": "image",
-              "src":
-                  "https://media1.giphy.com/media/3oz8xFUdHov8mVKYSs/giphy.gif"
-            }
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "d3ccce24-25a5-11eb-8298-0242ac120004",
-    "responses_count": 1,
-    "sender": {
-      "username": "Github",
-      "img": "https://pngimg.com/imgs/logos/github/"
-    },
-    "creation_date": 1605267971,
-    "content": {
-      "prepared": [
-        {"type": "unparseable"}
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "dfc1a416-25a5-11eb-9ab8-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605267991,
-        "content": {
-          "original_str": "Ready to deploy this weekend on QA :)",
-          "prepared": [
-            {"type": "text", "content": "Ready to deploy this weekend on QA "},
-            {"type": "emoji", "content": "slight_smile"}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "b3193ade-27dd-11eb-936d-0242ac120004",
-    "responses_count": 1,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-    "creation_date": 1605511871,
-    "content": {
-      "original_str": "Hello team :)",
-      "prepared": [
-        {"type": "text", "content": "Hello team "},
-        {"type": "emoji", "content": "slight_smile"}
-      ]
-    },
-    "reactions": {
-      ":wave:": {
-        "users": ["d3f576e6-6dca-11ea-ae8e-0242ac120004"],
-        "count": 1
-      }
-    },
-    "responses": [
-      {
-        "id": "ee7262ce-27e0-11eb-9cbd-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
-        "creation_date": 1605513259,
-        "content": {
-          "prepared": [
-            {
-              "type": "system",
-              "content": [
-                "@chamerling sent a GIF ",
-                {"type": "bold", "content": "#hello"}
-              ]
-            },
-            {"type": "br"},
-            {
-              "type": "image",
-              "src":
-                  "https://media1.giphy.com/media/3ornk57KwDXf81rjWM/giphy.gif"
-            }
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "66fce84c-27df-11eb-9221-0242ac120004",
-    "responses_count": 1,
-    "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
-    "creation_date": 1605512602,
-    "content": {
-      "original_str":
-          "hi team, may I know how to create a drive? https://app.zenhub.com/workspaces/twake-5f06c5bf7796310019354875/issues/twakeapp/twake/479",
-      "prepared": [
-        {
-          "type": "text",
-          "content": "hi team, may I know how to create a drive? "
-        },
-        {
-          "type": "url",
-          "content":
-              "https://app.zenhub.com/workspaces/twake-5f06c5bf7796310019354875/issues/twakeapp/twake/479"
-        }
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "b9963dd8-27df-11eb-a313-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
-        "creation_date": 1605512740,
-        "content": {
-          "original_str": "ah I found it. Plz ignore ",
-          "prepared": [
-            {"type": "text", "content": "ah I found it. Plz ignore "}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "69919bf6-27ea-11eb-87f6-0242ac120004",
-    "responses_count": null,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-    "creation_date": 1605517331,
-    "content": {
-      "original_str": "Daily ⏰",
-      "prepared": [
-        {"type": "text", "content": "Daily "},
-        {"type": "emoji", "content": "alarm_clock"}
-      ]
-    },
-    "reactions": null,
-    "responses": []
-  },
-  {
-    "id": "35d354a0-27ed-11eb-a030-0242ac120004",
-    "responses_count": 1,
-    "sender": {"user_id": "d3f576e6-6dca-11ea-ae8e-0242ac120004"},
-    "creation_date": 1605518532,
-    "content": {
-      "original_str":
-          "@chamerling:76990a70-e603-11e9-a066-0242ac120004 I had a look on James about waiting for Cassandra to be up in tests.\n\nWe are implementing a WaitStrategy from TesContainer:\nhttps://github.com/apache/james-project/blob/master/backends-common/cassandra/src/test/java/org/apache/james/backends/cassandra/CassandraWaitStrategy.java\nin the overrided `waitUntilReady` method, you have the command used in order to validate that Cassandra is up\nthe default timeout is one minute",
-      "prepared": [
-        {
-          "type": "user",
-          "content": "chamerling",
-          "id": "76990a70-e603-11e9-a066-0242ac120004"
-        },
-        {
-          "type": "text",
-          "content":
-              " I had a look on James about waiting for Cassandra to be up in tests."
-        },
-        {"type": "br"},
-        {"type": "br"},
-        {
-          "type": "text",
-          "content": "We are implementing a WaitStrategy from TesContainer:"
-        },
-        {"type": "br"},
-        {
-          "type": "url",
-          "content":
-              "https://github.com/apache/james-project/blob/master/backends-common/cassandra/src/test/java/org/apache/james/backends/cassandra/CassandraWaitStrategy.java"
-        },
-        {"type": "br"},
-        {"type": "text", "content": "in the overrided "},
-        {"type": "unparseable"},
-        {
-          "type": "text",
-          "content":
-              " method, you have the command used in order to validate that Cassandra is up"
-        },
-        {"type": "br"},
-        {"type": "text", "content": "the default timeout is one minute"}
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "dfa3f6fe-27ef-11eb-acfc-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
-        "creation_date": 1605519676,
-        "content": {
-          "original_str": "grat thanks!",
-          "prepared": [
-            {"type": "text", "content": "grat thanks!"}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "f4fe8348-27f4-11eb-b22f-0242ac120004",
-    "responses_count": null,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-    "creation_date": 1605521860,
-    "content": {
-      "original_str":
-          "@aimanrkyek:009b6f1c-e606-11ea-b45b-0242ac120004 Fabien is trying to talk to you, try to reload the page if you don't see his message :)",
-      "prepared": [
-        {
-          "type": "user",
-          "content": "aimanrkyek",
-          "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
-        },
-        {
-          "type": "text",
-          "content":
-              " Fabien is trying to talk to you, try to reload the page if you don't see his message "
-        },
-        {"type": "emoji", "content": "slight_smile"}
-      ]
-    },
-    "reactions": null,
-    "responses": []
-  },
-  {
-    "id": "9ee97dda-27fb-11eb-9cbe-0242ac120004",
-    "responses_count": 2,
-    "sender": {
-      "username": "Github",
-      "img": "https://pngimg.com/imgs/logos/github/"
-    },
-    "creation_date": 1605524722,
-    "content": {
-      "prepared": [
-        {"type": "unparseable"}
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "a7279090-27fb-11eb-9dbc-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605524735,
-        "content": {
-          "original_str": "Fix the remaining QA error for Q3 patch",
-          "prepared": [
-            {
-              "type": "text",
-              "content": "Fix the remaining QA error for Q3 patch"
-            }
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "bc74542e-27fb-11eb-8ab1-0242ac120004",
-        "responses_count": null,
-        "sender": {
-          "username": "Github",
-          "img": "https://pngimg.com/imgs/logos/github/"
-        },
-        "creation_date": 1605524771,
-        "content": {
-          "prepared": [
-            {"type": "unparseable"}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "a3028960-280b-11eb-bc3a-0242ac120004",
-    "responses_count": 3,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-    "creation_date": 1605531600,
-    "content": {
-      "original_str":
-          "@aimanrkyek I need you to finish your PR https://github.com/TwakeApp/Twake/pull/549 , context menu should be in an other PR, we need to merge some of your work before you have too many files changed.",
-      "prepared": [
-        {
-          "type": "user",
-          "content": "aimanrkyek",
-          "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
-        },
-        {"type": "text", "content": " I need you to finish your PR "},
-        {
-          "type": "url",
-          "content": "https://github.com/TwakeApp/Twake/pull/549"
-        },
-        {
-          "type": "text",
-          "content":
-              " , context menu should be in an other PR, we need to merge some of your work before you have too many files changed."
-        }
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "50318788-281d-11eb-9a82-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
-        "creation_date": 1605539192,
-        "content": {
-          "original_str": "Okay je mettrai à jour la PR",
-          "prepared": [
-            {"type": "text", "content": "Okay je mettrai à jour la PR"}
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "3310475a-281f-11eb-a3c6-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
-        "creation_date": 1605540003,
-        "content": {
-          "original_str": "Done",
-          "prepared": [
-            {"type": "text", "content": "Done"}
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "f21fe768-281f-11eb-bf2b-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605540323,
-        "content": {
-          "original_str": "Thanks Aiman, just 4 comments and I merge it :)",
-          "prepared": [
-            {
-              "type": "text",
-              "content": "Thanks Aiman, just 4 comments and I merge it "
-            },
-            {"type": "emoji", "content": "slight_smile"}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "773a7d94-280e-11eb-b5ee-0242ac120004",
-    "responses_count": 4,
-    "sender": {
-      "username": "Github",
-      "img": "https://pngimg.com/imgs/logos/github/"
-    },
-    "creation_date": 1605532815,
-    "content": {
-      "prepared": [
-        {"type": "unparseable"}
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "1d08537e-2812-11eb-b5a9-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605534382,
-        "content": {
-          "original_str":
-              "@chamerling Ok I read it, do you want me to finish the \"ORM\" part of cassandra / mongodb using decorators present in entities?\nI have time this week and the work isn't to heavy you already did a lot. WDYT ?",
-          "prepared": [
-            {
-              "type": "user",
-              "content": "chamerling",
-              "id": "76990a70-e603-11e9-a066-0242ac120004"
-            },
-            {
-              "type": "text",
-              "content":
-                  " Ok I read it, do you want me to finish the \"ORM\" part of cassandra / mongodb using decorators present in entities?"
-            },
-            {"type": "br"},
-            {
-              "type": "text",
-              "content":
-                  "I have time this week and the work isn't to heavy you already did a lot. WDYT ?"
-            }
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "f47dba94-282e-11eb-9993-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
-        "creation_date": 1605546770,
-        "content": {
-          "original_str": "Fucking notification",
-          "prepared": [
-            {"type": "text", "content": "Fucking notification"}
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "f9c26676-282e-11eb-ade8-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
-        "creation_date": 1605546778,
-        "content": {
-          "original_str": "We will talk about it tomorrow",
-          "prepared": [
-            {"type": "text", "content": "We will talk about it tomorrow"}
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "0153ce7a-282f-11eb-be29-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
-        "creation_date": 1605546791,
-        "content": {
-          "original_str":
-              "@romaricmourgues:4db463b4-4745-11e9-8c59-0242ac120005 ",
-          "prepared": [
-            {
-              "type": "user",
-              "content": "romaricmourgues",
-              "id": "4db463b4-4745-11e9-8c59-0242ac120005"
-            },
-            {"type": "text", "content": " "}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "def56804-2818-11eb-8449-0242ac120004",
-    "responses_count": 2,
-    "sender": {
-      "username": "Github",
-      "img": "https://pngimg.com/imgs/logos/github/"
-    },
-    "creation_date": 1605537284,
-    "content": {
-      "prepared": [
-        {"type": "unparseable"}
-      ]
-    },
-    "reactions": null,
-    "responses": [
-      {
-        "id": "f42ad88a-2818-11eb-ba58-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605537320,
-        "content": {
-          "original_str":
-              "Hello me again, now merging Q3 patch from last month into our Q4 branch :)",
-          "prepared": [
-            {
-              "type": "text",
-              "content":
-                  "Hello me again, now merging Q3 patch from last month into our Q4 branch "
-            },
-            {"type": "emoji", "content": "slight_smile"}
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "c3e60b08-2823-11eb-b8ef-0242ac120004",
-        "responses_count": null,
-        "sender": {
-          "username": "Github",
-          "img": "https://pngimg.com/imgs/logos/github/"
-        },
-        "creation_date": 1605541964,
-        "content": {
-          "prepared": [
-            {"type": "unparseable"}
-          ]
-        },
-        "reactions": null
-      }
-    ]
-  },
-  {
-    "id": "48287b4e-2824-11eb-b6e9-0242ac120004",
-    "responses_count": 2,
-    "sender": {
-      "username": "Github",
-      "img": "https://pngimg.com/imgs/logos/github/"
-    },
-    "creation_date": 1605542185,
-    "content": {
-      "prepared": [
-        {"type": "unparseable"}
-      ]
-    },
-    "reactions": {
-      ":rocket:": {
-        "users": ["2fdf4d12-6e7d-11ea-ae40-0242ac120004"],
-        "count": 1
-      }
-    },
-    "responses": [
-      {
-        "id": "95784a46-2824-11eb-bd17-0242ac120004",
-        "responses_count": null,
-        "sender": {
-          "username": "Github",
-          "img": "https://pngimg.com/imgs/logos/github/"
-        },
-        "creation_date": 1605542315,
-        "content": {
-          "prepared": [
-            {"type": "unparseable"}
-          ]
-        },
-        "reactions": null
-      },
-      {
-        "id": "a0c6a5d2-2824-11eb-8bf9-0242ac120004",
-        "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-        "creation_date": 1605542334,
-        "content": {
-          "original_str": "Thanks Aiman perfect :)",
-          "prepared": [
-            {"type": "text", "content": "Thanks Aiman perfect "},
-            {"type": "emoji", "content": "slight_smile"}
-          ]
-        },
-        "reactions": {
-          ":+1:": {
-            "users": ["009b6f1c-e606-11ea-b45b-0242ac120004"],
-            "count": 1
-          }
-        }
-      }
-    ]
-  },
-  {
-    "id": "7e91be32-2826-11eb-9d5b-0242ac120004",
-    "responses_count": null,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
-    "creation_date": 1605543136,
-    "content": {
-      "original_str":
-          "@aimanrkyek:009b6f1c-e606-11ea-b45b-0242ac120004 now that I have your work how can I help, what can I do without breaking your side ?\nI was thinking on finishing UI issues, fixing the \"+\" button, and implementing the selection with the routing, is it ok for you?",
-      "prepared": [
-        {
-          "type": "user",
-          "content": "aimanrkyek",
-          "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
-        },
-        {
-          "type": "text",
-          "content":
-              " now that I have your work how can I help, what can I do without breaking your side ?"
-        },
-        {"type": "br"},
-        {
-          "type": "text",
-          "content":
-              "I was thinking on finishing UI issues, fixing the \"+\" button, and implementing the selection with the routing, is it ok for you?"
-        }
-      ]
-    },
-    "reactions": null,
-    "responses": []
-  },
-  {
     "id": "71a4d302-2831-11eb-8619-0242ac120004",
     "responses_count": 2,
     "sender": {
@@ -1293,7 +617,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "b0ec32ee-2831-11eb-9d28-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605547945,
         "content": {
           "original_str": "ZeroTex PR closed and cherry-picked to PR 568",
@@ -1311,7 +642,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "b8870a48-28a8-11eb-8363-0242ac120004",
     "responses_count": 2,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1605599068,
     "content": {
       "original_str": "Hello team :)",
@@ -1333,7 +671,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "52bbe228-28a9-11eb-8d2f-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
         "creation_date": 1605599326,
         "content": {
           "original_str": "hello Romaric",
@@ -1346,7 +691,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "c3fc9e48-28ac-11eb-9858-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605600805,
         "content": {
           "prepared": [
@@ -1387,7 +739,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "dfe4d9d4-28db-11eb-aacf-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605621038,
         "content": {
           "original_str":
@@ -1411,7 +770,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "026e5282-28dc-11eb-8a47-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605621096,
         "content": {
           "original_str":
@@ -1434,7 +800,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "53fc254c-28dd-11eb-a0af-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605621662,
         "content": {
           "original_str":
@@ -1451,7 +824,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "6c9e69de-28dd-11eb-b7e2-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605621704,
         "content": {
           "original_str":
@@ -1473,7 +853,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "74e26d52-28dd-11eb-b03e-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605621717,
         "content": {
           "original_str": "Ok good for me thanks :)",
@@ -1504,7 +891,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "850bccf6-28dc-11eb-803f-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605621315,
         "content": {
           "original_str":
@@ -1526,7 +920,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "93e0c330-28dc-11eb-b7d4-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605621340,
         "content": {
           "original_str": "Do you want me to read it again or can I merge it ?",
@@ -1542,7 +943,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "b171a824-28dc-11eb-8c75-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605621389,
         "content": {
           "original_str": "I read it seems good to me :)",
@@ -1556,7 +964,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "c6955322-28dc-11eb-8c2d-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605621425,
         "content": {
           "original_str": "you can merge it, I will move to members now",
@@ -1587,7 +1002,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "df25d326-28dc-11eb-9692-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605621466,
         "content": {
           "prepared": [
@@ -1628,7 +1050,13 @@ const DUMMY_MESSAGES = [
       {
         "id": "21770964-28df-11eb-a02d-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
         "creation_date": 1605622436,
         "content": {
           "original_str":
@@ -1663,7 +1091,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "9f39cdc8-28df-11eb-958a-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605622647,
         "content": {
           "original_str":
@@ -1700,7 +1135,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "0072303a-28e0-11eb-b3ca-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605622811,
         "content": {
           "original_str": "(closed)",
@@ -1715,7 +1157,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "1bc8447a-28e3-11eb-a2db-0242ac120004",
     "responses_count": 3,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1605624145,
     "content": {
       "original_str":
@@ -1745,7 +1194,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "269ddaa0-28e7-11eb-ada7-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
         "creation_date": 1605625881,
         "content": {
           "original_str":
@@ -1765,7 +1221,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "dc05b1e2-28f1-11eb-83a4-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605630480,
         "content": {
           "prepared": [
@@ -1788,7 +1251,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "93d57150-297d-11eb-b53b-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "f5407788-47d8-11e9-9635-0242ac120005"},
+        "sender": {
+          "userId": "f5407788-47d8-11e9-9635-0242ac120005",
+          "username": "benoit",
+          "firstname": "Benoît",
+          "lastname": "TALLANDIER",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/685aab560bb0d073a65f580120c364d4.png"
+        },
         "creation_date": 1605690489,
         "content": {
           "prepared": [
@@ -1829,7 +1299,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "e768e09c-28f4-11eb-88cc-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605631788,
         "content": {
           "original_str": "This is cool :D ",
@@ -1844,7 +1321,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "2e583d10-297f-11eb-87d8-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
         "creation_date": 1605691177,
         "content": {
           "original_str": "Updated :)",
@@ -1875,7 +1359,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "6ec72518-28f9-11eb-b38b-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605633733,
         "content": {
           "original_str":
@@ -1893,7 +1384,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "c943921a-2971-11eb-9910-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605685424,
         "content": {
           "original_str": "Seems to not be happy with it yet (the CI) :/",
@@ -1927,7 +1425,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "4644fdfa-28fd-11eb-8c41-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605635383,
         "content": {
           "original_str":
@@ -1955,7 +1460,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "7e5e9eea-290b-11eb-8db9-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605641490,
         "content": {
           "original_str": "great!",
@@ -1970,7 +1482,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "ccfa7496-2971-11eb-9f3e-0242ac120004",
     "responses_count": 3,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1605685431,
     "content": {
       "original_str": "Hellloooo team !",
@@ -1988,7 +1507,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "ecbac02e-2971-11eb-9ea9-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
         "creation_date": 1605685484,
         "content": {
           "original_str": "hi",
@@ -2001,7 +1527,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "05804ce6-2972-11eb-a83d-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605685526,
         "content": {
           "original_str":
@@ -2020,7 +1553,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "067c5aa4-2972-11eb-8b86-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "d3f576e6-6dca-11ea-ae8e-0242ac120004"},
+        "sender": {
+          "userId": "d3f576e6-6dca-11ea-ae8e-0242ac120004",
+          "username": "aduprat",
+          "firstname": "Duprat",
+          "lastname": "Antoine",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/2fcd6593b7f24ace8b3cbb2df25b35be.png"
+        },
         "creation_date": 1605685527,
         "content": {
           "prepared": [
@@ -2060,7 +1600,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "4325d178-2982-11eb-8ea4-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605692501,
         "content": {
           "original_str": "Good work thanks! :)",
@@ -2091,7 +1638,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "417c4fdc-298c-11eb-bc25-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605696793,
         "content": {
           "original_str": "Boom he's dead.",
@@ -2104,7 +1658,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "4bb7503a-2998-11eb-869e-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605701964,
         "content": {
           "original_str":
@@ -2200,7 +1761,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "0d098388-29e0-11eb-83a5-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605732783,
         "content": {
           "original_str": "Twake was successfully updated to Q3.122 🎉 ",
@@ -2220,7 +1788,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "e415f7c0-2a3b-11eb-880d-0242ac120004",
     "responses_count": null,
-    "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+    "sender": {
+      "userId": "76990a70-e603-11e9-a066-0242ac120004",
+      "username": "chamerling",
+      "firstname": "Christophe",
+      "lastname": "Hamerling",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+    },
     "creation_date": 1605772228,
     "content": {
       "original_str": "Hello people",
@@ -2243,7 +1818,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "62ad4a34-2a46-11eb-94a1-0242ac120004",
     "responses_count": 1,
-    "sender": {"user_id": "f5407788-47d8-11e9-9635-0242ac120005"},
+    "sender": {
+      "userId": "f5407788-47d8-11e9-9635-0242ac120005",
+      "username": "benoit",
+      "firstname": "Benoît",
+      "lastname": "TALLANDIER",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/685aab560bb0d073a65f580120c364d4.png"
+    },
     "creation_date": 1605776735,
     "content": {
       "original_str": "Start the daily without me. I'm still in meeting",
@@ -2259,7 +1841,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "519b2616-2a47-11eb-94b5-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605777136,
         "content": {
           "original_str": "Done, it was fast without you :)",
@@ -2275,7 +1864,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "994f9f52-2b08-11eb-b272-0242ac120004",
     "responses_count": 5,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1605860149,
     "content": {
       "original_str": "Hello team, friday! 🎉 ",
@@ -2298,7 +1894,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "d711e560-2b09-11eb-bbbb-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605860682,
         "content": {
           "original_str": "Hello",
@@ -2311,7 +1914,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "deeaa9a2-2b09-11eb-a94a-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605860695,
         "content": {
           "prepared": [
@@ -2335,7 +1945,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "efd74554-2b09-11eb-ad04-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605860724,
         "content": {
           "original_str": "FYI I am working on some OIDC feature for OpenPaaS",
@@ -2351,7 +1968,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "f6f3934c-2b09-11eb-8792-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605860736,
         "content": {
           "original_str": "it should be quick (if no surprise)",
@@ -2364,7 +1988,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "40bc72fa-2b0a-11eb-a9e8-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605860860,
         "content": {
           "original_str": "Benoit told me, no problem",
@@ -2379,7 +2010,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "72fc7f80-2b0a-11eb-9e32-0242ac120004",
     "responses_count": 3,
-    "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+    "sender": {
+      "userId": "76990a70-e603-11e9-a066-0242ac120004",
+      "username": "chamerling",
+      "firstname": "Christophe",
+      "lastname": "Hamerling",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+    },
     "creation_date": 1605860944,
     "content": {
       "original_str":
@@ -2400,7 +2038,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "1f36fc4e-2b0b-11eb-9dc3-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605861233,
         "content": {
           "original_str":
@@ -2418,7 +2063,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "d06c7192-2b15-11eb-bd51-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1605865825,
         "content": {
           "original_str":
@@ -2436,7 +2088,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "40a206de-2b16-11eb-9169-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605866013,
         "content": {
           "original_str": "Not at all I try to find time for this!",
@@ -2454,7 +2113,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "2bc89338-2b0f-11eb-b9dc-0242ac120004",
     "responses_count": null,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1605862972,
     "content": {
       "original_str": "Benoit please go to meet.jit.si/Twake",
@@ -2484,7 +2150,13 @@ const DUMMY_MESSAGES = [
       {
         "id": "708e956c-2b23-11eb-9a29-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
         "creation_date": 1605871677,
         "content": {
           "original_str": "Draft, good week-end all :)",
@@ -2515,7 +2187,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "a9391152-2b42-11eb-bafc-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1605885087,
         "content": {
           "original_str": "Not ready at all for review, still playing around",
@@ -2533,7 +2212,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "0d5d7a5e-2d5c-11eb-bf79-0242ac120004",
     "responses_count": 5,
-    "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+    "sender": {
+      "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+      "username": "tthnguyen",
+      "firstname": "Ha",
+      "lastname": "Nguyen",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+    },
     "creation_date": 1606115894,
     "content": {
       "original_str":
@@ -2551,7 +2237,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "2a53382e-2d5c-11eb-b0b4-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
         "creation_date": 1606115943,
         "content": {
           "original_str": "there are two things: ",
@@ -2565,7 +2258,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "34b7b178-2d5c-11eb-824e-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
         "creation_date": 1606115960,
         "content": {
           "original_str":
@@ -2583,7 +2283,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "67f3c86a-2d5c-11eb-b405-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
         "creation_date": 1606116046,
         "content": {
           "original_str":
@@ -2601,7 +2308,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "809b2208-2d5e-11eb-aa31-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606116947,
         "content": {
           "original_str":
@@ -2619,7 +2333,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "3d8491dc-2d60-11eb-9fd0-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "023cc4e8-6e82-11ea-9fc9-0242ac120004"},
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
         "creation_date": 1606117693,
         "content": {
           "original_str": "that's great Romaric. Thanks :)",
@@ -2640,7 +2361,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "84a16ad8-2d5e-11eb-bef0-0242ac120004",
     "responses_count": null,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1606116954,
     "content": {
       "original_str": "Hello team :)",
@@ -2669,7 +2397,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "cbd34050-2d6a-11eb-887d-0242ac120004",
     "responses_count": 5,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1606122227,
     "content": {
       "original_str": "Daily!",
@@ -2682,7 +2417,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "444dbe02-2d6b-11eb-8ba3-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606122429,
         "content": {
           "original_str":
@@ -2700,7 +2442,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "671bf714-2d6b-11eb-ada6-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
         "creation_date": 1606122487,
         "content": {
           "original_str": "je suis connecté depuis 10  😨 ",
@@ -2715,7 +2464,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "d57dbb66-2d6b-11eb-a242-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
         "creation_date": 1606122673,
         "content": {
           "original_str": "je te vois connecter",
@@ -2728,7 +2484,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "e4d4166e-2d6b-11eb-aa5d-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "009b6f1c-e606-11ea-b45b-0242ac120004"},
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
         "creation_date": 1606122698,
         "content": {
           "original_str": "t'es tout seul!?",
@@ -2741,7 +2504,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "2989da46-2d6c-11eb-ac03-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606122814,
         "content": {
           "original_str":
@@ -2763,7 +2533,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "d66869d0-2e25-11eb-bb64-0242ac120004",
     "responses_count": 2,
-    "sender": {"user_id": "ad3e61b4-6e76-11ea-b5b6-0242ac120004"},
+    "sender": {
+      "userId": "ad3e61b4-6e76-11ea-b5b6-0242ac120004",
+      "username": "tlcong",
+      "firstname": "Tuan",
+      "lastname": "LE CONG",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/0445600aa913da15615fb65310f3e346.jpg"
+    },
     "creation_date": 1606202561,
     "content": {
       "original_str":
@@ -2788,7 +2565,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "2fa0a646-2e28-11eb-bd10-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606203569,
         "content": {
           "original_str":
@@ -2808,7 +2592,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "1167a8b2-2e2a-11eb-9060-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "ad3e61b4-6e76-11ea-b5b6-0242ac120004"},
+        "sender": {
+          "userId": "ad3e61b4-6e76-11ea-b5b6-0242ac120004",
+          "username": "tlcong",
+          "firstname": "Tuan",
+          "lastname": "LE CONG",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/0445600aa913da15615fb65310f3e346.jpg"
+        },
         "creation_date": 1606204378,
         "content": {
           "original_str": "Thanks!",
@@ -2823,7 +2614,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "32a8951a-2e28-11eb-946d-0242ac120004",
     "responses_count": 5,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1606203574,
     "content": {
       "original_str": "Hello team ! :)",
@@ -2842,7 +2640,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "1961fe04-2e30-11eb-84b0-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606206968,
         "content": {
           "prepared": [
@@ -2866,7 +2671,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "2882159a-2e30-11eb-859f-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606206993,
         "content": {
           "original_str":
@@ -2884,7 +2696,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "388642ea-2e30-11eb-b01a-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606207020,
         "content": {
           "original_str": "(or is it a twake issue?)",
@@ -2897,7 +2716,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "7d2326ca-2e30-11eb-92dd-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606207135,
         "content": {
           "original_str":
@@ -2916,7 +2742,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "bdc44024-2e30-11eb-8e76-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606207244,
         "content": {
           "prepared": [
@@ -2942,7 +2775,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "2229d696-2e31-11eb-abba-0242ac120004",
     "responses_count": 3,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1606207412,
     "content": {
       "original_str":
@@ -2965,7 +2805,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "ac9fd3e6-2e33-11eb-9187-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606208503,
         "content": {
           "original_str": "of course we can change",
@@ -2978,7 +2825,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "b0807402-2e33-11eb-beb2-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606208510,
         "content": {
           "original_str": "which link for the daily?",
@@ -2991,7 +2845,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "bafef93a-2e33-11eb-81f8-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606208528,
         "content": {
           "original_str": "https://jitsi.linagora.com/Twake",
@@ -3086,7 +2947,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "1c0dd126-2ef0-11eb-83de-0242ac120004",
     "responses_count": 1,
-    "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+    "sender": {
+      "userId": "76990a70-e603-11e9-a066-0242ac120004",
+      "username": "chamerling",
+      "firstname": "Christophe",
+      "lastname": "Hamerling",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+    },
     "creation_date": 1606289436,
     "content": {
       "original_str":
@@ -3105,7 +2973,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "e1a50e9a-2ef5-11eb-b66c-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606291915,
         "content": {
           "original_str": "Good exams ! 🩺",
@@ -3120,7 +2995,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "eb4eee8e-2ef5-11eb-8160-0242ac120004",
     "responses_count": null,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1606291931,
     "content": {
       "original_str": "Hello team ! 🚀",
@@ -3143,7 +3025,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "06ce3600-2ef7-11eb-9a52-0242ac120004",
     "responses_count": 1,
-    "sender": {"user_id": "d3f576e6-6dca-11ea-ae8e-0242ac120004"},
+    "sender": {
+      "userId": "d3f576e6-6dca-11ea-ae8e-0242ac120004",
+      "username": "aduprat",
+      "firstname": "Duprat",
+      "lastname": "Antoine",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/2fcd6593b7f24ace8b3cbb2df25b35be.png"
+    },
     "creation_date": 1606292407,
     "content": {
       "original_str":
@@ -3162,7 +3051,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "c9f00c8a-2ef7-11eb-b990-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606292734,
         "content": {
           "original_str": "Great ! :D ",
@@ -3179,7 +3075,14 @@ const DUMMY_MESSAGES = [
   {
     "id": "d96c69c4-2efc-11eb-9363-0242ac120004",
     "responses_count": 1,
-    "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
     "creation_date": 1606294907,
     "content": {
       "original_str": "Daily ! 📅",
@@ -3193,7 +3096,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "d3de8fc8-2efc-11eb-8be8-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "f5407788-47d8-11e9-9635-0242ac120005"},
+        "sender": {
+          "userId": "f5407788-47d8-11e9-9635-0242ac120005",
+          "username": "benoit",
+          "firstname": "Benoît",
+          "lastname": "TALLANDIER",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/685aab560bb0d073a65f580120c364d4.png"
+        },
         "creation_date": 1606294898,
         "content": {
           "original_str": "Start the daily without me",
@@ -3228,7 +3138,13 @@ const DUMMY_MESSAGES = [
       {
         "id": "f54924a2-2f3d-11eb-8f5a-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
         "creation_date": 1606322871,
         "content": {
           "original_str": "WDYT guys ? :)",
@@ -3242,7 +3158,13 @@ const DUMMY_MESSAGES = [
       {
         "id": "0465643c-2f3e-11eb-8a03-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
         "creation_date": 1606322897,
         "content": {"original_str": "", "prepared": []},
         "reactions": null
@@ -3250,7 +3172,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "27df99fa-2f3e-11eb-ac71-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606322956,
         "content": {
           "original_str": "This is nice, thx a lot",
@@ -3263,7 +3192,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "7be1913e-2f3e-11eb-bae9-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606323097,
         "content": {
           "original_str":
@@ -3281,7 +3217,13 @@ const DUMMY_MESSAGES = [
       {
         "id": "e01dbbfa-2f3e-11eb-a5c7-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
         "creation_date": 1606323265,
         "content": {
           "original_str": "Like this ? I'm pushing this right now. :)",
@@ -3298,7 +3240,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "1670669e-2f3f-11eb-8364-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606323357,
         "content": {
           "original_str": "Thanks, that's better.",
@@ -3311,7 +3260,13 @@ const DUMMY_MESSAGES = [
       {
         "id": "8f254d66-2f3f-11eb-ae70-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"},
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
         "creation_date": 1606323559,
         "content": {
           "original_str": "All done, i think you can merge this Romaric 👍 ",
@@ -3329,7 +3284,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "55b6ff0a-2f41-11eb-bb13-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "4db463b4-4745-11e9-8c59-0242ac120005"},
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
         "creation_date": 1606324322,
         "content": {
           "original_str":
@@ -3371,7 +3333,14 @@ const DUMMY_MESSAGES = [
       {
         "id": "859c14c6-2f41-11eb-aba9-0242ac120004",
         "responses_count": null,
-        "sender": {"user_id": "76990a70-e603-11e9-a066-0242ac120004"},
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
         "creation_date": 1606324402,
         "content": {
           "original_str": "de nada, I am also here to raise such points",
@@ -3394,6 +3363,1246 @@ const DUMMY_MESSAGES = [
       "img": "https://pngimg.com/imgs/logos/github/"
     },
     "creation_date": 1606324912,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": []
+  },
+  {
+    "id": "6645676a-2f93-11eb-a7db-0242ac120004",
+    "responses_count": 2,
+    "sender": {
+      "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+      "username": "tthnguyen",
+      "firstname": "Ha",
+      "lastname": "Nguyen",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+    },
+    "creation_date": 1606359568,
+    "content": {
+      "original_str":
+          "Hi Twake team, I don't see backlogs in QA:Testing column recently? May I know your plan please?",
+      "prepared": [
+        {
+          "type": "text",
+          "content": "Hi Twake team, I don't see backlogs in QA:"
+        },
+        {
+          "type": "text",
+          "content": "Testing column recently? May I know your plan please?"
+        }
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "ce73756e-2fbd-11eb-ae71-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606377782,
+        "content": {
+          "original_str":
+              "You should not see anything for the next 1 or two weeks, we try our best to finish the big step we are working on from the last 6 weeks. Expect a lot of user stories to test in two weeks. Unfortunately we are not ready to start the tests yet.\nOf course as soon as you can start testing something, I'll notify you.\nThanks Ha for asking and sorry for not keeping you updated :)",
+          "prepared": [
+            {
+              "type": "text",
+              "content":
+                  "You should not see anything for the next 1 or two weeks, we try our best to finish the big step we are working on from the last 6 weeks. Expect a lot of user stories to test in two weeks. Unfortunately we are not ready to start the tests yet."
+            },
+            {"type": "br"},
+            {
+              "type": "text",
+              "content":
+                  "Of course as soon as you can start testing something, I'll notify you."
+            },
+            {"type": "br"},
+            {
+              "type": "text",
+              "content":
+                  "Thanks Ha for asking and sorry for not keeping you updated "
+            },
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "95ffc262-2fc9-11eb-a1bf-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
+        "creation_date": 1606382841,
+        "content": {
+          "original_str": "thank you Romaric",
+          "prepared": [
+            {"type": "text", "content": "thank you Romaric"}
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "66e01622-2fbe-11eb-bae7-0242ac120004",
+    "responses_count": 8,
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
+    "creation_date": 1606378038,
+    "content": {
+      "original_str":
+          "Hello team, I will not be here for our daily, so don't wait for me!\nIt would be very nice if @aimanrkyek:009b6f1c-e606-11ea-b45b-0242ac120004 you could open your PR today on channels options. @chamerling:76990a70-e603-11e9-a066-0242ac120004 if you want us to discuss the PR you opened we can do it this afternoon after 1pm.",
+      "prepared": [
+        {
+          "type": "text",
+          "content":
+              "Hello team, I will not be here for our daily, so don't wait for me!"
+        },
+        {"type": "br"},
+        {"type": "text", "content": "It would be very nice if "},
+        {
+          "type": "user",
+          "content": "aimanrkyek",
+          "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
+        },
+        {
+          "type": "text",
+          "content": " you could open your PR today on channels options. "
+        },
+        {
+          "type": "user",
+          "content": "chamerling",
+          "id": "76990a70-e603-11e9-a066-0242ac120004"
+        },
+        {
+          "type": "text",
+          "content":
+              " if you want us to discuss the PR you opened we can do it this afternoon after 1pm."
+        }
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "4d9b1954-2fbf-11eb-a727-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606378425,
+        "content": {
+          "original_str":
+              "Hello, OK we will see if we have to discuss about it, still things to do this morning on cassandra tables and tests and it should be OK",
+          "prepared": [
+            {
+              "type": "text",
+              "content":
+                  "Hello, OK we will see if we have to discuss about it, still things to do this morning on cassandra tables and tests and it should be OK"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "6cd0b3ce-2fbf-11eb-907d-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606378477,
+        "content": {
+          "original_str":
+              "I have an appointment with doctor at 9:45am, I do not know if I will be on time for the daily (you know, doctors...)",
+          "prepared": [
+            {
+              "type": "text",
+              "content": "I have an appointment with doctor at 9:"
+            },
+            {
+              "type": "text",
+              "content":
+                  "45am, I do not know if I will be on time for the daily (you know, doctors...)"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "20c28f56-2fc0-11eb-b36d-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606378779,
+        "content": {
+          "original_str":
+              "Ok, @benoit:f5407788-47d8-11e9-9635-0242ac120005 this will be a little daily :)\n@stephanevieira75:2fdf4d12-6e7d-11ea-ae40-0242ac120004 the next jobs I have for you are:\n- change your channel editor popup to allow edition of channels (currently the fields are filled up but when I press enter it creates a second channel instead of just editing it). \n- change the Channel Members popup to use the useWatcher like you did on the workspace channel list,\n- change the tabs listing to use the useWatcher like you did on the workspace channel list (don't waste time with the applications that are not showing up, put an hardcoded application id for now)\nThanks 😇 ",
+          "prepared": [
+            {"type": "text", "content": "Ok, "},
+            {
+              "type": "user",
+              "content": "benoit",
+              "id": "f5407788-47d8-11e9-9635-0242ac120005"
+            },
+            {"type": "text", "content": " this will be a little daily "},
+            {"type": "emoji", "content": "slight_smile"},
+            {"type": "br"},
+            {
+              "type": "user",
+              "content": "stephanevieira75",
+              "id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"
+            },
+            {"type": "text", "content": " the next jobs I have for you are:"},
+            {"type": "br"},
+            {
+              "type": "text",
+              "content":
+                  "- change your channel editor popup to allow edition of channels (currently the fields are filled up but when I press enter it creates a second channel instead of just editing it). "
+            },
+            {"type": "br"},
+            {
+              "type": "text",
+              "content":
+                  "- change the Channel Members popup to use the useWatcher like you did on the workspace channel list,"
+            },
+            {"type": "br"},
+            {
+              "type": "text",
+              "content":
+                  "- change the tabs listing to use the useWatcher like you did on the workspace channel list (don't waste time with the applications that are not showing up, put an hardcoded application id for now)"
+            },
+            {"type": "br"},
+            {"type": "text", "content": "Thanks "},
+            {"type": "emoji", "content": "innocent"},
+            {"type": "text", "content": " "}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "b70c5f4e-2fc7-11eb-be32-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606382038,
+        "content": {
+          "original_str": "Hello",
+          "prepared": [
+            {"type": "text", "content": "Hello"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "ba6e3c98-2fc7-11eb-8118-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606382043,
+        "content": {
+          "original_str": "is it finished",
+          "prepared": [
+            {"type": "text", "content": "is it finished"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "f00ae702-2fc7-11eb-a325-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606382133,
+        "content": {
+          "original_str":
+              "So here is my status: As said, I am almost done with members. I am currently fixing things to make E2E tests running. I found something which should work. Then I need to implement the API with mongo, should be quick since it is simpler than cassandra",
+          "prepared": [
+            {"type": "text", "content": "So here is my status:"},
+            {
+              "type": "text",
+              "content":
+                  " As said, I am almost done with members. I am currently fixing things to make E2E tests running. I found something which should work. Then I need to implement the API with mongo, should be quick since it is simpler than cassandra"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "6811b3e6-2fca-11eb-93bf-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "username": "Github",
+          "img": "https://pngimg.com/imgs/logos/github/"
+        },
+        "creation_date": 1606383194,
+        "content": {
+          "prepared": [
+            {"type": "unparseable"}
+          ]
+        },
+        "reactions": {
+          ":pray:": {
+            "users": ["4db463b4-4745-11e9-8c59-0242ac120005"],
+            "count": 1
+          }
+        }
+      },
+      {
+        "id": "13d8e2da-2fd5-11eb-807a-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "username": "Github",
+          "img": "https://pngimg.com/imgs/logos/github/"
+        },
+        "creation_date": 1606387777,
+        "content": {
+          "prepared": [
+            {"type": "unparseable"}
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "2c3d6c2c-2fd2-11eb-87fc-0242ac120004",
+    "responses_count": 2,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606386529,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "69608f94-2fd2-11eb-8990-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606386632,
+        "content": {
+          "original_str":
+              "@chamerling:76990a70-e603-11e9-a066-0242ac120004 there is merge conflicts, I cannot do them on my side.\nIf you want to discuss I'm available right now :)",
+          "prepared": [
+            {
+              "type": "user",
+              "content": "chamerling",
+              "id": "76990a70-e603-11e9-a066-0242ac120004"
+            },
+            {
+              "type": "text",
+              "content":
+                  " there is merge conflicts, I cannot do them on my side."
+            },
+            {"type": "br"},
+            {
+              "type": "text",
+              "content": "If you want to discuss I'm available right now "
+            },
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "9af97c5a-2fd7-11eb-b949-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606388862,
+        "content": {
+          "original_str": "I rebased and pushed",
+          "prepared": [
+            {"type": "text", "content": "I rebased and pushed"}
+          ]
+        },
+        "reactions": {
+          ":pray:": {
+            "users": ["4db463b4-4745-11e9-8c59-0242ac120005"],
+            "count": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "feeab272-2fd4-11eb-b859-0242ac120004",
+    "responses_count": 3,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606387742,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "66f39866-2fd5-11eb-ac59-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606387916,
+        "content": {
+          "original_str": "Thanks :)",
+          "prepared": [
+            {"type": "text", "content": "Thanks "},
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "aac0bb1e-2fd5-11eb-9229-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606388030,
+        "content": {
+          "original_str":
+              "@aimanrkyek:009b6f1c-e606-11ea-b45b-0242ac120004 this is good but how do we put a channel to favorite in this case? Can we change it to a classic \"...\" with a three option menu (add to favorite, mark as unread/read, leave channel)",
+          "prepared": [
+            {
+              "type": "user",
+              "content": "aimanrkyek",
+              "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
+            },
+            {
+              "type": "text",
+              "content":
+                  " this is good but how do we put a channel to favorite in this case? Can we change it to a classic \"...\" with a three option menu (add to favorite, mark as unread/read, leave channel)"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "41cf938c-2ff8-11eb-821b-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
+        "creation_date": 1606402886,
+        "content": {
+          "original_str":
+              "Updated https://github.com/TwakeApp/Twake/pull/590/files",
+          "prepared": [
+            {"type": "text", "content": "Updated "},
+            {
+              "type": "url",
+              "content": "https://github.com/TwakeApp/Twake/pull/590/files"
+            }
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "03a22854-2fda-11eb-9b61-0242ac120004",
+    "responses_count": 10,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606389897,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "36e81ace-2fe0-11eb-9523-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "username": "Github",
+          "img": "https://pngimg.com/imgs/logos/github/"
+        },
+        "creation_date": 1606392560,
+        "content": {
+          "prepared": [
+            {"type": "unparseable"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "19606be0-2fe1-11eb-8c59-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "username": "Github",
+          "img": "https://pngimg.com/imgs/logos/github/"
+        },
+        "creation_date": 1606392940,
+        "content": {
+          "prepared": [
+            {"type": "unparseable"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "4a8bd11e-2fe1-11eb-a55e-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606393022,
+        "content": {
+          "original_str":
+              "@aimanrkyek:009b6f1c-e606-11ea-b45b-0242ac120004 and @stephanevieira75:2fdf4d12-6e7d-11ea-ae40-0242ac120004 I merged a big code change as I moved files in the channel bar and channel headers, please merge with caution, and don't wait to much to do it :)",
+          "prepared": [
+            {
+              "type": "user",
+              "content": "aimanrkyek",
+              "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
+            },
+            {"type": "text", "content": " and "},
+            {
+              "type": "user",
+              "content": "stephanevieira75",
+              "id": "2fdf4d12-6e7d-11ea-ae40-0242ac120004"
+            },
+            {
+              "type": "text",
+              "content":
+                  " I merged a big code change as I moved files in the channel bar and channel headers, please merge with caution, and don't wait to much to do it "
+            },
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "23cd6e52-2feb-11eb-8f96-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
+        "creation_date": 1606397252,
+        "content": {
+          "original_str":
+              "@romaricmourgues:4db463b4-4745-11e9-8c59-0242ac120005  @aimanrkyek:009b6f1c-e606-11ea-b45b-0242ac120004  after pulling, i had an error in `ChannelUser.tsx`.\nThis happen because the name of the file is `directChannel.tsx`, i will fix this in my PR 👍 ",
+          "prepared": [
+            {
+              "type": "user",
+              "content": "romaricmourgues",
+              "id": "4db463b4-4745-11e9-8c59-0242ac120005"
+            },
+            {"type": "text", "content": "  "},
+            {
+              "type": "user",
+              "content": "aimanrkyek",
+              "id": "009b6f1c-e606-11ea-b45b-0242ac120004"
+            },
+            {"type": "text", "content": "  after pulling, i had an error in "},
+            {"type": "unparseable"},
+            {"type": "text", "content": "."},
+            {"type": "br"},
+            {
+              "type": "text",
+              "content": "This happen because the name of the file is "
+            },
+            {"type": "unparseable"},
+            {"type": "text", "content": ", i will fix this in my PR "},
+            {"type": "emoji", "content": "thumbsup"},
+            {"type": "text", "content": " "}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "1761a7f2-2fee-11eb-b403-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606398520,
+        "content": {
+          "original_str": "Ok, sorry for this :)",
+          "prepared": [
+            {"type": "text", "content": "Ok, sorry for this "},
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "376aa30a-2fee-11eb-bcdf-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
+        "creation_date": 1606398574,
+        "content": {
+          "original_str": "as you wish, i just finished the channel edition :)",
+          "prepared": [
+            {
+              "type": "text",
+              "content": "as you wish, i just finished the channel edition "
+            },
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "3feed7e4-2fee-11eb-9ec6-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606398588,
+        "content": {
+          "original_str": "You can do the fix :)",
+          "prepared": [
+            {"type": "text", "content": "You can do the fix "},
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": {
+          ":+1:": {
+            "users": ["2fdf4d12-6e7d-11ea-ae40-0242ac120004"],
+            "count": 1
+          }
+        }
+      },
+      {
+        "id": "90cf8456-2fee-11eb-8ca3-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "2fdf4d12-6e7d-11ea-ae40-0242ac120004",
+          "username": "stephanevieira75",
+          "firstname": "Stéphane",
+          "lastname": "Vieira",
+          "thumbnail": ""
+        },
+        "creation_date": 1606398724,
+        "content": {
+          "original_str":
+              "Also in `Collections.ts` there is this code spamming the console, can i comment this ? 😄 ",
+          "prepared": [
+            {"type": "text", "content": "Also in "},
+            {"type": "unparseable"},
+            {
+              "type": "text",
+              "content":
+                  " there is this code spamming the console, can i comment this ? "
+            },
+            {"type": "emoji", "content": "smile"},
+            {"type": "text", "content": " "}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "9d62c8e0-2fee-11eb-b056-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606398745,
+        "content": {
+          "original_str": "Sh** yes of course you can too!",
+          "prepared": [
+            {"type": "text", "content": "Sh**"},
+            {"type": "text", "content": " yes of course you can too!"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "58a06050-2ff8-11eb-8c3c-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "009b6f1c-e606-11ea-b45b-0242ac120004",
+          "username": "aimanrkyek",
+          "firstname": "Aiman",
+          "lastname": "R'KYEK ",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/ba53f3b9d9a36698ed80ce7ebbe258d7.png"
+        },
+        "creation_date": 1606402925,
+        "content": {
+          "original_str":
+              "I just saw your discussion.. i fixed that in my PR 🤷‍♂️  ",
+          "prepared": [
+            {
+              "type": "text",
+              "content": "I just saw your discussion.. i fixed that in my PR "
+            },
+            {"type": "emoji", "content": "man_shrugging"},
+            {"type": "text", "content": "  "}
+          ]
+        },
+        "reactions": {
+          ":+1:": {
+            "users": ["2fdf4d12-6e7d-11ea-ae40-0242ac120004"],
+            "count": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "d14b5286-2fed-11eb-aff6-0242ac120004",
+    "responses_count": null,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606398403,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": {
+      ":rocket:": {
+        "users": ["2fdf4d12-6e7d-11ea-ae40-0242ac120004"],
+        "count": 1
+      }
+    },
+    "responses": []
+  },
+  {
+    "id": "87c9f246-2ff9-11eb-bdff-0242ac120004",
+    "responses_count": null,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606403433,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": []
+  },
+  {
+    "id": "ddb36704-2fff-11eb-a81d-0242ac120004",
+    "responses_count": null,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606406154,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": []
+  },
+  {
+    "id": "32966016-3008-11eb-878e-0242ac120004",
+    "responses_count": 3,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606409733,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "77f289b4-3008-11eb-9378-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606409849,
+        "content": {
+          "original_str":
+              "This is a first one @romaricmourgues:4db463b4-4745-11e9-8c59-0242ac120005. Still tiny things to check but you can merge it when OK. I will do other fixes in other PR",
+          "prepared": [
+            {"type": "text", "content": "This is a first one "},
+            {
+              "type": "user",
+              "content": "romaricmourgues",
+              "id": "4db463b4-4745-11e9-8c59-0242ac120005."
+            },
+            {
+              "type": "text",
+              "content":
+                  " Still tiny things to check but you can merge it when OK. I will do other fixes in other PR"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "579122f4-300b-11eb-8c8a-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606411083,
+        "content": {
+          "original_str": "Thanks :)",
+          "prepared": [
+            {"type": "text", "content": "Thanks "},
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "62ff40b0-300d-11eb-abd1-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "username": "Github",
+          "img": "https://pngimg.com/imgs/logos/github/"
+        },
+        "creation_date": 1606411961,
+        "content": {
+          "prepared": [
+            {"type": "unparseable"}
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "aadfe032-301d-11eb-a988-0242ac120004",
+    "responses_count": 1,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606418954,
+    "content": {
+      "prepared": [
+        {"type": "unparseable"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "cdb43b80-301d-11eb-8fe4-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606419012,
+        "content": {
+          "original_str": "Next cleaning iteration :)",
+          "prepared": [
+            {"type": "text", "content": "Next cleaning iteration "},
+            {"type": "emoji", "content": "slight_smile"}
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "1d7a67f4-3085-11eb-b822-0242ac120004",
+    "responses_count": 2,
+    "sender": {
+      "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+      "username": "romaricmourgues",
+      "firstname": "Romaric ",
+      "lastname": "Mourgues",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+    },
+    "creation_date": 1606463384,
+    "content": {
+      "original_str": "Hello super-team! :)",
+      "prepared": [
+        {"type": "text", "content": "Hello super-team! "},
+        {"type": "emoji", "content": "slight_smile"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "5f59f6d2-3088-11eb-970d-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "d3f576e6-6dca-11ea-ae8e-0242ac120004",
+          "username": "aduprat",
+          "firstname": "Duprat",
+          "lastname": "Antoine",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/2fcd6593b7f24ace8b3cbb2df25b35be.png"
+        },
+        "creation_date": 1606464783,
+        "content": {
+          "prepared": [
+            {
+              "type": "system",
+              "content": [
+                "@aduprat sent a GIF ",
+                {"type": "bold", "content": "#hero"}
+              ]
+            },
+            {"type": "br"},
+            {
+              "type": "image",
+              "src":
+                  "https://media3.giphy.com/media/ek4CUx2FONgHaMz9V5/giphy-downsized-medium.gif"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "53ab1558-308a-11eb-aeb5-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "76990a70-e603-11e9-a066-0242ac120004",
+          "username": "chamerling",
+          "firstname": "Christophe",
+          "lastname": "Hamerling",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/4e89ea344ef7e49680ef178d68ef34a5.jpg"
+        },
+        "creation_date": 1606465623,
+        "content": {
+          "prepared": [
+            {
+              "type": "system",
+              "content": [
+                "@chamerling sent a GIF ",
+                {"type": "bold", "content": "#superman"}
+              ]
+            },
+            {"type": "br"},
+            {
+              "type": "image",
+              "src": "https://media4.giphy.com/media/pqFbHWj0vRqmY/giphy.gif"
+            }
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "eb76d1f8-3088-11eb-9dd4-0242ac120004",
+    "responses_count": 5,
+    "sender": {
+      "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+      "username": "tthnguyen",
+      "firstname": "Ha",
+      "lastname": "Nguyen",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+    },
+    "creation_date": 1606465018,
+    "content": {
+      "original_str": "Hi team",
+      "prepared": [
+        {"type": "text", "content": "Hi team"}
+      ]
+    },
+    "reactions": null,
+    "responses": [
+      {
+        "id": "ff18dcba-3088-11eb-bcb5-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
+        "creation_date": 1606465051,
+        "content": {
+          "original_str":
+              "Tung (our devopps) just told me that his messages in Twake disappeared again",
+          "prepared": [
+            {
+              "type": "text",
+              "content":
+                  "Tung (our devopps) just told me that his messages in Twake disappeared again"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "07c1d740-3089-11eb-afbe-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
+        "creation_date": 1606465066,
+        "content": {
+          "original_str": "and he encountered the issues a lot of times",
+          "prepared": [
+            {
+              "type": "text",
+              "content": "and he encountered the issues a lot of times"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "0ceec8f4-3089-11eb-aaa2-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
+        "creation_date": 1606465075,
+        "content": {
+          "original_str": "the last time was yesterday",
+          "prepared": [
+            {"type": "text", "content": "the last time was yesterday"}
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "18d9ffe4-3089-11eb-ba83-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "023cc4e8-6e82-11ea-9fc9-0242ac120004",
+          "username": "tthnguyen",
+          "firstname": "Ha",
+          "lastname": "Nguyen",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/782b0205895a63b01de1a8534890f6ef.jpg"
+        },
+        "creation_date": 1606465095,
+        "content": {
+          "original_str": "the same issue that we talked about previously",
+          "prepared": [
+            {
+              "type": "text",
+              "content": "the same issue that we talked about previously"
+            }
+          ]
+        },
+        "reactions": null
+      },
+      {
+        "id": "be7e9466-308c-11eb-a137-0242ac120004",
+        "responses_count": null,
+        "sender": {
+          "userId": "4db463b4-4745-11e9-8c59-0242ac120005",
+          "username": "romaricmourgues",
+          "firstname": "Romaric ",
+          "lastname": "Mourgues",
+          "thumbnail":
+              "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/9aeccbb9d4e792a9d63cfe5ca0c5cd21.png"
+        },
+        "creation_date": 1606466661,
+        "content": {
+          "original_str":
+              "Thanks Ha, we did an update on our websockets so we hope it will solve the issue on our next update!",
+          "prepared": [
+            {
+              "type": "text",
+              "content":
+                  "Thanks Ha, we did an update on our websockets so we hope it will solve the issue on our next update!"
+            }
+          ]
+        },
+        "reactions": null
+      }
+    ]
+  },
+  {
+    "id": "459bb0b4-308d-11eb-a3c7-0242ac120004",
+    "responses_count": null,
+    "sender": {
+      "userId": "f5407788-47d8-11e9-9635-0242ac120005",
+      "username": "benoit",
+      "firstname": "Benoît",
+      "lastname": "TALLANDIER",
+      "thumbnail":
+          "https://s3.eu-west-3.amazonaws.com/twake.eu-west-3/public/uploads/prfl/685aab560bb0d073a65f580120c364d4.png"
+    },
+    "creation_date": 1606466888,
+    "content": {
+      "original_str":
+          "Hello !! \nCan you vote here plz? ;) \nhttps://www.reddit.com/r/InternetIsBeautiful/comments/k1xlwq/we_made_an_allinone_open_source_app_to_replace/",
+      "prepared": [
+        {"type": "text", "content": "Hello !! "},
+        {"type": "br"},
+        {"type": "text", "content": "Can you vote here plz? "},
+        {"type": "emoji", "content": "wink"},
+        {"type": "text", "content": " "},
+        {"type": "br"},
+        {
+          "type": "url",
+          "content":
+              "https://www.reddit.com/r/InternetIsBeautiful/comments/k1xlwq/we_made_an_allinone_open_source_app_to_replace/"
+        }
+      ]
+    },
+    "reactions": null,
+    "responses": []
+  },
+  {
+    "id": "18ddd180-309a-11eb-bb89-0242ac120004",
+    "responses_count": null,
+    "sender": {
+      "username": "Github",
+      "img": "https://pngimg.com/imgs/logos/github/"
+    },
+    "creation_date": 1606472396,
     "content": {
       "prepared": [
         {"type": "unparseable"}

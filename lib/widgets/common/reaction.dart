@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/config/styles_config.dart';
+import 'package:twake_mobile/models/message.dart';
+import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/utils/emojis.dart';
 
 class Reaction extends StatefulWidget {
@@ -13,14 +16,16 @@ class Reaction extends StatefulWidget {
 }
 
 class _ReactionState extends State<Reaction> {
-  bool incremented = false;
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        setState(() {
-          incremented = !incremented;
-        });
+        Provider.of<Message>(context, listen: false).updateReactions(
+          widget.reaction,
+          Provider.of<ProfileProvider>(context, listen: false)
+              .currentProfile
+              .userId,
+        );
       },
       child: Container(
         margin: EdgeInsets.only(right: Dim.wm2),
@@ -37,7 +42,7 @@ class _ReactionState extends State<Reaction> {
               Text(Emojis.getClosestMatch(widget.reaction)),
               SizedBox(width: Dim.widthMultiplier),
               Text(
-                '${widget.count + (incremented ? 1 : 0)}',
+                '${widget.count}',
                 style: StylesConfig.miniPurple,
               ),
             ],

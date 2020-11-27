@@ -13,6 +13,6 @@ class EmojiPickerKeyboard extends StatelessWidget {
   Widget build(BuildContext context) => EmojiPicker(
         rows: 4,
         columns: 9,
-        onEmojiSelected: (emoji, category) => onEmojiPicked(emoji.emoji),
+        onEmojiSelected: (emoji, category) => onEmojiPicked(emoji),
       );
 }

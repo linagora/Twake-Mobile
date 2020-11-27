@@ -84,7 +84,10 @@ class MessagesGrouppedList extends StatelessWidget {
             );
           },
           itemBuilder: (_, Message message) {
-            return MessageTile(message);
+            return ChangeNotifierProvider.value(
+              value: message,
+              child: MessageTile(message),
+            );
           },
         ),
       ),

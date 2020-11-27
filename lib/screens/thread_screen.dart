@@ -60,7 +60,11 @@ class ThreadScreen extends StatelessWidget {
           children: [
             Container(
               child: SingleChildScrollView(
-                  child: MessageTile(message, isThread: true)),
+                child: ChangeNotifierProvider.value(
+                  value: message,
+                  child: MessageTile(message, isThread: true),
+                ),
+              ),
               padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
               height: Dim.heightPercent(19),
             ),

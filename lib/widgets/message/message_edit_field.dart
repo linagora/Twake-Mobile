@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/message.dart';
@@ -66,9 +65,9 @@ class _MessageEditField extends State<MessageEditField> {
     super.initState();
   }
 
-  void onEmojiPicked(String emoji) {
+  void onEmojiPicked(emoji) {
     setState(() {
-      _controller.text += emoji;
+      _controller.text += emoji.emoji;
     });
   }
 

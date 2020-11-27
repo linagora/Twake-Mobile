@@ -44,6 +44,7 @@ class MessageTile extends StatelessWidget {
             builder: (context) {
               return MessageModalSheet(
                 message,
+                isThread: isThread,
                 onReply: onReply,
                 onEdit: onEdit,
               );
@@ -69,77 +70,63 @@ class MessageTile extends StatelessWidget {
             children: [
               ImageAvatar(message.sender.img),
               SizedBox(width: Dim.wm2),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: Dim.widthPercent(83),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          message.sender.firstName != null
-                              ? '${message.sender.firstName} ${message.sender.lastName}'
-                              : message.sender.username,
-                          style: Theme.of(context).textTheme.bodyText1,
-                        ),
-                        Text(
-                          ' - Online', // TODO figure out how to get status of user
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              isThread
-                                  ? DateFormatter.getVerboseDateTime(
-                                      message.creationDate)
-                                  : DateFormatter.getVerboseTime(
-                                      message.creationDate),
-                              style: Theme.of(context).textTheme.subtitle2,
+              Consumer<Message>(
+                builder: (context, message, _) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: Dim.widthPercent(83),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            message.sender.firstName != null
+                                ? '${message.sender.firstName} ${message.sender.lastName}'
+                                : message.sender.username,
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                isThread
+                                    ? DateFormatter.getVerboseDateTime(
+                                        message.creationDate)
+                                    : DateFormatter.getVerboseTime(
+                                        message.creationDate),
+                                style: Theme.of(context).textTheme.subtitle2,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
+                    Container(
                       padding: EdgeInsets.only(top: Dim.heightMultiplier),
                       width: Dim.widthPercent(83),
-                      child: Parser(message.content.prepared).render(context)
-                      // child: Text(
-                      //   message.content.originalStr ?? '',
-                      //   softWrap: true,
-                      //   style: Theme.of(context).textTheme.bodyText2,
-                      // ),
-                      ),
-                  SizedBox(height: Dim.hm2),
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (message.reactions != null)
-                        ...(message.reactions as Map<String, dynamic>)
-                            .keys
-                            .map((r) {
-                          return Reaction(
-                            r,
-                            (message.reactions as Map<String, dynamic>)[r]
-                                ['count'],
-                          );
-                        }),
-                      if (message.responsesCount != null && !isThread)
-                        Text(
-                          'See all answers (${message.responsesCount})',
-                          style: StylesConfig.miniPurple,
-                        ),
-                    ],
-                  ),
-                  // trailing: Text(
-                  // DateFormatter.getVerboseDateTime(message.creationDate),
-                  // style: Theme.of(context).textTheme.subtitle2,
-                  // ),
-                ],
+                      child: Parser(message.content.prepared).render(context),
+                    ),
+                    SizedBox(height: Dim.hm2),
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        if (message.reactions != null)
+                          ...message.reactions.keys.map((r) {
+                            return Reaction(
+                              r,
+                              message.reactions[r]['count'],
+                            );
+                          }),
+                        if (message.responsesCount != null && !isThread)
+                          Text(
+                            'See all answers (${message.responsesCount})',
+                            style: StylesConfig.miniPurple,
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ]),
       ),

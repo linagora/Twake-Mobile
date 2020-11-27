@@ -19,7 +19,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     content: json['content'] == null
         ? null
         : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
-    reactions: json['reactions'],
+    reactions: json['reactions'] as Map<String, dynamic>,
     responses: (json['responses'] as List)
         ?.map((e) =>
             e == null ? null : Message.fromJson(e as Map<String, dynamic>))
