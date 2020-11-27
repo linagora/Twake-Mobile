@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/models/message.dart';
@@ -16,7 +15,6 @@ class MessageEditField extends StatefulWidget {
 }
 
 class _MessageEditField extends State<MessageEditField> {
-  bool _isFocused = false;
   bool _emojiVisible = false;
   bool _keyboardVisible = false;
   bool _canSend = false;
@@ -25,18 +23,17 @@ class _MessageEditField extends State<MessageEditField> {
 
   /// Hide keyboard when showing emoji board,
   /// make sure we always get the focus on emoji board when clicked
-  Future<void> onEmojiClicked() async {
-    if (_keyboardVisible) {
-      await SystemChannels.textInput.invokeMethod('TextInput.hide');
-      await Future.delayed(Duration(milliseconds: 100));
-    } else if (_emojiVisible) {
-      _focus.requestFocus();
-    }
+  Future<void> toggleEmojiBoard() async {
+    print('removing focus');
+    FocusScope.of(context).unfocus();
+
+    setState(() {
+      _emojiVisible = !_emojiVisible;
+    });
   }
 
   @override
   void initState() {
-    _focus.addListener(onFocusChange);
     if (widget.message != null) {
       _controller.text = widget.message.content.originalStr;
     }
@@ -53,6 +50,7 @@ class _MessageEditField extends State<MessageEditField> {
     // Make sure that emoji keyboard and ordinary keyboard never
     // happens to be on screen at the same time
     KeyboardVisibility.onChange.listen((bool isKeyboardVisible) {
+      print('SETTING KEYBOARD: $isKeyboardVisible');
       setState(() {
         _keyboardVisible = isKeyboardVisible;
       });
@@ -67,15 +65,9 @@ class _MessageEditField extends State<MessageEditField> {
     super.initState();
   }
 
-  void onEmojiPicked(String emoji) {
+  void onEmojiPicked(emoji) {
     setState(() {
-      _controller.text += emoji;
-    });
-  }
-
-  void onFocusChange() {
-    setState(() {
-      _isFocused = _focus.hasFocus;
+      _controller.text += emoji.emoji;
     });
   }
 
@@ -84,6 +76,58 @@ class _MessageEditField extends State<MessageEditField> {
     _focus.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('REBUILDING FROM SCRATCH');
+    return Column(
+      children: [
+        TextInput(
+          focusNode: _focus,
+          controller: _controller,
+          autofocus: widget.autofocus,
+          emojiVisible: _emojiVisible,
+          keyboardVisible: _keyboardVisible,
+          toggleEmojiBoard: toggleEmojiBoard,
+          onEmojiPicked: onEmojiPicked,
+        ),
+        Offstage(
+          offstage: !_emojiVisible,
+          child: EmojiPickerKeyboard(onEmojiPicked: onEmojiPicked),
+        ),
+      ],
+    );
+  }
+}
+
+class TextInput extends StatelessWidget {
+  final FocusNode focusNode;
+  final TextEditingController controller;
+  final Function toggleEmojiBoard;
+  final Function onEmojiPicked;
+  final bool autofocus;
+  final bool emojiVisible;
+  final bool keyboardVisible;
+  TextInput({
+    this.focusNode,
+    this.controller,
+    this.autofocus,
+    this.emojiVisible,
+    this.keyboardVisible,
+    this.toggleEmojiBoard,
+    this.onEmojiPicked,
+  });
+  Future<void> onEmojiClicked() async {
+    if (emojiVisible) {
+      print('Requesting Focus');
+      focusNode.requestFocus();
+    } else if (keyboardVisible) {
+      // await SystemChannels.textInput.invokeMethod('TextInput.hide');
+      focusNode.unfocus();
+      await Future.delayed(Duration(milliseconds: 30));
+    }
+    toggleEmojiBoard();
   }
 
   @override
@@ -98,9 +142,9 @@ class _MessageEditField extends State<MessageEditField> {
           TextField(
             maxLines: 3,
             minLines: 1,
-            autofocus: widget.autofocus,
-            focusNode: _focus,
-            controller: _controller,
+            autofocus: autofocus,
+            focusNode: focusNode,
+            controller: controller,
             decoration: InputDecoration(
               contentPadding: EdgeInsets.all(Dim.widthMultiplier),
               floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -110,66 +154,47 @@ class _MessageEditField extends State<MessageEditField> {
               ),
             ),
           ),
-          if (_isFocused)
-            Column(
-              children: [
-                SizedBox(height: Dim.heightMultiplier),
-                Row(children: [
-                  _emojiVisible
-                      ? IconButton(
-                          iconSize: Dim.tm3(),
-                          icon: Icon(
-                            Icons.keyboard,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _emojiVisible = false;
-                            });
-                          },
-                        )
-                      : IconButton(
-                          iconSize: Dim.tm3(),
-                          icon: Icon(
-                            Icons.tag_faces,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _emojiVisible = true;
-                            });
-                          },
-                        ),
-                  SizedBox(width: Dim.wm2),
-                  IconButton(
-                    iconSize: Dim.tm3(),
-                    icon: Icon(
-                      Icons.alternate_email,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {},
+          // if (focusNode.hasFocus)
+          Column(
+            children: [
+              SizedBox(height: Dim.heightMultiplier),
+              Row(children: [
+                IconButton(
+                  iconSize: Dim.tm3(),
+                  icon: Icon(
+                    emojiVisible ? Icons.keyboard : Icons.tag_faces,
+                    color: Colors.grey,
                   ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        iconSize: Dim.tm3(),
-                        icon: Transform(
-                            transform: Matrix4.rotationZ(
-                              pi / 4,
-                            ), // rotate 45 degrees cc
-                            child: Icon(Icons.send_sharp)),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ),
-                ]),
-                Offstage(
-                  offstage: _emojiVisible,
-                  child: EmojiPickerKeyboard(onEmojiPicked: onEmojiPicked),
+                  onPressed: onEmojiClicked,
                 ),
-              ],
-            ),
+                SizedBox(width: Dim.wm2),
+                IconButton(
+                  iconSize: Dim.tm3(),
+                  icon: Icon(
+                    Icons.alternate_email,
+                    color: Colors.grey,
+                  ),
+                  onPressed: () {
+                    focusNode.unfocus();
+                  },
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: IconButton(
+                      iconSize: Dim.tm3(),
+                      icon: Transform(
+                          transform: Matrix4.rotationZ(
+                            -pi / 4,
+                          ), // rotate 45 degrees cc
+                          child: Icon(Icons.send_sharp)),
+                      onPressed: () {},
+                    ),
+                  ),
+                ),
+              ]),
+            ],
+          ),
         ],
       ),
     );

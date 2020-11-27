@@ -3,15 +3,13 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'message.g.dart';
 
-// TODO document the model
-
 @JsonSerializable(explicitToJson: true)
-class Message extends JsonSerializable {
+class Message extends JsonSerializable with ChangeNotifier {
   @JsonKey(required: true)
   final String id;
 
   @JsonKey(name: 'responses_count')
-  final int responsesCount;
+  int responsesCount;
 
   @JsonKey(required: true)
   final Sender sender;
@@ -22,9 +20,9 @@ class Message extends JsonSerializable {
   @JsonKey(required: true)
   final MessageTwacode content;
 
-  final dynamic reactions;
+  Map<String, dynamic> reactions;
 
-  final List<Message> responses;
+  List<Message> responses;
 
   @JsonKey(ignore: true)
   String channelId;
@@ -38,6 +36,41 @@ class Message extends JsonSerializable {
     this.reactions,
     this.responses,
   });
+
+  void updateReactions(String emojiCode, String userId) {
+    if (emojiCode == null) return;
+    if (reactions == null) {
+      reactions = {};
+    }
+    // in case if someone already reacted with this emoji, keep working with it
+    if (reactions[emojiCode] != null) {
+      // Get the list of people, who reacted with this emoji
+      List<String> users = reactions[emojiCode]['users'];
+      // If user already reacted with this emoji, then decrement the count
+      // and remove the user from list
+      if (users.contains(userId)) {
+        reactions[emojiCode]['count']--;
+        users.remove(userId);
+        if (users.isEmpty) {
+          reactions.remove(emojiCode);
+        }
+        if (reactions.isEmpty) {
+          reactions = null;
+        }
+      } else {
+        // otherwise increment count and add the user
+        reactions[emojiCode]['count']++;
+        users.add(userId);
+      }
+    } // otherwise create a new entry and populate with data
+    else {
+      reactions[emojiCode] = {
+        'users': [userId],
+        'count': 1,
+      };
+    }
+    notifyListeners();
+  }
 
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation

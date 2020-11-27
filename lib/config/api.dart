@@ -20,7 +20,7 @@ class TwakeApiConfig {
   }
 
   static String get currentProfileMethod {
-    return _HOST + _usersCurrentGet;
+    return _HOST + _usersCurrentGet + '?timezoneoffset=3';
   }
 
   static String workspaceChannelsMethod(String id) {

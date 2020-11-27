@@ -7,9 +7,9 @@ part of 'profile.dart';
 // **************************************************************************
 
 Profile _$ProfileFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['user_id', 'username', 'companies']);
+  $checkKeys(json, requiredKeys: const ['userId', 'username', 'companies']);
   return Profile(
-    userId: json['user_id'] as String,
+    userId: json['userId'] as String,
     username: json['username'] as String,
     companies: (json['companies'] as List)
         ?.map((e) =>
@@ -22,7 +22,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ProfileToJson(Profile instance) => <String, dynamic>{
-      'user_id': instance.userId,
+      'userId': instance.userId,
       'username': instance.username,
       'firstname': instance.firstName,
       'lastname': instance.lastName,

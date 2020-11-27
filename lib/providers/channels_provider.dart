@@ -20,9 +20,11 @@ class ChannelsProvider with ChangeNotifier {
     try {
       /// try to get channels from api
       list = await api.workspaceChannelsGet(workspaceId);
+      print('LOADED channels over NETWORK');
     } catch (error) {
       /// if we fail (network issue), then load channels from local store
       list = await DB.channelsLoad(workspaceId);
+      print('LOADED channels from STORE');
     } finally {
       _items.clear();
       for (var i = 0; i < list.length; i++) {
