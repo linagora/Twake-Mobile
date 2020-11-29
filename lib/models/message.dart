@@ -44,48 +44,54 @@ class Message extends JsonSerializable with ChangeNotifier {
     TwakeApi api,
   }) {
     if (emojiCode == null) return;
-    api.reactionSend(this.channelId, this.id, emojiCode).then((_) {
-      if (reactions == null) {
-        reactions = {};
+    if (reactions == null) {
+      reactions = {};
+    }
+    final oldReactions = Map<String, dynamic>.from(reactions);
+    // If user has already reacted to this message then
+    // we just remove him from reacted users only to readd him
+    // with a different Emoji
+    final previousEmoji = _userReactedWith(emojiCode, userId);
+    if (previousEmoji != null) {
+      List users = reactions[previousEmoji]['users'];
+      reactions[previousEmoji]['count']--;
+      users.remove(userId);
+      if (users.isEmpty) {
+        reactions.remove(previousEmoji);
       }
-      // If user has already reacted to this message then
-      // we just remove him from reacted users only to readd him
-      // with a different Emoji
-      final previousEmoji = _userReactedWith(emojiCode, userId);
-      if (previousEmoji != null) {
-        List<String> users = reactions[previousEmoji]['users'];
-        reactions[previousEmoji]['count']--;
+    }
+    // In case if someone already reacted with this emoji, keep working with it
+    if (reactions[emojiCode] != null) {
+      // Get the list of people, who reacted with this emoji
+      List<String> users = reactions[emojiCode]['users'];
+      // If user already reacted with this emoji, then decrement the count
+      // and remove the user from list
+      if (users.contains(userId)) {
+        reactions[emojiCode]['count']--;
         users.remove(userId);
         if (users.isEmpty) {
-          reactions.remove(previousEmoji);
+          reactions.remove(emojiCode);
         }
+        if (reactions.isEmpty) {
+          reactions = null;
+        }
+      } else {
+        // otherwise increment count and add the user
+        reactions[emojiCode]['count']++;
+        users.add(userId);
       }
-      // In case if someone already reacted with this emoji, keep working with it
-      if (reactions[emojiCode] != null) {
-        // Get the list of people, who reacted with this emoji
-        List<String> users = reactions[emojiCode]['users'];
-        // If user already reacted with this emoji, then decrement the count
-        // and remove the user from list
-        if (users.contains(userId)) {
-          reactions[emojiCode]['count']--;
-          users.remove(userId);
-          if (users.isEmpty) {
-            reactions.remove(emojiCode);
-          }
-          if (reactions.isEmpty) {
-            reactions = null;
-          }
-        } else {
-          // otherwise increment count and add the user
-          reactions[emojiCode]['count']++;
-          users.add(userId);
-        }
-      } // otherwise create a new entry and populate with data
-      else {
-        reactions[emojiCode] = {
-          'users': [userId],
-          'count': 1,
-        };
+    } // otherwise create a new entry and populate with data
+    else {
+      reactions[emojiCode] = {
+        'users': [userId],
+        'count': 1,
+      };
+    }
+    notifyListeners();
+    api.reactionSend(this.channelId, this.id, emojiCode).catchError((_) {
+      reactions = oldReactions;
+      if (reactions.isEmpty) {
+        reactions = null;
       }
       notifyListeners();
     });
@@ -97,7 +103,7 @@ class Message extends JsonSerializable with ChangeNotifier {
     String _emojiCode;
     final emojis = reactions.keys;
     for (int i = 0; i < emojis.length; i++) {
-      final users = reactions[emojis.elementAt(i)]['users'] as List<String>;
+      final users = reactions[emojis.elementAt(i)]['users'] as List;
       reacted = users.contains(userId);
       if (reacted) {
         if (emojis.elementAt(i) != emojiCode) {
@@ -113,8 +119,9 @@ class Message extends JsonSerializable with ChangeNotifier {
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   /// channelId is saved on per message basis in order to save and retrieve
   /// messages from data store later.
-  factory Message.fromJson(Map<String, dynamic> json) =>
-      _$MessageFromJson(json);
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return _$MessageFromJson(json);
+  }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation

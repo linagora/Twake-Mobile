@@ -9,7 +9,6 @@ class DirectMessagesBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Direct messages: $directMessages');
     return Column(
       children: [
         Row(

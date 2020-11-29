@@ -81,8 +81,11 @@ class ThreadScreen extends StatelessWidget {
             ThreadMessagesList(message.responses.reversed.toList()),
             MessageEditField((content) {
               Provider.of<TwakeApi>(context, listen: false).messageSend(
-                message.channelId,
-                content,
+                channelId: message.channelId,
+                content: content,
+                onSuccess: (Map<String, dynamic> message) {
+                  messagesProvider.addMessage(message);
+                },
                 parentMessageId: message.id,
               );
             }),

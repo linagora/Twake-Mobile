@@ -14,6 +14,7 @@ class TwakeApiConfig {
   static Map<String, String> authHeader(token) {
     return {
       'Authorization': 'Bearer $token',
+      'Content-type': 'application/json',
     };
   }
 

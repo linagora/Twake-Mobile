@@ -32,54 +32,61 @@ class MessagesScreen extends StatelessWidget {
           })
         : null;
 
-    final messagesProvider =
-        Provider.of<MessagesProvider>(context, listen: false);
-    messagesProvider.loadMessages(api, channelId);
     return Scaffold(
-        appBar: AppBar(
-          shadowColor: Colors.grey[300],
-          toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
-              .round()), // taking into account current appBar height to calculate a new one
-          title: Row(
-            children: [
-              if (channel.runtimeType == Direct)
-                ImageAvatar(correspondent.thumbnail),
-              if (channel.runtimeType == Channel)
-                TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
-              SizedBox(width: Dim.widthMultiplier),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                      channel.runtimeType == Channel
-                          ? channel.name
-                          : '${correspondent.firstName} ${correspondent.lastName}',
-                      style: Theme.of(context).textTheme.headline6),
-                  Text('${channel.membersCount} members',
-                      style: Theme.of(context).textTheme.bodyText2),
-                ],
-              ),
-            ],
-          ),
+      appBar: AppBar(
+        shadowColor: Colors.grey[300],
+        toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
+            .round()), // taking into account current appBar height to calculate a new one
+        title: Row(
+          children: [
+            if (channel.runtimeType == Direct)
+              ImageAvatar(correspondent.thumbnail),
+            if (channel.runtimeType == Channel)
+              TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
+            SizedBox(width: Dim.widthMultiplier),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    channel.runtimeType == Channel
+                        ? channel.name
+                        : '${correspondent.firstName} ${correspondent.lastName}',
+                    style: Theme.of(context).textTheme.headline6),
+                Text('${channel.membersCount ?? 'No'} members',
+                    style: Theme.of(context).textTheme.bodyText2),
+              ],
+            ),
+          ],
         ),
-        body: Consumer<MessagesProvider>(
-          builder: (ctx, messagesProvider, _) {
-            return messagesProvider.loaded
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      MessagesGrouppedList(
-                        Provider.of<MessagesProvider>(context, listen: false)
-                            .items,
-                      ),
-                      MessageEditField((content) {
-                        Provider.of<TwakeApi>(context, listen: false)
-                            .messageSend(channelId, content);
-                      }),
-                    ],
-                  )
-                : Center(child: CircularProgressIndicator());
-          },
-        ));
+      ),
+      body: FutureBuilder(
+        future: Provider.of<MessagesProvider>(
+          context,
+          listen: false,
+        ).loadMessages(api, channelId),
+        builder: (ctx, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Consumer<MessagesProvider>(
+                builder: (ctx, messagesProvider, _) => Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        MessagesGrouppedList(messagesProvider.items),
+                        MessageEditField((content) {
+                          Provider.of<TwakeApi>(context, listen: false)
+                              .messageSend(
+                                  channelId: channelId,
+                                  content: content,
+                                  onSuccess: (Map<String, dynamic> message) {
+                                    messagesProvider.addMessage(message);
+                                  });
+                        }),
+                      ],
+                    ));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
+    );
   }
 }

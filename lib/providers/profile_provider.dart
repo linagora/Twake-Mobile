@@ -70,9 +70,7 @@ class ProfileProvider with ChangeNotifier {
     // if (loaded) return;
     print('DEBUG: loading profile over network');
     try {
-      print('MAKING REQUEST');
       final response = await api.currentProfileGet();
-      print('PARSING REQUEST');
       // final response = DUMMY_USER;
       _currentProfile = Profile.fromJson(response);
 
@@ -82,7 +80,6 @@ class ProfileProvider with ChangeNotifier {
       /// And first workspace in that company
       _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
       loaded = true;
-      print('SAVING DATA TO STORE');
       DB.profileSave(_currentProfile);
       notifyListeners();
     } catch (error) {

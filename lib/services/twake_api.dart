@@ -16,6 +16,8 @@ class TwakeApi with ChangeNotifier {
   DateTime _refreshExpiration;
   bool _isAuthorized = false;
   String _platform;
+  // TODO get rid of this, request right data from api
+  Map<String, dynamic> _userData;
   TwakeApi() {
     DB.authLoad().then((map) {
       fromMap(map);
@@ -56,7 +58,6 @@ class TwakeApi with ChangeNotifier {
 
   void fromJson(String json) {
     final map = jsonDecode(json);
-    print('authdata:\n$map');
     _authJWToken = map['token'];
     _tokenExpiration =
         DateTime.fromMillisecondsSinceEpoch(map['expiration'] * 1000);
@@ -149,8 +150,8 @@ class TwakeApi with ChangeNotifier {
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final Map<String, dynamic> userData = jsonDecode(response.body);
-      print('GOT USER DATA:\n$userData');
       print('${response.statusCode}');
+      _userData = userData;
       return userData;
     } catch (error) {
       print('Error occured while loading user profile\n$error');
@@ -215,24 +216,42 @@ class TwakeApi with ChangeNotifier {
     }
   }
 
-  Future<void> messageSend(String channelId, String content,
-      {String parentMessageId}) async {
+  Future<void> messageSend({
+    String channelId,
+    String content,
+    String parentMessageId,
+    Function(Map<String, dynamic>) onSuccess,
+  }) async {
     await validate();
     final body = jsonEncode({
       'original_str': content,
       'parent_message_id': parentMessageId ?? '',
     });
-    print('Body: $body');
+    var headers = TwakeApiConfig.authHeader(_authJWToken);
     try {
       final response = await http.post(
         TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
-        headers: TwakeApiConfig.authHeader(_authJWToken),
+        headers: headers,
         body: body,
       );
-      print(response.body);
-      print('Method ' +
-          TwakeApiConfig.channelMessagesMethod(channelId, isPost: true));
-    } catch (error) {}
+      if (response.statusCode < 203) {
+        var message = jsonDecode(response.body)['object'];
+        // TODO remove after requesting data from api
+        message['sender'] = {
+          'username': _userData['username'],
+          'img': _userData['thumbnail'],
+          'id': _userData['userId'],
+          'firstname': _userData['firstname'],
+          'lastname': _userData['lastname'],
+        };
+        message['reactions'] = null;
+        print('MESSAGE $message');
+        onSuccess(message);
+      }
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 
   Future<void> reactionSend(
@@ -241,17 +260,16 @@ class TwakeApi with ChangeNotifier {
     String reaction,
   ) async {
     await validate();
-    print('CHANNEL ID IN REACTION: $channelId');
+    var headers = TwakeApiConfig.authHeader(_authJWToken);
     try {
-      final response = await http.post(
+      final _ = await http.post(
         TwakeApiConfig.messageReactionsMethod(channelId),
-        headers: TwakeApiConfig.authHeader(_authJWToken),
+        headers: headers,
         body: jsonEncode({
           'reaction': reaction,
           'message_id': messageId,
         }),
       );
-      print(response.body);
     } catch (error) {}
   }
 }

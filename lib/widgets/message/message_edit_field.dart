@@ -24,7 +24,6 @@ class _MessageEditField extends State<MessageEditField> {
   /// Hide keyboard when showing emoji board,
   /// make sure we always get the focus on emoji board when clicked
   Future<void> toggleEmojiBoard() async {
-    print('removing focus');
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -117,7 +116,6 @@ class TextInput extends StatelessWidget {
   });
   Future<void> onEmojiClicked() async {
     if (emojiVisible) {
-      print('Requesting Focus');
       focusNode.requestFocus();
     } else if (keyboardVisible) {
       // await SystemChannels.textInput.invokeMethod('TextInput.hide');
@@ -132,7 +130,7 @@ class TextInput extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: Dim.wm3,
-        vertical: focusNode.hasFocus ? Dim.heightMultiplier : Dim.hm3,
+        vertical: focusNode.hasFocus ? Dim.heightMultiplier : Dim.hm2,
       ),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300], width: 2.0)),
@@ -195,8 +193,10 @@ class TextInput extends StatelessWidget {
                                   ? Theme.of(context).accentColor
                                   : Colors.grey[400],
                             )),
-                        onPressed: () {
-                          onMessageSend(controller.text);
+                        onPressed: () async {
+                          await onMessageSend(controller.text);
+                          focusNode.unfocus();
+                          controller.clear();
                         },
                       ),
                     ),

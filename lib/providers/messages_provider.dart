@@ -26,6 +26,11 @@ class MessagesProvider extends ChangeNotifier {
     loaded = false;
   }
 
+  void addMessage(Map<String, dynamic> message) {
+    _items.add(Message.fromJson(message)..channelId = channelId);
+    notifyListeners();
+  }
+
   Future<void> loadMessages(TwakeApi api, String channelId) async {
     clearMessages();
     var list;
