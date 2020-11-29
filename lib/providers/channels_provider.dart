@@ -1,33 +1,62 @@
 import 'package:flutter/foundation.dart';
 import 'package:twake_mobile/models/channel.dart';
+import 'package:twake_mobile/models/direct.dart';
+import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
 class ChannelsProvider with ChangeNotifier {
   List<Channel> _items = List();
+  List<Direct> _directs = List();
   bool loaded = false;
 
   List<Channel> get items => [..._items];
+  List<Direct> get directs => [..._directs];
 
   int get channelCount => _items.length;
+  int get directsCount => _directs.length;
 
-  Channel getById(String channelId) =>
+  Channel getChannelById(String channelId) =>
       _items.firstWhere((c) => c.id == channelId);
 
-  Future<void> loadChannels(TwakeApi api, String workspaceId) async {
+  Direct getDirectsById(String directId) =>
+      _directs.firstWhere((d) => d.id == directId);
+
+  Future<void> loadChannels(TwakeApi api, String workspaceId,
+      {String companyId}) async {
     loaded = false;
     var list;
     try {
+      /// try to get channels from api
       list = await api.workspaceChannelsGet(workspaceId);
+      print('LOADED channels over NETWORK');
     } catch (error) {
-      print('Error occured while loading channels\n$error');
-      throw error;
+      /// if we fail (network issue), then load channels from local store
+      list = await DB.channelsLoad(workspaceId);
+      print('LOADED channels from STORE');
+    } finally {
+      _items.clear();
+      for (var i = 0; i < list.length; i++) {
+        _items.add(Channel.fromJson(list[i], workspaceId));
+      }
+      _items.sort((a, b) => a.name.compareTo(b.name));
     }
-    _items.clear();
-    for (var i = 0; i < list.length; i++) {
-      _items.add(Channel.fromJson(list[i], workspaceId));
+    var directs;
+
+    /// Reload direct messages only if current company has changed
+    if (companyId != null) {
+      try {
+        directs = await api.directMessagesGet(companyId);
+      } catch (error) {
+        print('Error occured when loading directs\n$error');
+      } finally {
+        _directs.clear();
+        for (var i = 0; i < directs.length; i++) {
+          _directs.add(Direct.fromJson(directs[i]));
+        }
+      }
     }
-    _items.sort((a, b) => a.name.compareTo(b.name));
     loaded = true;
+    DB.channelsSave(_items);
     notifyListeners();
   }
 }

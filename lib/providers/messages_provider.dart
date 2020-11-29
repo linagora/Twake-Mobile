@@ -26,19 +26,26 @@ class MessagesProvider extends ChangeNotifier {
     loaded = false;
   }
 
+  void addMessage(Map<String, dynamic> message) {
+    _items.add(Message.fromJson(message)..channelId = channelId);
+    notifyListeners();
+  }
+
   Future<void> loadMessages(TwakeApi api, String channelId) async {
     clearMessages();
     var list;
     this.api = api;
     this.channelId = channelId;
     try {
+      print('Trying to load messages over network\n$channelId');
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
+      print('Error while loading messages\n$error');
       // TODO implement proper error handling
       throw error;
     }
     for (var i = 0; i < list.length; i++) {
-      _items.add(Message.fromJson(list[i]));
+      _items.add(Message.fromJson(list[i])..channelId = channelId);
     }
     loaded = true;
     notifyListeners();
@@ -46,7 +53,6 @@ class MessagesProvider extends ChangeNotifier {
 
   Future<void> loadMoreMessages() async {
     var list;
-    // List<Message> tmp = List();
     try {
       list = await api.channelMessagesGet(
         channelId,
@@ -56,8 +62,8 @@ class MessagesProvider extends ChangeNotifier {
       // TODO implement proper error handling
       throw error;
     }
-    // This is checks are neccessary because of how often
-    // Notifications on scroll end might fire, and trigger
+    // This checks are neccessary because of how often
+    // Notifications on scroll's end might fire, and trigger
     // refetch of data which is already present
     if (list.length < 2 || list[0]['id'] == firstMessageId) {
       return;

@@ -67,10 +67,11 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) return;
+    // if (loaded) return;
     print('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();
+      // final response = DUMMY_USER;
       _currentProfile = Profile.fromJson(response);
 
       /// By default we are selecting first company
@@ -83,7 +84,7 @@ class ProfileProvider with ChangeNotifier {
       notifyListeners();
     } catch (error) {
       print('Error while loading user profile\n$error');
-      throw error;
+      // throw error;
     }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/models/channel.dart';
-import 'package:twake_mobile/widgets/channel/channel_tile.dart';
+import 'package:twake_mobile/models/direct.dart';
+import 'package:twake_mobile/widgets/channel/direct_tile.dart';
 
 class DirectMessagesBlock extends StatelessWidget {
-  final List<Channel> directMessages;
+  final List<Direct> directMessages;
   DirectMessagesBlock(this.directMessages);
 
   @override
@@ -32,7 +32,7 @@ class DirectMessagesBlock extends StatelessWidget {
             ),
           ],
         ),
-        ...directMessages.map((c) => ChannelTile(c)).toList(),
+        ...directMessages.map((d) => DirectTile(d)).toList(),
       ],
     );
   }

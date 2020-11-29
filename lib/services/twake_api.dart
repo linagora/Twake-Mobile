@@ -9,13 +9,19 @@ import 'package:twake_mobile/config/api.dart' show TwakeApiConfig;
 /// Main class for interacting with Twake api
 /// Contains all neccessary methods and error handling
 class TwakeApi with ChangeNotifier {
+  final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
   String _authJWToken;
+  String _refreshToken;
+  DateTime _tokenExpiration;
+  DateTime _refreshExpiration;
   bool _isAuthorized = false;
   String _platform;
+  // TODO get rid of this, request right data from api
+  Map<String, dynamic> _userData;
   TwakeApi() {
     DB.authLoad().then((map) {
       fromMap(map);
-      notifyListeners();
+      validate().then((_) => notifyListeners());
     }).catchError((e) => print('Error loading auth data from database\n$e'));
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
@@ -32,17 +38,79 @@ class TwakeApi with ChangeNotifier {
 
   Map<String, dynamic> toMap() {
     return {
-      'authjwtoken': _authJWToken,
-      'isauthorized': _isAuthorized ? 1 : 0,
+      'authJWToken': _authJWToken,
+      'refreshToken': _refreshToken,
+      'isAuthorized': _isAuthorized,
       'platform': _platform,
+      'tokenExpiration': _tokenExpiration.toIso8601String(),
+      'refreshExpiration': _refreshExpiration.toIso8601String(),
     };
   }
 
-  fromMap(Map<String, dynamic> map) {
-    print('GOT DATA FOR AUTH:\n$map');
-    _authJWToken = map['authjwtoken'];
-    _isAuthorized = map['isauthorized'] == 1;
+  void fromMap(Map<String, dynamic> map) {
+    _authJWToken = map['authJWToken'];
+    _refreshToken = map['refreshToken'];
+    _tokenExpiration = DateTime.parse(map['tokenExpiration'] as String);
+    _refreshExpiration = DateTime.parse(map['refreshExpiration'] as String);
+    _isAuthorized = map['isAuthorized'];
     _platform = map['platform'];
+  }
+
+  void fromJson(String json) {
+    final map = jsonDecode(json);
+    _authJWToken = map['token'];
+    _tokenExpiration =
+        DateTime.fromMillisecondsSinceEpoch(map['expiration'] * 1000);
+    _refreshToken = map['refresh_token'];
+    _refreshExpiration =
+        DateTime.fromMillisecondsSinceEpoch(map['refresh_expiration'] * 1000);
+  }
+
+  Future<void> validate() async {
+    final now = DateTime.now().toLocal();
+    if (now.isAfter(_tokenExpiration.toLocal())) {
+      if (now.isAfter(_refreshExpiration.toLocal())) {
+        _authJWToken = null;
+        _refreshToken = null;
+        _tokenExpiration = null;
+        _refreshExpiration = null;
+        _isAuthorized = false;
+        DB.fullClean(); // clean up any data from store
+        notifyListeners();
+      } else {
+        await prolongToken(_refreshToken);
+      }
+    }
+    print(
+        'Validation passed, expiration: ${_tokenExpiration.toLocal().toIso8601String()}');
+  }
+
+  Future<void> prolongToken(String refreshToken) async {
+    try {
+      print('Trying to prolongToken');
+      final response = await http.post(
+        TwakeApiConfig.tokenProlongMethod,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(
+          {
+            'refresh_token': refreshToken,
+            'timezoneoffset': timeZoneOffset,
+          },
+        ),
+      );
+      fromJson(response.body);
+      if (_authJWToken == null) {
+        throw Exception('Authorization failed');
+      }
+      _isAuthorized = true;
+      DB.authSave(this);
+      notifyListeners();
+    } catch (error) {
+      print('Error occured during authentication\n$error');
+      throw error;
+    }
   }
 
   Future<void> authenticate(String username, String password) async {
@@ -57,11 +125,11 @@ class TwakeApi with ChangeNotifier {
             'username': username,
             'password': password,
             'device': _platform,
+            'timezoneoffset': '$timeZoneOffset'
           },
         ),
       );
-      final authData = jsonDecode(response.body);
-      _authJWToken = authData['token'];
+      fromJson(response.body);
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
       }
@@ -75,12 +143,15 @@ class TwakeApi with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>> currentProfileGet() async {
+    await validate();
     try {
       final response = await http.get(
         TwakeApiConfig.currentProfileMethod, // url
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final Map<String, dynamic> userData = jsonDecode(response.body);
+      print('${response.statusCode}');
+      _userData = userData;
       return userData;
     } catch (error) {
       print('Error occured while loading user profile\n$error');
@@ -89,13 +160,14 @@ class TwakeApi with ChangeNotifier {
   }
 
   Future<List<dynamic>> workspaceChannelsGet(String workspaceId) async {
+    await validate();
     try {
       final response = await http.get(
         TwakeApiConfig.workspaceChannelsMethod(workspaceId), // url
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final channels = jsonDecode(response.body);
-      print(channels);
+      print('GOT channels list:\n$channels');
       // Some processing ...
       return channels;
     } catch (error) {
@@ -104,10 +176,28 @@ class TwakeApi with ChangeNotifier {
     }
   }
 
+  Future<List<dynamic>> directMessagesGet(String companyId) async {
+    await validate();
+    try {
+      final response = await http.get(
+        TwakeApiConfig.directMessagesMethod(companyId),
+        headers: TwakeApiConfig.authHeader(_authJWToken),
+      );
+      if (response.statusCode != 200) return [];
+      final directs = jsonDecode(response.body);
+      print('GOT directs:\n$directs');
+      return directs;
+    } catch (error) {
+      print('Error occured while getting direct messages\n$error');
+      throw error;
+    }
+  }
+
   Future<List<dynamic>> channelMessagesGet(
     String channelId, {
     String beforeMessageId,
   }) async {
+    await validate();
     try {
       final response = await http.get(
         TwakeApiConfig.channelMessagesMethod(
@@ -118,10 +208,68 @@ class TwakeApi with ChangeNotifier {
       );
       final messages = jsonDecode(response.body);
       // Some processing ...
+      print('GOT channel messages:\n$messages');
       return messages;
     } catch (error) {
       print('Error occured while getting channel messages\n$error');
       throw error;
     }
+  }
+
+  Future<void> messageSend({
+    String channelId,
+    String content,
+    String parentMessageId,
+    Function(Map<String, dynamic>) onSuccess,
+  }) async {
+    await validate();
+    final body = jsonEncode({
+      'original_str': content,
+      'parent_message_id': parentMessageId ?? '',
+    });
+    var headers = TwakeApiConfig.authHeader(_authJWToken);
+    try {
+      final response = await http.post(
+        TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
+        headers: headers,
+        body: body,
+      );
+      if (response.statusCode < 203) {
+        var message = jsonDecode(response.body)['object'];
+        // TODO remove after requesting data from api
+        message['sender'] = {
+          'username': _userData['username'],
+          'img': _userData['thumbnail'],
+          'id': _userData['userId'],
+          'firstname': _userData['firstname'],
+          'lastname': _userData['lastname'],
+        };
+        message['reactions'] = null;
+        print('MESSAGE $message');
+        onSuccess(message);
+      }
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
+  Future<void> reactionSend(
+    String channelId,
+    String messageId,
+    String reaction,
+  ) async {
+    await validate();
+    var headers = TwakeApiConfig.authHeader(_authJWToken);
+    try {
+      final _ = await http.post(
+        TwakeApiConfig.messageReactionsMethod(channelId),
+        headers: headers,
+        body: jsonEncode({
+          'reaction': reaction,
+          'message_id': messageId,
+        }),
+      );
+    } catch (error) {}
   }
 }

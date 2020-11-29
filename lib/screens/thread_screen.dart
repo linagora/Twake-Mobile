@@ -5,9 +5,10 @@ import 'package:twake_mobile/models/channel.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
+import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
+import 'package:twake_mobile/widgets/message/message_edit_field.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
-import 'package:twake_mobile/widgets/message/reply_field.dart';
 import 'package:twake_mobile/widgets/thread/thread_messages_list.dart';
 
 class ThreadScreen extends StatelessWidget {
@@ -18,7 +19,7 @@ class ThreadScreen extends StatelessWidget {
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     final Channel channel =
         Provider.of<ChannelsProvider>(context, listen: false)
-            .getById(params['channelId']);
+            .getChannelById(params['channelId']);
     final messagesProvider = Provider.of<MessagesProvider>(context);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
@@ -60,7 +61,11 @@ class ThreadScreen extends StatelessWidget {
           children: [
             Container(
               child: SingleChildScrollView(
-                  child: MessageTile(message, isThread: true)),
+                child: ChangeNotifierProvider.value(
+                  value: message,
+                  child: MessageTile(message, isThread: true),
+                ),
+              ),
               padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
               height: Dim.heightPercent(19),
             ),
@@ -74,7 +79,16 @@ class ThreadScreen extends StatelessWidget {
             ),
             Divider(color: Colors.grey[200]),
             ThreadMessagesList(message.responses.reversed.toList()),
-            ReplyField(),
+            MessageEditField((content) {
+              Provider.of<TwakeApi>(context, listen: false).messageSend(
+                channelId: message.channelId,
+                content: content,
+                onSuccess: (Map<String, dynamic> message) {
+                  messagesProvider.addMessage(message);
+                },
+                parentMessageId: message.id,
+              );
+            }),
           ],
         ),
       ),

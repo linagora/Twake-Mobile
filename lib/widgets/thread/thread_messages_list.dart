@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
@@ -31,7 +32,10 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
         reverse: true,
         itemCount: widget.responses.length,
         itemBuilder: (ctx, i) {
-          return MessageTile(widget.responses[i], isThread: true);
+          return ChangeNotifierProvider.value(
+            value: widget.responses[i],
+            child: MessageTile(widget.responses[i], isThread: true),
+          );
         },
         itemScrollController: conroller,
       ),
