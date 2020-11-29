@@ -44,19 +44,6 @@ class StylesConfig {
     button: _button,
   );
 
-  // Almost identical to light theme, should discuss with
-  // with designers about the best color pallete
-  /// Dark theme not implemented yet
-  // static final TextTheme darkTextTheme = TextTheme(
-  // headline6: _titleDark,
-  // subtitle2: _subTitleDark,
-  // button: _buttonDark,
-  // headline4: _greetingDark,
-  // headline3: _searchDark,
-  // bodyText2: _selectedTabDark,
-  // bodyText1: _unSelectedTabDark,
-  // );
-
   static final TextStyle _headline6 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w500,

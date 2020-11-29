@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:twake_mobile/data/dummy.dart';
 import 'package:twake_mobile/models/company.dart';
 import 'package:twake_mobile/models/profile.dart';
 import 'package:twake_mobile/models/workspace.dart';
@@ -68,7 +67,7 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) return;
+    // if (loaded) return;
     print('DEBUG: loading profile over network');
     try {
       print('MAKING REQUEST');
@@ -88,7 +87,7 @@ class ProfileProvider with ChangeNotifier {
       notifyListeners();
     } catch (error) {
       print('Error while loading user profile\n$error');
-      throw error;
+      // throw error;
     }
   }
 }

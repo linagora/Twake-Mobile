@@ -8,6 +8,7 @@ class TwakeApiConfig {
   static const String _workspaceChannels = '/workspace/%s/channels';
   static const String _channelMessages = '/channels/%s/messages';
   static const String _tokenProlong = '/authorization/prolong';
+  static const String _directMessages = '/company/%s/direct';
 
   static Map<String, String> authHeader(token) {
     return {
@@ -38,6 +39,10 @@ class TwakeApiConfig {
     }
 
     return url;
+  }
+
+  static String directMessagesMethod(String companyId) {
+    return _HOST + sprintf(_directMessages, [companyId]);
   }
 
   /// Method for getting url, in order to prolong JWToken

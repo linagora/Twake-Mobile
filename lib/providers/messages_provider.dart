@@ -35,8 +35,10 @@ class MessagesProvider extends ChangeNotifier {
     // list = DUMMY_MESSAGES;
     // await Future.delayed(Duration(milliseconds: 1000));
     try {
+      print('Trying to load messages over network\n$channelId');
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
+      print('Error while loading messages\n$error');
       // TODO implement proper error handling
       throw error;
     }

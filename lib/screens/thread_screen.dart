@@ -18,7 +18,7 @@ class ThreadScreen extends StatelessWidget {
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     final Channel channel =
         Provider.of<ChannelsProvider>(context, listen: false)
-            .getById(params['channelId']);
+            .getChannelById(params['channelId']);
     final messagesProvider = Provider.of<MessagesProvider>(context);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
@@ -78,7 +78,7 @@ class ThreadScreen extends StatelessWidget {
             ),
             Divider(color: Colors.grey[200]),
             ThreadMessagesList(message.responses.reversed.toList()),
-            MessageEditField(),
+            MessageEditField((content) {}),
           ],
         ),
       ),

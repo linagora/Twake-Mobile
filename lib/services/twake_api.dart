@@ -167,11 +167,25 @@ class TwakeApi with ChangeNotifier {
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final channels = jsonDecode(response.body);
-      print(channels);
       // Some processing ...
       return channels;
     } catch (error) {
       print('Error occured while getting workspace channels\n$error');
+      throw error;
+    }
+  }
+
+  Future<List<dynamic>> directMessagesGet(String companyId) async {
+    await validate();
+    try {
+      final response = await http.get(
+        TwakeApiConfig.directMessagesMethod(companyId),
+        headers: TwakeApiConfig.authHeader(_authJWToken),
+      );
+      final directs = jsonDecode(response.body);
+      return directs;
+    } catch (error) {
+      print('Error occured while getting direct messages\n$error');
       throw error;
     }
   }
@@ -207,6 +221,7 @@ class TwakeApi with ChangeNotifier {
         headers: TwakeApiConfig.authHeader(_authJWToken),
         body: jsonEncode(content),
       );
+      print(response.body);
     } catch (error) {}
   }
 }
