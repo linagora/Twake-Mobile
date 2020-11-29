@@ -79,7 +79,7 @@ class DirectMember {
 
   final String thumbnail;
 
-  final int timeZoneOffset;
+  // final int timeZoneOffset;
 
   DirectMember({
     @required this.userId,
@@ -87,7 +87,7 @@ class DirectMember {
     this.firstName,
     this.lastName,
     this.thumbnail,
-    this.timeZoneOffset,
+    // this.timeZoneOffset,
   });
 
   /// Convenience methods to avoid deserializing this class from JSON

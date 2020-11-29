@@ -32,8 +32,6 @@ class MessagesProvider extends ChangeNotifier {
     var list;
     this.api = api;
     this.channelId = channelId;
-    // list = DUMMY_MESSAGES;
-    // await Future.delayed(Duration(milliseconds: 1000));
     try {
       print('Trying to load messages over network\n$channelId');
       list = await api.channelMessagesGet(channelId);

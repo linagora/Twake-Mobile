@@ -133,7 +133,7 @@ class EmojiLine extends StatelessWidget {
             ...EMOJISET.map((e) => InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
-                    emojiPicked(context, e);
+                    emojiPicked(e);
                   },
                   child: Text(
                     Emojis.getByName(e),

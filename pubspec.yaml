@@ -99,6 +99,9 @@ flutter:
         - asset: assets/fonts/PTSans-BoldItalic.ttf
           style: italic
           weight: 700
+    - family: PTMono
+      fonts:
+        - asset: assets/fonts/PTMono-Regular.ttf
     - family: Lato
       fonts:
         - asset: assets/fonts/Lato-Regular.ttf

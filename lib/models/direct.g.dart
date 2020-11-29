@@ -57,7 +57,6 @@ DirectMember _$DirectMemberFromJson(Map<String, dynamic> json) {
     firstName: json['firstname'] as String,
     lastName: json['lastname'] as String,
     thumbnail: json['thumbnail'] as String,
-    timeZoneOffset: json['timeZoneOffset'] as int,
   );
 }
 
@@ -68,5 +67,4 @@ Map<String, dynamic> _$DirectMemberToJson(DirectMember instance) =>
       'firstname': instance.firstName,
       'lastname': instance.lastName,
       'thumbnail': instance.thumbnail,
-      'timeZoneOffset': instance.timeZoneOffset,
     };

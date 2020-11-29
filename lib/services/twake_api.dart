@@ -19,11 +19,8 @@ class TwakeApi with ChangeNotifier {
   TwakeApi() {
     DB.authLoad().then((map) {
       fromMap(map);
-      notifyListeners();
+      validate().then((_) => notifyListeners());
     }).catchError((e) => print('Error loading auth data from database\n$e'));
-    if (_authJWToken != null) {
-      validate(); // Make sure we have an active token
-    }
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
 
@@ -69,8 +66,8 @@ class TwakeApi with ChangeNotifier {
 
   Future<void> validate() async {
     final now = DateTime.now().toLocal();
-    if (now.isAfter(_tokenExpiration)) {
-      if (now.isAfter(_refreshExpiration)) {
+    if (now.isAfter(_tokenExpiration.toLocal())) {
+      if (now.isAfter(_refreshExpiration.toLocal())) {
         _authJWToken = null;
         _refreshToken = null;
         _tokenExpiration = null;
@@ -219,7 +216,10 @@ class TwakeApi with ChangeNotifier {
       final response = await http.post(
         TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
         headers: TwakeApiConfig.authHeader(_authJWToken),
-        body: jsonEncode(content),
+        body: jsonEncode({
+          'original_str': content,
+          'parent_message_id': parentMessageId,
+        }),
       );
       print(response.body);
     } catch (error) {}
