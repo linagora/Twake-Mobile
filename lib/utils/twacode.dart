@@ -25,7 +25,7 @@ TextStyle generateStyle(
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
-      fontFamily: monospace ? "monospace" : null);
+      fontFamily: monospace ? 'PTMono' : 'PT');
 }
 
 class Parser {

@@ -8,10 +8,13 @@ class TwakeApiConfig {
   static const String _workspaceChannels = '/workspace/%s/channels';
   static const String _channelMessages = '/channels/%s/messages';
   static const String _tokenProlong = '/authorization/prolong';
+  static const String _directMessages = '/company/%s/direct';
+  static const String _messageReactions = '/channels/%s/messages/reactions';
 
   static Map<String, String> authHeader(token) {
     return {
       'Authorization': 'Bearer $token',
+      'Content-type': 'application/json',
     };
   }
 
@@ -29,7 +32,8 @@ class TwakeApiConfig {
 
   static String channelMessagesMethod(String channelId,
       {String beforeId, int limit, bool isPost: false}) {
-    var url = _HOST + sprintf(_channelMessages, [channelId]) + '?';
+    var url =
+        _HOST + sprintf(_channelMessages, [channelId]) + (isPost ? '' : '?');
     if (beforeId != null) {
       url = url + 'before=$beforeId&';
     }
@@ -40,8 +44,17 @@ class TwakeApiConfig {
     return url;
   }
 
+  static String directMessagesMethod(String companyId) {
+    return _HOST + sprintf(_directMessages, [companyId]);
+  }
+
   /// Method for getting url, in order to prolong JWToken
   static String get tokenProlongMethod {
     return _HOST + _tokenProlong;
+  }
+
+  /// Method for getting url, in order to update message reactions
+  static String messageReactionsMethod(String channelId) {
+    return _HOST + sprintf(_messageReactions, [channelId]);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake_mobile/services/twake_api.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/models/message.dart';
@@ -38,7 +39,12 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
       emojiCode = ':$emojiCode:';
     }
 
-    widget.message.updateReactions(emojiCode, userId);
+    TwakeApi api = Provider.of<TwakeApi>(context, listen: false);
+    widget.message.updateReactions(
+      emojiCode: emojiCode,
+      userId: userId,
+      api: api,
+    );
   }
 
   void toggleEmojiBoard() {
@@ -133,7 +139,7 @@ class EmojiLine extends StatelessWidget {
             ...EMOJISET.map((e) => InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
-                    emojiPicked(context, e);
+                    emojiPicked(e);
                   },
                   child: Text(
                     Emojis.getByName(e),

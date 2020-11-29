@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:twake_mobile/data/dummy.dart';
 import 'package:twake_mobile/models/company.dart';
 import 'package:twake_mobile/models/profile.dart';
 import 'package:twake_mobile/models/workspace.dart';
@@ -68,12 +67,10 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) return;
+    // if (loaded) return;
     print('DEBUG: loading profile over network');
     try {
-      print('MAKING REQUEST');
       final response = await api.currentProfileGet();
-      print('PARSING REQUEST');
       // final response = DUMMY_USER;
       _currentProfile = Profile.fromJson(response);
 
@@ -83,12 +80,11 @@ class ProfileProvider with ChangeNotifier {
       /// And first workspace in that company
       _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
       loaded = true;
-      print('SAVING DATA TO STORE');
       DB.profileSave(_currentProfile);
       notifyListeners();
     } catch (error) {
       print('Error while loading user profile\n$error');
-      throw error;
+      // throw error;
     }
   }
 }

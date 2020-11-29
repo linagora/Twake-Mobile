@@ -26,7 +26,7 @@ class MessageEditModalSheet extends StatelessWidget {
             Text('Edit'),
           ]),
           // Divider(),
-          MessageEditField(message: message, autofocus: true),
+          MessageEditField((content) {}, autofocus: true),
         ],
       ),
     );

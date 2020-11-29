@@ -118,7 +118,9 @@ class MessageTile extends StatelessWidget {
                               message.reactions[r]['count'],
                             );
                           }),
-                        if (message.responsesCount != null && !isThread)
+                        if (message.responsesCount != null &&
+                            message.responsesCount != 0 &&
+                            !isThread)
                           Text(
                             'See all answers (${message.responsesCount})',
                             style: StylesConfig.miniPurple,

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake_mobile/services/twake_api.dart';
 
 part 'message.g.dart';
 
@@ -37,12 +38,29 @@ class Message extends JsonSerializable with ChangeNotifier {
     this.responses,
   });
 
-  void updateReactions(String emojiCode, String userId) {
+  void updateReactions({
+    String emojiCode,
+    String userId,
+    TwakeApi api,
+  }) {
     if (emojiCode == null) return;
     if (reactions == null) {
       reactions = {};
     }
-    // in case if someone already reacted with this emoji, keep working with it
+    final oldReactions = Map<String, dynamic>.from(reactions);
+    // If user has already reacted to this message then
+    // we just remove him from reacted users only to readd him
+    // with a different Emoji
+    final previousEmoji = _userReactedWith(emojiCode, userId);
+    if (previousEmoji != null) {
+      List users = reactions[previousEmoji]['users'];
+      reactions[previousEmoji]['count']--;
+      users.remove(userId);
+      if (users.isEmpty) {
+        reactions.remove(previousEmoji);
+      }
+    }
+    // In case if someone already reacted with this emoji, keep working with it
     if (reactions[emojiCode] != null) {
       // Get the list of people, who reacted with this emoji
       List<String> users = reactions[emojiCode]['users'];
@@ -70,14 +88,40 @@ class Message extends JsonSerializable with ChangeNotifier {
       };
     }
     notifyListeners();
+    api.reactionSend(this.channelId, this.id, emojiCode).catchError((_) {
+      reactions = oldReactions;
+      if (reactions.isEmpty) {
+        reactions = null;
+      }
+      notifyListeners();
+    });
+  }
+
+  // Helper method to check, if the user has already reacted with different emoji
+  String _userReactedWith(String emojiCode, String userId) {
+    bool reacted = false;
+    String _emojiCode;
+    final emojis = reactions.keys;
+    for (int i = 0; i < emojis.length; i++) {
+      final users = reactions[emojis.elementAt(i)]['users'] as List;
+      reacted = users.contains(userId);
+      if (reacted) {
+        if (emojis.elementAt(i) != emojiCode) {
+          _emojiCode = emojis.elementAt(i);
+        }
+        break;
+      }
+    }
+    return _emojiCode;
   }
 
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   /// channelId is saved on per message basis in order to save and retrieve
   /// messages from data store later.
-  factory Message.fromJson(Map<String, dynamic> json) =>
-      _$MessageFromJson(json);
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return _$MessageFromJson(json);
+  }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
