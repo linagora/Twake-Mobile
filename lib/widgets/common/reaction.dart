@@ -4,6 +4,7 @@ import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/config/styles_config.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
+import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/utils/emojis.dart';
 
 class Reaction extends StatefulWidget {
@@ -18,11 +19,13 @@ class Reaction extends StatefulWidget {
 class _ReactionState extends State<Reaction> {
   @override
   Widget build(BuildContext context) {
+    TwakeApi api = Provider.of<TwakeApi>(context, listen: false);
     return InkWell(
       onTap: () {
         Provider.of<Message>(context, listen: false).updateReactions(
-          widget.reaction,
-          Provider.of<ProfileProvider>(context, listen: false)
+          api: api,
+          emojiCode: widget.reaction,
+          userId: Provider.of<ProfileProvider>(context, listen: false)
               .currentProfile
               .userId,
         );

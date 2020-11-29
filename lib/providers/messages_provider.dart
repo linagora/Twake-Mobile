@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:twake_mobile/data/dummy.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
@@ -41,7 +40,7 @@ class MessagesProvider extends ChangeNotifier {
       throw error;
     }
     for (var i = 0; i < list.length; i++) {
-      _items.add(Message.fromJson(list[i]));
+      _items.add(Message.fromJson(list[i])..channelId = channelId);
     }
     loaded = true;
     notifyListeners();

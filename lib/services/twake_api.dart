@@ -56,6 +56,7 @@ class TwakeApi with ChangeNotifier {
 
   void fromJson(String json) {
     final map = jsonDecode(json);
+    print('authdata:\n$map');
     _authJWToken = map['token'];
     _tokenExpiration =
         DateTime.fromMillisecondsSinceEpoch(map['expiration'] * 1000);
@@ -149,6 +150,7 @@ class TwakeApi with ChangeNotifier {
       );
       final Map<String, dynamic> userData = jsonDecode(response.body);
       print('GOT USER DATA:\n$userData');
+      print('${response.statusCode}');
       return userData;
     } catch (error) {
       print('Error occured while loading user profile\n$error');
@@ -164,6 +166,7 @@ class TwakeApi with ChangeNotifier {
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       final channels = jsonDecode(response.body);
+      print('GOT channels list:\n$channels');
       // Some processing ...
       return channels;
     } catch (error) {
@@ -179,7 +182,9 @@ class TwakeApi with ChangeNotifier {
         TwakeApiConfig.directMessagesMethod(companyId),
         headers: TwakeApiConfig.authHeader(_authJWToken),
       );
+      if (response.statusCode != 200) return [];
       final directs = jsonDecode(response.body);
+      print('GOT directs:\n$directs');
       return directs;
     } catch (error) {
       print('Error occured while getting direct messages\n$error');
@@ -202,6 +207,7 @@ class TwakeApi with ChangeNotifier {
       );
       final messages = jsonDecode(response.body);
       // Some processing ...
+      print('GOT channel messages:\n$messages');
       return messages;
     } catch (error) {
       print('Error occured while getting channel messages\n$error');
@@ -212,13 +218,37 @@ class TwakeApi with ChangeNotifier {
   Future<void> messageSend(String channelId, String content,
       {String parentMessageId}) async {
     await validate();
+    final body = jsonEncode({
+      'original_str': content,
+      'parent_message_id': parentMessageId ?? '',
+    });
+    print('Body: $body');
     try {
       final response = await http.post(
         TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
         headers: TwakeApiConfig.authHeader(_authJWToken),
+        body: body,
+      );
+      print(response.body);
+      print('Method ' +
+          TwakeApiConfig.channelMessagesMethod(channelId, isPost: true));
+    } catch (error) {}
+  }
+
+  Future<void> reactionSend(
+    String channelId,
+    String messageId,
+    String reaction,
+  ) async {
+    await validate();
+    print('CHANNEL ID IN REACTION: $channelId');
+    try {
+      final response = await http.post(
+        TwakeApiConfig.messageReactionsMethod(channelId),
+        headers: TwakeApiConfig.authHeader(_authJWToken),
         body: jsonEncode({
-          'original_str': content,
-          'parent_message_id': parentMessageId,
+          'reaction': reaction,
+          'message_id': messageId,
         }),
       );
       print(response.body);
