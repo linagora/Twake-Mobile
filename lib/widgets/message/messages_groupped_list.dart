@@ -9,9 +9,8 @@ import 'package:twake_mobile/providers/messages_provider.dart';
 
 class MessagesGrouppedList extends StatelessWidget {
   final List<Message> messages;
-  final bool isThread;
 
-  MessagesGrouppedList(this.messages, {this.isThread: false});
+  MessagesGrouppedList(this.messages);
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
@@ -41,7 +40,7 @@ class MessagesGrouppedList extends StatelessWidget {
           groupComparator: (DateTime value1, DateTime value2) =>
               value2.compareTo(value1),
           itemComparator: (Message m1, Message m2) {
-            return m1.creationDate.compareTo(m2.creationDate);
+            return m2.creationDate.compareTo(m1.creationDate);
           },
           // floatingHeader: true,
           separator: SizedBox(height: Dim.hm2),
@@ -85,7 +84,10 @@ class MessagesGrouppedList extends StatelessWidget {
             );
           },
           itemBuilder: (_, Message message) {
-            return MessageTile(message, isThread: isThread);
+            return ChangeNotifierProvider.value(
+              value: message,
+              child: MessageTile(message),
+            );
           },
         ),
       ),

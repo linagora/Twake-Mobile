@@ -21,7 +21,7 @@ class StylesConfig {
       color: Colors.white,
       shadowColor: Colors.grey[300],
     ),
-    fontFamily: 'Lato',
+    fontFamily: 'PT',
   );
 
   /// For future use
@@ -43,19 +43,6 @@ class StylesConfig {
     subtitle2: _subtitle2,
     button: _button,
   );
-
-  // Almost identical to light theme, should discuss with
-  // with designers about the best color pallete
-  /// Dark theme not implemented yet
-  // static final TextTheme darkTextTheme = TextTheme(
-  // headline6: _titleDark,
-  // subtitle2: _subTitleDark,
-  // button: _buttonDark,
-  // headline4: _greetingDark,
-  // headline3: _searchDark,
-  // bodyText2: _selectedTabDark,
-  // bodyText1: _unSelectedTabDark,
-  // );
 
   static final TextStyle _headline6 = TextStyle(
     color: Colors.black,
@@ -102,7 +89,7 @@ class StylesConfig {
   static final TextStyle _bodyText1 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
-    fontSize: Dim.tm3(),
+    fontSize: Dim.tm2(decimal: .8),
   );
 
   static final TextStyle _bodyText2 = TextStyle(

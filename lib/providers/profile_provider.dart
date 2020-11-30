@@ -28,6 +28,9 @@ class ProfileProvider with ChangeNotifier {
   Profile get currentProfile => _currentProfile;
 
   List<Company> get companies => _currentProfile.companies;
+  List<Workspace> get workspaces => _currentProfile.companies
+      .firstWhere((c) => c.id == _selectedCompanyId)
+      .workspaces;
 
   bool isMe(String id) => _currentProfile.userId == id;
 
@@ -39,6 +42,10 @@ class ProfileProvider with ChangeNotifier {
 
   void currentCompanySet(String companyId) {
     _selectedCompanyId = companyId;
+    _selectedWorkspaceId = _currentProfile.companies
+        .firstWhere((c) => c.id == _selectedCompanyId)
+        .workspaces[0]
+        .id;
     notifyListeners();
   }
 
@@ -67,10 +74,11 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) return;
+    // if (loaded) return;
     print('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();
+      // final response = DUMMY_USER;
       _currentProfile = Profile.fromJson(response);
 
       /// By default we are selecting first company
@@ -83,7 +91,7 @@ class ProfileProvider with ChangeNotifier {
       notifyListeners();
     } catch (error) {
       print('Error while loading user profile\n$error');
-      throw error;
+      // throw error;
     }
   }
 }

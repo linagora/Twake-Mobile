@@ -16,10 +16,12 @@ class ChannelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('DEBUG: building channels screen');
-    final workspace = Provider.of<ProfileProvider>(context).selectedWorkspace;
+    final profile = Provider.of<ProfileProvider>(context, listen: false);
+    final workspace = profile.selectedWorkspace;
+    final company = profile.selectedCompany;
     final api = Provider.of<TwakeApi>(context, listen: false);
     final channels = Provider.of<ChannelsProvider>(context, listen: false);
-    channels.loadChannels(api, workspace.id);
+    channels.loadChannels(api, workspace.id, companyId: company.id);
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -73,6 +75,7 @@ class ChannelsScreen extends StatelessWidget {
         body: Consumer<ChannelsProvider>(
           builder: (ctx, channels, _) {
             final items = channels.items;
+            final directs = channels.directs;
             return channels.loaded
                 ? SingleChildScrollView(
                     child: Padding(
@@ -87,7 +90,7 @@ class ChannelsScreen extends StatelessWidget {
                           // Divider(height: Dim.hm5),
                           ChannelsBlock(items),
                           Divider(height: Dim.hm5),
-                          DirectMessagesBlock([]),
+                          DirectMessagesBlock(directs),
                           SizedBox(height: Dim.hm2),
                         ],
                       ),

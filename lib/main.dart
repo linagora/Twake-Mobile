@@ -46,7 +46,6 @@ class TwakeMobileApp extends StatelessWidget {
           update: (ctx, api, profile) {
             if (api.isAuthorized)
               profile.loadProfile(api).catchError((error) {
-                print('Error on profile update\n$error');
                 Scaffold.of(ctx).showSnackBar(
                   SnackBar(
                     content: Text('Failed to load user profile!'),

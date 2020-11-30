@@ -2,6 +2,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
+import 'package:twake_mobile/models/channel.dart';
 import 'package:twake_mobile/models/profile.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
@@ -9,7 +10,7 @@ class DB {
   static Database db;
   static StoreRef authStore = intMapStoreFactory.store(_authStore);
   static StoreRef profileStore = intMapStoreFactory.store(_profileStore);
-  static StoreRef channelStore = intMapStoreFactory.store(_channelStore);
+  static StoreRef channelStore = stringMapStoreFactory.store(_channelStore);
 
   /// Make sure that db is initialized
   static void initCheck() {
@@ -89,45 +90,59 @@ class DB {
       throw Exception('Profile storage is empty');
     }
     return record;
-    // List<Map<String, dynamic>> records =
-    //     await db.query(_profileTable, limit: 1);
-    // if (records.length == 0) {
-    //   throw Exception('Table is empty');
-    // }
-    //
-    // /// After we get the records we grab the first (and only) row and
-    // /// extract the profileJSON field
-    // final profileJsonText = records[0]['profilejson'];
-    //
-    // /// and pass it factory constructor of Profile
-    // return Profile.fromJsonText(profileJsonText);
   }
 
-  Future<void> channelsSave() async {}
+  /// Convenience method to perform full data store clean up
+  static Future<void> fullClean() async {
+    await authClean();
+    await profileClean();
+    await channelsClean();
+  }
+
+  /// Method for saving all the channels, that are downloaded during
+  /// user's session, if there's an active internet connection, channels
+  /// are always loaded over internet. Data store is used only when no connection
+  /// to the server can be established
+  static Future<void> channelsSave(List<Channel> channels) async {
+    initCheck();
+    for (int i = 0; i < channels.length; i++) {
+      channelStore.record(channels[i].id).put(
+            db,
+            channels[i].toJson(),
+            merge: true,
+          );
+    }
+  }
+
+  /// Load channels from data store in case if twake api is not available
+  static Future<List<Map<String, dynamic>>> channelsLoad(
+      String workspaceId) async {
+    initCheck();
+    final finder = Finder(
+      filter: Filter.equals(
+        'workspaceId',
+        workspaceId,
+      ),
+      sortOrders: [SortOrder('name')],
+    );
+    final records = await channelStore.find(db, finder: finder);
+    return records.map((r) => r.value).toList();
+  }
+
+  /// Remove all the channels downloaded during user's session, usually
+  /// the method is invoked on logout
+  static Future<void> channelsClean() async {
+    await channelStore.delete(db);
+  }
+
+  /// Save messages that are downloaded during user's session
+  /// data store is only accessed if connection to twake api cannot
+  /// be established
+  static Future<void> messagesSave() async {}
 }
 
-// Database file, located in path returned by getDatabasesPath()
 const String _DATABASE_FILE = 'twake.db';
-// password for database encryption, used by sqlite_cipher
-// const String __PASSWORD = 'oUlP6qM>/_,Yo)~qy{4HaWs_<';
 
 const String _profileStore = 'profile';
 const String _channelStore = 'channel';
 const String _authStore = 'auth';
-
-/// If database does not exist, these SQL statements
-/// will ensure that we have basic database schema
-// const String _ON_DB_CREATE_EXECUTE = '''
-// CREATE TABLE $_authTable (
-// authjwtoken TEXT NOT NULL,
-// isauthorized INT NOT NULL,
-// platform TEXT NOT NULL
-// );
-// CREATE TABLE $_profileTable (
-// profilejson TEXT NOT NULL
-// );
-// CREATE TABLE $_channelTable(
-// workspaceid TEXT NOT NULL,
-// channeljson TEXT NOT NULL
-// );
-// ''';

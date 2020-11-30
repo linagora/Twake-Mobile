@@ -1,7 +1,22 @@
 class Emojis {
+  // Let's create a singleton
+  static final Emojis _emojis = Emojis._internal();
+  factory Emojis() {
+    return _emojis;
+  }
+  Map<String, String> _reversedEmojiMap;
+  Emojis._internal() {
+    // reverse the map for reverse lookups
+    _reversedEmojiMap = _EMOJIS.map((k, v) => MapEntry(v, k));
+  }
+
   static String getByName(String name) {
     name = name.replaceAll(':', '');
     return _EMOJIS[name];
+  }
+
+  String reverseLookup(String value) {
+    return _reversedEmojiMap[value];
   }
 
   static String getClosestMatch(String name) {
