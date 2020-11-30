@@ -38,6 +38,13 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeMessage(messageId) {
+    api.messageDelete(channelId, messageId).then((_) {
+      _items.removeWhere((m) => m.id == messageId);
+      notifyListeners();
+    });
+  }
+
   Future<void> loadMessages(TwakeApi api, String channelId) async {
     clearMessages();
     var list;

@@ -10,13 +10,13 @@ import 'package:twake_mobile/widgets/common/emoji_piker_keyboard.dart';
 class MessageModalSheet extends StatefulWidget {
   final Message message;
   final void Function(BuildContext) onReply;
-  final void Function(BuildContext) onEdit;
+  final void Function(BuildContext) onDelete;
   final bool isThread;
   const MessageModalSheet(
     this.message, {
     this.isThread: false,
     this.onReply,
-    this.onEdit,
+    this.onDelete,
     Key key,
   }) : super(key: key);
 
@@ -100,7 +100,9 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                     .headline6
                     .copyWith(color: Colors.red),
               ),
-              onTap: () {},
+              onTap: () {
+                widget.onDelete(context);
+              },
             ),
           if (isMe && emojiBoardHidden) Divider(),
           if (isMe && emojiBoardHidden)

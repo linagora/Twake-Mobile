@@ -28,6 +28,9 @@ class ProfileProvider with ChangeNotifier {
   Profile get currentProfile => _currentProfile;
 
   List<Company> get companies => _currentProfile.companies;
+  List<Workspace> get workspaces => _currentProfile.companies
+      .firstWhere((c) => c.id == _selectedCompanyId)
+      .workspaces;
 
   bool isMe(String id) => _currentProfile.userId == id;
 
@@ -39,6 +42,10 @@ class ProfileProvider with ChangeNotifier {
 
   void currentCompanySet(String companyId) {
     _selectedCompanyId = companyId;
+    _selectedWorkspaceId = _currentProfile.companies
+        .firstWhere((c) => c.id == _selectedCompanyId)
+        .workspaces[0]
+        .id;
     notifyListeners();
   }
 

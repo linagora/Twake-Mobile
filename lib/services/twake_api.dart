@@ -1,8 +1,9 @@
-import 'dart:convert' show jsonDecode, jsonEncode;
+import 'dart:convert' show jsonEncode;
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/config/api.dart' show TwakeApiConfig;
 
@@ -17,11 +18,17 @@ class TwakeApi with ChangeNotifier {
   bool _isAuthorized = false;
   String _platform;
   // TODO get rid of this, request right data from api
+  Dio dio;
   Map<String, dynamic> _userData;
   TwakeApi() {
     DB.authLoad().then((map) {
       fromMap(map);
-      validate().then((_) => notifyListeners());
+      validate().then((_) {
+        dio = Dio(BaseOptions(
+          headers: TwakeApiConfig.authHeader(_authJWToken),
+        ));
+        notifyListeners();
+      });
     }).catchError((e) => print('Error loading auth data from database\n$e'));
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
@@ -56,14 +63,13 @@ class TwakeApi with ChangeNotifier {
     _platform = map['platform'];
   }
 
-  void fromJson(String json) {
-    final map = jsonDecode(json);
-    _authJWToken = map['token'];
+  void fromJson(Map<String, dynamic> json) {
+    _authJWToken = json['token'];
     _tokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(map['expiration'] * 1000);
-    _refreshToken = map['refresh_token'];
+        DateTime.fromMillisecondsSinceEpoch(json['expiration'] * 1000);
+    _refreshToken = json['refresh_token'];
     _refreshExpiration =
-        DateTime.fromMillisecondsSinceEpoch(map['refresh_expiration'] * 1000);
+        DateTime.fromMillisecondsSinceEpoch(json['refresh_expiration'] * 1000);
   }
 
   Future<void> validate() async {
@@ -88,39 +94,37 @@ class TwakeApi with ChangeNotifier {
   Future<void> prolongToken(String refreshToken) async {
     try {
       print('Trying to prolongToken');
-      final response = await http.post(
+      final response = await dio.post(
         TwakeApiConfig.tokenProlongMethod,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(
+        data: jsonEncode(
           {
             'refresh_token': refreshToken,
             'timezoneoffset': timeZoneOffset,
           },
         ),
       );
-      fromJson(response.body);
+      print('TOKEN DATA:${response.data}');
+      fromJson(response.data);
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
       }
       _isAuthorized = true;
+      dio = Dio(
+        BaseOptions(headers: TwakeApiConfig.authHeader(_authJWToken)),
+      );
       DB.authSave(this);
       notifyListeners();
     } catch (error) {
-      print('Error occured during authentication\n$error');
+      print('Error occurred during authentication\n$error');
       throw error;
     }
   }
 
   Future<void> authenticate(String username, String password) async {
     try {
-      final response = await http.post(
+      final response = await dio.post(
         TwakeApiConfig.authorizeMethod,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(
+        data: jsonEncode(
           {
             'username': username,
             'password': password,
@@ -129,15 +133,18 @@ class TwakeApi with ChangeNotifier {
           },
         ),
       );
-      fromJson(response.body);
+      fromJson(response.data);
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
       }
       _isAuthorized = true;
+      dio = Dio(
+        BaseOptions(headers: TwakeApiConfig.authHeader(_authJWToken)),
+      );
       DB.authSave(this);
       notifyListeners();
     } catch (error) {
-      print('Error occured during authentication\n$error');
+      print('Error occurred during authentication\n$error');
       throw error;
     }
   }
@@ -145,16 +152,15 @@ class TwakeApi with ChangeNotifier {
   Future<Map<String, dynamic>> currentProfileGet() async {
     await validate();
     try {
-      final response = await http.get(
+      print('AUTH TOKEN USED: $_authJWToken');
+      final response = await dio.get(
         TwakeApiConfig.currentProfileMethod, // url
-        headers: TwakeApiConfig.authHeader(_authJWToken),
       );
-      final Map<String, dynamic> userData = jsonDecode(response.body);
-      print('${response.statusCode}');
-      _userData = userData;
-      return userData;
+      print('AUTH TOKEN USED: $_authJWToken');
+      _userData = response.data;
+      return _userData;
     } catch (error) {
-      print('Error occured while loading user profile\n$error');
+      print('Error occurred while loading user profile\n$error');
       throw error;
     }
   }
@@ -162,16 +168,12 @@ class TwakeApi with ChangeNotifier {
   Future<List<dynamic>> workspaceChannelsGet(String workspaceId) async {
     await validate();
     try {
-      final response = await http.get(
+      final response = await dio.get(
         TwakeApiConfig.workspaceChannelsMethod(workspaceId), // url
-        headers: TwakeApiConfig.authHeader(_authJWToken),
       );
-      final channels = jsonDecode(response.body);
-      print('GOT channels list:\n$channels');
-      // Some processing ...
-      return channels;
+      return response.data;
     } catch (error) {
-      print('Error occured while getting workspace channels\n$error');
+      print('Error occurred while getting workspace channels\n$error');
       throw error;
     }
   }
@@ -179,16 +181,13 @@ class TwakeApi with ChangeNotifier {
   Future<List<dynamic>> directMessagesGet(String companyId) async {
     await validate();
     try {
-      final response = await http.get(
+      final response = await dio.get(
         TwakeApiConfig.directMessagesMethod(companyId),
-        headers: TwakeApiConfig.authHeader(_authJWToken),
       );
       if (response.statusCode != 200) return [];
-      final directs = jsonDecode(response.body);
-      print('GOT directs:\n$directs');
-      return directs;
+      return response.data;
     } catch (error) {
-      print('Error occured while getting direct messages\n$error');
+      print('Error occurred while getting direct messages\n$error');
       throw error;
     }
   }
@@ -199,19 +198,15 @@ class TwakeApi with ChangeNotifier {
   }) async {
     await validate();
     try {
-      final response = await http.get(
+      final response = await dio.get(
         TwakeApiConfig.channelMessagesMethod(
           channelId,
           beforeId: beforeMessageId,
         ), // url
-        headers: TwakeApiConfig.authHeader(_authJWToken),
       );
-      final messages = jsonDecode(response.body);
-      // Some processing ...
-      print('GOT channel messages:\n$messages');
-      return messages;
+      return response.data;
     } catch (error) {
-      print('Error occured while getting channel messages\n$error');
+      print('Error occurred while getting channel messages\n$error');
       throw error;
     }
   }
@@ -227,15 +222,13 @@ class TwakeApi with ChangeNotifier {
       'original_str': content,
       'parent_message_id': parentMessageId ?? '',
     });
-    var headers = TwakeApiConfig.authHeader(_authJWToken);
     try {
-      final response = await http.post(
+      final response = await dio.post(
         TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
-        headers: headers,
-        body: body,
+        data: body,
       );
       if (response.statusCode < 203) {
-        var message = jsonDecode(response.body)['object'];
+        var message = response.data['object'];
         // TODO remove after requesting data from api
         message['sender'] = {
           'username': _userData['username'],
@@ -260,16 +253,32 @@ class TwakeApi with ChangeNotifier {
     String reaction,
   ) async {
     await validate();
-    var headers = TwakeApiConfig.authHeader(_authJWToken);
     try {
-      final _ = await http.post(
+      final _ = await dio.post(
         TwakeApiConfig.messageReactionsMethod(channelId),
-        headers: headers,
-        body: jsonEncode({
+        data: jsonEncode({
           'reaction': reaction,
           'message_id': messageId,
         }),
       );
-    } catch (error) {}
+    } catch (error) {
+      print('Error occurred while setting reaction\n$error');
+    }
+  }
+
+  Future<void> messageDelete(String channelId, String messageId) async {
+    await validate();
+    final url = TwakeApiConfig.channelMessagesMethod(channelId, isPost: true);
+    print('$url\n$messageId');
+    try {
+      final _ = await dio.delete(
+        url,
+        data: jsonEncode({
+          'message_id': messageId,
+        }),
+      );
+    } catch (error) {
+      print('Error occurred while deteting message\n$error');
+    }
   }
 }

@@ -26,7 +26,8 @@ dependencies:
   flutter_localizations: # Used for localizing different in app strings
     sdk: flutter
   json_annotation: ^3.1.0 # serialization/deserialization auto code generation
-  http: ^0.12.2 # http client library
+  # http: ^0.12.2 # http client library
+  dio: ^3.0.10
   provider: ^4.3.2+2 # easier state management
   mime: ^0.9.7 # dynamically identify content-type
   intl: ^0.16.1

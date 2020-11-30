@@ -63,7 +63,7 @@ class Message extends JsonSerializable with ChangeNotifier {
     // In case if someone already reacted with this emoji, keep working with it
     if (reactions[emojiCode] != null) {
       // Get the list of people, who reacted with this emoji
-      List<String> users = reactions[emojiCode]['users'];
+      List users = reactions[emojiCode]['users'];
       // If user already reacted with this emoji, then decrement the count
       // and remove the user from list
       if (users.contains(userId)) {

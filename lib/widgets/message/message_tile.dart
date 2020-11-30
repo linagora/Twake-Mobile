@@ -9,7 +9,7 @@ import 'package:twake_mobile/utils/twacode.dart';
 import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/reaction.dart';
-import 'package:twake_mobile/widgets/message/message_edit_modal_sheet.dart';
+// import 'package:twake_mobile/widgets/message/message_edit_modal_sheet.dart';
 import 'package:twake_mobile/widgets/message/message_modal_sheet.dart';
 
 class MessageTile extends StatelessWidget {
@@ -25,14 +25,20 @@ class MessageTile extends StatelessWidget {
     });
   }
 
-  void onEdit(context) {
+  void onDelete(context) {
     Navigator.of(context).pop();
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return MessageEditModalSheet(message);
-        });
+    Provider.of<MessagesProvider>(context, listen: false)
+        .removeMessage(message.id);
   }
+  // NOT IMPLEMENTED YET
+  // void onEdit(context) {
+  // Navigator.of(context).pop();
+  // showModalBottomSheet(
+  // context: context,
+  // builder: (context) {
+  // return MessageEditModalSheet(message);
+  // });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +52,7 @@ class MessageTile extends StatelessWidget {
                 message,
                 isThread: isThread,
                 onReply: onReply,
-                onEdit: onEdit,
+                onDelete: onDelete,
               );
             });
       },
