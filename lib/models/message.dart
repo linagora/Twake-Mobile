@@ -161,9 +161,10 @@ class Sender {
   @JsonKey(required: true)
   final String username;
 
-  final String img;
+  final String thumbnail;
 
-  final String id;
+  @JsonKey(required: true)
+  final String userId;
 
   @JsonKey(name: 'firstname')
   final String firstName;
@@ -173,8 +174,8 @@ class Sender {
 
   Sender({
     @required this.username,
-    this.img,
-    this.id,
+    this.thumbnail,
+    this.userId,
     this.firstName,
     this.lastName,
   });

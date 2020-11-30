@@ -56,7 +56,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
   @override
   Widget build(BuildContext context) {
     final bool isMe = Provider.of<ProfileProvider>(context, listen: false)
-        .isMe(widget.message.sender.id);
+        .isMe(widget.message.sender.userId);
     return Container(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -65,19 +65,25 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
           /// who's currently logged in
           if (emojiBoardHidden) EmojiLine(onEmojiSelected, toggleEmojiBoard),
           if (emojiBoardHidden) Divider(),
-          if (emojiBoardHidden)
-            ListTile(
-              leading: Icon(Icons.edit_outlined),
-              title: Text('Edit'),
-              onTap: () {
-                widget.onEdit(context);
-              },
-            ),
-          if (isMe && emojiBoardHidden) Divider(),
+          // if (emojiBoardHidden)
+          // ListTile(
+          // leading: Icon(Icons.edit_outlined),
+          // title: Text(
+          // 'Edit',
+          // style: Theme.of(context).textTheme.headline6,
+          // ),
+          // onTap: () {
+          // widget.onEdit(context);
+          // },
+          // ),
+          // if (isMe && emojiBoardHidden) Divider(),
           if (!widget.isThread && emojiBoardHidden)
             ListTile(
               leading: Icon(Icons.reply_sharp),
-              title: Text('Reply'),
+              title: Text(
+                'Reply',
+                style: Theme.of(context).textTheme.headline6,
+              ),
               onTap: () {
                 Navigator.of(context).pop();
                 widget.onReply(context);
@@ -89,18 +95,23 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
               leading: Icon(Icons.delete, color: Colors.red),
               title: Text(
                 'Delete',
-                style: TextStyle(color: Colors.red),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(color: Colors.red),
               ),
               onTap: () {},
             ),
           if (isMe && emojiBoardHidden) Divider(),
-          ListTile(
-            leading: Icon(Icons.copy),
-            title: Text(
-              'Copy',
+          if (isMe && emojiBoardHidden)
+            ListTile(
+              leading: Icon(Icons.copy),
+              title: Text(
+                'Copy',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              onTap: () {},
             ),
-            onTap: () {},
-          ),
           Offstage(
               offstage: emojiBoardHidden,
               child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {

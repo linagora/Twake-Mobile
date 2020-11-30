@@ -239,8 +239,8 @@ class TwakeApi with ChangeNotifier {
         // TODO remove after requesting data from api
         message['sender'] = {
           'username': _userData['username'],
-          'img': _userData['thumbnail'],
-          'id': _userData['userId'],
+          'thumbnail': _userData['thumbnail'],
+          'userId': _userData['userId'],
           'firstname': _userData['firstname'],
           'lastname': _userData['lastname'],
         };

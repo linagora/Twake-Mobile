@@ -26,8 +26,15 @@ class MessagesProvider extends ChangeNotifier {
     loaded = false;
   }
 
-  void addMessage(Map<String, dynamic> message) {
-    _items.add(Message.fromJson(message)..channelId = channelId);
+  void addMessage(Map<String, dynamic> message, {String parentMessageId}) {
+    var _message = Message.fromJson(message)..channelId = channelId;
+    if (parentMessageId != null) {
+      var message = _items.firstWhere((m) => m.id == parentMessageId);
+      message.responses.add(_message);
+      message.responsesCount = message.responsesCount ?? 0 + 1;
+    } else {
+      _items.add(_message);
+    }
     notifyListeners();
   }
 

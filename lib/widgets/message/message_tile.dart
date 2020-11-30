@@ -68,7 +68,7 @@ class MessageTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ImageAvatar(message.sender.img),
+              ImageAvatar(message.sender.thumbnail),
               SizedBox(width: Dim.wm2),
               Consumer<Message>(
                 builder: (context, message, _) => Column(
