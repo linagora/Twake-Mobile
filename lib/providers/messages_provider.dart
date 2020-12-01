@@ -12,7 +12,7 @@ class MessagesProvider extends ChangeNotifier {
   String channelId;
   TwakeApi api;
 
-  List<Message> get items => _items;
+  List<Message> get items => [..._items];
 
   int get messagesCount => _items.length;
 
@@ -25,6 +25,7 @@ class MessagesProvider extends ChangeNotifier {
   void clearMessages() {
     _items.clear();
     loaded = false;
+    notifyListeners();
   }
 
   void addMessage(Map<String, dynamic> message, {String parentMessageId}) {
