@@ -2,7 +2,6 @@ import 'dart:convert' show jsonEncode;
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-// import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/config/api.dart' show TwakeApiConfig;
@@ -18,7 +17,7 @@ class TwakeApi with ChangeNotifier {
   bool _isAuthorized = false;
   String _platform;
   // TODO get rid of this, request right data from api
-  Dio dio;
+  Dio dio = Dio();
   Map<String, dynamic> _userData;
   TwakeApi() {
     DB.authLoad().then((map) {
@@ -29,7 +28,9 @@ class TwakeApi with ChangeNotifier {
         ));
         notifyListeners();
       });
-    }).catchError((e) => print('Error loading auth data from database\n$e'));
+    }).catchError((e) {
+      print('Error loading auth data from database\n$e');
+    });
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
 
@@ -199,11 +200,14 @@ class TwakeApi with ChangeNotifier {
     await validate();
     try {
       final response = await dio.get(
-        TwakeApiConfig.channelMessagesMethod(
-          channelId,
-          beforeId: beforeMessageId,
-        ), // url
-      );
+          TwakeApiConfig.channelMessagesMethod(
+            channelId,
+            beforeId: beforeMessageId,
+          ), // url
+          queryParameters: {
+            'before': beforeMessageId,
+            'limit': 50,
+          });
       return response.data;
     } catch (error) {
       print('Error occurred while getting channel messages\n$error');
@@ -224,7 +228,7 @@ class TwakeApi with ChangeNotifier {
     });
     try {
       final response = await dio.post(
-        TwakeApiConfig.channelMessagesMethod(channelId, isPost: true),
+        TwakeApiConfig.channelMessagesMethod(channelId),
         data: body,
       );
       if (response.statusCode < 203) {
@@ -268,7 +272,7 @@ class TwakeApi with ChangeNotifier {
 
   Future<void> messageDelete(String channelId, String messageId) async {
     await validate();
-    final url = TwakeApiConfig.channelMessagesMethod(channelId, isPost: true);
+    final url = TwakeApiConfig.channelMessagesMethod(channelId);
     print('$url\n$messageId');
     try {
       final _ = await dio.delete(

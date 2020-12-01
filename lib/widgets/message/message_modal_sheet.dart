@@ -11,12 +11,15 @@ class MessageModalSheet extends StatefulWidget {
   final Message message;
   final void Function(BuildContext) onReply;
   final void Function(BuildContext) onDelete;
+  final void Function() onCopy;
   final bool isThread;
+
   const MessageModalSheet(
     this.message, {
     this.isThread: false,
     this.onReply,
     this.onDelete,
+    this.onCopy,
     Key key,
   }) : super(key: key);
 
@@ -105,18 +108,19 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
               },
             ),
           if (isMe && emojiBoardHidden) Divider(),
-          if (isMe && emojiBoardHidden)
+          if (emojiBoardHidden)
             ListTile(
               leading: Icon(Icons.copy),
               title: Text(
                 'Copy',
                 style: Theme.of(context).textTheme.headline6,
               ),
-              onTap: () {},
+              onTap: widget.onCopy,
             ),
           Offstage(
               offstage: emojiBoardHidden,
               child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {
+                Navigator.of(context).pop();
                 onEmojiSelected(emoji.emoji, reverse: true);
               })),
         ],

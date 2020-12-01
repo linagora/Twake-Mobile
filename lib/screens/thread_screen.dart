@@ -77,16 +77,19 @@ class ThreadScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              child: SingleChildScrollView(
-                child: ChangeNotifierProvider.value(
-                  value: message,
-                  child: MessageTile(message, isThread: true),
+            // Show main message only if keyboard is hidden
+            // otherwise it causes ugly shrinking of responses list
+            if (MediaQuery.of(context).viewInsets.bottom == 0)
+              Container(
+                child: SingleChildScrollView(
+                  child: ChangeNotifierProvider.value(
+                    value: message,
+                    child: MessageTile(message, isThread: true),
+                  ),
                 ),
+                padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+                height: Dim.heightPercent(19),
               ),
-              padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
-              height: Dim.heightPercent(19),
-            ),
             Divider(color: Colors.grey[200]),
             Padding(
               padding: EdgeInsets.symmetric(
