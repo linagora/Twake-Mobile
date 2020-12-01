@@ -31,7 +31,10 @@ class MessagesScreen extends StatelessWidget {
             return !profile.isMe(m.userId);
           })
         : null;
-
+    final messagesProviderF = Provider.of<MessagesProvider>(
+      context,
+      listen: false,
+    );
     return Scaffold(
       appBar: AppBar(
         shadowColor: Colors.grey[300],
@@ -60,28 +63,26 @@ class MessagesScreen extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: Provider.of<MessagesProvider>(
-          context,
-          listen: false,
-        ).loadMessages(api, channelId),
+        future: messagesProviderF.loadMessages(api, channelId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return Consumer<MessagesProvider>(
-                builder: (ctx, messagesProvider, _) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        MessagesGrouppedList(messagesProvider.items),
-                        MessageEditField((content) {
-                          Provider.of<TwakeApi>(context, listen: false)
-                              .messageSend(
-                                  channelId: channelId,
-                                  content: content,
-                                  onSuccess: (Map<String, dynamic> message) {
-                                    messagesProvider.addMessage(message);
-                                  });
-                        }),
-                      ],
-                    ));
+              builder: (ctx, messagesProvider, child) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MessagesGrouppedList(messagesProvider.items),
+                  child,
+                ],
+              ),
+              child: MessageEditField((content) {
+                Provider.of<TwakeApi>(context, listen: false).messageSend(
+                    channelId: channelId,
+                    content: content,
+                    onSuccess: (Map<String, dynamic> message) {
+                      messagesProviderF.addMessage(message);
+                    });
+              }),
+            );
           } else {
             return Center(child: CircularProgressIndicator());
           }

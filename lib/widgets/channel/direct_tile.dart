@@ -24,10 +24,10 @@ class DirectTile extends StatelessWidget {
               MessagesScreen.route,
               arguments: direct.id,
             )
-            .then(
-              (_) => Provider.of<MessagesProvider>(context, listen: false)
-                  .clearMessages(),
-            );
+            .then((_) => Future.delayed(Duration(milliseconds: 300)).then(
+                  (_) => Provider.of<MessagesProvider>(context, listen: false)
+                      .clearMessages(),
+                ));
       },
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),

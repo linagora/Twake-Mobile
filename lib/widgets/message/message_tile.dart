@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/config/styles_config.dart';
@@ -9,7 +10,7 @@ import 'package:twake_mobile/utils/twacode.dart';
 import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/reaction.dart';
-import 'package:twake_mobile/widgets/message/message_edit_modal_sheet.dart';
+// import 'package:twake_mobile/widgets/message/message_edit_modal_sheet.dart';
 import 'package:twake_mobile/widgets/message/message_modal_sheet.dart';
 
 class MessageTile extends StatelessWidget {
@@ -25,14 +26,31 @@ class MessageTile extends StatelessWidget {
     });
   }
 
-  void onEdit(context) {
+  onCopy(context) {
+    FlutterClipboard.copy(message.content.originalStr);
     Navigator.of(context).pop();
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return MessageEditModalSheet(message);
-        });
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(milliseconds: 1300),
+        content: Text('Message has been copied to clipboard'),
+      ),
+    );
   }
+
+  void onDelete(context) {
+    Navigator.of(context).pop();
+    Provider.of<MessagesProvider>(context, listen: false)
+        .removeMessage(message.id);
+  }
+  // NOT IMPLEMENTED YET
+  // void onEdit(context) {
+  // Navigator.of(context).pop();
+  // showModalBottomSheet(
+  // context: context,
+  // builder: (context) {
+  // return MessageEditModalSheet(message);
+  // });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +59,15 @@ class MessageTile extends StatelessWidget {
         showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) {
+            builder: (_) {
               return MessageModalSheet(
                 message,
                 isThread: isThread,
                 onReply: onReply,
-                onEdit: onEdit,
+                onDelete: onDelete,
+                onCopy: () {
+                  onCopy(context);
+                },
               );
             });
       },
@@ -68,7 +89,7 @@ class MessageTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ImageAvatar(message.sender.img),
+              ImageAvatar(message.sender.thumbnail),
               SizedBox(width: Dim.wm2),
               Consumer<Message>(
                 builder: (context, message, _) => Column(

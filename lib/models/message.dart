@@ -63,7 +63,7 @@ class Message extends JsonSerializable with ChangeNotifier {
     // In case if someone already reacted with this emoji, keep working with it
     if (reactions[emojiCode] != null) {
       // Get the list of people, who reacted with this emoji
-      List<String> users = reactions[emojiCode]['users'];
+      List users = reactions[emojiCode]['users'];
       // If user already reacted with this emoji, then decrement the count
       // and remove the user from list
       if (users.contains(userId)) {
@@ -161,9 +161,10 @@ class Sender {
   @JsonKey(required: true)
   final String username;
 
-  final String img;
+  final String thumbnail;
 
-  final String id;
+  @JsonKey(required: true)
+  final String userId;
 
   @JsonKey(name: 'firstname')
   final String firstName;
@@ -173,8 +174,8 @@ class Sender {
 
   Sender({
     @required this.username,
-    this.img,
-    this.id,
+    this.thumbnail,
+    this.userId,
     this.firstName,
     this.lastName,
   });
