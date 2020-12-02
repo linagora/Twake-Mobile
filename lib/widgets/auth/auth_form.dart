@@ -66,6 +66,7 @@ class _AuthFormState extends State<AuthForm> {
       await Provider.of<TwakeApi>(ctx, listen: false)
           .authenticate(username, password);
     } catch (error) {
+      Scaffold.of(ctx).hideCurrentSnackBar();
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
           content: Text('Failed to authorize! Check credentials and try again'),
@@ -79,12 +80,12 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     return Container(
       width: Dim.widthPercent(87),
-      height: Dim.heightPercent(60),
+      height: Dim.heightPercent(63),
       child: Padding(
         padding: EdgeInsets.only(
           left: Dim.wm4,
           right: Dim.wm4,
-          top: Dim.heightPercent(5),
+          top: Dim.hm4,
           bottom: Dim.hm2,
         ),
         child: Form(

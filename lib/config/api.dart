@@ -2,7 +2,7 @@ import 'package:sprintf/sprintf.dart';
 
 class TwakeApiConfig {
   static const String _HOST = 'http://purecode.ru:3123';
-  static const int _MESSAGES_PER_PAGE = 50;
+  // static const int _MESSAGES_PER_PAGE = 50;
   static const String _authorize = '/authorize';
   static const String _usersCurrentGet = '/users/current/get';
   static const String _workspaceChannels = '/workspace/%s/channels';
@@ -31,15 +31,14 @@ class TwakeApiConfig {
   }
 
   static String channelMessagesMethod(String channelId,
-      {String beforeId, int limit, bool isPost: false}) {
-    var url =
-        _HOST + sprintf(_channelMessages, [channelId]) + (isPost ? '' : '?');
-    if (beforeId != null) {
-      url = url + 'before=$beforeId&';
-    }
-    if (!isPost) {
-      url = url + 'limit=${limit ?? _MESSAGES_PER_PAGE}&';
-    }
+      {String beforeId, int limit}) {
+    var url = _HOST + sprintf(_channelMessages, [channelId]);
+    // if (beforeId != null) {
+    // url = url + 'before=$beforeId&';
+    // }
+    // if (!isPost) {
+    // url = url + 'limit=${limit ?? _MESSAGES_PER_PAGE}&';
+    // }
 
     return url;
   }

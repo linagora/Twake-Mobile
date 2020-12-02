@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/config/styles_config.dart';
@@ -25,6 +26,17 @@ class MessageTile extends StatelessWidget {
     });
   }
 
+  onCopy(context) {
+    FlutterClipboard.copy(message.content.originalStr);
+    Navigator.of(context).pop();
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        duration: Duration(milliseconds: 1300),
+        content: Text('Message has been copied to clipboard'),
+      ),
+    );
+  }
+
   void onDelete(context) {
     Navigator.of(context).pop();
     Provider.of<MessagesProvider>(context, listen: false)
@@ -47,12 +59,15 @@ class MessageTile extends StatelessWidget {
         showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) {
+            builder: (_) {
               return MessageModalSheet(
                 message,
                 isThread: isThread,
                 onReply: onReply,
                 onDelete: onDelete,
+                onCopy: () {
+                  onCopy(context);
+                },
               );
             });
       },
