@@ -26,6 +26,7 @@ class _MessageEditField extends State<MessageEditField> {
   Future<void> toggleEmojiBoard() async {
     FocusScope.of(context).unfocus();
 
+    await Future.delayed(Duration(milliseconds: 50));
     setState(() {
       _emojiVisible = !_emojiVisible;
     });
