@@ -7,11 +7,18 @@ import 'package:twake_mobile/widgets/common/image_avatar.dart';
 
 const double ICON_SIZE_MULTIPLIER = 4.5;
 
-class TwakeDrawer extends StatelessWidget {
+class TwakeDrawer extends StatefulWidget {
+  @override
+  _TwakeDrawerState createState() => _TwakeDrawerState();
+}
+
+class _TwakeDrawerState extends State<TwakeDrawer> {
+  bool _companiesHidden = true;
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<ProfileProvider>(context);
-    final workspaces = profile.companyWorkspaces(profile.companies[0].id);
+    final workspaces = profile.workspaces;
+    final companies = profile.companies;
     final user = profile.currentProfile;
     final padding = EdgeInsets.symmetric(
       horizontal: Dim.wm2,
@@ -33,49 +40,70 @@ class TwakeDrawer extends StatelessWidget {
           child: Column(
             children: [
               ListTile(
-                contentPadding: padding,
-                leading: IconButton(
-                    color: Colors.black87,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    iconSize: Dim.tm4(),
-                    icon: Icon(
-                      Icons.close,
-                    )),
+                contentPadding: EdgeInsets.only(left: Dim.wm3),
                 title: Text(
-                  'Workspaces',
+                  _companiesHidden ? 'Workspaces' : 'Choose company',
                   style: Theme.of(context).textTheme.headline5,
                 ), // TODO configure the styles
-                trailing: IconButton(
-                  color: Colors.black87,
-                  onPressed: () {},
-                  iconSize: Dim.tm4(),
-                  icon: Icon(
-                    Icons.add,
-                  ),
-                ),
+                trailing: _companiesHidden
+                    ? IconButton(
+                        color: Colors.black87,
+                        onPressed: () {
+                          setState(() {
+                            _companiesHidden = false;
+                          });
+                        },
+                        iconSize: Dim.tm4(),
+                        icon: Icon(
+                          Icons.loop,
+                        ),
+                      )
+                    : SizedBox(width: 0, height: 0),
               ),
               Divider(),
               SizedBox(height: Dim.hm2),
-              Container(
-                height: Dim.heightPercent(55),
-                child: ListView.builder(
-                    itemCount: workspaces.length,
-                    itemBuilder: (ctx, i) => InkWell(
-                          onTap: () {
-                            profile.currentWorkspaceSet(workspaces[i].id);
-                            Navigator.of(context).pop();
-                          },
-                          child: ListTile(
-                            leading: ImageAvatar(workspaces[i].logo),
-                            title: Text(
-                              workspaces[i].name,
+              if (_companiesHidden)
+                Container(
+                  height: Dim.heightPercent(55),
+                  child: ListView.builder(
+                      itemCount: workspaces.length,
+                      itemBuilder: (ctx, i) => InkWell(
+                            onTap: () {
+                              profile.currentWorkspaceSet(workspaces[i].id);
+                              Navigator.of(context).pop();
+                            },
+                            child: ListTile(
+                              leading: ImageAvatar(workspaces[i].logo),
+                              title: Text(
+                                workspaces[i].name,
+                              ),
+                              subtitle: Text(profile.selectedCompany.name),
                             ),
-                            subtitle: Text(profile.selectedCompany.name),
-                          ),
-                        )),
-              ),
+                          )),
+                ),
+              if (!_companiesHidden)
+                Container(
+                  height: Dim.heightPercent(55),
+                  child: ListView.builder(
+                      itemCount: companies.length,
+                      itemBuilder: (ctx, i) => InkWell(
+                            onTap: () {
+                              profile.currentCompanySet(companies[i].id);
+                              setState(() {
+                                _companiesHidden = true;
+                              });
+                            },
+                            child: ListTile(
+                              leading: ImageAvatar(companies[i].logo),
+                              title: Text(
+                                companies[i].name,
+                              ),
+                              subtitle: Text(
+                                '${companies[i].workspaceCount} workspaces',
+                              ),
+                            ),
+                          )),
+                ),
               Spacer(),
               Divider(),
               ListTile(

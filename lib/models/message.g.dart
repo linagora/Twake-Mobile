@@ -51,11 +51,11 @@ Map<String, dynamic> _$MessageTwacodeToJson(MessageTwacode instance) =>
     };
 
 Sender _$SenderFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['username']);
+  $checkKeys(json, requiredKeys: const ['username', 'userId']);
   return Sender(
     username: json['username'] as String,
-    img: json['img'] as String,
-    id: json['id'] as String,
+    thumbnail: json['thumbnail'] as String,
+    userId: json['userId'] as String,
     firstName: json['firstname'] as String,
     lastName: json['lastname'] as String,
   );
@@ -63,8 +63,8 @@ Sender _$SenderFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$SenderToJson(Sender instance) => <String, dynamic>{
       'username': instance.username,
-      'img': instance.img,
-      'id': instance.id,
+      'thumbnail': instance.thumbnail,
+      'userId': instance.userId,
       'firstname': instance.firstName,
       'lastname': instance.lastName,
     };

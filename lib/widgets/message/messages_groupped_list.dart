@@ -22,15 +22,9 @@ class MessagesGrouppedList extends StatelessWidget {
         return true;
       },
       child: Expanded(
-        // height: Dim.maxScreenHeight - // taking all available vertical space
-        // Dim.heightPercent(
-        // (kToolbarHeight * 0.19).round()) - // deducting toolbar height
-        // Dim.heightPercent(11), // deducting height of text input for reply
-        // padding: EdgeInsets.only(bottom: Dim.hm3),
         child: StickyGroupedListView<Message, DateTime>(
           reverse: true,
           elements: messages,
-          // floatingHeader: true,
           order: StickyGroupedListOrder.ASC,
           groupBy: (Message m) {
             final DateTime dt =
@@ -42,7 +36,6 @@ class MessagesGrouppedList extends StatelessWidget {
           itemComparator: (Message m1, Message m2) {
             return m2.creationDate.compareTo(m1.creationDate);
           },
-          // floatingHeader: true,
           separator: SizedBox(height: Dim.hm2),
           groupSeparatorBuilder: (Message message) {
             return Container(
@@ -54,7 +47,6 @@ class MessagesGrouppedList extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Divider(
                       thickness: 0.0,
-                      // color: Theme.of(context).accentColor,
                     ),
                   ),
                   Align(
@@ -62,13 +54,6 @@ class MessagesGrouppedList extends StatelessWidget {
                     child: Container(
                       color: Theme.of(context).scaffoldBackgroundColor,
                       width: Dim.widthPercent(30),
-                      // decoration: BoxDecoration(
-                      // borderRadius: BorderRadius.circular(Dim.widthMultiplier),
-                      // color: Theme.of(context).accentColor,
-                      // border: Border.all(
-                      // color: Theme.of(context).accentColor.withOpacity(0.5),
-                      // ),
-                      // ),
                       child: Padding(
                         padding: const EdgeInsets.all(1.0),
                         child: Text(

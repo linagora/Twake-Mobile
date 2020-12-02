@@ -8,6 +8,7 @@ import 'package:twake_mobile/services/twake_api.dart';
 class MessagesProvider extends ChangeNotifier {
   List<Message> _items = List();
   bool loaded = false;
+  bool _topHit = false;
   String channelId;
   TwakeApi api;
 
@@ -24,15 +25,34 @@ class MessagesProvider extends ChangeNotifier {
   void clearMessages() {
     _items.clear();
     loaded = false;
-  }
-
-  void addMessage(Map<String, dynamic> message) {
-    _items.add(Message.fromJson(message)..channelId = channelId);
     notifyListeners();
   }
 
+  void addMessage(Map<String, dynamic> message, {String parentMessageId}) {
+    var _message = Message.fromJson(message)..channelId = channelId;
+    if (parentMessageId != null) {
+      var message = _items.firstWhere((m) => m.id == parentMessageId);
+      message.responses.add(_message);
+      message.responsesCount = message.responsesCount ?? 0 + 1;
+    } else {
+      _items.add(_message);
+    }
+    notifyListeners();
+  }
+
+  Future<void> removeMessage(messageId) async {
+    await api.messageDelete(channelId, messageId);
+    _items.retainWhere((m) => m.id != messageId);
+    if (messagesCount < 8) {
+      Future.delayed(Duration(milliseconds: 200))
+          .then((_) => notifyListeners());
+    } else {
+      notifyListeners();
+    }
+  }
+
   Future<void> loadMessages(TwakeApi api, String channelId) async {
-    clearMessages();
+    _topHit = false;
     var list;
     this.api = api;
     this.channelId = channelId;
@@ -52,6 +72,7 @@ class MessagesProvider extends ChangeNotifier {
   }
 
   Future<void> loadMoreMessages() async {
+    if (_topHit) return;
     var list;
     try {
       list = await api.channelMessagesGet(
@@ -66,6 +87,7 @@ class MessagesProvider extends ChangeNotifier {
     // Notifications on scroll's end might fire, and trigger
     // refetch of data which is already present
     if (list.length < 2 || list[0]['id'] == firstMessageId) {
+      _topHit = true;
       return;
     }
     List<Message> tmp = List();

@@ -26,6 +26,7 @@ class _MessageEditField extends State<MessageEditField> {
   Future<void> toggleEmojiBoard() async {
     FocusScope.of(context).unfocus();
 
+    await Future.delayed(Duration(milliseconds: 50));
     setState(() {
       _emojiVisible = !_emojiVisible;
     });
@@ -146,6 +147,28 @@ class TextInput extends StatelessWidget {
             focusNode: focusNode,
             controller: controller,
             decoration: InputDecoration(
+              suffixIcon: IconButton(
+                padding: EdgeInsets.only(top: Dim.hm2),
+                iconSize: Dim.tm4(),
+                icon: Transform(
+                  transform: Matrix4.rotationZ(
+                    -pi / 4,
+                  ), // rotate 45 degrees cc
+                  child: Icon(
+                    canSend ? Icons.send : Icons.send_outlined,
+                    color: canSend
+                        ? Theme.of(context).accentColor
+                        : Colors.grey[400],
+                  ),
+                ),
+                onPressed: canSend
+                    ? () async {
+                        await onMessageSend(controller.text);
+                        focusNode.unfocus();
+                        controller.clear();
+                      }
+                    : null,
+              ),
               isCollapsed: true,
               floatingLabelBehavior: FloatingLabelBehavior.never,
               labelText: 'Reply',
@@ -155,53 +178,27 @@ class TextInput extends StatelessWidget {
             ),
           ),
           if (focusNode.hasFocus)
-            Column(
+            Row(
               children: [
-                SizedBox(height: Dim.heightMultiplier),
-                Row(children: [
-                  IconButton(
-                    iconSize: Dim.tm3(),
-                    icon: Icon(
-                      emojiVisible ? Icons.keyboard : Icons.tag_faces,
-                      color: Colors.grey,
-                    ),
-                    onPressed: onEmojiClicked,
+                IconButton(
+                  iconSize: Dim.tm3(),
+                  icon: Icon(
+                    emojiVisible ? Icons.keyboard : Icons.tag_faces,
+                    color: Colors.grey,
                   ),
-                  SizedBox(width: Dim.wm2),
-                  IconButton(
-                    iconSize: Dim.tm3(),
-                    icon: Icon(
-                      Icons.alternate_email,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      focusNode.unfocus();
-                    },
+                  onPressed: onEmojiClicked,
+                ),
+                SizedBox(width: Dim.wm2),
+                IconButton(
+                  iconSize: Dim.tm3(),
+                  icon: Icon(
+                    Icons.alternate_email,
+                    color: Colors.grey,
                   ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(
-                        iconSize: Dim.tm4(),
-                        icon: Transform(
-                            transform: Matrix4.rotationZ(
-                              -pi / 4,
-                            ), // rotate 45 degrees cc
-                            child: Icon(
-                              canSend ? Icons.send : Icons.send_outlined,
-                              color: canSend
-                                  ? Theme.of(context).accentColor
-                                  : Colors.grey[400],
-                            )),
-                        onPressed: () async {
-                          await onMessageSend(controller.text);
-                          focusNode.unfocus();
-                          controller.clear();
-                        },
-                      ),
-                    ),
-                  ),
-                ]),
+                  onPressed: () {
+                    focusNode.unfocus();
+                  },
+                ),
               ],
             ),
         ],
