@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/utils/emojis.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const Color defaultColor = Colors.blueGrey;
 const Color linkColor = Colors.blue;
@@ -101,6 +102,17 @@ class TwacodeItem {
   bool newLine = false;
 
   TapGestureRecognizer recognizer;
+  Future<void> _launchUrlInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   TwacodeItem(String type, String content, String id) {
     this.content = content;
@@ -140,7 +152,8 @@ class TwacodeItem {
         this.type = TwacodeType.url;
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
-            print('Url clicked');
+            print('Content: ${this.content}');
+            _launchUrlInBrowser(this.content);
           };
         break;
       case 'channel':
@@ -186,6 +199,7 @@ class TwacodeItem {
         break;
       case 'quote':
         this.style = generateStyle(color: quoteColor, italic: true);
+        this.content = this.content;
         this.type = TwacodeType.quote;
         break;
       case 'emoji': // TODO: implementation needed
