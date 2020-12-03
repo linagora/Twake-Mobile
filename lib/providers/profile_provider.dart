@@ -17,10 +17,17 @@ class ProfileProvider with ChangeNotifier {
       _currentProfile = Profile.fromJson(p);
 
       /// By default we are selecting first company
-      _selectedCompanyId = _currentProfile.companies[0].id;
+      /// after trying to retrieve user selected company first
+      final selectedCompany = _currentProfile.companies.firstWhere(
+          (c) => c.isSelected,
+          orElse: () => _currentProfile.companies[0]);
+      _selectedCompanyId = selectedCompany.id;
 
       /// And first workspace in that company
-      _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
+      _selectedWorkspaceId = selectedCompany.workspaces
+          .firstWhere((w) => w.isSelected,
+              orElse: () => selectedCompany.workspaces[0])
+          .id;
       loaded = true;
     }).catchError((e) => print('Error loading profile from data store\n$e'));
   }
@@ -42,16 +49,34 @@ class ProfileProvider with ChangeNotifier {
 
   void currentCompanySet(String companyId) {
     _selectedCompanyId = companyId;
-    _selectedWorkspaceId = _currentProfile.companies
-        .firstWhere((c) => c.id == _selectedCompanyId)
-        .workspaces[0]
-        .id;
+    // Select workspace in case of change of company
+    // Check if workspace was selected before
+    // if nothing is found return first workspace
+    var company =
+        _currentProfile.companies.firstWhere((c) => c.id == _selectedCompanyId);
+    companies.forEach((c) {
+      c.isSelected = c.id == companyId;
+    });
+    var workspace = company.workspaces
+        .firstWhere((w) => w.isSelected, orElse: () => workspaces[0]);
+    _selectedWorkspaceId = workspace.id;
     notifyListeners();
+    _updateWorkspaceSelection(_selectedWorkspaceId);
+    DB.profileSave(_currentProfile);
+  }
+
+  void _updateWorkspaceSelection(String workspaceId) {
+    workspaces.forEach((w) {
+      w.isSelected = w.id == workspaceId;
+    });
   }
 
   void currentWorkspaceSet(String workspaceId) {
     _selectedWorkspaceId = workspaceId;
+    _updateWorkspaceSelection(_selectedWorkspaceId);
     notifyListeners();
+    workspaces.firstWhere((w) => w.id == workspaceId).isSelected = true;
+    DB.profileSave(_currentProfile);
   }
 
   Company get selectedCompany {
@@ -74,7 +99,7 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    // if (loaded) return;
+    if (loaded) return;
     print('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();
