@@ -33,7 +33,7 @@ class MessagesProvider extends ChangeNotifier {
     if (parentMessageId != null) {
       var message = _items.firstWhere((m) => m.id == parentMessageId);
       message.responses.add(_message);
-      message.responsesCount = message.responsesCount ?? 0 + 1;
+      message.responsesCount = (message.responsesCount ?? 0) + 1;
     } else {
       _items.add(_message);
     }

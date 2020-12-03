@@ -99,7 +99,12 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) return;
+    if (loaded) {
+      // TODO get rid of this, after requesting
+      // correct data for sent messages from api
+      api.userData = _currentProfile.toJson();
+      return;
+    }
     print('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();
