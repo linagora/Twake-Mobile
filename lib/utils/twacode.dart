@@ -8,8 +8,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 const Color defaultColor = Colors.blueGrey;
 const Color linkColor = Colors.blue;
-const Color codeColor = Colors.red;
+const Color codeColor = Colors.indigo;
+const Color errorColor = Colors.red;
 const Color quoteColor = Colors.grey;
+const DefaultFontSize = 0.5;
 
 TextStyle generateStyle(
     {Color color = defaultColor,
@@ -17,12 +19,14 @@ TextStyle generateStyle(
     bool underline = false,
     bool italic = false,
     bool strikethrough = false,
-    bool monospace = false}) {
+    bool monospace = false,
+    fontSize = DefaultFontSize
+    }) {
   return TextStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: Dim.tm2(decimal: .5),
+      fontSize: Dim.tm2(decimal: fontSize),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -218,8 +222,8 @@ class TwacodeItem {
         this.style = generateStyle();
         this.type = TwacodeType.copiable;
         break;
-      case 'system': // TODO: implementation needed
-        this.style = generateStyle();
+      case 'system':
+        this.style = generateStyle(color: quoteColor, italic: true ,fontSize: 0.3);
         this.type = TwacodeType.system;
         break;
       case 'attachment': // TODO: implementation needed
@@ -230,8 +234,8 @@ class TwacodeItem {
         this.style = generateStyle();
         this.type = TwacodeType.progress_bar;
         break;
-      case 'unparseable': // TODO: implementation needed
-        this.style = generateStyle();
+      case 'unparseable':
+        this.style = generateStyle(color:errorColor, fontSize:0.3);
         this.type = TwacodeType.text;
         break;
       default:
