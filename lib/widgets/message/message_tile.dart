@@ -39,8 +39,10 @@ class MessageTile extends StatelessWidget {
 
   void onDelete(context) {
     Navigator.of(context).pop();
-    Provider.of<MessagesProvider>(context, listen: false)
-        .removeMessage(message.id);
+    Provider.of<MessagesProvider>(context, listen: false).removeMessage(
+      message.id,
+      parentMessageId: message.parentMessageId,
+    );
   }
   // NOT IMPLEMENTED YET
   // void onEdit(context) {

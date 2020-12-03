@@ -9,6 +9,9 @@ class Message extends JsonSerializable with ChangeNotifier {
   @JsonKey(required: true)
   final String id;
 
+  @JsonKey(name: 'parent_message_id')
+  final String parentMessageId;
+
   @JsonKey(name: 'responses_count')
   int responsesCount;
 
@@ -36,6 +39,7 @@ class Message extends JsonSerializable with ChangeNotifier {
     this.content,
     this.reactions,
     this.responses,
+    this.parentMessageId,
   });
 
   void updateReactions({
@@ -88,7 +92,14 @@ class Message extends JsonSerializable with ChangeNotifier {
       };
     }
     notifyListeners();
-    api.reactionSend(this.channelId, this.id, emojiCode).catchError((_) {
+    api
+        .reactionSend(
+      this.channelId,
+      this.id,
+      emojiCode,
+      parentMessageId: parentMessageId,
+    )
+        .catchError((_) {
       reactions = oldReactions;
       if (reactions.isEmpty) {
         reactions = null;

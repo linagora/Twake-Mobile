@@ -241,7 +241,9 @@ class TwacodeItem {
 
   InlineSpan render() {
     if (this.type == TwacodeType.image) {
-      return WidgetSpan(child: Image.network(this.content));
+      return WidgetSpan(
+          child: Image.network(this.content ??
+              'https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png'));
     } else if (this.type == TwacodeType.emoji) {
       this.content = Emojis.getClosestMatch(this.content);
     }

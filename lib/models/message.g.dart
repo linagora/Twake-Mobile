@@ -24,11 +24,13 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
         ?.map((e) =>
             e == null ? null : Message.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+    parentMessageId: json['parent_message_id'] as String,
   );
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'id': instance.id,
+      'parent_message_id': instance.parentMessageId,
       'responses_count': instance.responsesCount,
       'sender': instance.sender?.toJson(),
       'creation_date': instance.creationDate,
