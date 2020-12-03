@@ -44,6 +44,10 @@ class TwakeApi with ChangeNotifier {
     notifyListeners();
   }
 
+  set userData(value) {
+    _userData = value;
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'authJWToken': _authJWToken,
