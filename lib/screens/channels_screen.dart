@@ -21,7 +21,6 @@ class ChannelsScreen extends StatelessWidget {
     final company = profile.selectedCompany;
     final api = Provider.of<TwakeApi>(context, listen: false);
     final channels = Provider.of<ChannelsProvider>(context, listen: false);
-    channels.loadChannels(api, workspace.id, companyId: company.id);
     return SafeArea(
       child: Scaffold(
         key: _scaffoldKey,
@@ -72,32 +71,41 @@ class ChannelsScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Consumer<ChannelsProvider>(
-          builder: (ctx, channels, _) {
-            final items = channels.items;
-            final directs = channels.directs;
-            return channels.loaded
-                ? SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Dim.wm3,
-                        vertical: Dim.heightMultiplier,
+        body: FutureBuilder(
+          future:
+              channels.loadChannels(api, workspace.id, companyId: company.id),
+          builder: (ctx, spapshot) =>
+              spapshot.connectionState == ConnectionState.done
+                  ? RefreshIndicator(
+                      onRefresh: () {
+                        return channels.loadChannels(api, workspace.id,
+                            companyId: company.id);
+                      },
+                      child: Consumer<ChannelsProvider>(
+                        builder: (ctx, channels, _) {
+                          final items = channels.items;
+                          final directs = channels.directs;
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Dim.wm3,
+                              vertical: Dim.heightMultiplier,
+                            ),
+                            child: ListView(
+                              children: [
+                                // Starred channels will be implemented in version 2
+                                // StarredChannelsBlock([]),
+                                // Divider(height: Dim.hm5),
+                                ChannelsBlock(items),
+                                Divider(height: Dim.hm5),
+                                DirectMessagesBlock(directs),
+                                SizedBox(height: Dim.hm2),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                      child: Column(
-                        children: [
-                          // Starred channels will be implemented in version 2
-                          // StarredChannelsBlock([]),
-                          // Divider(height: Dim.hm5),
-                          ChannelsBlock(items),
-                          Divider(height: Dim.hm5),
-                          DirectMessagesBlock(directs),
-                          SizedBox(height: Dim.hm2),
-                        ],
-                      ),
-                    ),
-                  )
-                : Center(child: CircularProgressIndicator());
-          },
+                    )
+                  : Center(child: CircularProgressIndicator()),
         ),
       ),
     );
