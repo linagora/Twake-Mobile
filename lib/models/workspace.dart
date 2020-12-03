@@ -11,6 +11,9 @@ class Workspace {
   final String name;
   final String logo;
 
+  @JsonKey(ignore: true)
+  bool isSelected = false;
+
   Workspace({
     @required this.id,
     @required this.name,
@@ -20,6 +23,10 @@ class Workspace {
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Workspace.fromJson(Map<String, dynamic> json) =>
-      _$WorkspaceFromJson(json);
-  Map<String, dynamic> toJson() => _$WorkspaceToJson(this);
+      _$WorkspaceFromJson(json)..isSelected = json['isSelected'] ?? false;
+  Map<String, dynamic> toJson() {
+    var map = _$WorkspaceToJson(this);
+    map['isSelected'] = isSelected;
+    return map;
+  }
 }
