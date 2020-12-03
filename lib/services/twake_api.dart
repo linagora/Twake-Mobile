@@ -232,7 +232,7 @@ class TwakeApi with ChangeNotifier {
         data: body,
       );
       if (response.statusCode < 203) {
-        var message = response.data['object'];
+        var message = response.data;
         // TODO remove after requesting data from api
         message['sender'] = {
           'username': _userData['username'],
@@ -245,7 +245,7 @@ class TwakeApi with ChangeNotifier {
         onSuccess(message);
       }
     } catch (error) {
-      print(error);
+      print('ERROR OCCURED ON MESSAGE SEND: $error');
       throw error;
     }
   }
