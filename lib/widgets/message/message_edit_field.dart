@@ -57,9 +57,12 @@ class _MessageEditField extends State<MessageEditField> {
   }
 
   void onEmojiPicked(emoji) {
-    setState(() {
-      _controller.text += emoji.emoji;
-    });
+    // Just in case if object is disposed before (edge case)
+    if (mounted) {
+      setState(() {
+        _controller.text += emoji.emoji;
+      });
+    }
   }
 
   @override

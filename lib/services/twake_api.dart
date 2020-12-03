@@ -108,7 +108,6 @@ class TwakeApi with ChangeNotifier {
           },
         ),
       );
-      print('TOKEN DATA:${response.data}');
       fromJson(response.data);
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
@@ -157,11 +156,9 @@ class TwakeApi with ChangeNotifier {
   Future<Map<String, dynamic>> currentProfileGet() async {
     await validate();
     try {
-      print('AUTH TOKEN USED: $_authJWToken');
       final response = await dio.get(
         TwakeApiConfig.currentProfileMethod, // url
       );
-      print('AUTH TOKEN USED: $_authJWToken');
       _userData = response.data;
       return _userData;
     } catch (error) {
@@ -206,7 +203,6 @@ class TwakeApi with ChangeNotifier {
       final response = await dio.get(
           TwakeApiConfig.channelMessagesMethod(
             channelId,
-            beforeId: beforeMessageId,
           ), // url
           queryParameters: {
             'before': beforeMessageId,
@@ -246,7 +242,6 @@ class TwakeApi with ChangeNotifier {
           'lastname': _userData['lastname'],
         };
         message['reactions'] = null;
-        print('MESSAGE $message');
         onSuccess(message);
       }
     } catch (error) {
@@ -258,15 +253,21 @@ class TwakeApi with ChangeNotifier {
   Future<void> reactionSend(
     String channelId,
     String messageId,
-    String reaction,
-  ) async {
+    String reaction, {
+    String parentMessageId,
+  }) async {
     await validate();
     try {
+      print('Reacting to message\n $messageId');
+      print('Reacting in parent\n $parentMessageId');
+      print('URL: ${TwakeApiConfig.messageReactionsMethod(channelId)}');
+      print('reaction: $reaction');
       final _ = await dio.post(
         TwakeApiConfig.messageReactionsMethod(channelId),
         data: jsonEncode({
           'reaction': reaction,
           'message_id': messageId,
+          'parent_message_id': parentMessageId,
         }),
       );
     } catch (error) {
@@ -274,7 +275,11 @@ class TwakeApi with ChangeNotifier {
     }
   }
 
-  Future<void> messageDelete(String channelId, String messageId) async {
+  Future<void> messageDelete(
+    String channelId,
+    String messageId, {
+    String parentMessageId,
+  }) async {
     await validate();
     final url = TwakeApiConfig.channelMessagesMethod(channelId);
     print('$url\n$messageId');
@@ -283,6 +288,7 @@ class TwakeApi with ChangeNotifier {
         url,
         data: jsonEncode({
           'message_id': messageId,
+          'parent_message_id': parentMessageId,
         }),
       );
     } catch (error) {

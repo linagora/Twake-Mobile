@@ -19,15 +19,12 @@ class DirectTile extends StatelessWidget {
     });
     return InkWell(
       onTap: () {
-        Navigator.of(context)
-            .pushNamed(
-              MessagesScreen.route,
-              arguments: direct.id,
-            )
-            .then((_) => Future.delayed(Duration(milliseconds: 300)).then(
-                  (_) => Provider.of<MessagesProvider>(context, listen: false)
-                      .clearMessages(),
-                ));
+        final provider = Provider.of<MessagesProvider>(context, listen: false);
+        provider.clearMessages();
+        Navigator.of(context).pushNamed(
+          MessagesScreen.route,
+          arguments: direct.id,
+        );
       },
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
