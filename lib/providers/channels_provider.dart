@@ -36,11 +36,7 @@ class ChannelsProvider with ChangeNotifier {
     } finally {
       _items.clear();
       for (var i = 0; i < list.length; i++) {
-        try {
-          _items.add(Channel.fromJson(list[i], workspaceId));
-        } catch (error) {
-          print('ERROR CONVERTIN CHANNEL:$error');
-        }
+        _items.add(Channel.fromJson(list[i], workspaceId));
       }
       _items.sort((a, b) => a.name.compareTo(b.name));
     }
