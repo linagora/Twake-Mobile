@@ -38,6 +38,7 @@ dependencies:
   scrollable_positioned_list: ^0.1.8
   emoji_picker: 0.1.0
   clipboard: ^0.1.2+8
+  url_launcher: ^5.7.10
   # flutter_keyboard_visibility: ^4.0.0
 
   # The following adds the Cupertino Icons font to your application.
