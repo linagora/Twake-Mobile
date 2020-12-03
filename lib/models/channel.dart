@@ -42,7 +42,7 @@ class Channel {
     @required this.name,
     @required this.icon,
     this.description,
-    @required this.membersCount,
+    this.membersCount,
     @required this.isPrivate,
     @required this.isDirect,
     @required this.lastActivity,

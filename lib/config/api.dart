@@ -30,16 +30,8 @@ class TwakeApiConfig {
     return _HOST + sprintf(_workspaceChannels, [id]);
   }
 
-  static String channelMessagesMethod(String channelId,
-      {String beforeId, int limit}) {
+  static String channelMessagesMethod(String channelId) {
     var url = _HOST + sprintf(_channelMessages, [channelId]);
-    // if (beforeId != null) {
-    // url = url + 'before=$beforeId&';
-    // }
-    // if (!isPost) {
-    // url = url + 'limit=${limit ?? _MESSAGES_PER_PAGE}&';
-    // }
-
     return url;
   }
 

@@ -25,7 +25,6 @@ class MessagesProvider extends ChangeNotifier {
   void clearMessages() {
     _items.clear();
     loaded = false;
-    notifyListeners();
   }
 
   void addMessage(Map<String, dynamic> message, {String parentMessageId}) {
@@ -40,8 +39,12 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeMessage(messageId) async {
-    await api.messageDelete(channelId, messageId);
+  Future<void> removeMessage(messageId, {parentMessageId}) async {
+    await api.messageDelete(
+      channelId,
+      messageId,
+      parentMessageId: parentMessageId,
+    );
     _items.retainWhere((m) => m.id != messageId);
     if (messagesCount < 8) {
       Future.delayed(Duration(milliseconds: 200))
@@ -57,7 +60,6 @@ class MessagesProvider extends ChangeNotifier {
     this.api = api;
     this.channelId = channelId;
     try {
-      print('Trying to load messages over network\n$channelId');
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
       print('Error while loading messages\n$error');
