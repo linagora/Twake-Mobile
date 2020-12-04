@@ -20,8 +20,7 @@ TextStyle generateStyle(
     bool italic = false,
     bool strikethrough = false,
     bool monospace = false,
-    fontSize = DefaultFontSize
-    }) {
+    fontSize = DefaultFontSize}) {
   return TextStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
@@ -223,7 +222,8 @@ class TwacodeItem {
         this.type = TwacodeType.copiable;
         break;
       case 'system':
-        this.style = generateStyle(color: quoteColor, italic: true ,fontSize: 0.3);
+        this.style =
+            generateStyle(color: quoteColor, italic: true, fontSize: 0.3);
         this.type = TwacodeType.system;
         break;
       case 'attachment': // TODO: implementation needed
@@ -235,7 +235,7 @@ class TwacodeItem {
         this.type = TwacodeType.progress_bar;
         break;
       case 'unparseable':
-        this.style = generateStyle(color:errorColor, fontSize:0.3);
+        this.style = generateStyle(color: errorColor, fontSize: 0.3);
         this.type = TwacodeType.text;
         break;
       default:
@@ -246,8 +246,12 @@ class TwacodeItem {
   InlineSpan render() {
     if (this.type == TwacodeType.image) {
       return WidgetSpan(
-          child: Image.network(this.content ??
-              'https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png'));
+        child: Image.network(
+          this.content,
+          height: Dim.heightPercent(20),
+          fit: BoxFit.cover,
+        ),
+      );
     } else if (this.type == TwacodeType.emoji) {
       this.content = Emojis.getClosestMatch(this.content);
     }
