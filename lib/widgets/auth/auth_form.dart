@@ -80,7 +80,7 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     return Container(
       width: Dim.widthPercent(87),
-      height: Dim.heightPercent(63),
+      height: Dim.heightPercent(67),
       child: Padding(
         padding: EdgeInsets.only(
           left: Dim.wm4,
@@ -92,12 +92,11 @@ class _AuthFormState extends State<AuthForm> {
           key: formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
-                child: Text(
-                  'Let\'s get started!',
-                  style: Theme.of(context).textTheme.headline1,
-                ),
+              Text(
+                'Let\'s get started!',
+                style: Theme.of(context).textTheme.headline1,
               ),
               SizedBox(height: Dim.heightMultiplier),
               Center(
@@ -106,7 +105,7 @@ class _AuthFormState extends State<AuthForm> {
                   style: Theme.of(context).textTheme.headline4,
                 ),
               ),
-              SizedBox(height: Dim.hm8),
+              Spacer(),
               _AuthTextForm(
                 label: 'Email',
                 validator: validateUsername,
@@ -129,7 +128,7 @@ class _AuthFormState extends State<AuthForm> {
                   style: StylesConfig.miniPurple,
                 ),
               ),
-              SizedBox(height: Dim.hm4),
+              Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: RaisedButton(

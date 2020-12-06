@@ -188,7 +188,7 @@ class TwacodeItem {
         this.style = generateStyle(monospace: true, color: codeColor);
         this.type = TwacodeType.mcode;
         this.content = this.content;
-        this.newLine = true;
+        // this.newLine = true;
         break;
       case 'icode':
         this.style = generateStyle(monospace: true, color: codeColor);
@@ -198,7 +198,7 @@ class TwacodeItem {
         this.style = generateStyle(color: quoteColor, italic: true);
         this.type = TwacodeType.mquote;
         this.content = this.content;
-        this.newLine = true;
+        // this.newLine = true;
         break;
       case 'quote':
         this.style = generateStyle(color: quoteColor, italic: true);
@@ -253,7 +253,7 @@ class TwacodeItem {
         ),
       );
     } else if (this.type == TwacodeType.emoji) {
-      this.content = Emojis.getClosestMatch(this.content);
+      this.content = Emojis().getClosestMatch(this.content);
     }
     var content = this.newLine ? '\n' + this.content + '\n' : this.content;
 

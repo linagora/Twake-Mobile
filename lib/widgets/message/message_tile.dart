@@ -103,11 +103,13 @@ class MessageTile extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            message.sender.firstName != null
-                                ? '${message.sender.firstName} ${message.sender.lastName}'
-                                : message.sender.username,
-                            style: Theme.of(context).textTheme.bodyText1,
+                          FittedBox(
+                            child: Text(
+                              message.sender.firstName != null
+                                  ? '${message.sender.firstName} ${message.sender.lastName}'
+                                  : message.sender.username,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
                           ),
                           Expanded(
                             child: Align(

@@ -53,6 +53,7 @@ class ChannelsProvider with ChangeNotifier {
         for (var i = 0; i < directs.length; i++) {
           _directs.add(Direct.fromJson(directs[i]));
         }
+        _directs.sort((d1, d2) => d2.lastActivity.compareTo(d1.lastActivity));
       }
     }
     loaded = true;

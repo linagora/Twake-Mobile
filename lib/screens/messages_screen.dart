@@ -37,27 +37,34 @@ class MessagesScreen extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
             .round()), // taking into account current appBar height to calculate a new one
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (channel.runtimeType == Direct)
               ImageAvatar(correspondent.thumbnail),
             if (channel.runtimeType == Channel)
               TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
             SizedBox(width: Dim.widthMultiplier),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+            SizedBox(
+              width: Dim.widthPercent(71),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
                     channel.runtimeType == Channel
                         ? channel.name
                         : '${correspondent.firstName} ${correspondent.lastName}',
-                    style: Theme.of(context).textTheme.headline6),
-                Text('${channel.membersCount ?? 'No'} members',
-                    style: Theme.of(context).textTheme.bodyText2),
-              ],
+                    style: Theme.of(context).textTheme.headline6,
+                    overflow: TextOverflow.fade,
+                  ),
+                  Text('${channel.membersCount ?? 'No'} members',
+                      style: Theme.of(context).textTheme.bodyText2),
+                ],
+              ),
             ),
           ],
         ),

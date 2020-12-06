@@ -78,6 +78,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
         key: _scaffoldKey,
         drawer: TwakeDrawer(),
         appBar: AppBar(
+          titleSpacing: 0.0,
           leading: IconButton(
             padding: EdgeInsets.only(left: Dim.wm3),
             onPressed: () {
