@@ -10,6 +10,7 @@ import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/companies_list_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/thread_screen.dart';
+import 'package:twake_mobile/screens/webview_screen.dart';
 import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/services/twake_api.dart';
@@ -97,6 +98,7 @@ class TwakeMobileApp extends StatelessWidget {
                 ChannelsScreen.route: (_) => ChannelsScreen(),
                 MessagesScreen.route: (_) => MessagesScreen(),
                 ThreadScreen.route: (_) => ThreadScreen(),
+                WebViewScreen.route: (_) => WebViewScreen(),
               },
             );
           },

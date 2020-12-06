@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/styles_config.dart';
+import 'package:twake_mobile/screens/webview_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
@@ -123,9 +124,17 @@ class _AuthFormState extends State<AuthForm> {
               SizedBox(height: Dim.heightMultiplier),
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  'Forgot password?',
-                  style: StylesConfig.miniPurple,
+                child: FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      WebViewScreen.route,
+                      arguments: 'https://web.twake.app/',
+                    );
+                  },
+                  child: Text(
+                    'Forgot password?',
+                    style: StylesConfig.miniPurple,
+                  ),
                 ),
               ),
               Spacer(),
@@ -162,9 +171,17 @@ class _AuthFormState extends State<AuthForm> {
                         style: StylesConfig.miniPurple
                             .copyWith(color: Colors.black87),
                       ),
-                      Text(
-                        ' Sign up',
-                        style: StylesConfig.miniPurple,
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            WebViewScreen.route,
+                            arguments: 'https://web.twake.app/',
+                          );
+                        },
+                        child: Text(
+                          ' Sign up',
+                          style: StylesConfig.miniPurple,
+                        ),
                       ),
                     ],
                   ),
