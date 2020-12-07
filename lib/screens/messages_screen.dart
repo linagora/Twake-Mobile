@@ -16,6 +16,7 @@ class MessagesScreen extends StatelessWidget {
   static const String route = '/messages';
   @override
   Widget build(BuildContext context) {
+    print('DEBUG: building messages screen');
     final api = Provider.of<TwakeApi>(context, listen: false);
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     final channelId = ModalRoute.of(context).settings.arguments as String;

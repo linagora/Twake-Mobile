@@ -185,7 +185,8 @@ class TwakeApi with ChangeNotifier {
       );
       return response.data;
     } catch (error, stackTrace) {
-      print('Error occurred while getting workspace channels\n$error');
+      print(
+          'Error occurred while getting workspace channels\n${error.response.data}');
       await Sentry.captureException(
         error,
         stackTrace: stackTrace,
@@ -215,6 +216,8 @@ class TwakeApi with ChangeNotifier {
   Future<List<dynamic>> channelMessagesGet(
     String channelId, {
     String beforeMessageId,
+    String parentMessageId,
+    String messageId,
   }) async {
     await validate();
     try {
@@ -224,7 +227,9 @@ class TwakeApi with ChangeNotifier {
           ), // url
           queryParameters: {
             'before': beforeMessageId,
-            'limit': 50,
+            'limit': messageId == null ? 50 : 1,
+            'message_id': messageId,
+            'parent_message_id': parentMessageId,
           });
       return response.data;
     } catch (error, stackTrace) {
@@ -314,6 +319,7 @@ class TwakeApi with ChangeNotifier {
     await validate();
     final url = TwakeApiConfig.channelMessagesMethod(channelId);
     print('$url\n$messageId');
+    print('\n$parentMessageId');
     try {
       final _ = await dio.delete(
         url,
@@ -323,7 +329,7 @@ class TwakeApi with ChangeNotifier {
         }),
       );
     } catch (error, stackTrace) {
-      print('Error occurred while deteting message\n$error');
+      print('Error occurred while deteting message\n${error.response.data}');
       await Sentry.captureException(
         error,
         stackTrace: stackTrace,

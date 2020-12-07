@@ -16,7 +16,7 @@ import 'package:twake_mobile/widgets/message/message_modal_sheet.dart';
 class MessageTile extends StatelessWidget {
   final Message message;
   final bool isThread;
-  MessageTile(this.message, {this.isThread: false});
+  MessageTile(this.message, {this.isThread: false, Key key}) : super(key: key);
 
   void onReply(context) {
     Navigator.of(context).pushNamed(ThreadScreen.route, arguments: {

@@ -19,10 +19,10 @@ class Message extends JsonSerializable with ChangeNotifier {
   final Sender sender;
 
   @JsonKey(required: true, name: 'creation_date')
-  final int creationDate;
+  int creationDate;
 
   @JsonKey(required: true)
-  final MessageTwacode content;
+  MessageTwacode content;
 
   Map<String, dynamic> reactions;
 
@@ -41,6 +41,13 @@ class Message extends JsonSerializable with ChangeNotifier {
     this.responses,
     this.parentMessageId,
   });
+
+  void doPartialUpdate(Message other) {
+    this.responsesCount = other.responsesCount;
+    this.creationDate = other.creationDate;
+    this.content = other.content;
+    this.reactions = other.reactions;
+  }
 
   void updateReactions({
     String emojiCode,
