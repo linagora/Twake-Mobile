@@ -21,8 +21,8 @@ class ImageAvatar extends StatelessWidget {
           : FadeInImage.assetNetwork(
               fit: BoxFit.cover,
               image: imageUrl,
-              width: Dim.wm9,
-              height: Dim.wm9,
+              width: Dim.hm5,
+              height: Dim.hm5,
               placeholder: _FALLBACK_IMG,
               // headers: {
               // 'CONTENT-TYPE': mime,

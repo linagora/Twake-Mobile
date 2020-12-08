@@ -3,8 +3,12 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/config/api.dart' show TwakeApiConfig;
+
+const int _MESSAGES_PER_PAGE = 50;
 
 /// Main class for interacting with Twake api
 /// Contains all neccessary methods and error handling
@@ -18,19 +22,21 @@ class TwakeApi with ChangeNotifier {
   String _platform;
   // TODO get rid of this, request right data from api
   Dio dio = Dio();
-  Map<String, dynamic> _userData;
   TwakeApi() {
-    DB.authLoad().then((map) {
-      fromMap(map);
-      validate().then((_) {
-        dio = Dio(BaseOptions(
-          headers: TwakeApiConfig.authHeader(_authJWToken),
-        ));
-        notifyListeners();
-      });
-    }).catchError((e) {
-      print('Error loading auth data from database\n$e');
-    });
+    // Get version number for the app
+    // Try to load state from local store
+    // validate data
+    TwakeApiConfig.init().then((_) => DB.authLoad().then((map) {
+          fromMap(map);
+          validate().then((_) {
+            dio = Dio(BaseOptions(
+              headers: TwakeApiConfig.authHeader(_authJWToken),
+            ));
+            notifyListeners();
+          });
+        }).catchError((e) {
+          print('Error loading auth data from database\n$e');
+        }));
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
 
@@ -104,7 +110,6 @@ class TwakeApi with ChangeNotifier {
           },
         ),
       );
-      print('TOKEN DATA:${response.data}');
       fromJson(response.data);
       if (_authJWToken == null) {
         throw Exception('Authorization failed');
@@ -115,9 +120,12 @@ class TwakeApi with ChangeNotifier {
       );
       DB.authSave(this);
       notifyListeners();
-    } catch (error) {
-      print('Error occurred during authentication\n$error');
-      throw error;
+    } catch (error, stackTrace) {
+      print('Error occurred during authentication\n${error.response.data}');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -144,22 +152,22 @@ class TwakeApi with ChangeNotifier {
       );
       DB.authSave(this);
       notifyListeners();
-    } catch (error) {
-      print('Error occurred during authentication\n$error');
-      throw error;
+    } catch (error, stackTrace) {
+      print('Error occurred during authentication\n${error.response.data}');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
   Future<Map<String, dynamic>> currentProfileGet() async {
     await validate();
     try {
-      print('AUTH TOKEN USED: $_authJWToken');
       final response = await dio.get(
         TwakeApiConfig.currentProfileMethod, // url
       );
-      print('AUTH TOKEN USED: $_authJWToken');
-      _userData = response.data;
-      return _userData;
+      return response.data;
     } catch (error) {
       print('Error occurred while loading user profile\n$error');
       throw error;
@@ -170,11 +178,19 @@ class TwakeApi with ChangeNotifier {
     await validate();
     try {
       final response = await dio.get(
-        TwakeApiConfig.workspaceChannelsMethod(workspaceId), // url
+        TwakeApiConfig.workspaceChannelsMethod, // url
+        queryParameters: {
+          'workspace_id': workspaceId,
+        },
       );
       return response.data;
-    } catch (error) {
-      print('Error occurred while getting workspace channels\n$error');
+    } catch (error, stackTrace) {
+      print(
+          'Error occurred while getting workspace channels\n${error.response.data}');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
       throw error;
     }
   }
@@ -183,12 +199,18 @@ class TwakeApi with ChangeNotifier {
     await validate();
     try {
       final response = await dio.get(
-        TwakeApiConfig.directMessagesMethod(companyId),
+        TwakeApiConfig.directMessagesMethod,
+        queryParameters: {
+          'company_id': companyId,
+        },
       );
-      if (response.statusCode != 200) return [];
       return response.data;
-    } catch (error) {
-      print('Error occurred while getting direct messages\n$error');
+    } catch (error, stackTrace) {
+      print('Error occurred while getting direct channels\n$error');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
       throw error;
     }
   }
@@ -196,21 +218,30 @@ class TwakeApi with ChangeNotifier {
   Future<List<dynamic>> channelMessagesGet(
     String channelId, {
     String beforeMessageId,
+    String threadId,
+    String messageId,
   }) async {
     await validate();
     try {
+      final profile = ProfileProvider(); // singleton
       final response = await dio.get(
-          TwakeApiConfig.channelMessagesMethod(
-            channelId,
-            beforeId: beforeMessageId,
-          ), // url
-          queryParameters: {
-            'before': beforeMessageId,
-            'limit': 50,
-          });
+        TwakeApiConfig.channelMessagesMethod, // url
+        queryParameters: {
+          'company_id': profile.selectedCompany.id,
+          'channel_id': channelId,
+          'before_message_id': beforeMessageId,
+          'limit': messageId == null ? _MESSAGES_PER_PAGE : 1,
+          'message_id': messageId,
+          'thread_id': threadId,
+        },
+      );
       return response.data;
-    } catch (error) {
+    } catch (error, stackTrace) {
       print('Error occurred while getting channel messages\n$error');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
       throw error;
     }
   }
@@ -218,35 +249,40 @@ class TwakeApi with ChangeNotifier {
   Future<void> messageSend({
     String channelId,
     String content,
-    String parentMessageId,
+    String threadId,
     Function(Map<String, dynamic>) onSuccess,
   }) async {
     await validate();
+    final profileProvider = ProfileProvider();
     final body = jsonEncode({
       'original_str': content,
-      'parent_message_id': parentMessageId ?? '',
+      'company_id': profileProvider.selectedCompany.id,
+      'channel_id': channelId,
+      'thread_id': threadId,
     });
     try {
       final response = await dio.post(
-        TwakeApiConfig.channelMessagesMethod(channelId),
+        TwakeApiConfig.channelMessagesMethod,
         data: body,
       );
-      if (response.statusCode < 203) {
-        var message = response.data['object'];
-        // TODO remove after requesting data from api
-        message['sender'] = {
-          'username': _userData['username'],
-          'thumbnail': _userData['thumbnail'],
-          'userId': _userData['userId'],
-          'firstname': _userData['firstname'],
-          'lastname': _userData['lastname'],
-        };
-        message['reactions'] = null;
-        print('MESSAGE $message');
-        onSuccess(message);
-      }
-    } catch (error) {
-      print(error);
+      var message = response.data;
+      // TODO remove after requesting data from api
+      final profile = profileProvider.currentProfile;
+      message['sender'] = {
+        'username': profile.username,
+        'thumbnail': profile.thumbnail,
+        'userId': profile.userId,
+        'firstname': profile.firstName,
+        'lastname': profile.lastName,
+      };
+      message['reactions'] = null;
+      onSuccess(message);
+    } catch (error, stackTrace) {
+      print('ERROR OCCURED ON MESSAGE SEND: $error');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
       throw error;
     }
   }
@@ -254,35 +290,58 @@ class TwakeApi with ChangeNotifier {
   Future<void> reactionSend(
     String channelId,
     String messageId,
-    String reaction,
-  ) async {
+    String reaction, {
+    String threadId,
+  }) async {
     await validate();
+    final profile = ProfileProvider();
     try {
+      final data = jsonEncode({
+        'company_id': profile.selectedCompany.id,
+        'channel_id': channelId,
+        'reaction': reaction,
+        'message_id': messageId,
+        'thread_id': threadId,
+      });
+      print('SENDING Reaction data: $data');
       final _ = await dio.post(
-        TwakeApiConfig.messageReactionsMethod(channelId),
-        data: jsonEncode({
-          'reaction': reaction,
-          'message_id': messageId,
-        }),
+        TwakeApiConfig.messageReactionsMethod,
+        data: data,
       );
-    } catch (error) {
+    } catch (error, stackTrace) {
       print('Error occurred while setting reaction\n$error');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
+      throw error;
     }
   }
 
-  Future<void> messageDelete(String channelId, String messageId) async {
+  Future<void> messageDelete(
+    String channelId,
+    String messageId, {
+    String threadId,
+  }) async {
     await validate();
-    final url = TwakeApiConfig.channelMessagesMethod(channelId);
-    print('$url\n$messageId');
+    final url = TwakeApiConfig.channelMessagesMethod;
+    final profile = ProfileProvider();
     try {
       final _ = await dio.delete(
         url,
         data: jsonEncode({
+          'company_id': profile.selectedCompany.id,
+          'channel_id': channelId,
           'message_id': messageId,
+          'thread_id': threadId,
         }),
       );
-    } catch (error) {
-      print('Error occurred while deteting message\n$error');
+    } catch (error, stackTrace) {
+      print('Error occurred while deteting message\n${error.response.data}');
+      await Sentry.captureException(
+        error,
+        stackTrace: stackTrace,
+      );
     }
   }
 }

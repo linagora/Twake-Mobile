@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
@@ -30,9 +31,11 @@ class MessageModalSheet extends StatefulWidget {
 class _MessageModalSheetState extends State<MessageModalSheet> {
   bool emojiBoardHidden = true;
   onEmojiSelected(String emojiCode, {bool reverse: false}) {
-    setState(() {
-      emojiBoardHidden = true;
-    });
+    if (mounted) {
+      setState(() {
+        emojiBoardHidden = true;
+      });
+    }
 
     String userId = Provider.of<ProfileProvider>(context, listen: false)
         .currentProfile
@@ -43,6 +46,10 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
     }
 
     TwakeApi api = Provider.of<TwakeApi>(context, listen: false);
+    if (widget.message.channelId == null) {
+      widget.message.channelId =
+          Provider.of<MessagesProvider>(context, listen: false).channelId;
+    }
     widget.message.updateReactions(
       emojiCode: emojiCode,
       userId: userId,

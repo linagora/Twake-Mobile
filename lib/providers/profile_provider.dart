@@ -11,7 +11,14 @@ class ProfileProvider with ChangeNotifier {
   String _selectedCompanyId;
   String _selectedWorkspaceId;
 
-  ProfileProvider() {
+  static final ProfileProvider _profileProvider = ProfileProvider._internal();
+
+  factory ProfileProvider() {
+    return _profileProvider;
+  }
+
+  // making it a singleton
+  ProfileProvider._internal() {
     DB.profileLoad().then((p) {
       print('DEBUG: loading profile from local data store');
       _currentProfile = Profile.fromJson(p);
@@ -47,7 +54,7 @@ class ProfileProvider with ChangeNotifier {
         .workspaces;
   }
 
-  void currentCompanySet(String companyId) {
+  void currentCompanySet(String companyId, {bool notify: true}) {
     _selectedCompanyId = companyId;
     // Select workspace in case of change of company
     // Check if workspace was selected before
@@ -60,7 +67,7 @@ class ProfileProvider with ChangeNotifier {
     var workspace = company.workspaces
         .firstWhere((w) => w.isSelected, orElse: () => workspaces[0]);
     _selectedWorkspaceId = workspace.id;
-    notifyListeners();
+    if (notify) notifyListeners();
     _updateWorkspaceSelection(_selectedWorkspaceId);
     DB.profileSave(_currentProfile);
   }
@@ -71,10 +78,10 @@ class ProfileProvider with ChangeNotifier {
     });
   }
 
-  void currentWorkspaceSet(String workspaceId) {
+  void currentWorkspaceSet(String workspaceId, {bool notify: true}) {
     _selectedWorkspaceId = workspaceId;
     _updateWorkspaceSelection(_selectedWorkspaceId);
-    notifyListeners();
+    if (notify) notifyListeners();
     workspaces.firstWhere((w) => w.id == workspaceId).isSelected = true;
     DB.profileSave(_currentProfile);
   }
@@ -99,7 +106,9 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) return;
+    if (loaded) {
+      return;
+    }
     print('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();

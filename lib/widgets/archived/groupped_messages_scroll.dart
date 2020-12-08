@@ -40,7 +40,7 @@ class _MessagesScrollViewState extends State<MessagesScrollView> {
         itemCount: groups.length,
         itemBuilder: (ctx, i) {
           return Column(children: [
-            Text(DateFormatter.getVerboseDate(groups[i].datetime)),
+            Text(DateFormatter.getVerboseDate(groups[i].datetime.microsecondsSinceEpoch)),
             ...groups[i].messages.map((m) => MessageTile(m)).toList(),
           ]);
         },

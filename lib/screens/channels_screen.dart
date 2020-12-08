@@ -4,15 +4,30 @@ import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+import 'package:twake_mobile/utils/notifications_handler.dart';
 import 'package:twake_mobile/widgets/channel/channels_block.dart';
 import 'package:twake_mobile/widgets/channel/direct_messages_block.dart';
 // import 'package:twake_mobile/widgets/channel/starred_channels_block.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/drawer/twake_drawer.dart';
 
-class ChannelsScreen extends StatelessWidget {
+class ChannelsScreen extends StatefulWidget {
   static const String route = '/channels';
+
+  @override
+  _ChannelsScreenState createState() => _ChannelsScreenState();
+}
+
+class _ChannelsScreenState extends State<ChannelsScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  var notificationsHandler;
+
+  @override
+  void initState() {
+    super.initState();
+    notificationsHandler = NotificationsHandler(context: context);
+  }
+
   @override
   Widget build(BuildContext context) {
     print('DEBUG: building channels screen');
@@ -26,6 +41,7 @@ class ChannelsScreen extends StatelessWidget {
         key: _scaffoldKey,
         drawer: TwakeDrawer(),
         appBar: AppBar(
+          titleSpacing: 0.0,
           leading: IconButton(
             padding: EdgeInsets.only(left: Dim.wm3),
             onPressed: () {
