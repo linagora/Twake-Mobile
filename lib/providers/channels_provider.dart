@@ -21,6 +21,12 @@ class ChannelsProvider with ChangeNotifier {
   Direct getDirectsById(String directId) =>
       _directs.firstWhere((d) => d.id == directId);
 
+  // cannot sort for now, because lastActivity is not updated
+  void directsSort() {
+    _directs.sort((d1, d2) => d2.lastActivity.compareTo(d1.lastActivity));
+    notifyListeners();
+  }
+
   Future<void> loadChannels(TwakeApi api, String workspaceId,
       {String companyId}) async {
     loaded = false;

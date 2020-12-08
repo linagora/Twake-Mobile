@@ -16,6 +16,7 @@ class MessagesScreen extends StatelessWidget {
   static const String route = '/messages';
   @override
   Widget build(BuildContext context) {
+    print('DEBUG: building messages screen');
     final api = Provider.of<TwakeApi>(context, listen: false);
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     final channelId = ModalRoute.of(context).settings.arguments as String;
@@ -49,22 +50,22 @@ class MessagesScreen extends StatelessWidget {
             if (channel.runtimeType == Channel)
               TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
             SizedBox(width: Dim.widthMultiplier),
-            SizedBox(
-              width: Dim.widthPercent(71),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: Dim.widthPercent(69),
+                  child: Text(
                     channel.runtimeType == Channel
                         ? channel.name
                         : '${correspondent.firstName} ${correspondent.lastName}',
                     style: Theme.of(context).textTheme.headline6,
                     overflow: TextOverflow.fade,
                   ),
-                  Text('${channel.membersCount ?? 'No'} members',
-                      style: Theme.of(context).textTheme.bodyText2),
-                ],
-              ),
+                ),
+                Text('${channel.membersCount ?? 'No'} members',
+                    style: Theme.of(context).textTheme.bodyText2),
+              ],
             ),
           ],
         ),

@@ -19,7 +19,7 @@ class MessagesProvider extends ChangeNotifier {
   String get firstMessageId => _items[0].id;
 
   Message getMessageById(String messageId) {
-    return _items.firstWhere((m) => m.id == messageId);
+    return _items.firstWhere((m) => m.id == messageId, orElse: () => null);
   }
 
   void clearMessages() {
@@ -27,10 +27,14 @@ class MessagesProvider extends ChangeNotifier {
     loaded = false;
   }
 
-  void addMessage(Map<String, dynamic> message, {String parentMessageId}) {
+  void addMessage(Map<String, dynamic> message, {String threadId}) {
     var _message = Message.fromJson(message)..channelId = channelId;
-    if (parentMessageId != null) {
-      var message = _items.firstWhere((m) => m.id == parentMessageId);
+    if (threadId != null) {
+      var message = _items.firstWhere((m) => m.id == threadId);
+      if (message.responses == null) {
+        message.responses = [];
+      }
+      _message.threadId = threadId;
       message.responses.add(_message);
       message.responsesCount = (message.responsesCount ?? 0) + 1;
     } else {
@@ -39,19 +43,20 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeMessage(messageId, {parentMessageId}) async {
+  Future<void> removeMessage(String messageId, {String threadId}) async {
     await api.messageDelete(
       channelId,
       messageId,
-      parentMessageId: parentMessageId,
+      threadId: threadId,
     );
-    _items.retainWhere((m) => m.id != messageId);
-    if (messagesCount < 8) {
-      Future.delayed(Duration(milliseconds: 200))
-          .then((_) => notifyListeners());
+    if (threadId != null && threadId.isNotEmpty) {
+      var message = getMessageById(threadId);
+      message.responsesCount--;
+      message.responses.removeWhere((m) => m.id == messageId);
     } else {
-      notifyListeners();
+      _items.firstWhere((m) => m.id == messageId)..hidden = true;
     }
+    notifyListeners();
   }
 
   Future<void> loadMessages(TwakeApi api, String channelId) async {
@@ -99,5 +104,67 @@ class MessagesProvider extends ChangeNotifier {
     _items = tmp + _items;
     loaded = true;
     notifyListeners();
+  }
+
+  Future<void> getMessageOnUpdate({
+    String channelId,
+    String messageId,
+    String threadId,
+  }) async {
+    print('Updating messages on notify!');
+    if (channelId == this.channelId) {
+      final list = await api.channelMessagesGet(
+        channelId,
+        messageId: messageId,
+        threadId: threadId,
+      );
+      // if list returned is empty, then message has been deleted
+      print('GOT MESSAGE $list');
+      if (list.isEmpty) {
+        // if threadId was present, remove response
+        if (threadId != null) {
+          var message = getMessageById(threadId);
+          message.responsesCount--;
+          message.responses.removeWhere((m) => m.id == messageId);
+        } else {
+          // else remove the message itself
+          _items.removeWhere((m) => m.id == messageId);
+        }
+        notifyListeners();
+        return;
+      }
+      var newMessage = Message.fromJson(list[0]);
+      // Add message to channel
+      if (threadId == null) {
+        var message = getMessageById(messageId);
+        // if message exists already, update it
+        if (message != null) {
+          print('message is found');
+          message.doPartialUpdate(newMessage);
+          print('message has been updated');
+          message.notifyListeners();
+          notifyListeners();
+        } else {
+          // else add a new one
+          print('message not found');
+          _items.add(newMessage);
+        }
+      } else {
+        // Add message to thread
+        print('Addeing message to the thread');
+        var message = getMessageById(threadId);
+        var response = message.responses
+            .firstWhere((r) => r.id == messageId, orElse: () => null);
+        // if message doesn't exists, add new to the thread
+        if (response == null) {
+          message.responsesCount++;
+          message.responses.add(newMessage);
+        } else {
+          // else just update existing one
+          response.doPartialUpdate(newMessage);
+        }
+      }
+      notifyListeners();
+    }
   }
 }

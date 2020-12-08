@@ -86,7 +86,7 @@ class _AuthFormState extends State<AuthForm> {
         padding: EdgeInsets.only(
           left: Dim.wm4,
           right: Dim.wm4,
-          top: Dim.hm4,
+          top: Dim.hm3,
           bottom: Dim.hm2,
         ),
         child: Form(
@@ -95,9 +95,12 @@ class _AuthFormState extends State<AuthForm> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Let\'s get started!',
-                style: Theme.of(context).textTheme.headline1,
+              FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  'Let\'s get started!',
+                  style: Theme.of(context).textTheme.headline1,
+                ),
               ),
               SizedBox(height: Dim.heightMultiplier),
               Center(
@@ -113,7 +116,7 @@ class _AuthFormState extends State<AuthForm> {
                 // onSaved: onUsernameSaved,
                 controller: usernameController,
               ),
-              SizedBox(height: Dim.hm4),
+              SizedBox(height: Dim.hm3),
               _AuthTextForm(
                 label: 'Password',
                 obscured: true,

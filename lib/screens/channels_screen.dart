@@ -4,12 +4,12 @@ import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+import 'package:twake_mobile/utils/notifications_handler.dart';
 import 'package:twake_mobile/widgets/channel/channels_block.dart';
 import 'package:twake_mobile/widgets/channel/direct_messages_block.dart';
 // import 'package:twake_mobile/widgets/channel/starred_channels_block.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/drawer/twake_drawer.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
 class ChannelsScreen extends StatefulWidget {
   static const String route = '/channels';
@@ -20,50 +20,13 @@ class ChannelsScreen extends StatefulWidget {
 
 class _ChannelsScreenState extends State<ChannelsScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  FirebaseMessaging _fcm = FirebaseMessaging();
-
-  static Future<dynamic> onMessage(Map<String, dynamic> message) async {
-    print('on message $message');
-  }
-
-  static Future<dynamic> onBackgroundMessage(
-      Map<String, dynamic> message) async {
-    print('on background message $message');
-  }
-
-  static Future<dynamic> onResume(Map<String, dynamic> message) async {
-    print('on resume $message');
-  }
-
-  static Future<dynamic> onLaunch(Map<String, dynamic> message) async {
-    print('on launch $message');
-  }
+  var notificationsHandler;
 
   @override
   void initState() {
     super.initState();
-    // if (Platform.isIOS) iOSPermission();
-    //
-    _fcm.getToken().then((token) {
-      print('(DEBUG) FCM TOKEN: $token');
-    });
-
-    _fcm.configure(
-      onMessage: onMessage,
-      onBackgroundMessage: onBackgroundMessage,
-      onResume: onResume,
-      onLaunch: onLaunch,
-    );
+    notificationsHandler = NotificationsHandler(context: context);
   }
-  // void iOSPermission() {
-  // _fcm.requestNotificationPermissions(
-  // IosNotificationSettings(sound: true, badge: true, alert: true));
-  // _fcm.onIosSettingsRegistered
-  // .listen((IosNotificationSettings settings) {
-  // print("Settings registered: $settings");
-  // });
-  // }
 
   @override
   Widget build(BuildContext context) {
