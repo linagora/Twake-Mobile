@@ -39,9 +39,10 @@ class MessageTile extends StatelessWidget {
 
   void onDelete(context) {
     Navigator.of(context).pop();
+    print('Removing message ${message.toJson()}');
     Provider.of<MessagesProvider>(context, listen: false).removeMessage(
       message.id,
-      parentMessageId: message.parentMessageId,
+      threadId: message.threadId,
     );
   }
   // NOT IMPLEMENTED YET
@@ -99,16 +100,18 @@ class MessageTile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      width: Dim.widthPercent(83),
+                      width: Dim.widthPercent(81),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          FittedBox(
+                          SizedBox(
+                            width: Dim.widthPercent(59),
                             child: Text(
                               message.sender.firstName != null
                                   ? '${message.sender.firstName} ${message.sender.lastName}'
                                   : message.sender.username,
                               style: Theme.of(context).textTheme.bodyText1,
+                              overflow: TextOverflow.fade,
                             ),
                           ),
                           Expanded(
@@ -129,12 +132,13 @@ class MessageTile extends StatelessWidget {
                     ),
                     Container(
                       padding: EdgeInsets.only(top: Dim.heightMultiplier),
-                      width: Dim.widthPercent(83),
+                      width: Dim.widthPercent(81),
                       child: Parser(message.content.prepared).render(context),
                     ),
                     SizedBox(height: Dim.hm2),
                     Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
+                      textDirection: TextDirection.ltr,
                       children: [
                         if (message.reactions != null)
                           ...message.reactions.keys.map((r) {

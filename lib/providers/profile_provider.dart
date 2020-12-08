@@ -11,7 +11,14 @@ class ProfileProvider with ChangeNotifier {
   String _selectedCompanyId;
   String _selectedWorkspaceId;
 
-  ProfileProvider() {
+  static final ProfileProvider _profileProvider = ProfileProvider._internal();
+
+  factory ProfileProvider() {
+    return _profileProvider;
+  }
+
+  // making it a singleton
+  ProfileProvider._internal() {
     DB.profileLoad().then((p) {
       print('DEBUG: loading profile from local data store');
       _currentProfile = Profile.fromJson(p);
@@ -100,9 +107,6 @@ class ProfileProvider with ChangeNotifier {
 
   Future<void> loadProfile(TwakeApi api) async {
     if (loaded) {
-      // TODO get rid of this, after requesting
-      // correct data for sent messages from api
-      api.userData = _currentProfile.toJson();
       return;
     }
     print('DEBUG: loading profile over network');

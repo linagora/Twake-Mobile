@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+// import 'package:twake_mobile/widgets/message/sticky_grouped_list.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
@@ -68,14 +69,25 @@ class MessagesGrouppedList extends StatelessWidget {
               ),
             );
           },
+          addAutomaticKeepAlives: false,
           itemBuilder: (_, Message message) {
-            return ChangeNotifierProvider.value(
-              value: message,
-              child: MessageTile(
-                message,
-                key: ValueKey(message.id),
-              ),
-            );
+            return !message.hidden
+                ? ChangeNotifierProvider.value(
+                    value: message,
+                    child: MessageTile(
+                      message,
+                      key: ValueKey(message.id),
+                    ),
+                  )
+                : Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: Dim.hm3),
+                      child: Text(
+                        'Message deleted',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
           },
         ),
       ),

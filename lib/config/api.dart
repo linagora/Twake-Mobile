@@ -1,16 +1,15 @@
 import 'package:package_info/package_info.dart';
-import 'package:sprintf/sprintf.dart';
+// import 'package:sprintf/sprintf.dart';
 
 class TwakeApiConfig {
   static const String _HOST = 'https://mobile.api.twake.app';
-  // static const int _MESSAGES_PER_PAGE = 50;
   static const String _authorize = '/authorize';
-  static const String _usersCurrentGet = '/users/current/get';
-  static const String _workspaceChannels = '/workspace/%s/channels';
-  static const String _channelMessages = '/channels/%s/messages';
+  static const String _usersCurrentGet = '/user';
+  static const String _workspaceChannels = '/channels';
+  static const String _channelMessages = '/messages';
   static const String _tokenProlong = '/authorization/prolong';
-  static const String _directMessages = '/company/%s/direct';
-  static const String _messageReactions = '/channels/%s/messages/reactions';
+  static const String _directMessages = '/direct';
+  static const String _messageReactions = '/reactions';
   static String apiVersion;
 
   static Map<String, String> authHeader(token) {
@@ -34,17 +33,17 @@ class TwakeApiConfig {
     return _HOST + _usersCurrentGet + '?timezoneoffset=3';
   }
 
-  static String workspaceChannelsMethod(String id) {
-    return _HOST + sprintf(_workspaceChannels, [id]);
+  static String get workspaceChannelsMethod {
+    return _HOST + _workspaceChannels;
   }
 
-  static String channelMessagesMethod(String channelId) {
-    var url = _HOST + sprintf(_channelMessages, [channelId]);
+  static String get channelMessagesMethod {
+    var url = _HOST + _channelMessages;
     return url;
   }
 
-  static String directMessagesMethod(String companyId) {
-    return _HOST + sprintf(_directMessages, [companyId]);
+  static String get directMessagesMethod {
+    return _HOST + _directMessages;
   }
 
   /// Method for getting url, in order to prolong JWToken
@@ -53,7 +52,7 @@ class TwakeApiConfig {
   }
 
   /// Method for getting url, in order to update message reactions
-  static String messageReactionsMethod(String channelId) {
-    return _HOST + sprintf(_messageReactions, [channelId]);
+  static String get messageReactionsMethod {
+    return _HOST + _messageReactions;
   }
 }

@@ -9,8 +9,8 @@ class Message extends JsonSerializable with ChangeNotifier {
   @JsonKey(required: true)
   final String id;
 
-  @JsonKey(name: 'parent_message_id')
-  final String parentMessageId;
+  @JsonKey(name: 'thread_id')
+  String threadId;
 
   @JsonKey(name: 'responses_count')
   int responsesCount;
@@ -31,6 +31,10 @@ class Message extends JsonSerializable with ChangeNotifier {
   @JsonKey(ignore: true)
   String channelId;
 
+  // used when deleting messages
+  @JsonKey(ignore: true)
+  bool hidden = false;
+
   Message({
     @required this.id,
     this.responsesCount,
@@ -39,7 +43,7 @@ class Message extends JsonSerializable with ChangeNotifier {
     this.content,
     this.reactions,
     this.responses,
-    this.parentMessageId,
+    this.threadId,
   });
 
   void doPartialUpdate(Message other) {
@@ -104,7 +108,7 @@ class Message extends JsonSerializable with ChangeNotifier {
       this.channelId,
       this.id,
       emojiCode,
-      parentMessageId: parentMessageId,
+      threadId: threadId,
     )
         .catchError((_) {
       reactions = oldReactions;

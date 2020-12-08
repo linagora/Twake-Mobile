@@ -27,10 +27,14 @@ class MessagesProvider extends ChangeNotifier {
     loaded = false;
   }
 
-  void addMessage(Map<String, dynamic> message, {String parentMessageId}) {
+  void addMessage(Map<String, dynamic> message, {String threadId}) {
     var _message = Message.fromJson(message)..channelId = channelId;
-    if (parentMessageId != null) {
-      var message = _items.firstWhere((m) => m.id == parentMessageId);
+    if (threadId != null) {
+      var message = _items.firstWhere((m) => m.id == threadId);
+      if (message.responses == null) {
+        message.responses = [];
+      }
+      _message.threadId = threadId;
       message.responses.add(_message);
       message.responsesCount = (message.responsesCount ?? 0) + 1;
     } else {
@@ -39,18 +43,18 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeMessage(messageId, {parentMessageId}) async {
+  Future<void> removeMessage(String messageId, {String threadId}) async {
     await api.messageDelete(
       channelId,
       messageId,
-      parentMessageId: parentMessageId,
+      threadId: threadId,
     );
-    if (parentMessageId != null) {
-      var message = getMessageById(parentMessageId);
+    if (threadId != null && threadId.isNotEmpty) {
+      var message = getMessageById(threadId);
       message.responsesCount--;
       message.responses.removeWhere((m) => m.id == messageId);
     } else {
-      _items.removeWhere((m) => m.id == messageId);
+      _items.firstWhere((m) => m.id == messageId)..hidden = true;
     }
     notifyListeners();
   }
@@ -105,21 +109,21 @@ class MessagesProvider extends ChangeNotifier {
   Future<void> getMessageOnUpdate({
     String channelId,
     String messageId,
-    String parentMessageId,
+    String threadId,
   }) async {
     print('Updating messages on notify!');
     if (channelId == this.channelId) {
       final list = await api.channelMessagesGet(
         channelId,
         messageId: messageId,
-        parentMessageId: parentMessageId,
+        threadId: threadId,
       );
       // if list returned is empty, then message has been deleted
       print('GOT MESSAGE $list');
       if (list.isEmpty) {
-        // if parentMessageId was present, remove response
-        if (parentMessageId != null) {
-          var message = getMessageById(parentMessageId);
+        // if threadId was present, remove response
+        if (threadId != null) {
+          var message = getMessageById(threadId);
           message.responsesCount--;
           message.responses.removeWhere((m) => m.id == messageId);
         } else {
@@ -131,7 +135,7 @@ class MessagesProvider extends ChangeNotifier {
       }
       var newMessage = Message.fromJson(list[0]);
       // Add message to channel
-      if (parentMessageId == null) {
+      if (threadId == null) {
         var message = getMessageById(messageId);
         // if message exists already, update it
         if (message != null) {
@@ -148,7 +152,7 @@ class MessagesProvider extends ChangeNotifier {
       } else {
         // Add message to thread
         print('Addeing message to the thread');
-        var message = getMessageById(parentMessageId);
+        var message = getMessageById(threadId);
         var response = message.responses
             .firstWhere((r) => r.id == messageId, orElse: () => null);
         // if message doesn't exists, add new to the thread
@@ -157,7 +161,7 @@ class MessagesProvider extends ChangeNotifier {
           message.responses.add(newMessage);
         } else {
           // else just update existing one
-          response = newMessage;
+          response.doPartialUpdate(newMessage);
         }
       }
       notifyListeners();
