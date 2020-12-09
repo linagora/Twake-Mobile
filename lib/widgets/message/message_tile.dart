@@ -77,7 +77,9 @@ class MessageTile extends StatelessWidget {
       onTap: isThread
           ? null
           : () {
-              if (!isThread && message.responsesCount != null) {
+              if (!isThread &&
+                  message.responsesCount != null &&
+                  message.responsesCount != 0) {
                 onReply(context);
               }
             },
