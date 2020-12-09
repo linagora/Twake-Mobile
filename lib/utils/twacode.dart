@@ -247,7 +247,7 @@ class TwacodeItem {
     if (this.type == TwacodeType.image) {
       return WidgetSpan(
         child: Image.network(
-          this.content,
+          this.content ?? 'https://twake.app/medias/logo_blue.png',
           height: Dim.heightPercent(20),
           fit: BoxFit.cover,
         ),
