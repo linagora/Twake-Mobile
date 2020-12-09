@@ -9,6 +9,9 @@ class Message extends JsonSerializable with ChangeNotifier {
   @JsonKey(required: true)
   final String id;
 
+  @JsonKey(name: 'thread_id')
+  String threadId;
+
   @JsonKey(name: 'responses_count')
   int responsesCount;
 
@@ -16,10 +19,10 @@ class Message extends JsonSerializable with ChangeNotifier {
   final Sender sender;
 
   @JsonKey(required: true, name: 'creation_date')
-  final int creationDate;
+  int creationDate;
 
   @JsonKey(required: true)
-  final MessageTwacode content;
+  MessageTwacode content;
 
   Map<String, dynamic> reactions;
 
@@ -27,6 +30,10 @@ class Message extends JsonSerializable with ChangeNotifier {
 
   @JsonKey(ignore: true)
   String channelId;
+
+  // used when deleting messages
+  @JsonKey(ignore: true)
+  bool hidden = false;
 
   Message({
     @required this.id,
@@ -36,7 +43,15 @@ class Message extends JsonSerializable with ChangeNotifier {
     this.content,
     this.reactions,
     this.responses,
+    this.threadId,
   });
+
+  void doPartialUpdate(Message other) {
+    this.responsesCount = other.responsesCount;
+    this.creationDate = other.creationDate;
+    this.content = other.content;
+    this.reactions = other.reactions;
+  }
 
   void updateReactions({
     String emojiCode,
@@ -88,7 +103,14 @@ class Message extends JsonSerializable with ChangeNotifier {
       };
     }
     notifyListeners();
-    api.reactionSend(this.channelId, this.id, emojiCode).catchError((_) {
+    api
+        .reactionSend(
+      this.channelId,
+      this.id,
+      emojiCode,
+      threadId: threadId,
+    )
+        .catchError((_) {
       reactions = oldReactions;
       if (reactions.isEmpty) {
         reactions = null;

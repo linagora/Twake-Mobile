@@ -10,24 +10,24 @@ class TextAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var style = Theme.of(context).textTheme.headline6;
-    if (fontSize != null) style = style.copyWith(fontSize: fontSize);
     return ClipRRect(
       borderRadius: BorderRadius.circular(
         Dim.widthMultiplier * 0.5,
       ),
       child: Container(
         // color: Colors.grey[200],
-        margin: EdgeInsets.symmetric(
-          vertical: Dim.heightMultiplier,
-        ),
-        width: Dim.wm9,
-        height: Dim.wm9,
+        // margin: EdgeInsets.symmetric(
+        // vertical: Dim.heightMultiplier,
+        // ),
+        width: Dim.hm5,
+        height: Dim.hm5,
         child: Align(
           alignment: Alignment.center,
-          child: Text(
-            emoji ? Emojis.getClosestMatch(text) : text,
-            style: style,
+          child: FittedBox(
+            child: Text(
+              emoji ? Emojis().getClosestMatch(text) : text,
+              style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
+            ),
           ),
         ),
       ),

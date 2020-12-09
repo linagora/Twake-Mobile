@@ -16,6 +16,7 @@ class MessagesScreen extends StatelessWidget {
   static const String route = '/messages';
   @override
   Widget build(BuildContext context) {
+    print('DEBUG: building messages screen');
     final api = Provider.of<TwakeApi>(context, listen: false);
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     final channelId = ModalRoute.of(context).settings.arguments as String;
@@ -37,10 +38,12 @@ class MessagesScreen extends StatelessWidget {
     );
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
             .round()), // taking into account current appBar height to calculate a new one
         title: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (channel.runtimeType == Direct)
               ImageAvatar(correspondent.thumbnail),
@@ -50,11 +53,16 @@ class MessagesScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                SizedBox(
+                  width: Dim.widthPercent(69),
+                  child: Text(
                     channel.runtimeType == Channel
                         ? channel.name
                         : '${correspondent.firstName} ${correspondent.lastName}',
-                    style: Theme.of(context).textTheme.headline6),
+                    style: Theme.of(context).textTheme.headline6,
+                    overflow: TextOverflow.fade,
+                  ),
+                ),
                 Text('${channel.membersCount ?? 'No'} members',
                     style: Theme.of(context).textTheme.bodyText2),
               ],

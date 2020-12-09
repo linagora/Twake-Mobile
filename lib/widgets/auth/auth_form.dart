@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/config/styles_config.dart';
+import 'package:twake_mobile/screens/webview_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
@@ -80,20 +81,22 @@ class _AuthFormState extends State<AuthForm> {
   Widget build(BuildContext context) {
     return Container(
       width: Dim.widthPercent(87),
-      height: Dim.heightPercent(63),
+      height: Dim.heightPercent(67),
       child: Padding(
         padding: EdgeInsets.only(
           left: Dim.wm4,
           right: Dim.wm4,
-          top: Dim.hm4,
+          top: Dim.hm3,
           bottom: Dim.hm2,
         ),
         child: Form(
           key: formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Center(
+              FittedBox(
+                fit: BoxFit.fitWidth,
                 child: Text(
                   'Let\'s get started!',
                   style: Theme.of(context).textTheme.headline1,
@@ -106,14 +109,14 @@ class _AuthFormState extends State<AuthForm> {
                   style: Theme.of(context).textTheme.headline4,
                 ),
               ),
-              SizedBox(height: Dim.hm8),
+              Spacer(),
               _AuthTextForm(
                 label: 'Email',
                 validator: validateUsername,
                 // onSaved: onUsernameSaved,
                 controller: usernameController,
               ),
-              SizedBox(height: Dim.hm4),
+              SizedBox(height: Dim.hm3),
               _AuthTextForm(
                 label: 'Password',
                 obscured: true,
@@ -124,12 +127,20 @@ class _AuthFormState extends State<AuthForm> {
               SizedBox(height: Dim.heightMultiplier),
               Align(
                 alignment: Alignment.centerRight,
-                child: Text(
-                  'Forgot password?',
-                  style: StylesConfig.miniPurple,
+                child: FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                      WebViewScreen.route,
+                      arguments: 'https://web.twake.app/',
+                    );
+                  },
+                  child: Text(
+                    'Forgot password?',
+                    style: StylesConfig.miniPurple,
+                  ),
                 ),
               ),
-              SizedBox(height: Dim.hm4),
+              Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: RaisedButton(
@@ -163,9 +174,17 @@ class _AuthFormState extends State<AuthForm> {
                         style: StylesConfig.miniPurple
                             .copyWith(color: Colors.black87),
                       ),
-                      Text(
-                        ' Sign up',
-                        style: StylesConfig.miniPurple,
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                            WebViewScreen.route,
+                            arguments: 'https://web.twake.app/',
+                          );
+                        },
+                        child: Text(
+                          ' Sign up',
+                          style: StylesConfig.miniPurple,
+                        ),
                       ),
                     ],
                   ),

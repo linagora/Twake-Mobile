@@ -42,7 +42,7 @@ class _ReactionState extends State<Reaction> {
           alignment: Alignment.center,
           child: Row(
             children: [
-              Text(Emojis.getClosestMatch(widget.reaction)),
+              Text(Emojis().getClosestMatch(widget.reaction)),
               SizedBox(width: Dim.widthMultiplier),
               Text(
                 '${widget.count}',

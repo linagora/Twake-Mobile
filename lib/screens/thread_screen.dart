@@ -39,10 +39,12 @@ class ThreadScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          titleSpacing: 0.0,
           shadowColor: Colors.grey[300],
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
               .round()), // taking into account current appBar height to calculate a new one
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               if (channel.runtimeType == Direct)
                 ImageAvatar(correspondent.thumbnail),
@@ -52,18 +54,22 @@ class ThreadScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                            text: channel.runtimeType == Channel
-                                ? channel.name
-                                : '${correspondent.firstName} ${correspondent.lastName}',
-                            style: Theme.of(context).textTheme.headline6),
-                        TextSpan(
-                            text: ' - thread',
-                            style: Theme.of(context).textTheme.subtitle2),
-                      ],
+                  SizedBox(
+                    width: Dim.widthPercent(67),
+                    child: RichText(
+                      overflow: TextOverflow.fade,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: channel.runtimeType == Channel
+                                  ? channel.name
+                                  : '${correspondent.firstName} ${correspondent.lastName}',
+                              style: Theme.of(context).textTheme.headline6),
+                          TextSpan(
+                              text: ' - thread',
+                              style: Theme.of(context).textTheme.subtitle2),
+                        ],
+                      ),
                     ),
                   ),
                   Text('${channel.membersCount ?? 'No'} members',
@@ -96,7 +102,8 @@ class ThreadScreen extends StatelessWidget {
                 vertical: Dim.heightMultiplier,
                 horizontal: Dim.wm4,
               ),
-              child: Text('${message.responsesCount ?? 'No'} responses'),
+              child: Text(
+                  '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
             ),
             Divider(color: Colors.grey[200]),
             ThreadMessagesList((message.responses ?? []).reversed.toList()),
@@ -107,10 +114,10 @@ class ThreadScreen extends StatelessWidget {
                 onSuccess: (Map<String, dynamic> _message) {
                   messagesProvider.addMessage(
                     _message,
-                    parentMessageId: message.id,
+                    threadId: message.id,
                   );
                 },
-                parentMessageId: message.id,
+                threadId: message.id,
               );
             }),
           ],

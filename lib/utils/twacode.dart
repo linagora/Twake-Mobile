@@ -4,11 +4,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/utils/emojis.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const Color defaultColor = Colors.blueGrey;
 const Color linkColor = Colors.blue;
-const Color codeColor = Colors.red;
+const Color codeColor = Colors.indigo;
+const Color errorColor = Colors.red;
 const Color quoteColor = Colors.grey;
+const DefaultFontSize = 0.5;
 
 TextStyle generateStyle(
     {Color color = defaultColor,
@@ -16,12 +19,13 @@ TextStyle generateStyle(
     bool underline = false,
     bool italic = false,
     bool strikethrough = false,
-    bool monospace = false}) {
+    bool monospace = false,
+    fontSize = DefaultFontSize}) {
   return TextStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: Dim.tm2(decimal: .5),
+      fontSize: Dim.tm2(decimal: fontSize),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -101,6 +105,17 @@ class TwacodeItem {
   bool newLine = false;
 
   TapGestureRecognizer recognizer;
+  Future<void> _launchUrlInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   TwacodeItem(String type, String content, String id) {
     this.content = content;
@@ -140,7 +155,8 @@ class TwacodeItem {
         this.type = TwacodeType.url;
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
-            print('Url clicked');
+            print('Content: ${this.content}');
+            _launchUrlInBrowser(this.content);
           };
         break;
       case 'channel':
@@ -172,7 +188,7 @@ class TwacodeItem {
         this.style = generateStyle(monospace: true, color: codeColor);
         this.type = TwacodeType.mcode;
         this.content = this.content;
-        this.newLine = true;
+        // this.newLine = true;
         break;
       case 'icode':
         this.style = generateStyle(monospace: true, color: codeColor);
@@ -182,10 +198,11 @@ class TwacodeItem {
         this.style = generateStyle(color: quoteColor, italic: true);
         this.type = TwacodeType.mquote;
         this.content = this.content;
-        this.newLine = true;
+        // this.newLine = true;
         break;
       case 'quote':
         this.style = generateStyle(color: quoteColor, italic: true);
+        this.content = this.content;
         this.type = TwacodeType.quote;
         break;
       case 'emoji': // TODO: implementation needed
@@ -204,8 +221,9 @@ class TwacodeItem {
         this.style = generateStyle();
         this.type = TwacodeType.copiable;
         break;
-      case 'system': // TODO: implementation needed
-        this.style = generateStyle();
+      case 'system':
+        this.style =
+            generateStyle(color: quoteColor, italic: true, fontSize: 0.3);
         this.type = TwacodeType.system;
         break;
       case 'attachment': // TODO: implementation needed
@@ -216,8 +234,8 @@ class TwacodeItem {
         this.style = generateStyle();
         this.type = TwacodeType.progress_bar;
         break;
-      case 'unparseable': // TODO: implementation needed
-        this.style = generateStyle();
+      case 'unparseable':
+        this.style = generateStyle(color: errorColor, fontSize: 0.3);
         this.type = TwacodeType.text;
         break;
       default:
@@ -227,9 +245,15 @@ class TwacodeItem {
 
   InlineSpan render() {
     if (this.type == TwacodeType.image) {
-      return WidgetSpan(child: Image.network(this.content));
+      return WidgetSpan(
+        child: Image.network(
+          this.content ?? 'https://twake.app/medias/logo_blue.png',
+          height: Dim.heightPercent(20),
+          fit: BoxFit.cover,
+        ),
+      );
     } else if (this.type == TwacodeType.emoji) {
-      this.content = Emojis.getClosestMatch(this.content);
+      this.content = Emojis().getClosestMatch(this.content);
     }
     var content = this.newLine ? '\n' + this.content + '\n' : this.content;
 

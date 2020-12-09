@@ -30,9 +30,14 @@ class DateFormatter {
         localDT.day == yesterday.day) {
       return 'Yesterday, ' + approximateTime;
     }
+    // include year in date if message is from previous year
+    if (localDT.year < justNow.year) {
+      return '${DateFormat('d/M/y H:mm').format(dateTime)}';
+    }
+
+    return '${DateFormat('d/M H:mm').format(dateTime)}';
 
     // by default return 'year/month/day, time'
-    return '${DateFormat('d MMM y H:m').format(dateTime)}';
   }
 
   static String getVerboseDate(int timestamp) {

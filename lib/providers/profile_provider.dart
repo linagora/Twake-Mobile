@@ -11,16 +11,30 @@ class ProfileProvider with ChangeNotifier {
   String _selectedCompanyId;
   String _selectedWorkspaceId;
 
-  ProfileProvider() {
+  static final ProfileProvider _profileProvider = ProfileProvider._internal();
+
+  factory ProfileProvider() {
+    return _profileProvider;
+  }
+
+  // making it a singleton
+  ProfileProvider._internal() {
     DB.profileLoad().then((p) {
       print('DEBUG: loading profile from local data store');
       _currentProfile = Profile.fromJson(p);
 
       /// By default we are selecting first company
-      _selectedCompanyId = _currentProfile.companies[0].id;
+      /// after trying to retrieve user selected company first
+      final selectedCompany = _currentProfile.companies.firstWhere(
+          (c) => c.isSelected,
+          orElse: () => _currentProfile.companies[0]);
+      _selectedCompanyId = selectedCompany.id;
 
       /// And first workspace in that company
-      _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
+      _selectedWorkspaceId = selectedCompany.workspaces
+          .firstWhere((w) => w.isSelected,
+              orElse: () => selectedCompany.workspaces[0])
+          .id;
       loaded = true;
     }).catchError((e) => print('Error loading profile from data store\n$e'));
   }
@@ -40,18 +54,36 @@ class ProfileProvider with ChangeNotifier {
         .workspaces;
   }
 
-  void currentCompanySet(String companyId) {
+  void currentCompanySet(String companyId, {bool notify: true}) {
     _selectedCompanyId = companyId;
-    _selectedWorkspaceId = _currentProfile.companies
-        .firstWhere((c) => c.id == _selectedCompanyId)
-        .workspaces[0]
-        .id;
-    notifyListeners();
+    // Select workspace in case of change of company
+    // Check if workspace was selected before
+    // if nothing is found return first workspace
+    var company =
+        _currentProfile.companies.firstWhere((c) => c.id == _selectedCompanyId);
+    companies.forEach((c) {
+      c.isSelected = c.id == companyId;
+    });
+    var workspace = company.workspaces
+        .firstWhere((w) => w.isSelected, orElse: () => workspaces[0]);
+    _selectedWorkspaceId = workspace.id;
+    if (notify) notifyListeners();
+    _updateWorkspaceSelection(_selectedWorkspaceId);
+    DB.profileSave(_currentProfile);
   }
 
-  void currentWorkspaceSet(String workspaceId) {
+  void _updateWorkspaceSelection(String workspaceId) {
+    workspaces.forEach((w) {
+      w.isSelected = w.id == workspaceId;
+    });
+  }
+
+  void currentWorkspaceSet(String workspaceId, {bool notify: true}) {
     _selectedWorkspaceId = workspaceId;
-    notifyListeners();
+    _updateWorkspaceSelection(_selectedWorkspaceId);
+    if (notify) notifyListeners();
+    workspaces.firstWhere((w) => w.id == workspaceId).isSelected = true;
+    DB.profileSave(_currentProfile);
   }
 
   Company get selectedCompany {
@@ -74,7 +106,9 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    // if (loaded) return;
+    if (loaded) {
+      return;
+    }
     print('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();

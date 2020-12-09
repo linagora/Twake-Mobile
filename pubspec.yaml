@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+version: 0.1.0
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -23,8 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations: # Used for localizing different in app strings
-    sdk: flutter
+#  flutter_localizations: # Used for localizing different in app strings
+#    sdk: flutter
   json_annotation: ^3.1.0 # serialization/deserialization auto code generation
   # http: ^0.12.2 # http client library
   dio: ^3.0.10
@@ -36,8 +36,15 @@ dependencies:
   path_provider: ^1.6.24
   sticky_grouped_list: ^1.3.0
   scrollable_positioned_list: ^0.1.8
+  webview_flutter: ^1.0.7
+
   emoji_picker: 0.1.0
   clipboard: ^0.1.2+8
+  url_launcher: ^5.7.10
+  package_info: ^0.4.3+2
+  sentry_flutter: ^4.0.0-beta.1
+  firebase_messaging: ^7.0.3
+
   # flutter_keyboard_visibility: ^4.0.0
 
   # The following adds the Cupertino Icons font to your application.
@@ -56,8 +63,8 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: 'dev_assets/logo.png'
-  adaptive_icon_background: '#FFFFFF'
+  image_path: 'dev_assets/logo_adaptive.png'
+  adaptive_icon_background: '#837DFF'
   adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
 
 
@@ -75,9 +82,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/empty-image.png
     - assets/images/logo-white.png
     - assets/images/1024x1024.png
+    - assets/images/oldtwakelogo.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

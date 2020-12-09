@@ -19,8 +19,9 @@ class Emojis {
     return _reversedEmojiMap[value];
   }
 
-  static String getClosestMatch(String name) {
+  String getClosestMatch(String name) {
     name = name.replaceAll(':', '');
+    if (_reversedEmojiMap[name] != null) return name;
     var res = _EMOJIS[name];
 
     // That's a pretty dumb algorithm, but will do for now
