@@ -275,6 +275,7 @@ class TwakeApi with ChangeNotifier {
       var message = response.data;
       // TODO remove after requesting data from api
       final profile = profileProvider.currentProfile;
+      message['responses'] = [];
       message['sender'] = {
         'username': profile.username,
         'thumbnail': profile.thumbnail,

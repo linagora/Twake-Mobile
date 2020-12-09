@@ -100,7 +100,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
               },
             ),
           if (!widget.isThread && emojiBoardHidden) Divider(),
-          if (isMe && emojiBoardHidden)
+          if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
             ListTile(
               leading: Icon(Icons.delete, color: Colors.red),
               title: Text(
@@ -114,7 +114,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                 widget.onDelete(context);
               },
             ),
-          if (isMe && emojiBoardHidden) Divider(),
+          if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
+            Divider(),
           if (emojiBoardHidden)
             ListTile(
               leading: Icon(Icons.copy),
