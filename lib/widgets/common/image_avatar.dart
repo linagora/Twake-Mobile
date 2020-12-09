@@ -4,7 +4,7 @@ import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 // TODO image loading failes spantaneously, have to figure out solution
 // But it definitely has to do with S3 storage
 
-const String _FALLBACK_IMG = 'assets/images/1024x1024.png';
+const String _FALLBACK_IMG = 'assets/images/oldtwakelogo.jpg';
 
 class ImageAvatar extends StatelessWidget {
   final String imageUrl;
@@ -38,8 +38,8 @@ Widget onErrorFallbackImg() => Image.asset(
       _FALLBACK_IMG,
       // isAntiAlias: true,
       fit: BoxFit.cover,
-      width: Dim.wm9,
-      height: Dim.wm9,
+      width: Dim.hm5,
+      height: Dim.hm5,
     );
 
 // 'https://lh3.googleusercontent.com/proxy/vVnrKCKFprDeQb4UqVOn_E_iK-BoUYb7BuV6p9hN0Vd9V3GbvTK8dOLyidagUGfHSaqmtlEt9DGUSt8fo4mCzXRthXJwJ8BFzUTpZ0bs2AM0quP6_bjzOOJHV9zytpQmtZG07Jxn',

@@ -81,6 +81,7 @@ class MessagesProvider extends ChangeNotifier {
   Future<void> loadMoreMessages() async {
     if (_topHit) return;
     var list;
+    print('Trying to load first message id\n$channelId\n$firstMessageId');
     try {
       list = await api.channelMessagesGet(
         channelId,

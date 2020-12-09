@@ -6,18 +6,15 @@ import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/services/dateformatter.dart';
-import 'package:twake_mobile/widgets/common/image_avatar.dart';
 // import 'package:twake_mobile/providers/channels_provider.dart';
 
 class DirectTile extends StatelessWidget {
   final Direct direct;
   DirectTile(this.direct);
+
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<ProfileProvider>(context, listen: false);
-    final correspondent = direct.members.firstWhere((m) {
-      return !profile.isMe(m.userId);
-    });
     return InkWell(
       onTap: () {
         final provider = Provider.of<MessagesProvider>(context, listen: false);
@@ -34,9 +31,11 @@ class DirectTile extends StatelessWidget {
       },
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
-        leading: ImageAvatar(correspondent.thumbnail),
+        leading: Stack(
+            alignment: Alignment.centerLeft,
+            children: direct.buildCorrespondentAvatars(profile)),
         title: Text(
-          '${correspondent.firstName} ${correspondent.lastName}',
+          direct.buildDirectName(profile),
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.headline6,
         ),

@@ -89,7 +89,7 @@ class StylesConfig {
   static final TextStyle _bodyText1 = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,
-    fontSize: Dim.tm2(decimal: .8),
+    fontSize: Dim.tm2(decimal: .5),
   );
 
   static final TextStyle _bodyText2 = TextStyle(
