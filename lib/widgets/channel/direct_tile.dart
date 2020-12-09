@@ -12,12 +12,33 @@ import 'package:twake_mobile/widgets/common/image_avatar.dart';
 class DirectTile extends StatelessWidget {
   final Direct direct;
   DirectTile(this.direct);
+
+  List<Widget> buildCorrespondents(List<DirectMember> correspondents) {
+    List<Padding> paddedAvatars = [];
+    for (int i = 0; i < correspondents.length; i++) {
+      paddedAvatars.add(Padding(
+          padding: EdgeInsets.only(left: i * Dim.wm2),
+          child: ImageAvatar(correspondents[i].thumbnail)));
+    }
+    return paddedAvatars;
+  }
+
+  String buildDirectName(List<DirectMember> correspondents) {
+    String name =
+        '${correspondents[0].firstName} ${correspondents[0].lastName}';
+    for (int i = 1; i < correspondents.length; i++) {
+      name += ', ${correspondents[i].firstName} ${correspondents[i].lastName}';
+    }
+    return name;
+  }
+
   @override
   Widget build(BuildContext context) {
     final profile = Provider.of<ProfileProvider>(context, listen: false);
-    final correspondent = direct.members.firstWhere((m) {
+    final correspondents = direct.members.where((m) {
       return !profile.isMe(m.userId);
-    });
+    }).toList();
+
     return InkWell(
       onTap: () {
         final provider = Provider.of<MessagesProvider>(context, listen: false);
@@ -34,9 +55,15 @@ class DirectTile extends StatelessWidget {
       },
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
-        leading: ImageAvatar(correspondent.thumbnail),
+        leading: Stack(
+            alignment: Alignment.centerLeft,
+            children: buildCorrespondents(correspondents)),
         title: Text(
-          '${correspondent.firstName} ${correspondent.lastName}',
+          correspondents.length == 1
+              ? '${correspondents[0].firstName} ${correspondents[0].lastName}'
+              : direct.name.isNotEmpty
+                  ? direct.name
+                  : buildDirectName(correspondents),
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.headline6,
         ),

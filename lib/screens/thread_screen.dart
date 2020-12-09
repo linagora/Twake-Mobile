@@ -56,21 +56,19 @@ class ThreadScreen extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: Dim.widthPercent(67),
-                    child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: channel.runtimeType == Channel
-                                    ? channel.name
-                                    : '${correspondent.firstName} ${correspondent.lastName}',
-                                style: Theme.of(context).textTheme.headline6),
-                            TextSpan(
-                                text: ' - thread',
-                                style: Theme.of(context).textTheme.subtitle2),
-                          ],
-                        ),
+                    child: RichText(
+                      overflow: TextOverflow.fade,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: channel.runtimeType == Channel
+                                  ? channel.name
+                                  : '${correspondent.firstName} ${correspondent.lastName}',
+                              style: Theme.of(context).textTheme.headline6),
+                          TextSpan(
+                              text: ' - thread',
+                              style: Theme.of(context).textTheme.subtitle2),
+                        ],
                       ),
                     ),
                   ),

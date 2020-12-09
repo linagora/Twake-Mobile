@@ -224,20 +224,26 @@ class TwakeApi with ChangeNotifier {
     await validate();
     try {
       final profile = ProfileProvider(); // singleton
+      final qp = {
+        'company_id': profile.selectedCompany.id,
+        'channel_id': channelId,
+        'workspace_id': profile.selectedWorkspace.id,
+        'before_message_id': beforeMessageId,
+        'limit': messageId == null ? _MESSAGES_PER_PAGE : 1,
+        'message_id': messageId,
+        'thread_id': threadId,
+      };
+
+      print('QP: $qp');
       final response = await dio.get(
         TwakeApiConfig.channelMessagesMethod, // url
-        queryParameters: {
-          'company_id': profile.selectedCompany.id,
-          'channel_id': channelId,
-          'before_message_id': beforeMessageId,
-          'limit': messageId == null ? _MESSAGES_PER_PAGE : 1,
-          'message_id': messageId,
-          'thread_id': threadId,
-        },
+        queryParameters: qp,
       );
+      print('GOT MESSAGES: ${response.data}');
       return response.data;
     } catch (error, stackTrace) {
-      print('Error occurred while getting channel messages\n$error');
+      print(
+          'Error occurred while getting channel messages\n${error.response.data}');
       await Sentry.captureException(
         error,
         stackTrace: stackTrace,
@@ -257,6 +263,7 @@ class TwakeApi with ChangeNotifier {
     final body = jsonEncode({
       'original_str': content,
       'company_id': profileProvider.selectedCompany.id,
+      'workspace_id': profileProvider.selectedWorkspace.id,
       'channel_id': channelId,
       'thread_id': threadId,
     });
@@ -299,6 +306,7 @@ class TwakeApi with ChangeNotifier {
       final data = jsonEncode({
         'company_id': profile.selectedCompany.id,
         'channel_id': channelId,
+        'workspace_id': profile.selectedWorkspace.id,
         'reaction': reaction,
         'message_id': messageId,
         'thread_id': threadId,
@@ -332,6 +340,7 @@ class TwakeApi with ChangeNotifier {
         data: jsonEncode({
           'company_id': profile.selectedCompany.id,
           'channel_id': channelId,
+          'workspace_id': profile.selectedWorkspace.id,
           'message_id': messageId,
           'thread_id': threadId,
         }),
