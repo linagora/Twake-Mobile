@@ -27,11 +27,6 @@ class MessagesScreen extends StatelessWidget {
     } catch (_) {
       channel = provider.getDirectsById(channelId);
     }
-    final correspondent = channel.runtimeType == Direct
-        ? channel.members.firstWhere((m) {
-            return !profile.isMe(m.userId);
-          })
-        : null;
     final messagesProviderF = Provider.of<MessagesProvider>(
       context,
       listen: false,
@@ -46,7 +41,10 @@ class MessagesScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (channel.runtimeType == Direct)
-              ImageAvatar(correspondent.thumbnail),
+              Stack(
+                children:
+                    (channel as Direct).buildCorrespondentAvatars(profile),
+              ),
             if (channel.runtimeType == Channel)
               TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
             SizedBox(width: Dim.widthMultiplier),
@@ -58,7 +56,7 @@ class MessagesScreen extends StatelessWidget {
                   child: Text(
                     channel.runtimeType == Channel
                         ? channel.name
-                        : '${correspondent.firstName} ${correspondent.lastName}',
+                        : (channel as Direct).buildDirectName(profile),
                     style: Theme.of(context).textTheme.headline6,
                     overflow: TextOverflow.fade,
                   ),
