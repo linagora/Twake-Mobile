@@ -1,5 +1,4 @@
 import 'package:package_info/package_info.dart';
-// import 'package:sprintf/sprintf.dart';
 
 class TwakeApiConfig {
   static const String _HOST = 'https://mobile.api.twake.app';
@@ -22,7 +21,6 @@ class TwakeApiConfig {
 
   static Future<void> init() async {
     apiVersion = (await PackageInfo.fromPlatform()).version;
-    print('APP VERSION: ' + apiVersion);
   }
 
   static String get authorizeMethod {

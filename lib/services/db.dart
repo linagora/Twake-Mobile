@@ -85,7 +85,6 @@ class DB {
   static Future<Map<String, dynamic>> profileLoad() async {
     initCheck();
     final record = await profileStore.record(0).get(db);
-    print('GOT PROFILE FROM STORE:\n$record');
     if (record == null) {
       throw Exception('Profile storage is empty');
     }

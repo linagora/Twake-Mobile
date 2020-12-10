@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 
@@ -6,6 +7,7 @@ import 'package:twake_mobile/services/twake_api.dart';
 // via some generic class. May be...
 
 class MessagesProvider extends ChangeNotifier {
+  final logger = Logger();
   List<Message> _items = List();
   bool loaded = false;
   bool _fetchInProgress = false; // Marker for loadMoreMessages
@@ -68,7 +70,7 @@ class MessagesProvider extends ChangeNotifier {
     try {
       list = await api.channelMessagesGet(channelId);
     } catch (error) {
-      print('Error while loading messages\n$error');
+      logger.e('Error while loading messages\n$error');
       // TODO implement proper error handling
       throw error;
     }
@@ -84,7 +86,7 @@ class MessagesProvider extends ChangeNotifier {
     if (_fetchInProgress) return;
     _fetchInProgress = true;
     var list;
-    print('Trying to load first message id\n$channelId\n$firstMessageId');
+    logger.d('Trying to load first message id\n$channelId\n$firstMessageId');
     try {
       list = await api.channelMessagesGet(
         channelId,
@@ -102,7 +104,7 @@ class MessagesProvider extends ChangeNotifier {
     }
     if (list.isEmpty) {
       // if (list.length < 1) {
-      print('NO MORE MESSAGES LEFT!');
+      logger.e('NO MORE MESSAGES LEFT!');
       _topHit = true;
       return;
     }
@@ -120,7 +122,7 @@ class MessagesProvider extends ChangeNotifier {
     String messageId,
     String threadId,
   }) async {
-    print('Updating messages on notify!');
+    logger.d('Updating messages on notify!');
     if (channelId == this.channelId) {
       final list = await api.channelMessagesGet(
         channelId,
@@ -128,7 +130,6 @@ class MessagesProvider extends ChangeNotifier {
         threadId: threadId,
       );
       // if list returned is empty, then message has been deleted
-      print('GOT MESSAGE $list');
       if (list.isEmpty) {
         // if threadId was present, remove response
         if (threadId != null) {
@@ -148,19 +149,19 @@ class MessagesProvider extends ChangeNotifier {
         var message = getMessageById(messageId);
         // if message exists already, update it
         if (message != null) {
-          print('message is found');
+          logger.d('message is found');
           message.doPartialUpdate(newMessage);
-          print('message has been updated');
+          logger.d('message has been updated');
           message.notifyListeners();
           notifyListeners();
         } else {
           // else add a new one
-          print('message not found');
+          logger.d('message not found');
           _items.add(newMessage);
         }
       } else {
         // Add message to thread
-        print('Addeing message to the thread');
+        logger.d('Addeing message to the thread');
         var message = getMessageById(threadId);
         var response = message.responses
             .firstWhere((r) => r.id == messageId, orElse: () => null);

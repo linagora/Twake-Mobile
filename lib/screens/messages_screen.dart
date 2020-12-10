@@ -7,7 +7,6 @@ import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 import 'package:twake_mobile/widgets/message/messages_groupped_list.dart';
 import 'package:twake_mobile/widgets/message/message_edit_field.dart';
@@ -16,7 +15,6 @@ class MessagesScreen extends StatelessWidget {
   static const String route = '/messages';
   @override
   Widget build(BuildContext context) {
-    print('DEBUG: building messages screen');
     final api = Provider.of<TwakeApi>(context, listen: false);
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     final channelId = ModalRoute.of(context).settings.arguments as String;

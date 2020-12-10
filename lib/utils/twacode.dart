@@ -2,9 +2,12 @@ library twacode;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:readmore/readmore.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
+import 'package:twake_mobile/config/styles_config.dart';
 import 'package:twake_mobile/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:logger/logger.dart';
 
 const Color defaultColor = Colors.blueGrey;
 const Color linkColor = Colors.blue;
@@ -37,7 +40,7 @@ class Parser {
 
   Parser(List<dynamic> items) {
     List<TwacodeItem> response = [];
-
+    items = collapseText(items);
     items.forEach((item) {
       item = item as Map<String, dynamic>;
       response.add(TwacodeItem(
@@ -47,6 +50,35 @@ class Parser {
     });
 
     this.items = response;
+  }
+
+  // Method for joining paragraphs strings, it's stupid that they are separate
+  List<dynamic> collapseText(List<dynamic> items) {
+    List<dynamic> newList = [];
+    bool previousWasText = false;
+    for (int i = 0, j = 0; i < items.length; i++) {
+      if (items[i]['type'] == 'text' || items[i]['type'] == 'br') {
+        if (!previousWasText) {
+          if (items[i]['type'] == 'br') {
+            continue;
+          }
+          newList.add(items[i]);
+          previousWasText = true;
+          if (j != 0) j++;
+        } else {
+          if (items[i]['type'] == 'br') {
+            newList[j]['content'] += '\n';
+            continue;
+          }
+          newList[j]['content'] += items[i]['content'];
+        }
+      } else {
+        newList.add(items[i]);
+        previousWasText = false;
+        j++;
+      }
+    }
+    return newList;
   }
 
   Widget render(context) {
@@ -99,6 +131,7 @@ enum TwacodeType {
 class TwacodeItem {
   TextStyle style;
 
+  final logger = Logger();
   String content;
   String id;
   TwacodeType type;
@@ -147,7 +180,7 @@ class TwacodeItem {
         this.type = TwacodeType.user;
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
-            print('User clicked');
+            logger.d('User clicked');
           };
         break;
       case 'url':
@@ -155,7 +188,7 @@ class TwacodeItem {
         this.type = TwacodeType.url;
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
-            print('Content: ${this.content}');
+            logger.d('Content: ${this.content}');
             _launchUrlInBrowser(this.content);
           };
         break;
@@ -164,7 +197,7 @@ class TwacodeItem {
         this.type = TwacodeType.channel;
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
-            print('Channel clicked');
+            logger.d('Channel clicked');
           };
         break;
       case 'email':
@@ -172,7 +205,7 @@ class TwacodeItem {
         this.type = TwacodeType.email;
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
-            print('Email clicked');
+            logger.d('Email clicked');
           };
         break;
       case 'image':
@@ -255,7 +288,21 @@ class TwacodeItem {
     } else if (this.type == TwacodeType.emoji) {
       this.content = Emojis().getClosestMatch(this.content);
     }
-    var content = this.newLine ? '\n' + this.content + '\n' : this.content;
+    var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
+
+    if (content != null && content.length > 300) {
+      return WidgetSpan(
+        child: ReadMoreText(
+          content,
+          trimLines: 3,
+          style: this.style,
+          colorClickableText: StylesConfig.accentColorRGB,
+          trimMode: TrimMode.Line,
+          trimCollapsedText: '...Show more',
+          trimExpandedText: ' show less',
+        ),
+      );
+    }
 
     return TextSpan(
         text: content, style: this.style, recognizer: this.recognizer);
