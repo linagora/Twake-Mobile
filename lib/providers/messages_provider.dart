@@ -8,6 +8,7 @@ import 'package:twake_mobile/services/twake_api.dart';
 class MessagesProvider extends ChangeNotifier {
   List<Message> _items = List();
   bool loaded = false;
+  bool _fetchInProgress = false; // Marker for loadMoreMessages
   bool _topHit = false;
   String channelId;
   TwakeApi api;
@@ -80,6 +81,8 @@ class MessagesProvider extends ChangeNotifier {
 
   Future<void> loadMoreMessages() async {
     if (_topHit) return;
+    if (_fetchInProgress) return;
+    _fetchInProgress = true;
     var list;
     print('Trying to load first message id\n$channelId\n$firstMessageId');
     try {
@@ -94,7 +97,12 @@ class MessagesProvider extends ChangeNotifier {
     // This checks are neccessary because of how often
     // Notifications on scroll's end might fire, and trigger
     // refetch of data which is already present
-    if (list.length < 2 || list[0]['id'] == firstMessageId) {
+    if (list[list.length - 1]['id'] == firstMessageId) {
+      list.removeLast();
+    }
+    if (list.isEmpty) {
+      // if (list.length < 1) {
+      print('NO MORE MESSAGES LEFT!');
       _topHit = true;
       return;
     }
@@ -103,7 +111,7 @@ class MessagesProvider extends ChangeNotifier {
       tmp.add(Message.fromJson(list[i]));
     }
     _items = tmp + _items;
-    loaded = true;
+    _fetchInProgress = false;
     notifyListeners();
   }
 
