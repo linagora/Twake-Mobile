@@ -63,6 +63,10 @@ class MessagesProvider extends ChangeNotifier {
   }
 
   Future<void> loadMessages(TwakeApi api, String channelId) async {
+    while (_fetchInProgress) {
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+    _fetchInProgress = true;
     _topHit = false;
     var list;
     this.api = api;
@@ -73,11 +77,22 @@ class MessagesProvider extends ChangeNotifier {
       logger.e('Error while loading messages\n$error');
       // TODO implement proper error handling
       throw error;
+    } finally {
+      _fetchInProgress = false;
     }
     for (var i = 0; i < list.length; i++) {
+      // try {
       _items.add(Message.fromJson(list[i])..channelId = channelId);
+      // } catch (error) {
+      //   logger.e('Error while parsing message\n$error');
+      //   logger.e('MESSAGE WAS\n${list[i]}');
+      //   // TODO implement proper error handling
+      //   continue;
+      // }
     }
+    logger.d('GOT ${_items.length} message in provider');
     loaded = true;
+    _fetchInProgress = false;
     notifyListeners();
   }
 
@@ -95,6 +110,8 @@ class MessagesProvider extends ChangeNotifier {
     } catch (error) {
       // TODO implement proper error handling
       throw error;
+    } finally {
+      _fetchInProgress = false;
     }
     // This checks are neccessary because of how often
     // Notifications on scroll's end might fire, and trigger

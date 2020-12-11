@@ -109,7 +109,7 @@ class MessageTile extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(
-                            width: Dim.widthPercent(59),
+                            width: Dim.widthPercent(55),
                             child: Text(
                               message.sender.firstName != null
                                   ? '${message.sender.firstName} ${message.sender.lastName}'

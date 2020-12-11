@@ -53,6 +53,7 @@ class Parser {
   }
 
   // Method for joining paragraphs strings, it's stupid that they are separate
+  // Ugliest piece of code to ever exist!
   List<dynamic> collapseText(List<dynamic> items) {
     List<dynamic> newList = [];
     bool previousWasText = false;
@@ -60,11 +61,18 @@ class Parser {
       if (items[i]['type'] == 'text' || items[i]['type'] == 'br') {
         if (!previousWasText) {
           if (items[i]['type'] == 'br') {
-            continue;
+            if (i + 1 < items.length &&
+                (items[i + 1]['type'] == 'text' ||
+                    items[i + 1]['type'] == 'br')) {
+              newList.add(items[i]);
+              j = newList.length - 1;
+              newList[j]['content'] = '\n';
+              continue;
+            }
           }
           newList.add(items[i]);
           previousWasText = true;
-          if (j != 0) j++;
+          j = newList.length - 1;
         } else {
           if (items[i]['type'] == 'br') {
             newList[j]['content'] += '\n';
@@ -75,7 +83,6 @@ class Parser {
       } else {
         newList.add(items[i]);
         previousWasText = false;
-        j++;
       }
     }
     return newList;
@@ -290,16 +297,17 @@ class TwacodeItem {
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
 
-    if (content != null && content.length > 300) {
+    if (content != null && content.length > 500) {
       return WidgetSpan(
         child: ReadMoreText(
           content,
-          trimLines: 3,
+          trimLines: 7,
           style: this.style,
           colorClickableText: StylesConfig.accentColorRGB,
           trimMode: TrimMode.Line,
           trimCollapsedText: '...Show more',
-          trimExpandedText: ' show less',
+          trimExpandedText: '\nShow less',
+          delimiter: '',
         ),
       );
     }

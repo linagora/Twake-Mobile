@@ -67,7 +67,7 @@ class StylesConfig {
   );
   static final TextStyle _subtitle2 = TextStyle(
     color: subTitleTextColor,
-    fontSize: Dim.tm2(decimal: -.3),
+    fontSize: Dim.tm2(decimal: -.5),
   );
 
   static final TextStyle _button = TextStyle(
