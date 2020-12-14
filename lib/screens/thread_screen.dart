@@ -28,7 +28,9 @@ class ThreadScreen extends StatelessWidget {
       channel = provider.getDirectsById(params['channelId']);
     }
     final profile = Provider.of<ProfileProvider>(context, listen: false);
-    final messagesProvider = Provider.of<MessagesProvider>(context);
+    final api = Provider.of<TwakeApi>(context, listen: false);
+    final messagesProvider =
+        Provider.of<MessagesProvider>(context, listen: false);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
     final correspondent = channel.runtimeType == Direct
@@ -106,9 +108,28 @@ class ThreadScreen extends StatelessWidget {
                   '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
             ),
             Divider(color: Colors.grey[200]),
-            ThreadMessagesList((message.responses ?? []).reversed.toList()),
+            FutureBuilder(
+              future: message.responsesLoaded
+                  // resolve future right away, if we already have loaded messages
+                  ? Future.value(1)
+                  : messagesProvider.loadMessages(
+                      api,
+                      message.channelId,
+                      threadId: message.id,
+                    ),
+              builder: (ctx, snapshot) =>
+                  snapshot.connectionState == ConnectionState.done
+                      ? ThreadMessagesList(
+                          (message.responses ?? []).reversed.toList())
+                      : Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+            ),
             MessageEditField((content) {
-              Provider.of<TwakeApi>(context, listen: false).messageSend(
+              api.messageSend(
                 channelId: message.channelId,
                 content: content,
                 onSuccess: (Map<String, dynamic> _message) {

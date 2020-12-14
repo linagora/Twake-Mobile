@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:twake_mobile/models/company.dart';
@@ -108,20 +109,35 @@ class ProfileProvider with ChangeNotifier {
   }
 
   Future<void> loadProfile(TwakeApi api) async {
-    if (loaded) {
-      return;
-    }
+    // if (loaded) {
+    // return;
+    // }
     logger.d('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();
       // final response = DUMMY_USER;
-      _currentProfile = Profile.fromJson(response);
+      final profile = Profile.fromJson(response);
+      if (loaded) {
+        for (int i = 0;
+            i < min(profile.companies.length, _currentProfile.companies.length);
+            i++) {
+          profile.companies[i].isSelected =
+              _currentProfile.companies[i].isSelected;
+          final wnew = profile.companies[i].workspaces;
+          final wold = _currentProfile.companies[i].workspaces;
+          for (int j = 0; j < min(wnew.length, wold.length); j++) {
+            wnew[j].isSelected = wold[j].isSelected;
+          }
+        }
+      } else {
+        /// By default we are selecting first company
+        _selectedCompanyId = _currentProfile.companies[0].id;
 
-      /// By default we are selecting first company
-      _selectedCompanyId = _currentProfile.companies[0].id;
+        /// And first workspace in that company
+        _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
+      }
+      _currentProfile = profile;
 
-      /// And first workspace in that company
-      _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
       loaded = true;
       DB.profileSave(_currentProfile);
       notifyListeners();

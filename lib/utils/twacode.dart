@@ -293,7 +293,16 @@ class TwacodeItem {
         ),
       );
     } else if (this.type == TwacodeType.emoji) {
-      this.content = Emojis().getClosestMatch(this.content);
+      if (this.id != null) {
+        // logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
+        List<int> codePoints = [];
+        for (String cp in this.id.split('-')) {
+          codePoints.add(int.parse(cp, radix: 16));
+        }
+        this.content = String.fromCharCodes(codePoints);
+      } else {
+        this.content = Emojis().getClosestMatch(this.content);
+      }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
 

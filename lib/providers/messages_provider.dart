@@ -62,17 +62,23 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadMessages(TwakeApi api, String channelId) async {
+  Future<void> loadMessages(
+    TwakeApi api,
+    String channelId, {
+    String threadId,
+  }) async {
     while (_fetchInProgress) {
       await Future.delayed(Duration(milliseconds: 200));
     }
+    // Just make sure that we don't have messages before fetching
+    if (_items.isNotEmpty) _items.clear();
     _fetchInProgress = true;
     _topHit = false;
     var list;
     this.api = api;
     this.channelId = channelId;
     try {
-      list = await api.channelMessagesGet(channelId);
+      list = await api.channelMessagesGet(channelId, threadId: threadId);
     } catch (error) {
       logger.e('Error while loading messages\n$error');
       // TODO implement proper error handling
@@ -80,17 +86,26 @@ class MessagesProvider extends ChangeNotifier {
     } finally {
       _fetchInProgress = false;
     }
-    for (var i = 0; i < list.length; i++) {
-      // try {
-      _items.add(Message.fromJson(list[i])..channelId = channelId);
-      // } catch (error) {
-      //   logger.e('Error while parsing message\n$error');
-      //   logger.e('MESSAGE WAS\n${list[i]}');
-      //   // TODO implement proper error handling
-      //   continue;
-      // }
+    if (threadId != null) {
+      var message = getMessageById(threadId)..responses = [];
+      for (var i = 0; i < list.length; i++) {
+        message.responses.add(Message.fromJson(list[i]));
+        logger.d('RESPONSES COUNT ${message.responses.length}');
+      }
+      message.responsesLoaded = true;
+    } else {
+      for (var i = 0; i < list.length; i++) {
+        // try {
+        _items.add(Message.fromJson(list[i])..channelId = channelId);
+        // } catch (error) {
+        //   logger.e('Error while parsing message\n$error');
+        //   logger.e('MESSAGE WAS\n${list[i]}');
+        //   // TODO implement proper error handling
+        //   continue;
+        // }
+      }
     }
-    logger.d('GOT ${_items.length} message in provider');
+    // logger.d('GOT ${_items.length} message in provider');
     loaded = true;
     _fetchInProgress = false;
     notifyListeners();
