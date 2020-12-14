@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:twake_mobile/models/company.dart';
 import 'package:twake_mobile/models/profile.dart';
 import 'package:twake_mobile/models/workspace.dart';
@@ -10,6 +11,7 @@ class ProfileProvider with ChangeNotifier {
   bool loaded = false;
   String _selectedCompanyId;
   String _selectedWorkspaceId;
+  final logger = Logger();
 
   static final ProfileProvider _profileProvider = ProfileProvider._internal();
 
@@ -20,7 +22,7 @@ class ProfileProvider with ChangeNotifier {
   // making it a singleton
   ProfileProvider._internal() {
     DB.profileLoad().then((p) {
-      print('DEBUG: loading profile from local data store');
+      logger.d('DEBUG: loading profile from local data store');
       _currentProfile = Profile.fromJson(p);
 
       /// By default we are selecting first company
@@ -36,7 +38,7 @@ class ProfileProvider with ChangeNotifier {
               orElse: () => selectedCompany.workspaces[0])
           .id;
       loaded = true;
-    }).catchError((e) => print('Error loading profile from data store\n$e'));
+    }).catchError((e) => logger.d('Error loading profile from data store\n$e'));
   }
 
   Profile get currentProfile => _currentProfile;
@@ -109,7 +111,7 @@ class ProfileProvider with ChangeNotifier {
     if (loaded) {
       return;
     }
-    print('DEBUG: loading profile over network');
+    logger.d('DEBUG: loading profile over network');
     try {
       final response = await api.currentProfileGet();
       // final response = DUMMY_USER;
@@ -124,7 +126,7 @@ class ProfileProvider with ChangeNotifier {
       DB.profileSave(_currentProfile);
       notifyListeners();
     } catch (error) {
-      print('Error while loading user profile\n$error');
+      logger.d('Error while loading user profile\n$error');
       // throw error;
     }
   }

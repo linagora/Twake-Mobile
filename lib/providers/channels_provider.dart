@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:twake_mobile/models/channel.dart';
 import 'package:twake_mobile/models/direct.dart';
 import 'package:twake_mobile/services/db.dart';
@@ -8,6 +9,7 @@ class ChannelsProvider with ChangeNotifier {
   List<Channel> _items = List();
   List<Direct> _directs = List();
   bool loaded = false;
+  var logger = Logger();
 
   List<Channel> get items => [..._items];
   List<Direct> get directs => [..._directs];
@@ -34,11 +36,9 @@ class ChannelsProvider with ChangeNotifier {
     try {
       /// try to get channels from api
       list = await api.workspaceChannelsGet(workspaceId);
-      print('LOADED channels over NETWORK');
     } catch (error) {
       /// if we fail (network issue), then load channels from local store
       list = await DB.channelsLoad(workspaceId);
-      print('LOADED channels from STORE');
     } finally {
       _items.clear();
       for (var i = 0; i < list.length; i++) {
@@ -53,7 +53,7 @@ class ChannelsProvider with ChangeNotifier {
       try {
         directs = await api.directMessagesGet(companyId);
       } catch (error) {
-        print('Error occured when loading directs\n$error');
+        logger.e('Error occured when loading directs\n$error');
       } finally {
         _directs.clear();
         for (var i = 0; i < directs.length; i++) {

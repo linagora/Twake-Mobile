@@ -28,7 +28,7 @@ class DateFormatter {
     if (localDT.year == yesterday.year &&
         localDT.month == yesterday.month &&
         localDT.day == yesterday.day) {
-      return 'Yesterday, ' + approximateTime;
+      return 'Ystd, ' + approximateTime;
     }
     // include year in date if message is from previous year
     if (localDT.year < justNow.year) {

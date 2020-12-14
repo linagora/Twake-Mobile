@@ -12,6 +12,7 @@ import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/reaction.dart';
 // import 'package:twake_mobile/widgets/message/message_edit_modal_sheet.dart';
 import 'package:twake_mobile/widgets/message/message_modal_sheet.dart';
+import 'package:logger/logger.dart';
 
 class MessageTile extends StatelessWidget {
   final Message message;
@@ -39,7 +40,8 @@ class MessageTile extends StatelessWidget {
 
   void onDelete(context) {
     Navigator.of(context).pop();
-    print('Removing message ${message.toJson()}');
+    final logger = Logger();
+    logger.d('Removing message ${message.toJson()}');
     Provider.of<MessagesProvider>(context, listen: false).removeMessage(
       message.id,
       threadId: message.threadId,
@@ -107,7 +109,7 @@ class MessageTile extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(
-                            width: Dim.widthPercent(59),
+                            width: Dim.widthPercent(55),
                             child: Text(
                               message.sender.firstName != null
                                   ? '${message.sender.firstName} ${message.sender.lastName}'

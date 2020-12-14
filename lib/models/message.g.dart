@@ -53,9 +53,9 @@ Map<String, dynamic> _$MessageTwacodeToJson(MessageTwacode instance) =>
     };
 
 Sender _$SenderFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['username', 'userId']);
+  $checkKeys(json, requiredKeys: const ['userId']);
   return Sender(
-    username: json['username'] as String,
+    username: json['username'] as String ?? 'BOT',
     thumbnail: json['thumbnail'] as String,
     userId: json['userId'] as String,
     firstName: json['firstname'] as String,

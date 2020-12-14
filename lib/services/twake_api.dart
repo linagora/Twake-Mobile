@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
+import 'package:logger/logger.dart';
 // import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/db.dart';
@@ -14,6 +15,7 @@ const int _MESSAGES_PER_PAGE = 50;
 /// Contains all neccessary methods and error handling
 class TwakeApi with ChangeNotifier {
   final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
+  final logger = Logger();
   String _authJWToken;
   String _refreshToken;
   DateTime _tokenExpiration;
@@ -35,7 +37,7 @@ class TwakeApi with ChangeNotifier {
             notifyListeners();
           });
         }).catchError((e) {
-          print('Error loading auth data from database\n$e');
+          logger.e('Error loading auth data from database\n$e');
         }));
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
@@ -94,13 +96,13 @@ class TwakeApi with ChangeNotifier {
         await prolongToken(_refreshToken);
       }
     }
-    print(
+    logger.v(
         'Validation passed, expiration: ${_tokenExpiration.toLocal().toIso8601String()}');
   }
 
   Future<void> prolongToken(String refreshToken) async {
     try {
-      print('Trying to prolongToken');
+      logger.d('Trying to prolongToken');
       final response = await dio.post(
         TwakeApiConfig.tokenProlongMethod,
         data: jsonEncode(
@@ -121,7 +123,7 @@ class TwakeApi with ChangeNotifier {
       DB.authSave(this);
       notifyListeners();
     } catch (error, stackTrace) {
-      print('Error occurred during authentication\n${error.response.data}');
+      logger.e('Error occurred during authentication\n${error.response.data}');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,
@@ -153,7 +155,7 @@ class TwakeApi with ChangeNotifier {
       DB.authSave(this);
       notifyListeners();
     } catch (error, stackTrace) {
-      print('Error occurred during authentication\n${error.response.data}');
+      logger.e('Error occurred during authentication\n${error.response.data}');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,
@@ -170,7 +172,7 @@ class TwakeApi with ChangeNotifier {
       );
       return response.data;
     } catch (error) {
-      print('Error occurred while loading user profile\n$error');
+      logger.e('Error occurred while loading user profile\n$error');
       throw error;
     }
   }
@@ -186,7 +188,7 @@ class TwakeApi with ChangeNotifier {
       );
       return response.data;
     } catch (error, stackTrace) {
-      print(
+      logger.e(
           'Error occurred while getting workspace channels\n${error.response.data}');
       // await Sentry.captureException(
       // error,
@@ -207,7 +209,7 @@ class TwakeApi with ChangeNotifier {
       );
       return response.data;
     } catch (error, stackTrace) {
-      print('Error occurred while getting direct channels\n$error');
+      logger.e('Error occurred while getting direct channels\n$error');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,
@@ -234,16 +236,17 @@ class TwakeApi with ChangeNotifier {
         'message_id': messageId,
         'thread_id': threadId,
       };
+      // logger.d('QUERY PARAMS FOR MESSAGES');
+      // logger.d(qp);
 
-      print('QP: $qp');
       final response = await dio.get(
         TwakeApiConfig.channelMessagesMethod, // url
         queryParameters: qp,
       );
-      print('GOT MESSAGES: ${response.data.length}');
+      // logger.d('GOT ${response.data.length} MESSAGES');
       return response.data;
     } catch (error, stackTrace) {
-      print(
+      logger.e(
           'Error occurred while getting channel messages\n${error.response.data}');
       // await Sentry.captureException(
       // error,
@@ -287,7 +290,7 @@ class TwakeApi with ChangeNotifier {
       message['reactions'] = null;
       onSuccess(message);
     } catch (error, stackTrace) {
-      print('ERROR OCCURED ON MESSAGE SEND: $error');
+      logger.e('ERROR OCCURED ON MESSAGE SEND: $error');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,
@@ -313,13 +316,12 @@ class TwakeApi with ChangeNotifier {
         'message_id': messageId,
         'thread_id': threadId,
       });
-      print('SENDING Reaction data: $data');
       final _ = await dio.post(
         TwakeApiConfig.messageReactionsMethod,
         data: data,
       );
     } catch (error, stackTrace) {
-      print('Error occurred while setting reaction\n$error');
+      logger.e('Error occurred while setting reaction\n$error');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,
@@ -348,7 +350,7 @@ class TwakeApi with ChangeNotifier {
         }),
       );
     } catch (error, stackTrace) {
-      print('Error occurred while deteting message\n${error.response.data}');
+      logger.e('Error occurred while deteting message\n${error.response.data}');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,

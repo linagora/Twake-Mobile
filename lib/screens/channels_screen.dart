@@ -30,7 +30,6 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('DEBUG: building channels screen');
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     final workspace = profile.selectedWorkspace;
     final company = profile.selectedCompany;
