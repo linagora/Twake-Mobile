@@ -6,7 +6,6 @@ class AuthScreen extends StatelessWidget {
   static const route = '/auth';
   @override
   Widget build(BuildContext context) {
-    print('DEBUG: building auth screen');
     return SafeArea(
       child: Scaffold(
         body: Stack(

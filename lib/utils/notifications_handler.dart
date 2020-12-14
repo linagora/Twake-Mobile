@@ -1,6 +1,7 @@
 // import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
@@ -12,11 +13,12 @@ import 'package:twake_mobile/services/twake_api.dart';
 
 class NotificationsHandler {
   final BuildContext context;
+  final logger = Logger();
   FirebaseMessaging _fcm = FirebaseMessaging();
   ProfileProvider profile;
   MessagesProvider messagesProvider;
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
-    print('Message received\n$message');
+    logger.d('Message received\n$message');
     final data = message['data'];
     final channelId = data['channel_id'];
     final messageId = data['message_id'];
@@ -73,7 +75,7 @@ class NotificationsHandler {
   }
 
   Future<dynamic> onResume(Map<String, dynamic> message) async {
-    print('Resuming on message received\n$message');
+    logger.d('Resuming on message received\n$message');
     final data = message['data'];
     final channelId = data['channel_id'];
     final companyId = data['company_id'];
@@ -90,7 +92,7 @@ class NotificationsHandler {
   Future<dynamic> onLaunch(Map<String, dynamic> message) async {
     // wait before it app launches
     await Future.delayed(Duration(milliseconds: 500));
-    print('Navigating after fresh start $message');
+    logger.d('Navigating after fresh start $message');
     // delegate to existing function DRY
     onResume(message);
   }
@@ -107,7 +109,7 @@ class NotificationsHandler {
     profile = Provider.of<ProfileProvider>(context, listen: false);
     messagesProvider = Provider.of<MessagesProvider>(context, listen: false);
     _fcm.getToken().then((token) {
-      print('(DEBUG) FCM TOKEN: $token');
+      logger.d('(DEBUG) FCM TOKEN: $token');
     });
 
     // if (Platform.isIOS) iOSPermission();

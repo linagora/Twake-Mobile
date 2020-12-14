@@ -15,7 +15,7 @@ import 'package:twake_mobile/screens/workspaces_screen.dart';
 import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/services/twake_api.dart';
 import 'package:flutter/services.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
+// import 'package:sentry_flutter/sentry_flutter.dart';
 // import 'package:twake_mobile/services/twake_socket.dart';
 
 void main() {
@@ -27,15 +27,16 @@ void main() {
     /// And disable landscape mode
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
         .then((_) {
-      SentryFlutter.init(
-        (options) {
-          options.dsn =
-              'https://2efc542ea1da4785aefcb93d55538e14@o310327.ingest.sentry.io/5544661';
-        },
-
-        /// And finally run the application
-        appRunner: () => runApp(TwakeMobileApp()),
-      );
+      // SentryFlutter.init(
+      // (options) {
+      // options.dsn =
+      // 'https://2efc542ea1da4785aefcb93d55538e14@o310327.ingest.sentry.io/5544661';
+      // },
+//
+      /// And finally run the application
+      // appRunner: () =>
+      runApp(TwakeMobileApp());
+      // );
     });
   });
 }
