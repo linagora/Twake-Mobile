@@ -29,8 +29,7 @@ class ThreadScreen extends StatelessWidget {
     }
     final profile = Provider.of<ProfileProvider>(context, listen: false);
     final api = Provider.of<TwakeApi>(context, listen: false);
-    final messagesProvider =
-        Provider.of<MessagesProvider>(context, listen: false);
+    final messagesProvider = Provider.of<MessagesProvider>(context);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
     final correspondent = channel.runtimeType == Direct
@@ -38,6 +37,11 @@ class ThreadScreen extends StatelessWidget {
             return !profile.isMe(m.userId);
           })
         : null;
+    messagesProvider.loadMessages(
+      api,
+      message.channelId,
+      threadId: message.id,
+    );
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -108,26 +112,15 @@ class ThreadScreen extends StatelessWidget {
                   '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
             ),
             Divider(color: Colors.grey[200]),
-            FutureBuilder(
-              future: message.responsesLoaded
-                  // resolve future right away, if we already have loaded messages
-                  ? Future.value(1)
-                  : messagesProvider.loadMessages(
-                      api,
-                      message.channelId,
-                      threadId: message.id,
+            message.responsesLoaded
+                ? ThreadMessagesList(
+                    (message.responses ?? []).reversed.toList())
+                : Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(),
                     ),
-              builder: (ctx, snapshot) =>
-                  snapshot.connectionState == ConnectionState.done
-                      ? ThreadMessagesList(
-                          (message.responses ?? []).reversed.toList())
-                      : Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-            ),
+                  ),
             MessageEditField((content) {
               api.messageSend(
                 channelId: message.channelId,

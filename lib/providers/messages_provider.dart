@@ -67,11 +67,19 @@ class MessagesProvider extends ChangeNotifier {
     String channelId, {
     String threadId,
   }) async {
+    Message message;
+    if (threadId != null) {
+      message = getMessageById(threadId);
+      if (message.responsesLoaded) {
+        return;
+      }
+    }
     while (_fetchInProgress) {
       await Future.delayed(Duration(milliseconds: 200));
     }
+
     // Just make sure that we don't have messages before fetching
-    if (_items.isNotEmpty) _items.clear();
+    if (_items.isNotEmpty && threadId == null) _items.clear();
     _fetchInProgress = true;
     _topHit = false;
     var list;
@@ -87,7 +95,7 @@ class MessagesProvider extends ChangeNotifier {
       _fetchInProgress = false;
     }
     if (threadId != null) {
-      var message = getMessageById(threadId)..responses = [];
+      message.responses = [];
       for (var i = 0; i < list.length; i++) {
         message.responses.add(Message.fromJson(list[i]));
         logger.d('RESPONSES COUNT ${message.responses.length}');
