@@ -190,13 +190,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.10"
-  emoji_picker:
-    dependency: "direct main"
-    description:
-      name: emoji_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -548,27 +541,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.4.8"
-  shared_preferences:
-    dependency: transitive
-    description:
-      name: shared_preferences
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.5"
-  shared_preferences_macos:
-    dependency: transitive
-    description:
-      name: shared_preferences_macos
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.0.1+11"
-  shared_preferences_platform_interface:
-    dependency: transitive
-    description:
-      name: shared_preferences_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.4"
   shelf:
     dependency: transitive
     description:

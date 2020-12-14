@@ -40,7 +40,7 @@ dependencies:
   readmore: ^1.0.1
   logger: ^0.9.4
   # expandable: ^4.1.4
-  emoji_picker: 0.1.0
+  # emoji_picker: 0.1.0
   clipboard: ^0.1.2+8
   url_launcher: ^5.7.10
   package_info: ^0.4.3+2
