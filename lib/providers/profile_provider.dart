@@ -131,10 +131,10 @@ class ProfileProvider with ChangeNotifier {
         }
       } else {
         /// By default we are selecting first company
-        _selectedCompanyId = _currentProfile.companies[0].id;
+        _selectedCompanyId = profile.companies[0].id;
 
         /// And first workspace in that company
-        _selectedWorkspaceId = _currentProfile.companies[0].workspaces[0].id;
+        _selectedWorkspaceId = profile.companies[0].workspaces[0].id;
       }
       _currentProfile = profile;
 
