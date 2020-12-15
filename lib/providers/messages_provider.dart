@@ -97,7 +97,7 @@ class MessagesProvider extends ChangeNotifier {
     if (threadId != null) {
       message.responses = [];
       for (var i = 0; i < list.length; i++) {
-        message.responses.add(Message.fromJson(list[i]));
+        message.responses.add(Message.fromJson(list[i])..channelId = channelId);
         logger.d('RESPONSES COUNT ${message.responses.length}');
       }
       message.responsesLoaded = true;

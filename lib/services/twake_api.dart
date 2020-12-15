@@ -96,8 +96,8 @@ class TwakeApi with ChangeNotifier {
         await prolongToken(_refreshToken);
       }
     }
-    logger.v(
-        'Validation passed, expiration: ${_tokenExpiration.toLocal().toIso8601String()}');
+    // logger.v(
+    // 'Validation passed, expiration: ${_tokenExpiration.toLocal().toIso8601String()}');
   }
 
   Future<void> prolongToken(String refreshToken) async {
@@ -316,12 +316,13 @@ class TwakeApi with ChangeNotifier {
         'message_id': messageId,
         'thread_id': threadId,
       });
+      logger.d('REACTION DATA: $data');
       final _ = await dio.post(
         TwakeApiConfig.messageReactionsMethod,
         data: data,
       );
     } catch (error, stackTrace) {
-      logger.e('Error occurred while setting reaction\n$error');
+      logger.e('Error occurred while setting reaction\n${error.response.data}');
       // await Sentry.captureException(
       // error,
       // stackTrace: stackTrace,
