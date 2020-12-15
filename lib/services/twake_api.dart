@@ -247,12 +247,11 @@ class TwakeApi with ChangeNotifier {
       };
       // logger.d('QUERY PARAMS FOR MESSAGES');
       // logger.d(qp);
-
       final response = await dio.get(
         TwakeApiConfig.channelMessagesMethod, // url
         queryParameters: qp,
       );
-      // logger.d('GOT ${response.data.length} MESSAGES');
+      logger.d('GOT ${response.data.length} MESSAGES');
       return response.data;
     } catch (error, stackTrace) {
       logger.e(

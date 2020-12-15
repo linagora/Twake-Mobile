@@ -1,4 +1,5 @@
 // import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
@@ -19,15 +20,31 @@ class NotificationsHandler {
   MessagesProvider messagesProvider;
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     logger.d('Message received\n$message');
-    final data = message['data'];
-    final channelId = data['channel_id'];
-    final messageId = data['message_id'];
-    final threadId = data['thread_id'];
-    messagesProvider.getMessageOnUpdate(
-      channelId: channelId,
-      messageId: messageId,
-      threadId: threadId,
-    );
+    // print('Message received\n$message');
+    var data = jsonDecode(message['data']['notification_data']);
+    print('NotificationsHandler: \n$data');
+    try {
+      if (data == null) {
+        data = message['data'];
+      }
+
+      print('GETTING CHANNEL');
+      final channelId = data['channel_id'];
+      print('GETTING MESSAGE');
+      final messageId = data['message_id'];
+      print('GETTING THREAD');
+      String threadId = data['thread_id'];
+      if (threadId.isEmpty) {
+        threadId = null;
+      }
+      messagesProvider.getMessageOnUpdate(
+        channelId: channelId,
+        messageId: messageId,
+        threadId: threadId,
+      );
+    } catch (error) {
+      print('$error');
+    }
   }
 
   static Future<dynamic> onBackgroundMessage(
