@@ -1,4 +1,5 @@
 import 'package:package_info/package_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class TwakeApiConfig {
   static const String _HOST = 'https://mobile.api.twake.app';
@@ -10,6 +11,7 @@ class TwakeApiConfig {
   static const String _directMessages = '/direct';
   static const String _messageReactions = '/reactions';
   static String apiVersion;
+  static String fcmToken;
 
   static Map<String, String> authHeader(token) {
     return {
@@ -21,6 +23,7 @@ class TwakeApiConfig {
 
   static Future<void> init() async {
     apiVersion = (await PackageInfo.fromPlatform()).version;
+    fcmToken = (await FirebaseMessaging().getToken());
   }
 
   static String get authorizeMethod {

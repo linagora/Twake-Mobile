@@ -10,6 +10,7 @@ import 'package:twake_mobile/services/db.dart';
 import 'package:twake_mobile/config/api.dart' show TwakeApiConfig;
 
 const int _MESSAGES_PER_PAGE = 50;
+const int _MESSAGES_PER_THREAD = 5000;
 
 /// Main class for interacting with Twake api
 /// Contains all neccessary methods and error handling
@@ -28,10 +29,14 @@ class TwakeApi with ChangeNotifier {
     // Get version number for the app
     // Try to load state from local store
     // validate data
+
     TwakeApiConfig.init().then((_) => DB.authLoad().then((map) {
           fromMap(map);
           validate().then((_) {
             dio = Dio(BaseOptions(
+              connectTimeout: 10000,
+              sendTimeout: 5000,
+              receiveTimeout: 7000,
               headers: TwakeApiConfig.authHeader(_authJWToken),
             ));
             notifyListeners();
@@ -109,6 +114,7 @@ class TwakeApi with ChangeNotifier {
           {
             'refresh_token': refreshToken,
             'timezoneoffset': timeZoneOffset,
+            'fcm_token': TwakeApiConfig.fcmToken,
           },
         ),
       );
@@ -140,7 +146,8 @@ class TwakeApi with ChangeNotifier {
             'username': username,
             'password': password,
             'device': _platform,
-            'timezoneoffset': '$timeZoneOffset'
+            'timezoneoffset': '$timeZoneOffset',
+            'fcm_token': TwakeApiConfig.fcmToken,
           },
         ),
       );
@@ -232,7 +239,9 @@ class TwakeApi with ChangeNotifier {
         'channel_id': channelId,
         'workspace_id': profile.selectedWorkspace.id,
         'before_message_id': beforeMessageId,
-        'limit': messageId == null ? _MESSAGES_PER_PAGE : 1,
+        'limit': threadId == null
+            ? (messageId == null ? _MESSAGES_PER_PAGE : 1)
+            : _MESSAGES_PER_THREAD,
         'message_id': messageId,
         'thread_id': threadId,
       };

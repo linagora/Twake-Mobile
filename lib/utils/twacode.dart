@@ -40,7 +40,7 @@ class Parser {
 
   Parser(List<dynamic> items) {
     List<TwacodeItem> response = [];
-    items = collapseText(items);
+    // items = collapseText(items);
     items.forEach((item) {
       item = item as Map<String, dynamic>;
       response.add(TwacodeItem(

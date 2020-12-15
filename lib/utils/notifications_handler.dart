@@ -75,7 +75,7 @@ class NotificationsHandler {
   }
 
   Future<dynamic> onResume(Map<String, dynamic> message) async {
-    logger.d('Resuming on message received\n$message');
+    logger.w('Resuming on message received\n$message');
     final data = message['data'];
     final channelId = data['channel_id'];
     final companyId = data['company_id'];
@@ -92,7 +92,7 @@ class NotificationsHandler {
   Future<dynamic> onLaunch(Map<String, dynamic> message) async {
     // wait before it app launches
     await Future.delayed(Duration(milliseconds: 500));
-    logger.d('Navigating after fresh start $message');
+    logger.w('Navigating after fresh start $message');
     // delegate to existing function DRY
     onResume(message);
   }
@@ -109,7 +109,7 @@ class NotificationsHandler {
     profile = Provider.of<ProfileProvider>(context, listen: false);
     messagesProvider = Provider.of<MessagesProvider>(context, listen: false);
     _fcm.getToken().then((token) {
-      logger.d('(DEBUG) FCM TOKEN: $token');
+      logger.w('(DEBUG) FCM TOKEN: $token');
     });
 
     // if (Platform.isIOS) iOSPermission();

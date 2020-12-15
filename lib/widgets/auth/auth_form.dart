@@ -76,7 +76,10 @@ class _AuthFormState extends State<AuthForm> {
       Scaffold.of(ctx).hideCurrentSnackBar();
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
-          content: Text('Login failed, wrong credentials'),
+          content: Text(
+            'Login failed, wrong credentials',
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
