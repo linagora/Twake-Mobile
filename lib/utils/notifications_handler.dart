@@ -22,17 +22,13 @@ class NotificationsHandler {
     logger.d('Message received\n$message');
     // print('Message received\n$message');
     var data = jsonDecode(message['data']['notification_data']);
-    print('NotificationsHandler: \n$data');
     try {
       if (data == null) {
         data = message['data'];
       }
 
-      print('GETTING CHANNEL');
       final channelId = data['channel_id'];
-      print('GETTING MESSAGE');
       final messageId = data['message_id'];
-      print('GETTING THREAD');
       String threadId = data['thread_id'];
       if (threadId.isEmpty) {
         threadId = null;

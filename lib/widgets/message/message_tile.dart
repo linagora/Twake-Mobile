@@ -137,7 +137,10 @@ class MessageTile extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.only(top: Dim.heightMultiplier),
                       width: Dim.widthPercent(81),
-                      child: Parser(message.content.prepared).render(context),
+                      child: Parser(
+                        message.content.prepared,
+                        (message.content.originalStr ?? '').length,
+                      ).render(context),
                     ),
                     SizedBox(height: Dim.hm2),
                     Wrap(
