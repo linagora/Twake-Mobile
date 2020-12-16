@@ -22,7 +22,7 @@ class ChannelTile extends StatelessWidget {
         );
       },
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+        contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
         leading: TextAvatar(
           channel.icon,
           emoji: true,

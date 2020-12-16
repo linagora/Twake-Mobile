@@ -30,7 +30,7 @@ class DirectTile extends StatelessWidget {
         );
       },
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+        contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
         leading: Stack(
             alignment: Alignment.centerLeft,
             children: direct.buildCorrespondentAvatars(profile)),

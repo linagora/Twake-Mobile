@@ -49,40 +49,25 @@ class ThreadScreen extends StatelessWidget {
           shadowColor: Colors.grey[300],
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
               .round()), // taking into account current appBar height to calculate a new one
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (channel.runtimeType == Direct)
-                ImageAvatar(correspondent.thumbnail),
-              if (channel.runtimeType == Channel)
-                TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
-              SizedBox(width: Dim.widthMultiplier),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: Dim.widthPercent(67),
-                    child: RichText(
-                      overflow: TextOverflow.fade,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                              text: channel.runtimeType == Channel
-                                  ? channel.name
-                                  : '${correspondent.firstName} ${correspondent.lastName}',
-                              style: Theme.of(context).textTheme.headline6),
-                          TextSpan(
-                              text: ' - thread',
-                              style: Theme.of(context).textTheme.subtitle2),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Text('${channel.membersCount ?? 'No'} members',
-                      style: Theme.of(context).textTheme.bodyText2),
-                ],
-              ),
-            ],
+          title: ListTile(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            contentPadding: EdgeInsets.zero,
+            leading: (channel.runtimeType == Direct)
+                ? ImageAvatar(correspondent.thumbnail)
+                // or ordinary channel
+                : TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
+            title: Text(
+              'Threaded replies',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            subtitle: Text(
+              channel.runtimeType == Channel
+                  ? channel.name
+                  // or direct
+                  : '${correspondent.firstName} ${correspondent.lastName}',
+              style: Theme.of(context).textTheme.bodyText2,
+            ),
           ),
         ),
         body: Column(
@@ -91,17 +76,16 @@ class ThreadScreen extends StatelessWidget {
           children: [
             // Show main message only if keyboard is hidden
             // otherwise it causes ugly shrinking of responses list
-            if (MediaQuery.of(context).viewInsets.bottom == 0)
-              Container(
-                child: SingleChildScrollView(
-                  child: ChangeNotifierProvider.value(
-                    value: message,
-                    child: MessageTile(message, isThread: true),
-                  ),
+            Container(
+              child: SingleChildScrollView(
+                child: ChangeNotifierProvider.value(
+                  value: message,
+                  child: MessageTile(message, isThread: true),
                 ),
-                padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
-                height: Dim.heightPercent(19),
               ),
+              padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+              height: Dim.heightPercent(19),
+            ),
             Divider(color: Colors.grey[200]),
             Padding(
               padding: EdgeInsets.symmetric(

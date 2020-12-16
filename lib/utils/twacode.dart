@@ -138,7 +138,7 @@ class _TwacodeState extends State<Twacode> {
     // }
     return widget.charCount > 300
         ? Column(
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
@@ -154,6 +154,7 @@ class _TwacodeState extends State<Twacode> {
             ],
           )
         : RichText(
+            textAlign: TextAlign.justify,
             text: TextSpan(children: spans),
           );
   }
