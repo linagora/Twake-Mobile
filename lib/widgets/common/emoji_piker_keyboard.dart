@@ -1,4 +1,4 @@
-// import 'package:emoji_picker/emoji_picker.dart';
+import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:flutter/material.dart';
 
 class EmojiPickerKeyboard extends StatelessWidget {
@@ -11,7 +11,10 @@ class EmojiPickerKeyboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Container(child: Text('Not implemented yet'));
+      // Container(child: Text('Not implemented yet'));
+      EmojiKeyboard(
+        onEmojiSelected: (emoji) => onEmojiPicked(emoji),
+      );
   // EmojiPicker(
   // rows: 4,
   // columns: 7,

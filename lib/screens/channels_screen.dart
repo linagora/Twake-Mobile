@@ -53,30 +53,30 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
           ),
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
               .round()), // taking into account current appBar height to calculate a new one
-          actions: [
-            PopupMenuButton<String>(
-              padding: EdgeInsets.only(right: Dim.wm3),
-              icon: Icon(
-                Icons.more_vert,
-                size: Dim.tm4(),
-              ),
-              onSelected: (choice) {},
-              itemBuilder: (BuildContext context) {
-                return {'Option 1', 'Option 2'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Row(
-                      children: [
-                        Icon(Icons.star_outline),
-                        SizedBox(width: Dim.wm2),
-                        Text(choice),
-                      ],
-                    ),
-                  );
-                }).toList();
-              },
-            ),
-          ],
+          // actions: [
+          // PopupMenuButton<String>(
+          // padding: EdgeInsets.only(right: Dim.wm3),
+          // icon: Icon(
+          // Icons.more_vert,
+          // size: Dim.tm4(),
+          // ),
+          // onSelected: (choice) {},
+          // itemBuilder: (BuildContext context) {
+          // return {'Option 1', 'Option 2'}.map((String choice) {
+          // return PopupMenuItem<String>(
+          // value: choice,
+          // child: Row(
+          // children: [
+          // Icon(Icons.star_outline),
+          // SizedBox(width: Dim.wm2),
+          // Text(choice),
+          // ],
+          // ),
+          // );
+          // }).toList();
+          // },
+          // ),
+          // ],
           title: Row(
             children: [
               ImageAvatar(workspace.logo),

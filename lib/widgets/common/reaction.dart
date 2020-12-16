@@ -47,6 +47,7 @@ class _ReactionState extends State<Reaction> {
             alignment: Alignment.center,
             child: RichText(
               text: TextSpan(
+                style: Theme.of(context).textTheme.bodyText2,
                 children: [
                   TextSpan(text: Emojis().getClosestMatch(widget.reaction)),
                   TextSpan(text: ' '),

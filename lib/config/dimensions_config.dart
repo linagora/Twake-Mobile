@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 
 // Size of the block used in determining multipliers
@@ -42,7 +44,7 @@ class Dim {
   /// Multiplier applied to fontSize attribute of text based widgets
   /// Must be accessed only after init
   static double get textMultiplier {
-    return _blockHeight;
+    return sqrt(_blockHeight * _blockWidth) * 1.3;
   }
 
   /// Multiplier, which can be applied to radius or width/height
