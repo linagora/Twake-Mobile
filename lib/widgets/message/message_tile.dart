@@ -86,61 +86,66 @@ class MessageTile extends StatelessWidget {
               }
             },
       child: Container(
-        width: Dim.maxScreenWidth,
         padding: EdgeInsets.only(
           left: Dim.wm2,
           right: Dim.wm2,
           bottom: Dim.hm2,
         ),
         child: Row(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ImageAvatar(message.sender.thumbnail),
-              SizedBox(width: Dim.wm2),
-              Consumer<Message>(
-                builder: (context, message, _) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: Dim.widthPercent(81),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            width: Dim.widthPercent(55),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ImageAvatar(message.sender.thumbnail),
+            SizedBox(width: Dim.wm2),
+            Consumer<Message>(
+              builder: (context, message, _) => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: Dim.widthPercent(81),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: Dim.widthPercent(55),
+                          child: Text(
+                            message.sender.firstName != null
+                                ? '${message.sender.firstName} ${message.sender.lastName}'
+                                : message.sender.username,
+                            style: Theme.of(context).textTheme.bodyText1,
+                            overflow: TextOverflow.fade,
+                          ),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
                             child: Text(
-                              message.sender.firstName != null
-                                  ? '${message.sender.firstName} ${message.sender.lastName}'
-                                  : message.sender.username,
-                              style: Theme.of(context).textTheme.bodyText1,
-                              overflow: TextOverflow.fade,
+                              isThread
+                                  ? DateFormatter.getVerboseDateTime(
+                                      message.creationDate)
+                                  : DateFormatter.getVerboseTime(
+                                      message.creationDate),
+                              style: Theme.of(context).textTheme.subtitle2,
                             ),
                           ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                isThread
-                                    ? DateFormatter.getVerboseDateTime(
-                                        message.creationDate)
-                                    : DateFormatter.getVerboseTime(
-                                        message.creationDate),
-                                style: Theme.of(context).textTheme.subtitle2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      padding: EdgeInsets.only(top: Dim.heightMultiplier),
-                      width: Dim.widthPercent(81),
-                      child: Parser(message.content.prepared).render(context),
-                    ),
-                    SizedBox(height: Dim.hm2),
-                    Wrap(
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: Dim.heightMultiplier),
+                    width: Dim.widthPercent(81),
+                    child: Parser(
+                      message.content.prepared,
+                      (message.content.originalStr ?? '').length,
+                    ).render(context),
+                  ),
+                  SizedBox(height: Dim.hm2),
+                  SizedBox(
+                    width: Dim.widthPercent(70),
+                    child: Wrap(
+                      runSpacing: Dim.heightMultiplier,
+                      spacing: Dim.wm2,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       textDirection: TextDirection.ltr,
                       children: [
@@ -160,10 +165,12 @@ class MessageTile extends StatelessWidget {
                           ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ]),
+            ),
+          ],
+        ),
       ),
     );
   }

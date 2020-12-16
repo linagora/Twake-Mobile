@@ -62,17 +62,31 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadMessages(TwakeApi api, String channelId) async {
+  Future<void> loadMessages(
+    TwakeApi api,
+    String channelId, {
+    String threadId,
+  }) async {
+    Message message;
+    if (threadId != null) {
+      message = getMessageById(threadId);
+      if (message.responsesLoaded) {
+        return;
+      }
+    }
     while (_fetchInProgress) {
       await Future.delayed(Duration(milliseconds: 200));
     }
+
+    // Just make sure that we don't have messages before fetching
+    if (_items.isNotEmpty && threadId == null) _items.clear();
     _fetchInProgress = true;
     _topHit = false;
     var list;
     this.api = api;
     this.channelId = channelId;
     try {
-      list = await api.channelMessagesGet(channelId);
+      list = await api.channelMessagesGet(channelId, threadId: threadId);
     } catch (error) {
       logger.e('Error while loading messages\n$error');
       // TODO implement proper error handling
@@ -80,17 +94,26 @@ class MessagesProvider extends ChangeNotifier {
     } finally {
       _fetchInProgress = false;
     }
-    for (var i = 0; i < list.length; i++) {
-      // try {
-      _items.add(Message.fromJson(list[i])..channelId = channelId);
-      // } catch (error) {
-      //   logger.e('Error while parsing message\n$error');
-      //   logger.e('MESSAGE WAS\n${list[i]}');
-      //   // TODO implement proper error handling
-      //   continue;
-      // }
+    if (threadId != null) {
+      message.responses = [];
+      for (var i = 0; i < list.length; i++) {
+        message.responses.add(Message.fromJson(list[i])..channelId = channelId);
+        logger.d('RESPONSES COUNT ${message.responses.length}');
+      }
+      message.responsesLoaded = true;
+    } else {
+      for (var i = 0; i < list.length; i++) {
+        // try {
+        _items.add(Message.fromJson(list[i])..channelId = channelId);
+        // } catch (error) {
+        //   logger.e('Error while parsing message\n$error');
+        //   logger.e('MESSAGE WAS\n${list[i]}');
+        //   // TODO implement proper error handling
+        //   continue;
+        // }
+      }
     }
-    logger.d('GOT ${_items.length} message in provider');
+    // logger.d('GOT ${_items.length} message in provider');
     loaded = true;
     _fetchInProgress = false;
     notifyListeners();
@@ -140,12 +163,16 @@ class MessagesProvider extends ChangeNotifier {
     String threadId,
   }) async {
     logger.d('Updating messages on notify!');
+    logger.d('Current ChannelID: ${this.channelId}');
+    logger.d('Requested ChannelID: $channelId');
+    logger.d('Is current channel: ${this.channelId == channelId}');
     if (channelId == this.channelId) {
       final list = await api.channelMessagesGet(
         channelId,
         messageId: messageId,
         threadId: threadId,
       );
+      logger.d('Received message for notify from api');
       // if list returned is empty, then message has been deleted
       if (list.isEmpty) {
         // if threadId was present, remove response
@@ -157,12 +184,15 @@ class MessagesProvider extends ChangeNotifier {
           // else remove the message itself
           _items.removeWhere((m) => m.id == messageId);
         }
+        logger.d('Message was deleted');
         notifyListeners();
         return;
       }
+      logger.d('Parsing message from json');
       var newMessage = Message.fromJson(list[0]);
       // Add message to channel
       if (threadId == null) {
+        logger.d('Adding message to channel');
         var message = getMessageById(messageId);
         // if message exists already, update it
         if (message != null) {
@@ -184,7 +214,7 @@ class MessagesProvider extends ChangeNotifier {
             .firstWhere((r) => r.id == messageId, orElse: () => null);
         // if message doesn't exists, add new to the thread
         if (response == null) {
-          message.responsesCount++;
+          message.responsesCount = (message.responsesCount ?? 0) + 1;
           message.responses.add(newMessage);
         } else {
           // else just update existing one

@@ -28,6 +28,7 @@ class ThreadScreen extends StatelessWidget {
       channel = provider.getDirectsById(params['channelId']);
     }
     final profile = Provider.of<ProfileProvider>(context, listen: false);
+    final api = Provider.of<TwakeApi>(context, listen: false);
     final messagesProvider = Provider.of<MessagesProvider>(context);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
@@ -36,6 +37,11 @@ class ThreadScreen extends StatelessWidget {
             return !profile.isMe(m.userId);
           })
         : null;
+    messagesProvider.loadMessages(
+      api,
+      message.channelId,
+      threadId: message.id,
+    );
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -106,9 +112,17 @@ class ThreadScreen extends StatelessWidget {
                   '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
             ),
             Divider(color: Colors.grey[200]),
-            ThreadMessagesList((message.responses ?? []).reversed.toList()),
+            message.responsesLoaded
+                ? ThreadMessagesList(
+                    (message.responses ?? []).reversed.toList())
+                : Expanded(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
             MessageEditField((content) {
-              Provider.of<TwakeApi>(context, listen: false).messageSend(
+              api.messageSend(
                 channelId: message.channelId,
                 content: content,
                 onSuccess: (Map<String, dynamic> _message) {
