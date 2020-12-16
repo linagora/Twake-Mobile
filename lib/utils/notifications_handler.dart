@@ -27,7 +27,13 @@ class NotificationsHandler {
         data = message['data'];
       }
 
-      final channelId = data['channel_id'];
+      String channelId = data['channel_id'];
+      // Monkey patch
+      // https://github.com/TwakeApp/Mobile/issues/99
+      if (channelId[14] == '1') {
+        channelId = channelId.replaceRange(14, 15, '4');
+      }
+
       final messageId = data['message_id'];
       String threadId = data['thread_id'];
       if (threadId.isEmpty) {
