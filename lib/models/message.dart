@@ -29,6 +29,9 @@ class Message extends JsonSerializable with ChangeNotifier {
   List<Message> responses;
 
   @JsonKey(ignore: true)
+  bool responsesLoaded = false;
+
+  @JsonKey(ignore: true)
   String channelId;
 
   // used when deleting messages
@@ -59,6 +62,7 @@ class Message extends JsonSerializable with ChangeNotifier {
     TwakeApi api,
   }) {
     if (emojiCode == null) return;
+    var unreact = false;
     if (reactions == null) {
       reactions = {};
     }
@@ -84,6 +88,7 @@ class Message extends JsonSerializable with ChangeNotifier {
       if (users.contains(userId)) {
         reactions[emojiCode]['count']--;
         users.remove(userId);
+        unreact = true;
         if (users.isEmpty) {
           reactions.remove(emojiCode);
         }
@@ -103,6 +108,7 @@ class Message extends JsonSerializable with ChangeNotifier {
       };
     }
     notifyListeners();
+    if (unreact) emojiCode = '';
     api
         .reactionSend(
       this.channelId,
@@ -180,7 +186,7 @@ class MessageTwacode {
 
 @JsonSerializable()
 class Sender {
-  @JsonKey(required: true)
+  @JsonKey(defaultValue: 'BOT')
   final String username;
 
   final String thumbnail;

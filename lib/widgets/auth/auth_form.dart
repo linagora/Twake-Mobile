@@ -13,6 +13,11 @@ class AuthForm extends StatefulWidget {
 class _AuthFormState extends State<AuthForm> {
   String username = '';
   String password = '';
+  var passwordController = TextEditingController();
+  var usernameController = TextEditingController();
+  final FocusNode _usernameFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
+
   final GlobalKey<FormState> formKey = GlobalKey();
 
   /// Closure to store the username from form field
@@ -29,9 +34,6 @@ class _AuthFormState extends State<AuthForm> {
     setState(() {});
   }
 
-  var passwordController = TextEditingController();
-  var usernameController = TextEditingController();
-
   @override
   initState() {
     passwordController.addListener(onPasswordSaved);
@@ -41,6 +43,8 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   dispose() {
+    _usernameFocusNode.dispose();
+    _passwordFocusNode.dispose();
     passwordController.dispose();
     usernameController.dispose();
     super.dispose();
@@ -62,6 +66,8 @@ class _AuthFormState extends State<AuthForm> {
 
   Future<void> onSubmit(BuildContext ctx) async {
     if (!formKey.currentState.validate()) return;
+    _usernameFocusNode.unfocus();
+    _passwordFocusNode.unfocus();
     formKey.currentState.save();
     try {
       await Provider.of<TwakeApi>(ctx, listen: false)
@@ -70,7 +76,10 @@ class _AuthFormState extends State<AuthForm> {
       Scaffold.of(ctx).hideCurrentSnackBar();
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
-          content: Text('Failed to authorize! Check credentials and try again'),
+          content: Text(
+            'Login failed, wrong credentials',
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Theme.of(context).errorColor,
         ),
       );
@@ -115,6 +124,7 @@ class _AuthFormState extends State<AuthForm> {
                 validator: validateUsername,
                 // onSaved: onUsernameSaved,
                 controller: usernameController,
+                focusNode: _usernameFocusNode,
               ),
               SizedBox(height: Dim.hm3),
               _AuthTextForm(
@@ -123,6 +133,7 @@ class _AuthFormState extends State<AuthForm> {
                 validator: validatePassword,
                 // onSaved: onPasswordSaved,
                 controller: passwordController,
+                focusNode: _passwordFocusNode,
               ),
               SizedBox(height: Dim.heightMultiplier),
               Align(
@@ -202,10 +213,12 @@ class _AuthTextForm extends StatefulWidget {
   final String label;
   final bool obscured;
   final TextEditingController controller;
+  final FocusNode focusNode;
   final String Function(String) validator;
   const _AuthTextForm({
     @required this.label,
     @required this.controller,
+    @required this.focusNode,
     this.validator,
     this.obscured: false,
   });
@@ -223,6 +236,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
       validator: widget.validator,
       // onFieldSubmitted: widget.onSaved,
       controller: widget.controller,
+      focusNode: widget.focusNode,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
         fillColor: Color.fromRGBO(239, 239, 245, 1),

@@ -37,12 +37,15 @@ dependencies:
   sticky_grouped_list: ^1.3.0
   scrollable_positioned_list: ^0.1.8
   webview_flutter: ^1.0.7
-
-  emoji_picker: 0.1.0
+  # readmore: ^1.0.1
+  logger: ^0.9.4
+  expandable: ^4.1.4
+  # emoji_picker: 0.1.0
   clipboard: ^0.1.2+8
   url_launcher: ^5.7.10
   package_info: ^0.4.3+2
-  sentry_flutter: ^4.0.0-beta.1
+  # Uncomment if sentry is needed
+  # sentry_flutter: ^4.0.0-beta.1
   firebase_messaging: ^7.0.3
 
   # flutter_keyboard_visibility: ^4.0.0
@@ -63,7 +66,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: 'dev_assets/logo_adaptive.png'
+  image_path: 'dev_assets/logo.png'
   adaptive_icon_background: '#837DFF'
   adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
 
