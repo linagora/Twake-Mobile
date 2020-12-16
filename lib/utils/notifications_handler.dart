@@ -7,10 +7,12 @@ import 'package:provider/provider.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
+
 // import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/thread_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+
 
 class NotificationsHandler {
   final BuildContext context;
@@ -18,14 +20,27 @@ class NotificationsHandler {
   FirebaseMessaging _fcm = FirebaseMessaging();
   ProfileProvider profile;
   MessagesProvider messagesProvider;
+
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     logger.d('Message received\n$message');
     // print('Message received\n$message');
-    var data = jsonDecode(message['data']['notification_data']);
+
+    var data = {};
+
+    try {
+      data = json.decode(message['notification_data']);
+    } catch (e) {
+      data = jsonDecode(message['data']['notification_data']);
+    }
+
+    // var data = jsonDecode(message['data']['notification_data']);
     try {
       if (data == null) {
         data = message['data'];
       }
+
+      logger.d("ok, that's what we have:");
+      logger.d(data);
 
       final channelId = data['channel_id'];
       final messageId = data['message_id'];
@@ -33,6 +48,9 @@ class NotificationsHandler {
       if (threadId.isEmpty) {
         threadId = null;
       }
+
+
+
       messagesProvider.getMessageOnUpdate(
         channelId: channelId,
         messageId: messageId,
@@ -57,7 +75,7 @@ class NotificationsHandler {
     profile.currentCompanySet(companyId, notify: false);
     profile.currentWorkspaceSet(workspaceId, notify: false);
     final channelsProvider =
-        Provider.of<ChannelsProvider>(context, listen: false);
+    Provider.of<ChannelsProvider>(context, listen: false);
     await channelsProvider.loadChannels(
       Provider.of<TwakeApi>(context, listen: false),
       profile.selectedWorkspace.id,
