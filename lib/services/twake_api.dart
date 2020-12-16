@@ -39,12 +39,27 @@ class TwakeApi with ChangeNotifier {
               receiveTimeout: 7000,
               headers: TwakeApiConfig.authHeader(_authJWToken),
             ));
+            _setDioInterceptors(dio);
             notifyListeners();
           });
         }).catchError((e) {
           logger.e('Error loading auth data from database\n$e');
         }));
     _platform = Platform.isAndroid ? 'android' : 'apple';
+  }
+
+  void _setDioInterceptors(Dio dio) {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioError error) {
+          if (error.response.statusCode == 401 && _refreshToken != null) {
+            logger.e('Token has expired prematuraly, prolonging...');
+            prolongToken(_refreshToken);
+          }
+          return error;
+        },
+      ),
+    );
   }
 
   String get token => _authJWToken;
@@ -126,6 +141,7 @@ class TwakeApi with ChangeNotifier {
       dio = Dio(
         BaseOptions(headers: TwakeApiConfig.authHeader(_authJWToken)),
       );
+      _setDioInterceptors(dio);
       DB.authSave(this);
       notifyListeners();
     } catch (error, stackTrace) {
@@ -159,6 +175,7 @@ class TwakeApi with ChangeNotifier {
       dio = Dio(
         BaseOptions(headers: TwakeApiConfig.authHeader(_authJWToken)),
       );
+      _setDioInterceptors(dio);
       DB.authSave(this);
       notifyListeners();
     } catch (error, stackTrace) {
