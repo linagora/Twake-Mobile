@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
+
 // import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/thread_screen.dart';
@@ -18,10 +19,20 @@ class NotificationsHandler {
   FirebaseMessaging _fcm = FirebaseMessaging();
   ProfileProvider profile;
   MessagesProvider messagesProvider;
+
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     logger.d('Message received\n$message');
     // print('Message received\n$message');
-    var data = jsonDecode(message['data']['notification_data']);
+
+    var data = {};
+
+    try {
+      data = json.decode(message['notification_data']);
+    } catch (e) {
+      data = jsonDecode(message['data']['notification_data']);
+    }
+
+    // var data = jsonDecode(message['data']['notification_data']);
     try {
       if (data == null) {
         data = message['data'];
@@ -34,11 +45,14 @@ class NotificationsHandler {
         channelId = channelId.replaceRange(14, 15, '4');
       }
 
+      logger.d("ok, that's what we have:");
+      logger.d(data);
       final messageId = data['message_id'];
       String threadId = data['thread_id'];
       if (threadId.isEmpty) {
         threadId = null;
       }
+
       messagesProvider.getMessageOnUpdate(
         channelId: channelId,
         messageId: messageId,
