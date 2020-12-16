@@ -1,4 +1,5 @@
 // import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
@@ -6,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
+
 // import 'package:twake_mobile/screens/channels_screen.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/thread_screen.dart';
@@ -17,17 +19,48 @@ class NotificationsHandler {
   FirebaseMessaging _fcm = FirebaseMessaging();
   ProfileProvider profile;
   MessagesProvider messagesProvider;
+
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     logger.d('Message received\n$message');
-    final data = message['data'];
-    final channelId = data['channel_id'];
-    final messageId = data['message_id'];
-    final threadId = data['thread_id'];
-    messagesProvider.getMessageOnUpdate(
-      channelId: channelId,
-      messageId: messageId,
-      threadId: threadId,
-    );
+    // print('Message received\n$message');
+
+    var data = {};
+
+    try {
+      data = json.decode(message['notification_data']);
+    } catch (e) {
+      data = jsonDecode(message['data']['notification_data']);
+    }
+
+    // var data = jsonDecode(message['data']['notification_data']);
+    try {
+      if (data == null) {
+        data = message['data'];
+      }
+
+      String channelId = data['channel_id'];
+      // Monkey patch
+      // https://github.com/TwakeApp/Mobile/issues/99
+      if (channelId[14] == '1') {
+        channelId = channelId.replaceRange(14, 15, '4');
+      }
+
+      logger.d("ok, that's what we have:");
+      logger.d(data);
+      final messageId = data['message_id'];
+      String threadId = data['thread_id'];
+      if (threadId.isEmpty) {
+        threadId = null;
+      }
+
+      messagesProvider.getMessageOnUpdate(
+        channelId: channelId,
+        messageId: messageId,
+        threadId: threadId,
+      );
+    } catch (error) {
+      print('$error');
+    }
   }
 
   static Future<dynamic> onBackgroundMessage(
@@ -75,7 +108,7 @@ class NotificationsHandler {
   }
 
   Future<dynamic> onResume(Map<String, dynamic> message) async {
-    logger.d('Resuming on message received\n$message');
+    logger.w('Resuming on message received\n$message');
     final data = message['data'];
     final channelId = data['channel_id'];
     final companyId = data['company_id'];
@@ -92,7 +125,7 @@ class NotificationsHandler {
   Future<dynamic> onLaunch(Map<String, dynamic> message) async {
     // wait before it app launches
     await Future.delayed(Duration(milliseconds: 500));
-    logger.d('Navigating after fresh start $message');
+    logger.w('Navigating after fresh start $message');
     // delegate to existing function DRY
     onResume(message);
   }
@@ -109,7 +142,7 @@ class NotificationsHandler {
     profile = Provider.of<ProfileProvider>(context, listen: false);
     messagesProvider = Provider.of<MessagesProvider>(context, listen: false);
     _fcm.getToken().then((token) {
-      logger.d('(DEBUG) FCM TOKEN: $token');
+      logger.w('(DEBUG) FCM TOKEN: $token');
     });
 
     // if (Platform.isIOS) iOSPermission();

@@ -192,7 +192,7 @@ class Dim {
   /// Convenience method for getting percentage of available screen height
   /// [percent] must be a number between 1 and 100 (exclusive)
   static double heightPercent(int percent) {
-    assert(percent > 0 && percent < 100);
+    // assert(percent > 0 && percent < 100);
     return _blockHeight * percent;
   }
 }

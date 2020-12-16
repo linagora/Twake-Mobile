@@ -29,6 +29,9 @@ class Message extends JsonSerializable with ChangeNotifier {
   List<Message> responses;
 
   @JsonKey(ignore: true)
+  bool responsesLoaded = false;
+
+  @JsonKey(ignore: true)
   String channelId;
 
   // used when deleting messages

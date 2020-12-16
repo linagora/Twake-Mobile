@@ -14,8 +14,8 @@ class Company {
   @JsonKey(required: true)
   final List<Workspace> workspaces;
 
-  @JsonKey(ignore: true)
-  bool isSelected = false;
+  @JsonKey(defaultValue: false)
+  bool isSelected;
 
   Company({
     @required this.id,

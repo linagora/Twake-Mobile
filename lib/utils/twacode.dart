@@ -2,7 +2,7 @@ library twacode;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:readmore/readmore.dart';
+// import 'package:readmore/readmore.dart';
 import 'package:twake_mobile/config/dimensions_config.dart';
 import 'package:twake_mobile/config/styles_config.dart';
 import 'package:twake_mobile/utils/emojis.dart';
@@ -37,10 +37,11 @@ TextStyle generateStyle(
 
 class Parser {
   List<TwacodeItem> items;
+  final charCount;
 
-  Parser(List<dynamic> items) {
+  Parser(List<dynamic> items, this.charCount) {
     List<TwacodeItem> response = [];
-    items = collapseText(items);
+    // items = collapseText(items);
     items.forEach((item) {
       item = item as Map<String, dynamic>;
       response.add(TwacodeItem(
@@ -54,58 +55,107 @@ class Parser {
 
   // Method for joining paragraphs strings, it's stupid that they are separate
   // Ugliest piece of code to ever exist!
-  List<dynamic> collapseText(List<dynamic> items) {
-    List<dynamic> newList = [];
-    bool previousWasText = false;
-    for (int i = 0, j = 0; i < items.length; i++) {
-      if (items[i]['type'] == 'text' || items[i]['type'] == 'br') {
-        if (!previousWasText) {
-          if (items[i]['type'] == 'br') {
-            if (i + 1 < items.length &&
-                (items[i + 1]['type'] == 'text' ||
-                    items[i + 1]['type'] == 'br')) {
-              newList.add(items[i]);
-              j = newList.length - 1;
-              newList[j]['content'] = '\n';
-              continue;
-            }
-          }
-          newList.add(items[i]);
-          previousWasText = true;
-          j = newList.length - 1;
-        } else {
-          if (items[i]['type'] == 'br') {
-            newList[j]['content'] += '\n';
-            continue;
-          }
-          newList[j]['content'] += items[i]['content'];
-        }
-      } else {
-        newList.add(items[i]);
-        previousWasText = false;
-      }
-    }
-    return newList;
-  }
+  // List<dynamic> collapseText(List<dynamic> items) {
+  //   List<dynamic> newList = [];
+  //   bool previousWasText = false;
+  //   for (int i = 0, j = 0; i < items.length; i++) {
+  //     if (items[i]['type'] == 'text' || items[i]['type'] == 'br') {
+  //       if (!previousWasText) {
+  //         if (items[i]['type'] == 'br') {
+  //           if (i + 1 < items.length &&
+  //               (items[i + 1]['type'] == 'text' ||
+  //                   items[i + 1]['type'] == 'br')) {
+  //             newList.add(items[i]);
+  //             j = newList.length - 1;
+  //             newList[j]['content'] = '\n';
+  //             continue;
+  //           }
+  //         }
+  //         newList.add(items[i]);
+  //         previousWasText = true;
+  //         j = newList.length - 1;
+  //       } else {
+  //         if (items[i]['type'] == 'br') {
+  //           newList[j]['content'] += '\n';
+  //           continue;
+  //         }
+  //         newList[j]['content'] += items[i]['content'];
+  //       }
+  //     } else {
+  //       newList.add(items[i]);
+  //       previousWasText = false;
+  //     }
+  //   }
+  //   return newList;
+  // }
 
   Widget render(context) {
-    return Twacode(this.items);
+    return Twacode(this.items, charCount);
   }
 }
 
-class Twacode extends StatelessWidget {
+class Twacode extends StatefulWidget {
   final List<dynamic> items;
-  Twacode(this.items);
+  final int charCount;
+  Twacode(this.items, this.charCount);
+
+  @override
+  _TwacodeState createState() => _TwacodeState();
+}
+
+class _TwacodeState extends State<Twacode> {
+  int maxRichTextHeight = 10;
+  bool heightIncreased = false;
+  void onHeightIncrease() {
+    setState(() {
+      maxRichTextHeight *= 50;
+      heightIncreased = true;
+    });
+  }
+
+  void onHeightDecrease() {
+    setState(() {
+      maxRichTextHeight = 10;
+      heightIncreased = false;
+    });
+  }
+
+  Widget buildButton(String text, void Function() callback) {
+    return InkWell(
+      child: Text(text, style: StylesConfig.miniPurple),
+      onTap: callback,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     List<InlineSpan> spans = [];
-    items.forEach((element) {
+    widget.items.forEach((element) {
       spans.add((element as TwacodeItem).render());
     });
-    return RichText(
-      text: TextSpan(children: spans),
-    );
+    // if (widget.charCount > 300) {
+    // spans.add(buildButton('...Show more', onHeightIncrease));
+    // }
+    return widget.charCount > 300
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                maxLines: maxRichTextHeight,
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.justify,
+                text: TextSpan(children: spans),
+              ),
+              buildButton(
+                heightIncreased ? 'show less' : '...Show more',
+                heightIncreased ? onHeightDecrease : onHeightIncrease,
+              ),
+            ],
+          )
+        : RichText(
+            text: TextSpan(children: spans),
+          );
   }
 }
 
@@ -293,24 +343,33 @@ class TwacodeItem {
         ),
       );
     } else if (this.type == TwacodeType.emoji) {
-      this.content = Emojis().getClosestMatch(this.content);
+      if (this.id != null) {
+        // logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
+        List<int> codePoints = [];
+        for (String cp in this.id.split('-')) {
+          codePoints.add(int.parse(cp, radix: 16));
+        }
+        this.content = String.fromCharCodes(codePoints);
+      } else {
+        this.content = Emojis().getClosestMatch(this.content);
+      }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
 
-    if (content != null && content.length > 500) {
-      return WidgetSpan(
-        child: ReadMoreText(
-          content,
-          trimLines: 7,
-          style: this.style,
-          colorClickableText: StylesConfig.accentColorRGB,
-          trimMode: TrimMode.Line,
-          trimCollapsedText: '...Show more',
-          trimExpandedText: '\nShow less',
-          delimiter: '',
-        ),
-      );
-    }
+    // if (content != null && content.length > 500) {
+    // return WidgetSpan(
+    // child: ReadMoreText(
+    // content,
+    // trimLines: 7,
+    // style: this.style,
+    // colorClickableText: StylesConfig.accentColorRGB,
+    // trimMode: TrimMode.Line,
+    // trimCollapsedText: '...Show more',
+    // trimExpandedText: '\nShow less',
+    // delimiter: '',
+    // ),
+    // );
+    // }
 
     return TextSpan(
         text: content, style: this.style, recognizer: this.recognizer);
