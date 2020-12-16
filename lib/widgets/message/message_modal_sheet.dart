@@ -129,7 +129,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
               offstage: emojiBoardHidden,
               child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {
                 Navigator.of(context).pop();
-                onEmojiSelected(emoji.emoji, reverse: true);
+                onEmojiSelected(emoji.text, reverse: true);
               })),
         ],
       ),
