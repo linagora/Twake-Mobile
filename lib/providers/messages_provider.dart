@@ -176,7 +176,8 @@ class MessagesProvider extends ChangeNotifier {
         if (notificationData.threadId != null) {
           var message = getMessageById(notificationData.threadId);
           message.responsesCount--;
-          message.responses.removeWhere((m) => m.id == notificationData.messageId);
+          message.responses
+              .removeWhere((m) => m.id == notificationData.messageId);
         } else {
           // else remove the message itself
           _items.removeWhere((m) => m.id == notificationData.messageId);
@@ -205,10 +206,11 @@ class MessagesProvider extends ChangeNotifier {
         }
       } else {
         // Add message to thread
-        logger.d('Addeing message to the thread');
+        logger.d('Adding message to the thread');
         var message = getMessageById(notificationData.threadId);
-        var response = message.responses
-            .firstWhere((r) => r.id == notificationData.messageId, orElse: () => null);
+        var response = message.responses.firstWhere(
+            (r) => r.id == notificationData.messageId,
+            orElse: () => null);
         // if message doesn't exists, add new to the thread
         if (response == null) {
           message.responsesCount = (message.responsesCount ?? 0) + 1;
