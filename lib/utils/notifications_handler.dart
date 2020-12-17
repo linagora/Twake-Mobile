@@ -1,5 +1,6 @@
 // import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
@@ -12,6 +13,17 @@ import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/screens/messages_screen.dart';
 import 'package:twake_mobile/screens/thread_screen.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+
+class NotificationData{
+  final String companyId;
+  final String workspaceId;
+  final String channelId;
+  final String threadId;
+  final String messageId;
+  NotificationData({this.companyId, this.workspaceId, this.channelId, this.threadId, this.messageId});
+}
+
+
 
 class NotificationsHandler {
   final BuildContext context;
@@ -27,7 +39,7 @@ class NotificationsHandler {
     var data = {};
 
     try {
-      data = json.decode(message['notification_data']);
+      data = jsonDecode(message['notification_data']);
     } catch (e) {
       data = jsonDecode(message['data']['notification_data']);
     }
@@ -47,17 +59,20 @@ class NotificationsHandler {
 
       logger.d("ok, that's what we have:");
       logger.d(data);
-      final messageId = data['message_id'];
+
       String threadId = data['thread_id'];
       if (threadId.isEmpty) {
         threadId = null;
       }
 
-      messagesProvider.getMessageOnUpdate(
-        channelId: channelId,
-        messageId: messageId,
-        threadId: threadId,
-      );
+      var notificationData = new NotificationData(
+          companyId:data['company_id'],
+          workspaceId: data['workspace_id'],
+          channelId: data['channel_id'],
+          threadId:threadId,
+          messageId: data['message_id']);
+
+      messagesProvider.getMessageOnUpdate(notificationData);
     } catch (error) {
       print('$error');
     }
@@ -68,14 +83,9 @@ class NotificationsHandler {
     print('on background message $message');
   }
 
-  Future<void> navigateToMessage({
-    String companyId,
-    String workspaceId,
-    String channelId,
-    String threadId,
-  }) async {
-    profile.currentCompanySet(companyId, notify: false);
-    profile.currentWorkspaceSet(workspaceId, notify: false);
+  Future<void> navigateToMessage(NotificationData notificationData) async {
+    profile.currentCompanySet(notificationData.companyId, notify: false);
+    profile.currentWorkspaceSet(notificationData.workspaceId, notify: false);
     final channelsProvider =
         Provider.of<ChannelsProvider>(context, listen: false);
     await channelsProvider.loadChannels(
@@ -90,16 +100,16 @@ class NotificationsHandler {
     ); // navigator.popAndPushNamed(
     navigator.pushNamed(
       MessagesScreen.route,
-      arguments: channelId,
+      arguments: notificationData.channelId,
     );
-    if (threadId != null) {
+    if (notificationData.threadId != null) {
       // give some time for the messages to be fetched
       // await Future.delayed(Duration(milliseconds: 300));
       navigator.pushNamed(
         ThreadScreen.route,
         arguments: {
-          'channelId': channelId,
-          'messageId': threadId,
+          'channelId': notificationData.channelId,
+          'messageId': notificationData.threadId,
         },
       );
     }
@@ -110,16 +120,12 @@ class NotificationsHandler {
   Future<dynamic> onResume(Map<String, dynamic> message) async {
     logger.w('Resuming on message received\n$message');
     final data = message['data'];
-    final channelId = data['channel_id'];
-    final companyId = data['company_id'];
-    final workspaceId = data['workspace_id'];
-    final threadId = data['thread_id'];
-    navigateToMessage(
-      companyId: companyId,
-      workspaceId: workspaceId,
-      channelId: channelId,
-      threadId: threadId,
-    );
+    navigateToMessage(new NotificationData(
+        channelId : data['channel_id'],
+        companyId : data['company_id'],
+        workspaceId : data['workspace_id'],
+        threadId : data['thread_id']
+    ));
   }
 
   Future<dynamic> onLaunch(Map<String, dynamic> message) async {
@@ -142,14 +148,15 @@ class NotificationsHandler {
     profile = Provider.of<ProfileProvider>(context, listen: false);
     messagesProvider = Provider.of<MessagesProvider>(context, listen: false);
     _fcm.getToken().then((token) {
-      logger.w('(DEBUG) FCM TOKEN: $token');
+      print('(DEBUG) FCM TOKEN: $token');
     });
 
     // if (Platform.isIOS) iOSPermission();
 
     _fcm.configure(
       onMessage: onMessage,
-      onBackgroundMessage: onBackgroundMessage,
+      // onBackgroundMessage: Platform.isIOS ? null : onBackgroundMessage,
+      onBackgroundMessage:  onBackgroundMessage,
       onResume: onResume,
       onLaunch: onLaunch,
     );
