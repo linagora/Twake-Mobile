@@ -10,6 +10,7 @@ class TwakeApiConfig {
   static const String _tokenProlong = '/authorization/prolong';
   static const String _directMessages = '/direct';
   static const String _messageReactions = '/reactions';
+  static const String _settingsEmojis = '/settings/emoji';
   static String apiVersion;
   static String fcmToken;
 
@@ -55,5 +56,10 @@ class TwakeApiConfig {
   /// Method for getting url, in order to update message reactions
   static String get messageReactionsMethod {
     return _HOST + _messageReactions;
+  }
+
+  /// Method for getting up to date version of emoji map
+  static String get settingsEmoji {
+    return _HOST + _settingsEmojis;
   }
 }

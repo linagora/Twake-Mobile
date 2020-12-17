@@ -49,7 +49,7 @@ class _ReactionState extends State<Reaction> {
               text: TextSpan(
                 style: Theme.of(context).textTheme.bodyText2,
                 children: [
-                  TextSpan(text: Emojis().getClosestMatch(widget.reaction)),
+                  TextSpan(text: Emojis().getByName(widget.reaction)),
                   TextSpan(text: ' '),
                   TextSpan(
                     text: '${widget.count}',

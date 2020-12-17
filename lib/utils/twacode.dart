@@ -352,7 +352,7 @@ class TwacodeItem {
         }
         this.content = String.fromCharCodes(codePoints);
       } else {
-        this.content = Emojis().getClosestMatch(this.content);
+        this.content = Emojis().getByName(this.content);
       }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
