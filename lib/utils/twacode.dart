@@ -144,7 +144,7 @@ class _TwacodeState extends State<Twacode> {
               RichText(
                 maxLines: maxRichTextHeight,
                 overflow: TextOverflow.fade,
-                textAlign: TextAlign.justify,
+                textAlign: TextAlign.left,
                 text: TextSpan(children: spans),
               ),
               buildButton(
@@ -154,7 +154,7 @@ class _TwacodeState extends State<Twacode> {
             ],
           )
         : RichText(
-            textAlign: TextAlign.justify,
+            textAlign: TextAlign.left,
             text: TextSpan(children: spans),
           );
   }
