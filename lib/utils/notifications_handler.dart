@@ -155,8 +155,7 @@ class NotificationsHandler {
 
     _fcm.configure(
       onMessage: onMessage,
-      // onBackgroundMessage: Platform.isIOS ? null : onBackgroundMessage,
-      onBackgroundMessage:  onBackgroundMessage,
+      onBackgroundMessage: Platform.isIOS ? null : onBackgroundMessage,
       onResume: onResume,
       onLaunch: onLaunch,
     );
