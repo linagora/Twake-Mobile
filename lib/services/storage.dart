@@ -55,6 +55,14 @@ class Storage {
         );
   }
 
+  Future<void> clean({
+    StorageType type,
+    dynamic key,
+  }) async {
+    StoreRef storeRef = _mapTypeToStore(type);
+    storeRef.record(key).delete(_db);
+  }
+
   StoreRef _mapTypeToStore(StorageType type) {
     StoreRef storeRef;
     if (type == StorageType.Auth)

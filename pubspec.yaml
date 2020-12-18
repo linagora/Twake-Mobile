@@ -1,4 +1,4 @@
-name: twake_mobile
+name: twake
 description: Mobile version of twake application.
 
 # The following line prevents the package from being accidentally published to

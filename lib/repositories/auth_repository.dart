@@ -1,0 +1,162 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:logger/logger.dart';
+import 'package:twake/services/api.dart';
+import 'package:twake/services/storage.dart';
+
+part 'auth_repository.g.dart';
+
+// Index of auth record in store
+// because it's a global object,
+// it always has only one record in store
+const AUTH_STORE_INDEX = 0;
+
+// API Endpoint for authentication
+const AUTHENTICATE_METHOD = '/authorize';
+// API Endpoint for prolonging token
+const TOKEN_PROLONG_METHOD = '/token/prolong';
+
+@JsonSerializable()
+class AuthRepository extends JsonSerializable {
+  @JsonKey(required: true, name: 'token')
+  String accessToken;
+
+  @JsonKey(required: true, name: 'refresh_token')
+  String refreshToken;
+
+  @JsonKey(required: true, name: 'expiration')
+  int accessTokenExpiration;
+
+  @JsonKey(required: true, name: 'refresh_expiration')
+  int refreshTokenExpiration;
+
+  // required by twake api
+  final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
+
+  final storage = Storage();
+  var api = Api();
+  final logger = Logger();
+
+  AuthRepository();
+
+  Future<bool> tokenIsValid() async {
+    final now = DateTime.now();
+    final accessTokenExpiration =
+        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration);
+    final refreshTokenExpiration =
+        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration);
+    if (now.isAfter(accessTokenExpiration)) {
+      if (now.isAfter(refreshTokenExpiration)) {
+        await clean();
+        return false;
+      } else {
+        final result = await prolongToken();
+        if (result == AuthResult.Ok) {
+          return true;
+        }
+        await clean();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<AuthResult> authenticate({
+    String username,
+    String password,
+  }) async {
+    try {
+      final response = await api.post(AUTHENTICATE_METHOD, body: {
+        'username': username,
+        'password': password,
+      });
+      _updateFromMap(response);
+      logger.d('Successfully authenticated');
+      return AuthResult.Ok;
+    } on ApiError catch (error) {
+      return _handleError(error);
+    }
+  }
+
+  Future<AuthResult> prolongToken() async {
+    try {
+      final response = await api.post(TOKEN_PROLONG_METHOD, body: {
+        'token': refreshToken,
+      });
+      _updateFromMap(response);
+      return AuthResult.Ok;
+    } on ApiError catch (error) {
+      return _handleError(error);
+    }
+  }
+
+  Future<void> save() async {
+    await storage.store(
+      item: this,
+      type: StorageType.Auth,
+      key: AUTH_STORE_INDEX,
+    );
+  }
+
+  Future<void> clean() async {
+    // So that we don't try to validate token if we are not
+    // authenticated
+    api.prolongToken = null;
+    api.tokenIsValid = null;
+    await storage.clean(type: StorageType.Auth, key: AUTH_STORE_INDEX);
+  }
+
+  /// Convenience methods to avoid deserializing this class from JSON
+  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  factory AuthRepository.fromJson(Map<String, dynamic> json) =>
+      // After getting instance of auth from store, we should make sure
+      // that api has valid callbacks for validation and
+      // prolonging token + set up to date headers
+      _$AuthRepositoryFromJson(json)
+        ..updateHeaders()
+        ..updateApiInterceptors();
+
+  /// Convenience methods to avoid serializing this class to JSON
+  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
+
+  void _updateFromMap(Map<String, dynamic> map) {
+    this.accessToken = map['token'];
+    this.accessTokenExpiration = map['expiration'];
+    this.refreshToken = map['refresh_token'];
+    this.refreshTokenExpiration = map['refresh_expiration'];
+    updateHeaders();
+    updateApiInterceptors();
+  }
+
+  AuthResult _handleError(ApiError error) {
+    if (error.type == ApiErrorType.Unauthorized) {
+      return AuthResult.WrongCredentials;
+    } else {
+      logger.e('Authentication error:\n${error.message}\n${error.type}');
+      return AuthResult.NetworkError;
+    }
+  }
+
+  // Set api (dio) interceptors to validate token before requests
+  // and to automatically prolong token on 401
+  void updateApiInterceptors() {
+    api.prolongToken = this.prolongToken;
+    api.tokenIsValid = this.tokenIsValid;
+  }
+
+  // method used to reinit Api with new headers
+  // specifically new accessToken in the header
+  void updateHeaders() {
+    Map<String, String> headers = {
+      'content-type': 'application/json',
+      'authorization': 'Bearer $accessToken',
+    };
+    api = Api(headers: headers);
+  }
+}
+
+enum AuthResult {
+  Ok,
+  WrongCredentials,
+  NetworkError,
+}
