@@ -15,7 +15,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
-    if (event is Authenticate) {
+    if (event is AuthInitialize) {
+      if (await repository.tokenIsValid()) {
+        yield Authenticated();
+      } else {
+        yield Unauthenticated();
+      }
+    } else if (event is Authenticate) {
       yield Authenticating();
       final result = await repository.authenticate(
         username: event.username,

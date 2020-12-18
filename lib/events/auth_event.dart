@@ -21,3 +21,8 @@ class ResetAuthentication extends AuthEvent {
   @override
   List<Object> get props => [];
 }
+
+class AuthInitialize extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}

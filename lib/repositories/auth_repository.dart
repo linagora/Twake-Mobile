@@ -1,7 +1,7 @@
+import 'dart:io' show Platform;
+
 import 'package:json_annotation/json_annotation.dart';
-import 'package:logger/logger.dart';
-import 'package:twake/services/api.dart';
-import 'package:twake/services/storage.dart';
+import 'package:twake/services/service_bundle.dart';
 
 part 'auth_repository.g.dart';
 
@@ -30,22 +30,36 @@ class AuthRepository extends JsonSerializable {
   int refreshTokenExpiration;
 
   // required by twake api
+  @JsonKey(ignore: true)
   final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
 
+  @JsonKey(ignore: true)
   final storage = Storage();
+  @JsonKey(ignore: true)
   var api = Api();
+  @JsonKey(ignore: true)
   final logger = Logger();
+  @JsonKey(ignore: true)
+  String fcmToken;
 
-  AuthRepository();
+  String get platform => Platform.isAndroid ? 'android' : 'apple';
+  AuthRepository([this.fcmToken]);
 
   Future<bool> tokenIsValid() async {
+    logger.d('Requesting validation');
+    if (this.accessToken == null) {
+      logger.w('Token is empty');
+      return false;
+    }
     final now = DateTime.now();
+    // timestamp is in microseconds, adjusting by multiplying by 1000
     final accessTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration);
+        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
     final refreshTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration);
+        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
     if (now.isAfter(accessTokenExpiration)) {
       if (now.isAfter(refreshTokenExpiration)) {
+        logger.w('Tokens has expired');
         await clean();
         return false;
       } else {
@@ -68,12 +82,18 @@ class AuthRepository extends JsonSerializable {
       final response = await api.post(AUTHENTICATE_METHOD, body: {
         'username': username,
         'password': password,
+        'device': platform,
+        'timezoneoffset': '$timeZoneOffset',
+        'fcm_token': fcmToken,
       });
       _updateFromMap(response);
       logger.d('Successfully authenticated');
       return AuthResult.Ok;
     } on ApiError catch (error) {
       return _handleError(error);
+    } catch (error, stacktrace) {
+      logger.wtf('Something terrible has happened $error\n$stacktrace');
+      throw error;
     }
   }
 
@@ -81,6 +101,8 @@ class AuthRepository extends JsonSerializable {
     try {
       final response = await api.post(TOKEN_PROLONG_METHOD, body: {
         'token': refreshToken,
+        'timezoneoffset': '$timeZoneOffset',
+        'fcm_token': fcmToken,
       });
       _updateFromMap(response);
       return AuthResult.Ok;
@@ -100,8 +122,11 @@ class AuthRepository extends JsonSerializable {
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
+    logger.d('Requesting storage cleaning');
     api.prolongToken = null;
     api.tokenIsValid = null;
+    accessToken = null;
+    refreshToken = null;
     await storage.clean(type: StorageType.Auth, key: AUTH_STORE_INDEX);
   }
 
@@ -119,11 +144,13 @@ class AuthRepository extends JsonSerializable {
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
+  // To update token related fields after instance has been created
   void _updateFromMap(Map<String, dynamic> map) {
     this.accessToken = map['token'];
     this.accessTokenExpiration = map['expiration'];
     this.refreshToken = map['refresh_token'];
     this.refreshTokenExpiration = map['refresh_expiration'];
+    save();
     updateHeaders();
     updateApiInterceptors();
   }

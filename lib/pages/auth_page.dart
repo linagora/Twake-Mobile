@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/widgets/auth/auth_form.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/widgets/auth/auth_form.dart';
 
-class AuthScreen extends StatelessWidget {
+class AuthPage extends StatelessWidget {
   static const route = '/auth';
   @override
   Widget build(BuildContext context) {

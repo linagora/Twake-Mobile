@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:logger/logger.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
@@ -14,6 +15,8 @@ class Storage {
   StoreRef _messageStore = stringMapStoreFactory.store('message');
   Database _db;
 
+  final logger = Logger();
+
   factory Storage() {
     if (_storage == null) {
       _storage = Storage._();
@@ -21,17 +24,18 @@ class Storage {
     return _storage;
   }
 
-  Storage._() {
+  Storage._();
+
+  Future<void> initDb() async {
     // Initialize database
     // First get application directory on device
-    getApplicationDocumentsDirectory().then((dir) => dir
-        // create application directory if doesn't exist
-        .create(recursive: true)
-        // join database file name with application directory path
-        .then((_) => join(dir.path, _DATABASE_FILE))
-        // create database file in application directory
-        .then((dbPath) =>
-            databaseFactoryIo.openDatabase(dbPath).then((db) => _db = db)));
+    final dir = await getApplicationDocumentsDirectory();
+    // create application directory if doesn't exist
+    await dir.create(recursive: true);
+    // join database file name with application directory path
+    final dbPath = join(dir.path, _DATABASE_FILE);
+    // create database file in application directory
+    this._db = await databaseFactoryIo.openDatabase(dbPath);
   }
 
   Future<Map<String, dynamic>> load({

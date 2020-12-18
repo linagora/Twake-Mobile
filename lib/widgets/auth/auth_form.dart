@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/styles_config.dart';
-import 'package:twake_mobile/screens/webview_screen.dart';
-import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc.dart';
+import 'package:twake/config/styles_config.dart';
+import 'package:twake/events/auth_event.dart';
+import 'package:twake/pages/webview_screen.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
   @override
@@ -64,26 +65,13 @@ class _AuthFormState extends State<AuthForm> {
     return null;
   }
 
-  Future<void> onSubmit(BuildContext ctx) async {
-    if (!formKey.currentState.validate()) return;
-    _usernameFocusNode.unfocus();
-    _passwordFocusNode.unfocus();
-    formKey.currentState.save();
-    try {
-      await Provider.of<TwakeApi>(ctx, listen: false)
-          .authenticate(username, password);
-    } catch (error) {
-      Scaffold.of(ctx).hideCurrentSnackBar();
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Login failed, wrong credentials',
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
-    }
+  void onSubmit() {
+    BlocProvider.of<AuthBloc>(context).add(
+      Authenticate(
+        username,
+        password,
+      ),
+    );
   }
 
   @override
@@ -170,7 +158,7 @@ class _AuthFormState extends State<AuthForm> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: username.isNotEmpty && password.isNotEmpty
-                      ? () => onSubmit(context)
+                      ? () => onSubmit()
                       : null,
                 ),
               ),

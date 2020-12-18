@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
   // static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
