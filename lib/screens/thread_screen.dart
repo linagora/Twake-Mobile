@@ -97,7 +97,8 @@ class ThreadScreen extends StatelessWidget {
             ),
             Divider(color: Colors.grey[200]),
             message.responsesLoaded
-                ? ThreadMessagesList((message.responses ?? []))
+                ? ThreadMessagesList(
+                    (message.responses ?? []).reversed.toList())
                 : Expanded(
                     child: Align(
                       alignment: Alignment.center,
