@@ -12,7 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   /// Disable landscape mode
-  final AuthRepository repository = await init();
+  final AuthRepository repository = await initAuth();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(TwakeMobileApp(repository)));
 }

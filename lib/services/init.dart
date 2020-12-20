@@ -1,12 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:twake/repositories/auth_repository.dart';
+import 'package:twake/repositories/profile_repository.dart';
 
 import 'service_bundle.dart';
 
 const AUTH_STORE_INDEX = 0;
 
-Future<AuthRepository> init() async {
+Future<AuthRepository> initAuth() async {
   // Initilize Storage class (singleton)
   final store = Storage();
   await store.initDb();
@@ -32,4 +33,8 @@ Future<AuthRepository> init() async {
     return AuthRepository.fromJson(authMap)..fcmToken = fcmToken;
   }
   return AuthRepository(fcmToken);
+}
+
+Future<void> initMain() async {
+  await ProfileRepository.load();
 }

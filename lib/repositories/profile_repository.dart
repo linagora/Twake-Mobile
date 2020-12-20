@@ -31,11 +31,20 @@ class ProfileRepository extends JsonSerializable {
   });
 
   @JsonKey(ignore: true)
-  final logger = Logger();
+  static final logger = Logger();
   @JsonKey(ignore: true)
-  final api = Api();
+  static final api = Api();
   @JsonKey(ignore: true)
-  final storage = Storage;
+  static final storage = Storage();
+
+  static Future<ProfileRepository> load() async {
+    var profileMap =
+        await storage.load(type: StorageType.Profile, key: PROFILE_STORE_INDEX);
+    if (profileMap == null) {
+      profileMap = await api.get(PROFILE_LOAD_METHOD);
+    }
+    return ProfileRepository.fromJson(profileMap);
+  }
 
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
