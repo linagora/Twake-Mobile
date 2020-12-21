@@ -6,18 +6,17 @@ part of 'companies_repository.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Company _$CompanyFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['id', 'name', 'isSelected']);
-  return Company(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    logo: json['logo'] as String,
-  )..isSelected = json['isSelected'] as bool;
+CompaniesRepository _$CompaniesRepositoryFromJson(Map<String, dynamic> json) {
+  return CompaniesRepository(
+    (json['companies'] as List)
+        ?.map((e) =>
+            e == null ? null : Company.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
 }
 
-Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'logo': instance.logo,
-      'isSelected': instance.isSelected,
+Map<String, dynamic> _$CompaniesRepositoryToJson(
+        CompaniesRepository instance) =>
+    <String, dynamic>{
+      'companies': instance.companies?.map((e) => e?.toJson())?.toList(),
     };

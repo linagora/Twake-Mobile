@@ -1,6 +1,9 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:twake/models/company.dart';
+import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/auth_repository.dart';
+import 'package:twake/repositories/list_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 
 import 'service_bundle.dart';
@@ -35,6 +38,28 @@ Future<AuthRepository> initAuth() async {
   return AuthRepository(fcmToken);
 }
 
-Future<void> initMain() async {
-  await ProfileRepository.load();
+Future<InitData> initMain() async {
+  final profile = await ProfileRepository.load();
+  final companies =
+      await CollectionRepository.load<Company>(Endpoint.companies);
+  final workspaces =
+      await CollectionRepository.load<Workspace>(Endpoint.workspaces);
+
+  return InitData(
+    profile: profile,
+    companies: companies,
+    workspaces: workspaces,
+  );
+}
+
+class InitData {
+  final ProfileRepository profile;
+  final CollectionRepository companies;
+  final CollectionRepository workspaces;
+
+  InitData({
+    this.profile,
+    this.companies,
+    this.workspaces,
+  });
 }

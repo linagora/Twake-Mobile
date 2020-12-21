@@ -8,12 +8,7 @@ part 'auth_repository.g.dart';
 // Index of auth record in store
 // because it's a global object,
 // it always has only one record in store
-const AUTH_STORE_INDEX = 0;
-
-// API Endpoint for authentication
-const AUTHENTICATE_METHOD = '/authorize';
-// API Endpoint for prolonging token
-const TOKEN_PROLONG_METHOD = '/token/prolong';
+const _AUTH_STORE_INDEX = 0;
 
 @JsonSerializable()
 class AuthRepository extends JsonSerializable {
@@ -34,11 +29,11 @@ class AuthRepository extends JsonSerializable {
   final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
 
   @JsonKey(ignore: true)
-  final storage = Storage();
+  final _storage = Storage();
   @JsonKey(ignore: true)
-  var api = Api();
+  var _api = Api();
   @JsonKey(ignore: true)
-  final logger = Logger();
+  final _logger = Logger();
   @JsonKey(ignore: true)
   String fcmToken;
 
@@ -46,9 +41,9 @@ class AuthRepository extends JsonSerializable {
   AuthRepository([this.fcmToken]);
 
   Future<bool> tokenIsValid() async {
-    logger.d('Requesting validation');
+    _logger.d('Requesting validation');
     if (this.accessToken == null) {
-      logger.w('Token is empty');
+      _logger.w('Token is empty');
       return false;
     }
     final now = DateTime.now();
@@ -59,7 +54,7 @@ class AuthRepository extends JsonSerializable {
         DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
     if (now.isAfter(accessTokenExpiration)) {
       if (now.isAfter(refreshTokenExpiration)) {
-        logger.w('Tokens has expired');
+        _logger.w('Tokens has expired');
         await clean();
         return false;
       } else {
@@ -79,7 +74,7 @@ class AuthRepository extends JsonSerializable {
     String password,
   }) async {
     try {
-      final response = await api.post(AUTHENTICATE_METHOD, body: {
+      final response = await _api.post(Endpoint.auth, body: {
         'username': username,
         'password': password,
         'device': platform,
@@ -87,19 +82,19 @@ class AuthRepository extends JsonSerializable {
         'fcm_token': fcmToken,
       });
       _updateFromMap(response);
-      logger.d('Successfully authenticated');
+      _logger.d('Successfully authenticated');
       return AuthResult.Ok;
     } on ApiError catch (error) {
       return _handleError(error);
     } catch (error, stacktrace) {
-      logger.wtf('Something terrible has happened $error\n$stacktrace');
+      _logger.wtf('Something terrible has happened $error\n$stacktrace');
       throw error;
     }
   }
 
   Future<AuthResult> prolongToken() async {
     try {
-      final response = await api.post(TOKEN_PROLONG_METHOD, body: {
+      final response = await _api.post(Endpoint.prolong, body: {
         'token': refreshToken,
         'timezoneoffset': '$timeZoneOffset',
         'fcm_token': fcmToken,
@@ -112,22 +107,22 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<void> save() async {
-    await storage.store(
+    await _storage.store(
       item: this,
       type: StorageType.Auth,
-      key: AUTH_STORE_INDEX,
+      key: _AUTH_STORE_INDEX,
     );
   }
 
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
-    logger.d('Requesting storage cleaning');
-    api.prolongToken = null;
-    api.tokenIsValid = null;
+    _logger.d('Requesting storage cleaning');
+    _api.prolongToken = null;
+    _api.tokenIsValid = null;
     accessToken = null;
     refreshToken = null;
-    await storage.clean(type: StorageType.Auth, key: AUTH_STORE_INDEX);
+    await _storage.clean(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
   }
 
   /// Convenience methods to avoid deserializing this class from JSON
@@ -159,7 +154,7 @@ class AuthRepository extends JsonSerializable {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
     } else {
-      logger.e('Authentication error:\n${error.message}\n${error.type}');
+      _logger.e('Authentication error:\n${error.message}\n${error.type}');
       return AuthResult.NetworkError;
     }
   }
@@ -167,8 +162,8 @@ class AuthRepository extends JsonSerializable {
   // Set api (dio) interceptors to validate token before requests
   // and to automatically prolong token on 401
   void updateApiInterceptors() {
-    api.prolongToken = this.prolongToken;
-    api.tokenIsValid = this.tokenIsValid;
+    _api.prolongToken = this.prolongToken;
+    _api.tokenIsValid = this.tokenIsValid;
   }
 
   // method used to reinit Api with new headers
@@ -178,7 +173,7 @@ class AuthRepository extends JsonSerializable {
       'content-type': 'application/json',
       'authorization': 'Bearer $accessToken',
     };
-    api = Api(headers: headers);
+    _api = Api(headers: headers);
   }
 }
 

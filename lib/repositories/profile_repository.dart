@@ -7,10 +7,7 @@ part 'profile_repository.g.dart';
 // because it's a global object,
 // it always has only one record in store
 // per running app
-const PROFILE_STORE_INDEX = 0;
-
-// API Endpoint for loading profile data
-const PROFILE_LOAD_METHOD = '/user';
+const _PROFILE_STORE_INDEX = 0;
 
 @JsonSerializable(explicitToJson: true)
 class ProfileRepository extends JsonSerializable {
@@ -31,19 +28,35 @@ class ProfileRepository extends JsonSerializable {
   });
 
   @JsonKey(ignore: true)
-  static final logger = Logger();
+  static final _logger = Logger();
   @JsonKey(ignore: true)
-  static final api = Api();
+  static final _api = Api();
   @JsonKey(ignore: true)
-  static final storage = Storage();
+  static final _storage = Storage();
 
+  // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
-    var profileMap =
-        await storage.load(type: StorageType.Profile, key: PROFILE_STORE_INDEX);
+    _logger.d('Loading profile from storage');
+    var profileMap = await _storage.load(
+        type: StorageType.Profile, key: _PROFILE_STORE_INDEX);
     if (profileMap == null) {
-      profileMap = await api.get(PROFILE_LOAD_METHOD);
+      _logger.d('No profile in storage, requesting from api...');
+      profileMap = await _api.get(Endpoint.profile);
     }
-    return ProfileRepository.fromJson(profileMap);
+    // Get repository instance
+    final profile = ProfileRepository.fromJson(profileMap);
+    // Save/resave it to store
+    profile.save();
+    // return it
+    return profile;
+  }
+
+  Future<void> save() async {
+    await _storage.store(
+      item: this,
+      type: StorageType.Profile,
+      key: _PROFILE_STORE_INDEX,
+    );
   }
 
   /// Convenience methods to avoid deserializing this class from JSON
