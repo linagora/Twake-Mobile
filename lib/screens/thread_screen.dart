@@ -8,7 +8,7 @@ import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/widgets/common/image_avatar.dart';
+// import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 import 'package:twake_mobile/widgets/message/message_edit_field.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
@@ -32,11 +32,11 @@ class ThreadScreen extends StatelessWidget {
     final messagesProvider = Provider.of<MessagesProvider>(context);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
-    final correspondent = channel.runtimeType == Direct
-        ? channel.members.firstWhere((m) {
-            return !profile.isMe(m.userId);
-          })
-        : null;
+    // final correspondent = channel.runtimeType == Direct
+    // ? channel.members.firstWhere((m) {
+    // return !profile.isMe(m.userId);
+    // })
+    // : null;
     messagesProvider.loadMessages(
       api,
       message.channelId,
@@ -54,7 +54,10 @@ class ThreadScreen extends StatelessWidget {
             visualDensity: VisualDensity.compact,
             contentPadding: EdgeInsets.zero,
             leading: (channel.runtimeType == Direct)
-                ? ImageAvatar(correspondent.thumbnail)
+                ? Stack(
+                    children:
+                        (channel as Direct).buildCorrespondentAvatars(profile),
+                  )
                 // or ordinary channel
                 : TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
             title: Text(
@@ -65,8 +68,10 @@ class ThreadScreen extends StatelessWidget {
               channel.runtimeType == Channel
                   ? channel.name
                   // or direct
-                  : '${correspondent.firstName} ${correspondent.lastName}',
+                  : (channel as Direct).buildDirectName(profile),
               style: Theme.of(context).textTheme.bodyText2,
+              overflow: TextOverflow.fade,
+              maxLines: 1,
             ),
           ),
         ),
