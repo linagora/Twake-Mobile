@@ -3,6 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
+import 'package:twake/models/channel.dart';
 
 class CollectionRepository<T extends JsonSerializable> {
   List<T> items;
@@ -12,11 +13,14 @@ class CollectionRepository<T extends JsonSerializable> {
   static Map<Type, Function> _typeToConstuctor = {
     Company: (Map<String, dynamic> json) => Company.fromJson(json),
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
+    // TODO remove null, once API returns workspaceId
+    Channel: (Map<String, dynamic> json) => Channel.fromJson(json, null),
   };
 
   static Map<Type, StorageType> _typeToStorageType = {
     Company: StorageType.Company,
     Workspace: StorageType.Workspace,
+    Channel: StorageType.Channel,
   };
 
   CollectionRepository({this.items, this.apiLoadMethod});

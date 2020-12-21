@@ -6,27 +6,39 @@ part 'workspace.g.dart';
 class Workspace extends JsonSerializable {
   @JsonKey(required: true)
   final String id;
-  @JsonKey(required: true)
-  final String name;
-  final String logo;
 
-  @JsonKey(ignore: true)
-  bool isSelected = false;
+  @JsonKey(required: true)
+  String name;
+
+  @JsonKey(required: true, name: 'company_id')
+  final String companyId;
+
+  final String color;
+
+  String logo;
+
+  @JsonKey(name: 'user_last_access')
+  int userLastAccess;
+
+  @JsonKey(name: 'total_members')
+  int totalMembers;
+
+  @JsonKey(defaultValue: false)
+  bool isSelected;
 
   Workspace({
     this.id,
-    this.name,
-    this.logo,
+    this.companyId,
+    this.color,
+    this.userLastAccess,
   });
 
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Workspace.fromJson(Map<String, dynamic> json) =>
-      _$WorkspaceFromJson(json)..isSelected = json['isSelected'] ?? false;
+      _$WorkspaceFromJson(json);
 
   Map<String, dynamic> toJson() {
-    var map = _$WorkspaceToJson(this);
-    map['isSelected'] = isSelected;
-    return map;
+    return _$WorkspaceToJson(this);
   }
 }

@@ -4,6 +4,7 @@ import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/events/auth_event.dart';
 import 'package:twake/pages/auth_page.dart';
+import 'package:twake/pages/main_page.dart';
 import 'package:twake/states/auth_state.dart';
 
 class InitialPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _InitialPageState extends State<InitialPage> {
         if (state is Unauthenticated) {
           return AuthPage();
         }
-        return Scaffold(body: Center(child: Text('Hurray!!!')));
+        return MainPage();
       },
     );
   }
