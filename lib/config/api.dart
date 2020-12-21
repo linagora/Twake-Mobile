@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 class TwakeApiConfig {
   static const String _HOST = 'https://mobile.api.twake.app';
+  // static const String _HOST = 'http://192.168.1.52:3123';
   static const String _authorize = '/authorize';
   static const String _usersCurrentGet = '/user';
   static const String _workspaceChannels = '/channels';
