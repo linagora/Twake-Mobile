@@ -21,7 +21,7 @@ class StylesConfig {
       color: Colors.white,
       shadowColor: Colors.grey[300],
     ),
-    fontFamily: 'PT',
+    // fontFamily: 'PT',
   );
 
   /// For future use

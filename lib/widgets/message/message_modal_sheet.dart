@@ -42,7 +42,11 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
         .userId;
     if (reverse) {
       emojiCode = Emojis().reverseLookup(emojiCode);
-      emojiCode = ':$emojiCode:';
+      if (emojiCode != null) {
+        emojiCode = ':$emojiCode:';
+      } else {
+        return;
+      }
     }
 
     TwakeApi api = Provider.of<TwakeApi>(context, listen: false);
@@ -129,6 +133,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
               offstage: emojiBoardHidden,
               child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {
                 Navigator.of(context).pop();
+                // print('Emoji name: ${emoji.name}\nEmoji: ${emoji.text} ');
                 onEmojiSelected(emoji.text, reverse: true);
               })),
         ],
@@ -167,7 +172,7 @@ class EmojiLine extends StatelessWidget {
                     emojiPicked(e);
                   },
                   child: Text(
-                    Emojis.getByName(e),
+                    Emojis().getByName(e),
                     style: Theme.of(context).textTheme.headline3,
                   ),
                 )),

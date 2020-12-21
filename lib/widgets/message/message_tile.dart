@@ -10,6 +10,7 @@ import 'package:twake_mobile/utils/twacode.dart';
 import 'package:twake_mobile/services/dateformatter.dart';
 import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/reaction.dart';
+
 // import 'package:twake_mobile/widgets/message/message_edit_modal_sheet.dart';
 import 'package:twake_mobile/widgets/message/message_modal_sheet.dart';
 import 'package:logger/logger.dart';
@@ -17,6 +18,7 @@ import 'package:logger/logger.dart';
 class MessageTile extends StatelessWidget {
   final Message message;
   final bool isThread;
+
   MessageTile(this.message, {this.isThread: false, Key key}) : super(key: key);
 
   void onReply(context) {
@@ -47,6 +49,7 @@ class MessageTile extends StatelessWidget {
       threadId: message.threadId,
     );
   }
+
   // NOT IMPLEMENTED YET
   // void onEdit(context) {
   // Navigator.of(context).pop();
@@ -76,15 +79,18 @@ class MessageTile extends StatelessWidget {
               );
             });
       },
-      onTap: isThread
-          ? null
-          : () {
-              if (!isThread &&
-                  message.responsesCount != null &&
-                  message.responsesCount != 0) {
-                onReply(context);
-              }
-            },
+      onTap: () {
+        FocusManager.instance.primaryFocus.unfocus();
+        return isThread
+            ? null
+            : () {
+                if (!isThread &&
+                    message.responsesCount != null &&
+                    message.responsesCount != 0) {
+                  onReply(context);
+                }
+              };
+      },
       child: Padding(
         padding: EdgeInsets.only(
           left: Dim.wm4,
