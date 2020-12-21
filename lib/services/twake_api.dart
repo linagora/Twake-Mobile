@@ -191,10 +191,26 @@ class TwakeApi with ChangeNotifier {
   Future<Map<String, dynamic>> currentProfileGet() async {
     await validate();
     try {
-      final response = await dio.get(
+      final profile = (await dio.get(
         TwakeApiConfig.currentProfileMethod, // url
-      );
-      return response.data;
+      ))
+          .data;
+      // Temporary solution to emulate old behavior
+      final companies = (await dio.get(
+        TwakeApiConfig.companiesMethod, // url
+      ))
+          .data as List<dynamic>;
+      final workspaces = (await dio.get(
+        TwakeApiConfig.workspacesMethod, // url
+      ))
+          .data as List<dynamic>;
+      companies.forEach((c) {
+        c['workspaces'] = workspaces.where((w) {
+          return w['company_id'] == c['id'];
+        }).toList();
+      });
+      profile['companies'] = companies;
+      return profile;
     } catch (error) {
       logger.e('Error occurred while loading user profile\n$error');
       throw error;
