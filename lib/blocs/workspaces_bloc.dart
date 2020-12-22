@@ -55,18 +55,19 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
 
       w.isSelected = true;
       yield WorkspacesLoaded(
-        workspaces: repository.items,
+        workspaces: currentWorkspaces,
         selected: w,
       );
     } else if (event is LoadSingleWorkspace) {
       // TODO implement single company loading
       throw 'Not implemented yet';
     } else if (event is RemoveWorkspace) {
-      repository.items.removeWhere((i) => i.id == event.workspaceId);
-      yield WorkspacesLoaded(
-        workspaces: repository.items,
-        selected: selected,
-      );
+      throw 'Not implemented yet';
+      // repository.items.removeWhere((i) => i.id == event.workspaceId);
+      // yield WorkspacesLoaded(
+      // workspaces: repository.items,
+      // selected: selected,
+      // );
     }
   }
 

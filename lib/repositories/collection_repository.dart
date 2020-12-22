@@ -46,6 +46,7 @@ class CollectionRepository<T extends CollectionItem> {
     return CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
   }
 
+  // TODO figure out query paramteres
   Future<void> reload() async {
     _logger.d('Reloading $T items from api...');
     final itemsList = await _api.get(apiEndpoint);

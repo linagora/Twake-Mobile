@@ -3,6 +3,7 @@ import 'package:twake/services/init.dart';
 import 'package:twake/widgets/common/twake_drawer.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:twake/widgets/channel/channels_block.dart';
 
 class MainPage extends StatefulWidget {
   static const route = '/main';
@@ -62,8 +63,6 @@ class _MainPageState extends State<MainPage> {
                       },
                       child: Consumer<ChannelsProvider>(
                         builder: (ctx, channels, _) {
-                          final items = channels.items;
-                          final directs = channels.directs;
                           return Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: Dim.wm3,
@@ -74,9 +73,9 @@ class _MainPageState extends State<MainPage> {
                                 // Starred channels will be implemented in version 2
                                 // StarredChannelsBlock([]),
                                 // Divider(height: Dim.hm5),
-                                ChannelsBlock(items),
+                                ChannelsBlock(channels.items),
                                 Divider(height: Dim.hm5),
-                                DirectMessagesBlock(directs),
+                                // DirectMessagesBlock(directs),
                                 SizedBox(height: Dim.hm2),
                               ],
                             ),
