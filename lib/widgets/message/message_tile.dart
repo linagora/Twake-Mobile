@@ -81,15 +81,11 @@ class MessageTile extends StatelessWidget {
       },
       onTap: () {
         FocusManager.instance.primaryFocus.unfocus();
-        return isThread
-            ? null
-            : () {
-                if (!isThread &&
-                    message.responsesCount != null &&
-                    message.responsesCount != 0) {
-                  onReply(context);
-                }
-              };
+        if (!isThread &&
+            message.responsesCount != null &&
+            message.responsesCount != 0) {
+          onReply(context);
+        }
       },
       child: Padding(
         padding: EdgeInsets.only(

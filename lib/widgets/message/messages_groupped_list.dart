@@ -26,7 +26,7 @@ class MessagesGrouppedList extends StatelessWidget {
         },
         child: Expanded(
           child: GestureDetector(
-            onTap: (){
+            onTap: () {
               FocusManager.instance.primaryFocus.unfocus();
             },
             child: StickyGroupedListView<Message, DateTime>(
@@ -46,39 +46,39 @@ class MessagesGrouppedList extends StatelessWidget {
               separator: SizedBox(height: Dim.hm2),
               groupSeparatorBuilder: (Message message) {
                 return GestureDetector(
-                onTap: (){
-                  FocusManager.instance.primaryFocus.unfocus();
-                },
-                child:
-                  Container(
-                  height: Dim.hm3,
-                  margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Divider(
-                          thickness: 0.0,
-                        ),
-                      ),
-                      Align(
-                        // alignment: Alignment.center,
-                        child: Container(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          width: Dim.widthPercent(30),
-                          child: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              DateFormatter.getVerboseDate(message.creationDate),
-                              style: Theme.of(context).textTheme.subtitle1,
-                              textAlign: TextAlign.center,
+                    onTap: () {
+                      FocusManager.instance.primaryFocus.unfocus();
+                    },
+                    child: Container(
+                      height: Dim.hm3,
+                      margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Divider(
+                              thickness: 0.0,
                             ),
                           ),
-                        ),
+                          Align(
+                            // alignment: Alignment.center,
+                            child: Container(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              width: Dim.widthPercent(30),
+                              child: Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Text(
+                                  DateFormatter.getVerboseDate(
+                                      message.creationDate),
+                                  style: Theme.of(context).textTheme.subtitle1,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                ));
+                    ));
               },
               addAutomaticKeepAlives: false,
               itemBuilder: (_, Message message) {
