@@ -4,8 +4,10 @@ abstract class WorkspacesEvent extends Equatable {
   const WorkspacesEvent();
 }
 
-class LoadWorkspaces extends WorkspacesEvent {
-  const LoadWorkspaces();
+class ReloadWorkspaces extends WorkspacesEvent {
+  // parent company id
+  final String companyId;
+  const ReloadWorkspaces(this.companyId);
   @override
   List<Object> get props => [];
 }
@@ -27,6 +29,14 @@ class LoadSingleWorkspace extends WorkspacesEvent {
 class ChangeSelectedWorkspace extends WorkspacesEvent {
   final String workspaceId;
   ChangeSelectedWorkspace(this.workspaceId);
+
+  @override
+  List<Object> get props => [workspaceId];
+}
+
+class RemoveWorkspace extends WorkspacesEvent {
+  final String workspaceId;
+  RemoveWorkspace(this.workspaceId);
 
   @override
   List<Object> get props => [workspaceId];

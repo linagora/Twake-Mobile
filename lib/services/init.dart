@@ -45,8 +45,7 @@ Future<InitData> initMain() async {
       await CollectionRepository.load<Company>(Endpoint.companies);
   final workspaces =
       await CollectionRepository.load<Workspace>(Endpoint.workspaces);
-  final channels =
-      await CollectionRepository.load<Channel>(Endpoint.workspaces);
+  final channels = await CollectionRepository.load<Channel>(Endpoint.channels);
 
   return InitData(
     profile: profile,

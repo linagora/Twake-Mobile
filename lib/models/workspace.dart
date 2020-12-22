@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/collection_item.dart';
 
 part 'workspace.g.dart';
 
 @JsonSerializable()
-class Workspace extends JsonSerializable {
+class Workspace extends CollectionItem {
   @JsonKey(required: true)
   final String id;
 

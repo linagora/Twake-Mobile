@@ -51,12 +51,30 @@ class ProfileRepository extends JsonSerializable {
     return profile;
   }
 
+  Future<void> reload() async {
+    final profileMap = await _api.get(Endpoint.profile);
+    _update(profileMap);
+  }
+
+  Future<void> clean() async {
+    await _storage.clean(
+      type: StorageType.Profile,
+      key: _PROFILE_STORE_INDEX,
+    );
+  }
+
   Future<void> save() async {
     await _storage.store(
       item: this,
       type: StorageType.Profile,
       key: _PROFILE_STORE_INDEX,
     );
+  }
+
+  void _update(Map<String, dynamic> json) {
+    firstName = json['firstname'] as String;
+    lastName = json['lastname'] as String;
+    thumbnail = json['thumbnail'] as String;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

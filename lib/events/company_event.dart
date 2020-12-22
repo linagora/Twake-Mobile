@@ -4,8 +4,8 @@ abstract class CompaniesEvent extends Equatable {
   const CompaniesEvent();
 }
 
-class LoadCompanies extends CompaniesEvent {
-  const LoadCompanies();
+class ReloadCompanies extends CompaniesEvent {
+  const ReloadCompanies();
   @override
   List<Object> get props => [];
 }
@@ -27,6 +27,14 @@ class LoadSingleCompany extends CompaniesEvent {
 class ChangeSelectedCompany extends CompaniesEvent {
   final String companyId;
   ChangeSelectedCompany(this.companyId);
+
+  @override
+  List<Object> get props => [companyId];
+}
+
+class RemoveCompany extends CompaniesEvent {
+  final String companyId;
+  RemoveCompany(this.companyId);
 
   @override
   List<Object> get props => [companyId];

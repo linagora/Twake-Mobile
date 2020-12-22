@@ -1,10 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/collection_item.dart';
 
 part 'company.g.dart';
 
 // Model class for a company entity
 @JsonSerializable(explicitToJson: true)
-class Company extends JsonSerializable {
+class Company extends CollectionItem {
   @JsonKey(required: true)
   final String id;
   @JsonKey(required: true)

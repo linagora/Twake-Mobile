@@ -4,6 +4,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
+import 'package:twake/models/collection_item.dart';
 
 export 'package:sembast/sembast.dart' show Filter, SortOrder;
 
@@ -67,13 +68,13 @@ class Storage {
   }
 
   Future<void> storeList({
-    List<JsonSerializable> items,
+    List<CollectionItem> items,
     StorageType type,
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
     await _db.transaction((txn) async {
       items.forEach((i) {
-        storeRef.add(txn, i.toJson());
+        storeRef.record(i.id).add(txn, i.toJson());
       });
     });
   }
@@ -101,6 +102,11 @@ class Storage {
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
     await storeRef.record(key).delete(_db);
+  }
+
+  Future<void> clearList(StorageType type) async {
+    StoreRef storeRef = _mapTypeToStore(type);
+    await storeRef.delete(_db);
   }
 
   /// Be carefull! This method clears all the data from store
