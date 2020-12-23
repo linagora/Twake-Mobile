@@ -66,31 +66,33 @@ class MessagesScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: FutureBuilder(
-        future: messagesProviderF.loadMessages(api, channelId),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Consumer<MessagesProvider>(
-              builder: (ctx, messagesProvider, child) => Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  MessagesGrouppedList(messagesProvider.items),
-                  child,
-                ],
-              ),
-              child: MessageEditField((content) {
-                Provider.of<TwakeApi>(context, listen: false).messageSend(
-                    channelId: channelId,
-                    content: content,
-                    onSuccess: (Map<String, dynamic> message) {
-                      messagesProviderF.addMessage(message);
-                    });
-              }),
-            );
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+      body: SafeArea(
+        child: FutureBuilder(
+          future: messagesProviderF.loadMessages(api, channelId),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return Consumer<MessagesProvider>(
+                builder: (ctx, messagesProvider, child) => Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MessagesGrouppedList(messagesProvider.items),
+                    child,
+                  ],
+                ),
+                child: MessageEditField((content) {
+                  Provider.of<TwakeApi>(context, listen: false).messageSend(
+                      channelId: channelId,
+                      content: content,
+                      onSuccess: (Map<String, dynamic> message) {
+                        messagesProviderF.addMessage(message);
+                      });
+                }),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
     );
   }
