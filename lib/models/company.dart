@@ -8,10 +8,12 @@ part 'company.g.dart';
 class Company extends CollectionItem {
   @JsonKey(required: true)
   final String id;
+
   @JsonKey(required: true)
   final String name;
+
   final String logo;
-  @JsonKey(required: true)
+
   @JsonKey(defaultValue: false)
   bool isSelected;
 
@@ -24,14 +26,13 @@ class Company extends CollectionItem {
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Company.fromJson(Map<String, dynamic> json) {
-    return _$CompanyFromJson(json)..isSelected = json['isSelected'] ?? false;
+    return _$CompanyFromJson(json);
   }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
     var map = _$CompanyToJson(this);
-    map['isSelected'] = isSelected;
     return map;
   }
 }

@@ -111,20 +111,21 @@ class Api {
     dio.interceptors.add(
       InterceptorsWrapper(
         // token validation causes infinite loop
-        // onRequest: (options) async {
-        // if (_tokenIsValid != null && !(await _tokenIsValid())) {
-        // _resetAuthentication();
-        // throw ApiError(
-        // message: 'Token has expired!',
-        // type: ApiErrorType.TokenExpired,
-        // );
-        // }
-        // },
+        onRequest: (options) async {
+          logger.d('URI: ${options.uri}\nQP: ${options.queryParameters}');
+          // if (_tokenIsValid != null && !(await _tokenIsValid())) {
+          // _resetAuthentication();
+          // throw ApiError(
+          // message: 'Token has expired!',
+          // type: ApiErrorType.TokenExpired,
+          // );
+          // }
+        },
         onError: (DioError error) {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // referesh token, we automatically use it to get a new token
-          logger.d('Error during network request\n${error.response.data}');
+          logger.e('Error during network request\n${error.response.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             _prolongToken();

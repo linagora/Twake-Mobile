@@ -28,7 +28,7 @@ class ProfileRepository extends JsonSerializable {
   });
 
   @JsonKey(ignore: true)
-  static final _logger = Logger();
+  static final logger = Logger();
   @JsonKey(ignore: true)
   static final _api = Api();
   @JsonKey(ignore: true)
@@ -36,11 +36,11 @@ class ProfileRepository extends JsonSerializable {
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
-    _logger.d('Loading profile from storage');
+    logger.d('Loading profile from storage');
     var profileMap = await _storage.load(
         type: StorageType.Profile, key: _PROFILE_STORE_INDEX);
     if (profileMap == null) {
-      _logger.d('No profile in storage, requesting from api...');
+      logger.d('No profile in storage, requesting from api...');
       profileMap = await _api.get(Endpoint.profile);
     }
     // Get repository instance

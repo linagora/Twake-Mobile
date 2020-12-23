@@ -27,7 +27,9 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     ..membersCount = json['members_count'] as int
     ..lastActivity = json['last_activity'] as int
     ..messagesTotal = json['messages_total'] as int
-    ..messagesUnread = json['messages_unread'] as int;
+    ..messagesUnread = json['messages_unread'] as int
+    ..workspaceId = json['workspace_id'] as String
+    ..isSelected = json['isSelected'] as bool ?? false;
 }
 
 Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
@@ -40,4 +42,6 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'last_activity': instance.lastActivity,
       'messages_total': instance.messagesTotal,
       'messages_unread': instance.messagesUnread,
+      'workspace_id': instance.workspaceId,
+      'isSelected': instance.isSelected,
     };

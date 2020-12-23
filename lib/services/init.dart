@@ -40,12 +40,23 @@ Future<AuthRepository> initAuth() async {
 }
 
 Future<InitData> initMain() async {
+  final logger = Logger();
   final profile = await ProfileRepository.load();
+  logger.d('PROFILE DATA: ${profile.toJson()}');
   final companies =
       await CollectionRepository.load<Company>(Endpoint.companies);
+  logger.d('COMPANIES: $companies');
   final workspaces =
       await CollectionRepository.load<Workspace>(Endpoint.workspaces);
-  final channels = await CollectionRepository.load<Channel>(Endpoint.channels);
+  logger.d('WORKSPACES: $workspaces');
+  final qp = {
+    'workspace_id': workspaces.selected.id,
+  };
+  final channels = await CollectionRepository.load<Channel>(
+    Endpoint.channels,
+    queryParams: qp,
+  );
+  logger.d('CHANNELS: $channels');
 
   return InitData(
     profile: profile,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/models/channel.dart';
-import 'package:twake_mobile/widgets/channel/channel_tile.dart';
+import 'package:twake/models/channel.dart';
+import 'package:twake/widgets/channel/channel_tile.dart';
 
 class StarredChannelsBlock extends StatelessWidget {
   final List<Channel> starred;

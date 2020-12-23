@@ -34,6 +34,9 @@ class Channel extends CollectionItem {
   @JsonKey(name: 'workspace_id')
   String workspaceId;
 
+  @JsonKey(defaultValue: false)
+  bool isSelected;
+
   Channel({
     this.id,
     this.icon,

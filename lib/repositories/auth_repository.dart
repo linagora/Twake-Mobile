@@ -33,7 +33,7 @@ class AuthRepository extends JsonSerializable {
   @JsonKey(ignore: true)
   var _api = Api();
   @JsonKey(ignore: true)
-  final _logger = Logger();
+  final logger = Logger();
   @JsonKey(ignore: true)
   String fcmToken;
 
@@ -41,9 +41,9 @@ class AuthRepository extends JsonSerializable {
   AuthRepository([this.fcmToken]);
 
   Future<bool> tokenIsValid() async {
-    _logger.d('Requesting validation');
+    logger.d('Requesting validation');
     if (this.accessToken == null) {
-      _logger.w('Token is empty');
+      logger.w('Token is empty');
       return false;
     }
     final now = DateTime.now();
@@ -54,7 +54,7 @@ class AuthRepository extends JsonSerializable {
         DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
     if (now.isAfter(accessTokenExpiration)) {
       if (now.isAfter(refreshTokenExpiration)) {
-        _logger.w('Tokens has expired');
+        logger.w('Tokens has expired');
         await clean();
         return false;
       } else {
@@ -82,12 +82,12 @@ class AuthRepository extends JsonSerializable {
         'fcm_token': fcmToken,
       });
       _updateFromMap(response);
-      _logger.d('Successfully authenticated');
+      logger.d('Successfully authenticated');
       return AuthResult.Ok;
     } on ApiError catch (error) {
       return _handleError(error);
     } catch (error, stacktrace) {
-      _logger.wtf('Something terrible has happened $error\n$stacktrace');
+      logger.wtf('Something terrible has happened $error\n$stacktrace');
       throw error;
     }
   }
@@ -95,7 +95,7 @@ class AuthRepository extends JsonSerializable {
   Future<AuthResult> prolongToken() async {
     try {
       final response = await _api.post(Endpoint.prolong, body: {
-        'token': refreshToken,
+        'refresh_token': refreshToken,
         'timezoneoffset': '$timeZoneOffset',
         'fcm_token': fcmToken,
       });
@@ -117,7 +117,7 @@ class AuthRepository extends JsonSerializable {
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
-    _logger.d('Requesting storage cleaning');
+    logger.d('Requesting storage cleaning');
     _api.prolongToken = null;
     _api.tokenIsValid = null;
     accessToken = null;
@@ -154,7 +154,7 @@ class AuthRepository extends JsonSerializable {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
     } else {
-      _logger.e('Authentication error:\n${error.message}\n${error.type}');
+      logger.e('Authentication error:\n${error.message}\n${error.type}');
       return AuthResult.NetworkError;
     }
   }

@@ -19,7 +19,8 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       : super(ChannelsLoaded(
             channels: repository.items
                 .where((i) =>
-                    (i as Channel).workspaceId == workspacesBloc.selected.id)
+                    (i as Channel).workspaceId ==
+                    workspacesBloc.repository.selected.id)
                 .toList(),
             selected: null)) {
     subscription = workspacesBloc.listen((WorkspaceState state) {

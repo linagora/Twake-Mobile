@@ -44,7 +44,10 @@ class _InitialPageState extends State<InitialPage> {
         if (state is Unauthenticated) {
           return AuthPage();
         }
-        return MainPage();
+        if (state is Authenticated)
+          return MainPage(state.initData);
+        else
+          return Center(child: Text('Something went terrible wrong!'));
       },
     );
   }

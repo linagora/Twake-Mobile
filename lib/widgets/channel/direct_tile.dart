@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/models/direct.dart';
-import 'package:twake_mobile/providers/messages_provider.dart';
-import 'package:twake_mobile/providers/profile_provider.dart';
-import 'package:twake_mobile/screens/messages_screen.dart';
-import 'package:twake_mobile/services/dateformatter.dart';
-// import 'package:twake_mobile/providers/channels_provider.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/direct.dart';
+import 'package:twake/utils/dateformatter.dart';
+// import 'package:twake/providers/channels_provider.dart';
 
 class DirectTile extends StatelessWidget {
   final Direct direct;
@@ -14,31 +10,29 @@ class DirectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile = Provider.of<ProfileProvider>(context, listen: false);
     return InkWell(
       onTap: () {
-        final provider = Provider.of<MessagesProvider>(context, listen: false);
-        provider.clearMessages();
-        Navigator.of(context).pushNamed(
-          MessagesScreen.route,
-          arguments: direct.id,
-          // )
-          // .then(
-          // (_) {
-          // Provider.of<ChannelsProvider>(context, listen: false).directsSort();
-          // },
-        );
+        // Navigator.of(context).pushNamed(
+        // MessagesScreen.route,
+        // arguments: direct.id,
+        // )
+        // .then(
+        // (_) {
+        // Provider.of<ChannelsProvider>(context, listen: false).directsSort();
+        // },
+        // );
       },
       child: ListTile(
         contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
-        leading: Stack(
-            alignment: Alignment.centerLeft,
-            children: direct.buildCorrespondentAvatars(profile)),
-        title: Text(
-          direct.buildDirectName(profile),
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.headline6,
-        ),
+        // leading: Stack(
+        // alignment: Alignment.centerLeft,
+        // children: direct.buildCorrespondentAvatars(profile)),
+        // title: Text(
+        // direct.buildDirectName(profile),
+        // overflow: TextOverflow.ellipsis,
+        // style: Theme.of(context).textTheme.headline6,
+        // ),
+        title: Text('Hello'),
         trailing: FittedBox(
           fit: BoxFit.fitWidth,
           // width: Dim.widthPercent(40),

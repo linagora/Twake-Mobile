@@ -7,12 +7,12 @@ part of 'company.dart';
 // **************************************************************************
 
 Company _$CompanyFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['id', 'name', 'isSelected']);
+  $checkKeys(json, requiredKeys: const ['id', 'name']);
   return Company(
     id: json['id'] as String,
     name: json['name'] as String,
     logo: json['logo'] as String,
-  )..isSelected = json['isSelected'] as bool;
+  )..isSelected = json['isSelected'] as bool ?? false;
 }
 
 Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{

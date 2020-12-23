@@ -9,7 +9,8 @@ class CollectionRepository<T extends CollectionItem> {
   final String apiEndpoint;
 
   // Ugly hack, but there's no other way to get constructor from generic type
-  static Map<Type, Function> _typeToConstuctor = {
+  static Map<Type, CollectionItem Function(Map<String, dynamic>)>
+      _typeToConstuctor = {
     Company: (Map<String, dynamic> json) => Company.fromJson(json),
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
     // TODO remove null, once API returns workspaceId
@@ -24,9 +25,12 @@ class CollectionRepository<T extends CollectionItem> {
 
   CollectionRepository({this.items, this.apiEndpoint});
 
+  CollectionItem get selected =>
+      items.firstWhere((i) => i.isSelected, orElse: () => items[0]);
+
   int get itemsCount => (items ?? []).length;
 
-  static final _logger = Logger();
+  static final logger = Logger();
   static final _api = Api();
   static final _storage = Storage();
 
@@ -34,28 +38,32 @@ class CollectionRepository<T extends CollectionItem> {
   // to load and build instance of class from either
   // storage or api request
   static Future<CollectionRepository> load<T extends CollectionItem>(
-    String apiEndpoint,
-  ) async {
-    _logger.d('Loading $T from storage');
-    var itemsList = await _storage.loadList(type: _typeToStorageType[T]);
-    if (itemsList == null) {
-      _logger.d('No $T items found in storage, requesting from api...');
-      itemsList = await _api.get(apiEndpoint);
+    String apiEndpoint, {
+    Map<String, dynamic> queryParams,
+  }) async {
+    logger.d('Loading $T from storage');
+    List<dynamic> itemsList =
+        await _storage.loadList(type: _typeToStorageType[T]);
+    logger.d('Got following data from storage\n$itemsList');
+    if (itemsList.isEmpty) {
+      logger.d('No $T items found in storage, requesting from api...');
+      itemsList = await _api.get(apiEndpoint, params: queryParams);
+      logger.d('Got following data from api\n$itemsList');
     }
-    final items = itemsList.map((i) => _typeToConstuctor[T](i));
+    final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
     return CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
   }
 
   Future<void> reload({
     Map<String, dynamic> queryParams,
   }) async {
-    _logger.d('Reloading $T items from api...');
+    logger.d('Reloading $T items from api...');
     final itemsList = await _api.get(apiEndpoint, params: queryParams);
     _updateItems(itemsList);
   }
 
   Future<void> pullOne(Map<String, dynamic> queryParams) async {
-    _logger.d('Pulling item $T from api...');
+    logger.d('Pulling item $T from api...');
     final item = (await _api.get(apiEndpoint, params: queryParams))[0];
     this.items.add(_typeToConstuctor[T](item));
     _storage.store(

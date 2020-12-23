@@ -10,15 +10,9 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   final CollectionRepository repository;
   CompaniesBloc(this.repository)
       : super(CompaniesLoaded(
-            companies: repository.items,
-            selected: repository.items.firstWhere(
-                (c) => (c as Company).isSelected,
-                orElse: () => repository.items[0])));
-
-  Company get selected {
-    return repository.items.firstWhere((c) => (c as Company).isSelected,
-        orElse: () => repository.items[0]);
-  }
+          companies: repository.items,
+          selected: repository.selected,
+        ));
 
   @override
   Stream<CompaniesState> mapEventToState(CompaniesEvent event) async* {
@@ -26,7 +20,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       await repository.reload();
       yield CompaniesLoaded(
         companies: repository.items,
-        selected: selected,
+        selected: repository.selected,
       );
     } else if (event is ClearCompanies) {
       await repository.clean();

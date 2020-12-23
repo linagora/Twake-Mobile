@@ -15,7 +15,7 @@ class CompaniesRepository {
   int get companiesCount => (companies ?? []).length;
 
   @JsonKey(ignore: true)
-  static final _logger = Logger();
+  static final logger = Logger();
   @JsonKey(ignore: true)
   static final _api = Api();
   @JsonKey(ignore: true)
@@ -25,10 +25,10 @@ class CompaniesRepository {
   // to load and build instance of class from either
   // storage or api request
   static Future<CompaniesRepository> load() async {
-    _logger.d('Loading companies from storage');
+    logger.d('Loading companies from storage');
     var companiesList = await _storage.loadList(type: StorageType.Company);
     if (companiesList == null) {
-      _logger.d('No companies in storage, requesting from api...');
+      logger.d('No companies in storage, requesting from api...');
       companiesList = await _api.get(_COMPANIES_LOAD_METHOD);
     }
     // In order to use auto deserialization we need to stick
@@ -38,7 +38,7 @@ class CompaniesRepository {
   }
 
   Future<void> reloadCompanies() async {
-    _logger.d('Reloading companies from api...');
+    logger.d('Reloading companies from api...');
     final companiesList = await _api.get(_COMPANIES_LOAD_METHOD);
     _updateCompanies(companiesList);
   }

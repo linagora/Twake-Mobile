@@ -5,13 +5,13 @@ import 'package:twake/events/profile_event.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/states/profile_state.dart';
 
-class AuthBloc extends Bloc<ProfileEvent, ProfileState> {
+class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository repository;
-  AuthBloc(this.repository)
+  ProfileBloc(this.repository)
       : super(ProfileLoaded(
           userId: repository.userId,
-          firstname: repository.firstName,
-          lastname: repository.firstName,
+          firstName: repository.firstName,
+          lastName: repository.firstName,
           thumbnail: repository.thumbnail,
         ));
 
@@ -21,8 +21,8 @@ class AuthBloc extends Bloc<ProfileEvent, ProfileState> {
       await repository.reload();
       yield ProfileLoaded(
         userId: repository.userId,
-        firstname: repository.firstName,
-        lastname: repository.firstName,
+        firstName: repository.firstName,
+        lastName: repository.firstName,
         thumbnail: repository.thumbnail,
       );
     } else if (event is ClearProfile) {

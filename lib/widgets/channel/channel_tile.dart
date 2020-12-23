@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/models/channel.dart';
-import 'package:twake_mobile/providers/messages_provider.dart';
-import 'package:twake_mobile/screens/messages_screen.dart';
-import 'package:twake_mobile/services/dateformatter.dart';
-import 'package:twake_mobile/widgets/common/text_avatar.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/channel.dart';
+// import 'package:twake/screens/messages_screen.dart';
+import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/widgets/common/text_avatar.dart';
 
 class ChannelTile extends StatelessWidget {
   final Channel channel;
@@ -14,12 +12,10 @@ class ChannelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        final provider = Provider.of<MessagesProvider>(context, listen: false);
-        provider.clearMessages();
-        Navigator.of(context).pushNamed(
-          MessagesScreen.route,
-          arguments: channel.id,
-        );
+        // Navigator.of(context).pushNamed(
+        // MessagesScreen.route,
+        // arguments: channel.id,
+        // );
       },
       child: ListTile(
         contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
@@ -41,13 +37,13 @@ class ChannelTile extends StatelessWidget {
                 DateFormatter.getVerboseDateTime(channel.lastActivity),
                 style: Theme.of(context).textTheme.subtitle2,
               ),
-              if (channel.messageUnread != 0) SizedBox(width: Dim.wm2),
-              if (channel.messageUnread != 0)
+              if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
+              if (channel.messagesUnread != 0)
                 Chip(
                   labelPadding:
                       EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
                   label: Text(
-                    '${channel.messageUnread}',
+                    '${channel.messagesUnread}',
                     style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
                   ),
                   clipBehavior: Clip.antiAlias,

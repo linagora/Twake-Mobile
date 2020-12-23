@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/channel.dart';
-import 'package:twake/widgets/channel/channel_tile.dart';
+import 'package:twake/widgets/channel/direct_tile.dart';
 
-class ChannelsBlock extends StatelessWidget {
-  final List<Channel> channels;
-  ChannelsBlock(this.channels);
-
+class DirectMessagesGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -14,7 +9,7 @@ class ChannelsBlock extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Channels',
+              'Direct Messages',
               style: Theme.of(context).textTheme.headline3,
             ),
             // Expanded(
@@ -32,7 +27,7 @@ class ChannelsBlock extends StatelessWidget {
             // ),
           ],
         ),
-        ...channels.map((c) => ChannelTile(c)).toList(),
+        ...[].map((d) => DirectTile(d)).toList(),
       ],
     );
   }

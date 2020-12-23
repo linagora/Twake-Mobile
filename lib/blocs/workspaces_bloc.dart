@@ -16,20 +16,19 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
 
   WorkspacesBloc({this.repository, this.companiesBloc})
       : super(WorkspacesLoaded(
-            workspaces: repository.items,
-            selected: repository.items.firstWhere(
-                (w) => (w as Workspace).isSelected,
-                orElse: () => repository.items[0]))) {
+          workspaces: repository.items
+              .where((i) =>
+                  (i as Workspace).companyId ==
+                  companiesBloc.repository.selected.id)
+              .toList(),
+          selected: repository.selected,
+        )) {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         _selectedCompanyId = state.selected.id;
         this.add(ReloadWorkspaces(_selectedCompanyId));
       }
     });
-  }
-  Workspace get selected {
-    return currentWorkspaces.firstWhere((w) => w.isSelected,
-        orElse: () => currentWorkspaces[0]);
   }
 
   List<Workspace> get currentWorkspaces {
@@ -44,7 +43,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       await repository.reload();
       yield WorkspacesLoaded(
         workspaces: currentWorkspaces,
-        selected: selected,
+        selected: repository.selected,
       );
     } else if (event is ClearWorkspaces) {
       await repository.clean();
