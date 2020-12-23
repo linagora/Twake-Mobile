@@ -46,32 +46,46 @@ class CollectionRepository<T extends CollectionItem> {
     return CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
   }
 
-  // TODO figure out query paramteres
-  Future<void> reload() async {
+  Future<void> reload({
+    Map<String, dynamic> queryParams,
+  }) async {
     _logger.d('Reloading $T items from api...');
-    final itemsList = await _api.get(apiEndpoint);
+    final itemsList = await _api.get(apiEndpoint, params: queryParams);
     _updateItems(itemsList);
   }
 
-  // TODO work out the logic for method
-  Future<void> addFromApi() async {
-    _logger.d('Reloading $T items from api...');
-    final itemsList = await _api.get(apiEndpoint);
-    _updateItems(itemsList);
+  Future<void> pullOne(Map<String, dynamic> queryParams) async {
+    _logger.d('Pulling item $T from api...');
+    final item = (await _api.get(apiEndpoint, params: queryParams))[0];
+    this.items.add(_typeToConstuctor[T](item));
+    _storage.store(
+      item: item,
+      type: _typeToStorageType[T],
+      key: item,
+    );
   }
 
   Future<void> clean() async {
     await _storage.clearList(_typeToStorageType[T]);
+    items.clear();
   }
 
-  Future<void> delete(key) async {
+  Future<void> delete(
+    key, {
+    bool apiSync,
+    Map<String, dynamic> requestBody,
+  }) async {
     await _storage.clean(type: _typeToStorageType[T], key: key);
+    if (apiSync) {
+      await _api.delete(apiEndpoint, body: requestBody);
+    }
     items.removeWhere((i) => i.id == key);
   }
 
   void _updateItems(List<Map<String, dynamic>> itemsList) {
     final items = itemsList.map((c) => _typeToConstuctor[T](c)).toList();
     this.items = items;
+    this.save();
   }
 
   Future<void> save() async {

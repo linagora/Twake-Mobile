@@ -63,7 +63,6 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       throw 'Not implemented yet';
     } else if (event is RemoveWorkspace) {
       throw 'Not implemented yet';
-      // repository.items.removeWhere((i) => i.id == event.workspaceId);
       // yield WorkspacesLoaded(
       // workspaces: repository.items,
       // selected: selected,
