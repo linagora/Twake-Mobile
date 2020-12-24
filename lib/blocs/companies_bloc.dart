@@ -29,12 +29,10 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       await repository.clean();
       yield CompaniesEmpty();
     } else if (event is ChangeSelectedCompany) {
-      Company c = repository.items.firstWhere((c) => c.id == event.companyId);
-      repository.selected.isSelected = false;
-      c.isSelected = true;
+      repository.select(event.companyId);
       yield CompaniesLoaded(
         companies: repository.items,
-        selected: c,
+        selected: repository.selected,
       );
     } else if (event is LoadSingleCompany) {
       // TODO implement single company loading

@@ -44,14 +44,18 @@ Future<InitData> initMain() async {
   final profile = await ProfileRepository.load();
   final companies =
       await CollectionRepository.load<Company>(Endpoint.companies);
-  final workspaces =
-      await CollectionRepository.load<Workspace>(Endpoint.workspaces);
-  final qp = {
-    'workspace_id': workspaces.selected.id,
-  };
+  final workspaces = await CollectionRepository.load<Workspace>(
+    Endpoint.workspaces,
+    filters: [
+      ['company_id', '=', companies.selected.id]
+    ],
+  );
   final channels = await CollectionRepository.load<Channel>(
     Endpoint.channels,
-    queryParams: qp,
+    queryParams: {'workspace_id': workspaces.selected.id},
+    filters: [
+      ['workspace_id', '=', workspaces.selected.id]
+    ],
   );
   final messages =
       CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);

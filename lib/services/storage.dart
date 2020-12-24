@@ -85,16 +85,12 @@ class Storage {
   /// https://github.com/tekartik/sembast.dart/blob/master/sembast/doc/queries.md
   Future<List<Map<String, dynamic>>> loadList({
     StorageType type,
-    Map<String, dynamic> filterMap,
+    List<List> filters,
     Map<String, bool> sortFields,
   }) async {
     Filter filter;
-    if (filterMap != null) {
-      List<Filter> filterList = [];
-      filterMap.entries.forEach((entry) {
-        filterList.add(Filter.equals(entry.key, entry.value));
-      });
-      filter = Filter.and(filterList);
+    if (filters != null) {
+      filter = filterBuild(filters);
     }
     List<SortOrder> sortOrders;
     if (sortFields != null) {
@@ -161,4 +157,24 @@ enum StorageType {
   Workspace,
   Channel,
   Message,
+}
+
+Filter filterBuild(List<List> expressions) {
+  List<Filter> andFilter = [];
+  for (List e in expressions) {
+    assert(e.length == 3);
+    final lhs = e[0];
+    final op = e[1];
+    final rhs = e[2];
+    Filter filter;
+
+    if (op == '=') filter = Filter.equals(lhs, rhs);
+    if (op == '>') filter = Filter.greaterThan(lhs, rhs);
+    if (op == '<') filter = Filter.lessThan(lhs, rhs);
+    if (op == '!=') filter = Filter.notEquals(lhs, rhs);
+    if (op == '!=' && rhs == null) filter = Filter.notNull(lhs);
+    if (op == '=' && rhs == null) filter = Filter.isNull(lhs);
+    andFilter.add(filter);
+  }
+  return Filter.and(andFilter);
 }

@@ -49,7 +49,9 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       };
       await repository.reload(
         queryParams: filter,
-        filterMap: filter,
+        filters: [
+          ['workspace_id', '=', event.workspaceId ?? _selectedWorkspaceId]
+        ],
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );

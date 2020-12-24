@@ -79,3 +79,16 @@ class ClearMessages extends MessagesEvent {
 
   Map<String, dynamic> toMap() => {};
 }
+
+class SelectMessage extends MessagesEvent {
+  final String messageId;
+  const SelectMessage(this.messageId);
+  @override
+  List<Object> get props => [messageId];
+
+  Map<String, dynamic> toMap() {
+    return {
+      'thread_id': messageId,
+    };
+  }
+}

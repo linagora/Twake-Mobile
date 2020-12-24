@@ -29,13 +29,42 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
       yield MessagesLoading();
+      List<List> filters = [
+        ['channel_id', '=', _selectedChannelId]
+      ];
+      await repository.reload(
+        queryParams: _makeQueryParams(event),
+        filters: filters,
+      );
+      if (repository.items.isEmpty)
+        yield MessagesEmpty();
+      else
+        yield MessagesLoaded(messages: repository.items);
     } else if (event is LoadSingleMessage) {
-      Map<String, dynamic> queryParams = _makeQueryParams(event);
       await repository.pullOne(
-        queryParams,
+        _makeQueryParams(event),
         addToItems: event.channelId == _selectedChannelId,
       );
       yield MessagesLoaded(messages: repository.items);
+    } else if (event is RemoveMessage) {
+      await repository.delete(
+        event.messageId,
+        removeFromItems: event.channelId == _selectedChannelId,
+        requestBody: _makeQueryParams(event),
+      );
+      if (repository.items.isEmpty)
+        yield MessagesEmpty();
+      else
+        yield MessagesLoaded(messages: repository.items);
+    } else if (event is SendMessage) {
+      await repository.add(_makeQueryParams(event));
+      yield MessagesLoaded(messages: repository.items);
+    } else if (event is ClearMessages) {
+      await repository.clean();
+      yield MessagesEmpty();
+    } else if (event is SelectMessage) {
+      repository.select(event.messageId);
+      yield MessageSelected(repository.selected);
     }
   }
 

@@ -14,9 +14,8 @@ class MessagesLoading extends MessagesState {
 
 class MessagesLoaded extends MessagesState {
   final List<Message> messages;
-  final Message threadMessage;
 
-  const MessagesLoaded({this.messages, this.threadMessage});
+  const MessagesLoaded({this.messages});
 
   @override
   List<Object> get props => [this.messages];
@@ -27,4 +26,13 @@ class MessagesEmpty extends MessagesState {
 
   @override
   List<Object> get props => [];
+}
+
+class MessageSelected extends MessagesState {
+  final Message threadMessage;
+
+  const MessageSelected(this.threadMessage);
+
+  @override
+  List<Object> get props => [threadMessage];
 }

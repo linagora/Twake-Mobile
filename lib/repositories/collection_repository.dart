@@ -42,28 +42,44 @@ class CollectionRepository<T extends CollectionItem> {
   static Future<CollectionRepository> load<T extends CollectionItem>(
     String apiEndpoint, {
     Map<String, dynamic> queryParams,
+    List<List> filters,
   }) async {
-    bool loadedFromNetwork = false;
     logger.d('Loading $T from storage');
-    List<dynamic> itemsList =
-        await _storage.loadList(type: _typeToStorageType[T]);
+    List<dynamic> itemsList = await _storage.loadList(
+      type: _typeToStorageType[T],
+      filters: filters,
+    );
     if (itemsList.isEmpty) {
       logger.d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
-      loadedFromNetwork = true;
     }
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
     final collection =
         CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
-    if (loadedFromNetwork) {
-      await collection.save();
-    }
     return collection;
+  }
+
+  void select(String itemId) {
+    final item = items.firstWhere((i) => i.id == itemId);
+    final oldSelected = selected..isSelected = false;
+    item.isSelected = true;
+    Future.wait([
+      _storage.store(
+        item: oldSelected,
+        type: _typeToStorageType[T],
+        key: oldSelected.id,
+      ),
+      _storage.store(
+        item: item,
+        type: _typeToStorageType[T],
+        key: item.id,
+      ),
+    ]);
   }
 
   Future<void> reload({
     Map<String, dynamic> queryParams,
-    Map<String, dynamic> filterMap, // fields to filter by in store
+    List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
     bool forceFromApi: false,
   }) async {
@@ -72,7 +88,7 @@ class CollectionRepository<T extends CollectionItem> {
       logger.d('Reloading $T items from storage...');
       itemsList = await _storage.loadList(
         type: _typeToStorageType[T],
-        filterMap: filterMap,
+        filters: filters,
         sortFields: sortFields,
       );
     }
@@ -87,7 +103,7 @@ class CollectionRepository<T extends CollectionItem> {
     final response = await _api.post(apiEndpoint, body: itemJson);
     final item = _typeToConstuctor[T](response) as T;
     items.add(item);
-    _storage.store(item: item, type: _typeToStorageType[T], key: item.id);
+    await _storage.store(item: item, type: _typeToStorageType[T], key: item.id);
   }
 
   Future<void> pullOne(
@@ -111,20 +127,21 @@ class CollectionRepository<T extends CollectionItem> {
 
   Future<void> delete(
     key, {
-    bool apiSync,
+    bool apiSync: true,
+    bool removeFromItems: true,
     Map<String, dynamic> requestBody,
   }) async {
     await _storage.clean(type: _typeToStorageType[T], key: key);
     if (apiSync) {
       await _api.delete(apiEndpoint, body: requestBody);
     }
-    items.removeWhere((i) => i.id == key);
+    if (removeFromItems) items.removeWhere((i) => i.id == key);
   }
 
   Future<void> _updateItems(List<dynamic> itemsList) async {
+    await this.save();
     final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T)).toList();
     this.items = items;
-    await this.save();
   }
 
   Future<void> save() async {

@@ -35,34 +35,27 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     selectedCompanyId = companiesBloc.repository.selected.id;
   }
 
-  List<Workspace> get currentWorkspaces {
-    return repository.items
-        .where((w) => (w as Workspace).companyId == selectedCompanyId)
-        .toList();
-  }
-
   @override
   Stream<WorkspaceState> mapEventToState(WorkspacesEvent event) async* {
     if (event is ReloadWorkspaces) {
       await repository.reload(
-        filterMap: {'company_id': event.companyId},
+        filters: [
+          ['company_id', '=', event.companyId]
+        ],
         sortFields: {'name': true},
       );
       yield WorkspacesLoaded(
-        workspaces: currentWorkspaces,
+        workspaces: repository.items,
         selected: repository.selected,
       );
     } else if (event is ClearWorkspaces) {
       await repository.clean();
       yield WorkspacesEmpty();
     } else if (event is ChangeSelectedWorkspace) {
-      Workspace w =
-          repository.items.firstWhere((w) => w.id == event.workspaceId);
-      repository.selected.isSelected = false;
-      w.isSelected = true;
+      repository.select(event.workspaceId);
       yield WorkspacesLoaded(
-        workspaces: currentWorkspaces,
-        selected: w,
+        workspaces: repository.items,
+        selected: repository.selected,
       );
     } else if (event is LoadSingleWorkspace) {
       // TODO implement single company loading
