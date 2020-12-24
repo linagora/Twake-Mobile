@@ -47,7 +47,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['channel_id'] = _selectedChannelId;
+    map['channel_id'] = map['channel_id'] ?? _selectedChannelId;
     map['company_id'] = channelsBloc.workspacesBloc.selectedCompanyId;
     map['workspace_id'] = channelsBloc.workspacesBloc.repository.selected.id;
     return map;
