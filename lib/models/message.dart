@@ -67,7 +67,6 @@ class Message extends CollectionItem {
     String userId,
   }) {
     if (emojiCode == null) return;
-    var unreact = false;
     if (reactions == null) {
       reactions = {};
     }
@@ -93,13 +92,13 @@ class Message extends CollectionItem {
       if (users.contains(userId)) {
         reactions[emojiCode]['count']--;
         users.remove(userId);
-        unreact = true;
         if (users.isEmpty) {
           reactions.remove(emojiCode);
         }
         if (reactions.isEmpty) {
           reactions = null;
         }
+        emojiCode = '';
       } else {
         // otherwise increment count and add the user
         reactions[emojiCode]['count']++;
@@ -113,7 +112,6 @@ class Message extends CollectionItem {
       };
     }
     // TODO sync with api
-    // if (unreact) emojiCode = '';
     // _api
     //     .reactionSend(
     //   this.channelId,

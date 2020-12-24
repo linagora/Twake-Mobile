@@ -40,33 +40,28 @@ class AuthRepository extends JsonSerializable {
   String get platform => Platform.isAndroid ? 'android' : 'apple';
   AuthRepository([this.fcmToken]);
 
-  Future<bool> tokenIsValid() async {
+  TokenStatus tokenIsValid() {
     logger.d('Requesting validation');
     if (this.accessToken == null) {
       logger.w('Token is empty');
-      return false;
+      return TokenStatus.BothExpired;
     }
     final now = DateTime.now();
     // timestamp is in microseconds, adjusting by multiplying by 1000
     final accessTokenExpiration =
         DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
     final refreshTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
+        DateTime.fromMillisecondsSinceEpoch(this.refreshTokenExpiration * 1000);
     if (now.isAfter(accessTokenExpiration)) {
       if (now.isAfter(refreshTokenExpiration)) {
         logger.w('Tokens has expired');
-        await clean();
-        return false;
+        clean();
+        return TokenStatus.BothExpired;
       } else {
-        final result = await prolongToken();
-        if (result == AuthResult.Ok) {
-          return true;
-        }
-        await clean();
-        return false;
+        return TokenStatus.AccessExpired;
       }
     }
-    return true;
+    return TokenStatus.Valid;
   }
 
   Future<AuthResult> authenticate({
@@ -94,11 +89,15 @@ class AuthRepository extends JsonSerializable {
 
   Future<AuthResult> prolongToken() async {
     try {
-      final response = await _api.post(Endpoint.prolong, body: {
-        'refresh_token': refreshToken,
-        'timezoneoffset': '$timeZoneOffset',
-        'fcm_token': fcmToken,
-      });
+      final response = await _api.post(
+        Endpoint.prolong,
+        body: {
+          'refresh_token': refreshToken,
+          'timezoneoffset': '$timeZoneOffset',
+          'fcm_token': fcmToken,
+        },
+        useTokenDio: true,
+      );
       _updateFromMap(response);
       return AuthResult.Ok;
     } on ApiError catch (error) {

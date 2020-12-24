@@ -8,12 +8,14 @@ import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/channel_state.dart';
 import 'package:twake/states/workspace_state.dart';
 
+export 'package:twake/events/channel_event.dart';
+export 'package:twake/states/channel_state.dart';
+
 class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
   final CollectionRepository repository;
   final WorkspacesBloc workspacesBloc;
   StreamSubscription subscription;
   String _selectedWorkspaceId;
-  Channel selected;
 
   ChannelsBloc({this.repository, this.workspacesBloc})
       : super(ChannelsLoaded(
@@ -22,13 +24,14 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
                     (i as Channel).workspaceId ==
                     workspacesBloc.repository.selected.id)
                 .toList(),
-            selected: null)) {
+            selected: repository.selected)) {
     subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         _selectedWorkspaceId = state.selected.id;
-        this.add(ReloadChannels(_selectedWorkspaceId));
+        this.add(ReloadChannels(workspaceId: _selectedWorkspaceId));
       }
     });
+    _selectedWorkspaceId = workspacesBloc.repository.selected.id;
   }
 
   List<Channel> get currentChannels {
@@ -40,21 +43,31 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
   @override
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
     if (event is ReloadChannels) {
-      await repository.reload();
+      yield ChannelsLoading();
+      final filter = {
+        'workspace_id': event.workspaceId ?? _selectedWorkspaceId
+      };
+      await repository.reload(
+        queryParams: filter,
+        filterMap: filter,
+        sortFields: {'name': true},
+        forceFromApi: event.forceFromApi,
+      );
       yield ChannelsLoaded(
         channels: currentChannels,
-        selected: selected,
+        selected: repository.selected,
       );
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
-      this.selected =
-          repository.items.firstWhere((w) => w.id == event.channelId);
+      Channel ch = repository.items.firstWhere((w) => w.id == event.channelId);
+      repository.selected.isSelected = false;
+      ch.isSelected = true;
 
       yield ChannelsLoaded(
         channels: repository.items,
-        selected: selected,
+        selected: ch,
       );
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading

@@ -1,12 +1,9 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:twake/models/collection_item.dart';
-
-export 'package:sembast/sembast.dart' show Filter, SortOrder;
 
 const String _DATABASE_FILE = 'twake.db';
 
@@ -55,12 +52,12 @@ class Storage {
 
   /// Store data of particular type at particular key
   Future<void> store({
-    JsonSerializable item,
+    item, // JsonSerializable
     StorageType type,
     dynamic key,
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
-    storeRef.record(key).put(
+    await storeRef.record(key).put(
           this._db,
           item.toJson(),
           merge: true,
@@ -73,22 +70,40 @@ class Storage {
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
     await _db.transaction((txn) async {
-      items.forEach((i) {
-        storeRef.record(i.id).add(txn, i.toJson());
-      });
+      for (int i = 0; i < items.length; i++) {
+        await storeRef
+            .record(items[i].id)
+            .put(txn, items[i].toJson(), merge: true);
+      }
     });
   }
 
   /// Method for loading list of items from store.
   /// If filtered result is wanted, then filter of type
-  /// Filter should be passed, same goes for sorting.
+  /// Filters should be passed, same goes for sorting.
   /// More on how to make queries:
   /// https://github.com/tekartik/sembast.dart/blob/master/sembast/doc/queries.md
   Future<List<Map<String, dynamic>>> loadList({
     StorageType type,
-    Filter filter,
-    List<SortOrder> sortOrders,
+    Map<String, dynamic> filterMap,
+    Map<String, bool> sortFields,
   }) async {
+    Filter filter;
+    if (filterMap != null) {
+      List<Filter> filterList = [];
+      filterMap.entries.forEach((entry) {
+        filterList.add(Filter.equals(entry.key, entry.value));
+      });
+      filter = Filter.and(filterList);
+    }
+    List<SortOrder> sortOrders;
+    if (sortFields != null) {
+      sortOrders = [];
+      sortFields.entries.forEach((entry) {
+        sortOrders.add(SortOrder(entry.key, entry.value));
+      });
+    }
+    logger.v('Requesting $type from storage');
     StoreRef storeRef = _mapTypeToStore(type);
     Finder finder = Finder(filter: filter, sortOrders: sortOrders);
     final records = await storeRef.find(_db, finder: finder);

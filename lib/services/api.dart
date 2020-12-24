@@ -14,11 +14,12 @@ class Api {
   // callback function to auto prolong token, if access token has expired
   Future<dynamic> Function() _prolongToken;
   // callback function to validate token
-  Future<bool> Function() _tokenIsValid;
+  TokenStatus Function() _tokenIsValid;
   // callback to reset authentication if for e.g. token has expired
   void Function() _resetAuthentication;
 
   Dio dio;
+  final Dio tokenDio = Dio(); // dio without interceptors for authentication
 
   factory Api({Map<String, String> headers}) {
     // if the headers are present, e.g. token has changed,
@@ -99,9 +100,10 @@ class Api {
   Future<dynamic> post(
     String method, {
     Map<String, String> body,
+    bool useTokenDio = false,
   }) async {
     final url = _HOST + method;
-    final response = await dio.post(url, data: body);
+    final response = await (useTokenDio ? tokenDio : dio).post(url, data: body);
     return response.data;
   }
 
@@ -113,13 +115,18 @@ class Api {
         // token validation causes infinite loop
         onRequest: (options) async {
           logger.d('URI: ${options.uri}\nQP: ${options.queryParameters}');
-          // if (_tokenIsValid != null && !(await _tokenIsValid())) {
-          // _resetAuthentication();
-          // throw ApiError(
-          // message: 'Token has expired!',
-          // type: ApiErrorType.TokenExpired,
-          // );
-          // }
+          if (_tokenIsValid != null) {
+            switch (_tokenIsValid()) {
+              case TokenStatus.Valid:
+                break;
+              case TokenStatus.AccessExpired:
+                await _prolongToken();
+                break;
+              case TokenStatus.BothExpired:
+                _resetAuthentication();
+                return dio.reject('Both tokens have expired');
+            }
+          }
         },
         onError: (DioError error) {
           // Due to the bugs in JWT handling from twake api side,
@@ -168,4 +175,10 @@ class ApiError implements Exception {
       type: apiErrorType,
     );
   }
+}
+
+enum TokenStatus {
+  AccessExpired,
+  BothExpired,
+  Valid,
 }

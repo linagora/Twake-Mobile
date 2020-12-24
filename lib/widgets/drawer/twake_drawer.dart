@@ -3,12 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
-import 'package:twake/events/profile_event.dart';
-import 'package:twake/states/profile_state.dart';
-import 'package:twake/states/workspace_state.dart';
-import 'package:twake/states/company_state.dart';
-import 'package:twake/events/company_event.dart';
-import 'package:twake/events/workspace_event.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/common/image_avatar.dart';
 
@@ -141,4 +135,3 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
     );
   }
 }
-// TODO outsource the icon buttons

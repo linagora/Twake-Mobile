@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
+import 'package:twake/models/message.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -40,15 +41,11 @@ Future<AuthRepository> initAuth() async {
 }
 
 Future<InitData> initMain() async {
-  final logger = Logger();
   final profile = await ProfileRepository.load();
-  logger.d('PROFILE DATA: ${profile.toJson()}');
   final companies =
       await CollectionRepository.load<Company>(Endpoint.companies);
-  logger.d('COMPANIES: $companies');
   final workspaces =
       await CollectionRepository.load<Workspace>(Endpoint.workspaces);
-  logger.d('WORKSPACES: $workspaces');
   final qp = {
     'workspace_id': workspaces.selected.id,
   };
@@ -56,13 +53,15 @@ Future<InitData> initMain() async {
     Endpoint.channels,
     queryParams: qp,
   );
-  logger.d('CHANNELS: $channels');
+  final messages =
+      CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
 
   return InitData(
     profile: profile,
     companies: companies,
     workspaces: workspaces,
     channels: channels,
+    messages: messages,
   );
 }
 
@@ -71,11 +70,13 @@ class InitData {
   final CollectionRepository companies;
   final CollectionRepository workspaces;
   final CollectionRepository channels;
+  final CollectionRepository messages;
 
   InitData({
     this.profile,
     this.companies,
     this.workspaces,
     this.channels,
+    this.messages,
   });
 }

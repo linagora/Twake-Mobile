@@ -46,7 +46,7 @@ class Channel extends CollectionItem {
 
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory Channel.fromJson(Map<String, dynamic> json, String workspaceId) =>
+  factory Channel.fromJson(Map<String, dynamic> json) =>
       _$ChannelFromJson(json);
 
   /// Convenience methods to avoid serializing this class to JSON

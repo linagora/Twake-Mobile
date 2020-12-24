@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/config/styles_config.dart';
-import 'package:twake/events/auth_event.dart';
 import 'package:twake/pages/webview_screen.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 

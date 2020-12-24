@@ -6,6 +6,9 @@ import 'package:twake/models/company.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/company_state.dart';
 
+export 'package:twake/events/company_event.dart';
+export 'package:twake/states/company_state.dart';
+
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   final CollectionRepository repository;
   CompaniesBloc(this.repository)
@@ -27,6 +30,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       yield CompaniesEmpty();
     } else if (event is ChangeSelectedCompany) {
       Company c = repository.items.firstWhere((c) => c.id == event.companyId);
+      repository.selected.isSelected = false;
       c.isSelected = true;
       yield CompaniesLoaded(
         companies: repository.items,

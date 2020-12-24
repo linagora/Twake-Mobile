@@ -7,7 +7,11 @@ abstract class ChannelsEvent extends Equatable {
 class ReloadChannels extends ChannelsEvent {
   // parent company id
   final String workspaceId;
-  const ReloadChannels(this.workspaceId);
+  final bool forceFromApi;
+  const ReloadChannels({
+    this.workspaceId,
+    this.forceFromApi: false,
+  });
   @override
   List<Object> get props => [];
 }

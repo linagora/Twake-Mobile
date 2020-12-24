@@ -12,9 +12,10 @@ class AuthInitializing extends AuthState {
 }
 
 class Unauthenticated extends AuthState {
-  const Unauthenticated();
+  final String message;
+  const Unauthenticated({this.message});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 class Authenticating extends AuthState {

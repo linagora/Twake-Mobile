@@ -1,3 +1,4 @@
+import 'package:twake/models/message.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
@@ -13,14 +14,15 @@ class CollectionRepository<T extends CollectionItem> {
       _typeToConstuctor = {
     Company: (Map<String, dynamic> json) => Company.fromJson(json),
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
-    // TODO remove null, once API returns workspaceId
-    Channel: (Map<String, dynamic> json) => Channel.fromJson(json, null),
+    Channel: (Map<String, dynamic> json) => Channel.fromJson(json),
+    Message: (Map<String, dynamic> json) => Message.fromJson(json),
   };
 
   static Map<Type, StorageType> _typeToStorageType = {
     Company: StorageType.Company,
     Workspace: StorageType.Workspace,
     Channel: StorageType.Channel,
+    Message: StorageType.Message,
   };
 
   CollectionRepository({this.items, this.apiEndpoint});
@@ -41,28 +43,57 @@ class CollectionRepository<T extends CollectionItem> {
     String apiEndpoint, {
     Map<String, dynamic> queryParams,
   }) async {
+    bool loadedFromNetwork = false;
     logger.d('Loading $T from storage');
     List<dynamic> itemsList =
         await _storage.loadList(type: _typeToStorageType[T]);
-    logger.d('Got following data from storage\n$itemsList');
     if (itemsList.isEmpty) {
       logger.d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
-      logger.d('Got following data from api\n$itemsList');
+      loadedFromNetwork = true;
     }
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
-    return CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
+    final collection =
+        CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
+    if (loadedFromNetwork) {
+      await collection.save();
+    }
+    return collection;
   }
 
   Future<void> reload({
     Map<String, dynamic> queryParams,
+    Map<String, dynamic> filterMap, // fields to filter by in store
+    Map<String, bool> sortFields, // fields to sort by + sort direction
+    bool forceFromApi: false,
   }) async {
-    logger.d('Reloading $T items from api...');
-    final itemsList = await _api.get(apiEndpoint, params: queryParams);
+    List<dynamic> itemsList = [];
+    if (!forceFromApi) {
+      logger.d('Reloading $T items from storage...');
+      itemsList = await _storage.loadList(
+        type: _typeToStorageType[T],
+        filterMap: filterMap,
+        sortFields: sortFields,
+      );
+    }
+    if (itemsList.isEmpty) {
+      logger.d('Reloading $T items from api...');
+      itemsList = await _api.get(apiEndpoint, params: queryParams);
+    }
     _updateItems(itemsList);
   }
 
-  Future<void> pullOne(Map<String, dynamic> queryParams) async {
+  Future<void> add(Map<String, dynamic> itemJson) async {
+    final response = await _api.post(apiEndpoint, body: itemJson);
+    final item = _typeToConstuctor[T](response) as T;
+    items.add(item);
+    _storage.store(item: item, type: _typeToStorageType[T], key: item.id);
+  }
+
+  Future<void> pullOne(
+    Map<String, dynamic> queryParams, {
+    bool addToItems = true,
+  }) async {
     logger.d('Pulling item $T from api...');
     final item = (await _api.get(apiEndpoint, params: queryParams))[0];
     this.items.add(_typeToConstuctor[T](item));
@@ -90,10 +121,10 @@ class CollectionRepository<T extends CollectionItem> {
     items.removeWhere((i) => i.id == key);
   }
 
-  void _updateItems(List<Map<String, dynamic>> itemsList) {
-    final items = itemsList.map((c) => _typeToConstuctor[T](c)).toList();
+  Future<void> _updateItems(List<dynamic> itemsList) async {
+    final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T)).toList();
     this.items = items;
-    this.save();
+    await this.save();
   }
 
   Future<void> save() async {

@@ -3,16 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
-import 'package:twake/events/channel_event.dart';
 import 'package:twake/services/init.dart';
-// import 'package:twake/services/service_bundle.dart';
 import 'package:twake/widgets/drawer/twake_drawer.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/states/workspace_state.dart';
-import 'package:twake/states/channel_state.dart';
 
 class MainPage extends StatelessWidget {
   static const route = '/main';
@@ -80,7 +76,7 @@ class MainPage extends StatelessWidget {
                   ? RefreshIndicator(
                       onRefresh: () {
                         BlocProvider.of<ChannelsBloc>(ctx)
-                            .add(ReloadChannels(''));
+                            .add(ReloadChannels(forceFromApi: true));
                         return Future.delayed(Duration(seconds: 1));
                       },
                       child: Padding(

@@ -15,7 +15,7 @@ class WorkspacesLoaded extends WorkspaceState {
   });
   @override
   // TODO: implement props
-  List<Object> get props => [workspaces];
+  List<Object> get props => [workspaces, selected];
 }
 
 class WorkspacesLoading extends WorkspaceState {

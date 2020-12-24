@@ -6,7 +6,6 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/services/init.dart';
-import 'package:responsive_framework/responsive_framework.dart';
 
 void main() async {
   /// Wait for flutter to initialize
@@ -33,14 +32,9 @@ class TwakeMobileApp extends StatelessWidget {
           /// of new values.
           Dim.init(constraints, orientation);
           return MaterialApp(
-            builder: (ctx, widget) => ResponsiveWrapper.builder(
-              BlocProvider(
-                create: (ctx) => AuthBloc(repository),
-                child: InitialPage(),
-              ),
-              maxWidth: constraints.maxWidth,
-              minWidth: constraints.minWidth,
-              defaultScale: true,
+            home: BlocProvider(
+              create: (ctx) => AuthBloc(repository),
+              child: InitialPage(),
             ),
           );
         },

@@ -8,11 +8,14 @@ import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/company_state.dart';
 import 'package:twake/states/workspace_state.dart';
 
+export 'package:twake/events/workspace_event.dart';
+export 'package:twake/states/workspace_state.dart';
+
 class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   final CollectionRepository repository;
   final CompaniesBloc companiesBloc;
   StreamSubscription subscription;
-  String _selectedCompanyId;
+  String selectedCompanyId;
 
   WorkspacesBloc({this.repository, this.companiesBloc})
       : super(WorkspacesLoaded(
@@ -25,22 +28,26 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         )) {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
-        _selectedCompanyId = state.selected.id;
-        this.add(ReloadWorkspaces(_selectedCompanyId));
+        selectedCompanyId = state.selected.id;
+        this.add(ReloadWorkspaces(selectedCompanyId));
       }
     });
+    selectedCompanyId = companiesBloc.repository.selected.id;
   }
 
   List<Workspace> get currentWorkspaces {
     return repository.items
-        .where((w) => (w as Workspace).companyId == _selectedCompanyId)
+        .where((w) => (w as Workspace).companyId == selectedCompanyId)
         .toList();
   }
 
   @override
   Stream<WorkspaceState> mapEventToState(WorkspacesEvent event) async* {
     if (event is ReloadWorkspaces) {
-      await repository.reload();
+      await repository.reload(
+        filterMap: {'company_id': event.companyId},
+        sortFields: {'name': true},
+      );
       yield WorkspacesLoaded(
         workspaces: currentWorkspaces,
         selected: repository.selected,
@@ -51,7 +58,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     } else if (event is ChangeSelectedWorkspace) {
       Workspace w =
           repository.items.firstWhere((w) => w.id == event.workspaceId);
-
+      repository.selected.isSelected = false;
       w.isSelected = true;
       yield WorkspacesLoaded(
         workspaces: currentWorkspaces,
