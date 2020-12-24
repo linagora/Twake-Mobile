@@ -6,14 +6,14 @@ abstract class ProfileState extends Equatable {
 
 class ProfileLoaded extends ProfileState {
   final String userId;
-  final String firstname;
-  final String lastname;
+  final String firstName;
+  final String lastName;
   final String thumbnail;
 
   const ProfileLoaded({
     this.userId,
-    this.firstname,
-    this.lastname,
+    this.firstName,
+    this.lastName,
     this.thumbnail,
   });
   @override

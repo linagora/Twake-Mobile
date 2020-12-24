@@ -1,11 +1,9 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
-
-export 'package:sembast/sembast.dart' show Filter, SortOrder;
+import 'package:twake/models/collection_item.dart';
 
 const String _DATABASE_FILE = 'twake.db';
 
@@ -54,12 +52,12 @@ class Storage {
 
   /// Store data of particular type at particular key
   Future<void> store({
-    JsonSerializable item,
+    item, // JsonSerializable
     StorageType type,
     dynamic key,
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
-    storeRef.record(key).put(
+    await storeRef.record(key).put(
           this._db,
           item.toJson(),
           merge: true,
@@ -67,27 +65,41 @@ class Storage {
   }
 
   Future<void> storeList({
-    List<JsonSerializable> items,
+    List<CollectionItem> items,
     StorageType type,
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
     await _db.transaction((txn) async {
-      items.forEach((i) {
-        storeRef.add(txn, i.toJson());
-      });
+      for (int i = 0; i < items.length; i++) {
+        await storeRef
+            .record(items[i].id)
+            .put(txn, items[i].toJson(), merge: true);
+      }
     });
   }
 
   /// Method for loading list of items from store.
   /// If filtered result is wanted, then filter of type
-  /// Filter should be passed, same goes for sorting.
+  /// Filters should be passed, same goes for sorting.
   /// More on how to make queries:
   /// https://github.com/tekartik/sembast.dart/blob/master/sembast/doc/queries.md
   Future<List<Map<String, dynamic>>> loadList({
     StorageType type,
-    Filter filter,
-    List<SortOrder> sortOrders,
+    List<List> filters,
+    Map<String, bool> sortFields,
   }) async {
+    Filter filter;
+    if (filters != null) {
+      filter = filterBuild(filters);
+    }
+    List<SortOrder> sortOrders;
+    if (sortFields != null) {
+      sortOrders = [];
+      sortFields.entries.forEach((entry) {
+        sortOrders.add(SortOrder(entry.key, entry.value));
+      });
+    }
+    logger.v('Requesting $type from storage');
     StoreRef storeRef = _mapTypeToStore(type);
     Finder finder = Finder(filter: filter, sortOrders: sortOrders);
     final records = await storeRef.find(_db, finder: finder);
@@ -101,6 +113,11 @@ class Storage {
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
     await storeRef.record(key).delete(_db);
+  }
+
+  Future<void> clearList(StorageType type) async {
+    StoreRef storeRef = _mapTypeToStore(type);
+    await storeRef.delete(_db);
   }
 
   /// Be carefull! This method clears all the data from store
@@ -140,4 +157,24 @@ enum StorageType {
   Workspace,
   Channel,
   Message,
+}
+
+Filter filterBuild(List<List> expressions) {
+  List<Filter> andFilter = [];
+  for (List e in expressions) {
+    assert(e.length == 3);
+    final lhs = e[0];
+    final op = e[1];
+    final rhs = e[2];
+    Filter filter;
+
+    if (op == '=') filter = Filter.equals(lhs, rhs);
+    if (op == '>') filter = Filter.greaterThan(lhs, rhs);
+    if (op == '<') filter = Filter.lessThan(lhs, rhs);
+    if (op == '!=') filter = Filter.notEquals(lhs, rhs);
+    if (op == '!=' && rhs == null) filter = Filter.notNull(lhs);
+    if (op == '=' && rhs == null) filter = Filter.isNull(lhs);
+    andFilter.add(filter);
+  }
+  return Filter.and(andFilter);
 }

@@ -33,40 +33,35 @@ class AuthRepository extends JsonSerializable {
   @JsonKey(ignore: true)
   var _api = Api();
   @JsonKey(ignore: true)
-  final _logger = Logger();
+  final logger = Logger();
   @JsonKey(ignore: true)
   String fcmToken;
 
   String get platform => Platform.isAndroid ? 'android' : 'apple';
   AuthRepository([this.fcmToken]);
 
-  Future<bool> tokenIsValid() async {
-    _logger.d('Requesting validation');
+  TokenStatus tokenIsValid() {
+    logger.d('Requesting validation');
     if (this.accessToken == null) {
-      _logger.w('Token is empty');
-      return false;
+      logger.w('Token is empty');
+      return TokenStatus.BothExpired;
     }
     final now = DateTime.now();
     // timestamp is in microseconds, adjusting by multiplying by 1000
     final accessTokenExpiration =
         DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
     final refreshTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
+        DateTime.fromMillisecondsSinceEpoch(this.refreshTokenExpiration * 1000);
     if (now.isAfter(accessTokenExpiration)) {
       if (now.isAfter(refreshTokenExpiration)) {
-        _logger.w('Tokens has expired');
-        await clean();
-        return false;
+        logger.w('Tokens has expired');
+        clean();
+        return TokenStatus.BothExpired;
       } else {
-        final result = await prolongToken();
-        if (result == AuthResult.Ok) {
-          return true;
-        }
-        await clean();
-        return false;
+        return TokenStatus.AccessExpired;
       }
     }
-    return true;
+    return TokenStatus.Valid;
   }
 
   Future<AuthResult> authenticate({
@@ -82,23 +77,27 @@ class AuthRepository extends JsonSerializable {
         'fcm_token': fcmToken,
       });
       _updateFromMap(response);
-      _logger.d('Successfully authenticated');
+      logger.d('Successfully authenticated');
       return AuthResult.Ok;
     } on ApiError catch (error) {
       return _handleError(error);
     } catch (error, stacktrace) {
-      _logger.wtf('Something terrible has happened $error\n$stacktrace');
+      logger.wtf('Something terrible has happened $error\n$stacktrace');
       throw error;
     }
   }
 
   Future<AuthResult> prolongToken() async {
     try {
-      final response = await _api.post(Endpoint.prolong, body: {
-        'token': refreshToken,
-        'timezoneoffset': '$timeZoneOffset',
-        'fcm_token': fcmToken,
-      });
+      final response = await _api.post(
+        Endpoint.prolong,
+        body: {
+          'refresh_token': refreshToken,
+          'timezoneoffset': '$timeZoneOffset',
+          'fcm_token': fcmToken,
+        },
+        useTokenDio: true,
+      );
       _updateFromMap(response);
       return AuthResult.Ok;
     } on ApiError catch (error) {
@@ -117,7 +116,7 @@ class AuthRepository extends JsonSerializable {
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
-    _logger.d('Requesting storage cleaning');
+    logger.d('Requesting storage cleaning');
     _api.prolongToken = null;
     _api.tokenIsValid = null;
     accessToken = null;
@@ -154,7 +153,7 @@ class AuthRepository extends JsonSerializable {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
     } else {
-      _logger.e('Authentication error:\n${error.message}\n${error.type}');
+      logger.e('Authentication error:\n${error.message}\n${error.type}');
       return AuthResult.NetworkError;
     }
   }

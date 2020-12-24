@@ -28,7 +28,7 @@ class ProfileRepository extends JsonSerializable {
   });
 
   @JsonKey(ignore: true)
-  static final _logger = Logger();
+  static final logger = Logger();
   @JsonKey(ignore: true)
   static final _api = Api();
   @JsonKey(ignore: true)
@@ -36,19 +36,33 @@ class ProfileRepository extends JsonSerializable {
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
-    _logger.d('Loading profile from storage');
+    bool loadedFromNetwork = false;
+    logger.d('Loading profile from storage');
     var profileMap = await _storage.load(
         type: StorageType.Profile, key: _PROFILE_STORE_INDEX);
     if (profileMap == null) {
-      _logger.d('No profile in storage, requesting from api...');
+      logger.d('No profile in storage, requesting from api...');
       profileMap = await _api.get(Endpoint.profile);
+      loadedFromNetwork = true;
     }
     // Get repository instance
     final profile = ProfileRepository.fromJson(profileMap);
-    // Save/resave it to store
-    profile.save();
+    // Save it to store
+    if (loadedFromNetwork) profile.save();
     // return it
     return profile;
+  }
+
+  Future<void> reload() async {
+    final profileMap = await _api.get(Endpoint.profile);
+    _update(profileMap);
+  }
+
+  Future<void> clean() async {
+    await _storage.clean(
+      type: StorageType.Profile,
+      key: _PROFILE_STORE_INDEX,
+    );
   }
 
   Future<void> save() async {
@@ -57,6 +71,12 @@ class ProfileRepository extends JsonSerializable {
       type: StorageType.Profile,
       key: _PROFILE_STORE_INDEX,
     );
+  }
+
+  void _update(Map<String, dynamic> json) {
+    firstName = json['firstname'] as String;
+    lastName = json['lastname'] as String;
+    thumbnail = json['thumbnail'] as String;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

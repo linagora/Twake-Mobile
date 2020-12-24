@@ -7,13 +7,15 @@ abstract class WorkspaceState extends Equatable {
 
 class WorkspacesLoaded extends WorkspaceState {
   final List<Workspace> workspaces;
+  final Workspace selected;
 
   const WorkspacesLoaded({
     this.workspaces,
+    this.selected,
   });
   @override
   // TODO: implement props
-  List<Object> get props => [workspaces];
+  List<Object> get props => [workspaces, selected];
 }
 
 class WorkspacesLoading extends WorkspaceState {

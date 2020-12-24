@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/events/auth_event.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/main_page.dart';
-import 'package:twake/states/auth_state.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -44,7 +42,10 @@ class _InitialPageState extends State<InitialPage> {
         if (state is Unauthenticated) {
           return AuthPage();
         }
-        return MainPage();
+        if (state is Authenticated)
+          return MainPage(state.initData);
+        else // is Authenticating
+          return buildSplashScreen();
       },
     );
   }

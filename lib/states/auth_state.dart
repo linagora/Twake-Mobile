@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twake/services/init.dart';
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -11,9 +12,10 @@ class AuthInitializing extends AuthState {
 }
 
 class Unauthenticated extends AuthState {
-  const Unauthenticated();
+  final String message;
+  const Unauthenticated({this.message});
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 class Authenticating extends AuthState {
@@ -23,7 +25,8 @@ class Authenticating extends AuthState {
 }
 
 class Authenticated extends AuthState {
-  const Authenticated();
+  final InitData initData;
+  const Authenticated(this.initData);
   @override
   List<Object> get props => [];
 }
