@@ -90,7 +90,7 @@ class TwakeMobileApp extends StatelessWidget {
               home: api.isAuthorized
                   ? (profile.loaded
                       ? ChannelsScreen()
-                      : Center(child: CircularProgressIndicator()))
+                      : Container(color:Colors.white, child: Center(child: CircularProgressIndicator())))
                   : AuthScreen(),
               routes: {
                 AuthScreen.route: (_) => AuthScreen(),

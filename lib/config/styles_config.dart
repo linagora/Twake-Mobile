@@ -99,8 +99,9 @@ class StylesConfig {
 
   static final miniPurple = TextStyle(
     color: accentColorRGB,
-    fontSize: Dim.tm2(decimal: -.1),
+      fontSize: Dim.tm2(decimal: .15)
   );
+
 
   /// For future use in dark theme
   // static final TextStyle _titleDark = _titleLight.copyWith(color: Colors.white);
