@@ -7,22 +7,28 @@ part of 'message.dart';
 // **************************************************************************
 
 Message _$MessageFromJson(Map<String, dynamic> json) {
-  $checkKeys(json,
-      requiredKeys: const ['id', 'sender', 'creation_date', 'content']);
+  $checkKeys(json, requiredKeys: const [
+    'id',
+    'sender',
+    'creation_date',
+    'content',
+    'channelId'
+  ]);
   return Message(
     id: json['id'] as String,
     sender: json['sender'] == null
         ? null
         : Sender.fromJson(json['sender'] as Map<String, dynamic>),
     creationDate: json['creation_date'] as int,
-    content: json['content'] == null
-        ? null
-        : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
   )
     ..isSelected = json['isSelected'] as bool
     ..threadId = json['thread_id'] as String
     ..responsesCount = json['responses_count'] as int
-    ..reactions = json['reactions'] as Map<String, dynamic>;
+    ..content = json['content'] == null
+        ? null
+        : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>)
+    ..reactions = json['reactions'] as Map<String, dynamic> ?? {}
+    ..channelId = json['channelId'] as String;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -34,4 +40,5 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'creation_date': instance.creationDate,
       'content': instance.content?.toJson(),
       'reactions': instance.reactions,
+      'channelId': instance.channelId,
     };

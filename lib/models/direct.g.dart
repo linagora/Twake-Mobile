@@ -30,10 +30,11 @@ Direct _$DirectFromJson(Map<String, dynamic> json) {
             e == null ? null : DirectMember.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     messageUnread: json['messages_unread'] as int,
-  );
+  )..isSelected = json['isSelected'] as bool;
 }
 
 Map<String, dynamic> _$DirectToJson(Direct instance) => <String, dynamic>{
+      'isSelected': instance.isSelected,
       'id': instance.id,
       'name': instance.name,
       'members': instance.members?.map((e) => e?.toJson())?.toList(),

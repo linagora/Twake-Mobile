@@ -16,7 +16,7 @@ class Message extends CollectionItem {
   @JsonKey(name: 'thread_id')
   String threadId;
 
-  @JsonKey(name: 'responses_count')
+  @JsonKey(name: 'responses_count', defaultValue: 0)
   int responsesCount;
 
   @JsonKey(required: true)
@@ -48,30 +48,12 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
-  Message({
-    this.id,
-    this.sender,
-    this.creationDate,
-    this.content,
-  });
+  Message({this.id, this.sender, this.creationDate});
 
-  void doPartialUpdate(Message other) {
-    this.responsesCount = other.responsesCount;
-    this.creationDate = other.creationDate;
-    this.content = other.content;
-    this.reactions = other.reactions;
-  }
-
-  void updateReactions({
-    String userId,
-    Map<String, dynamic> body,
-  }) {
+  void updateReactions({String userId, Map<String, dynamic> body}) {
     String emojiCode = body['reaction'];
     if (emojiCode == null) return;
     final oldReactions = Map<String, dynamic>.from(reactions);
-    // If user has already reacted to this message then
-    // we just remove him from reacted users only to readd him
-    // with a different Emoji
     for (var r in reactions.entries) {
       final users = r.value['users'] as List;
       if (users.contains(userId)) {
@@ -87,24 +69,17 @@ class Message extends CollectionItem {
 
     _api
         .post(Endpoint.reactions, body: body)
-        .catchError((_) => reactions = oldReactions)
-        .whenComplete(() => save());
+        .then((_) => save())
+        .catchError((_) => reactions = oldReactions);
   }
 
   Future<void> save() async {
     await _storage.store(item: this, type: StorageType.Message, key: id);
   }
 
-  /// Convenience methods to avoid serializing this class from JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Message.fromJson(Map<String, dynamic> json) {
     return _$MessageFromJson(json);
   }
 
-  /// Convenience methods to avoid serializing this class to JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  Map<String, dynamic> toJson() {
-    var map = _$MessageToJson(this);
-    return map;
-  }
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
 }
