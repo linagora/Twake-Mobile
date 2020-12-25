@@ -7,7 +7,7 @@ abstract class MessagesEvent extends Equatable {
 }
 
 class LoadMessages extends MessagesEvent {
-  final threadId;
+  final String threadId;
   const LoadMessages({this.threadId});
 
   @override

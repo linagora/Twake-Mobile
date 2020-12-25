@@ -1,12 +1,13 @@
 import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/collection_item.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
 part 'direct.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Direct {
+class Direct extends CollectionItem {
   @JsonKey(required: true)
   final String id;
 

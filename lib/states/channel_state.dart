@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:twake/models/channel.dart';
+import 'package:twake/models/direct.dart';
 
 abstract class ChannelState extends Equatable {
   const ChannelState();
@@ -14,8 +15,19 @@ class ChannelsLoaded extends ChannelState {
     this.selected,
   });
   @override
-  // TODO: implement props
   List<Object> get props => [channels];
+}
+
+class DirectsLoaded extends ChannelState {
+  final List<Direct> directs;
+  final Direct selected;
+
+  const DirectsLoaded({
+    this.directs,
+    this.selected,
+  });
+  @override
+  List<Object> get props => [directs];
 }
 
 class ChannelsLoading extends ChannelState {

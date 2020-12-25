@@ -3,16 +3,18 @@ class Endpoint {
   static const auth = '/authorize';
   // API Endpoint for prolonging token
   static const prolong = '/token/prolong';
-  // API Endpoint for getting user data
+  // API Endpoint for working with user data
   static const profile = '/user';
-  // API Endpoint for getting user's companies
+  // API Endpoint for working with user's companies
   static const companies = '/companies';
-  // API Endpoint for getting user's workspaces in all companies
+  // API Endpoint for working with user's workspaces in all companies
   static const workspaces = '/workspaces';
-  // API Endpoint for getting user's channels in a workspace
+  // API Endpoint for working with user's channels in a workspace
   static const channels = '/channels';
-  // API Endpoint for getting user's direct channels with other users
+  // API Endpoint for working with user's direct channels with other users
   static const directs = '/direct';
-  // API Endpoint for getting messages in a channel
+  // API Endpoint for working with messages in a channel
   static const messages = '/messages';
+  // API Endpoint for working with message reactions
+  static const reactions = '/reactions';
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:package_info/package_info.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/message.dart';
@@ -33,11 +34,14 @@ Future<AuthRepository> initAuth() async {
   logger.d('Auth data from storage: $authMap');
 
   final fcmToken = (await FirebaseMessaging().getToken());
+  final apiVersion = (await PackageInfo.fromPlatform()).version;
 
   if (authMap != null) {
-    return AuthRepository.fromJson(authMap)..fcmToken = fcmToken;
+    return AuthRepository.fromJson(authMap)
+      ..fcmToken = fcmToken
+      ..apiVersion = apiVersion;
   }
-  return AuthRepository(fcmToken);
+  return AuthRepository(fcmToken: fcmToken, apiVersion: apiVersion);
 }
 
 Future<InitData> initMain() async {
@@ -75,6 +79,8 @@ class InitData {
   final CollectionRepository workspaces;
   final CollectionRepository channels;
   final CollectionRepository messages;
+  final CollectionRepository directs;
+  final CollectionRepository threads;
 
   InitData({
     this.profile,
@@ -82,5 +88,7 @@ class InitData {
     this.workspaces,
     this.channels,
     this.messages,
+    this.directs,
+    this.threads,
   });
 }

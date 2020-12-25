@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/channels_bloc.dart';
-import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/events/messages_event.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/messages_state.dart';
@@ -10,32 +9,19 @@ import 'package:twake/states/messages_state.dart';
 export 'package:twake/states/messages_state.dart';
 export 'package:twake/events/messages_event.dart';
 
-class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
+class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository repository;
-  final ChannelsBloc channelsBloc;
-  final DirectsBloc directsBloc;
-  StreamSubscription channelsSubscription;
-  StreamSubscription directsSubscription;
-  String selectedChannelId;
+  final MessagesBloc messagesBloc;
+  StreamSubscription subscription;
+  String _selectedThreadId;
 
-  MessagesBloc({
-    this.repository,
-    this.channelsBloc,
-    this.directsBloc,
-  }) : super(MessagesEmpty()) {
-    channelsSubscription = channelsBloc.listen((ChannelState state) {
-      if (state is ChannelsLoaded) {
-        selectedChannelId = state.selected.id;
-        this.add(LoadMessages());
+  ThreadsBloc({this.repository, this.messagesBloc}) : super(MessagesEmpty()) {
+    subscription = messagesBloc.listen((MessagesState state) {
+      if (state is MessageSelected) {
+        _selectedThreadId = state.threadMessage.id;
+        this.add(LoadMessages(threadId: _selectedThreadId));
       }
     });
-    directsSubscription = directsBloc.listen((ChannelState state) {
-      if (state is DirectsLoaded) {
-        selectedChannelId = state.selected.id;
-        this.add(LoadMessages());
-      }
-    });
-    selectedChannelId = channelsBloc.repository.selected.id;
   }
 
   @override
@@ -43,7 +29,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     if (event is LoadMessages) {
       yield MessagesLoading();
       List<List> filters = [
-        ['channel_id', '=', selectedChannelId]
+        ['threadId', '!=', null],
+        ['threadId', '=', _selectedThreadId],
       ];
       await repository.reload(
         queryParams: _makeQueryParams(event),
@@ -56,14 +43,14 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is LoadSingleMessage) {
       await repository.pullOne(
         _makeQueryParams(event),
-        addToItems: event.channelId == selectedChannelId,
+        addToItems: event.threadId == _selectedThreadId,
       );
       yield MessagesLoaded(messages: repository.items);
     } else if (event is RemoveMessage) {
       await repository.delete(
         event.messageId,
         apiSync: !event.onNotify,
-        removeFromItems: event.channelId == selectedChannelId,
+        removeFromItems: event.threadId == _selectedThreadId,
         requestBody: _makeQueryParams(event),
       );
       if (repository.items.isEmpty)
@@ -76,24 +63,22 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty();
-    } else if (event is SelectMessage) {
-      repository.select(event.messageId);
-      yield MessageSelected(repository.selected);
     }
   }
 
   @override
   Future<void> close() {
-    channelsSubscription.cancel();
-    directsSubscription.cancel();
+    subscription.cancel();
     return super.close();
   }
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['channel_id'] = map['channel_id'] ?? selectedChannelId;
-    map['company_id'] = directsBloc.selectedCompanyId;
-    map['workspace_id'] = channelsBloc.selectedWorkspaceId;
+    map['channel_id'] = map['channel_id'] ?? messagesBloc.selectedChannelId;
+    map['company_id'] =
+        messagesBloc.channelsBloc.workspacesBloc.selectedCompanyId;
+    map['workspace_id'] =
+        messagesBloc.channelsBloc.workspacesBloc.repository.selected.id;
     return map;
   }
 }

@@ -5,11 +5,13 @@ abstract class ChannelsEvent extends Equatable {
 }
 
 class ReloadChannels extends ChannelsEvent {
-  // parent company id
   final String workspaceId;
+  // parent company id for directs
+  final String companyId;
   final bool forceFromApi;
   const ReloadChannels({
     this.workspaceId,
+    this.companyId,
     this.forceFromApi: false,
   });
   @override
