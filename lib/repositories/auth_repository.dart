@@ -36,9 +36,11 @@ class AuthRepository extends JsonSerializable {
   final logger = Logger();
   @JsonKey(ignore: true)
   String fcmToken;
+  @JsonKey(ignore: true)
+  String apiVersion;
 
   String get platform => Platform.isAndroid ? 'android' : 'apple';
-  AuthRepository([this.fcmToken]);
+  AuthRepository({this.fcmToken, this.apiVersion});
 
   TokenStatus tokenIsValid() {
     logger.d('Requesting validation');
@@ -169,8 +171,9 @@ class AuthRepository extends JsonSerializable {
   // specifically new accessToken in the header
   void updateHeaders() {
     Map<String, String> headers = {
-      'content-type': 'application/json',
-      'authorization': 'Bearer $accessToken',
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+      'Accept-version': apiVersion,
     };
     _api = Api(headers: headers);
   }

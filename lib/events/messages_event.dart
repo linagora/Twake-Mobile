@@ -7,7 +7,7 @@ abstract class MessagesEvent extends Equatable {
 }
 
 class LoadMessages extends MessagesEvent {
-  final threadId;
+  final String threadId;
   const LoadMessages({this.threadId});
 
   @override
@@ -40,8 +40,14 @@ class RemoveMessage extends MessagesEvent {
   final String messageId;
   final String channelId;
   final String threadId;
+  final bool onNotify;
 
-  const RemoveMessage({this.threadId, this.messageId, this.channelId});
+  const RemoveMessage({
+    this.threadId,
+    this.messageId,
+    this.channelId,
+    this.onNotify: false,
+  });
 
   @override
   List<Object> get props => [messageId, threadId];

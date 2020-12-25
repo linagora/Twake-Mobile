@@ -1,62 +1,71 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/workspaces_bloc.dart';
+import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/events/channel_event.dart';
-import 'package:twake/models/channel.dart';
+import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/channel_state.dart';
-import 'package:twake/states/workspace_state.dart';
 
 export 'package:twake/events/channel_event.dart';
 export 'package:twake/states/channel_state.dart';
 
-class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
-  final CollectionRepository<Channel> repository;
-  final WorkspacesBloc workspacesBloc;
+class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
+  final CollectionRepository<Direct> repository;
+  final CompaniesBloc companiesBloc;
   StreamSubscription subscription;
-  String selectedWorkspaceId;
+  String selectedCompanyId;
 
-  ChannelsBloc({this.repository, this.workspacesBloc})
-      : super(ChannelsLoaded(
-            channels: repository.items
-                .where((i) =>
-                    i.workspaceId == workspacesBloc.repository.selected.id)
-                .toList(),
-            selected: repository.selected)) {
-    subscription = workspacesBloc.listen((WorkspaceState state) {
-      if (state is WorkspacesLoaded) {
-        selectedWorkspaceId = state.selected.id;
-        this.add(ReloadChannels(workspaceId: selectedWorkspaceId));
+  DirectsBloc({
+    this.repository,
+    this.companiesBloc,
+  }) : super(repository.items.isEmpty
+            ? ChannelsEmpty()
+            : DirectsLoaded(
+                directs: repository.items,
+                selected: repository.selected,
+              )) {
+    subscription = companiesBloc.listen((CompaniesState state) {
+      if (state is CompaniesLoaded) {
+        selectedCompanyId = state.selected.id;
+        this.add(ReloadChannels(companyId: selectedCompanyId));
       }
     });
-    selectedWorkspaceId = workspacesBloc.repository.selected.id;
+    selectedCompanyId = companiesBloc.repository.selected.id;
   }
 
   @override
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
+      final filter = {
+        'company_id': event.companyId,
+      };
       await repository.reload(
-        queryParams: {'workspace_id': event.workspaceId ?? selectedWorkspaceId},
-        filters: [
-          ['workspace_id', '=', event.workspaceId ?? selectedWorkspaceId]
-        ],
+        queryParams: filter,
+        // TODO uncomment once we have correct company ids present
+        // for now get all the data from database
+        // filters: [
+        // ['company_id', '=', selectedCompanyId]
+        // ],
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
-      yield ChannelsLoaded(
-        channels: repository.items,
-        selected: repository.selected,
-      );
+      if (repository.items.isEmpty)
+        yield ChannelsEmpty();
+      else
+        yield DirectsLoaded(
+          directs: repository.items,
+          selected: repository.selected,
+        );
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId);
 
-      yield ChannelsLoaded(
-        channels: repository.items,
+      yield DirectsLoaded(
+        directs: repository.items,
         selected: repository.selected,
       );
     } else if (event is LoadSingleChannel) {
