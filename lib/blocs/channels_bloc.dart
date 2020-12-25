@@ -34,21 +34,14 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
     _selectedWorkspaceId = workspacesBloc.repository.selected.id;
   }
 
-  List<Channel> get currentChannels {
-    return repository.items
-        .where((w) => (w as Channel).workspaceId == _selectedWorkspaceId)
-        .toList();
-  }
-
   @override
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
-      final filter = {
-        'workspace_id': event.workspaceId ?? _selectedWorkspaceId
-      };
       await repository.reload(
-        queryParams: filter,
+        queryParams: {
+          'workspace_id': event.workspaceId ?? _selectedWorkspaceId
+        },
         filters: [
           ['workspace_id', '=', event.workspaceId ?? _selectedWorkspaceId]
         ],
@@ -56,7 +49,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
         forceFromApi: event.forceFromApi,
       );
       yield ChannelsLoaded(
-        channels: currentChannels,
+        channels: repository.items,
         selected: repository.selected,
       );
     } else if (event is ClearChannels) {

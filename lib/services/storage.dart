@@ -168,13 +168,23 @@ Filter filterBuild(List<List> expressions) {
     final rhs = e[2];
     Filter filter;
 
-    if (op == '=') filter = Filter.equals(lhs, rhs);
-    if (op == '>') filter = Filter.greaterThan(lhs, rhs);
-    if (op == '<') filter = Filter.lessThan(lhs, rhs);
-    if (op == '!=') filter = Filter.notEquals(lhs, rhs);
-    if (op == '!=' && rhs == null) filter = Filter.notNull(lhs);
-    if (op == '=' && rhs == null) filter = Filter.isNull(lhs);
-    andFilter.add(filter);
+    if (op == '=')
+      filter = Filter.equals(lhs, rhs);
+    else if (op == '>')
+      filter = Filter.greaterThan(lhs, rhs);
+    else if (op == '<')
+      filter = Filter.lessThan(lhs, rhs);
+    else if (op == '>=')
+      filter = Filter.greaterThanOrEquals(lhs, rhs);
+    else if (op == '<=')
+      filter = Filter.lessThanOrEquals(lhs, rhs);
+    else if (op == '!=' && rhs == null)
+      filter = Filter.notNull(lhs);
+    else if (op == '=' && rhs == null)
+      filter = Filter.isNull(lhs);
+    else if (op == '!=') filter = Filter.notEquals(lhs, rhs);
+
+    if (filter != null) andFilter.add(filter);
   }
   return Filter.and(andFilter);
 }

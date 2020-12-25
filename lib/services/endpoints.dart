@@ -11,6 +11,8 @@ class Endpoint {
   static const workspaces = '/workspaces';
   // API Endpoint for getting user's channels in a workspace
   static const channels = '/channels';
+  // API Endpoint for getting user's direct channels with other users
+  static const directs = '/direct';
   // API Endpoint for getting messages in a channel
   static const messages = '/messages';
 }

@@ -13,16 +13,16 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository repository;
   final ChannelsBloc channelsBloc;
   StreamSubscription subscription;
-  String _selectedChannelId;
+  String selectedChannelId;
 
   MessagesBloc({this.repository, this.channelsBloc}) : super(MessagesEmpty()) {
     subscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelsLoaded) {
-        _selectedChannelId = state.selected.id;
+        selectedChannelId = state.selected.id;
         this.add(LoadMessages());
       }
     });
-    _selectedChannelId = channelsBloc.repository.selected.id;
+    selectedChannelId = channelsBloc.repository.selected.id;
   }
 
   @override
@@ -30,7 +30,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     if (event is LoadMessages) {
       yield MessagesLoading();
       List<List> filters = [
-        ['channel_id', '=', _selectedChannelId]
+        ['channel_id', '=', selectedChannelId]
       ];
       await repository.reload(
         queryParams: _makeQueryParams(event),
@@ -43,13 +43,14 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is LoadSingleMessage) {
       await repository.pullOne(
         _makeQueryParams(event),
-        addToItems: event.channelId == _selectedChannelId,
+        addToItems: event.channelId == selectedChannelId,
       );
       yield MessagesLoaded(messages: repository.items);
     } else if (event is RemoveMessage) {
       await repository.delete(
         event.messageId,
-        removeFromItems: event.channelId == _selectedChannelId,
+        apiSync: !event.onNotify,
+        removeFromItems: event.channelId == selectedChannelId,
         requestBody: _makeQueryParams(event),
       );
       if (repository.items.isEmpty)
@@ -76,7 +77,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['channel_id'] = map['channel_id'] ?? _selectedChannelId;
+    map['channel_id'] = map['channel_id'] ?? selectedChannelId;
     map['company_id'] = channelsBloc.workspacesBloc.selectedCompanyId;
     map['workspace_id'] = channelsBloc.workspacesBloc.repository.selected.id;
     return map;
