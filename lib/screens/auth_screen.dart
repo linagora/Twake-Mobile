@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 import 'package:twake_mobile/widgets/auth/auth_form.dart';
 
@@ -6,44 +7,47 @@ class AuthScreen extends StatelessWidget {
   static const route = '/auth';
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              height: Dim.maxScreenHeight,
-              width: Dim.maxScreenWidth,
+    return  Scaffold(
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
             ),
-            MediaQuery.of(context).viewInsets.bottom == 0 // keyboard is hidden
-                // show the curve
-                ? ClipPath(
-                    clipper: _DiagonalClipper(),
-                    child: Container(
-                      color: Theme.of(context).accentColor,
-                      height: Dim.maxScreenHeight,
-                      width: Dim.maxScreenWidth,
-                    ),
-                  )
-                // show nothing
-                : Container(),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                margin: EdgeInsets.only(top: Dim.hm5),
-                width: Dim.widthPercent(20),
-                height: Dim.widthPercent(20),
-                child: Image.asset(
-                  'assets/images/logo-white.png',
-                  fit: BoxFit.cover,
+            child: Stack(
+              children: [
+                Container(
+                  height: Dim.maxScreenHeight,
+                  width: Dim.maxScreenWidth,
                 ),
-              ),
+                MediaQuery.of(context).viewInsets.bottom == 0 // keyboard is hidden
+                    // show the curve
+                    ? ClipPath(
+                        clipper: _DiagonalClipper(),
+                        child: Container(
+                          color: Theme.of(context).accentColor,
+                          height: Dim.maxScreenHeight,
+                          width: Dim.maxScreenWidth,
+                        ),
+                      )
+                    // show nothing
+                    : Container(),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    margin: EdgeInsets.only(top: Dim.hm5),
+                    width: Dim.widthPercent(20),
+                    height: Dim.widthPercent(20),
+                    child: Image.asset(
+                      'assets/images/logo-white.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Align(
+                  child: AuthForm(),
+                  alignment: Alignment.bottomCenter,
+                ),
+              ],
             ),
-            Align(
-              child: AuthForm(),
-              alignment: Alignment.bottomCenter,
-            ),
-          ],
-        ),
       ),
     );
   }
