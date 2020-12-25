@@ -12,6 +12,8 @@ class TwakeApiConfig {
   static const String _directMessages = '/direct';
   static const String _messageReactions = '/reactions';
   static const String _settingsEmojis = '/settings/emoji';
+  static const String _companies = '/companies';
+  static const String _workspaces = '/workspaces';
   static String apiVersion;
   static String fcmToken;
 
@@ -62,5 +64,13 @@ class TwakeApiConfig {
   /// Method for getting up to date version of emoji map
   static String get settingsEmoji {
     return _HOST + _settingsEmojis;
+  }
+
+  static String get workspacesMethod {
+    return _HOST + _workspaces;
+  }
+
+  static String get companiesMethod {
+    return _HOST + _companies;
   }
 }

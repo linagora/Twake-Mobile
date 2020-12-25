@@ -72,71 +72,73 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
     final bool isMe = Provider.of<ProfileProvider>(context, listen: false)
         .isMe(widget.message.sender.userId);
     return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Show edit only if the sender of the message is the person,
-          /// who's currently logged in
-          if (emojiBoardHidden) EmojiLine(onEmojiSelected, toggleEmojiBoard),
-          if (emojiBoardHidden) Divider(),
-          // if (emojiBoardHidden)
-          // ListTile(
-          // leading: Icon(Icons.edit_outlined),
-          // title: Text(
-          // 'Edit',
-          // style: Theme.of(context).textTheme.headline6,
-          // ),
-          // onTap: () {
-          // widget.onEdit(context);
-          // },
-          // ),
-          // if (isMe && emojiBoardHidden) Divider(),
-          if (!widget.isThread && emojiBoardHidden)
-            ListTile(
-              leading: Icon(Icons.reply_sharp),
-              title: Text(
-                'Reply',
-                style: Theme.of(context).textTheme.headline6,
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            /// Show edit only if the sender of the message is the person,
+            /// who's currently logged in
+            if (emojiBoardHidden) EmojiLine(onEmojiSelected, toggleEmojiBoard),
+            if (emojiBoardHidden) Divider(),
+            // if (emojiBoardHidden)
+            // ListTile(
+            // leading: Icon(Icons.edit_outlined),
+            // title: Text(
+            // 'Edit',
+            // style: Theme.of(context).textTheme.headline6,
+            // ),
+            // onTap: () {
+            // widget.onEdit(context);
+            // },
+            // ),
+            // if (isMe && emojiBoardHidden) Divider(),
+            if (!widget.isThread && emojiBoardHidden)
+              ListTile(
+                leading: Icon(Icons.reply_sharp),
+                title: Text(
+                  'Reply',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  widget.onReply(context);
+                },
               ),
-              onTap: () {
-                Navigator.of(context).pop();
-                widget.onReply(context);
-              },
-            ),
-          if (!widget.isThread && emojiBoardHidden) Divider(),
-          if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
-            ListTile(
-              leading: Icon(Icons.delete, color: Colors.red),
-              title: Text(
-                'Delete',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    .copyWith(color: Colors.red),
+            if (!widget.isThread && emojiBoardHidden) Divider(),
+            if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
+              ListTile(
+                leading: Icon(Icons.delete, color: Colors.red),
+                title: Text(
+                  'Delete',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline6
+                      .copyWith(color: Colors.red),
+                ),
+                onTap: () {
+                  widget.onDelete(context);
+                },
               ),
-              onTap: () {
-                widget.onDelete(context);
-              },
-            ),
-          if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
-            Divider(),
-          if (emojiBoardHidden)
-            ListTile(
-              leading: Icon(Icons.copy),
-              title: Text(
-                'Copy',
-                style: Theme.of(context).textTheme.headline6,
+            if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
+              Divider(),
+            if (emojiBoardHidden)
+              ListTile(
+                leading: Icon(Icons.copy),
+                title: Text(
+                  'Copy',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                onTap: widget.onCopy,
               ),
-              onTap: widget.onCopy,
-            ),
-          Offstage(
-              offstage: emojiBoardHidden,
-              child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {
-                Navigator.of(context).pop();
-                // print('Emoji name: ${emoji.name}\nEmoji: ${emoji.text} ');
-                onEmojiSelected(emoji.text, reverse: true);
-              })),
-        ],
+            Offstage(
+                offstage: emojiBoardHidden,
+                child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {
+                  Navigator.of(context).pop();
+                  // print('Emoji name: ${emoji.name}\nEmoji: ${emoji.text} ');
+                  onEmojiSelected(emoji.text, reverse: true);
+                })),
+          ],
+        ),
       ),
     );
   }

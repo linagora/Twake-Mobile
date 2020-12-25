@@ -42,8 +42,7 @@ class ThreadScreen extends StatelessWidget {
       message.channelId,
       threadId: message.id,
     );
-    return SafeArea(
-      child: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           titleSpacing: 0.0,
           shadowColor: Colors.grey[300],
@@ -75,57 +74,60 @@ class ThreadScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Show main message only if keyboard is hidden
-            // otherwise it causes ugly shrinking of responses list
-            Container(
-              child: SingleChildScrollView(
-                child: ChangeNotifierProvider.value(
-                  value: message,
-                  child: MessageTile(message, isThread: true),
-                ),
-              ),
-              padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
-              height: Dim.heightPercent(19),
-            ),
-            Divider(color: Colors.grey[200]),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: Dim.heightMultiplier,
-                horizontal: Dim.wm4,
-              ),
-              child: Text(
-                  '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
-            ),
-            Divider(color: Colors.grey[200]),
-            message.responsesLoaded
-                ? ThreadMessagesList(
-                    (message.responses ?? []).reversed.toList())
-                : Expanded(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(),
-                    ),
+        body: SafeArea(
+          // padding: EdgeInsets.only(bottom: 25),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Show main message only if keyboard is hidden
+              // otherwise it causes ugly shrinking of responses list
+              Container(
+                // decoration: BoxDecoration(border: Border.all(color:Colors.blueAccent)),
+                child: SingleChildScrollView(
+                  child: ChangeNotifierProvider.value(
+                    value: message,
+                    child: MessageTile(message, isThread: true),
                   ),
-            MessageEditField((content) {
-              api.messageSend(
-                channelId: message.channelId,
-                content: content,
-                onSuccess: (Map<String, dynamic> _message) {
-                  messagesProvider.addMessage(
-                    _message,
-                    threadId: message.id,
-                  );
-                },
-                threadId: message.id,
-              );
-            }),
-          ],
+                ),
+                // padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+                // height: Dim.heightPercent(19),
+              ),
+              Divider(color: Colors.grey[200]),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: Dim.heightMultiplier,
+                  horizontal: Dim.wm4,
+                ),
+                child: Text(
+                    '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
+              ),
+              Divider(color: Colors.grey[200]),
+              message.responsesLoaded
+                  ? ThreadMessagesList(
+                      (message.responses ?? []).reversed.toList())
+                  : Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+              MessageEditField((content) {
+                api.messageSend(
+                  channelId: message.channelId,
+                  content: content,
+                  onSuccess: (Map<String, dynamic> _message) {
+                    messagesProvider.addMessage(
+                      _message,
+                      threadId: message.id,
+                    );
+                  },
+                  threadId: message.id,
+                );
+              }),
+            ],
+          ),
         ),
-      ),
     );
   }
 }
