@@ -1,11 +1,23 @@
+import 'dart:collection';
+
 import 'package:twake/models/user.dart';
 import 'package:twake/services/service_bundle.dart';
 
+const _BUFFER_SIZE = 250;
+
 class UserRepository {
-  List<User> items = [];
+  ListQueue<User> items = ListQueue(_BUFFER_SIZE);
+  static UserRepository _userRepository;
   final String apiEndpoint;
 
-  UserRepository(this.apiEndpoint);
+  factory UserRepository([String apiEndpoint]) {
+    if (_userRepository == null || apiEndpoint != null) {
+      _userRepository = UserRepository._(apiEndpoint);
+    }
+    return _userRepository;
+  }
+
+  UserRepository._(this.apiEndpoint);
 
   final _api = Api();
   final _storage = Storage();
@@ -30,6 +42,16 @@ class UserRepository {
       }
     }
     return item;
+  }
+
+  Future<void> batchUsersLoad(Set<String> userIds) async {
+    final List response = await _api.get(apiEndpoint, params: {
+      'id': userIds,
+    });
+    items.clear();
+    final users = response.map((u) => User.fromJson(u));
+    items.addAll(users);
+    logger.d('Loaded ${items.length} users for messages');
   }
 
   Future<void> save(User user) async {

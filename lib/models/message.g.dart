@@ -16,9 +16,9 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
   ]);
   return Message(
     id: json['id'] as String,
-    sender: json['sender'] == null
-        ? null
-        : Sender.fromJson(json['sender'] as Map<String, dynamic>),
+    sender: (json['sender'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    ),
     creationDate: json['creation_date'] as int,
   )
     ..isSelected = json['isSelected'] as bool
@@ -36,7 +36,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'id': instance.id,
       'thread_id': instance.threadId,
       'responses_count': instance.responsesCount,
-      'sender': instance.sender?.toJson(),
+      'sender': instance.sender,
       'creation_date': instance.creationDate,
       'content': instance.content?.toJson(),
       'reactions': instance.reactions,

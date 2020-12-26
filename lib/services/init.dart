@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:package_info/package_info.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
+import 'package:twake/models/direct.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/auth_repository.dart';
@@ -14,11 +15,9 @@ import 'service_bundle.dart';
 const AUTH_STORE_INDEX = 0;
 
 Future<AuthRepository> initAuth() async {
-  // Initilize Storage class (singleton)
   final store = Storage();
   await store.initDb();
 
-  // Initilize Api class (singleton)
   final _ = Api();
 
   if (kDebugMode)
@@ -27,7 +26,6 @@ Future<AuthRepository> initAuth() async {
     Logger.level = Level.error;
   final logger = Logger();
 
-  // Try to load auth from store
   final authMap =
       await store.load(type: StorageType.Auth, key: AUTH_STORE_INDEX);
 
@@ -65,7 +63,19 @@ Future<InitData> initMain() async {
       ['workspace_id', '=', workspaces.selected.id]
     ],
   );
+  final directs = await CollectionRepository.load<Direct>(
+    Endpoint.directs,
+    queryParams: {
+      'company_id': companies.selected.id,
+    },
+    // TODO uncomment once company_id becomes available
+    // filters: [
+    // ['company_id', '=', workspaces.selected.id]
+    // ],
+  );
   final messages =
+      CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
+  final threads =
       CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
 
   return InitData(
@@ -73,26 +83,28 @@ Future<InitData> initMain() async {
     companies: companies,
     workspaces: workspaces,
     channels: channels,
+    directs: directs,
     messages: messages,
+    threads: threads,
   );
 }
 
 class InitData {
   final ProfileRepository profile;
-  final CollectionRepository companies;
-  final CollectionRepository workspaces;
-  final CollectionRepository channels;
-  final CollectionRepository messages;
-  final CollectionRepository directs;
-  final CollectionRepository threads;
+  final CollectionRepository<Company> companies;
+  final CollectionRepository<Workspace> workspaces;
+  final CollectionRepository<Channel> channels;
+  final CollectionRepository<Direct> directs;
+  final CollectionRepository<Message> messages;
+  final CollectionRepository<Message> threads;
 
   InitData({
     this.profile,
     this.companies,
     this.workspaces,
     this.channels,
-    this.messages,
     this.directs,
+    this.messages,
     this.threads,
   });
 }

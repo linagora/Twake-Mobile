@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
-import 'package:twake/blocs/workspaces_bloc.dart';
-import 'package:twake/services/init.dart';
-import 'package:twake/widgets/drawer/twake_drawer.dart';
-import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/widgets/common/image_avatar.dart';
-import 'package:twake/widgets/channel/channels_group.dart';
+import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/services/init.dart';
+import 'package:twake/widgets/channel/channels_group.dart';
+import 'package:twake/widgets/channel/direct_messages_group.dart';
+import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:twake/widgets/drawer/twake_drawer.dart';
 
 class MainPage extends StatelessWidget {
   static const route = '/main';
@@ -35,6 +37,12 @@ class MainPage extends StatelessWidget {
             return ChannelsBloc(
               repository: data.channels,
               workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
+            );
+          }),
+          BlocProvider<DirectsBloc>(create: (ctx) {
+            return DirectsBloc(
+              repository: data.directs,
+              companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
             );
           }),
         ],
@@ -93,7 +101,7 @@ class MainPage extends StatelessWidget {
                             // Divider(height: Dim.hm5),
                             ChannelsGroup(),
                             Divider(height: Dim.hm5),
-                            // DirectMessagesBlock(directs),
+                            DirectMessagesGroup(),
                             SizedBox(height: Dim.hm2),
                           ],
                         ),
