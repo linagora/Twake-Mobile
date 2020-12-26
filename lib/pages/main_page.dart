@@ -59,13 +59,15 @@ class MainPage extends StatelessWidget {
               title: BlocBuilder<WorkspacesBloc, WorkspaceState>(
                   builder: (ctx, state) {
                 if (state is WorkspacesLoaded)
-                  return Row(
-                    children: [
-                      ImageAvatar(state.selected.logo),
-                      SizedBox(width: Dim.wm2),
-                      Text(state.selected.logo,
-                          style: Theme.of(context).textTheme.headline6),
-                    ],
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: ImageAvatar(state.selected.logo),
+                    title: Text(
+                      state.selected.name,
+                      style: Theme.of(context).textTheme.headline6,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
                   );
                 else
                   return CircularProgressIndicator();

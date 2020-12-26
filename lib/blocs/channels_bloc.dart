@@ -38,7 +38,10 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
       await repository.reload(
-        queryParams: {'workspace_id': event.workspaceId ?? selectedWorkspaceId},
+        queryParams: {
+          'workspace_id': event.workspaceId ?? selectedWorkspaceId,
+          'company_id': workspacesBloc.selectedCompanyId,
+        },
         filters: [
           ['workspace_id', '=', event.workspaceId ?? selectedWorkspaceId]
         ],

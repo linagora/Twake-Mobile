@@ -53,10 +53,14 @@ Future<InitData> initMain() async {
     filters: [
       ['company_id', '=', companies.selected.id]
     ],
+    queryParams: {'company_id': companies.selected.id},
   );
   final channels = await CollectionRepository.load<Channel>(
     Endpoint.channels,
-    queryParams: {'workspace_id': workspaces.selected.id},
+    queryParams: {
+      'workspace_id': workspaces.selected.id,
+      'company_id': companies.selected.id,
+    },
     filters: [
       ['workspace_id', '=', workspaces.selected.id]
     ],

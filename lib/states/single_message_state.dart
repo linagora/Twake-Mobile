@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twake/models/sender.dart';
 import 'package:twake/models/twacode.dart';
 
 abstract class SingleMessageState extends Equatable {
@@ -11,7 +12,7 @@ class MessageReady extends SingleMessageState {
   final int creationDate;
   final MessageTwacode content;
   final Map<String, dynamic> reactions;
-  final String senderId;
+  final Sender sender;
 
   const MessageReady({
     this.id,
@@ -19,10 +20,9 @@ class MessageReady extends SingleMessageState {
     this.creationDate,
     this.content,
     this.reactions,
-    this.senderId,
+    this.sender,
   });
 
   @override
-  // TODO: implement props
   List<Object> get props => [id, content, reactions, responsesCount];
 }

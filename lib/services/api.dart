@@ -10,7 +10,7 @@ class Api {
   // singleton Api class instance
   static Api _api;
   // logging utility
-  final logger = Logger();
+  static final logger = Logger();
   // callback function to auto prolong token, if access token has expired
   Future<dynamic> Function() _prolongToken;
   // callback function to validate token
@@ -19,7 +19,7 @@ class Api {
   void Function() _resetAuthentication;
 
   Dio dio;
-  final Dio tokenDio = Dio(); // dio without interceptors for authentication
+  final Dio tokenDio = Dio();
 
   factory Api({Map<String, String> headers}) {
     // if the headers are present, e.g. token has changed,
@@ -47,6 +47,7 @@ class Api {
 
   // internal private constructor (singleton pattern)
   Api._(Map<String, String> headers) {
+    tokenDio.options.headers = headers;
     dio = Dio(
       BaseOptions(
           connectTimeout: _CONNECT_TIMEOUT,

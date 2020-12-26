@@ -23,7 +23,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
   )
     ..isSelected = json['isSelected'] as bool
     ..threadId = json['thread_id'] as String
-    ..responsesCount = json['responses_count'] as int
+    ..responsesCount = json['responses_count'] as int ?? 0
     ..content = json['content'] == null
         ? null
         : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>)

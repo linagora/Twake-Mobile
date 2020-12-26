@@ -15,6 +15,7 @@ class Storage {
   StoreRef _workspaceStore = stringMapStoreFactory.store('workspace');
   StoreRef _channelStore = stringMapStoreFactory.store('channel');
   StoreRef _messageStore = stringMapStoreFactory.store('message');
+  StoreRef _userStore = stringMapStoreFactory.store('user');
   Database _db;
 
   final logger = Logger();
@@ -90,7 +91,8 @@ class Storage {
   }) async {
     Filter filter;
     if (filters != null) {
-      filter = filterBuild(filters);
+      logger.d('Filters were: $filters');
+      filter = _filterBuild(filters);
     }
     List<SortOrder> sortOrders;
     if (sortFields != null) {
@@ -103,6 +105,7 @@ class Storage {
     StoreRef storeRef = _mapTypeToStore(type);
     Finder finder = Finder(filter: filter, sortOrders: sortOrders);
     final records = await storeRef.find(_db, finder: finder);
+    logger.d('GOT RECORDS: $records FROM STORAGE');
     return records.map((r) => r.value as Map<String, dynamic>).toList();
   }
 
@@ -125,6 +128,8 @@ class Storage {
     await _db.transaction((txn) async {
       await _authStore.delete(txn);
       await _profileStore.delete(txn);
+      await _companyStore.delete(txn);
+      await _workspaceStore.delete(txn);
       await _channelStore.delete(txn);
       await _messageStore.delete(txn);
     });
@@ -144,9 +149,41 @@ class Storage {
       storeRef = _channelStore;
     else if (type == StorageType.Message)
       storeRef = _messageStore;
+    else if (type == StorageType.User)
+      storeRef = _userStore;
     else
       throw 'Storage type does not exist';
     return storeRef;
+  }
+
+  Filter _filterBuild(List<List> expressions) {
+    List<Filter> andFilter = [];
+    for (List e in expressions) {
+      assert(e.length == 3);
+      final lhs = e[0];
+      final op = e[1];
+      final rhs = e[2];
+      Filter filter;
+
+      if (op == '=')
+        filter = Filter.equals(lhs, rhs);
+      else if (op == '>')
+        filter = Filter.greaterThan(lhs, rhs);
+      else if (op == '<')
+        filter = Filter.lessThan(lhs, rhs);
+      else if (op == '>=')
+        filter = Filter.greaterThanOrEquals(lhs, rhs);
+      else if (op == '<=')
+        filter = Filter.lessThanOrEquals(lhs, rhs);
+      else if (op == '!=' && rhs == null)
+        filter = Filter.notNull(lhs);
+      else if (op == '=' && rhs == null)
+        filter = Filter.isNull(lhs);
+      else if (op == '!=') filter = Filter.notEquals(lhs, rhs);
+
+      if (filter != null) andFilter.add(filter);
+    }
+    return Filter.and(andFilter);
   }
 }
 
@@ -157,34 +194,5 @@ enum StorageType {
   Workspace,
   Channel,
   Message,
-}
-
-Filter filterBuild(List<List> expressions) {
-  List<Filter> andFilter = [];
-  for (List e in expressions) {
-    assert(e.length == 3);
-    final lhs = e[0];
-    final op = e[1];
-    final rhs = e[2];
-    Filter filter;
-
-    if (op == '=')
-      filter = Filter.equals(lhs, rhs);
-    else if (op == '>')
-      filter = Filter.greaterThan(lhs, rhs);
-    else if (op == '<')
-      filter = Filter.lessThan(lhs, rhs);
-    else if (op == '>=')
-      filter = Filter.greaterThanOrEquals(lhs, rhs);
-    else if (op == '<=')
-      filter = Filter.lessThanOrEquals(lhs, rhs);
-    else if (op == '!=' && rhs == null)
-      filter = Filter.notNull(lhs);
-    else if (op == '=' && rhs == null)
-      filter = Filter.isNull(lhs);
-    else if (op == '!=') filter = Filter.notEquals(lhs, rhs);
-
-    if (filter != null) andFilter.add(filter);
-  }
-  return Filter.and(andFilter);
+  User,
 }

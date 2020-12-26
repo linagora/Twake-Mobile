@@ -2,9 +2,11 @@ class Endpoint {
   // API Endpoint for authentication
   static const auth = '/authorize';
   // API Endpoint for prolonging token
-  static const prolong = '/token/prolong';
+  static const prolong = '/authorization/prolong';
   // API Endpoint for working with user data
   static const profile = '/user';
+  // API Endpoint for working with other users
+  static const users = '/users';
   // API Endpoint for working with user's companies
   static const companies = '/companies';
   // API Endpoint for working with user's workspaces in all companies

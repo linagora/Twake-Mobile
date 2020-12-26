@@ -40,10 +40,12 @@ class AuthRepository extends JsonSerializable {
   String apiVersion;
 
   String get platform => Platform.isAndroid ? 'android' : 'apple';
-  AuthRepository({this.fcmToken, this.apiVersion});
+  AuthRepository({this.fcmToken, this.apiVersion}) {
+    updateHeaders();
+  }
 
   TokenStatus tokenIsValid() {
-    logger.d('Requesting validation');
+    logger.d('Requesting token validation');
     if (this.accessToken == null) {
       logger.w('Token is empty');
       return TokenStatus.BothExpired;
@@ -90,6 +92,7 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<AuthResult> prolongToken() async {
+    logger.d('Prolonging token');
     try {
       final response = await _api.post(
         Endpoint.prolong,
@@ -124,6 +127,11 @@ class AuthRepository extends JsonSerializable {
     accessToken = null;
     refreshToken = null;
     await _storage.clean(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
+  }
+
+  // Clears up entire database, be carefull!
+  Future<void> fullClean() async {
+    _storage.fullClean();
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

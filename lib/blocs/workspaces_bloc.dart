@@ -29,6 +29,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
+        CollectionRepository.logger.d(
+            'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId));
       }
     });
@@ -38,10 +40,12 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   @override
   Stream<WorkspaceState> mapEventToState(WorkspacesEvent event) async* {
     if (event is ReloadWorkspaces) {
+      yield WorkspacesLoading();
       await repository.reload(
         filters: [
           ['company_id', '=', event.companyId]
         ],
+        queryParams: {'company_id': event.companyId},
         sortFields: {'name': true},
       );
       yield WorkspacesLoaded(

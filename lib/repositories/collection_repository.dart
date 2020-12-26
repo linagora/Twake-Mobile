@@ -44,7 +44,6 @@ class CollectionRepository<T extends CollectionItem> {
     Map<String, dynamic> queryParams,
     List<List> filters,
   }) async {
-    logger.d('Loading $T from storage');
     List<dynamic> itemsList = await _storage.loadList(
       type: _typeToStorageType[T],
       filters: filters,
@@ -60,7 +59,8 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   void select(String itemId) {
-    final item = items.firstWhere((i) => i.id == itemId);
+    final item =
+        items.firstWhere((i) => i.id == itemId, orElse: () => items[0]);
     final oldSelected = selected..isSelected = false;
     item.isSelected = true;
     Future.wait([
@@ -96,6 +96,7 @@ class CollectionRepository<T extends CollectionItem> {
       logger.d('Reloading $T items from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
     }
+    await this.save();
     _updateItems(itemsList);
   }
 
@@ -138,8 +139,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (removeFromItems) items.removeWhere((i) => i.id == key);
   }
 
-  Future<void> _updateItems(List<dynamic> itemsList) async {
-    await this.save();
+  void _updateItems(List<dynamic> itemsList) {
     final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T)).toList();
     this.items = items;
   }

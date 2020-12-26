@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
@@ -99,6 +100,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                       title: Text(
                                         state.companies[i].name,
                                       ),
+                                      subtitle: Text(
+                                          '${state.companies[i].totalMembers} members'),
                                     ),
                                   ))
                           : CircularProgressIndicator()),
@@ -116,8 +119,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                         ), // TODO configure the styles
                         trailing: IconButton(
                           onPressed: () {
-                            BlocProvider.of<ProfileBloc>(ctx)
-                                .add(ClearProfile());
+                            BlocProvider.of<AuthBloc>(ctx)
+                                .add(ResetAuthentication());
                           },
                           color: Colors.black87,
                           icon: Icon(
