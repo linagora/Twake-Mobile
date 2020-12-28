@@ -40,10 +40,12 @@ class AuthRepository extends JsonSerializable {
   String apiVersion;
 
   String get platform => Platform.isAndroid ? 'android' : 'apple';
-  AuthRepository({this.fcmToken, this.apiVersion});
+  AuthRepository({this.fcmToken, this.apiVersion}) {
+    updateHeaders();
+  }
 
   TokenStatus tokenIsValid() {
-    logger.d('Requesting validation');
+    logger.d('Requesting token validation');
     if (this.accessToken == null) {
       logger.w('Token is empty');
       return TokenStatus.BothExpired;
@@ -90,6 +92,7 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<AuthResult> prolongToken() async {
+    logger.d('Prolonging token');
     try {
       final response = await _api.post(
         Endpoint.prolong,
@@ -126,15 +129,18 @@ class AuthRepository extends JsonSerializable {
     await _storage.clean(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
   }
 
+  // Clears up entire database, be carefull!
+  Future<void> fullClean() async {
+    _storage.fullClean();
+  }
+
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory AuthRepository.fromJson(Map<String, dynamic> json) =>
       // After getting instance of auth from store, we should make sure
       // that api has valid callbacks for validation and
       // prolonging token + set up to date headers
-      _$AuthRepositoryFromJson(json)
-        ..updateHeaders()
-        ..updateApiInterceptors();
+      _$AuthRepositoryFromJson(json);
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
@@ -175,6 +181,7 @@ class AuthRepository extends JsonSerializable {
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
+    logger.d('HEADERS: $apiVersion');
     _api = Api(headers: headers);
   }
 }

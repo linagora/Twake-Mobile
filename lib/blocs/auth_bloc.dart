@@ -58,11 +58,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield Authenticated(initData);
       }
     } else if (event is ResetAuthentication) {
-      yield Unauthenticated(message: 'Session has expired');
+      if (event.message == null) {
+        repository.fullClean();
+      } else {
+        repository.clean();
+      }
+      yield Unauthenticated(message: event.message);
     }
   }
 
   void resetAuthentication() {
-    this.add(ResetAuthentication());
+    this.add(ResetAuthentication(message: 'Session has expired'));
   }
 }

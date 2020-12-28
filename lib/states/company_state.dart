@@ -13,7 +13,6 @@ class CompaniesLoaded extends CompaniesState {
     this.selected,
   });
   @override
-  // TODO: implement props
   List<Object> get props => [companies, selected];
 }
 

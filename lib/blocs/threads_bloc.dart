@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/events/messages_event.dart';
+import 'package:twake/models/message.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/messages_state.dart';
 
@@ -10,7 +11,7 @@ export 'package:twake/states/messages_state.dart';
 export 'package:twake/events/messages_event.dart';
 
 class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
-  final CollectionRepository repository;
+  final CollectionRepository<Message> repository;
   final MessagesBloc messagesBloc;
   StreamSubscription subscription;
   String _selectedThreadId;

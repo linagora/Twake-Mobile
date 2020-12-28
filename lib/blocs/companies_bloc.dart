@@ -10,7 +10,7 @@ export 'package:twake/events/company_event.dart';
 export 'package:twake/states/company_state.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
-  final CollectionRepository repository;
+  final CollectionRepository<Company> repository;
   CompaniesBloc(this.repository)
       : super(CompaniesLoaded(
           companies: repository.items,

@@ -1,24 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'profile_repository.dart';
+part of 'user.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ProfileRepository _$ProfileRepositoryFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['id', 'username']);
-  return ProfileRepository(
+User _$UserFromJson(Map<String, dynamic> json) {
+  $checkKeys(json, requiredKeys: const ['id']);
+  return User(
     id: json['id'] as String,
     username: json['username'] as String,
   )
+    ..isSelected = json['isSelected'] as bool
     ..firstName = json['firstname'] as String
     ..lastName = json['lastname'] as String
     ..thumbnail = json['thumbnail'] as String;
 }
 
-Map<String, dynamic> _$ProfileRepositoryToJson(ProfileRepository instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
+      'isSelected': instance.isSelected,
       'id': instance.id,
       'username': instance.username,
       'firstname': instance.firstName,

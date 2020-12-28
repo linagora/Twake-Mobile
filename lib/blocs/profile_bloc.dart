@@ -12,9 +12,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository repository;
   ProfileBloc(this.repository)
       : super(ProfileLoaded(
-          userId: repository.userId,
+          userId: repository.id,
           firstName: repository.firstName,
-          lastName: repository.firstName,
+          lastName: repository.lastName,
           thumbnail: repository.thumbnail,
         ));
 
@@ -23,9 +23,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (event is ReloadProfile) {
       await repository.reload();
       yield ProfileLoaded(
-        userId: repository.userId,
+        userId: repository.id,
         firstName: repository.firstName,
-        lastName: repository.firstName,
+        lastName: repository.lastName,
         thumbnail: repository.thumbnail,
       );
     } else if (event is ClearProfile) {

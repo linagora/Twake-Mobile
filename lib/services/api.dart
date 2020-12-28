@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
 const _CONNECT_TIMEOUT = 50000;
-const String _HOST = 'https://mobile.api.twake.app';
+const String _HOST = 'mobile.api.twake.app';
+const String _SHOST = 'https://mobile.api.twake.app';
+const String _SCHEME = 'https';
 const _RECEIVE_TIMEOUT = 7000;
 const _SEND_TIMEOUT = 5000;
 
@@ -10,7 +12,7 @@ class Api {
   // singleton Api class instance
   static Api _api;
   // logging utility
-  final logger = Logger();
+  static final logger = Logger();
   // callback function to auto prolong token, if access token has expired
   Future<dynamic> Function() _prolongToken;
   // callback function to validate token
@@ -19,7 +21,7 @@ class Api {
   void Function() _resetAuthentication;
 
   Dio dio;
-  final Dio tokenDio = Dio(); // dio without interceptors for authentication
+  final Dio tokenDio = Dio();
 
   factory Api({Map<String, String> headers}) {
     // if the headers are present, e.g. token has changed,
@@ -47,6 +49,7 @@ class Api {
 
   // internal private constructor (singleton pattern)
   Api._(Map<String, String> headers) {
+    tokenDio.options.headers = headers;
     dio = Dio(
       BaseOptions(
           connectTimeout: _CONNECT_TIMEOUT,
@@ -74,7 +77,7 @@ class Api {
     String method, {
     Map<String, String> body,
   }) async {
-    final url = _HOST + method;
+    final url = _SHOST + method;
     final response = await dio.delete(url, data: body);
     return response.data;
   }
@@ -83,8 +86,13 @@ class Api {
     String method, {
     Map<String, dynamic> params: const {},
   }) async {
-    final url = _HOST + method;
-    final response = await dio.get(url, queryParameters: params);
+    final uri = Uri(
+      scheme: _SCHEME,
+      host: _HOST,
+      path: method,
+      queryParameters: params,
+    );
+    final response = await dio.getUri(uri);
     return response.data;
   }
 
@@ -92,7 +100,7 @@ class Api {
     String method, {
     Map<String, String> body,
   }) async {
-    final url = _HOST + method;
+    final url = _SHOST + method;
     final response = await dio.patch(url, data: body);
     return response.data;
   }
@@ -102,7 +110,7 @@ class Api {
     Map<String, String> body,
     bool useTokenDio = false,
   }) async {
-    final url = _HOST + method;
+    final url = _SHOST + method;
     final response = await (useTokenDio ? tokenDio : dio).post(url, data: body);
     return response.data;
   }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/services/init.dart';
@@ -32,6 +33,9 @@ class TwakeMobileApp extends StatelessWidget {
           /// of new values.
           Dim.init(constraints, orientation);
           return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: StylesConfig.lightTheme,
+            title: 'Twake',
             home: BlocProvider(
               create: (ctx) => AuthBloc(repository),
               child: InitialPage(),

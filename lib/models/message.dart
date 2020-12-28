@@ -3,7 +3,6 @@ import 'package:twake/models/collection_item.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/service_bundle.dart';
 
-import 'sender.dart';
 import 'twacode.dart';
 
 part 'message.g.dart';
@@ -20,7 +19,7 @@ class Message extends CollectionItem {
   int responsesCount;
 
   @JsonKey(required: true)
-  final Sender sender;
+  final Map<String, String> sender;
 
   @JsonKey(required: true, name: 'creation_date')
   int creationDate;
@@ -33,6 +32,9 @@ class Message extends CollectionItem {
 
   @JsonKey(required: true)
   String channelId;
+
+  @JsonKey(defaultValue: false)
+  bool isSelected;
 
   // used when deleting messages
   // TODO try to remove this field

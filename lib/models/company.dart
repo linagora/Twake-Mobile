@@ -14,6 +14,9 @@ class Company extends CollectionItem {
 
   final String logo;
 
+  @JsonKey(name: 'total_members', defaultValue: 0)
+  final int totalMembers;
+
   @JsonKey(defaultValue: false)
   bool isSelected;
 
@@ -21,6 +24,7 @@ class Company extends CollectionItem {
     this.id,
     this.name,
     this.logo,
+    this.totalMembers,
   });
 
   /// Convenience methods to avoid serializing this class from JSON

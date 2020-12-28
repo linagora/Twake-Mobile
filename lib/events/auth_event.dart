@@ -18,8 +18,11 @@ class Authenticate extends AuthEvent {
 }
 
 class ResetAuthentication extends AuthEvent {
+  final String message;
+  ResetAuthentication({this.message});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 }
 
 class AuthInitialize extends AuthEvent {

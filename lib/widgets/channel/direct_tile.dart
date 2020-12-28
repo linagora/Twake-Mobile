@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/utils/dateformatter.dart';
-// import 'package:twake/providers/channels_provider.dart';
+import 'package:twake/widgets/common/stacked_image_avatars.dart';
 
 class DirectTile extends StatelessWidget {
   final Direct direct;
@@ -24,15 +24,17 @@ class DirectTile extends StatelessWidget {
       },
       child: ListTile(
         contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
-        // leading: Stack(
-        // alignment: Alignment.centerLeft,
-        // children: direct.buildCorrespondentAvatars(profile)),
+        leading: StackedUserAvatars(direct.members),
         // title: Text(
         // direct.buildDirectName(profile),
         // overflow: TextOverflow.ellipsis,
         // style: Theme.of(context).textTheme.headline6,
         // ),
-        title: Text('Hello'),
+        title: Text(
+          direct.name,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.headline6,
+        ),
         trailing: FittedBox(
           fit: BoxFit.fitWidth,
           // width: Dim.widthPercent(40),
