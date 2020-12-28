@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/auth_bloc.dart';
-import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/main_page.dart';
 
@@ -20,13 +20,9 @@ class _InitialPageState extends State<InitialPage> {
   Widget buildSplashScreen() {
     return Scaffold(
       body: Center(
-        child: SizedBox(
-          width: Dim.hm9,
-          height: Dim.hm9,
-          child: Image.asset(
-            'assets/images/oldtwakelogo.jpg',
-            fit: BoxFit.cover,
-          ),
+        child: Lottie.asset(
+          'assets/animations/splash.json',
+          repeat: true,
         ),
       ),
     );

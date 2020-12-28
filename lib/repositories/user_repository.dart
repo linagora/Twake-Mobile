@@ -62,11 +62,10 @@ class UserRepository {
     final users =
         response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
     items.addEntries(users);
-    users.forEach((u) => _storage.store(
-          item: u.value,
-          type: StorageType.User,
-          key: u.value.id,
-        ));
+    _storage.storeList(
+      items: items.values,
+      type: StorageType.User,
+    );
     logger.d('Loaded ${items.length} users for messages');
   }
 

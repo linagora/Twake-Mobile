@@ -1,3 +1,4 @@
+import 'package:twake/models/direct.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/company.dart';
@@ -16,6 +17,7 @@ class CollectionRepository<T extends CollectionItem> {
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
     Channel: (Map<String, dynamic> json) => Channel.fromJson(json),
     Message: (Map<String, dynamic> json) => Message.fromJson(json),
+    Direct: (Map<String, dynamic> json) => Direct.fromJson(json),
   };
 
   static Map<Type, StorageType> _typeToStorageType = {
@@ -23,6 +25,7 @@ class CollectionRepository<T extends CollectionItem> {
     Workspace: StorageType.Workspace,
     Channel: StorageType.Channel,
     Message: StorageType.Message,
+    Direct: StorageType.Direct,
   };
 
   CollectionRepository({this.items, this.apiEndpoint});
@@ -51,6 +54,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (itemsList.isEmpty) {
       logger.d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
+      logger.d('ITEMS: FROM API\n$itemsList');
     }
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
     final collection =

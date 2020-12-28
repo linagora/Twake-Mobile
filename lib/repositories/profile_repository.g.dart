@@ -7,9 +7,9 @@ part of 'profile_repository.dart';
 // **************************************************************************
 
 ProfileRepository _$ProfileRepositoryFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['userId', 'username']);
+  $checkKeys(json, requiredKeys: const ['id', 'username']);
   return ProfileRepository(
-    userId: json['userId'] as String,
+    id: json['id'] as String,
     username: json['username'] as String,
   )
     ..firstName = json['firstname'] as String
@@ -19,7 +19,7 @@ ProfileRepository _$ProfileRepositoryFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ProfileRepositoryToJson(ProfileRepository instance) =>
     <String, dynamic>{
-      'userId': instance.userId,
+      'id': instance.id,
       'username': instance.username,
       'firstname': instance.firstName,
       'lastname': instance.lastName,

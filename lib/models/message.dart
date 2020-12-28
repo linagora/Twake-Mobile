@@ -33,6 +33,9 @@ class Message extends CollectionItem {
   @JsonKey(required: true)
   String channelId;
 
+  @JsonKey(defaultValue: false)
+  bool isSelected;
+
   // used when deleting messages
   // TODO try to remove this field
   @JsonKey(ignore: true)

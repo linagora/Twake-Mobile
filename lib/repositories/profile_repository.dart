@@ -12,7 +12,7 @@ const _PROFILE_STORE_INDEX = 0;
 @JsonSerializable(explicitToJson: true)
 class ProfileRepository extends JsonSerializable {
   @JsonKey(required: true)
-  final String userId;
+  final String id;
   @JsonKey(required: true)
   final String username;
   @JsonKey(name: 'firstname')
@@ -23,7 +23,7 @@ class ProfileRepository extends JsonSerializable {
   String thumbnail;
   @JsonKey(required: true)
   ProfileRepository({
-    this.userId,
+    this.id,
     this.username,
   });
 
@@ -81,8 +81,9 @@ class ProfileRepository extends JsonSerializable {
 
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory ProfileRepository.fromJson(Map<String, dynamic> json) =>
-      _$ProfileRepositoryFromJson(json);
+  factory ProfileRepository.fromJson(Map<String, dynamic> json) {
+    return _$ProfileRepositoryFromJson(json);
+  }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation

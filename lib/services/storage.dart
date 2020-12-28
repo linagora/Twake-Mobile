@@ -14,6 +14,7 @@ class Storage {
   StoreRef _companyStore = stringMapStoreFactory.store('company');
   StoreRef _workspaceStore = stringMapStoreFactory.store('workspace');
   StoreRef _channelStore = stringMapStoreFactory.store('channel');
+  StoreRef _directStore = stringMapStoreFactory.store('direct');
   StoreRef _messageStore = stringMapStoreFactory.store('message');
   StoreRef _userStore = stringMapStoreFactory.store('user');
   Database _db;
@@ -66,15 +67,13 @@ class Storage {
   }
 
   Future<void> storeList({
-    List<CollectionItem> items,
+    Iterable<CollectionItem> items,
     StorageType type,
   }) async {
     StoreRef storeRef = _mapTypeToStore(type);
     await _db.transaction((txn) async {
-      for (int i = 0; i < items.length; i++) {
-        await storeRef
-            .record(items[i].id)
-            .put(txn, items[i].toJson(), merge: true);
+      for (CollectionItem i in items) {
+        await storeRef.record(i.id).put(txn, i.toJson(), merge: true);
       }
     });
   }
@@ -147,6 +146,8 @@ class Storage {
       storeRef = _workspaceStore;
     else if (type == StorageType.Channel)
       storeRef = _channelStore;
+    else if (type == StorageType.Direct)
+      storeRef = _directStore;
     else if (type == StorageType.Message)
       storeRef = _messageStore;
     else if (type == StorageType.User)
@@ -193,6 +194,7 @@ enum StorageType {
   Company,
   Workspace,
   Channel,
+  Direct,
   Message,
   User,
 }

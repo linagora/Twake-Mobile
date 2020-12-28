@@ -9,6 +9,7 @@ import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
+import 'package:twake/repositories/user_repository.dart';
 
 import 'service_bundle.dart';
 
@@ -35,15 +36,21 @@ Future<AuthRepository> initAuth() async {
   final apiVersion = (await PackageInfo.fromPlatform()).version;
 
   if (authMap != null) {
-    return AuthRepository.fromJson(authMap)
+    logger.d('INIT APIVERSION: $apiVersion');
+    final authRepository = AuthRepository.fromJson(authMap);
+    authRepository
       ..fcmToken = fcmToken
-      ..apiVersion = apiVersion;
+      ..apiVersion = apiVersion
+      ..updateHeaders()
+      ..updateApiInterceptors();
+    return authRepository;
   }
   return AuthRepository(fcmToken: fcmToken, apiVersion: apiVersion);
 }
 
 Future<InitData> initMain() async {
   final profile = await ProfileRepository.load();
+  final _ = UserRepository(Endpoint.users);
   final companies =
       await CollectionRepository.load<Company>(Endpoint.companies);
   final workspaces = await CollectionRepository.load<Workspace>(

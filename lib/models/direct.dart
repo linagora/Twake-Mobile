@@ -1,5 +1,3 @@
-import 'dart:convert' show jsonEncode, jsonDecode;
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
 
@@ -36,6 +34,9 @@ class Direct extends CollectionItem {
 
   @JsonKey(required: true, name: 'messages_unread')
   int messageUnread;
+
+  @JsonKey(defaultValue: false)
+  bool isSelected;
 
   Direct({
     this.id,
