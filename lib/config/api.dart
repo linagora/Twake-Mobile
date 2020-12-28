@@ -1,3 +1,4 @@
+import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -28,6 +29,7 @@ class TwakeApiConfig {
   static Future<void> init() async {
     apiVersion = (await PackageInfo.fromPlatform()).version;
     fcmToken = (await FirebaseMessaging().getToken());
+    Logger().d('APIVERSION: $apiVersion');
   }
 
   static String get authorizeMethod {
