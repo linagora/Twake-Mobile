@@ -23,28 +23,29 @@ class TwakeApi with ChangeNotifier {
   DateTime _refreshExpiration;
   bool _isAuthorized = false;
   String _platform;
-  // TODO get rid of this, request right data from api
   Dio dio = Dio();
   TwakeApi() {
     // Get version number for the app
     // Try to load state from local store
     // validate data
 
-    TwakeApiConfig.init().then((_) => DB.authLoad().then((map) {
-          fromMap(map);
-          validate().then((_) {
-            dio = Dio(BaseOptions(
-              connectTimeout: 10000,
-              sendTimeout: 5000,
-              receiveTimeout: 7000,
-              headers: TwakeApiConfig.authHeader(_authJWToken),
-            ));
-            _setDioInterceptors(dio);
-            notifyListeners();
-          });
-        }).catchError((e) {
-          logger.e('Error loading auth data from database\n$e');
-        }));
+    TwakeApiConfig.init()
+        .then((_) => DB.authLoad().then((map) async {
+              fromMap(map);
+              await validate();
+            }).catchError((e) {
+              logger.e('Error loading auth data from database\n$e');
+            }))
+        .whenComplete(() {
+      dio = Dio(BaseOptions(
+        connectTimeout: 10000,
+        sendTimeout: 5000,
+        receiveTimeout: 7000,
+        headers: TwakeApiConfig.authHeader(_authJWToken),
+      ));
+      _setDioInterceptors(dio);
+      notifyListeners();
+    });
     _platform = Platform.isAndroid ? 'android' : 'apple';
   }
 
@@ -202,6 +203,7 @@ class TwakeApi with ChangeNotifier {
           .data as List<dynamic>;
       final workspaces = (await dio.get(
         TwakeApiConfig.workspacesMethod, // url
+        queryParameters: {'company_id': companies[0]['id']},
       ))
           .data as List<dynamic>;
       companies.forEach((c) {
@@ -223,6 +225,7 @@ class TwakeApi with ChangeNotifier {
       final response = await dio.get(
         TwakeApiConfig.workspaceChannelsMethod, // url
         queryParameters: {
+          'company_id': ProfileProvider().selectedCompany.id,
           'workspace_id': workspaceId,
         },
       );
