@@ -181,7 +181,6 @@ class AuthRepository extends JsonSerializable {
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
-    logger.d('HEADERS: $apiVersion');
     _api = Api(headers: headers);
   }
 }

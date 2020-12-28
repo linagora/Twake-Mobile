@@ -54,7 +54,6 @@ class CollectionRepository<T extends CollectionItem> {
     if (itemsList.isEmpty) {
       logger.d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
-      logger.d('ITEMS: FROM API\n$itemsList');
     }
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
     final collection =
@@ -97,7 +96,7 @@ class CollectionRepository<T extends CollectionItem> {
       );
     }
     if (itemsList.isEmpty) {
-      logger.d('Reloading $T items from api...');
+      // logger.d('Reloading $T items from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
     }
     await this.save();

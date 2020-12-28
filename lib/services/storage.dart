@@ -131,6 +131,8 @@ class Storage {
       await _workspaceStore.delete(txn);
       await _channelStore.delete(txn);
       await _messageStore.delete(txn);
+      await _userStore.delete(txn);
+      await _directStore.delete(txn);
     });
   }
 
