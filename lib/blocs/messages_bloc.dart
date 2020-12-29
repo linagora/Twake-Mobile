@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/events/messages_event.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -16,14 +17,19 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
   final ChannelsBloc channelsBloc;
   final DirectsBloc directsBloc;
+  final NotificationBloc notificationBloc;
+
   StreamSubscription channelsSubscription;
   StreamSubscription directsSubscription;
+  StreamSubscription notificationSubscription;
+
   String selectedChannelId;
 
   MessagesBloc({
     this.repository,
     this.channelsBloc,
     this.directsBloc,
+    this.notificationBloc,
   }) : super(MessagesEmpty()) {
     channelsSubscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelsLoaded) {
@@ -35,6 +41,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (state is DirectsLoaded) {
         selectedChannelId = state.selected.id;
         this.add(LoadMessages());
+      }
+    });
+    notificationSubscription =
+        notificationBloc.listen((NotificationState state) {
+      if (state is ChannelMessageNotification) {
+        this.add(LoadSingleMessage(
+          messageId: state.data.messageId,
+          channelId: state.data.channelId,
+        ));
       }
     });
     selectedChannelId = channelsBloc.repository.selected.id;
@@ -76,7 +91,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       else
         yield MessagesLoaded(messages: repository.items);
     } else if (event is SendMessage) {
-      await repository.add(_makeQueryParams(event));
+      await repository.pushOne(_makeQueryParams(event));
       yield MessagesLoaded(messages: repository.items);
     } else if (event is ClearMessages) {
       await repository.clean();
@@ -91,6 +106,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   Future<void> close() {
     channelsSubscription.cancel();
     directsSubscription.cancel();
+    notificationSubscription.cancel();
     return super.close();
   }
 

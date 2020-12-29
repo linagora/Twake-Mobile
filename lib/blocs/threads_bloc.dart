@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
+import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/events/messages_event.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -13,14 +14,31 @@ export 'package:twake/events/messages_event.dart';
 class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
   final MessagesBloc messagesBloc;
-  StreamSubscription subscription;
+  final NotificationBloc notificationBloc;
+
+  StreamSubscription messageSubscription;
+  StreamSubscription notificationSubscription;
   String _selectedThreadId;
 
-  ThreadsBloc({this.repository, this.messagesBloc}) : super(MessagesEmpty()) {
-    subscription = messagesBloc.listen((MessagesState state) {
+  ThreadsBloc({
+    this.repository,
+    this.messagesBloc,
+    this.notificationBloc,
+  }) : super(MessagesEmpty()) {
+    messageSubscription = messagesBloc.listen((MessagesState state) {
       if (state is MessageSelected) {
         _selectedThreadId = state.threadMessage.id;
         this.add(LoadMessages(threadId: _selectedThreadId));
+      }
+    });
+    notificationSubscription =
+        notificationBloc.listen((NotificationState state) {
+      if (state is ThreadMessageNotification) {
+        this.add(LoadSingleMessage(
+          messageId: state.data.messageId,
+          threadId: state.data.threadId,
+          channelId: state.data.channelId,
+        ));
       }
     });
   }
@@ -59,7 +77,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       else
         yield MessagesLoaded(messages: repository.items);
     } else if (event is SendMessage) {
-      await repository.add(_makeQueryParams(event));
+      await repository.pushOne(_makeQueryParams(event));
       yield MessagesLoaded(messages: repository.items);
     } else if (event is ClearMessages) {
       await repository.clean();
@@ -69,7 +87,8 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
 
   @override
   Future<void> close() {
-    subscription.cancel();
+    messageSubscription.cancel();
+    notificationSubscription.cancel();
     return super.close();
   }
 

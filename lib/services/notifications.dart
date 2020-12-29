@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:logger/logger.dart';
-import 'package:twake_mobile/models/notification.dart';
+import 'package:twake/models/notification.dart';
 
 class Notifications {
   final logger = Logger();
@@ -57,9 +57,9 @@ class Notifications {
     MessageNotification notification = MessageNotification.fromJson(data);
     // Monkey patch TODO burn this piece of code
     // https://github.com/TwakeApp/Mobile/issues/99
-    if (notification.channelId[14] == '1') {
-      notification.channelId = notification.channelId.replaceRange(14, 15, '4');
-    }
+    // if (notification.channelId[14] == '1') {
+    // notification.channelId = notification.channelId.replaceRange(14, 15, '4');
+    // }
     return notification;
   }
 

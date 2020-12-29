@@ -67,16 +67,8 @@ class CollectionRepository<T extends CollectionItem> {
     final oldSelected = selected..isSelected = false;
     item.isSelected = true;
     Future.wait([
-      _storage.store(
-        item: oldSelected,
-        type: _typeToStorageType[T],
-        key: oldSelected.id,
-      ),
-      _storage.store(
-        item: item,
-        type: _typeToStorageType[T],
-        key: item.id,
-      ),
+      saveOne(oldSelected),
+      saveOne(item),
     ]);
   }
 
@@ -103,25 +95,26 @@ class CollectionRepository<T extends CollectionItem> {
     _updateItems(itemsList);
   }
 
-  Future<void> add(Map<String, dynamic> itemJson) async {
-    final response = await _api.post(apiEndpoint, body: itemJson);
-    final item = _typeToConstuctor[T](response) as T;
-    items.add(item);
-    await _storage.store(item: item, type: _typeToStorageType[T], key: item.id);
-  }
-
   Future<void> pullOne(
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
     logger.d('Pulling item $T from api...');
-    final item = (await _api.get(apiEndpoint, params: queryParams))[0];
-    this.items.add(_typeToConstuctor[T](item));
-    _storage.store(
-      item: item,
-      type: _typeToStorageType[T],
-      key: item,
-    );
+    final resp = (await _api.get(apiEndpoint, params: queryParams))[0];
+    final item = _typeToConstuctor[T](resp);
+    if (addToItems) this.items.add(item);
+    saveOne(item);
+  }
+
+  Future<void> pushOne(
+    Map<String, dynamic> body, {
+    addToItems = true,
+  }) async {
+    logger.d('Sending item $T to api...');
+    final resp = (await _api.post(apiEndpoint, body: body));
+    final item = _typeToConstuctor[T](resp);
+    if (addToItems) this.items.add(item);
+    saveOne(item);
   }
 
   Future<void> clean() async {
@@ -151,6 +144,14 @@ class CollectionRepository<T extends CollectionItem> {
     await _storage.storeList(
       items: this.items,
       type: _typeToStorageType[T],
+    );
+  }
+
+  Future<void> saveOne(T item) async {
+    await _storage.store(
+      item: item,
+      type: _typeToStorageType[T],
+      key: item,
     );
   }
 }

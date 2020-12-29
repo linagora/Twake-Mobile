@@ -5,6 +5,13 @@ abstract class NotificationState extends Equatable {
   const NotificationState();
 }
 
+class NotificationsAbsent extends NotificationState {
+  const NotificationsAbsent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ChannelMessageNotification extends NotificationState {
   final MessageNotification data;
 
