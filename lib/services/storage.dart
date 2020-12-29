@@ -48,7 +48,7 @@ class Storage {
     StorageType type,
     dynamic key,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     return await storeRef.record(key).get(this._db);
   }
 
@@ -58,7 +58,7 @@ class Storage {
     StorageType type,
     dynamic key,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     await storeRef.record(key).put(
           this._db,
           item.toJson(),
@@ -70,7 +70,7 @@ class Storage {
     Iterable<CollectionItem> items,
     StorageType type,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     await _db.transaction((txn) async {
       for (CollectionItem i in items) {
         await storeRef.record(i.id).put(txn, i.toJson(), merge: true);
@@ -101,7 +101,7 @@ class Storage {
       });
     }
     logger.v('Requesting $type from storage');
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     Finder finder = Finder(filter: filter, sortOrders: sortOrders);
     final records = await storeRef.find(_db, finder: finder);
     logger.d('GOT RECORDS: $records FROM STORAGE');
@@ -109,21 +109,21 @@ class Storage {
   }
 
   /// Selectively remove a record from store
-  Future<void> clean({
+  Future<void> delete({
     StorageType type,
     dynamic key,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     await storeRef.record(key).delete(_db);
   }
 
   Future<void> clearList(StorageType type) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     await storeRef.delete(_db);
   }
 
   /// Be carefull! This method clears all the data from store
-  Future<void> fullClean() async {
+  Future<void> fullDrop() async {
     await _db.transaction((txn) async {
       await _authStore.delete(txn);
       await _profileStore.delete(txn);
@@ -136,7 +136,7 @@ class Storage {
     });
   }
 
-  StoreRef _mapTypeToStore(StorageType type) {
+  StoreRef mapTypeToStore(StorageType type) {
     StoreRef storeRef;
     if (type == StorageType.Auth)
       storeRef = _authStore;

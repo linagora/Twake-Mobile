@@ -126,24 +126,20 @@ class AuthRepository extends JsonSerializable {
     _api.tokenIsValid = null;
     accessToken = null;
     refreshToken = null;
-    await _storage.clean(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
+    await _storage.delete(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
   }
 
   // Clears up entire database, be carefull!
   Future<void> fullClean() async {
-    _storage.fullClean();
+    _storage.fullDrop();
   }
 
-  /// Convenience methods to avoid deserializing this class from JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory AuthRepository.fromJson(Map<String, dynamic> json) =>
-      // After getting instance of auth from store, we should make sure
-      // that api has valid callbacks for validation and
-      // prolonging token + set up to date headers
       _$AuthRepositoryFromJson(json);
 
-  /// Convenience methods to avoid serializing this class to JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  factory AuthRepository.fromMap(Map<String, dynamic> json) =>
+      _$AuthRepositoryFromJson(json);
+
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
   // To update token related fields after instance has been created

@@ -11,16 +11,13 @@ class Channel extends CollectionItem {
   @JsonKey(required: true)
   String name;
 
-  @JsonKey(required: true)
+  @JsonKey(required: true, defaultValue: ':thumbsup:')
   final String icon;
 
   final String description;
 
   @JsonKey(required: true, name: 'members_count')
   int membersCount;
-
-  @JsonKey(required: true, name: 'private')
-  final bool isPrivate;
 
   @JsonKey(required: true, name: 'last_activity')
   int lastActivity;
@@ -34,14 +31,18 @@ class Channel extends CollectionItem {
   @JsonKey(name: 'workspace_id')
   String workspaceId;
 
-  @JsonKey(defaultValue: false)
+  @JsonKey(
+    defaultValue: false,
+    name: 'is_selected',
+    fromJson: intToBool,
+    toJson: boolToInt,
+  )
   bool isSelected;
 
   Channel({
     this.id,
     this.icon,
     this.description,
-    this.isPrivate,
   });
 
   /// Convenience methods to avoid deserializing this class from JSON

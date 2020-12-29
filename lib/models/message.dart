@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
 import 'package:twake/services/endpoints.dart';
@@ -18,8 +20,11 @@ class Message extends CollectionItem {
   @JsonKey(name: 'responses_count', defaultValue: 0)
   int responsesCount;
 
-  @JsonKey(required: true)
-  final Map<String, String> sender;
+  @JsonKey(name: 'user_id')
+  final String userId;
+
+  @JsonKey(name: 'app_id')
+  final String appId;
 
   @JsonKey(required: true, name: 'creation_date')
   int creationDate;
@@ -33,7 +38,12 @@ class Message extends CollectionItem {
   @JsonKey(required: true)
   String channelId;
 
-  @JsonKey(defaultValue: false)
+  @JsonKey(
+    defaultValue: false,
+    name: 'is_selected',
+    fromJson: intToBool,
+    toJson: boolToInt,
+  )
   bool isSelected;
 
   // used when deleting messages
@@ -50,7 +60,7 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
-  Message({this.id, this.sender, this.creationDate});
+  Message({this.id, this.userId, this.appId, this.creationDate});
 
   void updateReactions({String userId, Map<String, dynamic> body}) {
     String emojiCode = body['reaction'];
@@ -80,6 +90,12 @@ class Message extends CollectionItem {
   }
 
   factory Message.fromJson(Map<String, dynamic> json) {
+    if (json['content'] is String) {
+      json['content'] = jsonDecode(json['content']);
+    }
+    if (json['reactions'] is String) {
+      json['reactions'] = jsonDecode(json['reactions']);
+    }
     return _$MessageFromJson(json);
   }
 

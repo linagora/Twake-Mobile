@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
 
@@ -8,6 +10,7 @@ class Direct extends CollectionItem {
   @JsonKey(required: true)
   final String id;
 
+  @JsonKey(required: true)
   String name;
 
   @JsonKey(required: true, name: 'company_id')
@@ -23,9 +26,6 @@ class Direct extends CollectionItem {
   @JsonKey(required: true, name: 'members_count')
   int membersCount;
 
-  @JsonKey(required: true, name: 'private')
-  bool isPrivate;
-
   @JsonKey(required: true, name: 'last_activity')
   int lastActivity;
 
@@ -35,7 +35,12 @@ class Direct extends CollectionItem {
   @JsonKey(required: true, name: 'messages_unread')
   int messageUnread;
 
-  @JsonKey(defaultValue: false)
+  @JsonKey(
+    defaultValue: false,
+    name: 'is_selected',
+    fromJson: intToBool,
+    toJson: boolToInt,
+  )
   bool isSelected;
 
   Direct({
@@ -43,7 +48,16 @@ class Direct extends CollectionItem {
     this.companyId,
   });
 
-  factory Direct.fromJson(Map<String, dynamic> json) => _$DirectFromJson(json);
+  factory Direct.fromJson(Map<String, dynamic> json) {
+    if (json['members'] is String) {
+      json['members'] = jsonDecode(json['members']);
+    }
+    return _$DirectFromJson(json);
+  }
 
-  Map<String, dynamic> toJson() => _$DirectToJson(this);
+  Map<String, dynamic> toJson() {
+    var map = _$DirectToJson(this);
+    map['members'] = jsonEncode(map['members']);
+    return map;
+  }
 }

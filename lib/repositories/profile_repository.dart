@@ -58,7 +58,7 @@ class ProfileRepository extends JsonSerializable {
   }
 
   Future<void> clean() async {
-    await _storage.clean(
+    await _storage.delete(
       type: StorageType.Profile,
       key: _PROFILE_STORE_INDEX,
     );

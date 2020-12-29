@@ -58,6 +58,7 @@ class CollectionRepository<T extends CollectionItem> {
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
     final collection =
         CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
+    collection.save();
     return collection;
   }
 
@@ -77,6 +78,7 @@ class CollectionRepository<T extends CollectionItem> {
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
     bool forceFromApi: false,
+    bool saveToStore: false,
   }) async {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
@@ -91,7 +93,7 @@ class CollectionRepository<T extends CollectionItem> {
       // logger.d('Reloading $T items from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
     }
-    await this.save();
+    if (saveToStore) await this.save();
     _updateItems(itemsList);
   }
 
@@ -128,7 +130,7 @@ class CollectionRepository<T extends CollectionItem> {
     bool removeFromItems: true,
     Map<String, dynamic> requestBody,
   }) async {
-    await _storage.clean(type: _typeToStorageType[T], key: key);
+    await _storage.delete(type: _typeToStorageType[T], key: key);
     if (apiSync) {
       await _api.delete(apiEndpoint, body: requestBody);
     }
