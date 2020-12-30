@@ -5,6 +5,7 @@ import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/events/messages_event.dart';
+import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
@@ -23,7 +24,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   StreamSubscription directsSubscription;
   StreamSubscription notificationSubscription;
 
-  String selectedChannelId;
+  BaseChannel selectedChannel;
 
   MessagesBloc({
     this.repository,
@@ -32,14 +33,14 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     this.notificationBloc,
   }) : super(MessagesEmpty()) {
     channelsSubscription = channelsBloc.listen((ChannelState state) {
-      if (state is ChannelsLoaded) {
-        selectedChannelId = state.selected.id;
+      if (state is ChannelsLoaded && state.fetchMessages) {
+        selectedChannel = state.selected;
         this.add(LoadMessages());
       }
     });
     directsSubscription = directsBloc.listen((ChannelState state) {
-      if (state is DirectsLoaded) {
-        selectedChannelId = state.selected.id;
+      if (state is DirectsLoaded && state.fetchMessages) {
+        selectedChannel = state.selected;
         this.add(LoadMessages());
       }
     });
@@ -52,7 +53,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         ));
       }
     });
-    selectedChannelId = channelsBloc.repository.selected.id;
+    selectedChannel = channelsBloc.repository.selected;
   }
 
   @override
@@ -62,7 +63,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: [
-          ['channel_id', '=', selectedChannelId]
+          ['channel_id', '=', selectedChannel.id]
         ],
       );
       if (repository.items.isEmpty)
@@ -76,14 +77,14 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is LoadSingleMessage) {
       await repository.pullOne(
         _makeQueryParams(event),
-        addToItems: event.channelId == selectedChannelId,
+        addToItems: event.channelId == selectedChannel.id,
       );
       yield MessagesLoaded(messages: repository.items);
     } else if (event is RemoveMessage) {
       await repository.delete(
         event.messageId,
         apiSync: !event.onNotify,
-        removeFromItems: event.channelId == selectedChannelId,
+        removeFromItems: event.channelId == selectedChannel.id,
         requestBody: _makeQueryParams(event),
       );
       if (repository.items.isEmpty)
@@ -112,7 +113,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['channel_id'] = map['channel_id'] ?? selectedChannelId;
+    map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
     map['company_id'] = directsBloc.selectedCompanyId;
     map['workspace_id'] = channelsBloc.selectedWorkspaceId;
     return map;
