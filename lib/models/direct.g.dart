@@ -10,38 +10,38 @@ Direct _$DirectFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const [
     'id',
     'name',
-    'company_id',
-    'members',
     'members_count',
     'last_activity',
     'messages_total',
-    'messages_unread'
+    'messages_unread',
+    'company_id',
+    'members'
   ]);
   return Direct(
-    id: json['id'] as String,
     companyId: json['company_id'] as String,
+    members: (json['members'] as List)?.map((e) => e as String)?.toList(),
   )
+    ..id = json['id'] as String
     ..name = json['name'] as String
-    ..members = (json['members'] as List)?.map((e) => e as String)?.toList()
     ..icon = json['icon'] as String
     ..description = json['description'] as String
     ..membersCount = json['members_count'] as int
     ..lastActivity = json['last_activity'] as int
-    ..messageTotal = json['messages_total'] as int
-    ..messageUnread = json['messages_unread'] as int
+    ..messagesTotal = json['messages_total'] as int
+    ..messagesUnread = json['messages_unread'] as int
     ..isSelected = intToBool(json['is_selected'] as int);
 }
 
 Map<String, dynamic> _$DirectToJson(Direct instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'company_id': instance.companyId,
-      'members': instance.members,
       'icon': instance.icon,
       'description': instance.description,
       'members_count': instance.membersCount,
       'last_activity': instance.lastActivity,
-      'messages_total': instance.messageTotal,
-      'messages_unread': instance.messageUnread,
+      'messages_total': instance.messagesTotal,
+      'messages_unread': instance.messagesUnread,
       'is_selected': boolToInt(instance.isSelected),
+      'company_id': instance.companyId,
+      'members': instance.members,
     };

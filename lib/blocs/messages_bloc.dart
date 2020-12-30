@@ -69,7 +69,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         yield MessagesEmpty();
       else {
         await UserRepository().batchUsersLoad(
-          repository.items.map((i) => i.sender['user_id']).toSet(),
+          repository.items.map((i) => i.userId).toSet(),
         );
         yield MessagesLoaded(messages: repository.items);
       }

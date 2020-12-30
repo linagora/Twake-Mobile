@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'channel.dart';
+part of 'base_channel.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Channel _$ChannelFromJson(Map<String, dynamic> json) {
+BaseChannel _$BaseChannelFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const [
     'id',
     'name',
@@ -15,10 +15,9 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     'messages_total',
     'messages_unread'
   ]);
-  return Channel(
-    workspaceId: json['workspace_id'] as String,
+  return BaseChannel(
+    id: json['id'] as String,
   )
-    ..id = json['id'] as String
     ..name = json['name'] as String
     ..icon = json['icon'] as String
     ..description = json['description'] as String
@@ -29,7 +28,8 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     ..isSelected = intToBool(json['is_selected'] as int);
 }
 
-Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
+Map<String, dynamic> _$BaseChannelToJson(BaseChannel instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'icon': instance.icon,
@@ -39,5 +39,4 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'messages_total': instance.messagesTotal,
       'messages_unread': instance.messagesUnread,
       'is_selected': boolToInt(instance.isSelected),
-      'workspace_id': instance.workspaceId,
     };
