@@ -112,7 +112,7 @@ class AuthRepository extends JsonSerializable {
 
   Future<void> save() async {
     await _storage.store(
-      item: this,
+      item: this.toJson(),
       type: StorageType.Auth,
       key: _AUTH_STORE_INDEX,
     );
@@ -131,7 +131,7 @@ class AuthRepository extends JsonSerializable {
 
   // Clears up entire database, be carefull!
   Future<void> fullClean() async {
-    _storage.fullDrop();
+    _storage.truncateAll();
   }
 
   factory AuthRepository.fromJson(Map<String, dynamic> json) =>

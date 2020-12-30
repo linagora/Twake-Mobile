@@ -47,7 +47,7 @@ class CollectionRepository<T extends CollectionItem> {
     Map<String, dynamic> queryParams,
     List<List> filters,
   }) async {
-    List<dynamic> itemsList = await _storage.loadList(
+    List<dynamic> itemsList = await _storage.batchLoad(
       type: _typeToStorageType[T],
       filters: filters,
     );
@@ -83,10 +83,10 @@ class CollectionRepository<T extends CollectionItem> {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
       logger.d('Reloading $T items from storage...');
-      itemsList = await _storage.loadList(
+      itemsList = await _storage.batchLoad(
         type: _typeToStorageType[T],
         filters: filters,
-        sortFields: sortFields,
+        orderings: sortFields,
       );
     }
     if (itemsList.isEmpty) {
@@ -120,7 +120,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> clean() async {
-    await _storage.clearList(_typeToStorageType[T]);
+    await _storage.truncate(_typeToStorageType[T]);
     items.clear();
   }
 
@@ -143,15 +143,15 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> save() async {
-    await _storage.storeList(
-      items: this.items,
+    await _storage.batchStore(
+      items: this.items.map((i) => i.toJson()),
       type: _typeToStorageType[T],
     );
   }
 
   Future<void> saveOne(T item) async {
     await _storage.store(
-      item: item,
+      item: item.toJson(),
       type: _typeToStorageType[T],
       key: item,
     );

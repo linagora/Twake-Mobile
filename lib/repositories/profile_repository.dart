@@ -66,7 +66,7 @@ class ProfileRepository extends JsonSerializable {
 
   Future<void> save() async {
     await _storage.store(
-      item: this,
+      item: this.toJson(),
       type: StorageType.Profile,
       key: _PROFILE_STORE_INDEX,
     );
