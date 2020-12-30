@@ -1,16 +1,18 @@
 import 'dart:io' show Platform;
 
-import 'package:twake/services/storage/sembast.dart';
+// import 'package:twake/services/storage/sembast.dart';
+import 'package:twake/services/storage/sqlite.dart';
 
 abstract class Storage {
+  final settingsField = null;
   static Storage _storage;
   factory Storage() {
     if (_storage == null) {
       if (Platform.isIOS || Platform.isAndroid) {
-        _storage = Sembast();
+        _storage = SQLite();
+      } else {
+        throw '${Platform.operatingSystem} is not supported';
       }
-    } else {
-      throw '${Platform.operatingSystem} is not supported';
     }
     return _storage;
   }
@@ -20,7 +22,7 @@ abstract class Storage {
   Future<Map<String, dynamic>> load({
     StorageType type,
     dynamic key,
-    bool copyMap,
+    List<String> fields,
   });
 
   Future<void> store({

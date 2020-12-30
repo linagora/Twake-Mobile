@@ -27,7 +27,7 @@ CREATE TABLE workspace (
     is_selected INT DEFAULT 0,
     FOREIGN KEY(company_id) REFERENCES company(id)
 );
-CREATE INDEX workspace_company_idx ON workspace(channel_id);
+CREATE INDEX workspace_company_idx ON workspace(company_id);
 ''';
 
 const String CREATE_CHANNEL_V1 = '''
@@ -52,6 +52,7 @@ CREATE TABLE direct (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     company_id TEXT NOT NULL,
+    members TEXT NOT NULL,
     icon TEXT,
     description TEXT,
     last_activity INT,
@@ -75,7 +76,7 @@ CREATE TABLE message (
     creation_date INT NOT NULL,
     content TEXT,
     reactions TEXT,
-    is_selected INT DEFAULT 0,
+    is_selected INT DEFAULT 0
 );
 CREATE INDEX message_channel_idx ON message(channel_id);
 CREATE INDEX message_thread_idx ON message(thread_id);
@@ -87,7 +88,7 @@ CREATE TABLE user (
     username TEXT,
     firstname TEXT,
     lastname TEXT,
-    lastname thumbnail
+    thumbnail TEXT
 )
 ''';
 

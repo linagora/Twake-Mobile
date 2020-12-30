@@ -16,8 +16,14 @@ class CollectionRepository<T extends CollectionItem> {
     Company: (Map<String, dynamic> json) => Company.fromJson(json),
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
     Channel: (Map<String, dynamic> json) => Channel.fromJson(json),
-    Message: (Map<String, dynamic> json) => Message.fromJson(json),
-    Direct: (Map<String, dynamic> json) => Direct.fromJson(json),
+    Message: (Map<String, dynamic> json) {
+      json = Map.from(json);
+      return Message.fromJson(json);
+    },
+    Direct: (Map<String, dynamic> json) {
+      json = Map.from(json);
+      return Direct.fromJson(json);
+    }
   };
 
   static Map<Type, StorageType> _typeToStorageType = {
@@ -51,14 +57,16 @@ class CollectionRepository<T extends CollectionItem> {
       type: _typeToStorageType[T],
       filters: filters,
     );
+    bool saveToStore = false;
     if (itemsList.isEmpty) {
       logger.d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
+      saveToStore = true;
     }
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
     final collection =
         CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
-    collection.save();
+    if (saveToStore) collection.save();
     return collection;
   }
 
@@ -78,23 +86,23 @@ class CollectionRepository<T extends CollectionItem> {
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
     bool forceFromApi: false,
-    bool saveToStore: false,
   }) async {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
-      logger.d('Reloading $T items from storage...');
+      logger.d('Reloading $T items from storage...\nFilters: $filters');
       itemsList = await _storage.batchLoad(
         type: _typeToStorageType[T],
         filters: filters,
         orderings: sortFields,
       );
     }
+    bool saveToStore = false;
     if (itemsList.isEmpty) {
-      // logger.d('Reloading $T items from api...');
+      logger.d('Non in storage. Reloading $T items from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
+      saveToStore = true;
     }
-    if (saveToStore) await this.save();
-    _updateItems(itemsList);
+    _updateItems(itemsList, saveToStore: saveToStore);
   }
 
   Future<void> pullOne(
@@ -137,9 +145,13 @@ class CollectionRepository<T extends CollectionItem> {
     if (removeFromItems) items.removeWhere((i) => i.id == key);
   }
 
-  void _updateItems(List<dynamic> itemsList) {
+  void _updateItems(
+    List<dynamic> itemsList, {
+    bool saveToStore: false,
+  }) {
     final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T)).toList();
     this.items = items;
+    if (saveToStore) this.save();
   }
 
   Future<void> save() async {

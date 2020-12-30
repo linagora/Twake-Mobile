@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'dart:convert' show jsonEncode;
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -8,7 +9,7 @@ part 'auth_repository.g.dart';
 // Index of auth record in store
 // because it's a global object,
 // it always has only one record in store
-const _AUTH_STORE_INDEX = 0;
+const AUTH_STORE_INDEX = 'auth';
 
 @JsonSerializable()
 class AuthRepository extends JsonSerializable {
@@ -112,9 +113,11 @@ class AuthRepository extends JsonSerializable {
 
   Future<void> save() async {
     await _storage.store(
-      item: this.toJson(),
+      item: {
+        'id': AUTH_STORE_INDEX,
+        _storage.settingsField: jsonEncode(this.toJson())
+      },
       type: StorageType.Auth,
-      key: _AUTH_STORE_INDEX,
     );
   }
 
@@ -126,7 +129,7 @@ class AuthRepository extends JsonSerializable {
     _api.tokenIsValid = null;
     accessToken = null;
     refreshToken = null;
-    await _storage.delete(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
+    await _storage.delete(type: StorageType.Auth, key: AUTH_STORE_INDEX);
   }
 
   // Clears up entire database, be carefull!

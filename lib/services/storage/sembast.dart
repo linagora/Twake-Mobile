@@ -8,8 +8,11 @@ import 'package:twake/services/storage/storage.dart';
 const String _DATABASE_FILE = 'twake.db';
 
 class Sembast with Storage {
-  StoreRef _authStore = intMapStoreFactory.store('auth');
-  StoreRef _profileStore = intMapStoreFactory.store('profile');
+  @override
+  final settingsField = null;
+
+  StoreRef _authStore = stringMapStoreFactory.store('auth');
+  StoreRef _profileStore = stringMapStoreFactory.store('profile');
   StoreRef _companyStore = stringMapStoreFactory.store('company');
   StoreRef _workspaceStore = stringMapStoreFactory.store('workspace');
   StoreRef _channelStore = stringMapStoreFactory.store('channel');
@@ -40,11 +43,10 @@ class Sembast with Storage {
   Future<Map<String, dynamic>> load({
     StorageType type,
     dynamic key,
-    bool copyMap: false,
+    List<String> fields,
   }) async {
     StoreRef storeRef = mapTypeToStore(type);
     final Map<String, dynamic> item = await storeRef.record(key).get(this._db);
-    if (copyMap) return Map.from(item);
     return item;
   }
 
