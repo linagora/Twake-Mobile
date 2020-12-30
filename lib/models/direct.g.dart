@@ -9,10 +9,10 @@ part of 'direct.dart';
 Direct _$DirectFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const [
     'id',
+    'name',
     'company_id',
     'members',
     'members_count',
-    'private',
     'last_activity',
     'messages_total',
     'messages_unread'
@@ -26,11 +26,10 @@ Direct _$DirectFromJson(Map<String, dynamic> json) {
     ..icon = json['icon'] as String
     ..description = json['description'] as String
     ..membersCount = json['members_count'] as int
-    ..isPrivate = json['private'] as bool
     ..lastActivity = json['last_activity'] as int
     ..messageTotal = json['messages_total'] as int
     ..messageUnread = json['messages_unread'] as int
-    ..isSelected = json['isSelected'] as bool ?? false;
+    ..isSelected = intToBool(json['is_selected'] as int);
 }
 
 Map<String, dynamic> _$DirectToJson(Direct instance) => <String, dynamic>{
@@ -41,9 +40,8 @@ Map<String, dynamic> _$DirectToJson(Direct instance) => <String, dynamic>{
       'icon': instance.icon,
       'description': instance.description,
       'members_count': instance.membersCount,
-      'private': instance.isPrivate,
       'last_activity': instance.lastActivity,
       'messages_total': instance.messageTotal,
       'messages_unread': instance.messageUnread,
-      'isSelected': instance.isSelected,
+      'is_selected': boolToInt(instance.isSelected),
     };

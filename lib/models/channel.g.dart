@@ -12,16 +12,14 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     'name',
     'icon',
     'members_count',
-    'private',
     'last_activity',
     'messages_total',
     'messages_unread'
   ]);
   return Channel(
     id: json['id'] as String,
-    icon: json['icon'] as String,
+    icon: json['icon'] as String ?? ':thumbsup:',
     description: json['description'] as String,
-    isPrivate: json['private'] as bool,
   )
     ..name = json['name'] as String
     ..membersCount = json['members_count'] as int
@@ -29,7 +27,7 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     ..messagesTotal = json['messages_total'] as int
     ..messagesUnread = json['messages_unread'] as int
     ..workspaceId = json['workspace_id'] as String
-    ..isSelected = json['isSelected'] as bool ?? false;
+    ..isSelected = intToBool(json['is_selected'] as int);
 }
 
 Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
@@ -38,10 +36,9 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'icon': instance.icon,
       'description': instance.description,
       'members_count': instance.membersCount,
-      'private': instance.isPrivate,
       'last_activity': instance.lastActivity,
       'messages_total': instance.messagesTotal,
       'messages_unread': instance.messagesUnread,
       'workspace_id': instance.workspaceId,
-      'isSelected': instance.isSelected,
+      'is_selected': boolToInt(instance.isSelected),
     };

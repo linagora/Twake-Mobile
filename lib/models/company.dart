@@ -18,12 +18,11 @@ class Company extends CollectionItem {
   final int totalMembers;
 
   @JsonKey(
-    defaultValue: false,
     name: 'is_selected',
     fromJson: intToBool,
     toJson: boolToInt,
   )
-  bool isSelected;
+  bool isSelected = false;
 
   Company({
     this.id,

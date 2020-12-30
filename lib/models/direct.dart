@@ -36,12 +36,11 @@ class Direct extends CollectionItem {
   int messageUnread;
 
   @JsonKey(
-    defaultValue: false,
     name: 'is_selected',
     fromJson: intToBool,
     toJson: boolToInt,
   )
-  bool isSelected;
+  bool isSelected = false;
 
   Direct({
     this.id,

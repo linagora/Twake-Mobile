@@ -32,12 +32,11 @@ class Channel extends CollectionItem {
   String workspaceId;
 
   @JsonKey(
-    defaultValue: false,
     name: 'is_selected',
     fromJson: intToBool,
     toJson: boolToInt,
   )
-  bool isSelected;
+  bool isSelected = false;
 
   Channel({
     this.id,

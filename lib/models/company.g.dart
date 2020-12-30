@@ -13,7 +13,7 @@ Company _$CompanyFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     logo: json['logo'] as String,
     totalMembers: json['total_members'] as int ?? 0,
-  )..isSelected = json['isSelected'] as bool ?? false;
+  )..isSelected = intToBool(json['is_selected'] as int);
 }
 
 Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
@@ -21,5 +21,5 @@ Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
       'name': instance.name,
       'logo': instance.logo,
       'total_members': instance.totalMembers,
-      'isSelected': instance.isSelected,
+      'is_selected': boolToInt(instance.isSelected),
     };

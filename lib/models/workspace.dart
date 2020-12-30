@@ -25,12 +25,11 @@ class Workspace extends CollectionItem {
   int totalMembers;
 
   @JsonKey(
-    defaultValue: false,
     name: 'is_selected',
     fromJson: intToBool,
     toJson: boolToInt,
   )
-  bool isSelected;
+  bool isSelected = false;
 
   Workspace({
     this.id,

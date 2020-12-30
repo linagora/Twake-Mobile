@@ -39,12 +39,11 @@ class Message extends CollectionItem {
   String channelId;
 
   @JsonKey(
-    defaultValue: false,
     name: 'is_selected',
     fromJson: intToBool,
     toJson: boolToInt,
   )
-  bool isSelected;
+  bool isSelected = false;
 
   // used when deleting messages
   // TODO try to remove this field
@@ -86,7 +85,11 @@ class Message extends CollectionItem {
   }
 
   Future<void> save() async {
-    await _storage.store(item: this, type: StorageType.Message, key: id);
+    await _storage.store(
+      item: this.toJson(),
+      type: StorageType.Message,
+      key: id,
+    );
   }
 
   factory Message.fromJson(Map<String, dynamic> json) {
