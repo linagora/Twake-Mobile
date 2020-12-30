@@ -122,7 +122,7 @@ class Api {
       InterceptorsWrapper(
         // token validation causes infinite loop
         onRequest: (options) async {
-          logger.d('URI: ${options.uri}\nQP: ${options.queryParameters}');
+          // logger.d('URI: ${options.uri}\nQP: ${options.queryParameters}');
           if (_tokenIsValid != null) {
             switch (_tokenIsValid()) {
               case TokenStatus.Valid:
@@ -144,8 +144,9 @@ class Api {
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             _prolongToken();
+          } else {
+            return ApiError.fromDioError(error);
           }
-          return ApiError.fromDioError(error);
         },
       ),
     );

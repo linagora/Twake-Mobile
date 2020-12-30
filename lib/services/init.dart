@@ -1,3 +1,5 @@
+import 'dart:convert' show jsonDecode;
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:package_info/package_info.dart';
@@ -13,8 +15,6 @@ import 'package:twake/repositories/user_repository.dart';
 
 import 'service_bundle.dart';
 
-const AUTH_STORE_INDEX = 0;
-
 Future<AuthRepository> initAuth() async {
   final store = Storage();
   await store.initDb();
@@ -27,8 +27,14 @@ Future<AuthRepository> initAuth() async {
     Logger.level = Level.error;
   final logger = Logger();
 
-  final authMap =
-      await store.load(type: StorageType.Auth, key: AUTH_STORE_INDEX);
+  Logger().d('SETTINGS FIELD NAME: ' + store.settingsField);
+  var authMap = await store.load(
+    type: StorageType.Auth,
+    fields: store.settingsField != null ? [store.settingsField] : null,
+    key: AUTH_STORE_INDEX,
+  );
+
+  if (authMap != null) authMap = jsonDecode(authMap[store.settingsField]);
 
   logger.d('Auth data from storage: $authMap');
 

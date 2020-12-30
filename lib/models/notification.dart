@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+part 'notification.g.dart';
+
 abstract class NotificationData extends Equatable {
   const NotificationData();
 }
@@ -12,9 +14,9 @@ class MessageNotification extends NotificationData {
   @JsonKey(name: 'workspace_id')
   final String workspaceId;
   @JsonKey(name: 'channel_id')
-  String channelId;
+  final String channelId;
   @JsonKey(name: 'thread_id')
-  String threadId;
+  final String threadId;
   @JsonKey(name: 'message_id')
   final String messageId;
 

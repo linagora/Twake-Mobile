@@ -1,13 +1,11 @@
+import 'dart:convert' show jsonEncode, jsonDecode;
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'profile_repository.g.dart';
 
-// Index of profile record in store
-// because it's a global object,
-// it always has only one record in store
-// per running app
-const _PROFILE_STORE_INDEX = 0;
+const _PROFILE_STORE_INDEX = 'profile';
 
 @JsonSerializable(explicitToJson: true)
 class ProfileRepository extends JsonSerializable {
@@ -37,13 +35,16 @@ class ProfileRepository extends JsonSerializable {
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
     bool loadedFromNetwork = false;
-    logger.d('Loading profile from storage');
     var profileMap = await _storage.load(
-        type: StorageType.Profile, key: _PROFILE_STORE_INDEX);
+      type: StorageType.Profile,
+      key: _PROFILE_STORE_INDEX,
+    );
     if (profileMap == null) {
       logger.d('No profile in storage, requesting from api...');
       profileMap = await _api.get(Endpoint.profile);
       loadedFromNetwork = true;
+    } else {
+      profileMap = jsonDecode(profileMap[_storage.settingsField]);
     }
     // Get repository instance
     final profile = ProfileRepository.fromJson(profileMap);
@@ -59,7 +60,7 @@ class ProfileRepository extends JsonSerializable {
   }
 
   Future<void> clean() async {
-    await _storage.clean(
+    await _storage.delete(
       type: StorageType.Profile,
       key: _PROFILE_STORE_INDEX,
     );
@@ -67,9 +68,11 @@ class ProfileRepository extends JsonSerializable {
 
   Future<void> save() async {
     await _storage.store(
-      item: this,
+      item: {
+        'id': _PROFILE_STORE_INDEX,
+        _storage.settingsField: jsonEncode(this.toJson())
+      },
       type: StorageType.Profile,
-      key: _PROFILE_STORE_INDEX,
     );
   }
 

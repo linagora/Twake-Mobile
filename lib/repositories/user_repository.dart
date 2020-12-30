@@ -62,14 +62,18 @@ class UserRepository {
     final users =
         response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
     items.addEntries(users);
-    _storage.storeList(
-      items: items.values,
+    _storage.batchStore(
+      items: items.values.map((u) => u.toJson()),
       type: StorageType.User,
     );
     logger.d('Loaded ${items.length} users for messages');
   }
 
   Future<void> save(User user) async {
-    await _storage.store(item: user, type: StorageType.User, key: user.id);
+    await _storage.store(
+      item: user.toJson(),
+      type: StorageType.User,
+      key: user.id,
+    );
   }
 }

@@ -7,6 +7,7 @@ abstract class NotificationEvent extends Equatable {
 
 class ChannelMessageEvent extends NotificationEvent {
   final MessageNotification data;
+
   const ChannelMessageEvent(this.data);
 
   @override
@@ -15,6 +16,7 @@ class ChannelMessageEvent extends NotificationEvent {
 
 class ThreadMessageEvent extends NotificationEvent {
   final MessageNotification data;
+
   const ThreadMessageEvent(this.data);
 
   @override

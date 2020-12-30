@@ -67,6 +67,7 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
       yield DirectsLoaded(
         directs: repository.items,
         selected: repository.selected,
+        fetchMessages: true,
       );
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading

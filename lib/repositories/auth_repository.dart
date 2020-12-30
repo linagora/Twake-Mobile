@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'dart:convert' show jsonEncode;
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -8,7 +9,7 @@ part 'auth_repository.g.dart';
 // Index of auth record in store
 // because it's a global object,
 // it always has only one record in store
-const _AUTH_STORE_INDEX = 0;
+const AUTH_STORE_INDEX = 'auth';
 
 @JsonSerializable()
 class AuthRepository extends JsonSerializable {
@@ -112,9 +113,11 @@ class AuthRepository extends JsonSerializable {
 
   Future<void> save() async {
     await _storage.store(
-      item: this,
+      item: {
+        'id': AUTH_STORE_INDEX,
+        _storage.settingsField: jsonEncode(this.toJson())
+      },
       type: StorageType.Auth,
-      key: _AUTH_STORE_INDEX,
     );
   }
 
@@ -126,24 +129,20 @@ class AuthRepository extends JsonSerializable {
     _api.tokenIsValid = null;
     accessToken = null;
     refreshToken = null;
-    await _storage.clean(type: StorageType.Auth, key: _AUTH_STORE_INDEX);
+    await _storage.delete(type: StorageType.Auth, key: AUTH_STORE_INDEX);
   }
 
   // Clears up entire database, be carefull!
   Future<void> fullClean() async {
-    _storage.fullClean();
+    _storage.truncateAll();
   }
 
-  /// Convenience methods to avoid deserializing this class from JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory AuthRepository.fromJson(Map<String, dynamic> json) =>
-      // After getting instance of auth from store, we should make sure
-      // that api has valid callbacks for validation and
-      // prolonging token + set up to date headers
       _$AuthRepositoryFromJson(json);
 
-  /// Convenience methods to avoid serializing this class to JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
+  factory AuthRepository.fromMap(Map<String, dynamic> json) =>
+      _$AuthRepositoryFromJson(json);
+
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
   // To update token related fields after instance has been created
@@ -181,7 +180,6 @@ class AuthRepository extends JsonSerializable {
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
-    logger.d('HEADERS: $apiVersion');
     _api = Api(headers: headers);
   }
 }

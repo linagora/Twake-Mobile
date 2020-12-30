@@ -1,47 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/collection_item.dart';
 
 part 'channel.g.dart';
 
 @JsonSerializable()
-class Channel extends CollectionItem {
-  @JsonKey(required: true)
-  final String id;
-
-  @JsonKey(required: true)
-  String name;
-
-  @JsonKey(required: true)
-  final String icon;
-
-  final String description;
-
-  @JsonKey(required: true, name: 'members_count')
-  int membersCount;
-
-  @JsonKey(required: true, name: 'private')
-  final bool isPrivate;
-
-  @JsonKey(required: true, name: 'last_activity')
-  int lastActivity;
-
-  @JsonKey(required: true, name: 'messages_total')
-  int messagesTotal;
-
-  @JsonKey(required: true, name: 'messages_unread')
-  int messagesUnread;
-
+class Channel extends BaseChannel {
   @JsonKey(name: 'workspace_id')
   String workspaceId;
 
-  @JsonKey(defaultValue: false)
-  bool isSelected;
-
   Channel({
-    this.id,
-    this.icon,
-    this.description,
-    this.isPrivate,
+    this.workspaceId,
   });
 
   /// Convenience methods to avoid deserializing this class from JSON

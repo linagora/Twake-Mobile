@@ -61,6 +61,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       yield ChannelsLoaded(
         channels: repository.items,
         selected: repository.selected,
+        fetchMessages: true,
       );
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading

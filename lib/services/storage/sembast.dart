@@ -3,14 +3,16 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
-import 'package:twake/models/collection_item.dart';
+import 'package:twake/services/storage/storage.dart';
 
 const String _DATABASE_FILE = 'twake.db';
 
-class Storage {
-  static Storage _storage;
-  StoreRef _authStore = intMapStoreFactory.store('auth');
-  StoreRef _profileStore = intMapStoreFactory.store('profile');
+class Sembast with Storage {
+  @override
+  final settingsField = null;
+
+  StoreRef _authStore = stringMapStoreFactory.store('auth');
+  StoreRef _profileStore = stringMapStoreFactory.store('profile');
   StoreRef _companyStore = stringMapStoreFactory.store('company');
   StoreRef _workspaceStore = stringMapStoreFactory.store('workspace');
   StoreRef _channelStore = stringMapStoreFactory.store('channel');
@@ -21,16 +23,10 @@ class Storage {
 
   final logger = Logger();
 
-  factory Storage() {
-    if (_storage == null) {
-      _storage = Storage._();
-    }
-    return _storage;
-  }
-
-  Storage._();
+  Sembast();
 
   /// Initialize store, create file if doesn't exist
+  @override
   Future<void> initDb() async {
     // Initialize database
     // First get application directory on device
@@ -43,98 +39,93 @@ class Storage {
     this._db = await databaseFactoryIo.openDatabase(dbPath);
   }
 
-  /// Load data of particular type from specified key
+  @override
   Future<Map<String, dynamic>> load({
     StorageType type,
     dynamic key,
+    List<String> fields,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
-    return await storeRef.record(key).get(this._db);
+    StoreRef storeRef = mapTypeToStore(type);
+    final Map<String, dynamic> item = await storeRef.record(key).get(this._db);
+    return item;
   }
 
-  /// Store data of particular type at particular key
+  @override
   Future<void> store({
-    item, // JsonSerializable
+    Map<String, dynamic> item, // JsonSerializable
     StorageType type,
     dynamic key,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
-    await storeRef.record(key).put(
-          this._db,
-          item.toJson(),
-          merge: true,
-        );
+    StoreRef storeRef = mapTypeToStore(type);
+    if (key != null)
+      await storeRef.record(key).put(
+            this._db,
+            item,
+            merge: true,
+          );
+    else
+      storeRef.add(this._db, item);
   }
 
-  Future<void> storeList({
-    Iterable<CollectionItem> items,
+  @override
+  Future<void> batchStore({
+    Iterable<Map<String, dynamic>> items,
     StorageType type,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     await _db.transaction((txn) async {
-      for (CollectionItem i in items) {
-        await storeRef.record(i.id).put(txn, i.toJson(), merge: true);
+      for (Map i in items) {
+        await storeRef.record(i['id']).put(txn, i, merge: true);
       }
     });
   }
 
-  /// Method for loading list of items from store.
-  /// If filtered result is wanted, then filter of type
-  /// Filters should be passed, same goes for sorting.
-  /// More on how to make queries:
-  /// https://github.com/tekartik/sembast.dart/blob/master/sembast/doc/queries.md
-  Future<List<Map<String, dynamic>>> loadList({
+  @override
+  Future<List<Map<String, dynamic>>> batchLoad({
     StorageType type,
     List<List> filters,
-    Map<String, bool> sortFields,
+    Map<String, bool> orderings,
   }) async {
     Filter filter;
     if (filters != null) {
       logger.d('Filters were: $filters');
-      filter = _filterBuild(filters);
+      filter = filtersBuild(filters);
     }
-    List<SortOrder> sortOrders;
-    if (sortFields != null) {
-      sortOrders = [];
-      sortFields.entries.forEach((entry) {
-        sortOrders.add(SortOrder(entry.key, entry.value));
-      });
-    }
+    List<SortOrder> sortOrders = orderingsBuild(orderings);
     logger.v('Requesting $type from storage');
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     Finder finder = Finder(filter: filter, sortOrders: sortOrders);
     final records = await storeRef.find(_db, finder: finder);
     logger.d('GOT RECORDS: $records FROM STORAGE');
     return records.map((r) => r.value as Map<String, dynamic>).toList();
   }
 
-  /// Selectively remove a record from store
-  Future<void> clean({
+  @override
+  Future<void> delete({
     StorageType type,
     dynamic key,
   }) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+    StoreRef storeRef = mapTypeToStore(type);
     await storeRef.record(key).delete(_db);
   }
 
-  Future<void> clearList(StorageType type) async {
-    StoreRef storeRef = _mapTypeToStore(type);
+  @override
+  Future<void> truncate(StorageType type) async {
+    StoreRef storeRef = mapTypeToStore(type);
     await storeRef.delete(_db);
   }
 
-  /// Be carefull! This method clears all the data from store
-  Future<void> fullClean() async {
+  @override
+  Future<void> truncateAll() async {
     await _db.transaction((txn) async {
-      await _authStore.delete(txn);
-      await _profileStore.delete(txn);
-      await _companyStore.delete(txn);
-      await _workspaceStore.delete(txn);
-      await _channelStore.delete(txn);
-      await _messageStore.delete(txn);
+      for (StoreRef s in getAllStorages()) {
+        await s.delete(txn);
+      }
     });
   }
 
-  StoreRef _mapTypeToStore(StorageType type) {
+  @override
+  StoreRef mapTypeToStore(StorageType type) {
     StoreRef storeRef;
     if (type == StorageType.Auth)
       storeRef = _authStore;
@@ -157,7 +148,8 @@ class Storage {
     return storeRef;
   }
 
-  Filter _filterBuild(List<List> expressions) {
+  @override
+  Filter filtersBuild(List<List> expressions) {
     List<Filter> andFilter = [];
     for (List e in expressions) {
       assert(e.length == 3);
@@ -186,15 +178,16 @@ class Storage {
     }
     return Filter.and(andFilter);
   }
-}
 
-enum StorageType {
-  Auth,
-  Profile,
-  Company,
-  Workspace,
-  Channel,
-  Direct,
-  Message,
-  User,
+  @override
+  List<SortOrder> orderingsBuild(Map<String, bool> orderings) {
+    List<SortOrder> sortOrders;
+    if (orderings != null) {
+      sortOrders = [];
+      orderings.entries.forEach((entry) {
+        sortOrders.add(SortOrder(entry.key, entry.value));
+      });
+    }
+    return sortOrders;
+  }
 }
