@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-
-// import 'package:twake/widgets/message/sticky_grouped_list.dart';
 import 'package:twake/models/message.dart';
-import 'package:twake/services/dateformatter.dart';
+import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:provider/provider.dart';
-import 'package:twake/providers/messages_provider.dart';
 
 class MessagesGrouppedList extends StatelessWidget {
   final List<Message> messages;
@@ -19,8 +17,7 @@ class MessagesGrouppedList extends StatelessWidget {
     return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            Provider.of<MessagesProvider>(context, listen: false)
-                .loadMoreMessages();
+            // TODO implement load more on collections repository
           }
           return true;
         },
@@ -83,8 +80,7 @@ class MessagesGrouppedList extends StatelessWidget {
               addAutomaticKeepAlives: false,
               itemBuilder: (_, Message message) {
                 return !message.hidden
-                    ? ChangeNotifierProvider.value(
-                        value: message,
+                    ? BlocProvider<Message>(
                         child: MessageTile(
                           message,
                           key: ValueKey(message.id),
