@@ -67,7 +67,6 @@ class SendMessage extends MessagesEvent {
 
   const SendMessage({this.content, this.threadId});
   @override
-  // TODO: implement props
   List<Object> get props => [content, threadId];
   Map<String, dynamic> toMap() {
     return {

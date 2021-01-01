@@ -18,6 +18,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           thumbnail: repository.thumbnail,
         ));
 
+  bool isMe(String userId) => repository.id == userId;
+
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
     if (event is ReloadProfile) {

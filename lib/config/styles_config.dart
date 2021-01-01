@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
   // static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
@@ -21,7 +21,7 @@ class StylesConfig {
       color: Colors.white,
       shadowColor: Colors.grey[300],
     ),
-    fontFamily: 'PT',
+    // fontFamily: 'PT',
   );
 
   /// For future use
@@ -99,8 +99,9 @@ class StylesConfig {
 
   static final miniPurple = TextStyle(
     color: accentColorRGB,
-    fontSize: Dim.tm2(decimal: -.1),
+      fontSize: Dim.tm2(decimal: .15)
   );
+
 
   /// For future use in dark theme
   // static final TextStyle _titleDark = _titleLight.copyWith(color: Colors.white);

@@ -31,7 +31,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     this.channelsBloc,
     this.directsBloc,
     this.notificationBloc,
-  }) : super(MessagesEmpty()) {
+  }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     channelsSubscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelsLoaded && state.fetchMessages) {
         selectedChannel = state.selected;
@@ -59,7 +59,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
-      yield MessagesLoading();
+      yield MessagesLoading(parentChannel: selectedChannel);
       await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: [
@@ -67,19 +67,25 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         ],
       );
       if (repository.items.isEmpty)
-        yield MessagesEmpty();
+        yield MessagesEmpty(parentChannel: selectedChannel);
       else {
         await UserRepository().batchUsersLoad(
           repository.items.map((i) => i.userId).toSet(),
         );
-        yield MessagesLoaded(messages: repository.items);
+        yield MessagesLoaded(
+          messages: repository.items,
+          parentChannel: selectedChannel,
+        );
       }
     } else if (event is LoadSingleMessage) {
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
       );
-      yield MessagesLoaded(messages: repository.items);
+      yield MessagesLoaded(
+        messages: repository.items,
+        parentChannel: selectedChannel,
+      );
     } else if (event is RemoveMessage) {
       await repository.delete(
         event.messageId,
@@ -88,18 +94,27 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         requestBody: _makeQueryParams(event),
       );
       if (repository.items.isEmpty)
-        yield MessagesEmpty();
+        yield MessagesEmpty(parentChannel: selectedChannel);
       else
-        yield MessagesLoaded(messages: repository.items);
+        yield MessagesLoaded(
+          messages: repository.items,
+          parentChannel: selectedChannel,
+        );
     } else if (event is SendMessage) {
       await repository.pushOne(_makeQueryParams(event));
-      yield MessagesLoaded(messages: repository.items);
+      yield MessagesLoaded(
+        messages: repository.items,
+        parentChannel: selectedChannel,
+      );
     } else if (event is ClearMessages) {
       await repository.clean();
-      yield MessagesEmpty();
+      yield MessagesEmpty(parentChannel: selectedChannel);
     } else if (event is SelectMessage) {
       repository.select(event.messageId);
-      yield MessageSelected(repository.selected);
+      yield MessageSelected(
+        threadMessage: repository.selected,
+        parentChannel: selectedChannel,
+      );
     }
   }
 

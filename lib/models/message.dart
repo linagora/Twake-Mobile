@@ -20,6 +20,10 @@ class Message extends CollectionItem {
   @JsonKey(name: 'responses_count', defaultValue: 0)
   int responsesCount;
 
+  @JsonKey(ignore: true)
+  String get respCountStr =>
+      responsesCount == 0 ? 'No' : responsesCount.toString();
+
   @JsonKey(name: 'user_id')
   final String userId;
 
