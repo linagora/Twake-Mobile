@@ -25,7 +25,7 @@ class TextAvatar extends StatelessWidget {
           alignment: Alignment.center,
           child: FittedBox(
             child: Text(
-              emoji ? Emojis().getClosestMatch(text) : text,
+              emoji ? Emojis().getByName(text) : text,
               style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
             ),
           ),

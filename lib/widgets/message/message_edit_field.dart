@@ -60,7 +60,7 @@ class _MessageEditField extends State<MessageEditField> {
     // Just in case if object is disposed before (edge case)
     if (mounted) {
       setState(() {
-        _controller.text += emoji.emoji;
+        _controller.text += emoji.text;
       });
     }
   }

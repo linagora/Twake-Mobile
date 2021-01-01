@@ -8,7 +8,7 @@ import 'package:twake_mobile/providers/channels_provider.dart';
 import 'package:twake_mobile/providers/messages_provider.dart';
 import 'package:twake_mobile/providers/profile_provider.dart';
 import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/widgets/common/image_avatar.dart';
+// import 'package:twake_mobile/widgets/common/image_avatar.dart';
 import 'package:twake_mobile/widgets/common/text_avatar.dart';
 import 'package:twake_mobile/widgets/message/message_edit_field.dart';
 import 'package:twake_mobile/widgets/message/message_tile.dart';
@@ -32,111 +32,102 @@ class ThreadScreen extends StatelessWidget {
     final messagesProvider = Provider.of<MessagesProvider>(context);
     final Message message =
         messagesProvider.getMessageById(params['messageId']);
-    final correspondent = channel.runtimeType == Direct
-        ? channel.members.firstWhere((m) {
-            return !profile.isMe(m.userId);
-          })
-        : null;
+    // final correspondent = channel.runtimeType == Direct
+    // ? channel.members.firstWhere((m) {
+    // return !profile.isMe(m.userId);
+    // })
+    // : null;
     messagesProvider.loadMessages(
       api,
       message.channelId,
       threadId: message.id,
     );
-    return SafeArea(
-      child: Scaffold(
+    return  Scaffold(
         appBar: AppBar(
           titleSpacing: 0.0,
           shadowColor: Colors.grey[300],
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
               .round()), // taking into account current appBar height to calculate a new one
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (channel.runtimeType == Direct)
-                ImageAvatar(correspondent.thumbnail),
-              if (channel.runtimeType == Channel)
-                TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
-              SizedBox(width: Dim.widthMultiplier),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: Dim.widthPercent(67),
-                    child: RichText(
-                      overflow: TextOverflow.fade,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                              text: channel.runtimeType == Channel
-                                  ? channel.name
-                                  : '${correspondent.firstName} ${correspondent.lastName}',
-                              style: Theme.of(context).textTheme.headline6),
-                          TextSpan(
-                              text: ' - thread',
-                              style: Theme.of(context).textTheme.subtitle2),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Text('${channel.membersCount ?? 'No'} members',
-                      style: Theme.of(context).textTheme.bodyText2),
-                ],
-              ),
-            ],
+          title: ListTile(
+            dense: true,
+            visualDensity: VisualDensity.compact,
+            contentPadding: EdgeInsets.zero,
+            leading: (channel.runtimeType == Direct)
+                ? Stack(
+                    children:
+                        (channel as Direct).buildCorrespondentAvatars(profile),
+                  )
+                // or ordinary channel
+                : TextAvatar(channel.icon, emoji: true, fontSize: Dim.tm4()),
+            title: Text(
+              'Threaded replies',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            subtitle: Text(
+              channel.runtimeType == Channel
+                  ? channel.name
+                  // or direct
+                  : (channel as Direct).buildDirectName(profile),
+              style: Theme.of(context).textTheme.bodyText2,
+              overflow: TextOverflow.fade,
+              maxLines: 1,
+            ),
           ),
         ),
-        body: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Show main message only if keyboard is hidden
-            // otherwise it causes ugly shrinking of responses list
-            if (MediaQuery.of(context).viewInsets.bottom == 0)
+        body: SafeArea(
+          // padding: EdgeInsets.only(bottom: 25),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Show main message only if keyboard is hidden
+              // otherwise it causes ugly shrinking of responses list
               Container(
+                // decoration: BoxDecoration(border: Border.all(color:Colors.blueAccent)),
                 child: SingleChildScrollView(
                   child: ChangeNotifierProvider.value(
                     value: message,
                     child: MessageTile(message, isThread: true),
                   ),
                 ),
-                padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
-                height: Dim.heightPercent(19),
+                // padding: EdgeInsets.symmetric(vertical: Dim.heightMultiplier),
+                // height: Dim.heightPercent(19),
               ),
-            Divider(color: Colors.grey[200]),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: Dim.heightMultiplier,
-                horizontal: Dim.wm4,
+              Divider(color: Colors.grey[200]),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: Dim.heightMultiplier,
+                  horizontal: Dim.wm4,
+                ),
+                child: Text(
+                    '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
               ),
-              child: Text(
-                  '${(message.responsesCount ?? 0) != 0 ? message.responsesCount : 'No'} responses'),
-            ),
-            Divider(color: Colors.grey[200]),
-            message.responsesLoaded
-                ? ThreadMessagesList(
-                    (message.responses ?? []).reversed.toList())
-                : Expanded(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(),
+              Divider(color: Colors.grey[200]),
+              message.responsesLoaded
+                  ? ThreadMessagesList(
+                      (message.responses ?? []).reversed.toList())
+                  : Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      ),
                     ),
-                  ),
-            MessageEditField((content) {
-              api.messageSend(
-                channelId: message.channelId,
-                content: content,
-                onSuccess: (Map<String, dynamic> _message) {
-                  messagesProvider.addMessage(
-                    _message,
-                    threadId: message.id,
-                  );
-                },
-                threadId: message.id,
-              );
-            }),
-          ],
+              MessageEditField((content) {
+                api.messageSend(
+                  channelId: message.channelId,
+                  content: content,
+                  onSuccess: (Map<String, dynamic> _message) {
+                    messagesProvider.addMessage(
+                      _message,
+                      threadId: message.id,
+                    );
+                  },
+                  threadId: message.id,
+                );
+              }),
+            ],
+          ),
         ),
-      ),
     );
   }
 }

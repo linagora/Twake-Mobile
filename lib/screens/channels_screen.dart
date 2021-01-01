@@ -35,8 +35,7 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
     final company = profile.selectedCompany;
     final api = Provider.of<TwakeApi>(context, listen: false);
     final channels = Provider.of<ChannelsProvider>(context, listen: false);
-    return SafeArea(
-      child: Scaffold(
+    return  Scaffold(
         key: _scaffoldKey,
         drawer: TwakeDrawer(),
         appBar: AppBar(
@@ -53,30 +52,30 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
           ),
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15)
               .round()), // taking into account current appBar height to calculate a new one
-          actions: [
-            PopupMenuButton<String>(
-              padding: EdgeInsets.only(right: Dim.wm3),
-              icon: Icon(
-                Icons.more_vert,
-                size: Dim.tm4(),
-              ),
-              onSelected: (choice) {},
-              itemBuilder: (BuildContext context) {
-                return {'Option 1', 'Option 2'}.map((String choice) {
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Row(
-                      children: [
-                        Icon(Icons.star_outline),
-                        SizedBox(width: Dim.wm2),
-                        Text(choice),
-                      ],
-                    ),
-                  );
-                }).toList();
-              },
-            ),
-          ],
+          // actions: [
+          // PopupMenuButton<String>(
+          // padding: EdgeInsets.only(right: Dim.wm3),
+          // icon: Icon(
+          // Icons.more_vert,
+          // size: Dim.tm4(),
+          // ),
+          // onSelected: (choice) {},
+          // itemBuilder: (BuildContext context) {
+          // return {'Option 1', 'Option 2'}.map((String choice) {
+          // return PopupMenuItem<String>(
+          // value: choice,
+          // child: Row(
+          // children: [
+          // Icon(Icons.star_outline),
+          // SizedBox(width: Dim.wm2),
+          // Text(choice),
+          // ],
+          // ),
+          // );
+          // }).toList();
+          // },
+          // ),
+          // ],
           title: Row(
             children: [
               ImageAvatar(workspace.logo),
@@ -86,43 +85,44 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
             ],
           ),
         ),
-        body: FutureBuilder(
-          future:
-              channels.loadChannels(api, workspace.id, companyId: company.id),
-          builder: (ctx, spapshot) =>
-              spapshot.connectionState == ConnectionState.done
-                  ? RefreshIndicator(
-                      onRefresh: () {
-                        return channels.loadChannels(api, workspace.id,
-                            companyId: company.id);
-                      },
-                      child: Consumer<ChannelsProvider>(
-                        builder: (ctx, channels, _) {
-                          final items = channels.items;
-                          final directs = channels.directs;
-                          return Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: Dim.wm3,
-                              vertical: Dim.heightMultiplier,
-                            ),
-                            child: ListView(
-                              children: [
-                                // Starred channels will be implemented in version 2
-                                // StarredChannelsBlock([]),
-                                // Divider(height: Dim.hm5),
-                                ChannelsBlock(items),
-                                Divider(height: Dim.hm5),
-                                DirectMessagesBlock(directs),
-                                SizedBox(height: Dim.hm2),
-                              ],
-                            ),
-                          );
+        body: SafeArea(
+          child: FutureBuilder(
+            future:
+                channels.loadChannels(api, workspace.id, companyId: company.id),
+            builder: (ctx, spapshot) =>
+                spapshot.connectionState == ConnectionState.done
+                    ? RefreshIndicator(
+                        onRefresh: () {
+                          return channels.loadChannels(api, workspace.id,
+                              companyId: company.id);
                         },
-                      ),
-                    )
-                  : Center(child: CircularProgressIndicator()),
+                        child: Consumer<ChannelsProvider>(
+                          builder: (ctx, channels, _) {
+                            final items = channels.items;
+                            final directs = channels.directs;
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Dim.wm3,
+                                vertical: Dim.heightMultiplier,
+                              ),
+                              child: ListView(
+                                children: [
+                                  // Starred channels will be implemented in version 2
+                                  // StarredChannelsBlock([]),
+                                  // Divider(height: Dim.hm5),
+                                  ChannelsBlock(items),
+                                  Divider(height: Dim.hm5),
+                                  DirectMessagesBlock(directs),
+                                  SizedBox(height: Dim.hm2),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    : Center(child: CircularProgressIndicator()),
+          ),
         ),
-      ),
     );
   }
 }

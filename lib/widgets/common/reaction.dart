@@ -30,25 +30,34 @@ class _ReactionState extends State<Reaction> {
               .userId,
         );
       },
-      child: Container(
-        margin: EdgeInsets.only(right: Dim.wm2),
-        padding: EdgeInsets.all(Dim.widthMultiplier),
-        decoration: BoxDecoration(
-          color: Color.fromRGBO(249, 247, 255, 1),
-          border: Border.all(color: StylesConfig.accentColorRGB),
-          borderRadius: BorderRadius.circular(Dim.widthMultiplier / 2),
-        ),
-        child: Align(
-          alignment: Alignment.center,
-          child: Row(
-            children: [
-              Text(Emojis().getClosestMatch(widget.reaction)),
-              SizedBox(width: Dim.widthMultiplier),
-              Text(
-                '${widget.count}',
-                style: StylesConfig.miniPurple,
+      child: FittedBox(
+        child: Container(
+          // constraints: BoxConstraints(
+          // minWidth: Dim.widthPercent(10),
+          // maxWidth: Dim.widthPercent(13),
+          // ),
+          margin: EdgeInsets.only(right: Dim.wm2),
+          padding: EdgeInsets.all(Dim.widthMultiplier),
+          decoration: BoxDecoration(
+            color: Color.fromRGBO(249, 247, 255, 1),
+            border: Border.all(color: StylesConfig.accentColorRGB),
+            borderRadius: BorderRadius.circular(Dim.widthMultiplier / 2),
+          ),
+          child: Align(
+            alignment: Alignment.center,
+            child: RichText(
+              text: TextSpan(
+                style: Theme.of(context).textTheme.bodyText2,
+                children: [
+                  TextSpan(text: Emojis().getByName(widget.reaction)),
+                  TextSpan(text: ' '),
+                  TextSpan(
+                    text: '${widget.count}',
+                    style: StylesConfig.miniPurple,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

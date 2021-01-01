@@ -13,7 +13,6 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     'icon',
     'members_count',
     'private',
-    'direct',
     'last_activity',
     'messages_total',
     'messages_unread'
@@ -25,7 +24,6 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     description: json['description'] as String,
     membersCount: json['members_count'] as int,
     isPrivate: json['private'] as bool,
-    isDirect: json['direct'] as bool,
     lastActivity: json['last_activity'] as int,
     messageTotal: json['messages_total'] as int,
     messageUnread: json['messages_unread'] as int,
@@ -39,7 +37,6 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'description': instance.description,
       'members_count': instance.membersCount,
       'private': instance.isPrivate,
-      'direct': instance.isDirect,
       'last_activity': instance.lastActivity,
       'messages_total': instance.messageTotal,
       'messages_unread': instance.messageUnread,

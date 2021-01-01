@@ -37,95 +37,97 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
           // horizontal: DimensionsConfig.widthMultiplier * 3,
           // vertical: DimensionsConfig.heightMultiplier,
           // ),
-          child: Column(
-            children: [
-              ListTile(
-                contentPadding: EdgeInsets.only(left: Dim.wm3),
-                title: Text(
-                  _companiesHidden ? 'Workspaces' : 'Choose company',
-                  style: Theme.of(context).textTheme.headline5,
-                ), // TODO configure the styles
-                trailing: _companiesHidden
-                    ? IconButton(
-                        color: Colors.black87,
-                        onPressed: () {
-                          setState(() {
-                            _companiesHidden = false;
-                          });
-                        },
-                        iconSize: Dim.tm4(),
-                        icon: Icon(
-                          Icons.loop,
-                        ),
-                      )
-                    : SizedBox(width: 0, height: 0),
-              ),
-              Divider(),
-              SizedBox(height: Dim.hm2),
-              if (_companiesHidden)
-                Container(
-                  height: Dim.heightPercent(55),
-                  child: ListView.builder(
-                      itemCount: workspaces.length,
-                      itemBuilder: (ctx, i) => InkWell(
-                            onTap: () {
-                              profile.currentWorkspaceSet(workspaces[i].id);
-                              Navigator.of(context).pop();
-                            },
-                            child: ListTile(
-                              leading: ImageAvatar(workspaces[i].logo),
-                              title: Text(
-                                workspaces[i].name,
-                              ),
-                              subtitle: Text(profile.selectedCompany.name),
-                            ),
-                          )),
+          child: SafeArea(
+            child: Column(
+              children: [
+                ListTile(
+                  contentPadding: EdgeInsets.only(left: Dim.wm3),
+                  title: Text(
+                    _companiesHidden ? 'Workspaces' : 'Choose company',
+                    style: Theme.of(context).textTheme.headline5,
+                  ), // TODO configure the styles
+                  trailing: _companiesHidden
+                      ? IconButton(
+                          color: Colors.black87,
+                          onPressed: () {
+                            setState(() {
+                              _companiesHidden = false;
+                            });
+                          },
+                          iconSize: Dim.tm4(),
+                          icon: Icon(
+                            Icons.loop,
+                          ),
+                        )
+                      : SizedBox(width: 0, height: 0),
                 ),
-              if (!_companiesHidden)
-                Container(
-                  height: Dim.heightPercent(55),
-                  child: ListView.builder(
-                      itemCount: companies.length,
-                      itemBuilder: (ctx, i) => InkWell(
-                            onTap: () {
-                              profile.currentCompanySet(companies[i].id);
-                              setState(() {
-                                _companiesHidden = true;
-                              });
-                            },
-                            child: ListTile(
-                              leading: ImageAvatar(companies[i].logo),
-                              title: Text(
-                                companies[i].name,
+                Divider(),
+                SizedBox(height: Dim.hm2),
+                if (_companiesHidden)
+                  Container(
+                    height: Dim.heightPercent(55),
+                    child: ListView.builder(
+                        itemCount: workspaces.length,
+                        itemBuilder: (ctx, i) => InkWell(
+                              onTap: () {
+                                profile.currentWorkspaceSet(workspaces[i].id);
+                                Navigator.of(context).pop();
+                              },
+                              child: ListTile(
+                                leading: ImageAvatar(workspaces[i].logo),
+                                title: Text(
+                                  workspaces[i].name,
+                                ),
+                                subtitle: Text(profile.selectedCompany.name),
                               ),
-                              subtitle: Text(
-                                '${companies[i].workspaceCount} workspaces',
+                            )),
+                  ),
+                if (!_companiesHidden)
+                  Container(
+                    height: Dim.heightPercent(55),
+                    child: ListView.builder(
+                        itemCount: companies.length,
+                        itemBuilder: (ctx, i) => InkWell(
+                              onTap: () {
+                                profile.currentCompanySet(companies[i].id);
+                                setState(() {
+                                  _companiesHidden = true;
+                                });
+                              },
+                              child: ListTile(
+                                leading: ImageAvatar(companies[i].logo),
+                                title: Text(
+                                  companies[i].name,
+                                ),
+                                subtitle: Text(
+                                  '${companies[i].workspaceCount} workspaces',
+                                ),
                               ),
-                            ),
-                          )),
-                ),
-              Spacer(),
-              Divider(),
-              ListTile(
-                contentPadding: padding,
-                leading: ImageAvatar(user.thumbnail),
-                title: Text(
-                  '${user.firstName} ${user.lastName}',
-                  style: Theme.of(context).textTheme.headline5,
-                ), // TODO configure the styles
-                trailing: IconButton(
-                  onPressed: () {
-                    final api = Provider.of<TwakeApi>(context, listen: false);
-                    profile.logout(api);
-                  },
-                  color: Colors.black87,
-                  icon: Icon(
-                    Icons.logout,
-                    size: Dim.tm4(),
+                            )),
+                  ),
+                Spacer(),
+                Divider(),
+                ListTile(
+                  contentPadding: padding,
+                  leading: ImageAvatar(user.thumbnail),
+                  title: Text(
+                    '${user.firstName} ${user.lastName}',
+                    style: Theme.of(context).textTheme.headline5,
+                  ), // TODO configure the styles
+                  trailing: IconButton(
+                    onPressed: () {
+                      final api = Provider.of<TwakeApi>(context, listen: false);
+                      profile.logout(api);
+                    },
+                    color: Colors.black87,
+                    icon: Icon(
+                      Icons.logout,
+                      size: Dim.tm4(),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

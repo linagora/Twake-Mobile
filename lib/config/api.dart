@@ -1,8 +1,10 @@
+import 'package:logger/logger.dart';
 import 'package:package_info/package_info.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class TwakeApiConfig {
   static const String _HOST = 'https://mobile.api.twake.app';
+  // static const String _HOST = 'http://192.168.1.52:3123';
   static const String _authorize = '/authorize';
   static const String _usersCurrentGet = '/user';
   static const String _workspaceChannels = '/channels';
@@ -10,6 +12,9 @@ class TwakeApiConfig {
   static const String _tokenProlong = '/authorization/prolong';
   static const String _directMessages = '/direct';
   static const String _messageReactions = '/reactions';
+  static const String _settingsEmojis = '/settings/emoji';
+  static const String _companies = '/companies';
+  static const String _workspaces = '/workspaces';
   static String apiVersion;
   static String fcmToken;
 
@@ -24,6 +29,7 @@ class TwakeApiConfig {
   static Future<void> init() async {
     apiVersion = (await PackageInfo.fromPlatform()).version;
     fcmToken = (await FirebaseMessaging().getToken());
+    Logger().d('APIVERSION: $apiVersion');
   }
 
   static String get authorizeMethod {
@@ -55,5 +61,18 @@ class TwakeApiConfig {
   /// Method for getting url, in order to update message reactions
   static String get messageReactionsMethod {
     return _HOST + _messageReactions;
+  }
+
+  /// Method for getting up to date version of emoji map
+  static String get settingsEmoji {
+    return _HOST + _settingsEmojis;
+  }
+
+  static String get workspacesMethod {
+    return _HOST + _workspaces;
+  }
+
+  static String get companiesMethod {
+    return _HOST + _companies;
   }
 }
