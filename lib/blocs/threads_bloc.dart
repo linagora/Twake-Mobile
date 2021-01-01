@@ -48,7 +48,6 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
     if (event is LoadMessages) {
       yield MessagesLoading();
       List<List> filters = [
-        ['threadId', '!=', null],
         ['threadId', '=', _selectedThreadId],
       ];
       await repository.reload(
@@ -58,13 +57,19 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       if (repository.items.isEmpty)
         yield MessagesEmpty();
       else
-        yield MessagesLoaded(messages: repository.items);
+        yield MessagesLoaded(
+          messages: repository.items,
+          parentChannel: messagesBloc.selectedChannel,
+        );
     } else if (event is LoadSingleMessage) {
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.threadId == _selectedThreadId,
       );
-      yield MessagesLoaded(messages: repository.items);
+      yield MessagesLoaded(
+        messages: repository.items,
+        parentChannel: messagesBloc.selectedChannel,
+      );
     } else if (event is RemoveMessage) {
       await repository.delete(
         event.messageId,
@@ -75,10 +80,16 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       if (repository.items.isEmpty)
         yield MessagesEmpty();
       else
-        yield MessagesLoaded(messages: repository.items);
+        yield MessagesLoaded(
+          messages: repository.items,
+          parentChannel: messagesBloc.selectedChannel,
+        );
     } else if (event is SendMessage) {
       await repository.pushOne(_makeQueryParams(event));
-      yield MessagesLoaded(messages: repository.items);
+      yield MessagesLoaded(
+        messages: repository.items,
+        parentChannel: messagesBloc.selectedChannel,
+      );
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty();
@@ -94,7 +105,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['channel_id'] = map['channel_id'] ?? messagesBloc.selectedChannelId;
+    map['channel_id'] = map['channel_id'] ?? messagesBloc.selectedChannel.id;
     map['company_id'] =
         messagesBloc.channelsBloc.workspacesBloc.selectedCompanyId;
     map['workspace_id'] =

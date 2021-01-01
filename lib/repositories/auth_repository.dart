@@ -1,7 +1,9 @@
+import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io' show Platform;
-import 'dart:convert' show jsonEncode;
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:package_info/package_info.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'auth_repository.g.dart';
@@ -30,7 +32,7 @@ class AuthRepository extends JsonSerializable {
   final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
 
   @JsonKey(ignore: true)
-  final _storage = Storage();
+  static final _storage = Storage();
   @JsonKey(ignore: true)
   var _api = Api();
   @JsonKey(ignore: true)
@@ -40,34 +42,41 @@ class AuthRepository extends JsonSerializable {
   @JsonKey(ignore: true)
   String apiVersion;
 
-  String get platform => Platform.isAndroid ? 'android' : 'apple';
   AuthRepository({this.fcmToken, this.apiVersion}) {
     updateHeaders();
   }
+  factory AuthRepository.fromJson(Map<String, dynamic> json) =>
+      _$AuthRepositoryFromJson(json);
 
-  TokenStatus tokenIsValid() {
-    logger.d('Requesting token validation');
-    if (this.accessToken == null) {
-      logger.w('Token is empty');
-      return TokenStatus.BothExpired;
+  static Future<AuthRepository> load() async {
+    var authMap = await _storage.load(
+      type: StorageType.Auth,
+      fields: _storage.settingsField != null ? [_storage.settingsField] : null,
+      key: AUTH_STORE_INDEX,
+    );
+
+    if (authMap != null) authMap = jsonDecode(authMap[_storage.settingsField]);
+
+    final fcmToken = (await FirebaseMessaging().getToken());
+    final apiVersion = (await PackageInfo.fromPlatform()).version;
+
+    if (authMap != null) {
+      Logger().d('INIT APIVERSION: $apiVersion');
+      final authRepository = AuthRepository.fromJson(authMap);
+      authRepository
+        ..fcmToken = fcmToken
+        ..apiVersion = apiVersion
+        ..updateHeaders()
+        ..updateApiInterceptors();
+      return authRepository;
     }
-    final now = DateTime.now();
-    // timestamp is in microseconds, adjusting by multiplying by 1000
-    final accessTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
-    final refreshTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.refreshTokenExpiration * 1000);
-    if (now.isAfter(accessTokenExpiration)) {
-      if (now.isAfter(refreshTokenExpiration)) {
-        logger.w('Tokens has expired');
-        clean();
-        return TokenStatus.BothExpired;
-      } else {
-        return TokenStatus.AccessExpired;
-      }
-    }
-    return TokenStatus.Valid;
+    return AuthRepository(fcmToken: fcmToken, apiVersion: apiVersion);
   }
+
+  factory AuthRepository.fromMap(Map<String, dynamic> json) =>
+      _$AuthRepositoryFromJson(json);
+
+  String get platform => Platform.isAndroid ? 'android' : 'apple';
 
   Future<AuthResult> authenticate({
     String username,
@@ -92,6 +101,22 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
+  Future<void> clean() async {
+    // So that we don't try to validate token if we are not
+    // authenticated
+    logger.d('Requesting storage cleaning');
+    _api.prolongToken = null;
+    _api.tokenIsValid = null;
+    accessToken = null;
+    refreshToken = null;
+    await _storage.delete(type: StorageType.Auth, key: AUTH_STORE_INDEX);
+  }
+
+  Future<void> fullClean() async {
+    _storage.truncateAll();
+  }
+
+  // Clears up entire database, be carefull!
   Future<AuthResult> prolongToken() async {
     logger.d('Prolonging token');
     try {
@@ -121,41 +146,49 @@ class AuthRepository extends JsonSerializable {
     );
   }
 
-  Future<void> clean() async {
-    // So that we don't try to validate token if we are not
-    // authenticated
-    logger.d('Requesting storage cleaning');
-    _api.prolongToken = null;
-    _api.tokenIsValid = null;
-    accessToken = null;
-    refreshToken = null;
-    await _storage.delete(type: StorageType.Auth, key: AUTH_STORE_INDEX);
-  }
-
-  // Clears up entire database, be carefull!
-  Future<void> fullClean() async {
-    _storage.truncateAll();
-  }
-
-  factory AuthRepository.fromJson(Map<String, dynamic> json) =>
-      _$AuthRepositoryFromJson(json);
-
-  factory AuthRepository.fromMap(Map<String, dynamic> json) =>
-      _$AuthRepositoryFromJson(json);
-
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
-  // To update token related fields after instance has been created
-  void _updateFromMap(Map<String, dynamic> map) {
-    this.accessToken = map['token'];
-    this.accessTokenExpiration = map['expiration'];
-    this.refreshToken = map['refresh_token'];
-    this.refreshTokenExpiration = map['refresh_expiration'];
-    save();
-    updateHeaders();
-    updateApiInterceptors();
+  TokenStatus tokenIsValid() {
+    logger.d('Requesting token validation');
+    if (this.accessToken == null) {
+      logger.w('Token is empty');
+      return TokenStatus.BothExpired;
+    }
+    final now = DateTime.now();
+    // timestamp is in microseconds, adjusting by multiplying by 1000
+    final accessTokenExpiration =
+        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
+    final refreshTokenExpiration =
+        DateTime.fromMillisecondsSinceEpoch(this.refreshTokenExpiration * 1000);
+    if (now.isAfter(accessTokenExpiration)) {
+      if (now.isAfter(refreshTokenExpiration)) {
+        logger.w('Tokens has expired');
+        clean();
+        return TokenStatus.BothExpired;
+      } else {
+        return TokenStatus.AccessExpired;
+      }
+    }
+    return TokenStatus.Valid;
   }
 
+  // To update token related fields after instance has been created
+  void updateApiInterceptors() {
+    _api.prolongToken = this.prolongToken;
+    _api.tokenIsValid = this.tokenIsValid;
+  }
+
+  void updateHeaders() {
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+      'Accept-version': apiVersion,
+    };
+    _api = Api(headers: headers);
+  }
+
+  // Set api (dio) interceptors to validate token before requests
+  // and to automatically prolong token on 401
   AuthResult _handleError(ApiError error) {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
@@ -165,22 +198,16 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
-  // Set api (dio) interceptors to validate token before requests
-  // and to automatically prolong token on 401
-  void updateApiInterceptors() {
-    _api.prolongToken = this.prolongToken;
-    _api.tokenIsValid = this.tokenIsValid;
-  }
-
   // method used to reinit Api with new headers
   // specifically new accessToken in the header
-  void updateHeaders() {
-    Map<String, String> headers = {
-      'Content-type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-      'Accept-version': apiVersion,
-    };
-    _api = Api(headers: headers);
+  void _updateFromMap(Map<String, dynamic> map) {
+    this.accessToken = map['token'];
+    this.accessTokenExpiration = map['expiration'];
+    this.refreshToken = map['refresh_token'];
+    this.refreshTokenExpiration = map['refresh_expiration'];
+    save();
+    updateHeaders();
+    updateApiInterceptors();
   }
 }
 

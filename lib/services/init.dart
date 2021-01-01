@@ -1,8 +1,4 @@
-import 'dart:convert' show jsonDecode;
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:package_info/package_info.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
@@ -25,33 +21,8 @@ Future<AuthRepository> initAuth() async {
     Logger.level = Level.debug;
   else
     Logger.level = Level.error;
-  final logger = Logger();
 
-  Logger().d('SETTINGS FIELD NAME: ' + store.settingsField);
-  var authMap = await store.load(
-    type: StorageType.Auth,
-    fields: store.settingsField != null ? [store.settingsField] : null,
-    key: AUTH_STORE_INDEX,
-  );
-
-  if (authMap != null) authMap = jsonDecode(authMap[store.settingsField]);
-
-  logger.d('Auth data from storage: $authMap');
-
-  final fcmToken = (await FirebaseMessaging().getToken());
-  final apiVersion = (await PackageInfo.fromPlatform()).version;
-
-  if (authMap != null) {
-    logger.d('INIT APIVERSION: $apiVersion');
-    final authRepository = AuthRepository.fromJson(authMap);
-    authRepository
-      ..fcmToken = fcmToken
-      ..apiVersion = apiVersion
-      ..updateHeaders()
-      ..updateApiInterceptors();
-    return authRepository;
-  }
-  return AuthRepository(fcmToken: fcmToken, apiVersion: apiVersion);
+  return await AuthRepository.load();
 }
 
 Future<InitData> initMain() async {
