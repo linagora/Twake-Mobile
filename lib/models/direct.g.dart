@@ -29,7 +29,7 @@ Direct _$DirectFromJson(Map<String, dynamic> json) {
     ..lastActivity = json['last_activity'] as int
     ..messagesTotal = json['messages_total'] as int
     ..messagesUnread = json['messages_unread'] as int
-    ..isSelected = intToBool(json['is_selected'] as int);
+    ..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$DirectToJson(Direct instance) => <String, dynamic>{
@@ -41,7 +41,7 @@ Map<String, dynamic> _$DirectToJson(Direct instance) => <String, dynamic>{
       'last_activity': instance.lastActivity,
       'messages_total': instance.messagesTotal,
       'messages_unread': instance.messagesUnread,
-      'is_selected': boolToInt(instance.isSelected),
+      'is_selected': instance.isSelected,
       'company_id': instance.companyId,
       'members': instance.members,
     };

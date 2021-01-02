@@ -26,12 +26,8 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(required: true, name: 'messages_unread')
   int messagesUnread;
 
-  @JsonKey(
-    name: 'is_selected',
-    fromJson: intToBool,
-    toJson: boolToInt,
-  )
-  bool isSelected = false;
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
 
   BaseChannel({
     this.id,

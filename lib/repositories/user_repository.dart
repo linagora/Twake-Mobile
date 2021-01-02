@@ -51,7 +51,6 @@ class UserRepository {
       else
         items[id] = User.fromJson(item);
     }
-    logger.d('TO FETCH: $toBeFetched');
     if (toBeFetched.isNotEmpty) {
       final List response = await _api.get(
         apiEndpoint,

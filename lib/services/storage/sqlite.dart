@@ -103,6 +103,7 @@ class SQLite with Storage {
       table,
       where: filter.item1,
       whereArgs: filter.item2,
+      orderBy: orderingsBuild(orderings),
     );
     return items;
   }

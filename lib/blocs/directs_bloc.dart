@@ -23,7 +23,6 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
             ? ChannelsEmpty()
             : DirectsLoaded(
                 directs: repository.items,
-                selected: repository.selected,
               )) {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
@@ -56,7 +55,6 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
       else
         yield DirectsLoaded(
           directs: repository.items,
-          selected: repository.selected,
         );
     } else if (event is ClearChannels) {
       await repository.clean();
@@ -64,10 +62,9 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId);
 
-      yield DirectsLoaded(
+      yield DirectPicked(
         directs: repository.items,
         selected: repository.selected,
-        fetchMessages: true,
       );
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading

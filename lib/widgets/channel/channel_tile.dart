@@ -4,7 +4,6 @@ import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
-import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 
@@ -15,7 +14,6 @@ class ChannelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Logger().d('BEFORE SELECTION ChannelId: ${channel.toJson()}');
         BlocProvider.of<ChannelsBloc>(context).add(
           ChangeSelectedChannel(channel.id),
         );

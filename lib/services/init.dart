@@ -46,12 +46,14 @@ Future<InitData> initMain() async {
     filters: [
       ['workspace_id', '=', workspaces.selected.id]
     ],
+    sortFields: {'name': true},
   );
   final directs = await CollectionRepository.load<Direct>(
     Endpoint.directs,
     queryParams: {
       'company_id': companies.selected.id,
     },
+    sortFields: {'last_activity': false},
     // TODO uncomment once company_id becomes available
     // filters: [
     // ['company_id', '=', workspaces.selected.id]

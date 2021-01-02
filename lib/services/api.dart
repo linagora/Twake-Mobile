@@ -92,7 +92,6 @@ class Api {
       path: method,
       queryParameters: params,
     );
-    logger.d('QUEYR PARAMS: ${uri.queryParameters}');
     final response = await dio.getUri(uri);
     return response.data;
   }

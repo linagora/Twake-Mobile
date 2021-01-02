@@ -34,7 +34,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     channelsSubscription = channelsBloc.listen((ChannelState state) {
       repository.logger.d('TRIGGERED MESSAGE FETCH: $state');
-      if (state is ChannelsLoaded && state.fetchMessages) {
+      if (state is ChannelPicked) {
         repository.logger
             .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
@@ -42,7 +42,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       }
     });
     directsSubscription = directsBloc.listen((ChannelState state) {
-      if (state is DirectsLoaded && state.fetchMessages) {
+      if (state is DirectPicked) {
         selectedChannel = state.selected;
         this.add(LoadMessages());
       }

@@ -22,7 +22,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
         : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>)
     ..reactions = json['reactions'] as Map<String, dynamic> ?? {}
     ..channelId = json['channel_id'] as String
-    ..isSelected = intToBool(json['is_selected'] as int);
+    ..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -35,5 +35,5 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'content': instance.content?.toJson(),
       'reactions': instance.reactions,
       'channel_id': instance.channelId,
-      'is_selected': boolToInt(instance.isSelected),
+      'is_selected': instance.isSelected,
     };
