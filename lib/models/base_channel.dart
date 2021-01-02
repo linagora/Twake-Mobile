@@ -1,12 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
 
-part 'base_channel.g.dart';
+// part 'base_channel.g.dart';
 
-@JsonSerializable()
-class BaseChannel extends CollectionItem {
-  @JsonKey(required: true)
-  final String id;
+abstract class BaseChannel extends CollectionItem {
+  @JsonKey(required: true, nullable: false)
+  String id;
 
   @JsonKey(required: true)
   String name;
@@ -27,21 +26,10 @@ class BaseChannel extends CollectionItem {
   @JsonKey(required: true, name: 'messages_unread')
   int messagesUnread;
 
-  @JsonKey(
-    name: 'is_selected',
-    fromJson: intToBool,
-    toJson: boolToInt,
-  )
-  bool isSelected = false;
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
 
   BaseChannel({
     this.id,
-  });
-
-  factory BaseChannel.fromJson(Map<String, dynamic> json) =>
-      _$BaseChannelFromJson(json);
-
-  Map<String, dynamic> toJson() {
-    return _$BaseChannelToJson(this);
-  }
+  }) : super(id);
 }

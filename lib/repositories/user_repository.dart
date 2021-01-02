@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'package:twake/models/user.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -41,7 +40,7 @@ class UserRepository {
     return item;
   }
 
-  Future<void> batchUsersLoad(HashSet<String> userIds) async {
+  Future<void> batchUsersLoad(Set<String> userIds) async {
     items.removeWhere((id, _) => !userIds.contains(id));
     userIds.retainAll(items.keys);
     List<String> toBeFetched = [];
@@ -52,16 +51,17 @@ class UserRepository {
       else
         items[id] = User.fromJson(item);
     }
-    final List response = await _api.get(
-      apiEndpoint,
-      params: {
-        'id': toBeFetched,
-      },
-    );
-    items.clear();
-    final users =
-        response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
-    items.addEntries(users);
+    if (toBeFetched.isNotEmpty) {
+      final List response = await _api.get(
+        apiEndpoint,
+        params: {
+          'id': toBeFetched,
+        },
+      );
+      final users =
+          response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
+      items.addEntries(users);
+    }
     _storage.batchStore(
       items: items.values.map((u) => u.toJson()),
       type: StorageType.User,

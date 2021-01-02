@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/models/message.dart';
 
 class MessageModalSheet extends StatefulWidget {
-  final Message message;
+  final String userId;
+  final int responsesCount;
   final void Function(BuildContext) onReply;
   final void Function(BuildContext) onDelete;
-  final void Function() onCopy;
+  final Function onCopy;
   final bool isThread;
 
-  const MessageModalSheet(
-    this.message, {
+  const MessageModalSheet({
+    this.userId,
+    this.responsesCount,
     this.isThread: false,
     this.onReply,
     this.onDelete,
@@ -26,8 +27,7 @@ class MessageModalSheet extends StatefulWidget {
 class _MessageModalSheetState extends State<MessageModalSheet> {
   @override
   Widget build(BuildContext context) {
-    final bool isMe =
-        BlocProvider.of<ProfileBloc>(context).isMe(widget.message.userId);
+    final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
     return Container(
       child: SafeArea(
         child: Column(
@@ -46,7 +46,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                 },
               ),
             if (!widget.isThread) Divider(),
-            if (isMe && widget.message.responsesCount == 0)
+            if (isMe && widget.responsesCount == 0)
               ListTile(
                 leading: Icon(Icons.delete, color: Colors.red),
                 title: Text(

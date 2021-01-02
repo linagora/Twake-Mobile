@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
@@ -10,7 +11,7 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
-class ThreadScreen extends StatelessWidget {
+class ThreadPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc, MessagesState>(
@@ -50,8 +51,12 @@ class ThreadScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MessageTile((threadState as MessageSelected).threadMessage,
-                      isThread: true),
+                  BlocProvider<SingleMessageBloc>(
+                    create: (_) => SingleMessageBloc(
+                      (threadState as MessageSelected).threadMessage,
+                    ),
+                    child: MessageTile(),
+                  ),
                   Divider(color: Colors.grey[200]),
                   Padding(
                     padding: EdgeInsets.symmetric(

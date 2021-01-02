@@ -17,7 +17,7 @@ Workspace _$WorkspaceFromJson(Map<String, dynamic> json) {
     ..name = json['name'] as String
     ..logo = json['logo'] as String
     ..totalMembers = json['total_members'] as int
-    ..isSelected = intToBool(json['is_selected'] as int);
+    ..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$WorkspaceToJson(Workspace instance) => <String, dynamic>{
@@ -28,5 +28,5 @@ Map<String, dynamic> _$WorkspaceToJson(Workspace instance) => <String, dynamic>{
       'logo': instance.logo,
       'user_last_access': instance.userLastAccess,
       'total_members': instance.totalMembers,
-      'is_selected': boolToInt(instance.isSelected),
+      'is_selected': instance.isSelected,
     };

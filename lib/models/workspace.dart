@@ -24,19 +24,15 @@ class Workspace extends CollectionItem {
   @JsonKey(name: 'total_members')
   int totalMembers;
 
-  @JsonKey(
-    name: 'is_selected',
-    fromJson: intToBool,
-    toJson: boolToInt,
-  )
-  bool isSelected = false;
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
 
   Workspace({
     this.id,
     this.companyId,
     this.color,
     this.userLastAccess,
-  });
+  }) : super(id);
 
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation

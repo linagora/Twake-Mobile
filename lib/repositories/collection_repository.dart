@@ -36,22 +36,20 @@ class CollectionRepository<T extends CollectionItem> {
 
   CollectionRepository({this.items, this.apiEndpoint});
 
-  CollectionItem get selected =>
-      items.firstWhere((i) => i.isSelected, orElse: () => items[0]);
+  T get selected =>
+      items.firstWhere((i) => i.isSelected == 1, orElse: () => items[0]);
 
   int get itemsCount => (items ?? []).length;
 
-  static final logger = Logger();
+  final logger = Logger();
   static final _api = Api();
   static final _storage = Storage();
 
-  // Sort of a constructor method
-  // to load and build instance of class from either
-  // storage or api request
   static Future<CollectionRepository> load<T extends CollectionItem>(
     String apiEndpoint, {
     Map<String, dynamic> queryParams,
     List<List> filters,
+    Map<String, bool> sortFields, // fields to sort by + sort direction
   }) async {
     List<dynamic> itemsList = await _storage.batchLoad(
       type: _typeToStorageType[T],
@@ -59,7 +57,7 @@ class CollectionRepository<T extends CollectionItem> {
     );
     bool saveToStore = false;
     if (itemsList.isEmpty) {
-      logger.d('No $T items found in storage, requesting from api...');
+      Logger().d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
       saveToStore = true;
     }
@@ -71,10 +69,17 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   void select(String itemId) {
-    final item =
-        items.firstWhere((i) => i.id == itemId, orElse: () => items[0]);
-    final oldSelected = selected..isSelected = false;
-    item.isSelected = true;
+    logger.d(
+        'REQEUSTED ITEM: $itemId\nITEMCOUNT: ${items.length}\n${items.map((c) => c.id).toList()}');
+    final item = items.firstWhere((i) => i.id == itemId);
+    var oldSelected = selected;
+    oldSelected.isSelected = 0;
+    logger.d('OLD ID: ' + oldSelected.id);
+    item.isSelected = 1;
+    logger.d('SELECTED COUNT: ${items.where((c) => c.isSelected == 1).length}');
+    logger.d(
+        'SELECTED LIST:\n${items.where((c) => c.isSelected == 1).map((c) => c.id).toList()}');
+    assert(selected.id == item.id);
     Future.wait([
       saveOne(oldSelected),
       saveOne(item),

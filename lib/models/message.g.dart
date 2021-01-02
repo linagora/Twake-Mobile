@@ -8,7 +8,7 @@ part of 'message.dart';
 
 Message _$MessageFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
-      requiredKeys: const ['id', 'creation_date', 'content', 'channelId']);
+      requiredKeys: const ['id', 'creation_date', 'content', 'channel_id']);
   return Message(
     id: json['id'] as String,
     userId: json['user_id'] as String,
@@ -21,8 +21,8 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
         ? null
         : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>)
     ..reactions = json['reactions'] as Map<String, dynamic> ?? {}
-    ..channelId = json['channelId'] as String
-    ..isSelected = intToBool(json['is_selected'] as int);
+    ..channelId = json['channel_id'] as String
+    ..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -34,6 +34,6 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'creation_date': instance.creationDate,
       'content': instance.content?.toJson(),
       'reactions': instance.reactions,
-      'channelId': instance.channelId,
-      'is_selected': boolToInt(instance.isSelected),
+      'channel_id': instance.channelId,
+      'is_selected': instance.isSelected,
     };

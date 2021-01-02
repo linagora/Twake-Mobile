@@ -12,24 +12,20 @@ export 'package:twake/events/workspace_event.dart';
 export 'package:twake/states/workspace_state.dart';
 
 class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
-  final CollectionRepository repository;
+  final CollectionRepository<Workspace> repository;
   final CompaniesBloc companiesBloc;
   StreamSubscription subscription;
   String selectedCompanyId;
 
   WorkspacesBloc({this.repository, this.companiesBloc})
       : super(WorkspacesLoaded(
-          workspaces: repository.items
-              .where((i) =>
-                  (i as Workspace).companyId ==
-                  companiesBloc.repository.selected.id)
-              .toList(),
+          workspaces: repository.items,
           selected: repository.selected,
         )) {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
-        CollectionRepository.logger.d(
+        repository.logger.d(
             'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId));
       }

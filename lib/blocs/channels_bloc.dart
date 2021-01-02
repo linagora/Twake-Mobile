@@ -19,11 +19,8 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
 
   ChannelsBloc({this.repository, this.workspacesBloc})
       : super(ChannelsLoaded(
-            channels: repository.items
-                .where((i) =>
-                    i.workspaceId == workspacesBloc.repository.selected.id)
-                .toList(),
-            selected: repository.selected)) {
+          channels: repository.items,
+        )) {
     subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         selectedWorkspaceId = state.selected.id;
@@ -50,19 +47,21 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       );
       yield ChannelsLoaded(
         channels: repository.items,
-        selected: repository.selected,
       );
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
+      repository.logger.d('FROM: ${repository.selected.name}');
       repository.select(event.channelId);
-
-      yield ChannelsLoaded(
+      repository.logger.d('TO: ${repository.selected.name}');
+      repository.logger.d(
+          'REQUESTED IS EQUAL TO RESULT: ${repository.selected.id == event.channelId}');
+      final newState = ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
-        fetchMessages: true,
       );
+      yield newState;
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading
       throw 'Not implemented yet';

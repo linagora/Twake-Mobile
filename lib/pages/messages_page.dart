@@ -9,7 +9,7 @@ import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/messages_groupped_list.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 
-class MessagesScreen extends StatelessWidget {
+class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc, MessagesState>(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel.dart';
-// import 'package:twake/screens/messages_screen.dart';
+import 'package:twake/pages/messages_page.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 
@@ -12,10 +14,13 @@ class ChannelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Navigator.of(context).pushNamed(
-        // MessagesScreen.route,
-        // arguments: channel.id,
-        // );
+        BlocProvider.of<ChannelsBloc>(context).add(
+          ChangeSelectedChannel(channel.id),
+        );
+        // Navigator.of(context).pushNamed(Routes.messages);
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => MessagesPage(),
+        ));
       },
       child: ListTile(
         contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
@@ -30,7 +35,6 @@ class ChannelTile extends StatelessWidget {
         ),
         trailing: FittedBox(
           fit: BoxFit.fitWidth,
-          // width: Dim.widthPercent(40),
           child: Row(
             children: [
               Text(
