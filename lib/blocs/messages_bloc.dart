@@ -33,7 +33,10 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     this.notificationBloc,
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     channelsSubscription = channelsBloc.listen((ChannelState state) {
+      repository.logger.d('TRIGGERED MESSAGE FETCH: $state');
       if (state is ChannelsLoaded && state.fetchMessages) {
+        repository.logger
+            .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
         this.add(LoadMessages());
       }

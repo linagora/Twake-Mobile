@@ -2,8 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/auth_bloc.dart';
+import 'package:twake/blocs/channels_bloc.dart';
+import 'package:twake/blocs/companies_bloc.dart';
+import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/messages_bloc.dart';
+import 'package:twake/blocs/notification_bloc.dart';
+import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/threads_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/pages/auth_page.dart';
-import 'package:twake/pages/main_page.dart';
+import 'package:twake/pages/routes.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -38,9 +46,56 @@ class _InitialPageState extends State<InitialPage> {
         if (state is Unauthenticated) {
           return AuthPage();
         }
-        if (state is Authenticated)
-          return MainPage(state.initData);
-        else // is Authenticating
+        if (state is Authenticated) {
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<ProfileBloc>(
+                  create: (_) => ProfileBloc(state.initData.profile)),
+              BlocProvider<NotificationBloc>(create: (_) => NotificationBloc()),
+              BlocProvider<CompaniesBloc>(
+                create: (ctx) => CompaniesBloc(state.initData.companies),
+              ),
+              BlocProvider<WorkspacesBloc>(create: (ctx) {
+                return WorkspacesBloc(
+                  repository: state.initData.workspaces,
+                  companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                );
+              }),
+              BlocProvider<ChannelsBloc>(create: (ctx) {
+                return ChannelsBloc(
+                  repository: state.initData.channels,
+                  workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
+                );
+              }),
+              BlocProvider<DirectsBloc>(create: (ctx) {
+                return DirectsBloc(
+                  repository: state.initData.directs,
+                  companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                );
+              }),
+              BlocProvider<MessagesBloc>(create: (ctx) {
+                return MessagesBloc(
+                  repository: state.initData.messages,
+                  channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
+                  directsBloc: BlocProvider.of<DirectsBloc>(ctx),
+                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                );
+              }),
+              BlocProvider<ThreadsBloc>(create: (ctx) {
+                return ThreadsBloc(
+                  repository: state.initData.threads,
+                  messagesBloc: BlocProvider.of<MessagesBloc>(ctx),
+                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                );
+              }),
+            ],
+            child: Navigator(
+              initialRoute: Routes.main,
+              onGenerateRoute: (settings) =>
+                  Routes.onGenerateRoute(settings.name),
+            ),
+          );
+        } else // is Authenticating
           return buildSplashScreen();
       },
     );

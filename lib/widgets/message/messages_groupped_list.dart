@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/message.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
-import 'package:provider/provider.dart';
 
 class MessagesGrouppedList extends StatelessWidget {
   final List<Message> messages;
@@ -79,22 +78,22 @@ class MessagesGrouppedList extends StatelessWidget {
               },
               addAutomaticKeepAlives: false,
               itemBuilder: (_, Message message) {
-                return !message.hidden
-                    ? BlocProvider<Message>(
-                        child: MessageTile(
-                          message,
-                          key: ValueKey(message.id),
-                        ),
-                      )
-                    : Center(
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: Dim.hm3),
-                          child: Text(
-                            'Message deleted',
-                            style: Theme.of(context).textTheme.subtitle1,
-                          ),
-                        ),
-                      );
+                if (!message.hidden) {
+                  return BlocProvider<SingleMessageBloc>(
+                    create: (_) => SingleMessageBloc(message),
+                    child: MessageTile(),
+                  );
+                } else {
+                  return Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: Dim.hm3),
+                      child: Text(
+                        'Message deleted',
+                        style: Theme.of(context).textTheme.subtitle1,
+                      ),
+                    ),
+                  );
+                }
               },
             ),
           ),

@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/sender.dart';
-import 'package:twake/models/twacode.dart';
 
 abstract class SingleMessageState extends Equatable {
   const SingleMessageState();
@@ -8,19 +6,25 @@ abstract class SingleMessageState extends Equatable {
 
 class MessageReady extends SingleMessageState {
   final String id;
+  final String threadId;
   final int responsesCount;
   final int creationDate;
-  final MessageTwacode content;
+  final List<dynamic> content;
+  final String text;
+  final int charCount;
   final Map<String, dynamic> reactions;
-  final Sender sender;
+  final String userId;
 
   const MessageReady({
     this.id,
+    this.threadId,
     this.responsesCount,
     this.creationDate,
     this.content,
+    this.text,
+    this.charCount,
     this.reactions,
-    this.sender,
+    this.userId,
   });
 
   @override

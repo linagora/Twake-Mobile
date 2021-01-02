@@ -36,7 +36,7 @@ class Workspace extends CollectionItem {
     this.companyId,
     this.color,
     this.userLastAccess,
-  });
+  }) : super(id);
 
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation

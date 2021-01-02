@@ -5,4 +5,6 @@ export 'package:twake/utils/bool_int.dart';
 class CollectionItem extends JsonSerializable {
   String id;
   bool isSelected;
+
+  CollectionItem(this.id);
 }

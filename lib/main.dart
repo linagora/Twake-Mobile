@@ -9,10 +9,8 @@ import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/services/init.dart';
 
 void main() async {
-  /// Wait for flutter to initialize
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// Disable landscape mode
   final AuthRepository repository = await initAuth();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(TwakeMobileApp(repository)));
@@ -26,11 +24,6 @@ class TwakeMobileApp extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) => OrientationBuilder(
         builder: (context, orientation) {
-          /// Here we initialize the size configuration, to get access
-          /// to scaling multipliers accross the rest of the app.
-          /// If screen orientation changes, OrientationBuilder will reinitialize
-          /// the configuration again, so other widgets can make use
-          /// of new values.
           Dim.init(constraints, orientation);
           return MaterialApp(
             debugShowCheckedModeBanner: false,

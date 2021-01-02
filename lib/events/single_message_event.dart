@@ -16,8 +16,15 @@ class UpdateContent extends SingleMessageEvent {
 class UpdateReaction extends SingleMessageEvent {
   final String emojiCode;
   final String userId;
+  final String companyId;
+  final String workspaceId;
 
-  const UpdateReaction({this.emojiCode, this.userId});
+  const UpdateReaction({
+    this.emojiCode,
+    this.userId,
+    this.companyId,
+    this.workspaceId,
+  });
 
   @override
   List<Object> get props => [emojiCode, userId];

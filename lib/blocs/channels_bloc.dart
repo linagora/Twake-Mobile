@@ -19,11 +19,10 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
 
   ChannelsBloc({this.repository, this.workspacesBloc})
       : super(ChannelsLoaded(
-            channels: repository.items
-                .where((i) =>
-                    i.workspaceId == workspacesBloc.repository.selected.id)
-                .toList(),
-            selected: repository.selected)) {
+          channels: repository.items,
+          selected: repository.selected,
+          fetchMessages: false,
+        )) {
     subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         selectedWorkspaceId = state.selected.id;
@@ -51,6 +50,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       yield ChannelsLoaded(
         channels: repository.items,
         selected: repository.selected,
+        fetchMessages: false,
       );
     } else if (event is ClearChannels) {
       await repository.clean();
@@ -58,6 +58,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId);
 
+      repository.logger.d('CHANGING CHANNEL: ${event.channelId}');
       yield ChannelsLoaded(
         channels: repository.items,
         selected: repository.selected,

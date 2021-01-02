@@ -29,7 +29,7 @@ class Company extends CollectionItem {
     this.name,
     this.logo,
     this.totalMembers,
-  });
+  }) : super(id);
 
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation

@@ -1,12 +1,10 @@
 class Emojis {
-  // Let's create a singleton
   static final Emojis _emojis = Emojis._internal();
   factory Emojis() {
     return _emojis;
   }
   Map<String, String> _reversedEmojiMap;
   Emojis._internal() {
-    // reverse the map for reverse lookups
     _reversedEmojiMap = _EMOJIS.map((k, v) => MapEntry(v, k));
   }
 
@@ -31,30 +29,8 @@ class Emojis {
   String reverseLookup(String value) {
     String hexcode =
         value.runes.map((r) => r.toRadixString(16).toUpperCase()).join('-');
-    // print('hexcode is: $hexcode');
     return _reversedEmojiMap[hexcode];
   }
-
-  // String getClosestMatch(String name) {
-  //   name = name.replaceAll(':', '');
-  //   if (_reversedEmojiMap[name] != null) return name;
-  //   var res = _EMOJIS[name];
-  //
-  //   // That's a pretty dumb algorithm, but will do for now
-  //   // TODO search a better solution to get closest match emoji
-  //   if (res == null) {
-  //     final parts = name.split('_');
-  //     for (var i = 0; i < parts.length; i++) {
-  //       final emoji = _EMOJIS.keys
-  //           .firstWhere((k) => k.contains(parts[i]), orElse: () => null);
-  //       if (emoji != null) {
-  //         res = _EMOJIS[emoji];
-  //         break;
-  //       }
-  //     }
-  //   }
-  //   return res ?? _EMOJIS['question'];
-  // }
 
   // https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json
   static const Map<String, String> _EMOJIS = {

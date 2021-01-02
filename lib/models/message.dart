@@ -12,7 +12,7 @@ part 'message.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Message extends CollectionItem {
   @JsonKey(required: true)
-  final String id;
+  String id;
 
   @JsonKey(name: 'thread_id')
   String threadId;
@@ -39,7 +39,7 @@ class Message extends CollectionItem {
   @JsonKey(defaultValue: {})
   Map<String, dynamic> reactions;
 
-  @JsonKey(required: true)
+  @JsonKey(required: true, name: 'channel_id')
   String channelId;
 
   @JsonKey(
@@ -63,7 +63,7 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
-  Message({this.id, this.userId, this.appId, this.creationDate});
+  Message({this.id, this.userId, this.appId, this.creationDate}) : super(id);
 
   void updateReactions({String userId, Map<String, dynamic> body}) {
     String emojiCode = body['reaction'];
@@ -106,5 +106,10 @@ class Message extends CollectionItem {
     return _$MessageFromJson(json);
   }
 
-  Map<String, dynamic> toJson() => _$MessageToJson(this);
+  Map<String, dynamic> toJson() {
+    var map = _$MessageToJson(this);
+    map['content'] = jsonEncode(map['content']);
+    map['reactions'] = jsonEncode(map['reactions']);
+    return map;
+  }
 }

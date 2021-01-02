@@ -41,7 +41,7 @@ class CollectionRepository<T extends CollectionItem> {
 
   int get itemsCount => (items ?? []).length;
 
-  static final logger = Logger();
+  final logger = Logger();
   static final _api = Api();
   static final _storage = Storage();
 
@@ -59,7 +59,7 @@ class CollectionRepository<T extends CollectionItem> {
     );
     bool saveToStore = false;
     if (itemsList.isEmpty) {
-      logger.d('No $T items found in storage, requesting from api...');
+      Logger().d('No $T items found in storage, requesting from api...');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
       saveToStore = true;
     }
