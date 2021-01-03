@@ -96,6 +96,8 @@ class SQLite with Storage {
     StorageType type,
     List<List> filters,
     Map<String, bool> orderings,
+    int limit,
+    int offset,
   }) async {
     final table = mapTypeToStore(type);
     final filter = filtersBuild(filters);
@@ -104,6 +106,8 @@ class SQLite with Storage {
       where: filter.item1,
       whereArgs: filter.item2,
       orderBy: orderingsBuild(orderings),
+      limit: limit,
+      offset: offset,
     );
     return items;
   }

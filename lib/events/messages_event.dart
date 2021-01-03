@@ -12,9 +12,34 @@ class LoadMessages extends MessagesEvent {
 
   @override
   List<Object> get props => [threadId];
+
+  @override
   Map<String, dynamic> toMap() {
     return {
       'thread_id': threadId,
+    };
+  }
+}
+
+class LoadMoreMessages extends MessagesEvent {
+  final String threadId;
+  final String beforeId;
+  final int beforeTimeStamp;
+
+  const LoadMoreMessages(
+    this.threadId,
+    this.beforeId,
+    this.beforeTimeStamp,
+  );
+
+  @override
+  List<Object> get props => [];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'thread_id': threadId,
+      'before_message_id': beforeId,
     };
   }
 }
@@ -27,6 +52,8 @@ class LoadSingleMessage extends MessagesEvent {
 
   @override
   List<Object> get props => [messageId, threadId, channelId];
+
+  @override
   Map<String, dynamic> toMap() {
     return {
       'channel_id': channelId,
@@ -52,6 +79,7 @@ class RemoveMessage extends MessagesEvent {
   @override
   List<Object> get props => [messageId, threadId];
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'message_id': messageId,
@@ -82,6 +110,7 @@ class ClearMessages extends MessagesEvent {
   @override
   List<Object> get props => [];
 
+  @override
   Map<String, dynamic> toMap() => {};
 }
 
@@ -91,6 +120,7 @@ class SelectMessage extends MessagesEvent {
   @override
   List<Object> get props => [messageId];
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'thread_id': messageId,

@@ -40,6 +40,8 @@ abstract class Storage {
     StorageType type,
     List<List> filters,
     Map<String, bool> orderings,
+    int limit,
+    int offset,
   });
 
   Future<void> delete({StorageType type, dynamic key});

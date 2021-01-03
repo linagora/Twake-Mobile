@@ -69,16 +69,10 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   void select(String itemId) {
-    logger.d(
-        'REQEUSTED ITEM: $itemId\nITEMCOUNT: ${items.length}\n${items.map((c) => c.id).toList()}');
     final item = items.firstWhere((i) => i.id == itemId);
     var oldSelected = selected;
     oldSelected.isSelected = 0;
-    logger.d('OLD ID: ' + oldSelected.id);
     item.isSelected = 1;
-    logger.d('SELECTED COUNT: ${items.where((c) => c.isSelected == 1).length}');
-    logger.d(
-        'SELECTED LIST:\n${items.where((c) => c.isSelected == 1).map((c) => c.id).toList()}');
     assert(selected.id == item.id);
     Future.wait([
       saveOne(oldSelected),
@@ -91,6 +85,9 @@ class CollectionRepository<T extends CollectionItem> {
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
     bool forceFromApi: false,
+    bool extendItems: false,
+    int limit,
+    int offset,
   }) async {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
@@ -99,6 +96,8 @@ class CollectionRepository<T extends CollectionItem> {
         type: _typeToStorageType[T],
         filters: filters,
         orderings: sortFields,
+        limit: limit,
+        offset: offset,
       );
     }
     bool saveToStore = false;
@@ -107,7 +106,11 @@ class CollectionRepository<T extends CollectionItem> {
       itemsList = await _api.get(apiEndpoint, params: queryParams);
       saveToStore = true;
     }
-    _updateItems(itemsList, saveToStore: saveToStore);
+    _updateItems(
+      itemsList,
+      saveToStore: saveToStore,
+      extendItems: extendItems,
+    );
   }
 
   Future<void> pullOne(
@@ -153,9 +156,13 @@ class CollectionRepository<T extends CollectionItem> {
   void _updateItems(
     List<dynamic> itemsList, {
     bool saveToStore: false,
+    bool extendItems: false,
   }) {
-    final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T)).toList();
-    this.items = items;
+    final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T));
+    if (extendItems)
+      this.items.addAll(items);
+    else
+      this.items = items.toList();
     if (saveToStore) this.save();
   }
 

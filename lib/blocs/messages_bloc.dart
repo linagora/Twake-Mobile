@@ -14,6 +14,8 @@ import 'package:twake/states/messages_state.dart';
 export 'package:twake/states/messages_state.dart';
 export 'package:twake/events/messages_event.dart';
 
+const _MESSAGE_LIMIT = 50;
+
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
   final ChannelsBloc channelsBloc;
