@@ -26,6 +26,8 @@ class CollectionRepository<T extends CollectionItem> {
     }
   };
 
+  List<T> get roItems => [...items];
+
   static Map<Type, StorageType> _typeToStorageType = {
     Company: StorageType.Company,
     Workspace: StorageType.Workspace,
@@ -145,9 +147,10 @@ class CollectionRepository<T extends CollectionItem> {
     bool addToItems = true,
   }) async {
     logger.d('Pulling item $T from api...');
-    final resp = (await _api.get(apiEndpoint, params: queryParams))[0];
+    final List resp = (await _api.get(apiEndpoint, params: queryParams));
     logger.d('GOT: $resp');
-    final item = _typeToConstuctor[T](resp);
+    if (resp.isEmpty) return;
+    final item = _typeToConstuctor[T](resp[0]);
     if (addToItems) this.items.add(item);
     logger.d('SAVING TO DATABASE: $item');
     saveOne(item);

@@ -13,6 +13,14 @@ class MessagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            BlocProvider.of<MessagesBloc>(context).add(LoadSingleMessage(
+              messageId: '23c4c83a-4920-11eb-86fb-0242ac120004',
+              channelId: '02b2f93c-323c-41eb-8c5e-0242ac120004',
+            ));
+          }),
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
@@ -54,13 +62,11 @@ class MessagesPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           MessagesGrouppedList(),
-          MessageEditField(
-            (content) {
-              BlocProvider.of<MessagesBloc>(context).add(
-                SendMessage(content: content),
-              );
-            },
-          ),
+          MessageEditField((content) {
+            BlocProvider.of<MessagesBloc>(context).add(
+              SendMessage(content: content),
+            );
+          }),
         ],
       )),
     );

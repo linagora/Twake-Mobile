@@ -17,9 +17,11 @@ class MessagesGrouppedList extends StatelessWidget {
               onNotification: (ScrollNotification scrollInfo) {
                 if (scrollInfo.metrics.pixels ==
                     scrollInfo.metrics.maxScrollExtent) {
+                  print(
+                      'FIRST IS LESS THAN LAST: ${state.messages.first.creationDate < state.messages.last.creationDate}');
                   BlocProvider.of<MessagesBloc>(context).add(LoadMoreMessages(
-                    beforeId: state.messages.last.id,
-                    beforeTimeStamp: state.messages.last.creationDate,
+                    beforeId: state.messages.first.id,
+                    beforeTimeStamp: state.messages.first.creationDate,
                   ));
                 }
                 return true;
@@ -30,79 +32,78 @@ class MessagesGrouppedList extends StatelessWidget {
                     FocusManager.instance.primaryFocus.unfocus();
                   },
                   child: StickyGroupedListView<Message, DateTime>(
-                    reverse: true,
-                    elements: state.messages,
-                    order: StickyGroupedListOrder.ASC,
-                    groupBy: (Message m) {
-                      final DateTime dt = DateTime.fromMillisecondsSinceEpoch(
-                          m.creationDate * 1000);
-                      return DateTime(dt.year, dt.month, dt.day);
-                    },
-                    groupComparator: (DateTime value1, DateTime value2) =>
-                        value2.compareTo(value1),
-                    itemComparator: (Message m1, Message m2) {
-                      return m2.creationDate.compareTo(m1.creationDate);
-                    },
-                    separator: SizedBox(height: Dim.hm2),
-                    groupSeparatorBuilder: (Message message) {
-                      return GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus.unfocus();
-                          },
-                          child: Container(
-                            height: Dim.hm3,
-                            margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Divider(
-                                    thickness: 0.0,
+                      order: StickyGroupedListOrder.DESC,
+                      reverse: true,
+                      elements: state.messages,
+                      groupBy: (Message m) {
+                        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(
+                            m.creationDate * 1000);
+                        return DateTime(dt.year, dt.month, dt.day);
+                      },
+                      groupComparator: (DateTime value1, DateTime value2) =>
+                          value1.compareTo(value2),
+                      itemComparator: (Message m1, Message m2) {
+                        return m1.creationDate.compareTo(m2.creationDate);
+                      },
+                      separator: SizedBox(height: Dim.hm2),
+                      groupSeparatorBuilder: (Message message) {
+                        print('Items count: ${state.messageCount}');
+                        return GestureDetector(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus.unfocus();
+                            },
+                            child: Container(
+                              height: Dim.hm3,
+                              margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Divider(
+                                      thickness: 0.0,
+                                    ),
                                   ),
-                                ),
-                                Align(
-                                  // alignment: Alignment.center,
-                                  child: Container(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    width: Dim.widthPercent(30),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(1.0),
-                                      child: Text(
-                                        DateFormatter.getVerboseDate(
-                                            message.creationDate),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                        textAlign: TextAlign.center,
+                                  Align(
+                                    // alignment: Alignment.center,
+                                    child: Container(
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
+                                      width: Dim.widthPercent(30),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(1.0),
+                                        child: Text(
+                                          DateFormatter.getVerboseDate(
+                                              message.creationDate),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subtitle1,
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     ),
                                   ),
+                                ],
+                              ),
+                            ));
+                      },
+                      // addAutomaticKeepAlives: false,
+                      indexedItemBuilder: (_, Message message, int i) {
+                        return !message.hidden
+                            ? MessageTile(
+                                message: message,
+                                key: ValueKey(message.id),
+                              )
+                            : Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: Dim.hm3),
+                                  child: Text(
+                                    'Message deleted',
+                                    style:
+                                        Theme.of(context).textTheme.subtitle1,
+                                  ),
                                 ),
-                              ],
-                            ),
-                          ));
-                    },
-                    addAutomaticKeepAlives: false,
-                    itemBuilder: (_, Message message) {
-                      if (!message.hidden) {
-                        return BlocProvider<SingleMessageBloc>(
-                          create: (_) => SingleMessageBloc(message),
-                          child: MessageTile(),
-                        );
-                      } else {
-                        return Center(
-                          child: Padding(
-                            padding: EdgeInsets.only(bottom: Dim.hm3),
-                            child: Text(
-                              'Message deleted',
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
+                              );
+                      }),
                 ),
               ))
           : Center(child: CircularProgressIndicator());

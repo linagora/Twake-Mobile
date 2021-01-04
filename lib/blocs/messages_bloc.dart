@@ -47,6 +47,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     });
     _directsSubscription = directsBloc.listen((ChannelState state) {
       if (state is DirectPicked) {
+        repository.logger.d('FETCHING DIRECT MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
         this.add(LoadMessages());
       }
@@ -83,7 +84,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         );
         _sortItems();
         yield MessagesLoaded(
-          messages: repository.items,
+          messages: repository.roItems,
           messageCount: repository.items.length,
           parentChannel: selectedChannel,
         );
@@ -92,7 +93,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (_previousMessageId == event.beforeId) return;
       _previousMessageId = event.beforeId;
       yield MoreMessagesLoading(
-        messages: repository.items,
+        messages: repository.roItems,
         parentChannel: selectedChannel,
       );
       final bool _ = await repository.loadMore(
@@ -105,7 +106,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       );
       _sortItems();
       yield MessagesLoaded(
-        messages: repository.items,
+        messages: repository.roItems,
         messageCount: repository.items.length,
         parentChannel: selectedChannel,
       );
@@ -119,34 +120,42 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       );
       _sortItems();
       final newState = MessagesLoaded(
-        messages: repository.items,
+        messages: repository.roItems,
         messageCount: repository.items.length,
         parentChannel: selectedChannel,
       );
-      repository.logger.d('YIELDING STATE: ${newState == this.state}');
+      repository.logger.d('YIELDING STATE: ${newState != this.state}');
       yield newState;
     } else if (event is RemoveMessage) {
+      final channelId = event.channelId ?? selectedChannel.id;
+      repository.logger
+          .d('DELETING IN CURRENT CHANNEL: ${channelId == selectedChannel.id}');
       await repository.delete(
         event.messageId,
         apiSync: !event.onNotify,
-        removeFromItems: event.channelId == selectedChannel.id,
+        removeFromItems: channelId == selectedChannel.id,
         requestBody: _makeQueryParams(event),
       );
       if (repository.items.isEmpty)
         yield MessagesEmpty(parentChannel: selectedChannel);
       else {
         _sortItems();
-        yield MessagesLoaded(
-          messages: repository.items,
+
+        final newState = MessagesLoaded(
+          messages: repository.roItems,
           messageCount: repository.items.length,
           parentChannel: selectedChannel,
         );
+
+        repository.logger
+            .d('Removed message, new state will yield: ${newState == state}');
+        yield newState;
       }
     } else if (event is SendMessage) {
       await repository.pushOne(_makeQueryParams(event));
       _sortItems();
       yield MessagesLoaded(
-        messages: repository.items,
+        messages: repository.roItems,
         messageCount: repository.items.length,
         parentChannel: selectedChannel,
       );
@@ -157,7 +166,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       repository.select(event.messageId);
       yield MessageSelected(
         threadMessage: repository.selected,
-        messages: repository.items,
+        messages: repository.roItems,
         parentChannel: selectedChannel,
       );
     }
@@ -181,7 +190,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _sortItems() {
     repository.items.sort(
-      (i1, i2) => i2.creationDate.compareTo(i1.creationDate),
+      (i1, i2) => i1.creationDate.compareTo(i2.creationDate),
     );
   }
 }

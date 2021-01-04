@@ -64,10 +64,10 @@ abstract class Storage {
 enum StorageType {
   Auth,
   Profile,
-  Company,
-  Workspace,
+  Message,
   Channel,
   Direct,
-  Message,
+  Workspace,
+  Company,
   User,
 }

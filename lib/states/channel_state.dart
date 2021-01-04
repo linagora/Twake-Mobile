@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 
@@ -7,38 +6,40 @@ abstract class ChannelState extends Equatable {
   const ChannelState();
 }
 
-class BaseChannelsLoaded extends ChannelState {
-  final List<BaseChannel> channels;
-
-  const BaseChannelsLoaded({
+class ChannelsLoaded extends ChannelState {
+  final List<Channel> channels;
+  const ChannelsLoaded({
     this.channels,
   });
   @override
   List<Object> get props => [channels];
 }
 
-class ChannelsLoaded extends BaseChannelsLoaded {
-  const ChannelsLoaded({
-    channels,
-  }) : super(channels: channels);
-}
-
 class ChannelPicked extends ChannelsLoaded {
-  final BaseChannel selected;
+  final Channel selected;
   const ChannelPicked({List<Channel> channels, this.selected})
       : super(channels: channels);
+
+  @override
+  List<Object> get props => [selected.id, channels];
 }
 
-class DirectsLoaded extends BaseChannelsLoaded {
+class DirectsLoaded extends ChannelState {
+  final List<Direct> channels;
   const DirectsLoaded({
-    channels,
-  }) : super(channels: channels);
+    this.channels,
+  });
+  @override
+  List<Object> get props => [channels];
 }
 
 class DirectPicked extends DirectsLoaded {
-  final BaseChannel selected;
+  final Direct selected;
   const DirectPicked({List<Direct> directs, this.selected})
       : super(channels: directs);
+
+  @override
+  List<Object> get props => [selected.id, channels];
 }
 
 class ChannelsLoading extends ChannelState {
