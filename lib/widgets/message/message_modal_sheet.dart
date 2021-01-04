@@ -4,14 +4,16 @@ import 'package:twake/blocs/profile_bloc.dart';
 
 class MessageModalSheet extends StatefulWidget {
   final String userId;
+  final String messageId;
   final int responsesCount;
-  final void Function(BuildContext) onReply;
+  final void Function(BuildContext, String) onReply;
   final void Function(BuildContext) onDelete;
   final Function onCopy;
   final bool isThread;
 
   const MessageModalSheet({
     this.userId,
+    this.messageId,
     this.responsesCount,
     this.isThread: false,
     this.onReply,
@@ -42,7 +44,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  widget.onReply(context);
+                  widget.onReply(context, widget.messageId);
                 },
               ),
             if (!widget.isThread) Divider(),

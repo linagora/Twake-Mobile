@@ -40,6 +40,8 @@ abstract class Storage {
     StorageType type,
     List<List> filters,
     Map<String, bool> orderings,
+    int limit,
+    int offset,
   });
 
   Future<void> delete({StorageType type, dynamic key});
@@ -62,10 +64,10 @@ abstract class Storage {
 enum StorageType {
   Auth,
   Profile,
-  Company,
-  Workspace,
+  Message,
   Channel,
   Direct,
-  Message,
+  Workspace,
+  Company,
   User,
 }

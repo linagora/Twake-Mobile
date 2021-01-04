@@ -32,6 +32,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void onMessageCallback(NotificationData data) {
     if (data is MessageNotification) {
+      // TODO remove monkey patch
+      if (data.channelId[14] == '1') {
+        data.channelId = data.channelId.replaceRange(14, 15, '4');
+      }
       if (data.threadId.isNotEmpty) {
         this.add(ThreadMessageEvent(data));
       } else {

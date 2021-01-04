@@ -32,7 +32,7 @@ class DirectMessagesGroup extends StatelessWidget {
                   // ),
                 ],
               ),
-              ...state.directs.map((d) => DirectTile(d)).toList()
+              ...state.channels.map((d) => DirectTile(d)).toList()
             ],
           );
         } else {

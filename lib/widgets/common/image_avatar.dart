@@ -19,6 +19,7 @@ class ImageAvatar extends StatelessWidget {
       child: imageUrl == null || imageUrl.isEmpty
           ? onErrorFallbackImg()
           : FadeInImage.assetNetwork(
+              placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(),
               fit: BoxFit.cover,
               image: imageUrl,
               width: Dim.tm5(),

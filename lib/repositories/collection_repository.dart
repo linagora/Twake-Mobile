@@ -26,6 +26,8 @@ class CollectionRepository<T extends CollectionItem> {
     }
   };
 
+  List<T> get roItems => [...items];
+
   static Map<Type, StorageType> _typeToStorageType = {
     Company: StorageType.Company,
     Workspace: StorageType.Workspace,
@@ -54,6 +56,7 @@ class CollectionRepository<T extends CollectionItem> {
     List<dynamic> itemsList = await _storage.batchLoad(
       type: _typeToStorageType[T],
       filters: filters,
+      orderings: sortFields,
     );
     bool saveToStore = false;
     if (itemsList.isEmpty) {
@@ -68,22 +71,17 @@ class CollectionRepository<T extends CollectionItem> {
     return collection;
   }
 
-  void select(String itemId) {
-    logger.d(
-        'REQEUSTED ITEM: $itemId\nITEMCOUNT: ${items.length}\n${items.map((c) => c.id).toList()}');
+  void select(String itemId, {bool saveToStore: true}) {
     final item = items.firstWhere((i) => i.id == itemId);
     var oldSelected = selected;
     oldSelected.isSelected = 0;
-    logger.d('OLD ID: ' + oldSelected.id);
     item.isSelected = 1;
-    logger.d('SELECTED COUNT: ${items.where((c) => c.isSelected == 1).length}');
-    logger.d(
-        'SELECTED LIST:\n${items.where((c) => c.isSelected == 1).map((c) => c.id).toList()}');
     assert(selected.id == item.id);
-    Future.wait([
-      saveOne(oldSelected),
-      saveOne(item),
-    ]);
+    if (saveToStore)
+      Future.wait([
+        saveOne(oldSelected),
+        saveOne(item),
+      ]);
   }
 
   Future<void> reload({
@@ -91,6 +89,8 @@ class CollectionRepository<T extends CollectionItem> {
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
     bool forceFromApi: false,
+    int limit,
+    int offset,
   }) async {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
@@ -99,6 +99,8 @@ class CollectionRepository<T extends CollectionItem> {
         type: _typeToStorageType[T],
         filters: filters,
         orderings: sortFields,
+        limit: limit,
+        offset: offset,
       );
     }
     bool saveToStore = false;
@@ -110,14 +112,47 @@ class CollectionRepository<T extends CollectionItem> {
     _updateItems(itemsList, saveToStore: saveToStore);
   }
 
+  Future<bool> loadMore({
+    Map<String, dynamic> queryParams,
+    List<List> filters, // fields to filter by in store
+    Map<String, bool> sortFields, // fields to sort by + sort direction
+    int limit,
+    int offset,
+  }) async {
+    List<dynamic> itemsList = [];
+    logger.d('Loading more $T items from storage...\nFilters: $filters');
+    itemsList = await _storage.batchLoad(
+      type: _typeToStorageType[T],
+      filters: filters,
+      orderings: sortFields,
+      limit: limit,
+      offset: offset,
+    );
+    bool saveToStore = false;
+    if (itemsList.isEmpty) {
+      logger.d('Non in storage. Reloading $T items from api...');
+      itemsList = await _api.get(apiEndpoint, params: queryParams);
+      saveToStore = true;
+    }
+    if (itemsList.isNotEmpty) {
+      _updateItems(itemsList, saveToStore: saveToStore, extendItems: true);
+    } else {
+      return false;
+    }
+    return true;
+  }
+
   Future<void> pullOne(
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
     logger.d('Pulling item $T from api...');
-    final resp = (await _api.get(apiEndpoint, params: queryParams))[0];
-    final item = _typeToConstuctor[T](resp);
+    final List resp = (await _api.get(apiEndpoint, params: queryParams));
+    logger.d('GOT: $resp');
+    if (resp.isEmpty) return;
+    final item = _typeToConstuctor[T](resp[0]);
     if (addToItems) this.items.add(item);
+    logger.d('SAVING TO DATABASE: $item');
     saveOne(item);
   }
 
@@ -127,6 +162,7 @@ class CollectionRepository<T extends CollectionItem> {
   }) async {
     logger.d('Sending item $T to api...');
     final resp = (await _api.post(apiEndpoint, body: body));
+    logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = _typeToConstuctor[T](resp);
     if (addToItems) this.items.add(item);
     saveOne(item);
@@ -153,9 +189,13 @@ class CollectionRepository<T extends CollectionItem> {
   void _updateItems(
     List<dynamic> itemsList, {
     bool saveToStore: false,
+    bool extendItems: false,
   }) {
-    final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T)).toList();
-    this.items = items;
+    final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T));
+    if (extendItems)
+      this.items.addAll(items);
+    else
+      this.items = items.toList();
     if (saveToStore) this.save();
   }
 

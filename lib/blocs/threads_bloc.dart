@@ -48,7 +48,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
     if (event is LoadMessages) {
       yield MessagesLoading();
       List<List> filters = [
-        ['threadId', '=', _selectedThreadId],
+        ['thread_id', '=', _selectedThreadId],
       ];
       await repository.reload(
         queryParams: _makeQueryParams(event),

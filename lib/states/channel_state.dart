@@ -8,12 +8,11 @@ abstract class ChannelState extends Equatable {
 
 class ChannelsLoaded extends ChannelState {
   final List<Channel> channels;
-
   const ChannelsLoaded({
     this.channels,
   });
   @override
-  List<Object> get props => [channels, channels.length];
+  List<Object> get props => [channels];
 }
 
 class ChannelPicked extends ChannelsLoaded {
@@ -22,26 +21,25 @@ class ChannelPicked extends ChannelsLoaded {
       : super(channels: channels);
 
   @override
-  List<Object> get props => [selected.id, selected.isSelected];
+  List<Object> get props => [selected.id, channels];
 }
 
 class DirectsLoaded extends ChannelState {
-  final List<Direct> directs;
-
+  final List<Direct> channels;
   const DirectsLoaded({
-    this.directs,
+    this.channels,
   });
   @override
-  List<Object> get props => [directs, directs.length];
+  List<Object> get props => [channels];
 }
 
 class DirectPicked extends DirectsLoaded {
   final Direct selected;
   const DirectPicked({List<Direct> directs, this.selected})
-      : super(directs: directs);
+      : super(channels: directs);
 
   @override
-  List<Object> get props => [selected.id];
+  List<Object> get props => [selected.id, channels];
 }
 
 class ChannelsLoading extends ChannelState {

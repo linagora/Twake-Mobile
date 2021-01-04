@@ -1,9 +1,8 @@
-import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'notification.g.dart';
 
-abstract class NotificationData extends Equatable {
+abstract class NotificationData {
   const NotificationData();
 }
 
@@ -14,7 +13,7 @@ class MessageNotification extends NotificationData {
   @JsonKey(name: 'workspace_id')
   final String workspaceId;
   @JsonKey(name: 'channel_id')
-  final String channelId;
+  String channelId;
   @JsonKey(name: 'thread_id')
   final String threadId;
   @JsonKey(name: 'message_id')
@@ -27,9 +26,6 @@ class MessageNotification extends NotificationData {
     this.threadId,
     this.messageId,
   });
-
-  @override
-  List<Object> get props => [messageId];
 
   factory MessageNotification.fromJson(Map<String, dynamic> json) =>
       _$MessageNotificationFromJson(json);

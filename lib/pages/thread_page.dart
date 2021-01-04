@@ -46,7 +46,11 @@ class ThreadPage extends StatelessWidget {
             ),
           ),
           body: SafeArea(
-            child: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: Dim.heightPercent(88),
+                minHeight: Dim.heightPercent(78),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +59,7 @@ class ThreadPage extends StatelessWidget {
                     create: (_) => SingleMessageBloc(
                       (threadState as MessageSelected).threadMessage,
                     ),
-                    child: MessageTile(),
+                    child: MessageTile(hideShowAnswers: true),
                   ),
                   Divider(color: Colors.grey[200]),
                   Padding(

@@ -22,7 +22,7 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
   }) : super(repository.items.isEmpty
             ? ChannelsEmpty()
             : DirectsLoaded(
-                directs: repository.items,
+                channels: repository.items,
               )) {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
@@ -54,7 +54,7 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
         yield ChannelsEmpty();
       else
         yield DirectsLoaded(
-          directs: repository.items,
+          channels: repository.items,
         );
     } else if (event is ClearChannels) {
       await repository.clean();
