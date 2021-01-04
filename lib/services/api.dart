@@ -75,7 +75,7 @@ class Api {
 
   Future<dynamic> delete(
     String method, {
-    Map<String, String> body,
+    Map<String, dynamic> body,
   }) async {
     final url = _SHOST + method;
     final response = await dio.delete(url, data: body);
@@ -98,7 +98,7 @@ class Api {
 
   Future<dynamic> patch(
     String method, {
-    Map<String, String> body,
+    Map<String, dynamic> body,
   }) async {
     final url = _SHOST + method;
     final response = await dio.patch(url, data: body);
@@ -107,7 +107,7 @@ class Api {
 
   Future<dynamic> post(
     String method, {
-    Map<String, String> body,
+    Map<String, dynamic> body,
     bool useTokenDio = false,
   }) async {
     final url = _SHOST + method;

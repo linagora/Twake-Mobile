@@ -29,10 +29,13 @@ class Notifications {
     else if (Platform.isWindows) this.platform = Target.Windows;
     _fcm.configure(
       onMessage: onMessage,
+      onResume: onResume,
+      onLaunch: onLaunch,
     );
   }
 
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
+    logger.d('GOT MESSAGE FROM FIREBASE: $message');
     final notification = messageParse(message);
     onMessageCallback(notification);
   }

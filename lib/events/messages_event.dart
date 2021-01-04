@@ -26,14 +26,14 @@ class LoadMoreMessages extends MessagesEvent {
   final String beforeId;
   final int beforeTimeStamp;
 
-  const LoadMoreMessages(
+  const LoadMoreMessages({
     this.threadId,
     this.beforeId,
     this.beforeTimeStamp,
-  );
+  });
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [beforeId, beforeTimeStamp];
 
   @override
   Map<String, dynamic> toMap() {
@@ -96,6 +96,8 @@ class SendMessage extends MessagesEvent {
   const SendMessage({this.content, this.threadId});
   @override
   List<Object> get props => [content, threadId];
+
+  @override
   Map<String, dynamic> toMap() {
     return {
       'original_str': content,

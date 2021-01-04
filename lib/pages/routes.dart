@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 import 'package:twake/pages/main_page.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/thread_page.dart';
@@ -12,7 +11,6 @@ class Routes {
 
   static MaterialPageRoute onGenerateRoute(String routeName) {
     Widget page;
-    Logger().e('ROUTE NAME: $routeName');
     switch (routeName) {
       case Routes.root:
       case Routes.main:

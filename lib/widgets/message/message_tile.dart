@@ -15,9 +15,12 @@ import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
 class MessageTile extends StatelessWidget {
-  MessageTile();
+  final bool hideShowAnswers;
+  MessageTile({this.hideShowAnswers: false});
 
-  void onReply(context) {
+  void onReply(context, String messageId) {
+    BlocProvider.of<MessagesBloc>(context).add(SelectMessage(messageId));
+
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => ThreadPage()));
   }
@@ -51,6 +54,7 @@ class MessageTile extends StatelessWidget {
                   builder: (ctx) {
                     return MessageModalSheet(
                       userId: messageState.userId,
+                      messageId: messageState.id,
                       responsesCount: messageState.responsesCount,
                       isThread: messageState.threadId != null,
                       onReply: onReply,
@@ -70,7 +74,7 @@ class MessageTile extends StatelessWidget {
               FocusManager.instance.primaryFocus.unfocus();
               if (messageState.threadId == null &&
                   messageState.responsesCount != 0) {
-                onReply(context);
+                onReply(context, messageState.id);
               }
             },
             child: Padding(
@@ -126,7 +130,8 @@ class MessageTile extends StatelessWidget {
                         );
                       }),
                       if (messageState.responsesCount > 0 &&
-                          messageState.threadId == null)
+                          messageState.threadId == null &&
+                          hideShowAnswers)
                         Text(
                           'See all answers (${messageState.responsesCount})',
                           style: StylesConfig.miniPurple,

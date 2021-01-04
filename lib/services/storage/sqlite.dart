@@ -170,10 +170,10 @@ class SQLite with Storage {
       final lhs = e[0];
       final op = e[1];
       final rhs = e[2];
-      where += '$lhs $op ?,';
+      where += '$lhs $op ? AND ';
       whereArgs.add(rhs);
     }
-    where = where.substring(0, where.length - 1);
+    where = where.substring(0, where.length - 4);
     return Tuple2(where, whereArgs);
   }
 

@@ -52,11 +52,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
-      repository.logger.d('FROM: ${repository.selected.name}');
-      repository.select(event.channelId);
-      repository.logger.d('TO: ${repository.selected.name}');
-      repository.logger.d(
-          'REQUESTED IS EQUAL TO RESULT: ${repository.selected.id == event.channelId}');
+      repository.select(event.channelId, saveToStore: false);
       final newState = ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
