@@ -3,13 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
-import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
 class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
@@ -54,38 +52,27 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BlocProvider<SingleMessageBloc>(
-                    create: (_) => SingleMessageBloc(
-                      (threadState as MessageSelected).threadMessage,
-                    ),
-                    child: MessageTile<T>(
-                        message: (threadState as MessageSelected).threadMessage,
-                        hideShowAnswers: true),
-                  ),
-                  Divider(color: Colors.grey[200]),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: Dim.heightMultiplier,
-                      horizontal: Dim.wm4,
-                    ),
-                    child: Text((threadState as MessageSelected)
-                            .threadMessage
-                            .respCountStr +
-                        ' responses'),
-                  ),
-                  Divider(color: Colors.grey[200]),
                   BlocBuilder<ThreadsBloc, MessagesState>(
-                    builder: (ctx, state) => state is MessagesLoaded
-                        ? ThreadMessagesList<T>(state.messages)
-                        : Expanded(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                  ),
+                      builder: (ctx, state) {
+                    print('STATE IS $state');
+                    if (state is MessagesLoaded) {
+                      return ThreadMessagesList<T>(
+                        state.messages,
+                        threadMessage:
+                            (threadState as MessageSelected).threadMessage,
+                      );
+                    } else if (state is MessagesEmpty) {
+                      return Expanded(
+                          child: Center(child: Text('No responses yet')));
+                    } else
+                      return Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                  }),
                   MessageEditField((content) {
                     BlocProvider.of<MessagesBloc<T>>(ctx).add(
                       SendMessage(

@@ -44,7 +44,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: filters,
-        sortFields: {'creation_date': false},
+        sortFields: {'creation_date': true},
       );
       if (repository.items.isEmpty)
         yield MessagesEmpty();
@@ -105,7 +105,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _sortItems() {
     repository.items.sort(
-      (i1, i2) => i1.creationDate.compareTo(i2.creationDate),
+      (i1, i2) => i2.creationDate.compareTo(i1.creationDate),
     );
   }
 }
