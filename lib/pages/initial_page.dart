@@ -73,12 +73,21 @@ class _InitialPageState extends State<InitialPage> {
                   companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
                 );
               }),
-              BlocProvider<MessagesBloc>(
+              BlocProvider<MessagesBloc<ChannelsBloc>>(
                 create: (ctx) {
-                  return MessagesBloc(
+                  return MessagesBloc<ChannelsBloc>(
                     repository: state.initData.messages,
                     channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
-                    directsBloc: BlocProvider.of<DirectsBloc>(ctx),
+                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                  );
+                },
+                lazy: false,
+              ),
+              BlocProvider<MessagesBloc<DirectsBloc>>(
+                create: (ctx) {
+                  return MessagesBloc<DirectsBloc>(
+                    repository: state.initData.messages,
+                    channelsBloc: BlocProvider.of<DirectsBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },
@@ -88,7 +97,8 @@ class _InitialPageState extends State<InitialPage> {
                 create: (ctx) {
                   return ThreadsBloc(
                     repository: state.initData.threads,
-                    messagesBloc: BlocProvider.of<MessagesBloc>(ctx),
+                    messagesBloc:
+                        BlocProvider.of<MessagesBloc<DirectsBloc>>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },

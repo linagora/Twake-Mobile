@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
@@ -17,13 +16,14 @@ export 'package:twake/events/messages_event.dart';
 
 const _MESSAGE_LIMIT = 50;
 
-class MessagesBloc<T extends BaseChannelBloc>
-    extends Bloc<MessagesEvent, MessagesState> {
+class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
-  final T channelsBloc;
+  final ChannelsBloc channelsBloc;
+  final DirectsBloc directsBloc;
   final NotificationBloc notificationBloc;
 
-  StreamSubscription _subscription;
+  StreamSubscription _channelsSubscription;
+  StreamSubscription _directsSubscription;
   StreamSubscription _notificationSubscription;
 
   BaseChannel selectedChannel;
@@ -33,35 +33,31 @@ class MessagesBloc<T extends BaseChannelBloc>
   MessagesBloc({
     this.repository,
     this.channelsBloc,
+    this.directsBloc,
     this.notificationBloc,
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
-    _subscription = channelsBloc.listen((ChannelState state) {
+    _channelsSubscription = channelsBloc.listen((ChannelState state) {
+      repository.logger.d('TRIGGERED MESSAGE FETCH: $state');
       if (state is ChannelPicked) {
-        repository.logger.d('TRIGGERED MESSAGE FETCH');
         repository.logger
             .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
         this.add(LoadMessages());
       }
     });
+    _directsSubscription = directsBloc.listen((ChannelState state) {
+      if (state is DirectPicked) {
+        repository.logger.d('FETCHING DIRECT MESSAGES: ${state.selected.name}');
+        selectedChannel = state.selected;
+        this.add(LoadMessages());
+      }
+    });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (T == ChannelsBloc && state is ChannelMessageNotification) {
-        repository.logger.d('CHANNEL MESSAGE FETCH ON NOTIFY');
+      if (state is ChannelMessageNotification) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
-          workspaceId: state.data.workspaceId,
-          companyId: state.data.companyId,
-        ));
-      }
-      if (T == DirectsBloc && state is DirectMessageNotification) {
-        repository.logger.d('DIRECT MESSAGE FETCH ON NOTIFY');
-        this.add(LoadSingleMessage(
-          messageId: state.data.messageId,
-          channelId: state.data.channelId,
-          workspaceId: state.data.workspaceId,
-          companyId: state.data.companyId,
         ));
       }
     });
@@ -178,7 +174,8 @@ class MessagesBloc<T extends BaseChannelBloc>
 
   @override
   Future<void> close() {
-    _subscription.cancel();
+    _channelsSubscription.cancel();
+    _directsSubscription.cancel();
     _notificationSubscription.cancel();
     return super.close();
   }
@@ -186,13 +183,8 @@ class MessagesBloc<T extends BaseChannelBloc>
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
-    if (channelsBloc is ChannelsBloc) {
-      map['company_id'] = map['company_id'] ??
-          (channelsBloc as ChannelsBloc).workspacesBloc.selectedCompanyId;
-    } else {
-      map['company_id'] = map['company_id'] ?? channelsBloc.selectedParentId;
-    }
-    map['workspace_id'] = map['workspace_id'] ?? channelsBloc.selectedParentId;
+    map['company_id'] = directsBloc.selectedParentId;
+    map['workspace_id'] = channelsBloc.selectedParentId;
     return map;
   }
 

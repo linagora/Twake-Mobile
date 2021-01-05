@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/events/channel_event.dart';
 import 'package:twake/models/channel.dart';
@@ -11,23 +11,21 @@ import 'package:twake/states/workspace_state.dart';
 export 'package:twake/events/channel_event.dart';
 export 'package:twake/states/channel_state.dart';
 
-class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
-  final CollectionRepository<Channel> repository;
+class ChannelsBloc extends BaseChannelBloc {
   final WorkspacesBloc workspacesBloc;
-  StreamSubscription subscription;
-  String selectedWorkspaceId;
+  StreamSubscription _subscription;
 
-  ChannelsBloc({this.repository, this.workspacesBloc})
-      : super(ChannelsLoaded(
-          channels: repository.items,
-        )) {
-    subscription = workspacesBloc.listen((WorkspaceState state) {
+  ChannelsBloc({CollectionRepository<Channel> repository, this.workspacesBloc})
+      : super(
+            repository: repository,
+            initState: ChannelsLoaded(channels: repository.items)) {
+    _subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
-        selectedWorkspaceId = state.selected.id;
-        this.add(ReloadChannels(workspaceId: selectedWorkspaceId));
+        selectedParentId = state.selected.id;
+        this.add(ReloadChannels(workspaceId: selectedParentId));
       }
     });
-    selectedWorkspaceId = workspacesBloc.repository.selected.id;
+    selectedParentId = workspacesBloc.repository.selected.id;
   }
 
   @override
@@ -36,11 +34,11 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
       yield ChannelsLoading();
       await repository.reload(
         queryParams: {
-          'workspace_id': event.workspaceId ?? selectedWorkspaceId,
+          'workspace_id': event.workspaceId ?? selectedParentId,
           'company_id': workspacesBloc.selectedCompanyId,
         },
         filters: [
-          ['workspace_id', '=', event.workspaceId ?? selectedWorkspaceId]
+          ['workspace_id', '=', event.workspaceId ?? selectedParentId]
         ],
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
@@ -73,7 +71,7 @@ class ChannelsBloc extends Bloc<ChannelsEvent, ChannelState> {
 
   @override
   Future<void> close() {
-    subscription.cancel();
+    _subscription.cancel();
     return super.close();
   }
 }

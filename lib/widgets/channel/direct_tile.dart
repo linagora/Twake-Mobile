@@ -19,8 +19,8 @@ class DirectTile extends StatelessWidget {
         BlocProvider.of<DirectsBloc>(context).add(
           ChangeSelectedChannel(direct.id),
         );
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => MessagesPage()));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => MessagesPage<DirectsBloc>()));
       },
       child: ListTile(
         contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),

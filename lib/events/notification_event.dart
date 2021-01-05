@@ -5,13 +5,21 @@ abstract class NotificationEvent extends Equatable {
   const NotificationEvent();
 }
 
-class ChannelMessageEvent extends NotificationEvent {
-  final MessageNotification data;
+class BaseChannelMessageEvent extends NotificationEvent {
+  final NotificationData data;
 
-  const ChannelMessageEvent(this.data);
+  const BaseChannelMessageEvent(this.data);
 
   @override
   List<Object> get props => [data];
+}
+
+class ChannelMessageEvent extends BaseChannelMessageEvent {
+  const ChannelMessageEvent(MessageNotification data) : super(data);
+}
+
+class DirectMessageEvent extends BaseChannelMessageEvent {
+  const DirectMessageEvent(MessageNotification data) : super(data);
 }
 
 class ThreadMessageEvent extends NotificationEvent {

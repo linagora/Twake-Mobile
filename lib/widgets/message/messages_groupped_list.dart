@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 
-class MessagesGrouppedList extends StatelessWidget {
+class MessagesGrouppedList<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessagesBloc, MessagesState>(builder: (ctx, state) {
-      print('REBUILDING MESSAGES PAGE');
+    return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
       return state is MessagesLoaded
           ? NotificationListener<ScrollNotification>(
               onNotification: (ScrollNotification scrollInfo) {
                 if (scrollInfo.metrics.pixels ==
                     scrollInfo.metrics.maxScrollExtent) {
-                  print(
-                      'FIRST IS LESS THAN LAST: ${state.messages.first.creationDate < state.messages.last.creationDate}');
-                  BlocProvider.of<MessagesBloc>(context).add(LoadMoreMessages(
+                  BlocProvider.of<MessagesBloc<T>>(context)
+                      .add(LoadMoreMessages(
                     beforeId: state.messages.first.id,
                     beforeTimeStamp: state.messages.first.creationDate,
                   ));
@@ -47,7 +46,6 @@ class MessagesGrouppedList extends StatelessWidget {
                       },
                       separator: SizedBox(height: Dim.hm2),
                       groupSeparatorBuilder: (Message message) {
-                        print('Items count: ${state.messageCount}');
                         return GestureDetector(
                             onTap: () {
                               FocusManager.instance.primaryFocus.unfocus();

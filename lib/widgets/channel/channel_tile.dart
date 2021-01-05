@@ -19,7 +19,7 @@ class ChannelTile extends StatelessWidget {
         );
         // Navigator.of(context).pushNamed(Routes.messages);
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MessagesPage(),
+          builder: (context) => MessagesPage<ChannelsBloc>(),
         ));
       },
       child: ListTile(

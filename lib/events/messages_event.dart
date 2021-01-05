@@ -48,14 +48,24 @@ class LoadSingleMessage extends MessagesEvent {
   final String messageId;
   final String channelId;
   final String threadId;
-  const LoadSingleMessage({this.channelId, this.threadId, this.messageId});
+  final String workspaceId;
+  final String companyId;
+  const LoadSingleMessage({
+    this.channelId,
+    this.threadId,
+    this.messageId,
+    this.workspaceId,
+    this.companyId,
+  });
 
   @override
-  List<Object> get props => [messageId, threadId, channelId];
+  List<Object> get props => [messageId];
 
   @override
   Map<String, dynamic> toMap() {
     return {
+      'company_id': companyId,
+      'workspace_id': workspaceId,
       'channel_id': channelId,
       'message_id': messageId,
       'thread_id': threadId,

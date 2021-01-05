@@ -8,7 +8,7 @@ class DirectMessagesGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DirectsBloc, ChannelState>(
       builder: (ctx, state) {
-        if (state is DirectsLoaded) {
+        if (state is ChannelsLoaded) {
           return Column(
             children: [
               Row(

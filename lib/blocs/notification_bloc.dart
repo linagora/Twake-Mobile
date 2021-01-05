@@ -23,7 +23,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   @override
   Stream<NotificationState> mapEventToState(NotificationEvent event) async* {
-    if (event is ChannelMessageEvent) {
+    if (event is DirectMessageEvent) {
+      yield DirectMessageNotification(event.data);
+    } else if (event is ChannelMessageEvent) {
       yield ChannelMessageNotification(event.data);
     } else if (event is ThreadMessageEvent) {
       yield ThreadMessageNotification(event.data);
@@ -38,6 +40,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       }
       if (data.threadId.isNotEmpty) {
         this.add(ThreadMessageEvent(data));
+      } else if (data.workspaceId == null) {
+        this.add(DirectMessageEvent(data));
       } else {
         this.add(ChannelMessageEvent(data));
       }

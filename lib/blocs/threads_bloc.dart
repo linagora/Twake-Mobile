@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/events/messages_event.dart';
@@ -106,10 +107,16 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? messagesBloc.selectedChannel.id;
-    map['company_id'] =
-        messagesBloc.channelsBloc.workspacesBloc.selectedCompanyId;
-    map['workspace_id'] =
-        messagesBloc.channelsBloc.workspacesBloc.repository.selected.id;
+    if (messagesBloc.channelsBloc is ChannelsBloc) {
+      map['company_id'] = map['company_id'] ??
+          (messagesBloc.channelsBloc as ChannelsBloc)
+              .workspacesBloc
+              .selectedCompanyId;
+    } else {
+      map['company_id'] =
+          map['company_id'] ?? messagesBloc.channelsBloc.selectedParentId;
+    }
+    map['workspace_id'] = messagesBloc.channelsBloc.selectedParentId;
     return map;
   }
 }
