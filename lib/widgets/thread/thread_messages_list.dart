@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
 
-class ThreadMessagesList extends StatelessWidget {
+class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
   final List<Message> responses;
   ThreadMessagesList(this.responses);
 
@@ -17,7 +18,7 @@ class ThreadMessagesList extends StatelessWidget {
         itemBuilder: (ctx, i) {
           return BlocProvider<SingleMessageBloc>(
             create: (_) => SingleMessageBloc(responses[i]),
-            child: MessageTile(),
+            child: MessageTile<T>(message: responses[i]),
           );
         },
       ),

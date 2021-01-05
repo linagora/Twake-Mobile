@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
@@ -11,10 +12,10 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
-class ThreadPage extends StatelessWidget {
+class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessagesBloc, MessagesState>(
+    return BlocBuilder<MessagesBloc<T>, MessagesState>(
       builder: (ctx, threadState) {
         return Scaffold(
           appBar: AppBar(
@@ -59,7 +60,9 @@ class ThreadPage extends StatelessWidget {
                     create: (_) => SingleMessageBloc(
                       (threadState as MessageSelected).threadMessage,
                     ),
-                    child: MessageTile(hideShowAnswers: true),
+                    child: MessageTile<T>(
+                        message: (threadState as MessageSelected).threadMessage,
+                        hideShowAnswers: true),
                   ),
                   Divider(color: Colors.grey[200]),
                   Padding(
@@ -75,7 +78,7 @@ class ThreadPage extends StatelessWidget {
                   Divider(color: Colors.grey[200]),
                   BlocBuilder<ThreadsBloc, MessagesState>(
                     builder: (ctx, state) => state is MessagesLoaded
-                        ? ThreadMessagesList(state.messages)
+                        ? ThreadMessagesList<T>(state.messages)
                         : Expanded(
                             child: Align(
                               alignment: Alignment.center,
@@ -84,9 +87,10 @@ class ThreadPage extends StatelessWidget {
                           ),
                   ),
                   MessageEditField((content) {
-                    BlocProvider.of<MessagesBloc>(ctx).add(
+                    BlocProvider.of<MessagesBloc<T>>(ctx).add(
                       SendMessage(
                         content: content,
+                        channelId: threadState.parentChannel.id,
                         threadId:
                             (threadState as MessageSelected).threadMessage.id,
                       ),

@@ -14,14 +14,14 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            BlocProvider.of<MessagesBloc<T>>(context).add(LoadSingleMessage(
-              messageId: '23c4c83a-4920-11eb-86fb-0242ac120004',
-              channelId: '02b2f93c-323c-41eb-8c5e-0242ac120004',
-            ));
-          }),
+      // floatingActionButton: FloatingActionButton(
+      // child: Icon(Icons.add),
+      // onPressed: () {
+      // BlocProvider.of<MessagesBloc<T>>(context).add(LoadSingleMessage(
+      // messageId: '23c4c83a-4920-11eb-86fb-0242ac120004',
+      // channelId: '02b2f93c-323c-41eb-8c5e-0242ac120004',
+      // ));
+      // }),
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],

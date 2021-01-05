@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/events/single_message_event.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/states/single_message_state.dart';
@@ -30,14 +31,17 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
     if (event is UpdateContent) {
       throw 'Not implemented yet!';
     } else if (event is UpdateReaction) {
-      message.updateReactions(userId: event.userId, body: {
-        'company_id': event.companyId,
-        'channel_id': message.channelId,
-        'workspace_id': event.workspaceId,
-        'message_id': message.id,
-        'thread_id': message.threadId,
-        'reaction': event.emojiCode,
-      });
+      message.updateReactions(
+        userId: event.userId ?? ProfileBloc().userId,
+        body: {
+          'company_id': event.companyId ?? ProfileBloc().selectedCompany,
+          'channel_id': message.channelId,
+          'workspace_id': event.workspaceId ?? ProfileBloc().selectedWorkspace,
+          'message_id': message.id,
+          'thread_id': message.threadId,
+          'reaction': event.emojiCode,
+        },
+      );
       yield messageReady;
     } else if (event is UpdateResponseCount) {
       message.responsesCount += event.modifier;

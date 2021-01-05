@@ -5,6 +5,8 @@ import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
+import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/events/messages_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
@@ -21,6 +23,7 @@ class MessagesBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
   final T channelsBloc;
+  final ThreadsBloc threadsBloc;
   final NotificationBloc notificationBloc;
 
   StreamSubscription _subscription;
@@ -33,6 +36,7 @@ class MessagesBloc<T extends BaseChannelBloc>
   MessagesBloc({
     this.repository,
     this.channelsBloc,
+    this.threadsBloc,
     this.notificationBloc,
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     _subscription = channelsBloc.listen((ChannelState state) {
@@ -168,6 +172,10 @@ class MessagesBloc<T extends BaseChannelBloc>
       yield MessagesEmpty(parentChannel: selectedChannel);
     } else if (event is SelectMessage) {
       repository.select(event.messageId);
+      threadsBloc.add(LoadMessages(
+        threadId: event.messageId,
+        channelId: selectedChannel.id,
+      ));
       yield MessageSelected(
         threadMessage: repository.selected,
         messages: repository.roItems,
@@ -186,13 +194,9 @@ class MessagesBloc<T extends BaseChannelBloc>
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
-    if (channelsBloc is ChannelsBloc) {
-      map['company_id'] = map['company_id'] ??
-          (channelsBloc as ChannelsBloc).workspacesBloc.selectedCompanyId;
-    } else {
-      map['company_id'] = map['company_id'] ?? channelsBloc.selectedParentId;
-    }
-    map['workspace_id'] = map['workspace_id'] ?? channelsBloc.selectedParentId;
+    map['company_id'] = map['company_id'] ?? ProfileBloc().selectedCompany;
+    map['workspace_id'] =
+        map['workspace_id'] ?? ProfileBloc().selectedWorkspace;
     return map;
   }
 

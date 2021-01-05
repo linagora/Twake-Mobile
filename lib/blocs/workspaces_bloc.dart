@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
+import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/events/workspace_event.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -30,6 +31,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         this.add(ReloadWorkspaces(selectedCompanyId));
       }
     });
+    ProfileBloc().selectedWorkspace = repository.selected.id;
     selectedCompanyId = companiesBloc.repository.selected.id;
   }
 
@@ -53,6 +55,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       yield WorkspacesEmpty();
     } else if (event is ChangeSelectedWorkspace) {
       repository.select(event.workspaceId);
+      ProfileBloc().selectedWorkspace = event.workspaceId;
       yield WorkspacesLoaded(
         workspaces: repository.items,
         selected: repository.selected,

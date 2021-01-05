@@ -10,7 +10,16 @@ export 'package:twake/states/profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository repository;
-  ProfileBloc(this.repository)
+  static ProfileBloc _profileBloc;
+
+  factory ProfileBloc([ProfileRepository repository]) {
+    if (_profileBloc == null) {
+      _profileBloc = ProfileBloc._(repository);
+    }
+    return _profileBloc;
+  }
+
+  ProfileBloc._(this.repository)
       : super(ProfileLoaded(
           userId: repository.id,
           firstName: repository.firstName,
@@ -19,6 +28,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         ));
 
   bool isMe(String userId) => repository.id == userId;
+
+  String get userId => repository.id;
+
+  String get selectedCompany => repository.selectedCompanyId;
+  String get selectedWorkspace => repository.selectedWorkspaceId;
+
+  set selectedCompany(String val) {
+    repository.selectedCompanyId = val;
+    repository.save();
+  }
+
+  set selectedWorkspace(String val) {
+    repository.selectedWorkspaceId = val;
+    repository.save();
+  }
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
@@ -34,5 +58,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       await repository.clean();
       yield ProfileEmpty();
     }
+  }
+
+  @override
+  Future<void> close() {
+    _profileBloc.close();
+    return super.close();
   }
 }
