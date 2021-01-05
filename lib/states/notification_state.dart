@@ -12,13 +12,21 @@ class NotificationsAbsent extends NotificationState {
   List<Object> get props => [];
 }
 
-class ChannelMessageNotification extends NotificationState {
+abstract class BaseChannelMessageNotification extends NotificationState {
   final MessageNotification data;
 
-  const ChannelMessageNotification(this.data);
+  const BaseChannelMessageNotification(this.data);
 
   @override
   List<Object> get props => [data];
+}
+
+class ChannelMessageNotification extends BaseChannelMessageNotification {
+  const ChannelMessageNotification(MessageNotification data) : super(data);
+}
+
+class DirectMessageNotification extends BaseChannelMessageNotification {
+  const DirectMessageNotification(MessageNotification data) : super(data);
 }
 
 class ThreadMessageNotification extends NotificationState {

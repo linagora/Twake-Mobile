@@ -7,26 +7,30 @@ abstract class MessagesEvent extends Equatable {
 }
 
 class LoadMessages extends MessagesEvent {
+  final String channelId;
   final String threadId;
-  const LoadMessages({this.threadId});
+  const LoadMessages({this.channelId, this.threadId});
 
   @override
-  List<Object> get props => [threadId];
+  List<Object> get props => [threadId, channelId];
 
   @override
   Map<String, dynamic> toMap() {
     return {
+      'channel_id': channelId,
       'thread_id': threadId,
     };
   }
 }
 
 class LoadMoreMessages extends MessagesEvent {
+  final String channelId;
   final String threadId;
   final String beforeId;
   final int beforeTimeStamp;
 
   const LoadMoreMessages({
+    this.channelId,
     this.threadId,
     this.beforeId,
     this.beforeTimeStamp,
@@ -38,6 +42,7 @@ class LoadMoreMessages extends MessagesEvent {
   @override
   Map<String, dynamic> toMap() {
     return {
+      'channel_id': channelId,
       'thread_id': threadId,
       'before_message_id': beforeId,
     };
@@ -48,14 +53,24 @@ class LoadSingleMessage extends MessagesEvent {
   final String messageId;
   final String channelId;
   final String threadId;
-  const LoadSingleMessage({this.channelId, this.threadId, this.messageId});
+  final String workspaceId;
+  final String companyId;
+  const LoadSingleMessage({
+    this.channelId,
+    this.threadId,
+    this.messageId,
+    this.workspaceId,
+    this.companyId,
+  });
 
   @override
-  List<Object> get props => [messageId, threadId, channelId];
+  List<Object> get props => [messageId];
 
   @override
   Map<String, dynamic> toMap() {
     return {
+      'company_id': companyId,
+      'workspace_id': workspaceId,
       'channel_id': channelId,
       'message_id': messageId,
       'thread_id': threadId,
@@ -92,8 +107,9 @@ class RemoveMessage extends MessagesEvent {
 class SendMessage extends MessagesEvent {
   final String content;
   final String threadId;
+  final String channelId;
 
-  const SendMessage({this.content, this.threadId});
+  const SendMessage({this.content, this.threadId, this.channelId});
   @override
   List<Object> get props => [content, threadId];
 
@@ -102,6 +118,7 @@ class SendMessage extends MessagesEvent {
     return {
       'original_str': content,
       'thread_id': threadId,
+      'channel_id': channelId,
     };
   }
 }

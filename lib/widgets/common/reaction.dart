@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/utils/emojis.dart';
@@ -11,13 +13,13 @@ class Reaction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        BlocProvider.of<SingleMessageBloc>(context).add(
+          UpdateReaction(emojiCode: reaction),
+        );
+      },
       child: FittedBox(
         child: Container(
-          // constraints: BoxConstraints(
-          // minWidth: Dim.widthPercent(10),
-          // maxWidth: Dim.widthPercent(13),
-          // ),
           margin: EdgeInsets.only(right: Dim.wm2),
           padding: EdgeInsets.all(Dim.widthMultiplier),
           decoration: BoxDecoration(

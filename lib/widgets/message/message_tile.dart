@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/blocs/user_bloc.dart';
@@ -14,7 +15,7 @@ import 'package:twake/widgets/common/reaction.dart';
 
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
-class MessageTile extends StatelessWidget {
+class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
   final bool hideShowAnswers;
   final Message message;
   MessageTile({
@@ -24,10 +25,10 @@ class MessageTile extends StatelessWidget {
   }) : super(key: key);
 
   void onReply(context, String messageId) {
-    BlocProvider.of<MessagesBloc>(context).add(SelectMessage(messageId));
+    BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
 
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ThreadPage()));
+        .push(MaterialPageRoute(builder: (context) => ThreadPage<T>()));
   }
 
   onCopy({context, text}) {
@@ -42,7 +43,7 @@ class MessageTile extends StatelessWidget {
   }
 
   void onDelete(context, RemoveMessage event) {
-    BlocProvider.of<MessagesBloc>(context).add(event);
+    BlocProvider.of<MessagesBloc<T>>(context).add(event);
     Navigator.of(context).pop();
   }
 
@@ -68,6 +69,7 @@ class MessageTile extends StatelessWidget {
                           onDelete: (ctx) => onDelete(
                               ctx,
                               RemoveMessage(
+                                channelId: message.channelId,
                                 messageId: messageState.id,
                                 threadId: messageState.threadId,
                               )),
@@ -138,7 +140,7 @@ class MessageTile extends StatelessWidget {
                           }),
                           if (messageState.responsesCount > 0 &&
                               messageState.threadId == null &&
-                              hideShowAnswers)
+                              !hideShowAnswers)
                             Text(
                               'See all answers (${messageState.responsesCount})',
                               style: StylesConfig.miniPurple,

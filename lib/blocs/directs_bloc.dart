@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/events/channel_event.dart';
 import 'package:twake/models/direct.dart';
@@ -10,27 +10,25 @@ import 'package:twake/states/channel_state.dart';
 export 'package:twake/events/channel_event.dart';
 export 'package:twake/states/channel_state.dart';
 
-class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
-  final CollectionRepository<Direct> repository;
+class DirectsBloc extends BaseChannelBloc {
   final CompaniesBloc companiesBloc;
-  StreamSubscription subscription;
-  String selectedCompanyId;
+  StreamSubscription _subscription;
 
   DirectsBloc({
-    this.repository,
+    CollectionRepository<Direct> repository,
     this.companiesBloc,
-  }) : super(repository.items.isEmpty
-            ? ChannelsEmpty()
-            : DirectsLoaded(
-                channels: repository.items,
-              )) {
-    subscription = companiesBloc.listen((CompaniesState state) {
+  }) : super(
+            repository: repository,
+            initState: repository.items.isEmpty
+                ? ChannelsEmpty()
+                : ChannelsLoaded(channels: repository.items)) {
+    _subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
-        selectedCompanyId = state.selected.id;
-        this.add(ReloadChannels(companyId: selectedCompanyId));
+        selectedParentId = state.selected.id;
+        this.add(ReloadChannels(companyId: selectedParentId));
       }
     });
-    selectedCompanyId = companiesBloc.repository.selected.id;
+    selectedParentId = companiesBloc.repository.selected.id;
   }
 
   @override
@@ -47,13 +45,13 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
         // filters: [
         // ['company_id', '=', selectedCompanyId]
         // ],
-        sortFields: {'name': true},
+        sortFields: {'last_activity': false},
         forceFromApi: event.forceFromApi,
       );
       if (repository.items.isEmpty)
         yield ChannelsEmpty();
       else
-        yield DirectsLoaded(
+        yield ChannelsLoaded(
           channels: repository.items,
         );
     } else if (event is ClearChannels) {
@@ -62,8 +60,8 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId);
 
-      yield DirectPicked(
-        directs: repository.items,
+      yield ChannelPicked(
+        channels: repository.items,
         selected: repository.selected,
       );
     } else if (event is LoadSingleChannel) {
@@ -81,7 +79,7 @@ class DirectsBloc extends Bloc<ChannelsEvent, ChannelState> {
 
   @override
   Future<void> close() {
-    subscription.cancel();
+    _subscription.cancel();
     return super.close();
   }
 }

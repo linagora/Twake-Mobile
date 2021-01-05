@@ -141,6 +141,7 @@ class Api {
           // we randomly get token expirations, so if we have a
           // referesh token, we automatically use it to get a new token
           logger.e('Error during network request\n${error.response.data}');
+          logger.e('QUERY WAS:\n${error.request.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             _prolongToken();
