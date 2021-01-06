@@ -24,13 +24,7 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                BlocProvider<SingleMessageBloc>(
-                  create: (_) => SingleMessageBloc(
-                    threadMessage,
-                  ),
-                  child: MessageTile<T>(
-                      message: threadMessage, hideShowAnswers: true),
-                ),
+                MessageTile<T>(message: threadMessage, hideShowAnswers: true),
                 Divider(color: Colors.grey[200]),
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -40,10 +34,7 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
                   child: Text(threadMessage.respCountStr + ' responses'),
                 ),
                 Divider(color: Colors.grey[200]),
-                BlocProvider<SingleMessageBloc>(
-                  create: (_) => SingleMessageBloc(responses[i]),
-                  child: MessageTile<T>(message: responses[i]),
-                ),
+                MessageTile<T>(message: responses[i]),
               ],
             );
           } else {

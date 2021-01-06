@@ -83,7 +83,6 @@ class MessagesGrouppedList<T extends BaseChannelBloc> extends StatelessWidget {
                             ),
                           ));
                     },
-                    // addAutomaticKeepAlives: false,
                     indexedItemBuilder: (_, Message message, int i) {
                       return !message.hidden
                           ? MessageTile<T>(
@@ -100,7 +99,9 @@ class MessagesGrouppedList<T extends BaseChannelBloc> extends StatelessWidget {
                               ),
                             );
                     })
-                : Center(child: CircularProgressIndicator()),
+                : Center(
+                    child: CircularProgressIndicator(),
+                  ),
           ),
         ),
       );
