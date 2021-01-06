@@ -40,7 +40,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                 leading: Icon(Icons.reply_sharp),
                 title: Text(
                   'Reply',
-                  style: Theme.of(context).textTheme.headline6,
+                  style: Theme.of(context).textTheme.headline2,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -55,7 +55,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                   'Delete',
                   style: Theme.of(context)
                       .textTheme
-                      .headline6
+                      .headline2
                       .copyWith(color: Colors.red),
                 ),
                 onTap: () {
@@ -67,7 +67,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
               leading: Icon(Icons.copy),
               title: Text(
                 'Copy',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headline2,
               ),
               onTap: widget.onCopy,
             ),

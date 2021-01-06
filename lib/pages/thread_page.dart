@@ -82,7 +82,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                             (threadState as MessageSelected).threadMessage.id,
                       ),
                     );
-                  }),
+                  }, autofocus: true),
                 ],
               ),
             ),

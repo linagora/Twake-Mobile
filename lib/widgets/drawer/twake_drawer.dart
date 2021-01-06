@@ -52,61 +52,58 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
               Divider(),
               SizedBox(height: Dim.hm2),
               if (_companiesHidden)
-                Container(
-                  height: Dim.heightPercent(55),
-                  child: BlocBuilder<WorkspacesBloc, WorkspaceState>(
-                    builder: (ctx, state) => state is WorkspacesLoaded
-                        ? ListView.builder(
-                            itemCount: state.workspaces.length,
-                            itemBuilder: (ctx, i) => InkWell(
-                                  onTap: () {
-                                    BlocProvider.of<WorkspacesBloc>(ctx).add(
-                                        ChangeSelectedWorkspace(
-                                            state.workspaces[i].id));
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: ListTile(
-                                    leading:
-                                        ImageAvatar(state.workspaces[i].logo),
-                                    title: Text(
-                                      state.workspaces[i].name,
-                                    ),
-                                    subtitle: Text(
-                                        '${state.workspaces[i].totalMembers} members'),
-                                  ),
-                                ))
-                        : CircularProgressIndicator(),
-                  ),
-                ),
-              if (!_companiesHidden)
-                Container(
-                  height: Dim.heightPercent(55),
-                  child: BlocBuilder<CompaniesBloc, CompaniesState>(
-                      builder: (ctx, state) => state is CompaniesLoaded
-                          ? ListView.builder(
-                              itemCount: state.companies.length,
+                BlocBuilder<WorkspacesBloc, WorkspaceState>(
+                  builder: (ctx, state) => state is WorkspacesLoaded
+                      ? Expanded(
+                          child: ListView.builder(
+                              itemCount: state.workspaces.length,
                               itemBuilder: (ctx, i) => InkWell(
                                     onTap: () {
-                                      BlocProvider.of<CompaniesBloc>(ctx).add(
-                                          ChangeSelectedCompany(
-                                              state.companies[i].id));
-                                      setState(() {
-                                        _companiesHidden = true;
-                                      });
+                                      BlocProvider.of<WorkspacesBloc>(ctx).add(
+                                          ChangeSelectedWorkspace(
+                                              state.workspaces[i].id));
+                                      Navigator.of(context).pop();
                                     },
                                     child: ListTile(
                                       leading:
-                                          ImageAvatar(state.companies[i].logo),
+                                          ImageAvatar(state.workspaces[i].logo),
                                       title: Text(
-                                        state.companies[i].name,
+                                        state.workspaces[i].name,
                                       ),
                                       subtitle: Text(
-                                          '${state.companies[i].totalMembers} members'),
+                                          '${state.workspaces[i].totalMembers} members'),
                                     ),
-                                  ))
-                          : CircularProgressIndicator()),
+                                  )),
+                        )
+                      : CircularProgressIndicator(),
                 ),
-              Spacer(),
+              if (!_companiesHidden)
+                BlocBuilder<CompaniesBloc, CompaniesState>(
+                    builder: (ctx, state) => state is CompaniesLoaded
+                        ? Expanded(
+                            child: ListView.builder(
+                                itemCount: state.companies.length,
+                                itemBuilder: (ctx, i) => InkWell(
+                                      onTap: () {
+                                        BlocProvider.of<CompaniesBloc>(ctx).add(
+                                            ChangeSelectedCompany(
+                                                state.companies[i].id));
+                                        setState(() {
+                                          _companiesHidden = true;
+                                        });
+                                      },
+                                      child: ListTile(
+                                        leading: ImageAvatar(
+                                            state.companies[i].logo),
+                                        title: Text(
+                                          state.companies[i].name,
+                                        ),
+                                        subtitle: Text(
+                                            '${state.companies[i].totalMembers} members'),
+                                      ),
+                                    )),
+                          )
+                        : CircularProgressIndicator()),
               Divider(),
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (ctx, state) => state is ProfileLoaded
