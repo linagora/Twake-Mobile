@@ -13,21 +13,13 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // floatingActionButton: FloatingActionButton(
-      // child: Icon(Icons.add),
-      // onPressed: () {
-      // BlocProvider.of<MessagesBloc<T>>(context).add(LoadSingleMessage(
-      // messageId: '23c4c83a-4920-11eb-86fb-0242ac120004',
-      // channelId: '02b2f93c-323c-41eb-8c5e-0242ac120004',
-      // ));
-      // }),
-      appBar: AppBar(
-        titleSpacing: 0.0,
-        shadowColor: Colors.grey[300],
-        toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
-        title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (ctx, state) => Row(
+    return BlocBuilder<MessagesBloc<T>, MessagesState>(
+      builder: (ctx, state) => Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0.0,
+          shadowColor: Colors.grey[300],
+          toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
+          title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if ((state.parentChannel is Direct))
@@ -57,19 +49,28 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             ],
           ),
         ),
+        body: SafeArea(
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (state is MoreMessagesLoading)
+              SizedBox(
+                height: Dim.hm4,
+                width: Dim.hm4,
+                child: Padding(
+                  padding: EdgeInsets.all(Dim.widthMultiplier),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            MessagesGrouppedList<T>(),
+            MessageEditField((content) {
+              BlocProvider.of<MessagesBloc<T>>(context).add(
+                SendMessage(content: content),
+              );
+            }),
+          ],
+        )),
       ),
-      body: SafeArea(
-          child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          MessagesGrouppedList<T>(),
-          MessageEditField((content) {
-            BlocProvider.of<MessagesBloc<T>>(context).add(
-              SendMessage(content: content),
-            );
-          }),
-        ],
-      )),
     );
   }
 }
