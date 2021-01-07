@@ -51,6 +51,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       else {
         _sortItems();
         yield MessagesLoaded(
+          messageCount: repository.itemsCount,
           messages: repository.items,
         );
       }
@@ -61,6 +62,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       );
       _sortItems();
       yield MessagesLoaded(
+        messageCount: repository.itemsCount,
         messages: repository.items,
       );
     } else if (event is RemoveMessage) {
@@ -75,12 +77,14 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
       else {
         _sortItems();
         yield MessagesLoaded(
+          messageCount: repository.itemsCount,
           messages: repository.items,
         );
       }
     } else if (event is SendMessage) {
       await repository.pushOne(_makeQueryParams(event));
       yield MessagesLoaded(
+        messageCount: repository.itemsCount,
         messages: repository.items,
       );
     } else if (event is ClearMessages) {

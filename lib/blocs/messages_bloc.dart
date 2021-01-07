@@ -93,7 +93,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         _sortItems();
         yield MessagesLoaded(
           messages: repository.roItems,
-          messageCount: repository.items.length,
+          messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
       }
@@ -115,7 +115,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       _sortItems();
       yield MessagesLoaded(
         messages: repository.roItems,
-        messageCount: repository.items.length,
+        messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
     } else if (event is LoadSingleMessage) {
@@ -129,7 +129,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       _sortItems();
       final newState = MessagesLoaded(
         messages: repository.roItems,
-        messageCount: repository.items.length,
+        messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
       repository.logger.d('YIELDING STATE: ${newState != this.state}');
@@ -151,7 +151,7 @@ class MessagesBloc<T extends BaseChannelBloc>
 
         final newState = MessagesLoaded(
           messages: repository.roItems,
-          messageCount: repository.items.length,
+          messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
 
@@ -164,7 +164,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       _sortItems();
       yield MessagesLoaded(
         messages: repository.roItems,
-        messageCount: repository.items.length,
+        messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
     } else if (event is ClearMessages) {

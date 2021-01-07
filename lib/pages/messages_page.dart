@@ -42,8 +42,9 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       overflow: TextOverflow.fade,
                     ),
                   ),
-                  Text('${state.parentChannel.membersCount ?? 'No'} members',
-                      style: Theme.of(ctx).textTheme.bodyText2),
+                  if (state.parentChannel is Channel)
+                    Text('${state.parentChannel.membersCount ?? 'No'} members',
+                        style: Theme.of(ctx).textTheme.bodyText2),
                 ],
               ),
             ],
