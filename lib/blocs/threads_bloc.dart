@@ -12,6 +12,8 @@ import 'package:twake/states/messages_state.dart';
 export 'package:twake/states/messages_state.dart';
 export 'package:twake/events/messages_event.dart';
 
+const _THREAD_MESSAGES_LIMIT = 1000;
+
 class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
   final NotificationBloc notificationBloc;
@@ -45,6 +47,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
         queryParams: _makeQueryParams(event),
         filters: filters,
         sortFields: {'creation_date': true},
+        limit: _THREAD_MESSAGES_LIMIT,
       );
       if (repository.items.isEmpty)
         yield MessagesEmpty();
@@ -104,6 +107,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
     map['company_id'] = map['company_id'] ?? ProfileBloc().selectedCompany;
     map['workspace_id'] =
         map['workspace_id'] ?? ProfileBloc().selectedWorkspace;
+    map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }
 

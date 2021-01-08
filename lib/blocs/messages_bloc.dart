@@ -79,7 +79,8 @@ class MessagesBloc<T extends BaseChannelBloc>
       await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: [
-          ['channel_id', '=', selectedChannel.id]
+          ['channel_id', '=', selectedChannel.id],
+          ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
         limit: _MESSAGE_LIMIT,
@@ -92,7 +93,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
         _sortItems();
         yield MessagesLoaded(
-          messages: repository.roItems,
+          messages: repository.items,
           messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
@@ -101,7 +102,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       if (_previousMessageId == event.beforeId) return;
       _previousMessageId = event.beforeId;
       yield MoreMessagesLoading(
-        messages: repository.roItems,
+        messages: repository.items,
         parentChannel: selectedChannel,
       );
       final bool _ = await repository.loadMore(
@@ -109,12 +110,13 @@ class MessagesBloc<T extends BaseChannelBloc>
         filters: [
           ['channel_id', '=', selectedChannel.id],
           ['creation_date', '<', event.beforeTimeStamp],
+          ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
       );
       _sortItems();
       yield MessagesLoaded(
-        messages: repository.roItems,
+        messages: repository.items,
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
@@ -128,7 +130,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       );
       _sortItems();
       final newState = MessagesLoaded(
-        messages: repository.roItems,
+        messages: repository.items,
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
@@ -150,7 +152,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         _sortItems();
 
         final newState = MessagesLoaded(
-          messages: repository.roItems,
+          messages: repository.items,
           messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
@@ -163,7 +165,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       await repository.pushOne(_makeQueryParams(event));
       _sortItems();
       yield MessagesLoaded(
-        messages: repository.roItems,
+        messages: repository.items,
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
@@ -178,7 +180,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       ));
       yield MessageSelected(
         threadMessage: repository.selected,
-        messages: repository.roItems,
+        messages: repository.items,
         parentChannel: selectedChannel,
       );
     }
