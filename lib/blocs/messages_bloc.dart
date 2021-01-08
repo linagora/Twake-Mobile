@@ -57,12 +57,6 @@ class MessagesBloc<T extends BaseChannelBloc>
           workspaceId: state.data.workspaceId,
           companyId: state.data.companyId,
         ));
-      } else if (T == ChannelsBloc && state is ThreadMessageNotification) {
-        this.add(ModifyResponsesCount(
-          threadId: state.data.threadId,
-          channelId: state.data.channelId,
-          modifier: 1,
-        ));
       } else if (T == DirectsBloc && state is DirectMessageNotification) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
@@ -70,12 +64,20 @@ class MessagesBloc<T extends BaseChannelBloc>
           workspaceId: state.data.workspaceId,
           companyId: state.data.companyId,
         ));
-      } else if (T == DirectsBloc && state is ThreadMessageNotification) {
-        this.add(ModifyResponsesCount(
-          threadId: state.data.threadId,
-          channelId: state.data.channelId,
-          modifier: 1,
-        ));
+      }
+      if (state is ThreadMessageNotification) {
+        if (state.data.workspaceId == null)
+          this.add(ModifyResponsesCount(
+            threadId: state.data.threadId,
+            channelId: state.data.channelId,
+            modifier: 1,
+          ));
+        else
+          this.add(ModifyResponsesCount(
+            threadId: state.data.threadId,
+            channelId: state.data.channelId,
+            modifier: 1,
+          ));
       }
     });
     selectedChannel = channelsBloc.repository.selected;
