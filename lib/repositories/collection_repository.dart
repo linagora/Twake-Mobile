@@ -148,11 +148,9 @@ class CollectionRepository<T extends CollectionItem> {
   }) async {
     logger.d('Pulling item $T from api...');
     final List resp = (await _api.get(apiEndpoint, params: queryParams));
-    logger.d('GOT: $resp');
     if (resp.isEmpty) return;
     final item = _typeToConstuctor[T](resp[0]);
     if (addToItems) this.items.add(item);
-    logger.d('SAVING TO DATABASE: $item');
     saveOne(item);
   }
 
@@ -166,6 +164,16 @@ class CollectionRepository<T extends CollectionItem> {
     final item = _typeToConstuctor[T](resp);
     if (addToItems) this.items.add(item);
     saveOne(item);
+  }
+
+  Future<T> getItemById(String id) async {
+    var item = items.firstWhere((i) => i.id == id, orElse: () => null);
+    if (item == null) {
+      final map = await _storage.load(type: _typeToStorageType[T], key: id);
+      if (map == null) return null;
+      item = _typeToConstuctor[T](map);
+    }
+    return item;
   }
 
   Future<void> clean() async {

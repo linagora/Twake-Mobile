@@ -78,6 +78,28 @@ class LoadSingleMessage extends MessagesEvent {
   }
 }
 
+class ModifyResponsesCount extends MessagesEvent {
+  final String threadId;
+  final String channelId;
+  final int modifier;
+
+  const ModifyResponsesCount({
+    this.channelId,
+    this.threadId,
+    this.modifier,
+  });
+
+  @override
+  List<Object> get props => [this.threadId];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {
+      'thread_id': threadId,
+    };
+  }
+}
+
 class RemoveMessage extends MessagesEvent {
   final String messageId;
   final String channelId;

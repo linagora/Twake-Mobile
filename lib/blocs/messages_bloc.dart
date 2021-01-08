@@ -51,21 +51,30 @@ class MessagesBloc<T extends BaseChannelBloc>
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (T == ChannelsBloc && state is ChannelMessageNotification) {
-        repository.logger.d('CHANNEL MESSAGE FETCH ON NOTIFY');
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
           workspaceId: state.data.workspaceId,
           companyId: state.data.companyId,
         ));
-      }
-      if (T == DirectsBloc && state is DirectMessageNotification) {
-        repository.logger.d('DIRECT MESSAGE FETCH ON NOTIFY');
+      } else if (T == ChannelsBloc && state is ThreadMessageNotification) {
+        this.add(ModifyResponsesCount(
+          threadId: state.data.threadId,
+          channelId: state.data.channelId,
+          modifier: 1,
+        ));
+      } else if (T == DirectsBloc && state is DirectMessageNotification) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
           workspaceId: state.data.workspaceId,
           companyId: state.data.companyId,
+        ));
+      } else if (T == DirectsBloc && state is ThreadMessageNotification) {
+        this.add(ModifyResponsesCount(
+          threadId: state.data.threadId,
+          channelId: state.data.channelId,
+          modifier: 1,
         ));
       }
     });
@@ -134,8 +143,24 @@ class MessagesBloc<T extends BaseChannelBloc>
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
-      repository.logger.d('YIELDING STATE: ${newState != this.state}');
+      // repository.logger.d('YIELDING STATE: ${newState != this.state}');
       yield newState;
+    } else if (event is ModifyResponsesCount) {
+      final thread = await repository.getItemById(event.threadId);
+      if (thread != null) {
+        thread.responsesCount += event.modifier;
+        repository.saveOne(thread);
+      } else
+        return;
+      if (event.channelId == selectedChannel.id) {
+        final newState = MessagesLoaded(
+          messages: repository.items,
+          messageCount: repository.itemsCount,
+          parentChannel: selectedChannel,
+        );
+        repository.logger.d('YIELDING STATE: ${newState != this.state}');
+        yield newState;
+      }
     } else if (event is RemoveMessage) {
       final channelId = event.channelId ?? selectedChannel.id;
       repository.logger

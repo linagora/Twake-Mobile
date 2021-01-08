@@ -40,6 +40,23 @@ class ChangeSelectedChannel extends ChannelsEvent {
   List<Object> get props => [channelId];
 }
 
+class ModifyUnreadCount extends ChannelsEvent {
+  final String channelId;
+  final String workspaceId;
+  final String companyId;
+  final int modifier;
+
+  ModifyUnreadCount({
+    this.channelId,
+    this.workspaceId,
+    this.companyId,
+    this.modifier,
+  });
+
+  @override
+  List<Object> get props => [channelId];
+}
+
 class RemoveChannel extends ChannelsEvent {
   final String channelId;
   RemoveChannel(this.channelId);

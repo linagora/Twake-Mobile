@@ -72,12 +72,14 @@ class _InitialPageState extends State<InitialPage> {
                 return ChannelsBloc(
                   repository: state.initData.channels,
                   workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
+                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                 );
               }),
               BlocProvider<DirectsBloc>(create: (ctx) {
                 return DirectsBloc(
                   repository: state.initData.directs,
                   companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                 );
               }),
               BlocProvider<ThreadsBloc>(
