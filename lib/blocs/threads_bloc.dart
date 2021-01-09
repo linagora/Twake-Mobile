@@ -104,9 +104,8 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['company_id'] = map['company_id'] ?? ProfileBloc().selectedCompany;
-    map['workspace_id'] =
-        map['workspace_id'] ?? ProfileBloc().selectedWorkspace;
+    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
+    map['workspace_id'] = map['workspace_id'] ?? ProfileBloc.selectedWorkspace;
     map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }

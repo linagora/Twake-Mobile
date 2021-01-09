@@ -225,6 +225,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
       controller: widget.controller,
       focusNode: widget.focusNode,
       keyboardType: TextInputType.emailAddress,
+      style: Theme.of(context).textTheme.headline2,
       decoration: InputDecoration(
         fillColor: Color.fromRGBO(239, 239, 245, 1),
         filled: true,

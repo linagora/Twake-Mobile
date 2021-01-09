@@ -66,13 +66,13 @@ class MessagesBloc<T extends BaseChannelBloc>
         ));
       }
       if (state is ThreadMessageNotification) {
-        if (state.data.workspaceId == null)
+        if (T == DirectsBloc && state.data.workspaceId == null)
           this.add(ModifyResponsesCount(
             threadId: state.data.threadId,
             channelId: state.data.channelId,
             modifier: 1,
           ));
-        else
+        else if (T == ChannelsBloc && state.data.workspaceId != null)
           this.add(ModifyResponsesCount(
             threadId: state.data.threadId,
             channelId: state.data.channelId,
@@ -223,9 +223,8 @@ class MessagesBloc<T extends BaseChannelBloc>
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
-    map['company_id'] = map['company_id'] ?? ProfileBloc().selectedCompany;
-    map['workspace_id'] =
-        map['workspace_id'] ?? ProfileBloc().selectedWorkspace;
+    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
+    map['workspace_id'] = map['workspace_id'] ?? ProfileBloc.selectedWorkspace;
     return map;
   }
 
