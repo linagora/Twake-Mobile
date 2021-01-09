@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:mime/mime.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/dimensions_config.dart' show Dim;
 // TODO image loading failes spantaneously, have to figure out solution
 // But it definitely has to do with S3 storage
 
@@ -19,6 +19,7 @@ class ImageAvatar extends StatelessWidget {
       child: imageUrl == null || imageUrl.isEmpty
           ? onErrorFallbackImg()
           : FadeInImage.assetNetwork(
+              placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(),
               fit: BoxFit.cover,
               image: imageUrl,
               width: Dim.tm5(),

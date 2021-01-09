@@ -10,24 +10,23 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const [
     'id',
     'name',
-    'icon',
     'members_count',
-    'private',
     'last_activity',
     'messages_total',
     'messages_unread'
   ]);
   return Channel(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    icon: json['icon'] as String,
-    description: json['description'] as String,
-    membersCount: json['members_count'] as int,
-    isPrivate: json['private'] as bool,
-    lastActivity: json['last_activity'] as int,
-    messageTotal: json['messages_total'] as int,
-    messageUnread: json['messages_unread'] as int,
-  );
+    workspaceId: json['workspace_id'] as String,
+  )
+    ..id = json['id'] as String
+    ..name = json['name'] as String
+    ..icon = json['icon'] as String
+    ..description = json['description'] as String
+    ..membersCount = json['members_count'] as int
+    ..lastActivity = json['last_activity'] as int
+    ..messagesTotal = json['messages_total'] as int
+    ..messagesUnread = json['messages_unread'] as int
+    ..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
@@ -36,8 +35,9 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'icon': instance.icon,
       'description': instance.description,
       'members_count': instance.membersCount,
-      'private': instance.isPrivate,
       'last_activity': instance.lastActivity,
-      'messages_total': instance.messageTotal,
-      'messages_unread': instance.messageUnread,
+      'messages_total': instance.messagesTotal,
+      'messages_unread': instance.messagesUnread,
+      'is_selected': instance.isSelected,
+      'workspace_id': instance.workspaceId,
     };

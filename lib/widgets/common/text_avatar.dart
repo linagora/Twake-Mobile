@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/utils/emojis.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/utils/emojis.dart';
 
 class TextAvatar extends StatelessWidget {
   final String text;
@@ -25,7 +25,7 @@ class TextAvatar extends StatelessWidget {
           alignment: Alignment.center,
           child: FittedBox(
             child: Text(
-              emoji ? Emojis().getByName(text) : text,
+              emoji ? Emojis.getByName(text) : text,
               style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
             ),
           ),
