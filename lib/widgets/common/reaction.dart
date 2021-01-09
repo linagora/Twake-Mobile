@@ -33,7 +33,7 @@ class Reaction extends StatelessWidget {
               text: TextSpan(
                 style: Theme.of(context).textTheme.bodyText2,
                 children: [
-                  TextSpan(text: Emojis().getByName(reaction)),
+                  TextSpan(text: Emojis.getByName(reaction)),
                   TextSpan(text: ' '),
                   TextSpan(
                     text: '$count',

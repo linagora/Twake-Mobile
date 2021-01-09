@@ -34,7 +34,7 @@ class MessageModalSheet extends StatefulWidget {
 class _MessageModalSheetState extends State<MessageModalSheet> {
   onEmojiSelected(String emojiCode, {bool reverse: false}) {
     if (reverse) {
-      emojiCode = Emojis().reverseLookup(emojiCode);
+      emojiCode = Emojis.reverseLookup(emojiCode);
       if (emojiCode != null) {
         emojiCode = ':$emojiCode:';
       } else {
@@ -139,7 +139,7 @@ class EmojiLine extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                    Emojis().getByName(e),
+                    Emojis.getByName(e),
                     style: Theme.of(context).textTheme.headline3,
                   ),
                 ),

@@ -8,6 +8,7 @@ import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
+import 'package:twake/utils/emojis.dart';
 
 import 'service_bundle.dart';
 
@@ -26,6 +27,7 @@ Future<AuthRepository> initAuth() async {
 }
 
 Future<InitData> initMain() async {
+  await Emojis.load();
   final profile = await ProfileRepository.load();
   final _ = UserRepository(Endpoint.users);
   final companies =
