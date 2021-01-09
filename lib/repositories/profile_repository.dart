@@ -5,7 +5,7 @@ import 'package:twake/services/service_bundle.dart';
 
 part 'profile_repository.g.dart';
 
-const _PROFILE_STORE_INDEX = 'profile';
+const _PROFILE_STORE_KEY = 'profile';
 
 @JsonSerializable(explicitToJson: true)
 class ProfileRepository extends JsonSerializable {
@@ -42,7 +42,7 @@ class ProfileRepository extends JsonSerializable {
     bool loadedFromNetwork = false;
     var profileMap = await _storage.load(
       type: StorageType.Profile,
-      key: _PROFILE_STORE_INDEX,
+      key: _PROFILE_STORE_KEY,
     );
     if (profileMap == null) {
       logger.d('No profile in storage, requesting from api...');
@@ -67,14 +67,14 @@ class ProfileRepository extends JsonSerializable {
   Future<void> clean() async {
     await _storage.delete(
       type: StorageType.Profile,
-      key: _PROFILE_STORE_INDEX,
+      key: _PROFILE_STORE_KEY,
     );
   }
 
   Future<void> save() async {
     await _storage.store(
       item: {
-        'id': _PROFILE_STORE_INDEX,
+        'id': _PROFILE_STORE_KEY,
         _storage.settingsField: jsonEncode(this.toJson())
       },
       type: StorageType.Profile,

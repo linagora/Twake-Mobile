@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
@@ -82,7 +83,15 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                             (threadState as MessageSelected).threadMessage.id,
                       ),
                     );
-                  }),
+                    // TODO fix the mess regarding failed message dispatch
+                    BlocProvider.of<MessagesBloc<T>>(ctx).add(
+                      ModifyResponsesCount(
+                        threadId:
+                            (threadState as MessageSelected).threadMessage.id,
+                        modifier: 1,
+                      ),
+                    );
+                  }, autofocus: true),
                 ],
               ),
             ),

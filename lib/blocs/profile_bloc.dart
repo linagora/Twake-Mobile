@@ -9,37 +9,31 @@ export 'package:twake/events/profile_event.dart';
 export 'package:twake/states/profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final ProfileRepository repository;
-  static ProfileBloc _profileBloc;
+  static ProfileRepository repository;
 
-  factory ProfileBloc([ProfileRepository repository]) {
-    if (_profileBloc == null) {
-      _profileBloc = ProfileBloc._(repository);
-    }
-    return _profileBloc;
-  }
-
-  ProfileBloc._(this.repository)
+  ProfileBloc(ProfileRepository rpstr)
       : super(ProfileLoaded(
-          userId: repository.id,
-          firstName: repository.firstName,
-          lastName: repository.lastName,
-          thumbnail: repository.thumbnail,
-        ));
+          userId: rpstr.id,
+          firstName: rpstr.firstName,
+          lastName: rpstr.lastName,
+          thumbnail: rpstr.thumbnail,
+        )) {
+    repository = rpstr;
+  }
 
   bool isMe(String userId) => repository.id == userId;
 
-  String get userId => repository.id;
+  static String get userId => repository.id;
 
-  String get selectedCompany => repository.selectedCompanyId;
-  String get selectedWorkspace => repository.selectedWorkspaceId;
+  static String get selectedCompany => repository.selectedCompanyId;
+  static String get selectedWorkspace => repository.selectedWorkspaceId;
 
-  set selectedCompany(String val) {
+  static set selectedCompany(String val) {
     repository.selectedCompanyId = val;
     repository.save();
   }
 
-  set selectedWorkspace(String val) {
+  static set selectedWorkspace(String val) {
     repository.selectedWorkspaceId = val;
     repository.save();
   }
@@ -58,11 +52,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       await repository.clean();
       yield ProfileEmpty();
     }
-  }
-
-  @override
-  Future<void> close() {
-    _profileBloc.close();
-    return super.close();
   }
 }

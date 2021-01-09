@@ -70,4 +70,5 @@ enum StorageType {
   Workspace,
   Company,
   User,
+  Emojis,
 }

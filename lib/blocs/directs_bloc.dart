@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
+import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/events/channel_event.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -12,11 +13,15 @@ export 'package:twake/states/channel_state.dart';
 
 class DirectsBloc extends BaseChannelBloc {
   final CompaniesBloc companiesBloc;
+  final NotificationBloc notificationBloc;
+
   StreamSubscription _subscription;
+  StreamSubscription _notificationSubscription;
 
   DirectsBloc({
     CollectionRepository<Direct> repository,
     this.companiesBloc,
+    this.notificationBloc,
   }) : super(
             repository: repository,
             initState: repository.items.isEmpty
@@ -26,6 +31,16 @@ class DirectsBloc extends BaseChannelBloc {
       if (state is CompaniesLoaded) {
         selectedParentId = state.selected.id;
         this.add(ReloadChannels(companyId: selectedParentId));
+      }
+    });
+    _notificationSubscription =
+        notificationBloc.listen((NotificationState state) {
+      if (state is BaseChannelMessageNotification) {
+        this.add(ModifyUnreadCount(
+          channelId: state.data.channelId,
+          companyId: state.data.companyId,
+          modifier: 1,
+        ));
       }
     });
     selectedParentId = companiesBloc.repository.selected.id;
@@ -54,12 +69,30 @@ class DirectsBloc extends BaseChannelBloc {
         yield ChannelsLoaded(
           channels: repository.items,
         );
+    } else if (event is ModifyUnreadCount) {
+      final ch = await repository.getItemById(event.channelId);
+      if (ch != null) {
+        ch.messagesUnread += event.modifier;
+        ch.messagesTotal += event.modifier.isNegative ? 0 : event.modifier;
+        repository.saveOne(ch);
+      } else
+        return;
+      // TODO uncomment condition when we have
+      // company based direct chats
+      // if (event.companyId == selectedParentId) {
+      yield ChannelsLoaded(
+        channels: repository.items,
+        force: DateTime.now().toString(),
+      );
+      // }
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId);
 
+      repository.selected.messagesUnread = 0;
+      repository.saveOne(repository.selected);
       yield ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
@@ -80,6 +113,7 @@ class DirectsBloc extends BaseChannelBloc {
   @override
   Future<void> close() {
     _subscription.cancel();
+    _notificationSubscription.cancel();
     return super.close();
   }
 }

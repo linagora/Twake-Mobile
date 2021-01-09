@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:twake/blocs/base_channel_bloc.dart';
+import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/events/channel_event.dart';
 import 'package:twake/models/channel.dart';
@@ -13,16 +14,32 @@ export 'package:twake/states/channel_state.dart';
 
 class ChannelsBloc extends BaseChannelBloc {
   final WorkspacesBloc workspacesBloc;
-  StreamSubscription _subscription;
+  final NotificationBloc notificationBloc;
 
-  ChannelsBloc({CollectionRepository<Channel> repository, this.workspacesBloc})
-      : super(
+  StreamSubscription _subscription;
+  StreamSubscription _notificationSubscription;
+
+  ChannelsBloc({
+    CollectionRepository<Channel> repository,
+    this.workspacesBloc,
+    this.notificationBloc,
+  }) : super(
             repository: repository,
             initState: ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         selectedParentId = state.selected.id;
         this.add(ReloadChannels(workspaceId: selectedParentId));
+      }
+    });
+    _notificationSubscription =
+        notificationBloc.listen((NotificationState state) {
+      if (state is BaseChannelMessageNotification) {
+        this.add(ModifyUnreadCount(
+          channelId: state.data.channelId,
+          workspaceId: state.data.workspaceId,
+          modifier: 1,
+        ));
       }
     });
     selectedParentId = workspacesBloc.repository.selected.id;
@@ -51,11 +68,28 @@ class ChannelsBloc extends BaseChannelBloc {
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId, saveToStore: false);
+
+      repository.selected.messagesUnread = 0;
+      repository.saveOne(repository.selected);
       final newState = ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
       );
       yield newState;
+    } else if (event is ModifyUnreadCount) {
+      final ch = await repository.getItemById(event.channelId);
+      if (ch != null) {
+        ch.messagesUnread += event.modifier;
+        ch.messagesTotal += event.modifier.isNegative ? 0 : event.modifier;
+        repository.saveOne(ch);
+      } else
+        return;
+      if (event.workspaceId == selectedParentId) {
+        yield ChannelsLoaded(
+          channels: repository.items,
+          force: DateTime.now().toString(),
+        );
+      }
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading
       throw 'Not implemented yet';
@@ -72,6 +106,7 @@ class ChannelsBloc extends BaseChannelBloc {
   @override
   Future<void> close() {
     _subscription.cancel();
+    _notificationSubscription.cancel();
     return super.close();
   }
 }

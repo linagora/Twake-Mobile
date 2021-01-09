@@ -82,7 +82,7 @@ class TextInput extends StatelessWidget {
       child: Column(
         children: [
           TextField(
-            style: Theme.of(context).textTheme.headline6,
+            style: Theme.of(context).textTheme.headline2,
             maxLines: 4,
             minLines: 1,
             cursorHeight: Dim.tm3(),

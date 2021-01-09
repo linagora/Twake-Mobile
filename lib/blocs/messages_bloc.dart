@@ -51,7 +51,13 @@ class MessagesBloc<T extends BaseChannelBloc>
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (T == ChannelsBloc && state is ChannelMessageNotification) {
-        repository.logger.d('CHANNEL MESSAGE FETCH ON NOTIFY');
+        this.add(LoadSingleMessage(
+          messageId: state.data.messageId,
+          channelId: state.data.channelId,
+          workspaceId: state.data.workspaceId,
+          companyId: state.data.companyId,
+        ));
+      } else if (T == DirectsBloc && state is DirectMessageNotification) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
@@ -59,14 +65,19 @@ class MessagesBloc<T extends BaseChannelBloc>
           companyId: state.data.companyId,
         ));
       }
-      if (T == DirectsBloc && state is DirectMessageNotification) {
-        repository.logger.d('DIRECT MESSAGE FETCH ON NOTIFY');
-        this.add(LoadSingleMessage(
-          messageId: state.data.messageId,
-          channelId: state.data.channelId,
-          workspaceId: state.data.workspaceId,
-          companyId: state.data.companyId,
-        ));
+      if (state is ThreadMessageNotification) {
+        if (T == DirectsBloc && state.data.workspaceId == null)
+          this.add(ModifyResponsesCount(
+            threadId: state.data.threadId,
+            channelId: state.data.channelId,
+            modifier: 1,
+          ));
+        else if (T == ChannelsBloc && state.data.workspaceId != null)
+          this.add(ModifyResponsesCount(
+            threadId: state.data.threadId,
+            channelId: state.data.channelId,
+            modifier: 1,
+          ));
       }
     });
     selectedChannel = channelsBloc.repository.selected;
@@ -79,7 +90,8 @@ class MessagesBloc<T extends BaseChannelBloc>
       await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: [
-          ['channel_id', '=', selectedChannel.id]
+          ['channel_id', '=', selectedChannel.id],
+          ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
         limit: _MESSAGE_LIMIT,
@@ -92,8 +104,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
         _sortItems();
         yield MessagesLoaded(
-          messages: repository.roItems,
-          messageCount: repository.items.length,
+          messages: repository.items,
+          messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
       }
@@ -101,7 +113,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       if (_previousMessageId == event.beforeId) return;
       _previousMessageId = event.beforeId;
       yield MoreMessagesLoading(
-        messages: repository.roItems,
+        messages: repository.items,
         parentChannel: selectedChannel,
       );
       final bool _ = await repository.loadMore(
@@ -109,13 +121,14 @@ class MessagesBloc<T extends BaseChannelBloc>
         filters: [
           ['channel_id', '=', selectedChannel.id],
           ['creation_date', '<', event.beforeTimeStamp],
+          ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
       );
       _sortItems();
       yield MessagesLoaded(
-        messages: repository.roItems,
-        messageCount: repository.items.length,
+        messages: repository.items,
+        messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
     } else if (event is LoadSingleMessage) {
@@ -128,12 +141,28 @@ class MessagesBloc<T extends BaseChannelBloc>
       );
       _sortItems();
       final newState = MessagesLoaded(
-        messages: repository.roItems,
-        messageCount: repository.items.length,
+        messages: repository.items,
+        messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
-      repository.logger.d('YIELDING STATE: ${newState != this.state}');
+      // repository.logger.d('YIELDING STATE: ${newState != this.state}');
       yield newState;
+    } else if (event is ModifyResponsesCount) {
+      final thread = await repository.getItemById(event.threadId);
+      if (thread != null) {
+        thread.responsesCount += event.modifier;
+        repository.saveOne(thread);
+      } else
+        return;
+      if (event.channelId == selectedChannel.id) {
+        final newState = MessagesLoaded(
+          messages: repository.items,
+          messageCount: repository.itemsCount,
+          parentChannel: selectedChannel,
+        );
+        repository.logger.d('YIELDING STATE: ${newState != this.state}');
+        yield newState;
+      }
     } else if (event is RemoveMessage) {
       final channelId = event.channelId ?? selectedChannel.id;
       repository.logger
@@ -150,8 +179,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         _sortItems();
 
         final newState = MessagesLoaded(
-          messages: repository.roItems,
-          messageCount: repository.items.length,
+          messages: repository.items,
+          messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
 
@@ -163,8 +192,8 @@ class MessagesBloc<T extends BaseChannelBloc>
       await repository.pushOne(_makeQueryParams(event));
       _sortItems();
       yield MessagesLoaded(
-        messages: repository.roItems,
-        messageCount: repository.items.length,
+        messages: repository.items,
+        messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
     } else if (event is ClearMessages) {
@@ -178,7 +207,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       ));
       yield MessageSelected(
         threadMessage: repository.selected,
-        messages: repository.roItems,
+        messages: repository.items,
         parentChannel: selectedChannel,
       );
     }
@@ -194,9 +223,8 @@ class MessagesBloc<T extends BaseChannelBloc>
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
-    map['company_id'] = map['company_id'] ?? ProfileBloc().selectedCompany;
-    map['workspace_id'] =
-        map['workspace_id'] ?? ProfileBloc().selectedWorkspace;
+    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
+    map['workspace_id'] = map['workspace_id'] ?? ProfileBloc.selectedWorkspace;
     return map;
   }
 

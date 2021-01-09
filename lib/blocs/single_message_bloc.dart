@@ -32,11 +32,11 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
       throw 'Not implemented yet!';
     } else if (event is UpdateReaction) {
       message.updateReactions(
-        userId: event.userId ?? ProfileBloc().userId,
+        userId: event.userId ?? ProfileBloc.userId,
         body: {
-          'company_id': event.companyId ?? ProfileBloc().selectedCompany,
+          'company_id': event.companyId ?? ProfileBloc.selectedCompany,
           'channel_id': message.channelId,
-          'workspace_id': event.workspaceId ?? ProfileBloc().selectedWorkspace,
+          'workspace_id': event.workspaceId ?? ProfileBloc.selectedWorkspace,
           'message_id': message.id,
           'thread_id': message.threadId,
           'reaction': event.emojiCode,

@@ -19,4 +19,6 @@ class Endpoint {
   static const messages = '/messages';
   // API Endpoint for working with message reactions
   static const reactions = '/reactions';
+  // API Endpoint for getting current supported emojis
+  static const emojis = '/settings/emoji';
 }

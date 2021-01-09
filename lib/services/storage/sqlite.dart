@@ -131,6 +131,8 @@ class SQLite with Storage {
       table = 'message';
     else if (type == StorageType.User)
       table = 'user';
+    else if (type == StorageType.Emojis)
+      table = 'setting';
     else
       throw 'Storage type does not exist';
     return table;
@@ -170,8 +172,14 @@ class SQLite with Storage {
       final lhs = e[0];
       final op = e[1];
       final rhs = e[2];
-      where += '$lhs $op ? AND ';
-      whereArgs.add(rhs);
+      if (rhs == null && op == '=')
+        where += '$lhs IS NULL AND ';
+      else if (rhs == 'null' && op == '!=')
+        where += '$lhs IS NOT NULL AND ';
+      else {
+        where += '$lhs $op ? AND ';
+        whereArgs.add(rhs);
+      }
     }
     where = where.substring(0, where.length - 4);
     return Tuple2(where, whereArgs);

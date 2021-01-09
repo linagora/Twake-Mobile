@@ -35,15 +35,16 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: Dim.widthPercent(69),
+                    width: Dim.widthPercent(67),
                     child: Text(
                       state.parentChannel.name,
                       style: Theme.of(ctx).textTheme.headline6,
                       overflow: TextOverflow.fade,
                     ),
                   ),
-                  Text('${state.parentChannel.membersCount ?? 'No'} members',
-                      style: Theme.of(ctx).textTheme.bodyText2),
+                  if (state.parentChannel is Channel)
+                    Text('${state.parentChannel.membersCount ?? 'No'} members',
+                        style: Theme.of(ctx).textTheme.bodyText2),
                 ],
               ),
             ],

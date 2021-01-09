@@ -17,7 +17,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
           companies: repository.items,
           selected: repository.selected,
         )) {
-    ProfileBloc().selectedCompany = repository.selected.id;
+    ProfileBloc.selectedCompany = repository.selected.id;
   }
 
   @override
@@ -33,7 +33,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       yield CompaniesEmpty();
     } else if (event is ChangeSelectedCompany) {
       repository.select(event.companyId);
-      ProfileBloc().selectedCompany = event.companyId;
+      ProfileBloc.selectedCompany = event.companyId;
       yield CompaniesLoaded(
         companies: repository.items,
         selected: repository.selected,

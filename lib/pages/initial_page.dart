@@ -10,6 +10,7 @@ import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
 
@@ -28,9 +29,13 @@ class _InitialPageState extends State<InitialPage> {
   Widget buildSplashScreen() {
     return Scaffold(
       body: Center(
-        child: Lottie.asset(
-          'assets/animations/splash.json',
-          repeat: true,
+        child: SizedBox(
+          width: Dim.heightPercent(13),
+          height: Dim.heightPercent(13),
+          child: Lottie.asset(
+            'assets/animations/splash.json',
+            repeat: true,
+          ),
         ),
       ),
     );
@@ -67,12 +72,14 @@ class _InitialPageState extends State<InitialPage> {
                 return ChannelsBloc(
                   repository: state.initData.channels,
                   workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
+                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                 );
               }),
               BlocProvider<DirectsBloc>(create: (ctx) {
                 return DirectsBloc(
                   repository: state.initData.directs,
                   companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                 );
               }),
               BlocProvider<ThreadsBloc>(

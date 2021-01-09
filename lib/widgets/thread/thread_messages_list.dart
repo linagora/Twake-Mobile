@@ -38,9 +38,9 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
               ],
             );
           } else {
-            return BlocProvider<SingleMessageBloc>(
-              create: (_) => SingleMessageBloc(responses[i]),
-              child: MessageTile<T>(message: responses[i]),
+            return MessageTile<T>(
+              message: responses[i],
+              key: ValueKey(responses[i].id),
             );
           }
         },
