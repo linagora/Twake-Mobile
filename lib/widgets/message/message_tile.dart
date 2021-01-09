@@ -59,13 +59,14 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                   showModalBottomSheet(
                       context: context,
                       isScrollControlled: true,
-                      builder: (ctx) {
+                      builder: (_) {
                         return MessageModalSheet(
                           userId: messageState.userId,
                           messageId: messageState.id,
                           responsesCount: messageState.responsesCount,
                           isThread: messageState.threadId != null,
                           onReply: onReply,
+                          ctx: ctx,
                           onDelete: (ctx) => onDelete(
                               ctx,
                               RemoveMessage(

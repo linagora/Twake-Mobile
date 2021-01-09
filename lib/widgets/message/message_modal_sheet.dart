@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/utils/emojis.dart';
 
 class MessageModalSheet extends StatefulWidget {
   final String userId;
@@ -10,6 +13,7 @@ class MessageModalSheet extends StatefulWidget {
   final void Function(BuildContext) onDelete;
   final Function onCopy;
   final bool isThread;
+  final BuildContext ctx;
 
   const MessageModalSheet({
     this.userId,
@@ -19,6 +23,7 @@ class MessageModalSheet extends StatefulWidget {
     this.onReply,
     this.onDelete,
     this.onCopy,
+    this.ctx,
     Key key,
   }) : super(key: key);
 
@@ -27,6 +32,20 @@ class MessageModalSheet extends StatefulWidget {
 }
 
 class _MessageModalSheetState extends State<MessageModalSheet> {
+  onEmojiSelected(String emojiCode, {bool reverse: false}) {
+    if (reverse) {
+      emojiCode = Emojis().reverseLookup(emojiCode);
+      if (emojiCode != null) {
+        emojiCode = ':$emojiCode:';
+      } else {
+        return;
+      }
+    }
+
+    BlocProvider.of<SingleMessageBloc>(widget.ctx)
+        .add(UpdateReaction(userId: widget.userId, emojiCode: emojiCode));
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
@@ -35,6 +54,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            EmojiLine(onEmojiSelected),
+            Divider(),
             if (!widget.isThread)
               ListTile(
                 leading: Icon(Icons.reply_sharp),
@@ -73,6 +94,57 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class EmojiLine extends StatelessWidget {
+  final Function emojiPicked;
+  EmojiLine(this.emojiPicked);
+  static const EMOJISET = [
+    ':smiley:',
+    ':smile:',
+    ':sweat_smile:',
+    ':wink:',
+    ':yum:',
+    ':laughing:',
+    ':rage:',
+    ':cry:',
+    ':persevere:',
+    ':disappointed:',
+    ':thumbsup:',
+    ':thumbsdown:',
+    ':ok_hand:',
+    'raised_hand_with_fingers_splayed',
+    ':heart:',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: Dim.heightMultiplier,
+        horizontal: Dim.wm2,
+      ),
+      constraints: BoxConstraints(maxHeight: Dim.hm7),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          ...EMOJISET.map((e) => InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  emojiPicked(e);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: Text(
+                    Emojis().getByName(e),
+                    style: Theme.of(context).textTheme.headline3,
+                  ),
+                ),
+              )),
+        ],
       ),
     );
   }
