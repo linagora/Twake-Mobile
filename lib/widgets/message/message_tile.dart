@@ -75,6 +75,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                 threadId: messageState.threadId,
                               )),
                           onCopy: () {
+                            print('TEXT: ${messageState.text}');
                             onCopy(context: ctx, text: messageState.text);
                           },
                         );
