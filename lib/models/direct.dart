@@ -25,9 +25,6 @@ class Direct {
   @JsonKey(required: true, name: 'private')
   final bool isPrivate;
 
-  @JsonKey(required: true, name: 'direct')
-  final bool isDirect;
-
   @JsonKey(required: true, name: 'last_activity')
   final int lastActivity;
 
@@ -77,7 +74,6 @@ class Direct {
     this.description,
     @required this.membersCount,
     @required this.isPrivate,
-    @required this.isDirect,
     @required this.lastActivity,
     @required this.messageTotal,
     @required this.members,

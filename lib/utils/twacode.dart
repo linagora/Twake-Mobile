@@ -138,13 +138,13 @@ class _TwacodeState extends State<Twacode> {
     // }
     return widget.charCount > 300
         ? Column(
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
                 maxLines: maxRichTextHeight,
                 overflow: TextOverflow.fade,
-                textAlign: TextAlign.justify,
+                textAlign: TextAlign.left,
                 text: TextSpan(children: spans),
               ),
               buildButton(
@@ -154,6 +154,7 @@ class _TwacodeState extends State<Twacode> {
             ],
           )
         : RichText(
+            textAlign: TextAlign.left,
             text: TextSpan(children: spans),
           );
   }
@@ -351,7 +352,7 @@ class TwacodeItem {
         }
         this.content = String.fromCharCodes(codePoints);
       } else {
-        this.content = Emojis().getClosestMatch(this.content);
+        this.content = Emojis().getByName(this.content);
       }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;

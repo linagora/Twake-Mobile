@@ -142,7 +142,7 @@ class ProfileProvider with ChangeNotifier {
       DB.profileSave(_currentProfile);
       notifyListeners();
     } catch (error) {
-      logger.d('Error while loading user profile\n$error');
+      logger.d('Error while loading user profile\n${error.response.data}');
       // throw error;
     }
   }

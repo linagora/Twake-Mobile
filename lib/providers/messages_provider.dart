@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:twake_mobile/models/message.dart';
 import 'package:twake_mobile/services/twake_api.dart';
+import 'package:twake_mobile/utils/notifications_handler.dart';
 
 // BIG TODO. May be, I should consider implementing all those Provider classes
 // via some generic class. May be...
@@ -157,11 +158,7 @@ class MessagesProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getMessageOnUpdate({
-    String channelId,
-    String messageId,
-    String threadId,
-  }) async {
+  Future<void> getMessageOnUpdate(NotificationData notificationData) async {
     logger.d('Updating messages on notify!');
     logger.d('Current ChannelID: ${this.channelId}');
     logger.d('Requested ChannelID: $channelId');
@@ -169,20 +166,21 @@ class MessagesProvider extends ChangeNotifier {
     if (channelId == this.channelId) {
       final list = await api.channelMessagesGet(
         channelId,
-        messageId: messageId,
-        threadId: threadId,
+        messageId: notificationData.messageId,
+        threadId: notificationData.threadId,
       );
       logger.d('Received message for notify from api');
       // if list returned is empty, then message has been deleted
       if (list.isEmpty) {
         // if threadId was present, remove response
-        if (threadId != null) {
-          var message = getMessageById(threadId);
+        if (notificationData.threadId != null) {
+          var message = getMessageById(notificationData.threadId);
           message.responsesCount--;
-          message.responses.removeWhere((m) => m.id == messageId);
+          message.responses
+              .removeWhere((m) => m.id == notificationData.messageId);
         } else {
           // else remove the message itself
-          _items.removeWhere((m) => m.id == messageId);
+          _items.removeWhere((m) => m.id == notificationData.messageId);
         }
         logger.d('Message was deleted');
         notifyListeners();
@@ -191,9 +189,9 @@ class MessagesProvider extends ChangeNotifier {
       logger.d('Parsing message from json');
       var newMessage = Message.fromJson(list[0]);
       // Add message to channel
-      if (threadId == null) {
+      if (notificationData.threadId == null) {
         logger.d('Adding message to channel');
-        var message = getMessageById(messageId);
+        var message = getMessageById(notificationData.messageId);
         // if message exists already, update it
         if (message != null) {
           logger.d('message is found');
@@ -208,10 +206,11 @@ class MessagesProvider extends ChangeNotifier {
         }
       } else {
         // Add message to thread
-        logger.d('Addeing message to the thread');
-        var message = getMessageById(threadId);
-        var response = message.responses
-            .firstWhere((r) => r.id == messageId, orElse: () => null);
+        logger.d('Adding message to the thread');
+        var message = getMessageById(notificationData.threadId);
+        var response = message.responses.firstWhere(
+            (r) => r.id == notificationData.messageId,
+            orElse: () => null);
         // if message doesn't exists, add new to the thread
         if (response == null) {
           message.responsesCount = (message.responsesCount ?? 0) + 1;
