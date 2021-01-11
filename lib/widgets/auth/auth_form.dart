@@ -218,7 +218,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: TextStyle(fontSize: Dim.tm2(decimal:0.2)),
+      // style: TextStyle(fontSize: Dim.tm2(decimal:0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
       // onFieldSubmitted: widget.onSaved,

@@ -85,6 +85,8 @@ class Sembast with Storage {
     StorageType type,
     List<List> filters,
     Map<String, bool> orderings,
+    int limit,
+    int offset,
   }) async {
     Filter filter;
     if (filters != null) {
