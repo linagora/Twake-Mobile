@@ -36,9 +36,9 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   initState() {
+    super.initState();
     passwordController.addListener(onPasswordSaved);
     usernameController.addListener(onUsernameSaved);
-    super.initState();
   }
 
   @override

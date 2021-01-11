@@ -40,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           }
           break;
         case TokenStatus.BothExpired:
-          yield Unauthenticated();
+          yield Unauthenticated(message: 'Session expired');
       }
     } else if (event is Authenticate) {
       yield Authenticating();
@@ -49,7 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         password: event.password,
       );
       if (result == AuthResult.WrongCredentials) {
-        yield Unauthenticated();
+        yield Unauthenticated(message: 'Wrong credentials');
       } else if (result == AuthResult.NetworkError) {
         yield AuthenticationError();
       } else {
