@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_channel.dart';
-import 'package:twake/models/collection_item.dart';
 
 part 'direct.g.dart';
 

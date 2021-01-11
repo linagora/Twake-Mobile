@@ -219,6 +219,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
       // onFieldSubmitted: widget.onSaved,
@@ -230,7 +231,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
         fillColor: Color.fromRGBO(239, 239, 245, 1),
         filled: true,
         labelText: widget.label,
-        labelStyle: TextStyle(fontSize: Dim.tm2(decimal: .1)),
+        labelStyle: TextStyle(fontSize: Dim.tm2(decimal: .1), height: 0.9),
         contentPadding: EdgeInsets.fromLTRB(
           Dim.wm3,
           Dim.heightMultiplier,
