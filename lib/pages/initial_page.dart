@@ -43,86 +43,90 @@ class _InitialPageState extends State<InitialPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (ctx, state) {
-        if (state is AuthInitializing) {
-          return buildSplashScreen();
-        }
-        if (state is Unauthenticated) {
-          return AuthPage();
-        }
-        if (state is Authenticated) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider<ProfileBloc>(
-                create: (_) => ProfileBloc(state.initData.profile),
-                lazy: false,
-              ),
-              BlocProvider<NotificationBloc>(create: (_) => NotificationBloc()),
-              BlocProvider<CompaniesBloc>(
-                create: (ctx) => CompaniesBloc(state.initData.companies),
-              ),
-              BlocProvider<WorkspacesBloc>(create: (ctx) {
-                return WorkspacesBloc(
-                  repository: state.initData.workspaces,
-                  companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
-                );
-              }),
-              BlocProvider<ChannelsBloc>(create: (ctx) {
-                return ChannelsBloc(
-                  repository: state.initData.channels,
-                  workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
-                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-                );
-              }),
-              BlocProvider<DirectsBloc>(create: (ctx) {
-                return DirectsBloc(
-                  repository: state.initData.directs,
-                  companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
-                  notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-                );
-              }),
-              BlocProvider<ThreadsBloc>(
-                create: (ctx) {
-                  return ThreadsBloc(
-                    repository: state.initData.threads,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (ctx, state) {},
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (ctx, state) {
+          if (state is AuthInitializing) {
+            return buildSplashScreen();
+          }
+          if (state is Unauthenticated) {
+            return AuthPage();
+          }
+          if (state is Authenticated) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<ProfileBloc>(
+                  create: (_) => ProfileBloc(state.initData.profile),
+                  lazy: false,
+                ),
+                BlocProvider<NotificationBloc>(
+                    create: (_) => NotificationBloc()),
+                BlocProvider<CompaniesBloc>(
+                  create: (ctx) => CompaniesBloc(state.initData.companies),
+                ),
+                BlocProvider<WorkspacesBloc>(create: (ctx) {
+                  return WorkspacesBloc(
+                    repository: state.initData.workspaces,
+                    companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                  );
+                }),
+                BlocProvider<ChannelsBloc>(create: (ctx) {
+                  return ChannelsBloc(
+                    repository: state.initData.channels,
+                    workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
-                },
-                lazy: false,
-              ),
-              BlocProvider<MessagesBloc<ChannelsBloc>>(
-                create: (ctx) {
-                  return MessagesBloc<ChannelsBloc>(
-                    repository: state.initData.messages,
-                    channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
-                    threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
+                }),
+                BlocProvider<DirectsBloc>(create: (ctx) {
+                  return DirectsBloc(
+                    repository: state.initData.directs,
+                    companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
-                },
-                lazy: false,
+                }),
+                BlocProvider<ThreadsBloc>(
+                  create: (ctx) {
+                    return ThreadsBloc(
+                      repository: state.initData.threads,
+                      notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                    );
+                  },
+                  lazy: false,
+                ),
+                BlocProvider<MessagesBloc<ChannelsBloc>>(
+                  create: (ctx) {
+                    return MessagesBloc<ChannelsBloc>(
+                      repository: state.initData.messages,
+                      channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
+                      threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
+                      notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                    );
+                  },
+                  lazy: false,
+                ),
+                BlocProvider<MessagesBloc<DirectsBloc>>(
+                  create: (ctx) {
+                    return MessagesBloc<DirectsBloc>(
+                      repository: state.initData.messages,
+                      channelsBloc: BlocProvider.of<DirectsBloc>(ctx),
+                      threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
+                      notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                    );
+                  },
+                  lazy: false,
+                ),
+              ],
+              child: Navigator(
+                initialRoute: Routes.main,
+                onGenerateRoute: (settings) =>
+                    Routes.onGenerateRoute(settings.name),
               ),
-              BlocProvider<MessagesBloc<DirectsBloc>>(
-                create: (ctx) {
-                  return MessagesBloc<DirectsBloc>(
-                    repository: state.initData.messages,
-                    channelsBloc: BlocProvider.of<DirectsBloc>(ctx),
-                    threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
-                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-                  );
-                },
-                lazy: false,
-              ),
-            ],
-            child: Navigator(
-              initialRoute: Routes.main,
-              onGenerateRoute: (settings) =>
-                  Routes.onGenerateRoute(settings.name),
-            ),
-          );
-        } else // is Authenticating
-          return buildSplashScreen();
-      },
+            );
+          } else // is Authenticating
+            return buildSplashScreen();
+        },
+      ),
     );
   }
 }

@@ -13,7 +13,6 @@ export 'package:twake/states/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;
   AuthBloc(this.repository) : super(AuthInitializing()) {
-    // setting callback to notify the bloc in case if token will expire
     Api().resetAuthentication = resetAuthentication;
   }
 
