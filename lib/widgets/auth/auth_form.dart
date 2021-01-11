@@ -169,7 +169,8 @@ class _AuthFormState extends State<AuthForm> {
                     children: [
                       Text(
                         'Don\'t have an account? ',
-                        style: StylesConfig.miniPurple.copyWith(color: Colors.black87),
+                        style: StylesConfig.miniPurple
+                            .copyWith(color: Colors.black87),
                       ),
                       FlatButton(
                         onPressed: () {
@@ -218,10 +219,8 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      // style: TextStyle(fontSize: Dim.tm2(decimal:0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
-      // onFieldSubmitted: widget.onSaved,
       controller: widget.controller,
       focusNode: widget.focusNode,
       keyboardType: TextInputType.emailAddress,

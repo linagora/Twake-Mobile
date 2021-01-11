@@ -45,6 +45,10 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   if (state.parentChannel is Channel)
                     Text('${state.parentChannel.membersCount ?? 'No'} members',
                         style: Theme.of(ctx).textTheme.bodyText2),
+                  if (state.parentChannel is Direct &&
+                      state.parentChannel.membersCount > 1)
+                    Text('${state.parentChannel.membersCount} members',
+                        style: Theme.of(ctx).textTheme.bodyText2),
                 ],
               ),
             ],
