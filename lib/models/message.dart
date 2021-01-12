@@ -45,11 +45,6 @@ class Message extends CollectionItem {
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 
-  // used when deleting messages
-  // TODO try to remove this field
-  @JsonKey(ignore: true)
-  bool hidden = false;
-
   @JsonKey(ignore: true)
   final _api = Api();
 
@@ -63,25 +58,33 @@ class Message extends CollectionItem {
 
   void updateReactions({String userId, Map<String, dynamic> body}) {
     String emojiCode = body['reaction'];
+    logger.d('Updating reaction: $emojiCode');
     if (emojiCode == null) return;
     final oldReactions = Map<String, dynamic>.from(reactions);
     for (var r in reactions.entries) {
       final users = r.value['users'] as List;
       if (users.contains(userId)) {
+        logger.d('Found userId: $users');
         users.remove(userId);
         if (users.isEmpty) reactions.remove(r.key);
+        emojiCode = '';
         break;
       }
     }
-    final r = reactions[emojiCode] ?? {'users': [], 'count': 0};
-    r['users'].add(userId);
-    r['count'] += 1;
-    reactions[emojiCode] = r;
+    if (emojiCode.isNotEmpty) {
+      final r = reactions[emojiCode] ?? {'users': [], 'count': 0};
+      r['users'].add(userId);
+      r['count'] += 1;
+      reactions[emojiCode] = r;
+    }
 
-    _api
-        .post(Endpoint.reactions, body: body)
-        .then((_) => save())
-        .catchError((_) => reactions = oldReactions);
+    _api.post(Endpoint.reactions, body: body).then((_) {
+      logger.d('Successfully updated reaction');
+      save();
+    }).catchError((_) {
+      logger.e('Error updating reaction');
+      reactions = oldReactions;
+    });
   }
 
   Future<void> save() async {
