@@ -20,6 +20,8 @@ class StylesConfig {
       ),
       color: Colors.white,
       shadowColor: Colors.grey[300],
+      elevation: 0.0,
+      brightness: Brightness.light,
     ),
     // fontFamily: 'PT',
   );

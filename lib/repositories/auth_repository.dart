@@ -60,6 +60,8 @@ class AuthRepository extends JsonSerializable {
     final fcmToken = (await FirebaseMessaging().getToken());
     final apiVersion = (await PackageInfo.fromPlatform()).version;
 
+    print('PLATFORM VERSION: $apiVersion');
+
     if (authMap != null) {
       Logger().d('INIT APIVERSION: $apiVersion');
       final authRepository = AuthRepository.fromJson(authMap);

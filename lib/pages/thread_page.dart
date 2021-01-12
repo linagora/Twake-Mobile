@@ -23,7 +23,6 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
             titleSpacing: 0.0,
             shadowColor: Colors.grey[300],
             toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
-            backgroundColor: Theme.of(context).appBarTheme.color,
             title: ListTile(
               dense: true,
               visualDensity: VisualDensity.compact,

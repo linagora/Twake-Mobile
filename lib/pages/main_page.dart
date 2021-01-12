@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
@@ -18,7 +19,6 @@ class MainPage extends StatelessWidget {
         drawer: TwakeDrawer(),
         appBar: AppBar(
           titleSpacing: 0.0,
-          backgroundColor: Theme.of(context).appBarTheme.color,
           leading: IconButton(
             padding: EdgeInsets.only(left: Dim.wm3),
             onPressed: () {
@@ -29,6 +29,7 @@ class MainPage extends StatelessWidget {
               size: Dim.tm4(),
             ),
           ),
+          backgroundColor: Colors.white,
           toolbarHeight: Dim.heightPercent(
             (kToolbarHeight * 0.15).round(),
           ), // taking into account current appBar height to calculate a new one
