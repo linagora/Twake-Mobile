@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
@@ -14,16 +15,28 @@ export 'package:twake/events/messages_event.dart';
 
 const _THREAD_MESSAGES_LIMIT = 1000;
 
-class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
+class ThreadsBloc<T extends BaseChannelBloc>
+    extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
+  final MessagesBloc<T> messagesBloc;
   final NotificationBloc notificationBloc;
 
   StreamSubscription notificationSubscription;
+  StreamSubscription messagesSubscription;
 
   ThreadsBloc({
     this.repository,
+    this.messagesBloc,
     this.notificationBloc,
   }) : super(MessagesEmpty()) {
+    messagesSubscription = messagesBloc.listen((MessagesState state) {
+      if (state is MessageSelected) {
+        this.add(LoadMessages(
+          threadId: state.threadMessage.id,
+          channelId: state.parentChannel.id,
+        ));
+      }
+    });
     notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (state is ThreadMessageNotification) {
@@ -85,11 +98,14 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
         );
       }
     } else if (event is SendMessage) {
-      await repository.pushOne(_makeQueryParams(event));
-      yield MessagesLoaded(
-        messageCount: repository.itemsCount,
-        messages: repository.items,
-      );
+      final success = await repository.pushOne(_makeQueryParams(event));
+      if (success) {
+        yield MessagesLoaded(
+          messageCount: repository.itemsCount,
+          messages: repository.items,
+        );
+        _updateParentChannel();
+      }
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty();
@@ -99,6 +115,7 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
   @override
   Future<void> close() {
     notificationSubscription.cancel();
+    messagesSubscription.cancel();
     return super.close();
   }
 
@@ -114,5 +131,14 @@ class ThreadsBloc extends Bloc<MessagesEvent, MessagesState> {
     repository.items.sort(
       (i1, i2) => i2.creationDate.compareTo(i1.creationDate),
     );
+  }
+
+  void _updateParentChannel() {
+    final channelId = messagesBloc.selectedChannel.id;
+    messagesBloc.channelsBloc.add(ModifyMessageCount(
+      channelId: channelId,
+      companyId: ProfileBloc.selectedCompany,
+      totalModifier: 1,
+    ));
   }
 }
