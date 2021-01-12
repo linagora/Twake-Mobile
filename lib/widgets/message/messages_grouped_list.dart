@@ -16,10 +16,12 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
             if (state is MessagesLoaded)
-              BlocProvider.of<MessagesBloc<T>>(context).add(LoadMoreMessages(
-                beforeId: state.messages.first.id,
-                beforeTimeStamp: state.messages.first.creationDate,
-              ));
+              BlocProvider.of<MessagesBloc<T>>(context).add(
+                LoadMoreMessages(
+                  beforeId: state.messages.first.id,
+                  beforeTimeStamp: state.messages.first.creationDate,
+                ),
+              );
           }
           return true;
         },
@@ -46,42 +48,42 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                     separator: SizedBox(height: Dim.hm2),
                     groupSeparatorBuilder: (Message message) {
                       return GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus.unfocus();
-                          },
-                          child: Container(
-                            height: Dim.hm3,
-                            margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.center,
-                                  child: Divider(
-                                    thickness: 0.0,
-                                  ),
+                        onTap: () {
+                          FocusManager.instance.primaryFocus.unfocus();
+                        },
+                        child: Container(
+                          height: Dim.hm3,
+                          margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                          child: Stack(
+                            children: [
+                              Align(
+                                alignment: Alignment.center,
+                                child: Divider(
+                                  thickness: 0.0,
                                 ),
-                                Align(
-                                  // alignment: Alignment.center,
-                                  child: Container(
-                                    color: Theme.of(context)
-                                        .scaffoldBackgroundColor,
-                                    width: Dim.widthPercent(30),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(1.0),
-                                      child: Text(
-                                        DateFormatter.getVerboseDate(
-                                            message.creationDate),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                        textAlign: TextAlign.center,
-                                      ),
+                              ),
+                              Align(
+                                // alignment: Alignment.center,
+                                child: Container(
+                                  color:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  width: Dim.widthPercent(30),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1.0),
+                                    child: Text(
+                                      DateFormatter.getVerboseDate(
+                                          message.creationDate),
+                                      style:
+                                          Theme.of(context).textTheme.subtitle1,
+                                      textAlign: TextAlign.center,
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ));
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     },
                     indexedItemBuilder: (_, Message message, int i) {
                       return MessageTile<T>(
