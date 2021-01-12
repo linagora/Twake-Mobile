@@ -22,84 +22,44 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      // child: MultiBlocProvider(
-      // providers: [
-      // BlocProvider<ProfileBloc>(create: (_) => ProfileBloc(data.profile)),
-      // BlocProvider<NotificationBloc>(create: (_) => NotificationBloc()),
-      // BlocProvider<CompaniesBloc>(
-      // create: (ctx) => CompaniesBloc(data.companies),
-      // ),
-      // BlocProvider<WorkspacesBloc>(create: (ctx) {
-      // return WorkspacesBloc(
-      // repository: data.workspaces,
-      // companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
-      // );
-      // }),
-      // BlocProvider<ChannelsBloc>(create: (ctx) {
-      // return ChannelsBloc(
-      // repository: data.channels,
-      // workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
-      // );
-      // }),
-      // BlocProvider<DirectsBloc>(create: (ctx) {
-      // return DirectsBloc(
-      // repository: data.directs,
-      // companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
-      // );
-      // }),
-      // BlocProvider<MessagesBloc>(create: (ctx) {
-      // return MessagesBloc(
-      // repository: data.messages,
-      // channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
-      // directsBloc: BlocProvider.of<DirectsBloc>(ctx),
-      // notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-      // );
-      // }),
-      // BlocProvider<ThreadsBloc>(create: (ctx) {
-      // return ThreadsBloc(
-      // repository: data.threads,
-      // messagesBloc: BlocProvider.of<MessagesBloc>(ctx),
-      // notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-      // );
-      // }),
-      // ],
-      child: Scaffold(
-          key: _scaffoldKey,
-          drawer: TwakeDrawer(),
-          appBar: AppBar(
-            titleSpacing: 0.0,
-            leading: IconButton(
-              padding: EdgeInsets.only(left: Dim.wm3),
-              onPressed: () {
-                _scaffoldKey.currentState.openDrawer();
-              },
-              icon: Icon(
-                Icons.menu,
-                size: Dim.tm4(),
-              ),
+    return Scaffold(
+        key: _scaffoldKey,
+        drawer: TwakeDrawer(),
+        appBar: AppBar(
+          titleSpacing: 0.0,
+          backgroundColor: Theme.of(context).appBarTheme.color,
+          leading: IconButton(
+            padding: EdgeInsets.only(left: Dim.wm3),
+            onPressed: () {
+              _scaffoldKey.currentState.openDrawer();
+            },
+            icon: Icon(
+              Icons.menu,
+              size: Dim.tm4(),
             ),
-            toolbarHeight: Dim.heightPercent(
-              (kToolbarHeight * 0.15).round(),
-            ), // taking into account current appBar height to calculate a new one
-            title: BlocBuilder<WorkspacesBloc, WorkspaceState>(
-                builder: (ctx, state) {
-              if (state is WorkspacesLoaded)
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: ImageAvatar(state.selected.logo),
-                  title: Text(
-                    state.selected.name,
-                    style: Theme.of(context).textTheme.headline6,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                );
-              else
-                return CircularProgressIndicator();
-            }),
           ),
-          body: BlocBuilder<ChannelsBloc, ChannelState>(
+          toolbarHeight: Dim.heightPercent(
+            (kToolbarHeight * 0.15).round(),
+          ), // taking into account current appBar height to calculate a new one
+          title: BlocBuilder<WorkspacesBloc, WorkspaceState>(
+              builder: (ctx, state) {
+            if (state is WorkspacesLoaded)
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: ImageAvatar(state.selected.logo),
+                title: Text(
+                  state.selected.name,
+                  style: Theme.of(context).textTheme.headline6,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              );
+            else
+              return CircularProgressIndicator();
+          }),
+        ),
+        body: SafeArea(
+          child: BlocBuilder<ChannelsBloc, ChannelState>(
             builder: (ctx, state) => state is ChannelsLoaded
                 ? RefreshIndicator(
                     onRefresh: () {
@@ -126,7 +86,7 @@ class MainPage extends StatelessWidget {
                     ),
                   )
                 : Center(child: CircularProgressIndicator()),
-          )),
-    );
+          ),
+        ));
   }
 }

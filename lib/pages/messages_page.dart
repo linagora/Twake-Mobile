@@ -17,6 +17,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
       builder: (ctx, state) => Scaffold(
         appBar: AppBar(
           titleSpacing: 0.0,
+          backgroundColor: Theme.of(context).appBarTheme.color,
           shadowColor: Colors.grey[300],
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
           title: Row(
