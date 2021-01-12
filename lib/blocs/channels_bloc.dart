@@ -25,7 +25,9 @@ class ChannelsBloc extends BaseChannelBloc {
     this.notificationBloc,
   }) : super(
             repository: repository,
-            initState: ChannelsLoaded(channels: repository.items)) {
+            initState: repository.isEmpty
+                ? ChannelsEmpty()
+                : ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         selectedParentId = state.selected.id;
@@ -60,6 +62,7 @@ class ChannelsBloc extends BaseChannelBloc {
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
+      if (repository.isEmpty) yield ChannelsEmpty();
       yield ChannelsLoaded(
         channels: repository.items,
       );

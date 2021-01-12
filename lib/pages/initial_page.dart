@@ -34,6 +34,7 @@ class _InitialPageState extends State<InitialPage> {
           height: Dim.heightPercent(13),
           child: Lottie.asset(
             'assets/animations/splash.json',
+            animate: true,
             repeat: true,
           ),
         ),

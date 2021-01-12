@@ -36,9 +36,9 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   initState() {
+    super.initState();
     passwordController.addListener(onPasswordSaved);
     usernameController.addListener(onUsernameSaved);
-    super.initState();
   }
 
   @override
@@ -219,6 +219,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
       controller: widget.controller,

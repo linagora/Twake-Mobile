@@ -38,8 +38,12 @@ class CollectionRepository<T extends CollectionItem> {
 
   CollectionRepository({this.items, this.apiEndpoint});
 
-  T get selected =>
-      items.firstWhere((i) => i.isSelected == 1, orElse: () => items[0]);
+  bool get isEmpty => items.isEmpty;
+
+  T get selected => items.firstWhere((i) => i.isSelected == 1, orElse: () {
+        if (items.isNotEmpty) return items[0];
+        return null;
+      });
 
   int get itemsCount => (items ?? []).length;
 

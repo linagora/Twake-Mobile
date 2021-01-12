@@ -9,7 +9,7 @@ class MessageModalSheet extends StatefulWidget {
   final String userId;
   final String messageId;
   final int responsesCount;
-  final void Function(BuildContext, String) onReply;
+  final void Function(BuildContext, String, {bool autofocus}) onReply;
   final void Function(BuildContext) onDelete;
   final Function onCopy;
   final bool isThread;
@@ -65,7 +65,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  widget.onReply(context, widget.messageId);
+                  widget.onReply(context, widget.messageId, autofocus: true);
                 },
               ),
             if (!widget.isThread) Divider(),

@@ -4,6 +4,7 @@ import 'package:twake/widgets/auth/auth_form.dart';
 
 class AuthPage extends StatelessWidget {
   static const route = '/auth';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

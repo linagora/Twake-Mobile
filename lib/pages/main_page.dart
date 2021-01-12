@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
-import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
-import 'package:twake/blocs/messages_bloc.dart';
-import 'package:twake/blocs/notification_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-// import 'package:twake/services/init.dart';
 import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/widgets/channel/direct_messages_group.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
@@ -17,9 +11,6 @@ import 'package:twake/widgets/drawer/twake_drawer.dart';
 
 class MainPage extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  // final InitData data;
-  // MainPage(this.data);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

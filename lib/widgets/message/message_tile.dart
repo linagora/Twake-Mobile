@@ -24,11 +24,16 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
-  void onReply(context, String messageId) {
+  void onReply(context, String messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
 
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => ThreadPage<T>()));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ThreadPage<T>(
+          autofocus: autofocus,
+        ),
+      ),
+    );
   }
 
   onCopy({context, text}) {
@@ -75,6 +80,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                 threadId: messageState.threadId,
                               )),
                           onCopy: () {
+                            print('TEXT: ${messageState.text}');
                             onCopy(context: ctx, text: messageState.text);
                           },
                         );

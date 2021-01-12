@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
@@ -12,6 +11,9 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
 class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
+  final bool autofocus;
+  ThreadPage({this.autofocus: false});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc<T>, MessagesState>(
@@ -75,24 +77,27 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                         ),
                       );
                   }),
-                  MessageEditField((content) {
-                    BlocProvider.of<MessagesBloc<T>>(ctx).add(
-                      SendMessage(
-                        content: content,
-                        channelId: threadState.parentChannel.id,
-                        threadId:
-                            (threadState as MessageSelected).threadMessage.id,
-                      ),
-                    );
-                    // TODO fix the mess regarding failed message dispatch
-                    BlocProvider.of<MessagesBloc<T>>(ctx).add(
-                      ModifyResponsesCount(
-                        threadId:
-                            (threadState as MessageSelected).threadMessage.id,
-                        modifier: 1,
-                      ),
-                    );
-                  }, autofocus: true),
+                  MessageEditField(
+                    (content) {
+                      BlocProvider.of<MessagesBloc<T>>(ctx).add(
+                        SendMessage(
+                          content: content,
+                          channelId: threadState.parentChannel.id,
+                          threadId:
+                              (threadState as MessageSelected).threadMessage.id,
+                        ),
+                      );
+                      // TODO fix the mess regarding failed message dispatch
+                      BlocProvider.of<MessagesBloc<T>>(ctx).add(
+                        ModifyResponsesCount(
+                          threadId:
+                              (threadState as MessageSelected).threadMessage.id,
+                          modifier: 1,
+                        ),
+                      );
+                    },
+                    autofocus: autofocus,
+                  ),
                 ],
               ),
             ),
