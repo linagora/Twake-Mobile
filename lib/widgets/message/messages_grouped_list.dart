@@ -8,7 +8,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 
-class MessagesGrouppedList<T extends BaseChannelBloc> extends StatelessWidget {
+class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
