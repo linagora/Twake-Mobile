@@ -1,32 +1,45 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/collection_item.dart';
 
 part 'workspace.g.dart';
 
 @JsonSerializable()
-class Workspace {
+class Workspace extends CollectionItem {
   @JsonKey(required: true)
   final String id;
-  @JsonKey(required: true)
-  final String name;
-  final String logo;
 
-  @JsonKey(ignore: true)
-  bool isSelected = false;
+  @JsonKey(required: true)
+  String name;
+
+  @JsonKey(required: true, name: 'company_id')
+  final String companyId;
+
+  final String color;
+
+  String logo;
+
+  @JsonKey(name: 'user_last_access')
+  int userLastAccess;
+
+  @JsonKey(name: 'total_members')
+  int totalMembers;
+
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
 
   Workspace({
-    @required this.id,
-    @required this.name,
-    this.logo,
-  });
+    this.id,
+    this.companyId,
+    this.color,
+    this.userLastAccess,
+  }) : super(id);
 
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Workspace.fromJson(Map<String, dynamic> json) =>
-      _$WorkspaceFromJson(json)..isSelected = json['isSelected'] ?? false;
+      _$WorkspaceFromJson(json);
+
   Map<String, dynamic> toJson() {
-    var map = _$WorkspaceToJson(this);
-    map['isSelected'] = isSelected;
-    return map;
+    return _$WorkspaceToJson(this);
   }
 }

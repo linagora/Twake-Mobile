@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
   // static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
@@ -33,6 +33,7 @@ class StylesConfig {
 
   static final TextTheme lightTextTheme = TextTheme(
     headline1: _headline1,
+    headline2: _headline2,
     headline3: _headline3,
     headline4: _headline4,
     headline5: _headline5,
@@ -45,8 +46,13 @@ class StylesConfig {
   );
 
   static final TextStyle _headline6 = TextStyle(
-    color: Colors.black,
+    color: Colors.black87,
     fontWeight: FontWeight.w500,
+    fontSize: Dim.tm2(decimal: .9),
+  );
+
+  static final TextStyle _headline2 = TextStyle(
+    color: Colors.black,
     fontSize: Dim.tm2(decimal: .9),
   );
 
@@ -97,11 +103,8 @@ class StylesConfig {
     fontSize: Dim.tm2(),
   );
 
-  static final miniPurple = TextStyle(
-    color: accentColorRGB,
-      fontSize: Dim.tm2(decimal: .15)
-  );
-
+  static final miniPurple =
+      TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
 
   /// For future use in dark theme
   // static final TextStyle _titleDark = _titleLight.copyWith(color: Colors.white);

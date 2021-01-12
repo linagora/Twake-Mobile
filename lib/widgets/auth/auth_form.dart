@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/styles_config.dart';
-import 'package:twake_mobile/screens/webview_screen.dart';
-import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc.dart';
+import 'package:twake/config/styles_config.dart';
+import 'package:twake/pages/webview_page.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
   @override
@@ -36,9 +36,9 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   initState() {
+    super.initState();
     passwordController.addListener(onPasswordSaved);
     usernameController.addListener(onUsernameSaved);
-    super.initState();
   }
 
   @override
@@ -64,26 +64,13 @@ class _AuthFormState extends State<AuthForm> {
     return null;
   }
 
-  Future<void> onSubmit(BuildContext ctx) async {
-    if (!formKey.currentState.validate()) return;
-    _usernameFocusNode.unfocus();
-    _passwordFocusNode.unfocus();
-    formKey.currentState.save();
-    try {
-      await Provider.of<TwakeApi>(ctx, listen: false)
-          .authenticate(username, password);
-    } catch (error) {
-      Scaffold.of(ctx).hideCurrentSnackBar();
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Login failed, wrong credentials',
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
-    }
+  void onSubmit() {
+    BlocProvider.of<AuthBloc>(context).add(
+      Authenticate(
+        username,
+        password,
+      ),
+    );
   }
 
   @override
@@ -170,7 +157,7 @@ class _AuthFormState extends State<AuthForm> {
                     style: Theme.of(context).textTheme.button,
                   ),
                   onPressed: username.isNotEmpty && password.isNotEmpty
-                      ? () => onSubmit(context)
+                      ? () => onSubmit()
                       : null,
                 ),
               ),
@@ -182,7 +169,8 @@ class _AuthFormState extends State<AuthForm> {
                     children: [
                       Text(
                         'Don\'t have an account? ',
-                        style: StylesConfig.miniPurple.copyWith(color: Colors.black87),
+                        style: StylesConfig.miniPurple
+                            .copyWith(color: Colors.black87),
                       ),
                       FlatButton(
                         onPressed: () {
@@ -231,13 +219,13 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: TextStyle(fontSize: Dim.tm2(decimal:0.2)),
+      // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
-      // onFieldSubmitted: widget.onSaved,
       controller: widget.controller,
       focusNode: widget.focusNode,
       keyboardType: TextInputType.emailAddress,
+      style: Theme.of(context).textTheme.headline2,
       decoration: InputDecoration(
         fillColor: Color.fromRGBO(239, 239, 245, 1),
         filled: true,
