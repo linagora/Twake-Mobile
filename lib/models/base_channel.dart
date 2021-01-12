@@ -10,6 +10,7 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(required: true)
   String name;
 
+  @JsonKey(defaultValue: ':+1:')
   String icon;
 
   String description;
