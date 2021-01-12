@@ -23,7 +23,6 @@ class MessagesBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
   final CollectionRepository<Message> repository;
   final T channelsBloc;
-  final ThreadsBloc threadsBloc;
   final NotificationBloc notificationBloc;
 
   StreamSubscription _subscription;
@@ -36,7 +35,6 @@ class MessagesBloc<T extends BaseChannelBloc>
   MessagesBloc({
     this.repository,
     this.channelsBloc,
-    this.threadsBloc,
     this.notificationBloc,
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     _subscription = channelsBloc.listen((ChannelState state) {
@@ -189,22 +187,21 @@ class MessagesBloc<T extends BaseChannelBloc>
         yield newState;
       }
     } else if (event is SendMessage) {
-      await repository.pushOne(_makeQueryParams(event));
-      _sortItems();
-      yield MessagesLoaded(
-        messages: repository.items,
-        messageCount: repository.itemsCount,
-        parentChannel: selectedChannel,
-      );
+      final success = await repository.pushOne(_makeQueryParams(event));
+      if (success) {
+        _sortItems();
+        yield MessagesLoaded(
+          messages: repository.items,
+          messageCount: repository.itemsCount,
+          parentChannel: selectedChannel,
+        );
+        _updateParentChannel();
+      }
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty(parentChannel: selectedChannel);
     } else if (event is SelectMessage) {
       repository.select(event.messageId);
-      threadsBloc.add(LoadMessages(
-        threadId: event.messageId,
-        channelId: selectedChannel.id,
-      ));
       yield MessageSelected(
         threadMessage: repository.selected,
         messages: repository.items,
@@ -226,6 +223,14 @@ class MessagesBloc<T extends BaseChannelBloc>
     map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
     map['workspace_id'] = map['workspace_id'] ?? ProfileBloc.selectedWorkspace;
     return map;
+  }
+
+  void _updateParentChannel() {
+    channelsBloc.add(ModifyMessageCount(
+      channelId: selectedChannel.id,
+      companyId: ProfileBloc.selectedCompany,
+      totalModifier: 1,
+    ));
   }
 
   void _sortItems() {

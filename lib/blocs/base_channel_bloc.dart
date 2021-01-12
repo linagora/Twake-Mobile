@@ -22,4 +22,16 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
     yield ChannelsEmpty();
   }
+
+  Future<void> updateMessageCount(ModifyMessageCount event) async {
+    final ch = await repository.getItemById(event.channelId);
+    if (ch != null) {
+      ch.messagesTotal += event.totalModifier ?? 0;
+      ch.messagesUnread += event.unreadModifier ?? 0;
+      ch.lastActivity =
+          event.timeStamp ?? DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      repository.saveOne(ch);
+    } else
+      return;
+  }
 }

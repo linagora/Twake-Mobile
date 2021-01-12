@@ -158,16 +158,23 @@ class CollectionRepository<T extends CollectionItem> {
     saveOne(item);
   }
 
-  Future<void> pushOne(
+  Future<bool> pushOne(
     Map<String, dynamic> body, {
     addToItems = true,
   }) async {
     logger.d('Sending item $T to api...');
-    final resp = (await _api.post(apiEndpoint, body: body));
+    var resp;
+    try {
+      resp = (await _api.post(apiEndpoint, body: body));
+    } catch (error) {
+      logger.e('Error while sending $T item to api\n${error.message}');
+      return false;
+    }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = _typeToConstuctor[T](resp);
     if (addToItems) this.items.add(item);
     saveOne(item);
+    return true;
   }
 
   Future<T> getItemById(String id) async {

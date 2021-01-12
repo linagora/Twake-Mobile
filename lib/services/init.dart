@@ -30,14 +30,17 @@ Future<InitData> initMain() async {
   await Emojis.load();
   final profile = await ProfileRepository.load();
   final _ = UserRepository(Endpoint.users);
-  final companies =
-      await CollectionRepository.load<Company>(Endpoint.companies);
+  final companies = await CollectionRepository.load<Company>(
+    Endpoint.companies,
+    sortFields: {'name': true},
+  );
   final workspaces = await CollectionRepository.load<Workspace>(
     Endpoint.workspaces,
     filters: [
       ['company_id', '=', companies.selected.id]
     ],
     queryParams: {'company_id': companies.selected.id},
+    sortFields: {'name': true},
   );
   final channels = await CollectionRepository.load<Channel>(
     Endpoint.channels,

@@ -40,17 +40,21 @@ class ChangeSelectedChannel extends ChannelsEvent {
   List<Object> get props => [channelId];
 }
 
-class ModifyUnreadCount extends ChannelsEvent {
+class ModifyMessageCount extends ChannelsEvent {
   final String channelId;
   final String workspaceId;
   final String companyId;
-  final int modifier;
+  final int totalModifier;
+  final int unreadModifier;
+  final int timeStamp;
 
-  ModifyUnreadCount({
+  ModifyMessageCount({
     this.channelId,
     this.workspaceId,
     this.companyId,
-    this.modifier,
+    this.totalModifier,
+    this.unreadModifier,
+    this.timeStamp,
   });
 
   @override
