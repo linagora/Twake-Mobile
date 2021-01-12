@@ -27,6 +27,7 @@ class MainPage extends StatelessWidget {
         drawer: TwakeDrawer(),
         appBar: AppBar(
           titleSpacing: 0.0,
+          backgroundColor: Theme.of(context).appBarTheme.color,
           leading: IconButton(
             padding: EdgeInsets.only(left: Dim.wm3),
             onPressed: () {
