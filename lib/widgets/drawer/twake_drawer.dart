@@ -25,7 +25,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
     return Container(
       width: Dim.widthPercent(80),
       child: Drawer(
-        child: Container(
+        child: SafeArea(
           child: Column(
             children: [
               ListTile(
