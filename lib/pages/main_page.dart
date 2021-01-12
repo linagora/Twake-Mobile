@@ -49,34 +49,35 @@ class MainPage extends StatelessWidget {
                 return CircularProgressIndicator();
             }),
           ),
-          body: BlocBuilder<ChannelsBloc, ChannelState>(
-            builder: (ctx, state) => state is ChannelsLoaded
-                ? RefreshIndicator(
-                    onRefresh: () {
-                      BlocProvider.of<ChannelsBloc>(ctx)
-                          .add(ReloadChannels(forceFromApi: true));
-                      return Future.delayed(Duration(seconds: 1));
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Dim.wm3,
-                        vertical: Dim.heightMultiplier,
-                      ),
-                      child: ListView(
-                        children: [
-                          // Starred channels will be implemented in version 2
-                          // StarredChannelsBlock([]),
-                          // Divider(height: Dim.hm5),
-                          ChannelsGroup(),
-                          Divider(height: Dim.hm5),
-                          DirectMessagesGroup(),
-                          SizedBox(height: Dim.hm2),
-                        ],
-                      ),
-                    ),
-                  )
-                : Center(child: CircularProgressIndicator()),
-          )),
+          body: BlocBuilder<ChannelsBloc, ChannelState>(builder: (ctx, state) {
+            if (state is ChannelsLoaded || state is ChannelsEmpty)
+              return RefreshIndicator(
+                onRefresh: () {
+                  BlocProvider.of<ChannelsBloc>(ctx)
+                      .add(ReloadChannels(forceFromApi: true));
+                  return Future.delayed(Duration(seconds: 1));
+                },
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Dim.wm3,
+                    vertical: Dim.heightMultiplier,
+                  ),
+                  child: ListView(
+                    children: [
+                      // Starred channels will be implemented in version 2
+                      // StarredChannelsBlock([]),
+                      // Divider(height: Dim.hm5),
+                      ChannelsGroup(),
+                      Divider(height: Dim.hm5),
+                      DirectMessagesGroup(),
+                      SizedBox(height: Dim.hm2),
+                    ],
+                  ),
+                ),
+              );
+            else
+              return Center(child: CircularProgressIndicator());
+          })),
     );
   }
 }

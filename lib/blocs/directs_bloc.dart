@@ -24,7 +24,7 @@ class DirectsBloc extends BaseChannelBloc {
     this.notificationBloc,
   }) : super(
             repository: repository,
-            initState: repository.items.isEmpty
+            initState: repository.isEmpty
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {
     _subscription = companiesBloc.listen((CompaniesState state) {
@@ -63,7 +63,7 @@ class DirectsBloc extends BaseChannelBloc {
         sortFields: {'last_activity': false},
         forceFromApi: event.forceFromApi,
       );
-      if (repository.items.isEmpty)
+      if (repository.isEmpty)
         yield ChannelsEmpty();
       else
         yield ChannelsLoaded(

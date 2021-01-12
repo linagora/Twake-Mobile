@@ -8,36 +8,40 @@ class DirectMessagesGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DirectsBloc, ChannelState>(
       builder: (ctx, state) {
-        if (state is ChannelsLoaded) {
-          return Column(
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Direct Messages',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  // Expanded(
-                  // child: Align(
-                  // alignment: Alignment.centerRight,
-                  // child: IconButton(
-                  // onPressed: () {},
-                  // iconSize: Dim.tm4(),
-                  // icon: Icon(
-                  // Icons.add,
-                  // color: Colors.black,
-                  // ),
-                  // ),
-                  // ),
-                  // ),
-                ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Direct Messages',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+                // Expanded(
+                // child: Align(
+                // alignment: Alignment.centerRight,
+                // child: IconButton(
+                // onPressed: () {},
+                // iconSize: Dim.tm4(),
+                // icon: Icon(
+                // Icons.add,
+                // color: Colors.black,
+                // ),
+                // ),
+                // ),
+                // ),
+              ],
+            ),
+            if (state is ChannelsLoaded)
+              ...state.channels.map((d) => DirectTile(d)).toList(),
+            if (state is ChannelsEmpty)
+              Padding(
+                padding: EdgeInsets.all(7.0),
+                child: Text('You have no direct channels yet'),
               ),
-              ...state.channels.map((d) => DirectTile(d)).toList()
-            ],
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
+            if (state is ChannelsLoading) CircularProgressIndicator(),
+          ],
+        );
       },
     );
   }

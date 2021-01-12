@@ -8,23 +8,27 @@ class ChannelsGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ChannelsBloc, ChannelState>(
       builder: (ctx, state) {
-        if (state is ChannelsLoaded)
-          return Column(
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Channels',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                ],
-              ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Channels',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+              ],
+            ),
+            if (state is ChannelsLoaded)
               ...state.channels.map((c) => ChannelTile(c)).toList(),
-            ],
-          );
-        else {
-          return CircularProgressIndicator();
-        }
+            if (state is ChannelsEmpty)
+              Padding(
+                padding: EdgeInsets.all(7.0),
+                child: Text('You have no channels yet'),
+              ),
+            if (state is ChannelsLoading) CircularProgressIndicator(),
+          ],
+        );
       },
     );
   }
