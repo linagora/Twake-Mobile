@@ -56,7 +56,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  BlocBuilder<ThreadsBloc, MessagesState>(
+                  BlocBuilder<ThreadsBloc<T>, MessagesState>(
                       builder: (ctx, state) {
                     print('STATE IS $state');
                     if (state is MessagesLoaded) {
@@ -78,7 +78,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   }),
                   MessageEditField(
                     (content) {
-                      BlocProvider.of<ThreadsBloc>(ctx).add(
+                      BlocProvider.of<ThreadsBloc<T>>(ctx).add(
                         SendMessage(
                           content: content,
                           channelId: threadState.parentChannel.id,

@@ -83,21 +83,11 @@ class _InitialPageState extends State<InitialPage> {
                   notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                 );
               }),
-              BlocProvider<ThreadsBloc>(
-                create: (ctx) {
-                  return ThreadsBloc(
-                    repository: state.initData.threads,
-                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-                  );
-                },
-                lazy: false,
-              ),
               BlocProvider<MessagesBloc<ChannelsBloc>>(
                 create: (ctx) {
                   return MessagesBloc<ChannelsBloc>(
                     repository: state.initData.messages,
                     channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
-                    threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },
@@ -108,7 +98,28 @@ class _InitialPageState extends State<InitialPage> {
                   return MessagesBloc<DirectsBloc>(
                     repository: state.initData.messages,
                     channelsBloc: BlocProvider.of<DirectsBloc>(ctx),
-                    threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
+                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                  );
+                },
+                lazy: false,
+              ),
+              BlocProvider<ThreadsBloc<ChannelsBloc>>(
+                create: (ctx) {
+                  return ThreadsBloc<ChannelsBloc>(
+                    repository: state.initData.threads,
+                    messagesBloc:
+                        BlocProvider.of<MessagesBloc<ChannelsBloc>>(ctx),
+                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                  );
+                },
+                lazy: false,
+              ),
+              BlocProvider<ThreadsBloc<DirectsBloc>>(
+                create: (ctx) {
+                  return ThreadsBloc<DirectsBloc>(
+                    repository: state.initData.threads,
+                    messagesBloc:
+                        BlocProvider.of<MessagesBloc<DirectsBloc>>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },

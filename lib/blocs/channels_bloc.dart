@@ -37,10 +37,11 @@ class ChannelsBloc extends BaseChannelBloc {
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (state is BaseChannelMessageNotification) {
-        this.add(ModifyUnreadCount(
+        this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           workspaceId: state.data.workspaceId,
-          modifier: 1,
+          totalModifier: 1,
+          unreadModifier: 1,
         ));
       }
     });
@@ -79,14 +80,8 @@ class ChannelsBloc extends BaseChannelBloc {
         selected: repository.selected,
       );
       yield newState;
-    } else if (event is ModifyUnreadCount) {
-      final ch = await repository.getItemById(event.channelId);
-      if (ch != null) {
-        ch.messagesUnread += event.modifier;
-        ch.messagesTotal += event.modifier.isNegative ? 0 : event.modifier;
-        repository.saveOne(ch);
-      } else
-        return;
+    } else if (event is ModifyMessageCount) {
+      await this.updateMessageCount(event);
       if (event.workspaceId == selectedParentId) {
         yield ChannelsLoaded(
           channels: repository.items,

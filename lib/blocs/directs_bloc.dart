@@ -36,10 +36,11 @@ class DirectsBloc extends BaseChannelBloc {
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (state is BaseChannelMessageNotification) {
-        this.add(ModifyUnreadCount(
+        this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           companyId: state.data.companyId,
-          modifier: 1,
+          totalModifier: 1,
+          unreadModifier: 1,
         ));
       }
     });
@@ -69,14 +70,8 @@ class DirectsBloc extends BaseChannelBloc {
         yield ChannelsLoaded(
           channels: repository.items,
         );
-    } else if (event is ModifyUnreadCount) {
-      final ch = await repository.getItemById(event.channelId);
-      if (ch != null) {
-        ch.messagesUnread += event.modifier;
-        ch.messagesTotal += event.modifier.isNegative ? 0 : event.modifier;
-        repository.saveOne(ch);
-      } else
-        return;
+    } else if (event is ModifyMessageCount) {
+      await this.updateMessageCount(event);
       // TODO uncomment condition when we have
       // company based direct chats
       // if (event.companyId == selectedParentId) {
