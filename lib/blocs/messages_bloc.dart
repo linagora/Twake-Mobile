@@ -146,14 +146,20 @@ class MessagesBloc<T extends BaseChannelBloc>
       // repository.logger.d('YIELDING STATE: ${newState != this.state}');
       yield newState;
     } else if (event is ModifyResponsesCount) {
-      final thread = await repository.getItemById(event.threadId);
+      var thread = await repository.getItemById(event.threadId);
       if (thread != null) {
         thread.responsesCount += event.modifier;
         repository.saveOne(thread);
       } else
         return;
       if (event.channelId == selectedChannel.id) {
+        repository.logger
+            .d('In thread: ${event.threadId == repository.selected.id}');
+        thread = event.threadId == repository.selected.id
+            ? thread
+            : repository.selected;
         final newState = MessagesLoaded(
+          threadMessage: thread,
           messages: repository.items,
           messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
@@ -204,6 +210,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       repository.select(event.messageId);
       yield MessageSelected(
         threadMessage: repository.selected,
+        responsesCount: repository.selected.responsesCount,
         messages: repository.items,
         parentChannel: selectedChannel,
       );

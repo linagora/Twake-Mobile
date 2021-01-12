@@ -6,6 +6,7 @@ import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/events/messages_event.dart';
+import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/states/messages_state.dart';
@@ -24,6 +25,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
   StreamSubscription notificationSubscription;
   StreamSubscription messagesSubscription;
 
+  Message threadMessage;
+  BaseChannel parentChannel;
+
   ThreadsBloc({
     this.repository,
     this.messagesBloc,
@@ -31,6 +35,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
   }) : super(MessagesEmpty()) {
     messagesSubscription = messagesBloc.listen((MessagesState state) {
       if (state is MessageSelected) {
+        this.threadMessage = state.threadMessage;
+        this.parentChannel = state.parentChannel;
         this.add(LoadMessages(
           threadId: state.threadMessage.id,
           channelId: state.parentChannel.id,
@@ -52,7 +58,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
-      yield MessagesLoading();
+      yield MessagesLoading(
+        threadMessage: threadMessage,
+        parentChannel: parentChannel,
+      );
       List<List> filters = [
         ['thread_id', '=', event.threadId],
       ];
@@ -63,13 +72,13 @@ class ThreadsBloc<T extends BaseChannelBloc>
         limit: _THREAD_MESSAGES_LIMIT,
       );
       if (repository.items.isEmpty)
-        yield MessagesEmpty();
+        yield MessagesEmpty(
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+        );
       else {
         _sortItems();
-        yield MessagesLoaded(
-          messageCount: repository.itemsCount,
-          messages: repository.items,
-        );
+        yield messagesLoaded;
       }
     } else if (event is LoadSingleMessage) {
       await repository.pullOne(
@@ -77,10 +86,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
         addToItems: event.threadId == event.threadId,
       );
       _sortItems();
-      yield MessagesLoaded(
-        messageCount: repository.itemsCount,
-        messages: repository.items,
-      );
+      yield messagesLoaded;
     } else if (event is RemoveMessage) {
       await repository.delete(
         event.messageId,
@@ -89,26 +95,37 @@ class ThreadsBloc<T extends BaseChannelBloc>
         requestBody: _makeQueryParams(event),
       );
       if (repository.items.isEmpty)
-        yield MessagesEmpty();
+        yield MessagesEmpty(
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+        );
       else {
         _sortItems();
-        yield MessagesLoaded(
-          messageCount: repository.itemsCount,
-          messages: repository.items,
-        );
+        yield messagesLoaded;
       }
+      messagesBloc.add(ModifyResponsesCount(
+        channelId: event.channelId,
+        threadId: event.threadId,
+        modifier: -1,
+      ));
+      _updateParentChannel(totalModifier: -1);
     } else if (event is SendMessage) {
       final success = await repository.pushOne(_makeQueryParams(event));
       if (success) {
-        yield MessagesLoaded(
-          messageCount: repository.itemsCount,
-          messages: repository.items,
-        );
+        yield messagesLoaded;
+        messagesBloc.add(ModifyResponsesCount(
+          channelId: event.channelId,
+          threadId: event.threadId,
+          modifier: 1,
+        ));
         _updateParentChannel();
       }
     } else if (event is ClearMessages) {
       await repository.clean();
-      yield MessagesEmpty();
+      yield MessagesEmpty(
+        threadMessage: threadMessage,
+        parentChannel: parentChannel,
+      );
     }
   }
 
@@ -133,12 +150,19 @@ class ThreadsBloc<T extends BaseChannelBloc>
     );
   }
 
-  void _updateParentChannel() {
+  MessagesLoaded get messagesLoaded => MessagesLoaded(
+        messageCount: repository.itemsCount,
+        messages: repository.items,
+        threadMessage: threadMessage,
+        parentChannel: parentChannel,
+      );
+
+  void _updateParentChannel({int totalModifier: 1}) {
     final channelId = messagesBloc.selectedChannel.id;
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
       companyId: ProfileBloc.selectedCompany,
-      totalModifier: 1,
+      totalModifier: totalModifier,
     ));
   }
 }

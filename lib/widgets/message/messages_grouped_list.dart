@@ -86,7 +86,9 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                     indexedItemBuilder: (_, Message message, int i) {
                       return MessageTile<T>(
                         message: message,
-                        key: ValueKey(message.id),
+                        key: ValueKey(
+                          message.id + message.responsesCount.toString(),
+                        ),
                       );
                     })
                 : Center(
