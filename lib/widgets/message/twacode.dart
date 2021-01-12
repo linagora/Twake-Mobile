@@ -59,6 +59,7 @@ class Parser {
 class Twacode extends StatefulWidget {
   final List<dynamic> items;
   final int charCount;
+
   Twacode(this.items, this.charCount);
 
   @override
@@ -68,6 +69,7 @@ class Twacode extends StatefulWidget {
 class _TwacodeState extends State<Twacode> {
   int maxRichTextHeight = 10;
   bool heightIncreased = false;
+
   void onHeightIncrease() {
     setState(() {
       maxRichTextHeight *= 50;
@@ -103,11 +105,14 @@ class _TwacodeState extends State<Twacode> {
             // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              RichText(
-                maxLines: maxRichTextHeight,
-                overflow: TextOverflow.fade,
-                textAlign: TextAlign.left,
-                text: TextSpan(children: spans),
+              Container(
+                color: Theme.of(context).canvasColor,
+                child: RichText(
+                  maxLines: maxRichTextHeight,
+                  overflow: TextOverflow.fade,
+                  textAlign: TextAlign.left,
+                  text: TextSpan(children: spans),
+                ),
               ),
               buildButton(
                 heightIncreased ? 'show less' : '...Show more',
@@ -115,9 +120,12 @@ class _TwacodeState extends State<Twacode> {
               ),
             ],
           )
-        : RichText(
-            textAlign: TextAlign.left,
-            text: TextSpan(children: spans),
+        : Container(
+            color: Theme.of(context).canvasColor,
+            child: RichText(
+              textAlign: TextAlign.left,
+              text: TextSpan(children: spans),
+            ),
           );
   }
 }
@@ -158,6 +166,7 @@ class TwacodeItem {
   bool newLine = false;
 
   TapGestureRecognizer recognizer;
+
   Future<void> _launchUrlInBrowser(String url) async {
     if (await canLaunch(url)) {
       await launch(
