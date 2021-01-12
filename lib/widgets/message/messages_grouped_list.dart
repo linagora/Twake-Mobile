@@ -84,20 +84,10 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                           ));
                     },
                     indexedItemBuilder: (_, Message message, int i) {
-                      return !message.hidden
-                          ? MessageTile<T>(
-                              message: message,
-                              key: ValueKey(message.id),
-                            )
-                          : Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(bottom: Dim.hm3),
-                                child: Text(
-                                  'Message deleted',
-                                  style: Theme.of(context).textTheme.subtitle1,
-                                ),
-                              ),
-                            );
+                      return MessageTile<T>(
+                        message: message,
+                        key: ValueKey(message.id),
+                      );
                     })
                 : Center(
                     child: CircularProgressIndicator(),

@@ -78,7 +78,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   }),
                   MessageEditField(
                     (content) {
-                      BlocProvider.of<MessagesBloc<T>>(ctx).add(
+                      BlocProvider.of<ThreadsBloc>(ctx).add(
                         SendMessage(
                           content: content,
                           channelId: threadState.parentChannel.id,
