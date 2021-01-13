@@ -153,15 +153,17 @@ class Api {
             }
           }
         },
-        onError: (DioError error) {
+        onError: (DioError error) async {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // referesh token, we automatically use it to get a new token
-          logger.e('Error during network request\n${error.response.data}');
-          logger.e('QUERY WAS:\n${error.request.data}');
+          logger.e('Error during network request!' +
+              '\nMethod: ${error.request.path}' +
+              '\nError: ${error.response.data}' +
+              '\nData: ${error.request.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
-            _prolongToken();
+            await _prolongToken();
           } else {
             return error;
           }
