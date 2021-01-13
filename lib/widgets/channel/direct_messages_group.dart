@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/widgets/channel/direct_tile.dart';
+import 'package:twake/widgets/common/main_page_title.dart';
 
 class DirectMessagesGroup extends StatelessWidget {
   @override
@@ -11,26 +12,10 @@ class DirectMessagesGroup extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'Direct Messages',
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-                // Expanded(
-                // child: Align(
-                // alignment: Alignment.centerRight,
-                // child: IconButton(
-                // onPressed: () {},
-                // iconSize: Dim.tm4(),
-                // icon: Icon(
-                // Icons.add,
-                // color: Colors.black,
-                // ),
-                // ),
-                // ),
-                // ),
-              ],
+            MainPageTitle(
+              title: 'Direct Messages',
+              trailingAction: () =>
+                  print('Add new direct channel button pressed'),
             ),
             if (state is ChannelsLoaded)
               ...state.channels.map((d) => DirectTile(d)).toList(),
