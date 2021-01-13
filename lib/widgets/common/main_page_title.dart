@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/config/dimensions_config.dart';
 
 class MainPageTitle extends StatelessWidget {
   final String title;
@@ -20,7 +21,11 @@ class MainPageTitle extends StatelessWidget {
           style: Theme.of(context).textTheme.headline3,
         ),
         IconButton(
-          icon: Icon(Icons.add),
+          icon: Icon(
+            Icons.add,
+            size: Dim.tm3(decimal: .3),
+            color: Colors.black,
+          ),
           onPressed: trailingAction?.call(),
         ),
       ],
