@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-
-enum DraggableScrollableFlow {
-  channel,
-  direct,
-}
+import 'package:twake/blocs/sheet_bloc.dart';
 
 class DraggableScrollable extends StatelessWidget {
-  final DraggableScrollableFlow flow;
+  final SheetFlow flow;
 
   const DraggableScrollable({Key key, this.flow}) : super(key: key);
 

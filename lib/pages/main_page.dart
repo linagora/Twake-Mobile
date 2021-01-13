@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/channel/channels_group.dart';
@@ -24,7 +24,6 @@ class _MainPageState extends State<MainPage>
     begin: Offset(0, 1),
     end: Offset(0, 0),
   );
-  DraggableScrollableFlow currentSheetFlow = DraggableScrollableFlow.channel;
   AnimationController _animationController;
 
   @override
@@ -116,20 +115,25 @@ class _MainPageState extends State<MainPage>
             ),
 
             // Sheet for channel/direct adding
-            SlideTransition(
-              position: _tween.animate(_animationController),
-              child: DraggableScrollable(
-                flow: DraggableScrollableFlow.channel,
-              ),
-            ),
+            BlocBuilder<SheetBloc, SheetState>(builder: (context, state) {
+              if (state is SheetInitial) {
+                final flow = state.flow;
+
+                return SlideTransition(
+                  position: _tween.animate(_animationController),
+                  child: DraggableScrollable(flow: flow),
+                );
+              } else {
+                return SizedBox();
+              }
+            }),
           ],
         ),
       ),
     );
   }
 
-  void _onAddButtonAction({@required DraggableScrollableFlow flow}) {
-    currentSheetFlow = flow;
+  void _onAddAction() {
     if (_animationController.isDismissed) {
       _animationController.forward();
     } else if (_animationController.isCompleted) {
