@@ -5,12 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
-import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/bars/main_app_bar.dart';
 import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/widgets/channel/direct_messages_group.dart';
-import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/drawer/twake_drawer.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
@@ -47,108 +45,100 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // MainPage body
-        Scaffold(
-          key: _scaffoldKey,
-          drawer: TwakeDrawer(),
-          body: Stack(
-            children: [
+    return Scaffold(
+      key: _scaffoldKey,
+      drawer: TwakeDrawer(),
+      body: Stack(
+        children: [
 
-              // MainPage body
-              SafeArea(
-                child: Column(
-                  children: [
-                    MainAppBar(scaffoldKey: _scaffoldKey,),
-                    Expanded(
-                      child: BlocBuilder<ChannelsBloc, ChannelState>(
-                        builder: (ctx, state) =>
-                            (state is ChannelsLoaded || state is ChannelsEmpty)
-                                ? RefreshIndicator(
-                                    onRefresh: () {
-                                      BlocProvider.of<ChannelsBloc>(ctx)
-                                          .add(ReloadChannels(forceFromApi: true));
-                                      return Future.delayed(Duration(seconds: 1));
-                                    },
-                                    child: GestureDetector(
-                                      onTap: () => _closeSheet(),
-                                      behavior: HitTestBehavior.translucent,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: Dim.wm3,
-                                          vertical: Dim.heightMultiplier,
-                                        ),
-                                        child: ListView(
-                                          children: [
-                                            // Starred channels will be implemented in version 2
-                                            // StarredChannelsBlock([]),
-                                            // Divider(height: Dim.hm5),
-                                            ChannelsGroup(),
-                                            Divider(height: Dim.hm5),
-                                            DirectMessagesGroup(),
-                                            SizedBox(height: Dim.hm2),
-                                          ],
-                                        ),
-                                      ),
+          // MainPage body
+          SafeArea(
+            child: Column(
+              children: [
+                MainAppBar(scaffoldKey: _scaffoldKey,),
+                Expanded(
+                  child: BlocBuilder<ChannelsBloc, ChannelState>(
+                    builder: (ctx, state) =>
+                        (state is ChannelsLoaded || state is ChannelsEmpty)
+                            ? RefreshIndicator(
+                                onRefresh: () {
+                                  BlocProvider.of<ChannelsBloc>(ctx)
+                                      .add(ReloadChannels(forceFromApi: true));
+                                  return Future.delayed(Duration(seconds: 1));
+                                },
+                                child: GestureDetector(
+                                  onTap: () => _closeSheet(),
+                                  behavior: HitTestBehavior.translucent,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: Dim.wm3,
+                                      vertical: Dim.heightMultiplier,
                                     ),
-                                  )
-                                : Center(child: CircularProgressIndicator()),
-                      ),
-                    ),
-                  ],
+                                    child: ListView(
+                                      children: [
+                                        // Starred channels will be implemented in version 2
+                                        // StarredChannelsBlock([]),
+                                        // Divider(height: Dim.hm5),
+                                        ChannelsGroup(),
+                                        Divider(height: Dim.hm5),
+                                        DirectMessagesGroup(),
+                                        SizedBox(height: Dim.hm2),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Center(child: CircularProgressIndicator()),
+                  ),
                 ),
-              ),
+              ],
+            ),
+          ),
 
-              // Blur under the sheet
-              Container(
-                width: _shouldBlur ? MediaQuery.of(context).size.width : 0,
-                height: _shouldBlur ? MediaQuery.of(context).size.height : 0,
-                child: AnimatedOpacity(
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: 5.0,
-                        sigmaY: 5.0,
-                      ),
-                      child: GestureDetector(
-                        onTap: () => _closeSheet(),
-                        behavior: HitTestBehavior.translucent,
-                        child: Container(
-                          color: Colors.black.withOpacity(0.5),
-                        ),
-                      ),
+          // Blur under the sheet
+          Container(
+            width: _shouldBlur ? MediaQuery.of(context).size.width : 0,
+            height: _shouldBlur ? MediaQuery.of(context).size.height : 0,
+            child: AnimatedOpacity(
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 5.0,
+                    sigmaY: 5.0,
+                  ),
+                  child: GestureDetector(
+                    onTap: () => _closeSheet(),
+                    behavior: HitTestBehavior.translucent,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.5),
                     ),
                   ),
-                  opacity: _shouldBlur ? 1 : 0,
-                  duration: Duration(milliseconds: 300),
                 ),
               ),
-
-              // Sheet for channel/direct adding
-              BlocConsumer<SheetBloc, SheetState>(
-                listener: (context, state) {
-                  if (state is SheetShouldOpen) {
-                    _openSheet();
-                  }
-                  if (state is SheetShouldClose) {
-                    _closeSheet();
-                  }
-                },
-                builder: (context, state) {
-                  // if (state is SheetShouldOpen || state is SheetShouldClose) {
-                  // final flow = state.flow;
-
-                  return SlideTransition(
-                    position: _tween.animate(_animationController),
-                    child: DraggableScrollable(),
-                  );
-                },
-              ),
-            ],
+              opacity: _shouldBlur ? 1 : 0,
+              duration: Duration(milliseconds: 300),
+            ),
           ),
-        ),
-      ],
+
+          // Sheet for channel/direct adding
+          BlocConsumer<SheetBloc, SheetState>(
+            listener: (context, state) {
+              if (state is SheetShouldOpen) {
+                _openSheet();
+              }
+              if (state is SheetShouldClose) {
+                _closeSheet();
+              }
+            },
+            builder: (context, state) {
+              return SlideTransition(
+                position: _tween.animate(_animationController),
+                child: DraggableScrollable(),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
