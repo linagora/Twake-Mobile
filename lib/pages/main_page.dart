@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
@@ -25,6 +27,7 @@ class _MainPageState extends State<MainPage>
     end: Offset(0, 0),
   );
   AnimationController _animationController;
+  bool _shouldBlur = false;
 
   @override
   void initState() {
@@ -118,29 +121,74 @@ class _MainPageState extends State<MainPage>
                       : Center(child: CircularProgressIndicator()),
             ),
 
-            // Sheet for channel/direct adding
-            BlocConsumer<SheetBloc, SheetState>(
-              listener: (context, state) {
-                if (state is SheetShouldOpen) {
-                  _openSheet();
-                }
-                if (state is SheetShouldClose) {
-                  _closeSheet();
-                }
-              },
-              builder: (context, state) {
-                // if (state is SheetShouldOpen || state is SheetShouldClose) {
-                  // final flow = state.flow;
+            Container(
+              width: _shouldBlur ? MediaQuery.of(context).size.width : 0,
+              height: _shouldBlur ? MediaQuery.of(context).size.height : 0,
+              child: AnimatedOpacity(
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: 5.0,
+                      sigmaY: 5.0,
+                    ),
+                    child: GestureDetector(
+                      onTap: () => _closeSheet(),
+                      behavior: HitTestBehavior.translucent,
+                      child: Container(
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    ),
+                  ),
+                ),
+                opacity: _shouldBlur ? 1 : 0,
+                duration: Duration(milliseconds: 300),
+              ),
+            ),
 
-                  return SlideTransition(
-                    position: _tween.animate(_animationController),
-                    child: DraggableScrollable(),
-                  );
-                }
+            // BackdropFilter
+            // AnimatedPositioned(
+            //   duration: Duration(milliseconds: 300),
+            //   width: MediaQuery.of(context).size.width,
+            //   height: MediaQuery.of(context).size.height,
+            //   bottom: _shouldBlur ? 0 : -MediaQuery.of(context).size.height,
+            //   child: ClipRect(
+            //     child: BackdropFilter(
+            //       filter: ImageFilter.blur(
+            //         sigmaX: 5.0,
+            //         sigmaY: 5.0,
+            //       ),
+            //       child: GestureDetector(
+            //         onTap: () => _closeSheet(),
+            //         behavior: HitTestBehavior.translucent,
+            //         child: Container(
+            //           color: Colors.black.withOpacity(0.5),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+
+            // Sheet for channel/direct adding
+            BlocConsumer<SheetBloc, SheetState>(listener: (context, state) {
+              if (state is SheetShouldOpen) {
+                _openSheet();
+              }
+              if (state is SheetShouldClose) {
+                _closeSheet();
+              }
+            }, builder: (context, state) {
+              // if (state is SheetShouldOpen || state is SheetShouldClose) {
+              // final flow = state.flow;
+
+              return SlideTransition(
+                position: _tween.animate(_animationController),
+                child: DraggableScrollable(),
+              );
+            }
                 // else {
                 //   return SizedBox();
                 // }
-            ),
+                ),
           ],
         ),
       ),
@@ -151,11 +199,17 @@ class _MainPageState extends State<MainPage>
     if (_animationController.isDismissed) {
       _animationController.forward();
     }
+    setState(() {
+      _shouldBlur = true;
+    });
   }
 
   void _closeSheet() {
     if (_animationController.isCompleted) {
       _animationController.reverse();
     }
+    setState(() {
+      _shouldBlur = false;
+    });
   }
 }
