@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
@@ -9,14 +9,38 @@ import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/widgets/channel/direct_messages_group.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/drawer/twake_drawer.dart';
+import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
 class MainPage extends StatefulWidget {
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage>
+    with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Duration _duration = Duration(milliseconds: 500);
+  final Tween<Offset> _tween = Tween(
+    begin: Offset(0, 1),
+    end: Offset(0, 0),
+  );
+  DraggableScrollableFlow currentSheetFlow = DraggableScrollableFlow.channel;
+  AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: _duration,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +84,7 @@ class _MainPageState extends State<MainPage> {
       body: SafeArea(
         child: Stack(
           children: [
+            // MainPage body
             BlocBuilder<ChannelsBloc, ChannelState>(
               builder: (ctx, state) =>
                   (state is ChannelsLoaded || state is ChannelsEmpty)
@@ -89,9 +114,26 @@ class _MainPageState extends State<MainPage> {
                         )
                       : Center(child: CircularProgressIndicator()),
             ),
+
+            // Sheet for channel/direct adding
+            SlideTransition(
+              position: _tween.animate(_animationController),
+              child: DraggableScrollable(
+                flow: DraggableScrollableFlow.channel,
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _onAddButtonAction({@required DraggableScrollableFlow flow}) {
+    currentSheetFlow = flow;
+    if (_animationController.isDismissed) {
+      _animationController.forward();
+    } else if (_animationController.isCompleted) {
+      _animationController.reverse();
+    }
   }
 }

@@ -6,6 +6,10 @@ enum DraggableScrollableFlow {
 }
 
 class DraggableScrollable extends StatelessWidget {
+  final DraggableScrollableFlow flow;
+
+  const DraggableScrollable({Key key, this.flow}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
