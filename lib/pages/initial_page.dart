@@ -8,6 +8,7 @@ import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -124,6 +125,10 @@ class _InitialPageState extends State<InitialPage> {
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },
+                lazy: false,
+              ),
+              BlocProvider<SheetBloc>(
+                create: (_) => SheetBloc(state.initData.sheet),
                 lazy: false,
               ),
             ],
