@@ -56,6 +56,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final InitData initData = await initMain();
         yield Authenticated(initData);
       }
+    } else if (event is SetAuthData) {
+      yield Authenticating();
+      repository.setAuthData(event.authData);
+      await repository.prolongToken();
+      final InitData initData = await initMain();
+      yield Authenticated(initData);
     } else if (event is ResetAuthentication) {
       if (event.message == null) {
         repository.fullClean();

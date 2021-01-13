@@ -6,6 +6,7 @@ import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 const double ICON_SIZE_MULTIPLIER = 4.5;
 
@@ -115,7 +116,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                           style: Theme.of(context).textTheme.headline5,
                         ), // TODO configure the styles
                         trailing: IconButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await CookieManager().clearCookies();
                             BlocProvider.of<AuthBloc>(ctx)
                                 .add(ResetAuthentication());
                           },

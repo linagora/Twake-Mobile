@@ -11,8 +11,9 @@ import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/pages/auth_page.dart';
+// import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
+import 'package:twake/pages/web_auth_page.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -50,7 +51,7 @@ class _InitialPageState extends State<InitialPage> {
           return buildSplashScreen();
         }
         if (state is Unauthenticated) {
-          return AuthPage();
+          return WebAuthPage();
         }
         if (state is Authenticated) {
           return MultiBlocProvider(

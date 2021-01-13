@@ -103,6 +103,10 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
+  void setAuthData(Map<String, dynamic> authData) {
+    _updateFromMap(authData);
+  }
+
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
@@ -120,7 +124,7 @@ class AuthRepository extends JsonSerializable {
 
   // Clears up entire database, be carefull!
   Future<AuthResult> prolongToken() async {
-    logger.d('Prolonging token');
+    logger.d('Prolonging token\nAccess: $accessToken\nRefresh: $refreshToken');
     try {
       final response = await _api.post(
         Endpoint.prolong,
@@ -204,9 +208,9 @@ class AuthRepository extends JsonSerializable {
   // specifically new accessToken in the header
   void _updateFromMap(Map<String, dynamic> map) {
     this.accessToken = map['token'];
-    this.accessTokenExpiration = map['expiration'];
+    this.accessTokenExpiration = map['expiration'].floor();
     this.refreshToken = map['refresh_token'];
-    this.refreshTokenExpiration = map['refresh_expiration'];
+    this.refreshTokenExpiration = map['refresh_expiration'].floor();
     save();
     updateHeaders();
     updateApiInterceptors();

@@ -53,17 +53,19 @@ Future<InitData> initMain() async {
     ],
     sortFields: {'name': true},
   );
-  final directs = await CollectionRepository.load<Direct>(
-    Endpoint.directs,
-    queryParams: {
-      'company_id': companies.selected.id,
-    },
-    sortFields: {'last_activity': false},
-    // TODO uncomment once company_id becomes available
-    // filters: [
-    // ['company_id', '=', workspaces.selected.id]
-    // ],
-  );
+  // final directs = await CollectionRepository.load<Direct>(
+  //   Endpoint.directs,
+  //   queryParams: {
+  //     'company_id': companies.selected.id,
+  //   },
+  //   sortFields: {'last_activity': false},
+  //   // TODO uncomment once company_id becomes available
+  //   // filters: [
+  //   // ['company_id', '=', workspaces.selected.id]
+  //   // ],
+  // );
+  final directs =
+      CollectionRepository<Direct>(items: [], apiEndpoint: Endpoint.directs);
   final messages =
       CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
   final threads =

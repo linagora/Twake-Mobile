@@ -17,6 +17,15 @@ class Authenticate extends AuthEvent {
       ];
 }
 
+class SetAuthData extends AuthEvent {
+  final Map<String, dynamic> authData;
+
+  const SetAuthData(this.authData);
+
+  @override
+  List<Object> get props => [authData];
+}
+
 class ResetAuthentication extends AuthEvent {
   final String message;
   ResetAuthentication({this.message});

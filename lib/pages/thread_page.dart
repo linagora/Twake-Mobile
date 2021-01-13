@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
