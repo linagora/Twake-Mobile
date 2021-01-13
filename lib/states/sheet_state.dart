@@ -12,3 +12,21 @@ class SheetInitial extends SheetState {
   @override
   List<Object> get props => [flow];
 }
+
+class SheetShouldOpen extends SheetState {
+  SheetShouldOpen();
+  @override
+  List<Object> get props => [];
+}
+
+class SheetShouldClose extends SheetState {
+  SheetShouldClose();
+  @override
+  List<Object> get props => [];
+}
+
+class SheetShouldClear extends SheetState {
+  SheetShouldClear();
+  @override
+  List<Object> get props => [];
+}

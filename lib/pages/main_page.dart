@@ -115,18 +115,25 @@ class _MainPageState extends State<MainPage>
             ),
 
             // Sheet for channel/direct adding
-            BlocBuilder<SheetBloc, SheetState>(builder: (context, state) {
-              if (state is SheetInitial) {
-                final flow = state.flow;
+            BlocConsumer<SheetBloc, SheetState>(
+              listener: (context, state) {
+                if (state is SheetShouldOpen || state is SheetShouldClose) {
+                  _onAddAction();
+                }
+              },
+              builder: (context, state) {
+                if (state is SheetInitial) {
+                  final flow = state.flow;
 
-                return SlideTransition(
-                  position: _tween.animate(_animationController),
-                  child: DraggableScrollable(),
-                );
-              } else {
-                return SizedBox();
-              }
-            }),
+                  return SlideTransition(
+                    position: _tween.animate(_animationController),
+                    child: DraggableScrollable(),
+                  );
+                } else {
+                  return SizedBox();
+                }
+              },
+            ),
           ],
         ),
       ),
