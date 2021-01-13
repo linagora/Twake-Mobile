@@ -19,8 +19,20 @@ class SheetShouldOpen extends SheetState {
   List<Object> get props => [];
 }
 
+class SheetOpened extends SheetState {
+  SheetOpened();
+  @override
+  List<Object> get props => [];
+}
+
 class SheetShouldClose extends SheetState {
   SheetShouldClose();
+  @override
+  List<Object> get props => [];
+}
+
+class SheetClosed extends SheetState {
+  SheetClosed();
   @override
   List<Object> get props => [];
 }

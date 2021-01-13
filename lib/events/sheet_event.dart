@@ -18,6 +18,13 @@ class OpenSheet extends SheetEvent {
   List<Object> get props => [];
 }
 
+class CloseSheet extends SheetEvent {
+  const CloseSheet();
+
+  @override
+  List<Object> get props => [];
+}
+
 class CacheSheet extends SheetEvent {
   const CacheSheet();
 

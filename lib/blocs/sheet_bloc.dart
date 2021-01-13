@@ -21,9 +21,12 @@ class SheetBloc extends Bloc<SheetEvent, SheetState> {
       yield SheetInitial(
         flow: repository.flow,
       );
-    } else if (event is CacheSheet) {
+    } else if (event is OpenSheet) {
+      yield SheetShouldOpen();
       // await repository.clean();
       // yield ProfileEmpty();
+    } else if (event is CloseSheet) {
+      yield SheetShouldClose();
     }
   }
 }

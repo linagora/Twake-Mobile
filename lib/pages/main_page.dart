@@ -122,17 +122,17 @@ class _MainPageState extends State<MainPage>
                 }
               },
               builder: (context, state) {
-                if (state is SheetInitial) {
-                  final flow = state.flow;
+                // if (state is SheetShouldOpen || state is SheetShouldClose) {
+                  // final flow = state.flow;
 
                   return SlideTransition(
                     position: _tween.animate(_animationController),
                     child: DraggableScrollable(),
                   );
-                } else {
-                  return SizedBox();
                 }
-              },
+                // else {
+                //   return SizedBox();
+                // }
             ),
           ],
         ),

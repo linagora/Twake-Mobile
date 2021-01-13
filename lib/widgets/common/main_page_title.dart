@@ -26,7 +26,7 @@ class MainPageTitle extends StatelessWidget {
             size: Dim.tm3(decimal: .3),
             color: Colors.black,
           ),
-          onPressed: trailingAction?.call(),
+          onPressed: () => trailingAction?.call(),
         ),
       ],
     );

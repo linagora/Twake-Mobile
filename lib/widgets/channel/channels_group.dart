@@ -13,9 +13,20 @@ class ChannelsGroup extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            MainPageTitle(
-              title: 'Channels',
-              trailingAction: () => context.read<SheetBloc>().add(OpenSheet()),
+            BlocBuilder<SheetBloc, SheetState>(
+              builder: (context, state) {
+                return MainPageTitle(
+                    title: 'Channels',
+                    trailingAction: () {
+                      if (state is SheetShouldClose ||
+                          state is SheetClosed ||
+                          state is SheetInitial) {
+                        context.read<SheetBloc>().add(OpenSheet());
+                      } else {
+                        context.read<SheetBloc>().add(CloseSheet());
+                      }
+                    });
+              },
             ),
             if (state is ChannelsLoaded)
               ...state.channels.map((c) => ChannelTile(c)).toList(),
