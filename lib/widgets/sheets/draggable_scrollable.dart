@@ -6,17 +6,31 @@ class DraggableScrollable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
-        builder: (BuildContext context, ScrollController scrollController) {
-      return Container(
-        color: Colors.blue[100],
-        child: ListView.builder(
-          controller: scrollController,
-          itemCount: 25,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(title: Text('Item $index'));
-          },
-        ),
-      );
-    });
+      initialChildSize: 0.9,
+      builder: (BuildContext context, ScrollController scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Color(0xffefeef3),
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(10.0),
+              topRight: const Radius.circular(10.0),
+            ),
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Color(0xff555151),
+            //     spreadRadius: 1,
+            //   ),
+            // ],
+          ),
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: 25,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(title: Text('Item $index'));
+            },
+          ),
+        );
+      },
+    );
   }
 }
