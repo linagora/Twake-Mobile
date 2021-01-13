@@ -19,7 +19,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Duration _duration = Duration(milliseconds: 500);
+  final Duration _duration = Duration(milliseconds: 400);
   final Tween<Offset> _tween = Tween(
     begin: Offset(0, 1),
     end: Offset(0, 0),
@@ -93,21 +93,25 @@ class _MainPageState extends State<MainPage>
                                 .add(ReloadChannels(forceFromApi: true));
                             return Future.delayed(Duration(seconds: 1));
                           },
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: Dim.wm3,
-                              vertical: Dim.heightMultiplier,
-                            ),
-                            child: ListView(
-                              children: [
-                                // Starred channels will be implemented in version 2
-                                // StarredChannelsBlock([]),
-                                // Divider(height: Dim.hm5),
-                                ChannelsGroup(),
-                                Divider(height: Dim.hm5),
-                                DirectMessagesGroup(),
-                                SizedBox(height: Dim.hm2),
-                              ],
+                          child: GestureDetector(
+                            onTap: () => _closeSheet(),
+                            behavior: HitTestBehavior.translucent,
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Dim.wm3,
+                                vertical: Dim.heightMultiplier,
+                              ),
+                              child: ListView(
+                                children: [
+                                  // Starred channels will be implemented in version 2
+                                  // StarredChannelsBlock([]),
+                                  // Divider(height: Dim.hm5),
+                                  ChannelsGroup(),
+                                  Divider(height: Dim.hm5),
+                                  DirectMessagesGroup(),
+                                  SizedBox(height: Dim.hm2),
+                                ],
+                              ),
                             ),
                           ),
                         )
@@ -117,8 +121,11 @@ class _MainPageState extends State<MainPage>
             // Sheet for channel/direct adding
             BlocConsumer<SheetBloc, SheetState>(
               listener: (context, state) {
-                if (state is SheetShouldOpen || state is SheetShouldClose) {
-                  _onAddAction();
+                if (state is SheetShouldOpen) {
+                  _openSheet();
+                }
+                if (state is SheetShouldClose) {
+                  _closeSheet();
                 }
               },
               builder: (context, state) {
@@ -140,10 +147,14 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  void _onAddAction() {
+  void _openSheet() {
     if (_animationController.isDismissed) {
       _animationController.forward();
-    } else if (_animationController.isCompleted) {
+    }
+  }
+
+  void _closeSheet() {
+    if (_animationController.isCompleted) {
       _animationController.reverse();
     }
   }
