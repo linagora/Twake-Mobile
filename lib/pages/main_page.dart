@@ -7,6 +7,7 @@ import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/widgets/bars/main_app_bar.dart';
 import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/widgets/channel/direct_messages_group.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
@@ -46,152 +47,108 @@ class _MainPageState extends State<MainPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: TwakeDrawer(),
-      appBar: AppBar(
-        titleSpacing: 0.0,
-        leading: IconButton(
-          padding: EdgeInsets.only(left: Dim.wm3),
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
-          },
-          icon: Icon(
-            Icons.menu,
-            size: Dim.tm4(),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        toolbarHeight: Dim.heightPercent(
-          (kToolbarHeight * 0.15).round(),
-        ),
-        // taking into account current appBar height to calculate a new one
-        title:
-            BlocBuilder<WorkspacesBloc, WorkspaceState>(builder: (ctx, state) {
-          if (state is WorkspacesLoaded)
-            return ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ImageAvatar(state.selected.logo),
-              title: Text(
-                state.selected.name,
-                style: Theme.of(context).textTheme.headline6,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            );
-          else
-            return CircularProgressIndicator();
-        }),
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            // MainPage body
-            BlocBuilder<ChannelsBloc, ChannelState>(
-              builder: (ctx, state) =>
-                  (state is ChannelsLoaded || state is ChannelsEmpty)
-                      ? RefreshIndicator(
-                          onRefresh: () {
-                            BlocProvider.of<ChannelsBloc>(ctx)
-                                .add(ReloadChannels(forceFromApi: true));
-                            return Future.delayed(Duration(seconds: 1));
-                          },
-                          child: GestureDetector(
-                            onTap: () => _closeSheet(),
-                            behavior: HitTestBehavior.translucent,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: Dim.wm3,
-                                vertical: Dim.heightMultiplier,
-                              ),
-                              child: ListView(
-                                children: [
-                                  // Starred channels will be implemented in version 2
-                                  // StarredChannelsBlock([]),
-                                  // Divider(height: Dim.hm5),
-                                  ChannelsGroup(),
-                                  Divider(height: Dim.hm5),
-                                  DirectMessagesGroup(),
-                                  SizedBox(height: Dim.hm2),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )
-                      : Center(child: CircularProgressIndicator()),
-            ),
+    return Stack(
+      children: [
+        // MainPage body
+        Scaffold(
+          key: _scaffoldKey,
+          drawer: TwakeDrawer(),
+          body: Stack(
+            children: [
 
-            Container(
-              width: _shouldBlur ? MediaQuery.of(context).size.width : 0,
-              height: _shouldBlur ? MediaQuery.of(context).size.height : 0,
-              child: AnimatedOpacity(
-                child: ClipRect(
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(
-                      sigmaX: 5.0,
-                      sigmaY: 5.0,
+              // MainPage body
+              SafeArea(
+                child: Column(
+                  children: [
+                    MainAppBar(scaffoldKey: _scaffoldKey,),
+                    Expanded(
+                      child: BlocBuilder<ChannelsBloc, ChannelState>(
+                        builder: (ctx, state) =>
+                            (state is ChannelsLoaded || state is ChannelsEmpty)
+                                ? RefreshIndicator(
+                                    onRefresh: () {
+                                      BlocProvider.of<ChannelsBloc>(ctx)
+                                          .add(ReloadChannels(forceFromApi: true));
+                                      return Future.delayed(Duration(seconds: 1));
+                                    },
+                                    child: GestureDetector(
+                                      onTap: () => _closeSheet(),
+                                      behavior: HitTestBehavior.translucent,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: Dim.wm3,
+                                          vertical: Dim.heightMultiplier,
+                                        ),
+                                        child: ListView(
+                                          children: [
+                                            // Starred channels will be implemented in version 2
+                                            // StarredChannelsBlock([]),
+                                            // Divider(height: Dim.hm5),
+                                            ChannelsGroup(),
+                                            Divider(height: Dim.hm5),
+                                            DirectMessagesGroup(),
+                                            SizedBox(height: Dim.hm2),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Center(child: CircularProgressIndicator()),
+                      ),
                     ),
-                    child: GestureDetector(
-                      onTap: () => _closeSheet(),
-                      behavior: HitTestBehavior.translucent,
-                      child: Container(
-                        color: Colors.black.withOpacity(0.5),
+                  ],
+                ),
+              ),
+
+              // Blur under the sheet
+              Container(
+                width: _shouldBlur ? MediaQuery.of(context).size.width : 0,
+                height: _shouldBlur ? MediaQuery.of(context).size.height : 0,
+                child: AnimatedOpacity(
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(
+                        sigmaX: 5.0,
+                        sigmaY: 5.0,
+                      ),
+                      child: GestureDetector(
+                        onTap: () => _closeSheet(),
+                        behavior: HitTestBehavior.translucent,
+                        child: Container(
+                          color: Colors.black.withOpacity(0.5),
+                        ),
                       ),
                     ),
                   ),
+                  opacity: _shouldBlur ? 1 : 0,
+                  duration: Duration(milliseconds: 300),
                 ),
-                opacity: _shouldBlur ? 1 : 0,
-                duration: Duration(milliseconds: 300),
               ),
-            ),
 
-            // BackdropFilter
-            // AnimatedPositioned(
-            //   duration: Duration(milliseconds: 300),
-            //   width: MediaQuery.of(context).size.width,
-            //   height: MediaQuery.of(context).size.height,
-            //   bottom: _shouldBlur ? 0 : -MediaQuery.of(context).size.height,
-            //   child: ClipRect(
-            //     child: BackdropFilter(
-            //       filter: ImageFilter.blur(
-            //         sigmaX: 5.0,
-            //         sigmaY: 5.0,
-            //       ),
-            //       child: GestureDetector(
-            //         onTap: () => _closeSheet(),
-            //         behavior: HitTestBehavior.translucent,
-            //         child: Container(
-            //           color: Colors.black.withOpacity(0.5),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
+              // Sheet for channel/direct adding
+              BlocConsumer<SheetBloc, SheetState>(
+                listener: (context, state) {
+                  if (state is SheetShouldOpen) {
+                    _openSheet();
+                  }
+                  if (state is SheetShouldClose) {
+                    _closeSheet();
+                  }
+                },
+                builder: (context, state) {
+                  // if (state is SheetShouldOpen || state is SheetShouldClose) {
+                  // final flow = state.flow;
 
-            // Sheet for channel/direct adding
-            BlocConsumer<SheetBloc, SheetState>(listener: (context, state) {
-              if (state is SheetShouldOpen) {
-                _openSheet();
-              }
-              if (state is SheetShouldClose) {
-                _closeSheet();
-              }
-            }, builder: (context, state) {
-              // if (state is SheetShouldOpen || state is SheetShouldClose) {
-              // final flow = state.flow;
-
-              return SlideTransition(
-                position: _tween.animate(_animationController),
-                child: DraggableScrollable(),
-              );
-            }
-                // else {
-                //   return SizedBox();
-                // }
-                ),
-          ],
+                  return SlideTransition(
+                    position: _tween.animate(_animationController),
+                    child: DraggableScrollable(),
+                  );
+                },
+              ),
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
