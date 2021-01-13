@@ -121,7 +121,7 @@ class _MainPageState extends State<MainPage>
 
                 return SlideTransition(
                   position: _tween.animate(_animationController),
-                  child: DraggableScrollable(flow: flow),
+                  child: DraggableScrollable(),
                 );
               } else {
                 return SizedBox();

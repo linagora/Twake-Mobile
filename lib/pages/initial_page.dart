@@ -127,7 +127,7 @@ class _InitialPageState extends State<InitialPage> {
                 lazy: false,
               ),
               BlocProvider<SheetBloc>(
-                create: (_) => SheetBloc(SheetFlow.channel),
+                create: (_) => SheetBloc(state.initData.sheet),
                 lazy: false,
               ),
             ],

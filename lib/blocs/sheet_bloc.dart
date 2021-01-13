@@ -4,18 +4,14 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 
 part '../events/sheet_event.dart';
 part '../states/sheet_state.dart';
 
-enum SheetFlow {
-  channel,
-  direct,
-}
-
 class SheetBloc extends Bloc<SheetEvent, SheetState> {
-  final SheetFlow flow;
-  SheetBloc(this.flow) : super(SheetInitial(flow: flow));
+  final SheetRepository repository;
+  SheetBloc(this.repository) : super(SheetInitial(flow: repository.flow));
 
   @override
   Stream<SheetState> mapEventToState(
@@ -23,7 +19,7 @@ class SheetBloc extends Bloc<SheetEvent, SheetState> {
   ) async* {
     if (event is InitSheet) {
       yield SheetInitial(
-        flow: flow,
+        flow: repository.flow,
       );
     } else if (event is CacheSheet) {
       // await repository.clean();
