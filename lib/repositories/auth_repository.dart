@@ -1,5 +1,6 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io' show Platform;
+import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -103,11 +104,15 @@ class AuthRepository extends JsonSerializable {
 
   Future<void> setAuthData(Map<String, dynamic> authData) async {
     _updateFromMap(authData);
-    await initSession();
+    await initSession(Random().nextInt(1000000).toString());
   }
 
-  Future<void> initSession() async {
-    final body = {"timezoneoffset": timeZoneOffset, "fcm_token": fcmToken};
+  Future<void> initSession(String username) async {
+    final body = {
+      "timezoneoffset": timeZoneOffset,
+      "fcm_token": fcmToken,
+      "username": username,
+    };
     await _api.post(Endpoint.init, body: body);
   }
 
@@ -190,7 +195,7 @@ class AuthRepository extends JsonSerializable {
 
   void updateHeaders() {
     Map<String, String> headers = {
-      'Content-type': 'application/json',
+      'content-type': 'application/json',
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
