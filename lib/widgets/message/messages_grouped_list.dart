@@ -13,6 +13,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
     if (state is MessagesLoaded)
       return StickyGroupedListView<Message, DateTime>(
           order: StickyGroupedListOrder.DESC,
+          stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
           reverse: true,
           elements: state.messages,
           groupBy: (Message m) {
@@ -34,6 +35,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
               child: Container(
                 height: Dim.hm3,
                 margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                color: Theme.of(context).scaffoldBackgroundColor,
                 child: Stack(
                   children: [
                     Align(

@@ -26,9 +26,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield Authenticated(initData);
           break;
         case TokenStatus.AccessExpired:
-          final InitData initData = await initMain();
-          yield Authenticated(initData);
-          break;
+          // final InitData initData = await initMain();
+          // yield Authenticated(initData);
+          // break;
           switch (await repository.prolongToken()) {
             case AuthResult.Ok:
               final InitData initData = await initMain();
