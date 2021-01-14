@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake/widgets/sheets/add_channel_container.dart';
+import 'package:twake/widgets/sheets/add_channel_flow.dart';
 
 class DraggableScrollable extends StatelessWidget {
   const DraggableScrollable({Key key}) : super(key: key);
@@ -26,7 +26,7 @@ class DraggableScrollable extends StatelessWidget {
             ),
             child: SingleChildScrollView(
               controller: scrollController,
-              child: AddChannelContainer(),
+              child: AddChannelFlow(),
             ),
             // child: ListView.builder(
             //   controller: scrollController,
