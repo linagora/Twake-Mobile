@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/widgets/sheets/add_channel_container.dart';
 
 class DraggableScrollable extends StatelessWidget {
   const DraggableScrollable({Key key}) : super(key: key);
@@ -22,13 +23,17 @@ class DraggableScrollable extends StatelessWidget {
             //   ),
             // ],
           ),
-          child: ListView.builder(
+          child: SingleChildScrollView(
             controller: scrollController,
-            itemCount: 25,
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(title: Text('Item $index'));
-            },
+            child: AddChannelContainer(),
           ),
+          // child: ListView.builder(
+          //   controller: scrollController,
+          //   itemCount: 25,
+          //   itemBuilder: (BuildContext context, int index) {
+          //     return ListTile(title: Text(''));
+          //   },
+          // ),
         );
       },
     );
