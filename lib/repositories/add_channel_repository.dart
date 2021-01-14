@@ -1,3 +1,11 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:logger/logger.dart';
+import 'package:twake/services/api.dart';
+import 'package:twake/services/endpoints.dart';
+import 'package:twake/services/storage/storage.dart';
+
+// part 'add_channel_repository.g.dart';
+
 enum FlowStage {
   info,
   groups,
@@ -11,17 +19,49 @@ enum ChannelType {
   direct,
 }
 
+@JsonSerializable(explicitToJson: true)
 class AddChannelRepository {
+
+  @JsonKey(required: true, name: 'company_id')
+  final String companyId;
+  @JsonKey(required: true, name: 'workspace_id')
+  final String workspaceId;
+  @JsonKey(required: true)
+  final String name;
+  @JsonKey(required: true)
+  final String visibility;
+
+  @JsonKey(required: false)
+  String icon;
+  @JsonKey(required: false)
+  String description;
+  @JsonKey(required: false, name: 'channel_group')
+  String channelGroup;
+  @JsonKey(required: false, name: 'default')
+  bool def;
+  @JsonKey(required: false)
+  List<String> members;
+
+  @JsonKey(ignore: true)
+  static final _logger = Logger();
+  @JsonKey(ignore: true)
+  static final _api = Api();
+  @JsonKey(ignore: true)
+  static final _storage = Storage();
+
+  @JsonKey(name: 'selected_company_id')
+  String selectedCompanyId;
+  @JsonKey(name: 'selected_workspace_id')
+  String selectedWorkspaceId;
+
+
   FlowStage flow;
   ChannelType type;
 
-  AddChannelRepository({this.flow, this.type});
+  AddChannelRepository(this.companyId, this.workspaceId, this.name, this.visibility);
 
   static Future<AddChannelRepository> load() async {
-    return AddChannelRepository(
-      flow: FlowStage.info,
-      type: ChannelType.public,
-    );
+    return AddChannelRepository('', '','','');
   }
 
   // Future<AddChannelData> load() async {
@@ -36,5 +76,16 @@ class AddChannelRepository {
 
   Future<void> clear() async {}
 
-  Future<void> process() async {}
+  Future<void> process(Map<String, dynamic> body) async {
+    _logger.d('Channel creation request...');
+    var resp;
+    try {
+      resp = await _api.post(Endpoint.channels, body: body);
+    } catch (error) {
+      _logger.e('Error while trying to create a channel:\n${error.message}');
+      return false;
+    }
+    _logger.d('RESPONSE AFTER CHANNEL CREATION: $resp');
+    return true;
+  }
 }
