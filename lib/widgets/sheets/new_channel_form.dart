@@ -1,17 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/widgets/sheets/channel_info_text_form.dart';
-
-class AddChannelContainer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: NewChannelForm(),
-    );
-  }
-}
 
 class NewChannelForm extends StatefulWidget {
   @override
