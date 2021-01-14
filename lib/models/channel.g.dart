@@ -11,7 +11,6 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     'id',
     'name',
     'members_count',
-    'last_activity',
     'messages_total',
     'messages_unread'
   ]);
@@ -23,9 +22,9 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     ..icon = json['icon'] as String ?? ':+1:'
     ..description = json['description'] as String
     ..membersCount = json['members_count'] as int
-    ..lastActivity = json['last_activity'] as int
-    ..messagesTotal = json['messages_total'] as int
-    ..messagesUnread = json['messages_unread'] as int
+    ..lastActivity = json['last_activity'] as int ?? 0
+    ..messagesTotal = json['messages_total'] as int ?? 0
+    ..messagesUnread = json['messages_unread'] as int ?? 0
     ..isSelected = json['is_selected'] as int ?? 0;
 }
 

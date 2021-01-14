@@ -9,6 +9,77 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 
 class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
+  Widget buildMessagesList(context, MessagesState state) {
+    if (state is MessagesLoaded)
+      return StickyGroupedListView<Message, DateTime>(
+          order: StickyGroupedListOrder.DESC,
+          reverse: true,
+          elements: state.messages,
+          groupBy: (Message m) {
+            final DateTime dt =
+                DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
+            return DateTime(dt.year, dt.month, dt.day);
+          },
+          groupComparator: (DateTime value1, DateTime value2) =>
+              value1.compareTo(value2),
+          itemComparator: (Message m1, Message m2) {
+            return m1.creationDate.compareTo(m2.creationDate);
+          },
+          separator: SizedBox(height: Dim.hm2),
+          groupSeparatorBuilder: (Message message) {
+            return GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus.unfocus();
+              },
+              child: Container(
+                height: Dim.hm3,
+                margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                child: Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Divider(
+                        thickness: 0.0,
+                      ),
+                    ),
+                    Align(
+                      // alignment: Alignment.center,
+                      child: Container(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        width: Dim.widthPercent(30),
+                        child: Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Text(
+                            DateFormatter.getVerboseDate(message.creationDate),
+                            style: Theme.of(context).textTheme.subtitle1,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+          indexedItemBuilder: (_, Message message, int i) {
+            return MessageTile<T>(
+              message: message,
+              key: ValueKey(
+                message.id + message.responsesCount.toString(),
+              ),
+            );
+          });
+    else if (state is MessagesEmpty)
+      return Center(
+        child: Text('No messages yet'),
+      );
+    else
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
@@ -30,72 +101,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
             onTap: () {
               FocusManager.instance.primaryFocus.unfocus();
             },
-            child: state is MessagesLoaded
-                ? StickyGroupedListView<Message, DateTime>(
-                    order: StickyGroupedListOrder.DESC,
-                    reverse: true,
-                    elements: state.messages,
-                    groupBy: (Message m) {
-                      final DateTime dt = DateTime.fromMillisecondsSinceEpoch(
-                          m.creationDate * 1000);
-                      return DateTime(dt.year, dt.month, dt.day);
-                    },
-                    groupComparator: (DateTime value1, DateTime value2) =>
-                        value1.compareTo(value2),
-                    itemComparator: (Message m1, Message m2) {
-                      return m1.creationDate.compareTo(m2.creationDate);
-                    },
-                    separator: SizedBox(height: Dim.hm2),
-                    groupSeparatorBuilder: (Message message) {
-                      return GestureDetector(
-                        onTap: () {
-                          FocusManager.instance.primaryFocus.unfocus();
-                        },
-                        child: Container(
-                          height: Dim.hm3,
-                          margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                          child: Stack(
-                            children: [
-                              Align(
-                                alignment: Alignment.center,
-                                child: Divider(
-                                  thickness: 0.0,
-                                ),
-                              ),
-                              Align(
-                                // alignment: Alignment.center,
-                                child: Container(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  width: Dim.widthPercent(30),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(1.0),
-                                    child: Text(
-                                      DateFormatter.getVerboseDate(
-                                          message.creationDate),
-                                      style:
-                                          Theme.of(context).textTheme.subtitle1,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    indexedItemBuilder: (_, Message message, int i) {
-                      return MessageTile<T>(
-                        message: message,
-                        key: ValueKey(
-                          message.id + message.responsesCount.toString(),
-                        ),
-                      );
-                    })
-                : Center(
-                    child: CircularProgressIndicator(),
-                  ),
+            child: buildMessagesList(context, state),
           ),
         ),
       );

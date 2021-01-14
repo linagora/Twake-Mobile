@@ -48,6 +48,7 @@ class _InitialPageState extends State<InitialPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (ctx, state) {
+        print('CURRENT AUTH STATE $state');
         if (state is AuthInitializing) {
           return buildSplashScreen();
         }
