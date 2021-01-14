@@ -4,6 +4,7 @@ import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/models/workspace.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
@@ -31,6 +32,7 @@ Future<InitData> initMain() async {
   await Emojis.load();
   final profile = await ProfileRepository.load();
   final sheet = await SheetRepository.load();
+  final addChannel = await AddChannelRepository.load();
   final _ = UserRepository(Endpoint.users);
   final companies = await CollectionRepository.load<Company>(
     Endpoint.companies,
@@ -81,6 +83,7 @@ Future<InitData> initMain() async {
     messages: messages,
     threads: threads,
     sheet: sheet,
+    addChannel: addChannel,
   );
 }
 
@@ -93,6 +96,7 @@ class InitData {
   final CollectionRepository<Message> messages;
   final CollectionRepository<Message> threads;
   final SheetRepository sheet;
+  final AddChannelRepository addChannel;
 
   InitData({
     this.profile,
@@ -103,5 +107,6 @@ class InitData {
     this.messages,
     this.threads,
     this.sheet,
+    this.addChannel,
   });
 }

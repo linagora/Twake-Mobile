@@ -6,8 +6,10 @@ import 'package:twake/widgets/sheets/new_channel_form.dart';
 class AddChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: NewChannelForm(),
+    return IndexedStack(
+      children: [
+        NewChannelForm(),
+      ],
     );
   }
 }

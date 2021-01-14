@@ -11,6 +11,7 @@ import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 // import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
@@ -130,6 +131,10 @@ class _InitialPageState extends State<InitialPage> {
               ),
               BlocProvider<SheetBloc>(
                 create: (_) => SheetBloc(state.initData.sheet),
+                lazy: false,
+              ),
+              BlocProvider<AddChannelBloc>(
+                create: (_) => AddChannelBloc(state.initData.addChannel),
                 lazy: false,
               ),
             ],
