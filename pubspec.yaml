@@ -91,7 +91,7 @@ flutter:
     - assets/images/3.0x/
 
     # localization
-    - assets/translations/
+    # - assets/translations/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -1,6 +1,8 @@
 class Endpoint {
   // API Endpoint for authentication
   static const auth = '/authorize';
+  // API Endpoint for initializing some server required data
+  static const init = '/init';
   // API Endpoint for prolonging token
   static const prolong = '/authorization/prolong';
   // API Endpoint for working with user data

@@ -60,8 +60,6 @@ class AuthRepository extends JsonSerializable {
     final fcmToken = (await FirebaseMessaging().getToken());
     final apiVersion = (await PackageInfo.fromPlatform()).version;
 
-    print('PLATFORM VERSION: $apiVersion');
-
     if (authMap != null) {
       Logger().d('INIT APIVERSION: $apiVersion');
       final authRepository = AuthRepository.fromJson(authMap);
@@ -103,8 +101,14 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
-  void setAuthData(Map<String, dynamic> authData) {
+  Future<void> setAuthData(Map<String, dynamic> authData) async {
     _updateFromMap(authData);
+    await initSession();
+  }
+
+  Future<void> initSession() async {
+    final body = {"timezoneoffset": timeZoneOffset, "fcm_token": fcmToken};
+    await _api.post(Endpoint.init, body: body);
   }
 
   Future<void> clean() async {

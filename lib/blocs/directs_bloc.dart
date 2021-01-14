@@ -56,11 +56,9 @@ class DirectsBloc extends BaseChannelBloc {
       };
       await repository.reload(
         queryParams: filter,
-        // TODO uncomment once we have correct company ids present
-        // for now get all the data from database
-        // filters: [
-        // ['company_id', '=', selectedCompanyId]
-        // ],
+        filters: [
+          ['company_id', '=', selectedParentId]
+        ],
         sortFields: {'last_activity': false},
         forceFromApi: event.forceFromApi,
       );
@@ -72,14 +70,12 @@ class DirectsBloc extends BaseChannelBloc {
         );
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);
-      // TODO uncomment condition when we have
-      // company based direct chats
-      // if (event.companyId == selectedParentId) {
-      yield ChannelsLoaded(
-        channels: repository.items,
-        force: DateTime.now().toString(),
-      );
-      // }
+      if (event.companyId == selectedParentId) {
+        yield ChannelsLoaded(
+          channels: repository.items,
+          force: DateTime.now().toString(),
+        );
+      }
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
