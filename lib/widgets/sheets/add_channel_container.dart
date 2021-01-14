@@ -90,6 +90,10 @@ class _NewChannelFormState extends State<NewChannelForm> {
             trailingAction: () => print('SHOW GROUPS!'),
           ),
         ),
+        SizedBox(height: 8),
+        HintLine(
+          text: 'You can add your channel to an existing group or create a new one',
+        ),
       ],
     );
   }
