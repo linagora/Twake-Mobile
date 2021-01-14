@@ -9,31 +9,33 @@ class DraggableScrollable extends StatelessWidget {
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Color(0xffefeef3),
-            borderRadius: new BorderRadius.only(
-              topLeft: const Radius.circular(10.0),
-              topRight: const Radius.circular(10.0),
+        return ClipRRect(
+          borderRadius: new BorderRadius.only(
+            topLeft: const Radius.circular(10.0),
+            topRight: const Radius.circular(10.0),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xffefeef3),
+              // boxShadow: [
+              //   BoxShadow(
+              //     color: Color(0xff555151),
+              //     spreadRadius: 1,
+              //   ),
+              // ],
             ),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: Color(0xff555151),
-            //     spreadRadius: 1,
-            //   ),
-            // ],
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: AddChannelContainer(),
+            ),
+            // child: ListView.builder(
+            //   controller: scrollController,
+            //   itemCount: 25,
+            //   itemBuilder: (BuildContext context, int index) {
+            //     return ListTile(title: Text(''));
+            //   },
+            // ),
           ),
-          child: SingleChildScrollView(
-            controller: scrollController,
-            child: AddChannelContainer(),
-          ),
-          // child: ListView.builder(
-          //   controller: scrollController,
-          //   itemCount: 25,
-          //   itemBuilder: (BuildContext context, int index) {
-          //     return ListTile(title: Text(''));
-          //   },
-          // ),
         );
       },
     );

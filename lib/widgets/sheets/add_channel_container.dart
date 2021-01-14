@@ -33,23 +33,29 @@ class _NewChannelFormState extends State<NewChannelForm> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SizedBox(),
-              Text(
-                'New Channel',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w600,
+              Expanded(child: SizedBox()),
+              Expanded(
+                child: Text(
+                  'New Channel',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Next',
-                  style: TextStyle(
-                    color: canGoNext ? Color(0xff837cfe) : Color(0xffa2a2a2),
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.w500,
+              Expanded(
+                child: TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                      color: canGoNext ? Color(0xff837cfe) : Color(0xffa2a2a2),
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.end,
                   ),
                 ),
               ),
