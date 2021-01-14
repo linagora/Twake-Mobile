@@ -112,6 +112,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
     } else if (event is SendMessage) {
       final success = await repository.pushOne(_makeQueryParams(event));
       if (success) {
+        _sortItems();
         yield messagesLoaded;
         messagesBloc.add(ModifyResponsesCount(
           channelId: event.channelId,
