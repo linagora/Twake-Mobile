@@ -4,7 +4,7 @@ import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/storage/storage.dart';
 
-// part 'add_channel_repository.g.dart';
+part 'add_channel_repository.g.dart';
 
 enum FlowStage {
   info,
@@ -48,17 +48,15 @@ class AddChannelRepository {
   static final _api = Api();
   @JsonKey(ignore: true)
   static final _storage = Storage();
-
-  @JsonKey(name: 'selected_company_id')
-  String selectedCompanyId;
-  @JsonKey(name: 'selected_workspace_id')
-  String selectedWorkspaceId;
-
-
+  @JsonKey(ignore: true)
   FlowStage flow;
+  @JsonKey(ignore: true)
   ChannelType type;
 
   AddChannelRepository(this.companyId, this.workspaceId, this.name, this.visibility);
+
+  factory AddChannelRepository.fromJson(Map<String, dynamic> json) => _$AddChannelRepositoryFromJson(json);
+  Map<String, dynamic> toJson() => _$AddChannelRepositoryToJson(this);
 
   static Future<AddChannelRepository> load() async {
     return AddChannelRepository('', '','','');
