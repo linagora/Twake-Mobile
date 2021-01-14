@@ -4,12 +4,12 @@ import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 
-class NewChannelForm extends StatefulWidget {
+class ChannelInfoForm extends StatefulWidget {
   @override
-  _NewChannelFormState createState() => _NewChannelFormState();
+  _ChannelInfoFormState createState() => _ChannelInfoFormState();
 }
 
-class _NewChannelFormState extends State<NewChannelForm> {
+class _ChannelInfoFormState extends State<ChannelInfoForm> {
   var _channelName = '';
   var _description = '';
   var _groupName = '';

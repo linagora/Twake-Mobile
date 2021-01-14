@@ -5,12 +5,23 @@ enum FlowStage {
   participants,
 }
 
+enum ChannelType {
+  public,
+  private,
+  direct,
+}
+
 class AddChannelRepository {
   FlowStage flow;
-  AddChannelRepository({this.flow});
+  ChannelType type;
+
+  AddChannelRepository({this.flow, this.type});
 
   static Future<AddChannelRepository> load() async {
-    return AddChannelRepository(flow: FlowStage.info);
+    return AddChannelRepository(
+      flow: FlowStage.info,
+      type: ChannelType.public,
+    );
   }
 
   // Future<AddChannelData> load() async {
@@ -21,12 +32,9 @@ class AddChannelRepository {
     this.flow = flow;
   }
 
-  Future<void> cache() async {
-  }
+  Future<void> cache() async {}
 
-  Future<void> clear() async {
-  }
+  Future<void> clear() async {}
 
-  Future<void> process() async {
-  }
+  Future<void> process() async {}
 }
