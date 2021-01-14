@@ -19,6 +19,11 @@ class ClearCache extends AddChannelEvent {
   List<Object> get props => [];
 }
 
+class Create extends AddChannelEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class SetFlowStage extends AddChannelEvent {
   final FlowStage stage;
 

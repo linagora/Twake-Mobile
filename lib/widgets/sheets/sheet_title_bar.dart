@@ -31,7 +31,7 @@ class SheetTitleBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
-            onPressed: () {},
+            onPressed: leadingAction,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -64,7 +64,7 @@ class SheetTitleBar extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: trailingAction,
             child: Text(
               trailingTitle ?? '',
               style: TextStyle(

@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
-import 'package:twake/widgets/sheets/channel_info_text_form.dart';
-import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelTypeForm extends StatefulWidget {
   @override
@@ -22,9 +21,10 @@ class _ChannelTypeFormState extends State<ChannelTypeForm> {
         SheetTitleBar(
           title: 'New Channel',
           leadingTitle: 'Back',
-          leadingAction: () => print('BACK!'),
+          leadingAction: () =>
+              context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info)),
           trailingTitle: 'Create',
-          trailingAction: () => print('CREATE!'),
+          trailingAction: () => context.read<AddChannelBloc>().add(Create()),
         ),
         SizedBox(height: 23),
         Padding(
@@ -117,28 +117,30 @@ class SelectableItem extends StatelessWidget {
       child: Container(
         height: 44.0,
         color: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 14.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  if (selected)
-                    Icon(
-                      CupertinoIcons.check_mark,
-                      color: Color(0xff837cfe),
-                    ),
-                ],
+                    if (selected)
+                      Icon(
+                        CupertinoIcons.check_mark,
+                        color: Color(0xff837cfe),
+                      ),
+                  ],
+                ),
               ),
             ),
             Divider(

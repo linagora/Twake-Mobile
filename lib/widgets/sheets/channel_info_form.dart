@@ -16,7 +16,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   var _channelName = '';
   var _description = '';
   var _groupName = '';
-  var _canGoNext = false;
+  var _canGoNext = true;
 
   final _channelNameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -91,7 +91,9 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
             controller: _groupNameController,
             focusNode: _groupNameFocusNode,
             leadingAction: () => _groupNameController.clear(),
-            trailingAction: () => print('SHOW GROUPS!'),
+            trailingAction: () => context
+                .read<AddChannelBloc>()
+                .add(SetFlowStage(FlowStage.groups)),
           ),
         ),
         SizedBox(height: 8),

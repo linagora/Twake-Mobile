@@ -18,6 +18,10 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
   Stream<AddChannelState> mapEventToState(
     AddChannelEvent event,
   ) async* {
-    // TODO: implement mapEventToState
+    print('incoming event: $event');
+    if (event is SetFlowStage) {
+      print('incoming event stage: ${event.stage}');
+      yield StageUpdated(event.stage);
+    }
   }
 }

@@ -55,7 +55,7 @@ class _ChannelInfoTextFormState extends State<ChannelInfoTextForm> {
                 height: 25,
                 padding: EdgeInsets.only(right: 10),
                 child: IconButton(
-                  onPressed: () => widget.leadingAction,
+                  onPressed: widget.leadingAction,
                   padding: EdgeInsets.all(0),
                   iconSize: 20,
                   icon: Icon(
@@ -71,7 +71,7 @@ class _ChannelInfoTextFormState extends State<ChannelInfoTextForm> {
                 height: 25,
                 padding: EdgeInsets.only(left: 10),
                 child: IconButton(
-                  onPressed: () => widget.trailingAction,
+                  onPressed: widget.trailingAction,
                   padding: EdgeInsets.all(0),
                   iconSize: 20,
                   icon: Icon(
