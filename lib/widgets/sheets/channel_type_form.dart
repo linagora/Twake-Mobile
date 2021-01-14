@@ -48,16 +48,13 @@ class _ChannelTypeFormState extends State<ChannelTypeForm> {
           text:
               'Direct channels involve correspondence between selected members',
         ),
-        // Container(
-        //   padding: const EdgeInsets.only(left: 14.0, right: 7),
-        //   color: Colors.white,
-        //   child: ChannelInfoTextForm(
-        //     hint: 'Channel description',
-        //     controller: _descriptionController,
-        //     focusNode: _channelDescriptionFocusNode,
-        //   ),
-        // ),
-        SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+          child: ParticipantsButton(
+            participantsCount: 0,
+            onTap: () => print('Add participants'),
+          ),
+        ),
         HintLine(
           text: 'Only available for direct channels',
         ),
@@ -152,6 +149,72 @@ class SelectableItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ParticipantsButton extends StatelessWidget {
+  final int participantsCount;
+  final Function onTap;
+
+  const ParticipantsButton({
+    Key key,
+    @required this.participantsCount,
+    @required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      height: 44,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(width: 15),
+          Text(
+            'Added participants',
+            style: TextStyle(
+              fontSize: 17.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: onTap,
+            child: participantsCount > 0
+                ? Row(
+                    children: [
+                      Text(
+                        '$participantsCount',
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff837cfe),
+                        ),
+                      ),
+                      Icon(
+                        CupertinoIcons.forward,
+                        color: Color(0xff837cfe),
+                      ),
+                    ],
+                  )
+                : Text(
+                    'Add',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff837cfe),
+                    ),
+                  ),
+          ),
+          SizedBox(width: 20),
+        ],
       ),
     );
   }

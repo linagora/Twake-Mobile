@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SheetTitleBar extends StatelessWidget {
@@ -22,20 +23,32 @@ class SheetTitleBar extends StatelessWidget {
       color: Color(0xfff7f7f7),
       height: 52,
       width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.only(left: leadingAction != null ? 0.0 : 16.0, right: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
             onPressed: () {},
-            child: Text(
-              leadingTitle ?? '',
-              style: TextStyle(
-                color: leadingAction != null ? Color(0xff837cfe) : Color(0xffa2a2a2),
-                fontSize: 17.0,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.end,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                if (leadingAction != null)
+                  Icon(
+                    CupertinoIcons.back,
+                    color: Color(0xff837cfe),
+                  ),
+                Text(
+                  leadingTitle ?? '',
+                  style: TextStyle(
+                    color: leadingAction != null
+                        ? Color(0xff837cfe)
+                        : Color(0xffa2a2a2),
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.end,
+                ),
+              ],
             ),
           ),
           Text(
@@ -52,7 +65,9 @@ class SheetTitleBar extends StatelessWidget {
             child: Text(
               trailingTitle ?? '',
               style: TextStyle(
-                color: trailingAction != null ? Color(0xff837cfe) : Color(0xffa2a2a2),
+                color: trailingAction != null
+                    ? Color(0xff837cfe)
+                    : Color(0xffa2a2a2),
                 fontSize: 17.0,
                 fontWeight: FontWeight.w500,
               ),
