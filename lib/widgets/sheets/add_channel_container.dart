@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
+import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 
 class AddChannelContainer extends StatelessWidget {
   @override
@@ -25,42 +26,10 @@ class _NewChannelFormState extends State<NewChannelForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          color: Color(0xfff7f7f7),
-          height: 52,
-          width: MediaQuery.of(context).size.width,
-          padding: EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: SizedBox()),
-              Expanded(
-                child: Text(
-                  'New Channel',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Next',
-                    style: TextStyle(
-                      color: canGoNext ? Color(0xff837cfe) : Color(0xffa2a2a2),
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.end,
-                  ),
-                ),
-              ),
-            ],
-          ),
+        SheetTitleBar(
+          title: 'New Channel',
+          trailingTitle: 'Next',
+          trailingAction: canGoNext ? () => print('GO!') : null,
         )
       ],
     );
