@@ -52,7 +52,9 @@ class _ChannelTypeFormState extends State<ChannelTypeForm> {
           padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
           child: ParticipantsButton(
             participantsCount: 0,
-            onTap: () => print('Add participants'),
+            onTap: () => context
+                .read<AddChannelBloc>()
+                .add(SetFlowStage(FlowStage.participants)),
           ),
         ),
         HintLine(

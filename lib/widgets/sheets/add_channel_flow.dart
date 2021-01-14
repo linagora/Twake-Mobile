@@ -5,6 +5,7 @@ import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/channel_info_form.dart';
 import 'package:twake/widgets/sheets/channel_type_form.dart';
 import 'package:twake/widgets/sheets/channel_groups_list.dart';
+import 'package:twake/widgets/sheets/channel_participants_list.dart';
 
 class AddChannelFlow extends StatelessWidget {
   @override
@@ -35,6 +36,7 @@ class AddChannelFlow extends StatelessWidget {
           ChannelInfoForm(),
           ChannelTypeForm(),
           ChannelGroupsList(),
+          ChannelParticipantsList(),
         ],
       );
     });
