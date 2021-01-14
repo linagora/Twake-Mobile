@@ -14,6 +14,12 @@ class StylesConfig {
     accentColor: accentColorRGB,
     // brightness: Brightness.light,
     textTheme: lightTextTheme,
+    useTextSelectionTheme: true,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Color(0xff837cfe),
+      // selectionColor: darkPrimarySwatchColor,
+      // selectionHandleColor: darkPrimarySwatchColor,
+    ),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
         color: Colors.black87,

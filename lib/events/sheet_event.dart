@@ -45,3 +45,17 @@ class ProcessSheet extends SheetEvent {
   @override
   List<Object> get props => [];
 }
+
+class SetClosed extends SheetEvent {
+  const SetClosed();
+
+  @override
+  List<Object> get props => [];
+}
+
+class SetOpened extends SheetEvent {
+  const SetOpened();
+
+  @override
+  List<Object> get props => [];
+}

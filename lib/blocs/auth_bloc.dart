@@ -19,12 +19,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
     if (event is AuthInitialize) {
+      // print(repository.tokenIsValid());
       switch (repository.tokenIsValid()) {
         case TokenStatus.Valid:
           final InitData initData = await initMain();
           yield Authenticated(initData);
           break;
         case TokenStatus.AccessExpired:
+          final InitData initData = await initMain();
+          yield Authenticated(initData);
+          break;
           switch (await repository.prolongToken()) {
             case AuthResult.Ok:
               final InitData initData = await initMain();

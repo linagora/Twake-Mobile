@@ -35,6 +35,14 @@ class _MainPageState extends State<MainPage>
       vsync: this,
       duration: _duration,
     );
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.dismissed) {
+        context.read<SheetBloc>().add(SetClosed());
+      }
+      if (status == AnimationStatus.completed) {
+        context.read<SheetBloc>().add(SetOpened());
+      }
+    });
   }
 
   @override
