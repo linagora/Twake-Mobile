@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
+import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
+import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 
 class AddChannelContainer extends StatelessWidget {
   @override
@@ -55,6 +56,39 @@ class _NewChannelFormState extends State<NewChannelForm> {
         ChannelNameContainer(
           controller: _channelNameController,
           focusNode: _channelNameFocusNode,
+        ),
+        SizedBox(height: 8),
+        HintLine(
+          text: 'Please provide a channel name and optional channel icon',
+        ),
+        SizedBox(height: 20),
+        Container(
+          height: 44.0,
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          color: Colors.white,
+          child: ChannelInfoTextForm(
+            hint: 'Channel description',
+            controller: _descriptionController,
+            focusNode: _channelDescriptionFocusNode,
+          ),
+        ),
+        SizedBox(height: 8),
+        HintLine(
+          text: 'Please provide an optional description for your channel',
+        ),
+        SizedBox(height: 20),
+        Container(
+          height: 44.0,
+          width: MediaQuery.of(context).size.width,
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          color: Colors.white,
+          child: ChannelInfoTextForm(
+            hint: 'Channel group name',
+            controller: _groupNameController,
+            focusNode: _groupNameFocusNode,
+            trailingAction: () => print('SHOW GROUPS!'),
+          ),
         ),
       ],
     );
