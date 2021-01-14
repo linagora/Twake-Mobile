@@ -71,6 +71,7 @@ class DirectsBloc extends BaseChannelBloc {
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);
       if (event.companyId == selectedParentId) {
+        _sortItems();
         yield ChannelsLoaded(
           channels: repository.items,
           force: DateTime.now().toString(),
@@ -99,6 +100,12 @@ class DirectsBloc extends BaseChannelBloc {
       // selected: selected,
       // );
     }
+  }
+
+  void _sortItems() {
+    repository.items.sort(
+      (i1, i2) => i2.lastActivity.compareTo(i1.lastActivity),
+    );
   }
 
   @override

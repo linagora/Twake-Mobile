@@ -98,8 +98,8 @@ class Api {
     );
     try {
       final response = await dio.getUri(uri);
-      // logger.d('RESPONSE: ${response.data}');
-      // logger.d('PARAMS: $params');
+      logger.d('RESPONSE: ${response.data}');
+      logger.d('PARAMS: $params');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
