@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class ChannelInfoTextForm extends StatefulWidget {
   final String hint;
+  final Function leadingAction;
   final Function trailingAction;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -12,6 +13,7 @@ class ChannelInfoTextForm extends StatefulWidget {
     @required this.controller,
     @required this.focusNode,
     @required this.hint,
+    this.leadingAction,
     this.trailingAction,
     this.validator,
   });
@@ -37,25 +39,41 @@ class _ChannelInfoTextFormState extends State<ChannelInfoTextForm> {
       decoration: InputDecoration(
         hintText: widget.hint,
         hintStyle: TextStyle(
-          fontSize: 15.0,
+          fontSize: 17.0,
           fontWeight: FontWeight.w500,
           color: Color(0xffc8c8c8),
         ),
-        contentPadding: EdgeInsets.only(
-          bottom: widget.trailingAction != null ? 9.0 : 5.0,
-        ),
+        alignLabelWithHint: true,
+        // contentPadding: widget.leadingAction != null
+        //     ? EdgeInsets.only(left: 14, bottom: 5)
+        //     : null,
         fillColor: Colors.transparent,
         filled: true,
+        prefix: (widget.leadingAction != null && widget.focusNode.hasFocus)
+            ? Container(
+                width: 30,
+                height: 25,
+                padding: EdgeInsets.only(right: 10),
+                child: IconButton(
+                  onPressed: () => widget.leadingAction,
+                  padding: EdgeInsets.all(0),
+                  iconSize: 20,
+                  icon: Icon(
+                    CupertinoIcons.minus_circle_fill,
+                    color: Color(0xfff14620),
+                  ),
+                ),
+              )
+            : null,
         suffix: widget.trailingAction != null
             ? Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                width: 25,
+                width: 30,
                 height: 25,
+                padding: EdgeInsets.only(left: 10),
                 child: IconButton(
+                  onPressed: () => widget.trailingAction,
                   padding: EdgeInsets.all(0),
-                  onPressed: () => widget.trailingAction(),
+                  iconSize: 20,
                   icon: Icon(
                     CupertinoIcons.add_circled,
                     color: Color(0xff837cfe),
@@ -67,7 +85,7 @@ class _ChannelInfoTextFormState extends State<ChannelInfoTextForm> {
                   shape: BoxShape.circle,
                   color: Color(0xffeeeeef),
                 ),
-                width: 20,
+                width: 30,
                 height: 20,
                 child: IconButton(
                   padding: EdgeInsets.all(0),

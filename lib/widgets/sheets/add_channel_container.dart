@@ -33,6 +33,16 @@ class _NewChannelFormState extends State<NewChannelForm> {
   final _groupNameFocusNode = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    _groupNameFocusNode.addListener(() {
+      print(_groupNameFocusNode.hasFocus);
+      setState(() {
+      });
+    });
+  }
+
+  @override
   void dispose() {
     _channelNameController.dispose();
     _descriptionController.dispose();
@@ -63,9 +73,7 @@ class _NewChannelFormState extends State<NewChannelForm> {
         ),
         SizedBox(height: 20),
         Container(
-          height: 44.0,
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          padding: const EdgeInsets.only(left: 14.0, right: 7),
           color: Colors.white,
           child: ChannelInfoTextForm(
             hint: 'Channel description',
@@ -79,14 +87,13 @@ class _NewChannelFormState extends State<NewChannelForm> {
         ),
         SizedBox(height: 20),
         Container(
-          height: 44.0,
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          padding: const EdgeInsets.only(left: 14.0, right: 10),
           color: Colors.white,
           child: ChannelInfoTextForm(
             hint: 'Channel group name',
             controller: _groupNameController,
             focusNode: _groupNameFocusNode,
+            leadingAction: () => _groupNameController.clear(),
             trailingAction: () => print('SHOW GROUPS!'),
           ),
         ),

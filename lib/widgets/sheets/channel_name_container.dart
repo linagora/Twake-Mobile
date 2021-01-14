@@ -17,23 +17,25 @@ class ChannelNameContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 83.0,
       width: MediaQuery.of(context).size.width,
-      color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(child: SelectableAvatar()),
-          Expanded(
-            flex: 3,
-            child: ChannelInfoTextForm(
-              hint: 'Channel name',
-              controller: controller,
-              focusNode: focusNode,
+      child: Container(
+        color: Colors.white,
+        child: Row(
+          children: [
+            Expanded(child: SelectableAvatar()),
+            Expanded(
+              flex: 3,
+              child: ChannelInfoTextForm(
+                hint: 'Channel name',
+                controller: controller,
+                focusNode: focusNode,
+              ),
             ),
-          ),
-          SizedBox(width: 10.0),
-        ],
+            SizedBox(width: 10.0),
+          ],
+        ),
       ),
     );
   }
