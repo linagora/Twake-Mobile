@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
+import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelInfoForm extends StatefulWidget {
   @override
@@ -28,8 +31,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
     super.initState();
     _groupNameFocusNode.addListener(() {
       print(_groupNameFocusNode.hasFocus);
-      setState(() {
-      });
+      setState(() {});
     });
   }
 
@@ -51,7 +53,11 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         SheetTitleBar(
           title: 'New Channel',
           trailingTitle: 'Next',
-          trailingAction: _canGoNext ? () => print('GO!') : null,
+          trailingAction: _canGoNext
+              ? () => context
+                  .read<AddChannelBloc>()
+                  .add(SetFlowStage(FlowStage.type))
+              : null,
         ),
         SizedBox(height: 16),
         ChannelNameContainer(
@@ -90,7 +96,8 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         ),
         SizedBox(height: 8),
         HintLine(
-          text: 'You can add your channel to an existing group or create a new one',
+          text:
+              'You can add your channel to an existing group or create a new one',
         ),
       ],
     );
