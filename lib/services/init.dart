@@ -62,7 +62,7 @@ Future<InitData> initMain() async {
     },
     sortFields: {'last_activity': false},
     filters: [
-      ['company_id', '=', workspaces.selected.id]
+      ['company_id', '=', companies.selected.id]
     ],
   );
   // final directs =

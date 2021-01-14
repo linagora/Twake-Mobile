@@ -219,6 +219,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> save() async {
+    logger.d('SAVING $T items to store!');
     await _storage.batchStore(
       items: this.items.map((i) => i.toJson()),
       type: _typeToStorageType[T],
