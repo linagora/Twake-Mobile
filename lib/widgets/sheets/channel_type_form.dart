@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
@@ -14,7 +15,25 @@ class ChannelTypeForm extends StatefulWidget {
 class _ChannelTypeFormState extends State<ChannelTypeForm> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddChannelBloc, AddChannelState>(
+    return BlocConsumer<AddChannelBloc, AddChannelState>(
+      listener: (context, state) {
+
+        if (state is Created) {
+          // Close sheet
+          context.read<SheetBloc>().add(CloseSheet());
+        } else if (state is Error) {
+          // Show an error
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              state.message,
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ),
+            duration: Duration(seconds: 2),
+          ));
+        }
+      },
       buildWhen: (previous, current) {
         return (current is Updated);
       },
