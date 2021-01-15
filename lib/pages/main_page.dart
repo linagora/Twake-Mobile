@@ -102,6 +102,7 @@ class _MainPageState extends State<MainPage>
                                         thickness: 1.0,
                                         color: Color(0xffEEEEEE),
                                       ),
+                                      SizedBox(height: 8),
                                       DirectMessagesGroup(),
                                       Divider(
                                         thickness: 1.0,

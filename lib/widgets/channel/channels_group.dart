@@ -13,10 +13,12 @@ class ChannelsGroup extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 8),
             MainPageTitle(
               title: 'Channels',
               isDirect: false,
             ),
+            SizedBox(height: 11),
             if (state is ChannelsLoaded)
               ...state.channels.map((c) => ChannelTile(c)).toList(),
             if (state is ChannelsEmpty)
