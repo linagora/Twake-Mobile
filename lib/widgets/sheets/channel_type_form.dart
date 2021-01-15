@@ -14,52 +14,60 @@ class ChannelTypeForm extends StatefulWidget {
 class _ChannelTypeFormState extends State<ChannelTypeForm> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        SheetTitleBar(
-          title: 'New Channel',
-          leadingTitle: 'Back',
-          leadingAction: () =>
-              context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info)),
-          trailingTitle: 'Create',
-          trailingAction: () => context.read<AddChannelBloc>().add(Create()),
-        ),
-        SizedBox(height: 23),
-        Padding(
-          padding: const EdgeInsets.only(left: 14.0, right: 100.0),
-          child: Text(
-            'CHANNEL TYPE',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontSize: 13.0,
-              fontWeight: FontWeight.w400,
-              color: Colors.black.withOpacity(0.4),
+    return BlocBuilder<AddChannelBloc, AddChannelState>(
+        builder: (context, state) {
+      var channelType = ChannelType.public;
+      if (state is Updated) {
+        channelType = state.repository?.type;
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SheetTitleBar(
+            title: 'New Channel',
+            leadingTitle: 'Back',
+            leadingAction: () => context
+                .read<AddChannelBloc>()
+                .add(SetFlowStage(FlowStage.info)),
+            trailingTitle: 'Create',
+            trailingAction: () => context.read<AddChannelBloc>().add(Create()),
+          ),
+          SizedBox(height: 23),
+          Padding(
+            padding: const EdgeInsets.only(left: 14.0, right: 100.0),
+            child: Text(
+              'CHANNEL TYPE',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 13.0,
+                fontWeight: FontWeight.w400,
+                color: Colors.black.withOpacity(0.4),
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 6),
-        ChannelTypesContainer(),
-        SizedBox(height: 8),
-        HintLine(
-          text:
-              'Direct channels involve correspondence between selected members',
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-          child: ParticipantsButton(
-            participantsCount: 0,
-            onTap: () => context
-                .read<AddChannelBloc>()
-                .add(SetFlowStage(FlowStage.participants)),
+          SizedBox(height: 6),
+          ChannelTypesContainer(),
+          SizedBox(height: 8),
+          HintLine(
+            text: channelType != ChannelType.direct
+                ? 'Public channels can be found by everyone, though private can only be joined by invitation'
+                : 'Direct channels involve correspondence between selected members',
           ),
-        ),
-        HintLine(
-          text: 'Only available for direct channels',
-        ),
-      ],
-    );
+          if (channelType == ChannelType.public) AddAllSwitcher(),
+          if (channelType == ChannelType.private) SizedBox(),
+          if (channelType == ChannelType.direct) ParticipantsButton(),
+          HintLine(
+            text: channelType != ChannelType.private
+                ? (channelType != ChannelType.direct
+                    ? 'Only available for public channels'
+                    : 'Only available for direct channels')
+                : '',
+          ),
+        ],
+      );
+    });
   }
 }
 
@@ -168,39 +176,24 @@ class SelectableItem extends StatelessWidget {
 }
 
 class ParticipantsButton extends StatelessWidget {
-  final int participantsCount;
-  final Function onTap;
-
-  const ParticipantsButton({
-    Key key,
-    @required this.participantsCount,
-    @required this.onTap,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      height: 44,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 15),
-          Text(
-            'Added participants',
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-          ),
-          Spacer(),
-          GestureDetector(
-            onTap: onTap,
-            child: participantsCount > 0
+    return GestureDetector(
+      onTap: () => context
+          .read<AddChannelBloc>()
+          .add(SetFlowStage(FlowStage.participants)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+        child: ParticipantsCommonWidget(
+          title: 'Added participants',
+          trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
+              builder: (context, state) {
+            var participantsCount = 0;
+            if (state is Updated) {
+              final participants = state.repository?.members;
+              participantsCount = participants.length;
+            }
+            return participantsCount > 0
                 ? Row(
                     children: [
                       Text(
@@ -224,8 +217,74 @@ class ParticipantsButton extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                       color: Color(0xff837cfe),
                     ),
-                  ),
+                  );
+          }),
+        ),
+      ),
+    );
+  }
+}
+
+class AddAllSwitcher extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+      child: ParticipantsCommonWidget(
+        title: 'Automatically add new users',
+        trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
+          builder: (context, state) {
+            var shouldAddAll = true;
+            if (state is Updated) {
+              shouldAddAll = state.repository.def;
+            }
+            return CupertinoSwitch(
+              value: shouldAddAll,
+              onChanged: (value) {
+                context
+                    .read<AddChannelBloc>()
+                    .add(Update(automaticallyAddNew: value));
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class ParticipantsCommonWidget extends StatelessWidget {
+  final String title;
+  final Widget trailingWidget;
+
+  const ParticipantsCommonWidget({
+    Key key,
+    @required this.title,
+    @required this.trailingWidget,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      height: 44,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(width: 15),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 17.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
+            ),
           ),
+          Spacer(),
+          trailingWidget,
           SizedBox(width: 20),
         ],
       ),
