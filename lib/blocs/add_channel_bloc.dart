@@ -18,14 +18,12 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
   Stream<AddChannelState> mapEventToState(
     AddChannelEvent event,
   ) async* {
-    print('incoming event: $event');
+    // print('incoming event: $event');
 
     if (event is SetFlowStage) {
-      print('incoming flow stage: ${event.stage}');
+      // print('incoming flow stage: ${event.stage}');
       yield StageUpdated(event.stage);
-
     } else if (event is Update) {
-
       repository.name = event.name ?? repository.name;
       repository.description = event.description ?? repository.description;
       repository.channelGroup = event.groupName ?? repository.channelGroup;
@@ -34,7 +32,19 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       repository.def = event.automaticallyAddNew ?? repository.def ?? false;
 
       print('Updated data: ${repository.toJson()}');
-      yield Updated(repository);
+      var newRepo = AddChannelRepository(
+        repository.companyId,
+        repository.workspaceId,
+        repository.name,
+        repository.visibility,
+        description: repository.description,
+        channelGroup: repository.channelGroup,
+        type: repository.type,
+        members: repository.members,
+        def: repository.def,
+      );
+
+      yield Updated(newRepo);
 
     } else if (event is Create) {
       yield Creation();

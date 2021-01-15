@@ -54,7 +54,17 @@ class AddChannelRepository {
   ChannelType type;
 
   AddChannelRepository(
-      this.companyId, this.workspaceId, this.name, this.visibility);
+    this.companyId,
+    this.workspaceId,
+    this.name,
+    this.visibility, {
+    this.icon,
+    this.description,
+    this.channelGroup,
+    this.def,
+    this.members,
+    this.type,
+  });
 
   factory AddChannelRepository.fromJson(Map<String, dynamic> json) =>
       _$AddChannelRepositoryFromJson(json);
