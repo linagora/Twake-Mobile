@@ -85,7 +85,19 @@ class AddChannelRepository {
 
   Future<void> cache() async {}
 
-  Future<void> clear() async {}
+  Future<void> clear() async {
+    companyId = '';
+    workspaceId = '';
+    name = '';
+    visibility = '';
+    icon = '';
+    description = '';
+    channelGroup = '';
+    def = false;
+    members = [];
+    flow = FlowStage.info;
+    type = ChannelType.public;
+  }
 
   Future<bool> create() async {
     switch (type) {

@@ -6,14 +6,17 @@ import 'image_avatar.dart';
 
 class StackedUserAvatars extends StatelessWidget {
   final List<String> userIds;
+
   StackedUserAvatars(this.userIds);
 
   @override
   Widget build(BuildContext context) {
-    List<Padding> paddedAvatars = [];
+    List<Container> paddedAvatars = [];
     for (int i = 0; i < userIds.length; i++) {
-      paddedAvatars.add(Padding(
-          padding: EdgeInsets.only(left: i * Dim.wm2),
+      paddedAvatars.add(
+        Container(
+          width: 30,
+          height: 30,
           child: BlocProvider<UserBloc>(
             create: (_) => UserBloc(userIds[i]),
             child: BlocBuilder<UserBloc, UserState>(builder: (ctx, state) {
@@ -21,7 +24,9 @@ class StackedUserAvatars extends StatelessWidget {
                 state is UserReady ? state.thumbnail : null,
               );
             }),
-          )));
+          ),
+        ),
+      );
     }
     return Stack(
       alignment: Alignment.centerLeft,

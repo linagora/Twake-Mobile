@@ -56,6 +56,7 @@ class _MainPageState extends State<MainPage>
     return Scaffold(
       key: _scaffoldKey,
       drawer: TwakeDrawer(),
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           // MainPage body
@@ -88,17 +89,25 @@ class _MainPageState extends State<MainPage>
                                 behavior: HitTestBehavior.translucent,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: Dim.wm3,
-                                    vertical: Dim.heightMultiplier,
+                                    horizontal: 12.0,
                                   ),
                                   child: ListView(
+                                    padding: EdgeInsets.only(top: 0),
                                     children: [
                                       // Starred channels will be implemented in version 2
                                       // StarredChannelsBlock([]),
                                       // Divider(height: Dim.hm5),
                                       ChannelsGroup(),
-                                      Divider(height: Dim.hm5),
+                                      Divider(
+                                        thickness: 1.0,
+                                        color: Color(0xffEEEEEE),
+                                      ),
+                                      SizedBox(height: 8),
                                       DirectMessagesGroup(),
+                                      Divider(
+                                        thickness: 1.0,
+                                        color: Color(0xffEEEEEE),
+                                      ),
                                       SizedBox(height: Dim.hm2),
                                     ],
                                   ),

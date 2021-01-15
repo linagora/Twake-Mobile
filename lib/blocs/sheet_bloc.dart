@@ -31,6 +31,8 @@ class SheetBloc extends Bloc<SheetEvent, SheetState> {
       yield SheetClosed();
     } else if (event is SetOpened) {
       yield SheetOpened();
+    } else if (event is ClearSheet) {
+      yield SheetShouldClear();
     }
   }
 }

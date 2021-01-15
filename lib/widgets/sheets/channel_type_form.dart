@@ -18,6 +18,10 @@ class ChannelTypeForm extends StatelessWidget {
           context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
           // Close sheet
           context.read<SheetBloc>().add(CloseSheet());
+          // Clear sheet
+          context.read<SheetBloc>().add(ClearSheet());
+          // Return to initial page
+          context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
         } else if (state is Error) {
           // Show an error
           Scaffold.of(context).showSnackBar(SnackBar(
