@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
+import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/storage/storage.dart';
@@ -23,13 +24,13 @@ enum ChannelType {
 class AddChannelRepository {
 
   @JsonKey(required: true, name: 'company_id')
-  final String companyId;
+  String companyId;
   @JsonKey(required: true, name: 'workspace_id')
-  final String workspaceId;
+  String workspaceId;
   @JsonKey(required: true)
-  final String name;
+  String name;
   @JsonKey(required: true)
-  final String visibility;
+  String visibility;
 
   @JsonKey(required: false)
   String icon;
@@ -74,7 +75,26 @@ class AddChannelRepository {
 
   Future<void> clear() async {}
 
-  Future<void> process(Map<String, dynamic> body) async {
+  Future<bool> create() async {
+    switch (type) {
+      case ChannelType.public:
+        this.visibility = 'public';
+        break;
+      case ChannelType.private:
+        this.visibility = 'private';
+        break;
+      case ChannelType.direct:
+        this.visibility = 'direct';
+        break;
+    }
+    this.companyId = ProfileBloc.selectedCompany;
+    this.workspaceId = ProfileBloc.selectedWorkspace;
+
+    final channelJson = this.toJson();
+    return process(channelJson);
+  }
+
+  Future<bool> process(Map<String, dynamic> body) async {
     _logger.d('Channel creation request...');
     var resp;
     try {

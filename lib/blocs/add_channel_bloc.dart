@@ -19,9 +19,19 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
     AddChannelEvent event,
   ) async* {
     print('incoming event: $event');
+
     if (event is SetFlowStage) {
-      print('incoming event stage: ${event.stage}');
+      print('incoming flow stage: ${event.stage}');
       yield StageUpdated(event.stage);
+
+    } else if (event is Create) {
+      yield Creation();
+      final result = await repository.create();
+      if (result) {
+        yield Created();
+      } else {
+        yield Error('Channel creation failure!');
+      }
     }
   }
 }
