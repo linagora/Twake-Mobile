@@ -7,22 +7,19 @@ part of 'company.dart';
 // **************************************************************************
 
 Company _$CompanyFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['id', 'name', 'workspaces']);
+  $checkKeys(json, requiredKeys: const ['id', 'name']);
   return Company(
     id: json['id'] as String,
     name: json['name'] as String,
-    workspaces: (json['workspaces'] as List)
-        ?.map((e) =>
-            e == null ? null : Workspace.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
     logo: json['logo'] as String,
-  )..isSelected = json['isSelected'] as bool ?? false;
+    totalMembers: json['total_members'] as int ?? 0,
+  )..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'logo': instance.logo,
-      'workspaces': instance.workspaces?.map((e) => e?.toJson())?.toList(),
-      'isSelected': instance.isSelected,
+      'total_members': instance.totalMembers,
+      'is_selected': instance.isSelected,
     };

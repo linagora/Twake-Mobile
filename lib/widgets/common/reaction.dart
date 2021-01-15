@@ -1,41 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart';
-import 'package:twake_mobile/config/styles_config.dart';
-import 'package:twake_mobile/models/message.dart';
-import 'package:twake_mobile/providers/profile_provider.dart';
-import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/utils/emojis.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/styles_config.dart';
+import 'package:twake/utils/emojis.dart';
 
-class Reaction extends StatefulWidget {
+class Reaction extends StatelessWidget {
   final String reaction;
   final int count;
   Reaction(this.reaction, this.count);
 
   @override
-  _ReactionState createState() => _ReactionState();
-}
-
-class _ReactionState extends State<Reaction> {
-  @override
   Widget build(BuildContext context) {
-    TwakeApi api = Provider.of<TwakeApi>(context, listen: false);
     return InkWell(
       onTap: () {
-        Provider.of<Message>(context, listen: false).updateReactions(
-          api: api,
-          emojiCode: widget.reaction,
-          userId: Provider.of<ProfileProvider>(context, listen: false)
-              .currentProfile
-              .userId,
+        BlocProvider.of<SingleMessageBloc>(context).add(
+          UpdateReaction(emojiCode: reaction),
         );
       },
       child: FittedBox(
         child: Container(
-          // constraints: BoxConstraints(
-          // minWidth: Dim.widthPercent(10),
-          // maxWidth: Dim.widthPercent(13),
-          // ),
           margin: EdgeInsets.only(right: Dim.wm2),
           padding: EdgeInsets.all(Dim.widthMultiplier),
           decoration: BoxDecoration(
@@ -49,10 +33,10 @@ class _ReactionState extends State<Reaction> {
               text: TextSpan(
                 style: Theme.of(context).textTheme.bodyText2,
                 children: [
-                  TextSpan(text: Emojis().getByName(widget.reaction)),
+                  TextSpan(text: Emojis.getByName(reaction)),
                   TextSpan(text: ' '),
                   TextSpan(
-                    text: '${widget.count}',
+                    text: '$count',
                     style: StylesConfig.miniPurple,
                   ),
                 ],
