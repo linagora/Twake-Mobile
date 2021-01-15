@@ -30,6 +30,7 @@ class ChannelsBloc extends BaseChannelBloc {
                 : ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
+        selectedBeforeId = selectedParentId;
         selectedParentId = state.selected.id;
         this.add(ReloadChannels(workspaceId: selectedParentId));
       }
@@ -52,7 +53,7 @@ class ChannelsBloc extends BaseChannelBloc {
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
-      await repository.reload(
+      bool success = await repository.reload(
         queryParams: {
           'workspace_id': event.workspaceId ?? selectedParentId,
           'company_id': workspacesBloc.selectedCompanyId,
@@ -63,6 +64,10 @@ class ChannelsBloc extends BaseChannelBloc {
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
+      if (!success) {
+        workspacesBloc.add(ChangeSelectedWorkspace(selectedBeforeId));
+        yield ErrorLoadingChannels(channels: repository.items);
+      }
       if (repository.isEmpty) yield ChannelsEmpty();
       yield ChannelsLoaded(
         channels: repository.items,

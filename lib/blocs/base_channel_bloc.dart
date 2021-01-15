@@ -12,6 +12,7 @@ export 'package:twake/states/channel_state.dart';
 abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
   final CollectionRepository<BaseChannel> repository;
   String selectedParentId;
+  String selectedBeforeId;
 
   BaseChannelBloc({
     this.repository,
