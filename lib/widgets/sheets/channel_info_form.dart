@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
@@ -72,60 +73,73 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        SheetTitleBar(
-          title: 'New Channel',
-          trailingTitle: 'Next',
-          trailingAction: _canGoNext
-              ? () => context
-                  .read<AddChannelBloc>()
-                  .add(SetFlowStage(FlowStage.type))
-              : null,
-        ),
-        SizedBox(height: 16),
-        ChannelNameContainer(
-          controller: _channelNameController,
-          focusNode: _channelNameFocusNode,
-        ),
-        SizedBox(height: 8),
-        HintLine(
-          text: 'Please provide a channel name and optional channel icon',
-        ),
-        SizedBox(height: 20),
-        Container(
-          padding: const EdgeInsets.only(left: 14.0, right: 7),
-          color: Colors.white,
-          child: ChannelInfoTextForm(
-            hint: 'Channel description',
-            controller: _descriptionController,
-            focusNode: _channelDescriptionFocusNode,
-          ),
-        ),
-        SizedBox(height: 8),
-        HintLine(
-          text: 'Please provide an optional description for your channel',
-        ),
-        // SizedBox(height: 20),
-        // Container(
-        //   padding: const EdgeInsets.only(left: 14.0, right: 10),
-        //   color: Colors.white,
-        //   child: ChannelInfoTextForm(
-        //     hint: 'Channel group name',
-        //     controller: _groupNameController,
-        //     focusNode: _groupNameFocusNode,
-        //     leadingAction: () => _groupNameController.clear(),
-        //     trailingAction: () => context
-        //         .read<AddChannelBloc>()
-        //         .add(SetFlowStage(FlowStage.groups)),
-        //   ),
-        // ),
-        // SizedBox(height: 8),
-        // HintLine(
-        //   text:
-        //       'You can add your channel to an existing group or create a new one',
-        // ),
-      ],
+    return BlocConsumer<SheetBloc, SheetState>(
+      listener: (context, state) {
+        if (state is SheetShouldClear) {
+          _channelNameController.clear();
+          _descriptionController.clear();
+          _groupNameController.clear();
+          FocusScope.of(context).requestFocus(new FocusNode());
+          context.read<AddChannelBloc>().add(Clear());
+        }
+      },
+      builder: (context, state) {
+        return Column(
+          children: [
+            SheetTitleBar(
+              title: 'New Channel',
+              trailingTitle: 'Next',
+              trailingAction: _canGoNext
+                  ? () => context
+                      .read<AddChannelBloc>()
+                      .add(SetFlowStage(FlowStage.type))
+                  : null,
+            ),
+            SizedBox(height: 16),
+            ChannelNameContainer(
+              controller: _channelNameController,
+              focusNode: _channelNameFocusNode,
+            ),
+            SizedBox(height: 8),
+            HintLine(
+              text: 'Please provide a channel name and optional channel icon',
+            ),
+            SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.only(left: 14.0, right: 7),
+              color: Colors.white,
+              child: ChannelInfoTextForm(
+                hint: 'Channel description',
+                controller: _descriptionController,
+                focusNode: _channelDescriptionFocusNode,
+              ),
+            ),
+            SizedBox(height: 8),
+            HintLine(
+              text: 'Please provide an optional description for your channel',
+            ),
+            // SizedBox(height: 20),
+            // Container(
+            //   padding: const EdgeInsets.only(left: 14.0, right: 10),
+            //   color: Colors.white,
+            //   child: ChannelInfoTextForm(
+            //     hint: 'Channel group name',
+            //     controller: _groupNameController,
+            //     focusNode: _groupNameFocusNode,
+            //     leadingAction: () => _groupNameController.clear(),
+            //     trailingAction: () => context
+            //         .read<AddChannelBloc>()
+            //         .add(SetFlowStage(FlowStage.groups)),
+            //   ),
+            // ),
+            // SizedBox(height: 8),
+            // HintLine(
+            //   text:
+            //       'You can add your channel to an existing group or create a new one',
+            // ),
+          ],
+        );
+      }
     );
   }
 }
