@@ -85,6 +85,7 @@ CREATE INDEX message_thread_idx ON message(thread_id);
 const String CREATE_USER_V1 = '''
 CREATE TABLE user (
     id TEXT PRIMARY KEY,
+    name TEXT,
     username TEXT,
     firstname TEXT,
     lastname TEXT,

@@ -6,14 +6,15 @@ part 'user.g.dart';
 class User {
   @JsonKey(required: true)
   final String id;
-  final String username;
+  String name;
+  String username;
   @JsonKey(name: 'firstname')
   String firstName;
   @JsonKey(name: 'lastname')
   String lastName;
   String thumbnail;
 
-  User({this.id, this.username});
+  User({this.id, this.name = '', this.username});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

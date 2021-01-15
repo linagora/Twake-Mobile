@@ -23,4 +23,6 @@ class Endpoint {
   static const reactions = '/reactions';
   // API Endpoint for getting current supported emojis
   static const emojis = '/settings/emoji';
+  // API Endpoint for searching users by name
+  static const usersSearch = '/users/search';
 }

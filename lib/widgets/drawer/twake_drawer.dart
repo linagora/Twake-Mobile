@@ -41,7 +41,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                     Spacer(),
                     _companiesHidden
                         ? IconButton(
-                            color: Colors.black87,
+                            color: Color(0xff444444),
                             onPressed: () {
                               setState(() {
                                 _companiesHidden = false;
@@ -50,6 +50,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                             iconSize: Dim.tm4(),
                             icon: Icon(
                               Icons.loop,
+                              color: Color(0xff444444),
                             ),
                           )
                         : SizedBox(width: 0, height: 0),

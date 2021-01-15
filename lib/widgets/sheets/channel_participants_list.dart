@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/radio_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:twake/blocs/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelParticipantsList extends StatefulWidget {
@@ -15,6 +18,15 @@ class ChannelParticipantsList extends StatefulWidget {
 class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<UserBloc>().add(LoadUsers('')),
+    );
+  }
 
   @override
   void dispose() {
@@ -56,18 +68,27 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
             focusNode: _focusNode,
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(top: 0),
-          itemCount: participants.length,
-          itemBuilder: (context, index) {
-            return RadioItem(
-              title: participants[index],
-              selected: selectedIndex == index,
-              onTap: () => selectedIndex = index,
-            );
-          },
-        ),
+        BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+          var users = <User>[];
+
+          if (state is MultipleUsersLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is MultipleUsersLoaded) {
+            users = state.users;
+          }
+          return ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(top: 0),
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              return RadioItem(
+                title: users[index].name,
+                selected: selectedIndex == index,
+                onTap: () => selectedIndex = index,
+              );
+            },
+          );
+        }),
       ],
     );
   }

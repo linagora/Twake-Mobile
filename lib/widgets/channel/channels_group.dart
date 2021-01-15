@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/widgets/channel/channel_tile.dart';
 import 'package:twake/widgets/common/main_page_title.dart';
-import 'package:twake/blocs/sheet_bloc.dart';
 
 class ChannelsGroup extends StatelessWidget {
   @override
