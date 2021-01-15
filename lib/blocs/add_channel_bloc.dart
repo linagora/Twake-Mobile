@@ -31,7 +31,7 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       repository.members = event.participants ?? repository.members ?? [];
       repository.def = event.automaticallyAddNew ?? repository.def ?? false;
 
-      print('Updated data: ${repository.toJson()}');
+      // print('Updated data: ${repository.toJson()}');
       var newRepo = AddChannelRepository(
         repository.companyId,
         repository.workspaceId,

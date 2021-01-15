@@ -19,7 +19,6 @@ class ChannelsGroup extends StatelessWidget {
               return MainPageTitle(
                 title: 'Channels',
                 trailingAction: () {
-                  print(state);
                   if (state is SheetClosed || state is SheetInitial) {
                     context.read<SheetBloc>().add(OpenSheet());
                   } else {

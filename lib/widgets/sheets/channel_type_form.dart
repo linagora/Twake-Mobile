@@ -70,7 +70,6 @@ class ChannelTypesContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AddChannelBloc, AddChannelState>(
       builder: (context, state) {
-        print('Emitted state $state');
         var type = ChannelType.public;
         if (state is Updated) {
           type = state.repository.type;

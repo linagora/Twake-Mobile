@@ -17,7 +17,6 @@ class AddChannelFlow extends StatelessWidget {
       builder: (context, state) {
         var i = 0;
         if (state is StageUpdated) {
-          print(state.stage);
           switch (state.stage) {
             case FlowStage.info:
               i = 0;

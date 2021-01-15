@@ -26,23 +26,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           yield Authenticated(initData);
           break;
         case TokenStatus.AccessExpired:
-          final InitData initData = await initMain();
-          yield Authenticated(initData);
-          break;
-          // switch (await repository.prolongToken()) {
-          //   case AuthResult.Ok:
-          //     final InitData initData = await initMain();
-          //     yield Authenticated(initData);
-          //     break;
-          //   case AuthResult.NetworkError:
-          //     // TODO Work out the case with absent network connection
-          //     final InitData initData = await initMain();
-          //     yield Authenticated(initData);
-          //     break;
-          //   case AuthResult.WrongCredentials:
-          //     yield Unauthenticated();
-          // }
+          // final InitData initData = await initMain();
+          // yield Authenticated(initData);
           // break;
+          switch (await repository.prolongToken()) {
+            case AuthResult.Ok:
+              final InitData initData = await initMain();
+              yield Authenticated(initData);
+              break;
+            case AuthResult.NetworkError:
+              // TODO Work out the case with absent network connection
+              final InitData initData = await initMain();
+              yield Authenticated(initData);
+              break;
+            case AuthResult.WrongCredentials:
+              yield Unauthenticated();
+          }
+          break;
         case TokenStatus.BothExpired:
           yield Unauthenticated(message: 'Session expired');
       }

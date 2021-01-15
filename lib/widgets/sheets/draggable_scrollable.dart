@@ -17,24 +17,11 @@ class DraggableScrollable extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: Color(0xffefeef3),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Color(0xff555151),
-              //     spreadRadius: 1,
-              //   ),
-              // ],
             ),
             child: SingleChildScrollView(
               controller: scrollController,
               child: AddChannelFlow(),
             ),
-            // child: ListView.builder(
-            //   controller: scrollController,
-            //   itemCount: 25,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return ListTile(title: Text(''));
-            //   },
-            // ),
           ),
         );
       },
