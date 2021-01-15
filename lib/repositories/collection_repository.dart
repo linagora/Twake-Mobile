@@ -85,7 +85,7 @@ class CollectionRepository<T extends CollectionItem> {
     var oldSelected = selected;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
-    assert(selected.id == item.id);
+    // assert(selected.id == item.id);
     if (saveToStore)
       Future.wait([
         saveOne(oldSelected),
@@ -233,6 +233,10 @@ class CollectionRepository<T extends CollectionItem> {
     await _storage.delete(type: _typeToStorageType[T], key: key);
     if (removeFromItems) items.removeWhere((i) => i.id == key);
     return true;
+  }
+
+  void clear() {
+    this.items.clear();
   }
 
   void _updateItems(

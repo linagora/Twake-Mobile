@@ -13,7 +13,8 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
     if (state is MessagesLoaded)
       return StickyGroupedListView<Message, DateTime>(
           order: StickyGroupedListOrder.DESC,
-          stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          stickyHeaderBackgroundColor:
+              Theme.of(context).scaffoldBackgroundColor,
           reverse: true,
           elements: state.messages,
           groupBy: (Message m) {
@@ -74,7 +75,11 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
           });
     else if (state is MessagesEmpty)
       return Center(
-        child: Text('No messages yet'),
+        child: Text(
+          state is ErrorLoadingMessages
+              ? 'Couldn\'t load messages'
+              : 'No messages yet',
+        ),
       );
     else
       return Center(

@@ -62,7 +62,11 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   if (state is MessagesEmpty)
                     Expanded(
                       child: Center(
-                        child: Text('No responses yet'),
+                        child: Text(
+                          state is ErrorLoadingMessages
+                              ? 'Couldn\'t load messages, no connection'
+                              : 'No responses yet',
+                        ),
                       ),
                     ),
                   if (state is MessagesLoading)
