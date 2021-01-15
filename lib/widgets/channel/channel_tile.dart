@@ -45,35 +45,26 @@ class ChannelTile extends StatelessWidget {
                 color: Color(0xff444444),
               ),
             ),
-            Spacer(),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      DateFormatter.getVerboseDateTime(channel.lastActivity),
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ),
-                  if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
-                  if (channel.messagesUnread != 0)
-                    Chip(
-                      labelPadding:
-                          EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
-                      label: Text(
-                        '${channel.messagesUnread}',
-                        style:
-                            TextStyle(color: Colors.white, fontSize: Dim.tm2()),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      backgroundColor: Color.fromRGBO(255, 81, 84, 1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                ],
-              ),
+            Spacer(flex: 2),
+            Text(
+              DateFormatter.getVerboseDateTime(channel.lastActivity),
+              style: Theme.of(context).textTheme.subtitle2,
             ),
+            if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
+            if (channel.messagesUnread != 0)
+              Chip(
+                labelPadding:
+                    EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
+                label: Text(
+                  '${channel.messagesUnread}',
+                  style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
+                ),
+                clipBehavior: Clip.antiAlias,
+                backgroundColor: Color.fromRGBO(255, 81, 84, 1),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
           ],
         ),
       ),
