@@ -29,7 +29,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             leading: ImageAvatar(state.selected.logo),
             title: Text(
               state.selected.name,
-              style: Theme.of(context).textTheme.headline6,
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff444444),
+              ),
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
             ),
