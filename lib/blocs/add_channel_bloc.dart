@@ -22,6 +22,12 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
 
     if (event is SetFlowStage) {
       print('incoming flow stage: ${event.stage}');
+      repository.name = event.name ?? repository.name;
+      repository.description = event.description ?? repository.description;
+      repository.channelGroup = event.groupName ?? repository.channelGroup;
+      repository.type = event.type ?? repository.type;
+      repository.members = event.participants ?? repository.members;
+      repository.def = event.automaticallyAddNew ?? repository.def;
       yield StageUpdated(event.stage);
 
     } else if (event is Create) {

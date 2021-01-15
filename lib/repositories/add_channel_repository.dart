@@ -12,6 +12,7 @@ enum FlowStage {
   groups,
   type,
   participants,
+  finish,
 }
 
 enum ChannelType {
@@ -22,7 +23,6 @@ enum ChannelType {
 
 @JsonSerializable(explicitToJson: true)
 class AddChannelRepository {
-
   @JsonKey(required: true, name: 'company_id')
   String companyId;
   @JsonKey(required: true, name: 'workspace_id')
@@ -54,13 +54,16 @@ class AddChannelRepository {
   @JsonKey(ignore: true)
   ChannelType type;
 
-  AddChannelRepository(this.companyId, this.workspaceId, this.name, this.visibility);
+  AddChannelRepository(
+      this.companyId, this.workspaceId, this.name, this.visibility);
 
-  factory AddChannelRepository.fromJson(Map<String, dynamic> json) => _$AddChannelRepositoryFromJson(json);
+  factory AddChannelRepository.fromJson(Map<String, dynamic> json) =>
+      _$AddChannelRepositoryFromJson(json);
+
   Map<String, dynamic> toJson() => _$AddChannelRepositoryToJson(this);
 
   static Future<AddChannelRepository> load() async {
-    return AddChannelRepository('', '','','');
+    return AddChannelRepository('', '', '', '');
   }
 
   // Future<AddChannelData> load() async {
@@ -90,8 +93,17 @@ class AddChannelRepository {
     this.companyId = ProfileBloc.selectedCompany;
     this.workspaceId = ProfileBloc.selectedWorkspace;
 
-    final channelJson = this.toJson();
-    return process(channelJson);
+    if (this.name.isEmpty ||
+        this.companyId.isEmpty ||
+        this.workspaceId.isEmpty ||
+        this.visibility.isEmpty) {
+      _logger.d(
+          'Channel creation: validation error. Not all mandatory fields are filled.');
+      return false;
+    } else {
+      final channelJson = this.toJson();
+      return process(channelJson);
+    }
   }
 
   Future<bool> process(Map<String, dynamic> body) async {
