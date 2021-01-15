@@ -76,4 +76,8 @@ class UserRepository {
       key: user.id,
     );
   }
+
+  Future<List<User>> users() async {
+    return [];
+  }
 }
