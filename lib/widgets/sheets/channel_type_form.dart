@@ -69,38 +69,43 @@ class ChannelTypesContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddChannelBloc, AddChannelState>(
-      builder: (context, state) {
-        var type = ChannelType.public;
-        if (state is Updated) {
-          type = state.repository.type;
-        }
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Divider(
-              thickness: 0.5,
-              height: 0.5,
-              color: Colors.black.withOpacity(0.2),
-            ),
-            SelectableItem(
-              title: 'Public',
-              selected: type == ChannelType.public,
-              onTap: () => context.read<AddChannelBloc>().add(Update(type: ChannelType.public)),
-            ),
-            SelectableItem(
-              title: 'Private',
-              selected: type == ChannelType.private,
-              onTap: () => context.read<AddChannelBloc>().add(Update(type: ChannelType.private)),
-            ),
-            SelectableItem(
-              title: 'Direct',
-              selected: type == ChannelType.direct,
-              onTap: () => context.read<AddChannelBloc>().add(Update(type: ChannelType.direct)),
-            ),
-          ],
-        );
+        builder: (context, state) {
+      var type = ChannelType.public;
+      if (state is Updated) {
+        type = state.repository.type;
       }
-    );
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Divider(
+            thickness: 0.5,
+            height: 0.5,
+            color: Colors.black.withOpacity(0.2),
+          ),
+          SelectableItem(
+            title: 'Public',
+            selected: type == ChannelType.public,
+            onTap: () => context
+                .read<AddChannelBloc>()
+                .add(Update(type: ChannelType.public)),
+          ),
+          SelectableItem(
+            title: 'Private',
+            selected: type == ChannelType.private,
+            onTap: () => context
+                .read<AddChannelBloc>()
+                .add(Update(type: ChannelType.private)),
+          ),
+          SelectableItem(
+            title: 'Direct',
+            selected: type == ChannelType.direct,
+            onTap: () => context
+                .read<AddChannelBloc>()
+                .add(Update(type: ChannelType.direct)),
+          ),
+        ],
+      );
+    });
   }
 }
 
