@@ -8,12 +8,7 @@ import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ChannelTypeForm extends StatefulWidget {
-  @override
-  _ChannelTypeFormState createState() => _ChannelTypeFormState();
-}
-
-class _ChannelTypeFormState extends State<ChannelTypeForm> {
+class ChannelTypeForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddChannelBloc, AddChannelState>(
