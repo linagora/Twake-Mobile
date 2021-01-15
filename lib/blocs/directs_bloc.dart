@@ -36,10 +36,11 @@ class DirectsBloc extends BaseChannelBloc {
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (state is BaseChannelMessageNotification) {
-        this.add(ModifyUnreadCount(
+        this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           companyId: state.data.companyId,
-          modifier: 1,
+          totalModifier: 1,
+          unreadModifier: 1,
         ));
       }
     });
@@ -55,11 +56,9 @@ class DirectsBloc extends BaseChannelBloc {
       };
       await repository.reload(
         queryParams: filter,
-        // TODO uncomment once we have correct company ids present
-        // for now get all the data from database
-        // filters: [
-        // ['company_id', '=', selectedCompanyId]
-        // ],
+        filters: [
+          ['company_id', '=', selectedParentId]
+        ],
         sortFields: {'last_activity': false},
         forceFromApi: event.forceFromApi,
       );
@@ -69,22 +68,15 @@ class DirectsBloc extends BaseChannelBloc {
         yield ChannelsLoaded(
           channels: repository.items,
         );
-    } else if (event is ModifyUnreadCount) {
-      final ch = await repository.getItemById(event.channelId);
-      if (ch != null) {
-        ch.messagesUnread += event.modifier;
-        ch.messagesTotal += event.modifier.isNegative ? 0 : event.modifier;
-        repository.saveOne(ch);
-      } else
-        return;
-      // TODO uncomment condition when we have
-      // company based direct chats
-      // if (event.companyId == selectedParentId) {
-      yield ChannelsLoaded(
-        channels: repository.items,
-        force: DateTime.now().toString(),
-      );
-      // }
+    } else if (event is ModifyMessageCount) {
+      await this.updateMessageCount(event);
+      if (event.companyId == selectedParentId) {
+        _sortItems();
+        yield ChannelsLoaded(
+          channels: repository.items,
+          force: DateTime.now().toString(),
+        );
+      }
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
@@ -108,6 +100,12 @@ class DirectsBloc extends BaseChannelBloc {
       // selected: selected,
       // );
     }
+  }
+
+  void _sortItems() {
+    repository.items.sort(
+      (i1, i2) => i2.lastActivity.compareTo(i1.lastActivity),
+    );
   }
 
   @override

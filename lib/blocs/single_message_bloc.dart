@@ -20,6 +20,7 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
           responsesCount: message.responsesCount,
           creationDate: message.creationDate,
           content: message.content.prepared,
+          threadId: message.threadId,
           text: (message.content.originalStr ?? '').replaceAllMapped(_userId,
               (match) {
             final end = message.content.originalStr.indexOf(':', match.start);
@@ -62,5 +63,6 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
         charCount: (message.content.originalStr ?? '').length,
         reactions: message.reactions,
         userId: message.userId,
+        threadId: message.threadId,
       );
 }

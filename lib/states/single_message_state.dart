@@ -28,5 +28,5 @@ class MessageReady extends SingleMessageState {
   });
 
   @override
-  List<Object> get props => [id, content, reactions, responsesCount];
+  List<Object> get props => [id, content, reactions.length, responsesCount];
 }

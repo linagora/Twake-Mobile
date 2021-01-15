@@ -64,8 +64,13 @@ class CollectionRepository<T extends CollectionItem> {
     );
     bool saveToStore = false;
     if (itemsList.isEmpty) {
-      Logger().d('No $T items found in storage, requesting from api...');
-      itemsList = await _api.get(apiEndpoint, params: queryParams);
+      Logger().d('Requesting $T items from api...');
+      try {
+        itemsList = await _api.get(apiEndpoint, params: queryParams);
+      } on ApiError catch (error) {
+        Logger().d('ERROR WHILE FETCHING $T items FROM API\n${error.message}');
+        throw error;
+      }
       saveToStore = true;
     }
     final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
@@ -88,7 +93,7 @@ class CollectionRepository<T extends CollectionItem> {
       ]);
   }
 
-  Future<void> reload({
+  Future<bool> reload({
     Map<String, dynamic> queryParams,
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
@@ -110,10 +115,16 @@ class CollectionRepository<T extends CollectionItem> {
     bool saveToStore = false;
     if (itemsList.isEmpty) {
       logger.d('Non in storage. Reloading $T items from api...');
-      itemsList = await _api.get(apiEndpoint, params: queryParams);
+      try {
+        itemsList = await _api.get(apiEndpoint, params: queryParams);
+      } on ApiError catch (error) {
+        logger.d('ERROR while reloading $T items from api\n${error.message}');
+        return false;
+      }
       saveToStore = true;
     }
     _updateItems(itemsList, saveToStore: saveToStore);
+    return true;
   }
 
   Future<bool> loadMore({
@@ -135,7 +146,13 @@ class CollectionRepository<T extends CollectionItem> {
     bool saveToStore = false;
     if (itemsList.isEmpty) {
       logger.d('Non in storage. Reloading $T items from api...');
-      itemsList = await _api.get(apiEndpoint, params: queryParams);
+      try {
+        itemsList = await _api.get(apiEndpoint, params: queryParams);
+      } on ApiError catch (error) {
+        logger
+            .d('ERROR while loading more $T items from api\n${error.message}');
+        return false;
+      }
       saveToStore = true;
     }
     if (itemsList.isNotEmpty) {
@@ -146,28 +163,42 @@ class CollectionRepository<T extends CollectionItem> {
     return true;
   }
 
-  Future<void> pullOne(
+  Future<bool> pullOne(
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
     logger.d('Pulling item $T from api...');
-    final List resp = (await _api.get(apiEndpoint, params: queryParams));
-    if (resp.isEmpty) return;
+    List resp = [];
+    try {
+      resp = (await _api.get(apiEndpoint, params: queryParams));
+    } on ApiError catch (error) {
+      logger.d('ERROR while loading more $T items from api\n${error.message}');
+      return false;
+    }
+    if (resp.isEmpty) return false;
     final item = _typeToConstuctor[T](resp[0]);
     if (addToItems) this.items.add(item);
     saveOne(item);
+    return true;
   }
 
-  Future<void> pushOne(
+  Future<bool> pushOne(
     Map<String, dynamic> body, {
     addToItems = true,
   }) async {
     logger.d('Sending item $T to api...');
-    final resp = (await _api.post(apiEndpoint, body: body));
+    var resp;
+    try {
+      resp = (await _api.post(apiEndpoint, body: body));
+    } catch (error) {
+      logger.e('Error while sending $T item to api\n${error.message}');
+      return false;
+    }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = _typeToConstuctor[T](resp);
     if (addToItems) this.items.add(item);
     saveOne(item);
+    return true;
   }
 
   Future<T> getItemById(String id) async {
@@ -185,17 +216,23 @@ class CollectionRepository<T extends CollectionItem> {
     items.clear();
   }
 
-  Future<void> delete(
+  Future<bool> delete(
     key, {
     bool apiSync: true,
     bool removeFromItems: true,
     Map<String, dynamic> requestBody,
   }) async {
-    await _storage.delete(type: _typeToStorageType[T], key: key);
     if (apiSync) {
-      await _api.delete(apiEndpoint, body: requestBody);
+      try {
+        await _api.delete(apiEndpoint, body: requestBody);
+      } catch (error) {
+        logger.e('Error while sending $T item to api\n${error.message}');
+        return false;
+      }
     }
+    await _storage.delete(type: _typeToStorageType[T], key: key);
     if (removeFromItems) items.removeWhere((i) => i.id == key);
+    return true;
   }
 
   void _updateItems(
@@ -212,6 +249,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> save() async {
+    logger.d('SAVING $T items to store!');
     await _storage.batchStore(
       items: this.items.map((i) => i.toJson()),
       type: _typeToStorageType[T],

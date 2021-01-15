@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/widgets/channel/channel_tile.dart';
+import 'package:twake/widgets/common/main_page_title.dart';
+import 'package:twake/blocs/sheet_bloc.dart';
 
 class ChannelsGroup extends StatelessWidget {
   @override
@@ -11,13 +13,9 @@ class ChannelsGroup extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  'Channels',
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ],
+            MainPageTitle(
+              title: 'Channels',
+              isDirect: false,
             ),
             if (state is ChannelsLoaded)
               ...state.channels.map((c) => ChannelTile(c)).toList(),

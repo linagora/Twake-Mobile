@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
@@ -48,7 +49,10 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
   }
 
   void onDelete(context, RemoveMessage event) {
-    BlocProvider.of<MessagesBloc<T>>(context).add(event);
+    if (message.threadId == null)
+      BlocProvider.of<MessagesBloc<T>>(context).add(event);
+    else
+      BlocProvider.of<ThreadsBloc<T>>(context).add(event);
     Navigator.of(context).pop();
   }
 

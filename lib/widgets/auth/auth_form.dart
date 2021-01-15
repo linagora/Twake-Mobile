@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/config/styles_config.dart';
-import 'package:twake/pages/webview_page.dart';
+// import 'package:twake/pages/webview_page.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
@@ -126,12 +126,7 @@ class _AuthFormState extends State<AuthForm> {
               Align(
                 alignment: Alignment.centerRight,
                 child: FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                      WebViewScreen.route,
-                      arguments: 'https://web.twake.app/',
-                    );
-                  },
+                  onPressed: () {},
                   child: Text(
                     'Forgot password?',
                     style: StylesConfig.miniPurple,
@@ -173,12 +168,7 @@ class _AuthFormState extends State<AuthForm> {
                             .copyWith(color: Colors.black87),
                       ),
                       FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            WebViewScreen.route,
-                            arguments: 'https://web.twake.app/',
-                          );
-                        },
+                        onPressed: () {},
                         child: Text(
                           ' Sign up',
                           style: StylesConfig.miniPurple,

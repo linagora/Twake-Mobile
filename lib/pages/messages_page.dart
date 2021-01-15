@@ -7,7 +7,7 @@ import 'package:twake/models/direct.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
-import 'package:twake/widgets/message/messages_groupped_list.dart';
+import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
@@ -17,7 +17,6 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
       builder: (ctx, state) => Scaffold(
         appBar: AppBar(
           titleSpacing: 0.0,
-          backgroundColor: Theme.of(context).appBarTheme.color,
           shadowColor: Colors.grey[300],
           toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
           title: Row(
@@ -68,7 +67,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               ),
-            MessagesGrouppedList<T>(),
+            MessagesGroupedList<T>(),
             MessageEditField((content) {
               BlocProvider.of<MessagesBloc<T>>(context).add(
                 SendMessage(content: content),

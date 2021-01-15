@@ -14,12 +14,6 @@ void main() async {
   final AuthRepository repository = await initAuth();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(TwakeMobileApp(repository)));
-
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    statusBarColor: Colors.white,
-    statusBarBrightness: Brightness.dark,
-    statusBarIconBrightness: Brightness.dark,
-  ));
 }
 
 class TwakeMobileApp extends StatelessWidget {

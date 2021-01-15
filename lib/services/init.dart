@@ -4,9 +4,11 @@ import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/models/workspace.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/utils/emojis.dart';
 
@@ -29,15 +31,20 @@ Future<AuthRepository> initAuth() async {
 Future<InitData> initMain() async {
   await Emojis.load();
   final profile = await ProfileRepository.load();
+  final sheet = await SheetRepository.load();
+  final addChannel = await AddChannelRepository.load();
   final _ = UserRepository(Endpoint.users);
-  final companies =
-      await CollectionRepository.load<Company>(Endpoint.companies);
+  final companies = await CollectionRepository.load<Company>(
+    Endpoint.companies,
+    sortFields: {'name': true},
+  );
   final workspaces = await CollectionRepository.load<Workspace>(
     Endpoint.workspaces,
     filters: [
       ['company_id', '=', companies.selected.id]
     ],
     queryParams: {'company_id': companies.selected.id},
+    sortFields: {'name': true},
   );
   final channels = await CollectionRepository.load<Channel>(
     Endpoint.channels,
@@ -56,11 +63,12 @@ Future<InitData> initMain() async {
       'company_id': companies.selected.id,
     },
     sortFields: {'last_activity': false},
-    // TODO uncomment once company_id becomes available
-    // filters: [
-    // ['company_id', '=', workspaces.selected.id]
-    // ],
+    filters: [
+      ['company_id', '=', companies.selected.id]
+    ],
   );
+  // final directs =
+  // CollectionRepository<Direct>(items: [], apiEndpoint: Endpoint.directs);
   final messages =
       CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
   final threads =
@@ -74,6 +82,8 @@ Future<InitData> initMain() async {
     directs: directs,
     messages: messages,
     threads: threads,
+    sheet: sheet,
+    addChannel: addChannel,
   );
 }
 
@@ -85,6 +95,8 @@ class InitData {
   final CollectionRepository<Direct> directs;
   final CollectionRepository<Message> messages;
   final CollectionRepository<Message> threads;
+  final SheetRepository sheet;
+  final AddChannelRepository addChannel;
 
   InitData({
     this.profile,
@@ -94,5 +106,7 @@ class InitData {
     this.directs,
     this.messages,
     this.threads,
+    this.sheet,
+    this.addChannel,
   });
 }

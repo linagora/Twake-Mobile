@@ -83,7 +83,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                   widget.onDelete(context);
                 },
               ),
-            if (isMe) Divider(),
+            if (isMe && widget.responsesCount == 0) Divider(),
             ListTile(
               leading: Icon(Icons.copy),
               title: Text(

@@ -1,6 +1,5 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io' show Platform;
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:package_info/package_info.dart';
@@ -29,7 +28,7 @@ class AuthRepository extends JsonSerializable {
 
   // required by twake api
   @JsonKey(ignore: true)
-  final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
+  final timeZoneOffset = -DateTime.now().timeZoneOffset.inMinutes;
 
   @JsonKey(ignore: true)
   static final _storage = Storage();
@@ -101,6 +100,30 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
+  Future<bool> setAuthData(Map<String, dynamic> authData) async {
+    try {
+      authData = await initSession(
+          token: authData['token'], username: authData['username']);
+      logger.d('AUTH FROM INIT $authData');
+    } on ApiError catch (error) {
+      logger.e('ERROR AFTER SUCCESSFUL AUTH: ${error.message}');
+      return false;
+    }
+    _updateFromMap(authData);
+    return true;
+  }
+
+  Future<Map<String, dynamic>> initSession(
+      {String username, String token}) async {
+    final body = {
+      "timezoneoffset": timeZoneOffset,
+      "fcm_token": fcmToken,
+      "token": token,
+      "username": username,
+    };
+    return await _api.post(Endpoint.init, body: body);
+  }
+
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
@@ -118,7 +141,7 @@ class AuthRepository extends JsonSerializable {
 
   // Clears up entire database, be carefull!
   Future<AuthResult> prolongToken() async {
-    logger.d('Prolonging token');
+    logger.d('Prolonging token\nAccess: $accessToken\nRefresh: $refreshToken');
     try {
       final response = await _api.post(
         Endpoint.prolong,
@@ -180,7 +203,7 @@ class AuthRepository extends JsonSerializable {
 
   void updateHeaders() {
     Map<String, String> headers = {
-      'Content-type': 'application/json',
+      'content-type': 'application/json',
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
@@ -202,9 +225,9 @@ class AuthRepository extends JsonSerializable {
   // specifically new accessToken in the header
   void _updateFromMap(Map<String, dynamic> map) {
     this.accessToken = map['token'];
-    this.accessTokenExpiration = map['expiration'];
+    this.accessTokenExpiration = map['expiration'].floor();
     this.refreshToken = map['refresh_token'];
-    this.refreshTokenExpiration = map['refresh_expiration'];
+    this.refreshTokenExpiration = map['refresh_expiration'].floor();
     save();
     updateHeaders();
     updateApiInterceptors();
