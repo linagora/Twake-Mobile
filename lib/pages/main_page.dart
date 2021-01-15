@@ -88,7 +88,7 @@ class _MainPageState extends State<MainPage>
                                 behavior: HitTestBehavior.translucent,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal: Dim.wm3,
+                                    horizontal: 12.0,
                                     vertical: Dim.heightMultiplier,
                                   ),
                                   child: ListView(

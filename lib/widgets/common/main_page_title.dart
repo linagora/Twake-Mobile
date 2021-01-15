@@ -25,7 +25,11 @@ class MainPageTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.headline3,
+          style: TextStyle(
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            color: Color(0xff444444),
+          ),
         ),
         BlocBuilder<SheetBloc, SheetState>(builder: (context, state) {
           if (state is SheetClosed || state is SheetInitial) {
