@@ -28,7 +28,8 @@ class LoadSingleWorkspace extends WorkspacesEvent {
 
 class ChangeSelectedWorkspace extends WorkspacesEvent {
   final String workspaceId;
-  ChangeSelectedWorkspace(this.workspaceId);
+
+  const ChangeSelectedWorkspace(this.workspaceId);
 
   @override
   List<Object> get props => [workspaceId];

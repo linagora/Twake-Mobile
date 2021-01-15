@@ -58,45 +58,55 @@ class _MainPageState extends State<MainPage>
       drawer: TwakeDrawer(),
       body: Stack(
         children: [
-
           // MainPage body
           SafeArea(
             child: Column(
               children: [
-                MainAppBar(scaffoldKey: _scaffoldKey,),
+                MainAppBar(
+                  scaffoldKey: _scaffoldKey,
+                ),
                 Expanded(
-                  child: BlocBuilder<ChannelsBloc, ChannelState>(
-                    builder: (ctx, state) =>
-                        (state is ChannelsLoaded || state is ChannelsEmpty)
-                            ? RefreshIndicator(
-                                onRefresh: () {
-                                  BlocProvider.of<ChannelsBloc>(ctx)
-                                      .add(ReloadChannels(forceFromApi: true));
-                                  return Future.delayed(Duration(seconds: 1));
-                                },
-                                child: GestureDetector(
-                                  onTap: () => _closeSheet(),
-                                  behavior: HitTestBehavior.translucent,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: Dim.wm3,
-                                      vertical: Dim.heightMultiplier,
-                                    ),
-                                    child: ListView(
-                                      children: [
-                                        // Starred channels will be implemented in version 2
-                                        // StarredChannelsBlock([]),
-                                        // Divider(height: Dim.hm5),
-                                        ChannelsGroup(),
-                                        Divider(height: Dim.hm5),
-                                        DirectMessagesGroup(),
-                                        SizedBox(height: Dim.hm2),
-                                      ],
-                                    ),
+                  child: BlocListener<ChannelsBloc, ChannelState>(
+                    listener: (ctx, state) {
+                      if (state is ErrorLoadingChannels)
+                        Scaffold.of(ctx).showSnackBar(SnackBar(
+                          content: Text('No connection to internet'),
+                          backgroundColor: Theme.of(ctx).errorColor,
+                        ));
+                    },
+                    child: BlocBuilder<ChannelsBloc, ChannelState>(
+                      builder: (ctx, state) => (state is ChannelsLoaded ||
+                              state is ChannelsEmpty)
+                          ? RefreshIndicator(
+                              onRefresh: () {
+                                BlocProvider.of<ChannelsBloc>(ctx)
+                                    .add(ReloadChannels(forceFromApi: true));
+                                return Future.delayed(Duration(seconds: 1));
+                              },
+                              child: GestureDetector(
+                                onTap: () => _closeSheet(),
+                                behavior: HitTestBehavior.translucent,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Dim.wm3,
+                                    vertical: Dim.heightMultiplier,
+                                  ),
+                                  child: ListView(
+                                    children: [
+                                      // Starred channels will be implemented in version 2
+                                      // StarredChannelsBlock([]),
+                                      // Divider(height: Dim.hm5),
+                                      ChannelsGroup(),
+                                      Divider(height: Dim.hm5),
+                                      DirectMessagesGroup(),
+                                      SizedBox(height: Dim.hm2),
+                                    ],
                                   ),
                                 ),
-                              )
-                            : Center(child: CircularProgressIndicator()),
+                              ),
+                            )
+                          : Center(child: CircularProgressIndicator()),
+                    ),
                   ),
                 ),
               ],

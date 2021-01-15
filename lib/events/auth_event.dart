@@ -18,7 +18,7 @@ class Authenticate extends AuthEvent {
 }
 
 class SetAuthData extends AuthEvent {
-  final Map<String, dynamic> authData;
+  final Map<String, String> authData;
 
   const SetAuthData(this.authData);
 

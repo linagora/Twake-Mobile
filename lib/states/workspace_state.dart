@@ -14,7 +14,6 @@ class WorkspacesLoaded extends WorkspaceState {
     this.selected,
   });
   @override
-  // TODO: implement props
   List<Object> get props => [workspaces, selected];
 }
 

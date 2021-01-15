@@ -36,3 +36,11 @@ class ChannelsEmpty extends ChannelState {
   @override
   List<Object> get props => [];
 }
+
+class ErrorLoadingChannels extends ChannelsLoaded {
+  const ErrorLoadingChannels({List<BaseChannel> channels})
+      : super(channels: channels);
+
+  @override
+  List<Object> get props => [];
+}
