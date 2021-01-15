@@ -26,6 +26,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       );
     } else if (event is RemoveUser) {
       throw 'Not implemented yet';
+    } else if (event is LoadUsers) {
+      yield MultipleUsersLoading();
+      final users = await repository.users();
+      if (users != null) {
+        yield MultipleUsersLoaded(users);
+      } else {
+        yield UserError('Users loading error.');
+      }
     }
   }
 }

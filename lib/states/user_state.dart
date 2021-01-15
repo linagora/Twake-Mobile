@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twake/models/user.dart';
 
 abstract class UserState extends Equatable {
   const UserState();
@@ -26,4 +27,29 @@ class UserReady extends UserState {
 
   @override
   List<Object> get props => [username];
+}
+
+class MultipleUsersLoading extends UserState {
+  const MultipleUsersLoading();
+
+  @override
+  List<Object> get props => [];
+}
+
+class MultipleUsersLoaded extends UserState {
+  final List<User> users;
+
+  MultipleUsersLoaded(this.users);
+
+  @override
+  List<Object> get props => [users];
+}
+
+class UserError extends UserState {
+  final String message;
+
+  UserError(this.message);
+
+  @override
+  List<Object> get props => [message];
 }

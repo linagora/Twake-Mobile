@@ -13,9 +13,6 @@ class ChannelInfoForm extends StatefulWidget {
 }
 
 class _ChannelInfoFormState extends State<ChannelInfoForm> {
-  var _channelName = '';
-  var _description = '';
-  var _groupName = '';
   var _canGoNext = false;
 
   final _channelNameController = TextEditingController();
@@ -32,6 +29,33 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
     _groupNameFocusNode.addListener(() {
       print(_groupNameFocusNode.hasFocus);
       setState(() {});
+    });
+
+    _channelNameController.addListener(() {
+      context
+          .read<AddChannelBloc>()
+          .add(Update(name: _channelNameController.text));
+      if (_channelNameController.text.isNotEmpty && !_canGoNext) {
+        setState(() {
+          _canGoNext = true;
+        });
+      } else if (_channelNameController.text.isEmpty && _canGoNext){
+        setState(() {
+          _canGoNext = false;
+        });
+      }
+    });
+
+    _descriptionController.addListener(() {
+      context
+          .read<AddChannelBloc>()
+          .add(Update(description: _descriptionController.text));
+    });
+
+    _groupNameController.addListener(() {
+      context
+          .read<AddChannelBloc>()
+          .add(Update(groupName: _groupNameController.text));
     });
   }
 
@@ -82,23 +106,25 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         HintLine(
           text: 'Please provide an optional description for your channel',
         ),
-        SizedBox(height: 20),
-        Container(
-          padding: const EdgeInsets.only(left: 14.0, right: 10),
-          color: Colors.white,
-          child: ChannelInfoTextForm(
-            hint: 'Channel group name',
-            controller: _groupNameController,
-            focusNode: _groupNameFocusNode,
-            leadingAction: () => _groupNameController.clear(),
-            trailingAction: () => print('SHOW GROUPS!'),
-          ),
-        ),
-        SizedBox(height: 8),
-        HintLine(
-          text:
-              'You can add your channel to an existing group or create a new one',
-        ),
+        // SizedBox(height: 20),
+        // Container(
+        //   padding: const EdgeInsets.only(left: 14.0, right: 10),
+        //   color: Colors.white,
+        //   child: ChannelInfoTextForm(
+        //     hint: 'Channel group name',
+        //     controller: _groupNameController,
+        //     focusNode: _groupNameFocusNode,
+        //     leadingAction: () => _groupNameController.clear(),
+        //     trailingAction: () => context
+        //         .read<AddChannelBloc>()
+        //         .add(SetFlowStage(FlowStage.groups)),
+        //   ),
+        // ),
+        // SizedBox(height: 8),
+        // HintLine(
+        //   text:
+        //       'You can add your channel to an existing group or create a new one',
+        // ),
       ],
     );
   }

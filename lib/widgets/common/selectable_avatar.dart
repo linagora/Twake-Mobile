@@ -55,7 +55,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
               : Colors.white,
         ),
       ),
-      onTap: _getImage,
+      onTap: null, //_getImage,
     );
   }
 }
