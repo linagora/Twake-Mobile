@@ -7,7 +7,7 @@ import 'package:twake/models/direct.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
-import 'package:twake/widgets/message/messages_groupped_list.dart';
+import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
@@ -45,6 +45,10 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   if (state.parentChannel is Channel)
                     Text('${state.parentChannel.membersCount ?? 'No'} members',
                         style: Theme.of(ctx).textTheme.bodyText2),
+                  if (state.parentChannel is Direct &&
+                      state.parentChannel.membersCount > 1)
+                    Text('${state.parentChannel.membersCount} members',
+                        style: Theme.of(ctx).textTheme.bodyText2),
                 ],
               ),
             ],
@@ -63,7 +67,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               ),
-            MessagesGrouppedList<T>(),
+            MessagesGroupedList<T>(),
             MessageEditField((content) {
               BlocProvider.of<MessagesBloc<T>>(context).add(
                 SendMessage(content: content),

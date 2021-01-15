@@ -1,5 +1,6 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io' show Platform;
+import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -101,6 +102,20 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
+  Future<void> setAuthData(Map<String, dynamic> authData) async {
+    _updateFromMap(authData);
+    await initSession(Random().nextInt(1000000).toString());
+  }
+
+  Future<void> initSession(String username) async {
+    final body = {
+      "timezoneoffset": timeZoneOffset,
+      "fcm_token": fcmToken,
+      "username": username,
+    };
+    await _api.post(Endpoint.init, body: body);
+  }
+
   Future<void> clean() async {
     // So that we don't try to validate token if we are not
     // authenticated
@@ -118,7 +133,7 @@ class AuthRepository extends JsonSerializable {
 
   // Clears up entire database, be carefull!
   Future<AuthResult> prolongToken() async {
-    logger.d('Prolonging token');
+    logger.d('Prolonging token\nAccess: $accessToken\nRefresh: $refreshToken');
     try {
       final response = await _api.post(
         Endpoint.prolong,
@@ -180,7 +195,7 @@ class AuthRepository extends JsonSerializable {
 
   void updateHeaders() {
     Map<String, String> headers = {
-      'Content-type': 'application/json',
+      'content-type': 'application/json',
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
@@ -202,9 +217,9 @@ class AuthRepository extends JsonSerializable {
   // specifically new accessToken in the header
   void _updateFromMap(Map<String, dynamic> map) {
     this.accessToken = map['token'];
-    this.accessTokenExpiration = map['expiration'];
+    this.accessTokenExpiration = map['expiration'].floor();
     this.refreshToken = map['refresh_token'];
-    this.refreshTokenExpiration = map['refresh_expiration'];
+    this.refreshTokenExpiration = map['refresh_expiration'].floor();
     save();
     updateHeaders();
     updateApiInterceptors();

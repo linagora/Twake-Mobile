@@ -10,6 +10,7 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(required: true)
   String name;
 
+  @JsonKey(defaultValue: ':+1:')
   String icon;
 
   String description;
@@ -17,13 +18,13 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(required: true, name: 'members_count')
   int membersCount;
 
-  @JsonKey(required: true, name: 'last_activity')
+  @JsonKey(name: 'last_activity', defaultValue: 0)
   int lastActivity;
 
-  @JsonKey(required: true, name: 'messages_total')
+  @JsonKey(required: true, name: 'messages_total', defaultValue: 0)
   int messagesTotal;
 
-  @JsonKey(required: true, name: 'messages_unread')
+  @JsonKey(required: true, name: 'messages_unread', defaultValue: 0)
   int messagesUnread;
 
   @JsonKey(name: 'is_selected', defaultValue: 0)

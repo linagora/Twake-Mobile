@@ -4,11 +4,12 @@ import 'package:twake/widgets/auth/auth_form.dart';
 
 class AuthPage extends StatelessWidget {
   static const route = '/auth';
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Stack(
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
           children: [
             Container(
               height: Dim.maxScreenHeight,

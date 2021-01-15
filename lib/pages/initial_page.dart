@@ -8,11 +8,14 @@ import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/pages/auth_page.dart';
+// import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
+import 'package:twake/pages/web_auth_page.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -34,6 +37,7 @@ class _InitialPageState extends State<InitialPage> {
           height: Dim.heightPercent(13),
           child: Lottie.asset(
             'assets/animations/splash.json',
+            animate: true,
             repeat: true,
           ),
         ),
@@ -49,7 +53,7 @@ class _InitialPageState extends State<InitialPage> {
           return buildSplashScreen();
         }
         if (state is Unauthenticated) {
-          return AuthPage();
+          return WebAuthPage();
         }
         if (state is Authenticated) {
           return MultiBlocProvider(
@@ -82,21 +86,11 @@ class _InitialPageState extends State<InitialPage> {
                   notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                 );
               }),
-              BlocProvider<ThreadsBloc>(
-                create: (ctx) {
-                  return ThreadsBloc(
-                    repository: state.initData.threads,
-                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
-                  );
-                },
-                lazy: false,
-              ),
               BlocProvider<MessagesBloc<ChannelsBloc>>(
                 create: (ctx) {
                   return MessagesBloc<ChannelsBloc>(
                     repository: state.initData.messages,
                     channelsBloc: BlocProvider.of<ChannelsBloc>(ctx),
-                    threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },
@@ -107,10 +101,39 @@ class _InitialPageState extends State<InitialPage> {
                   return MessagesBloc<DirectsBloc>(
                     repository: state.initData.messages,
                     channelsBloc: BlocProvider.of<DirectsBloc>(ctx),
-                    threadsBloc: BlocProvider.of<ThreadsBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 },
+                lazy: false,
+              ),
+              BlocProvider<ThreadsBloc<ChannelsBloc>>(
+                create: (ctx) {
+                  return ThreadsBloc<ChannelsBloc>(
+                    repository: state.initData.threads,
+                    messagesBloc:
+                        BlocProvider.of<MessagesBloc<ChannelsBloc>>(ctx),
+                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                  );
+                },
+                lazy: false,
+              ),
+              BlocProvider<ThreadsBloc<DirectsBloc>>(
+                create: (ctx) {
+                  return ThreadsBloc<DirectsBloc>(
+                    repository: state.initData.threads,
+                    messagesBloc:
+                        BlocProvider.of<MessagesBloc<DirectsBloc>>(ctx),
+                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                  );
+                },
+                lazy: false,
+              ),
+              BlocProvider<SheetBloc>(
+                create: (_) => SheetBloc(state.initData.sheet),
+                lazy: false,
+              ),
+              BlocProvider<AddChannelBloc>(
+                create: (_) => AddChannelBloc(state.initData.addChannel),
                 lazy: false,
               ),
             ],

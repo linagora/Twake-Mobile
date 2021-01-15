@@ -12,7 +12,7 @@ export 'package:twake/states/single_message_state.dart';
 
 class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
   final Message message;
-  static final RegExp _userId = RegExp('user_id:([^\s]+)');
+  static final RegExp _userId = RegExp('@([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
 
   SingleMessageBloc(this.message)
       : super(MessageReady(
@@ -20,8 +20,13 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
           responsesCount: message.responsesCount,
           creationDate: message.creationDate,
           content: message.content.prepared,
-          text: (message.content.originalStr ?? '').replaceFirst(_userId, ''),
-          charCount: (message.content.originalStr ?? '').length,
+          threadId: message.threadId,
+          text: (message.content.originalStr ?? '').replaceAllMapped(_userId,
+              (match) {
+            final end = message.content.originalStr.indexOf(':', match.start);
+            return message.content.originalStr.substring(match.start, end);
+          }),
+          charCount: (message.content.originalStr ?? ' ').length,
           reactions: message.reactions,
           userId: message.userId,
         ));
@@ -58,5 +63,6 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
         charCount: (message.content.originalStr ?? '').length,
         reactions: message.reactions,
         userId: message.userId,
+        threadId: message.threadId,
       );
 }

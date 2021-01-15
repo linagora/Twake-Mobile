@@ -78,8 +78,12 @@ class Api {
     Map<String, dynamic> body,
   }) async {
     final url = _SHOST + method;
-    final response = await dio.delete(url, data: body);
-    return response.data;
+    try {
+      final response = await dio.delete(url, data: body);
+      return response.data;
+    } catch (e) {
+      throw ApiError.fromDioError(e);
+    }
   }
 
   Future<dynamic> get(
@@ -92,8 +96,16 @@ class Api {
       path: method,
       queryParameters: params,
     );
-    final response = await dio.getUri(uri);
-    return response.data;
+    try {
+      final response = await dio.getUri(uri);
+      // logger.d('METHOD: ${uri.toString()}');
+      // logger.d('HEADERS: ${dio.options.headers}');
+      // logger.d('PARAMS: $params');
+      // logger.d('RESPONSE: ${response.data}');
+      return response.data;
+    } catch (e) {
+      throw ApiError.fromDioError(e);
+    }
   }
 
   Future<dynamic> patch(
@@ -101,8 +113,12 @@ class Api {
     Map<String, dynamic> body,
   }) async {
     final url = _SHOST + method;
-    final response = await dio.patch(url, data: body);
-    return response.data;
+    try {
+      final response = await dio.patch(url, data: body);
+      return response.data;
+    } catch (e) {
+      throw ApiError.fromDioError(e);
+    }
   }
 
   Future<dynamic> post(
@@ -111,8 +127,13 @@ class Api {
     bool useTokenDio = false,
   }) async {
     final url = _SHOST + method;
-    final response = await (useTokenDio ? tokenDio : dio).post(url, data: body);
-    return response.data;
+    try {
+      final response =
+          await (useTokenDio ? tokenDio : dio).post(url, data: body);
+      return response.data;
+    } catch (e) {
+      throw ApiError.fromDioError(e);
+    }
   }
 
   // helper method to add on request and on error interceptors to Dio
@@ -136,17 +157,19 @@ class Api {
             }
           }
         },
-        onError: (DioError error) {
+        onError: (DioError error) async {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // referesh token, we automatically use it to get a new token
-          logger.e('Error during network request\n${error.response.data}');
-          logger.e('QUERY WAS:\n${error.request.data}');
+          logger.e('Error during network request!' +
+              '\nMethod: ${error.request.path}' +
+              '\nError: ${error.response.data}' +
+              '\nData: ${error.request.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
-            _prolongToken();
+            await _prolongToken();
           } else {
-            return ApiError.fromDioError(error);
+            return error;
           }
         },
       ),
@@ -172,12 +195,14 @@ class ApiError implements Exception {
     var apiErrorType = ApiErrorType.Unknown;
     if (error.response.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;
-    } else if (error.response.statusCode == 401) {
+    } else if (const [401, 403].contains(error.response.statusCode)) {
       apiErrorType = ApiErrorType.Unauthorized;
     } else if (error.response.statusCode == 400) {
       apiErrorType = ApiErrorType.BadRequest;
     } else if (error.response.statusCode == 404) {
       apiErrorType = ApiErrorType.NotFound;
+    } else {
+      throw error;
     }
 
     return ApiError(

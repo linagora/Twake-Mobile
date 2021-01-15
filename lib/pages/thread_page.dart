@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/messages_bloc.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
@@ -12,10 +10,13 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
 class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
+  final bool autofocus;
+  ThreadPage({this.autofocus: false});
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessagesBloc<T>, MessagesState>(
-      builder: (ctx, threadState) {
+    return BlocBuilder<ThreadsBloc<T>, MessagesState>(
+      builder: (ctx, state) {
         return Scaffold(
           appBar: AppBar(
             titleSpacing: 0.0,
@@ -25,11 +26,10 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
               dense: true,
               visualDensity: VisualDensity.compact,
               contentPadding: EdgeInsets.zero,
-              leading: threadState.parentChannel is Direct
-                  ? StackedUserAvatars(
-                      (threadState.parentChannel as Direct).members)
+              leading: state.parentChannel is Direct
+                  ? StackedUserAvatars((state.parentChannel as Direct).members)
                   : TextAvatar(
-                      threadState.parentChannel.icon,
+                      state.parentChannel.icon,
                       emoji: true,
                       fontSize: Dim.tm4(),
                     ),
@@ -38,7 +38,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                 style: Theme.of(context).textTheme.headline6,
               ),
               subtitle: Text(
-                threadState.parentChannel.name,
+                state.parentChannel.name,
                 style: Theme.of(context).textTheme.bodyText2,
                 overflow: TextOverflow.fade,
                 maxLines: 1,
@@ -54,44 +54,36 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  BlocBuilder<ThreadsBloc, MessagesState>(
-                      builder: (ctx, state) {
-                    print('STATE IS $state');
-                    if (state is MessagesLoaded) {
-                      return ThreadMessagesList<T>(
-                        state.messages,
-                        threadMessage:
-                            (threadState as MessageSelected).threadMessage,
-                      );
-                    } else if (state is MessagesEmpty) {
-                      return Expanded(
-                          child: Center(child: Text('No responses yet')));
-                    } else
-                      return Expanded(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(),
+                  if (state is MessagesLoaded)
+                    ThreadMessagesList<T>(
+                      state.messages,
+                      threadMessage: state.threadMessage,
+                    ),
+                  if (state is MessagesEmpty)
+                    Expanded(
+                      child: Center(
+                        child: Text('No responses yet'),
+                      ),
+                    ),
+                  if (state is MessagesLoading)
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  MessageEditField(
+                    (content) {
+                      BlocProvider.of<ThreadsBloc<T>>(ctx).add(
+                        SendMessage(
+                          content: content,
+                          channelId: state.parentChannel.id,
+                          threadId: state.threadMessage.id,
                         ),
                       );
-                  }),
-                  MessageEditField((content) {
-                    BlocProvider.of<MessagesBloc<T>>(ctx).add(
-                      SendMessage(
-                        content: content,
-                        channelId: threadState.parentChannel.id,
-                        threadId:
-                            (threadState as MessageSelected).threadMessage.id,
-                      ),
-                    );
-                    // TODO fix the mess regarding failed message dispatch
-                    BlocProvider.of<MessagesBloc<T>>(ctx).add(
-                      ModifyResponsesCount(
-                        threadId:
-                            (threadState as MessageSelected).threadMessage.id,
-                        modifier: 1,
-                      ),
-                    );
-                  }, autofocus: true),
+                    },
+                    autofocus: autofocus,
+                  ),
                 ],
               ),
             ),

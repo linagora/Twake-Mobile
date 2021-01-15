@@ -14,12 +14,20 @@ class StylesConfig {
     accentColor: accentColorRGB,
     // brightness: Brightness.light,
     textTheme: lightTextTheme,
+    useTextSelectionTheme: true,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Color(0xff837cfe),
+      // selectionColor: darkPrimarySwatchColor,
+      // selectionHandleColor: darkPrimarySwatchColor,
+    ),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
         color: Colors.black87,
       ),
       color: Colors.white,
       shadowColor: Colors.grey[300],
+      elevation: 0.0,
+      brightness: Brightness.light,
     ),
     // fontFamily: 'PT',
   );

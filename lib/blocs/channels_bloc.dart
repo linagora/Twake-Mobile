@@ -25,7 +25,9 @@ class ChannelsBloc extends BaseChannelBloc {
     this.notificationBloc,
   }) : super(
             repository: repository,
-            initState: ChannelsLoaded(channels: repository.items)) {
+            initState: repository.isEmpty
+                ? ChannelsEmpty()
+                : ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         selectedParentId = state.selected.id;
@@ -35,10 +37,11 @@ class ChannelsBloc extends BaseChannelBloc {
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (state is BaseChannelMessageNotification) {
-        this.add(ModifyUnreadCount(
+        this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           workspaceId: state.data.workspaceId,
-          modifier: 1,
+          totalModifier: 1,
+          unreadModifier: 1,
         ));
       }
     });
@@ -60,6 +63,7 @@ class ChannelsBloc extends BaseChannelBloc {
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
+      if (repository.isEmpty) yield ChannelsEmpty();
       yield ChannelsLoaded(
         channels: repository.items,
       );
@@ -76,14 +80,8 @@ class ChannelsBloc extends BaseChannelBloc {
         selected: repository.selected,
       );
       yield newState;
-    } else if (event is ModifyUnreadCount) {
-      final ch = await repository.getItemById(event.channelId);
-      if (ch != null) {
-        ch.messagesUnread += event.modifier;
-        ch.messagesTotal += event.modifier.isNegative ? 0 : event.modifier;
-        repository.saveOne(ch);
-      } else
-        return;
+    } else if (event is ModifyMessageCount) {
+      await this.updateMessageCount(event);
       if (event.workspaceId == selectedParentId) {
         yield ChannelsLoaded(
           channels: repository.items,

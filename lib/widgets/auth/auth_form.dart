@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/config/styles_config.dart';
-import 'package:twake/pages/webview_page.dart';
+// import 'package:twake/pages/webview_page.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
@@ -36,9 +36,9 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   initState() {
+    super.initState();
     passwordController.addListener(onPasswordSaved);
     usernameController.addListener(onUsernameSaved);
-    super.initState();
   }
 
   @override
@@ -126,12 +126,7 @@ class _AuthFormState extends State<AuthForm> {
               Align(
                 alignment: Alignment.centerRight,
                 child: FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                      WebViewScreen.route,
-                      arguments: 'https://web.twake.app/',
-                    );
-                  },
+                  onPressed: () {},
                   child: Text(
                     'Forgot password?',
                     style: StylesConfig.miniPurple,
@@ -169,15 +164,11 @@ class _AuthFormState extends State<AuthForm> {
                     children: [
                       Text(
                         'Don\'t have an account? ',
-                        style: StylesConfig.miniPurple.copyWith(color: Colors.black87),
+                        style: StylesConfig.miniPurple
+                            .copyWith(color: Colors.black87),
                       ),
                       FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            WebViewScreen.route,
-                            arguments: 'https://web.twake.app/',
-                          );
-                        },
+                        onPressed: () {},
                         child: Text(
                           ' Sign up',
                           style: StylesConfig.miniPurple,
@@ -218,10 +209,9 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      // style: TextStyle(fontSize: Dim.tm2(decimal:0.2)),
+      // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
-      // onFieldSubmitted: widget.onSaved,
       controller: widget.controller,
       focusNode: widget.focusNode,
       keyboardType: TextInputType.emailAddress,

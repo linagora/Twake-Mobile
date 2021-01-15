@@ -2,42 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/widgets/channel/direct_tile.dart';
+import 'package:twake/widgets/common/main_page_title.dart';
 
 class DirectMessagesGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<DirectsBloc, ChannelState>(
       builder: (ctx, state) {
-        if (state is ChannelsLoaded) {
-          return Column(
-            children: [
-              Row(
-                children: [
-                  Text(
-                    'Direct Messages',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  // Expanded(
-                  // child: Align(
-                  // alignment: Alignment.centerRight,
-                  // child: IconButton(
-                  // onPressed: () {},
-                  // iconSize: Dim.tm4(),
-                  // icon: Icon(
-                  // Icons.add,
-                  // color: Colors.black,
-                  // ),
-                  // ),
-                  // ),
-                  // ),
-                ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MainPageTitle(
+              title: 'Direct Messages',
+              trailingAction: () =>
+                  print('Add new direct channel button pressed'),
+            ),
+            if (state is ChannelsLoaded)
+              ...state.channels.map((d) => DirectTile(d)).toList(),
+            if (state is ChannelsEmpty)
+              Padding(
+                padding: EdgeInsets.all(7.0),
+                child: Text('You have no direct channels yet'),
               ),
-              ...state.channels.map((d) => DirectTile(d)).toList()
-            ],
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
+            if (state is ChannelsLoading) CircularProgressIndicator(),
+          ],
+        );
       },
     );
   }

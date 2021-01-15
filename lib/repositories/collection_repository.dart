@@ -38,8 +38,12 @@ class CollectionRepository<T extends CollectionItem> {
 
   CollectionRepository({this.items, this.apiEndpoint});
 
-  T get selected =>
-      items.firstWhere((i) => i.isSelected == 1, orElse: () => items[0]);
+  bool get isEmpty => items.isEmpty;
+
+  T get selected => items.firstWhere((i) => i.isSelected == 1, orElse: () {
+        if (items.isNotEmpty) return items[0];
+        return null;
+      });
 
   int get itemsCount => (items ?? []).length;
 
@@ -154,16 +158,23 @@ class CollectionRepository<T extends CollectionItem> {
     saveOne(item);
   }
 
-  Future<void> pushOne(
+  Future<bool> pushOne(
     Map<String, dynamic> body, {
     addToItems = true,
   }) async {
     logger.d('Sending item $T to api...');
-    final resp = (await _api.post(apiEndpoint, body: body));
+    var resp;
+    try {
+      resp = (await _api.post(apiEndpoint, body: body));
+    } catch (error) {
+      logger.e('Error while sending $T item to api\n${error.message}');
+      return false;
+    }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = _typeToConstuctor[T](resp);
     if (addToItems) this.items.add(item);
     saveOne(item);
+    return true;
   }
 
   Future<T> getItemById(String id) async {
@@ -208,6 +219,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> save() async {
+    logger.d('SAVING $T items to store!');
     await _storage.batchStore(
       items: this.items.map((i) => i.toJson()),
       type: _typeToStorageType[T],
