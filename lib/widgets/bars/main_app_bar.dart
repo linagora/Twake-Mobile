@@ -28,7 +28,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (state is WorkspacesLoaded)
               return ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: ImageAvatar(state.selected.logo),
+                leading: SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: ImageAvatar(state.selected.logo),
+                ),
                 title: Text(
                   state.selected.name,
                   style: TextStyle(
@@ -45,6 +49,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           }),
           Divider(
             thickness: 1.0,
+            height: 1.0,
             color: Color(0xffEEEEEE),
           ),
         ],
