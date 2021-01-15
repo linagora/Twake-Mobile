@@ -35,36 +35,62 @@ class ChannelTile extends StatelessWidget {
               emoji: true,
             ),
             SizedBox(width: 12),
-            Text(
-              channel.name,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w400,
-                color: Color(0xff444444),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  channel.name,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff444444),
+                  ),
+                ),
+                if (channel.description.isNotEmpty)
+                  Padding(
+                    padding: EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      channel.description,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff444444),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             Spacer(flex: 2),
-            Text(
-              DateFormatter.getVerboseDateTime(channel.lastActivity),
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-            if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
-            if (channel.messagesUnread != 0)
-              Chip(
-                labelPadding:
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  DateFormatter.getVerboseDateTime(channel.lastActivity),
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+                if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
+                if (channel.messagesUnread != 0)
+                  Chip(
+                    labelPadding:
                     EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
-                label: Text(
-                  '${channel.messagesUnread}',
-                  style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
-                ),
-                clipBehavior: Clip.antiAlias,
-                backgroundColor: Color.fromRGBO(255, 81, 84, 1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
+                    label: Text(
+                      '${channel.messagesUnread}',
+                      style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    backgroundColor: Color.fromRGBO(255, 81, 84, 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
