@@ -79,6 +79,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                   child: SizedBox(
                                     height: 62,
                                     child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
                                       children: [
                                         ImageAvatar(
                                           state.workspaces[i].logo,
@@ -92,6 +94,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            SizedBox(height: 12),
                                             Text(
                                               state.workspaces[i].name,
                                               style: TextStyle(
@@ -109,6 +112,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                                 color: Color(0xff444444),
                                               ),
                                             ),
+                                            SizedBox(height: 12),
                                           ],
                                         ),
                                       ],
@@ -135,6 +139,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                   });
                                 },
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     ImageAvatar(
                                       state.companies[i].logo,
@@ -148,6 +154,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        SizedBox(height: 12),
                                         Text(
                                           state.companies[i].name,
                                           style: TextStyle(
@@ -165,6 +172,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                             color: Color(0xff444444),
                                           ),
                                         ),
+                                        SizedBox(height: 12),
                                       ],
                                     ),
                                   ],
@@ -180,7 +188,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
               ),
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (ctx, state) => state is ProfileLoaded
-                    ? Padding(
+                    ? Container(
+                  height: 52,
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: Row(
                           children: [
@@ -199,16 +208,16 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                               ),
                             ),
                             Spacer(),
-                            IconButton(
-                              onPressed: () async {
+                            InkWell(
+                              onTap: () async {
                                 await CookieManager().clearCookies();
                                 BlocProvider.of<AuthBloc>(ctx)
                                     .add(ResetAuthentication());
                               },
-                              color: Colors.black87,
-                              icon: Icon(
+                              child: Icon(
                                 Icons.logout,
-                                size: Dim.tm4(),
+                                color: Color(0xff444444),
+                                size: 30,
                               ),
                             ),
                           ],
