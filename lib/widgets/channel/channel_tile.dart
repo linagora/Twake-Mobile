@@ -20,9 +20,19 @@ class ChannelTile extends StatelessWidget {
           ChangeSelectedChannel(channel.id),
         );
         // Navigator.of(context).pushNamed(Routes.messages);
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context)
+            .push(MaterialPageRoute(
           builder: (context) => MessagesPage<ChannelsBloc>(),
-        ));
+        ))
+            .then((r) {
+          if (r is bool && r) {
+            Scaffold.of(context).hideCurrentSnackBar();
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('No connection to internet'),
+              backgroundColor: Theme.of(context).errorColor,
+            ));
+          }
+        });
       },
       child: SizedBox(
         height: 62.0,
