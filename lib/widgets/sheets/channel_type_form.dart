@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -17,8 +18,9 @@ class _ChannelTypeFormState extends State<ChannelTypeForm> {
   Widget build(BuildContext context) {
     return BlocConsumer<AddChannelBloc, AddChannelState>(
       listener: (context, state) {
-
         if (state is Created) {
+          // Reload channels
+          context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
           // Close sheet
           context.read<SheetBloc>().add(CloseSheet());
         } else if (state is Error) {

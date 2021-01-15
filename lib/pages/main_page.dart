@@ -58,7 +58,6 @@ class _MainPageState extends State<MainPage>
       drawer: TwakeDrawer(),
       body: Stack(
         children: [
-
           // MainPage body
           SafeArea(
             child: Column(
