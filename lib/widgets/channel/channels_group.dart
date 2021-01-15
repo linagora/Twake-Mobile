@@ -15,18 +15,7 @@ class ChannelsGroup extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BlocBuilder<SheetBloc, SheetState>(builder: (context, state) {
-              return MainPageTitle(
-                title: 'Channels',
-                trailingAction: () {
-                  if (state is SheetClosed || state is SheetInitial) {
-                    context.read<SheetBloc>().add(OpenSheet());
-                  } else {
-                    context.read<SheetBloc>().add(CloseSheet());
-                  }
-                },
-              );
-            }),
+            MainPageTitle(title: 'Channels'),
             if (state is ChannelsLoaded)
               ...state.channels.map((c) => ChannelTile(c)).toList(),
             if (state is ChannelsEmpty)
