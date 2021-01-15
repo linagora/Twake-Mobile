@@ -15,105 +15,107 @@ class _ChannelTypeFormState extends State<ChannelTypeForm> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddChannelBloc, AddChannelState>(
-        builder: (context, state) {
-      var channelType = ChannelType.public;
-      if (state is Updated) {
-        channelType = state.repository?.type;
-      }
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SheetTitleBar(
-            title: 'New Channel',
-            leadingTitle: 'Back',
-            leadingAction: () => context
-                .read<AddChannelBloc>()
-                .add(SetFlowStage(FlowStage.info)),
-            trailingTitle: 'Create',
-            trailingAction: () => context.read<AddChannelBloc>().add(Create()),
-          ),
-          SizedBox(height: 23),
-          Padding(
-            padding: const EdgeInsets.only(left: 14.0, right: 100.0),
-            child: Text(
-              'CHANNEL TYPE',
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 13.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black.withOpacity(0.4),
+      buildWhen: (previous, current) {
+        return (current is Updated);
+      },
+      builder: (context, state) {
+        var channelType = ChannelType.public;
+        if (state is Updated) {
+          channelType = state.repository?.type;
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SheetTitleBar(
+              title: 'New Channel',
+              leadingTitle: 'Back',
+              leadingAction: () => context
+                  .read<AddChannelBloc>()
+                  .add(SetFlowStage(FlowStage.info)),
+              trailingTitle: 'Create',
+              trailingAction: () =>
+                  context.read<AddChannelBloc>().add(Create()),
+            ),
+            SizedBox(height: 23),
+            Padding(
+              padding: const EdgeInsets.only(left: 14.0, right: 100.0),
+              child: Text(
+                'CHANNEL TYPE',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black.withOpacity(0.4),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 6),
-          ChannelTypesContainer(),
-          SizedBox(height: 8),
-          HintLine(
-            text: channelType != ChannelType.direct
-                ? 'Public channels can be found by everyone, though private can only be joined by invitation'
-                : 'Direct channels involve correspondence between selected members',
-          ),
-          if (channelType == ChannelType.public) AddAllSwitcher(),
-          if (channelType == ChannelType.private) SizedBox(),
-          if (channelType == ChannelType.direct) ParticipantsButton(),
-          HintLine(
-            text: channelType != ChannelType.private
-                ? (channelType != ChannelType.direct
-                    ? 'Only available for public channels'
-                    : 'Only available for direct channels')
-                : '',
-          ),
-        ],
-      );
-    });
+            SizedBox(height: 6),
+            ChannelTypesContainer(type: channelType),
+            SizedBox(height: 8),
+            HintLine(
+              text: channelType != ChannelType.direct
+                  ? 'Public channels can be found by everyone, though private can only be joined by invitation'
+                  : 'Direct channels involve correspondence between selected members',
+            ),
+            if (channelType == ChannelType.public) AddAllSwitcher(),
+            if (channelType == ChannelType.private) SizedBox(),
+            if (channelType == ChannelType.direct) ParticipantsButton(),
+            HintLine(
+              text: channelType != ChannelType.private
+                  ? (channelType != ChannelType.direct
+                      ? 'Only available for public channels'
+                      : 'Only available for direct channels')
+                  : '',
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
 class ChannelTypesContainer extends StatelessWidget {
-  const ChannelTypesContainer({Key key}) : super(key: key);
+  final ChannelType type;
+
+  const ChannelTypesContainer({
+    Key key,
+    @required this.type,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddChannelBloc, AddChannelState>(
-        builder: (context, state) {
-      var type = ChannelType.public;
-      if (state is Updated) {
-        type = state.repository.type;
-      }
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Divider(
-            thickness: 0.5,
-            height: 0.5,
-            color: Colors.black.withOpacity(0.2),
-          ),
-          SelectableItem(
-            title: 'Public',
-            selected: type == ChannelType.public,
-            onTap: () => context
-                .read<AddChannelBloc>()
-                .add(Update(type: ChannelType.public)),
-          ),
-          SelectableItem(
-            title: 'Private',
-            selected: type == ChannelType.private,
-            onTap: () => context
-                .read<AddChannelBloc>()
-                .add(Update(type: ChannelType.private)),
-          ),
-          SelectableItem(
-            title: 'Direct',
-            selected: type == ChannelType.direct,
-            onTap: () => context
-                .read<AddChannelBloc>()
-                .add(Update(type: ChannelType.direct)),
-          ),
-        ],
-      );
-    });
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Divider(
+          thickness: 0.5,
+          height: 0.5,
+          color: Colors.black.withOpacity(0.2),
+        ),
+        SelectableItem(
+          title: 'Public',
+          selected: type == ChannelType.public,
+          onTap: () => context
+              .read<AddChannelBloc>()
+              .add(Update(type: ChannelType.public)),
+        ),
+        SelectableItem(
+          title: 'Private',
+          selected: type == ChannelType.private,
+          onTap: () => context
+              .read<AddChannelBloc>()
+              .add(Update(type: ChannelType.private)),
+        ),
+        SelectableItem(
+          title: 'Direct',
+          selected: type == ChannelType.direct,
+          onTap: () => context
+              .read<AddChannelBloc>()
+              .add(Update(type: ChannelType.direct)),
+        ),
+      ],
+    );
   }
 }
 
