@@ -17,46 +17,57 @@ class TwakeDrawer extends StatefulWidget {
 
 class _TwakeDrawerState extends State<TwakeDrawer> {
   bool _companiesHidden = true;
+
   @override
   Widget build(BuildContext context) {
-    final padding = EdgeInsets.symmetric(
-      horizontal: Dim.wm2,
-      vertical: Dim.heightMultiplier,
-    );
-    return Container(
+    return SizedBox(
       width: Dim.widthPercent(80),
       child: Drawer(
         child: SafeArea(
           child: Column(
             children: [
-              ListTile(
-                contentPadding: EdgeInsets.only(left: Dim.wm3),
-                title: Text(
-                  _companiesHidden ? 'Workspaces' : 'Choose company',
-                  style: Theme.of(context).textTheme.headline5,
-                ), // TODO configure the styles
-                trailing: _companiesHidden
-                    ? IconButton(
-                        color: Colors.black87,
-                        onPressed: () {
-                          setState(() {
-                            _companiesHidden = false;
-                          });
-                        },
-                        iconSize: Dim.tm4(),
-                        icon: Icon(
-                          Icons.loop,
-                        ),
-                      )
-                    : SizedBox(width: 0, height: 0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Row(
+                  children: [
+                    Text(
+                      _companiesHidden ? 'Workspaces' : 'Choose company',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff444444),
+                      ),
+                    ),
+                    Spacer(),
+                    _companiesHidden
+                        ? IconButton(
+                            color: Colors.black87,
+                            onPressed: () {
+                              setState(() {
+                                _companiesHidden = false;
+                              });
+                            },
+                            iconSize: Dim.tm4(),
+                            icon: Icon(
+                              Icons.loop,
+                            ),
+                          )
+                        : SizedBox(width: 0, height: 0),
+                  ],
+                ),
               ),
-              Divider(),
+              Divider(
+                thickness: 2.0,
+                height: 2.0,
+                color: Color(0xffEEEEEE),
+              ),
               SizedBox(height: Dim.hm2),
               if (_companiesHidden)
                 Expanded(
                   child: BlocBuilder<WorkspacesBloc, WorkspaceState>(
                     builder: (ctx, state) => state is WorkspacesLoaded
                         ? ListView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
                             itemCount: state.workspaces.length,
                             itemBuilder: (ctx, i) => InkWell(
                                   onTap: () {
@@ -65,14 +76,43 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                             state.workspaces[i].id));
                                     Navigator.of(context).pop();
                                   },
-                                  child: ListTile(
-                                    leading:
-                                        ImageAvatar(state.workspaces[i].logo),
-                                    title: Text(
-                                      state.workspaces[i].name,
+                                  child: SizedBox(
+                                    height: 62,
+                                    child: Row(
+                                      children: [
+                                        ImageAvatar(
+                                          state.workspaces[i].logo,
+                                          width: 30,
+                                          height: 30,
+                                        ),
+                                        SizedBox(width: 15),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              state.workspaces[i].name,
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w600,
+                                                color: Color(0xff444444),
+                                              ),
+                                            ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              '${state.workspaces[i].totalMembers} members',
+                                              style: TextStyle(
+                                                fontSize: 12.0,
+                                                fontWeight: FontWeight.w400,
+                                                color: Color(0xff444444),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    subtitle: Text(
-                                        '${state.workspaces[i].totalMembers} members'),
                                   ),
                                 ))
                         : CircularProgressIndicator(),
@@ -83,6 +123,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                   child: BlocBuilder<CompaniesBloc, CompaniesState>(
                       builder: (ctx, state) => state is CompaniesLoaded
                           ? ListView.builder(
+                              padding: EdgeInsets.symmetric(horizontal: 15),
                               itemCount: state.companies.length,
                               itemBuilder: (ctx, i) => InkWell(
                                 onTap: () {
@@ -93,39 +134,84 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                     _companiesHidden = true;
                                   });
                                 },
-                                child: ListTile(
-                                  leading: ImageAvatar(state.companies[i].logo),
-                                  title: Text(
-                                    state.companies[i].name,
-                                  ),
-                                  subtitle: Text(
-                                      '${state.companies[i].totalMembers} members'),
+                                child: Row(
+                                  children: [
+                                    ImageAvatar(
+                                      state.companies[i].logo,
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                    SizedBox(width: 15),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          state.companies[i].name,
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xff444444),
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          '${state.companies[i].totalMembers} members',
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: Color(0xff444444),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             )
                           : CircularProgressIndicator()),
                 ),
-              Divider(),
+              Divider(
+                thickness: 2.0,
+                height: 2.0,
+                color: Color(0xffEEEEEE),
+              ),
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (ctx, state) => state is ProfileLoaded
-                    ? ListTile(
-                        contentPadding: padding,
-                        leading: ImageAvatar(state.thumbnail),
-                        title: Text(
-                          '${state.firstName} ${state.lastName}',
-                          style: Theme.of(context).textTheme.headline5,
-                        ), // TODO configure the styles
-                        trailing: IconButton(
-                          onPressed: () async {
-                            await CookieManager().clearCookies();
-                            BlocProvider.of<AuthBloc>(ctx)
-                                .add(ResetAuthentication());
-                          },
-                          color: Colors.black87,
-                          icon: Icon(
-                            Icons.logout,
-                            size: Dim.tm4(),
-                          ),
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.0),
+                        child: Row(
+                          children: [
+                            ImageAvatar(
+                              state.thumbnail,
+                              width: 30,
+                              height: 30,
+                            ),
+                            SizedBox(width: 15),
+                            Text(
+                              '${state.firstName} ${state.lastName}',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff444444),
+                              ),
+                            ),
+                            Spacer(),
+                            IconButton(
+                              onPressed: () async {
+                                await CookieManager().clearCookies();
+                                BlocProvider.of<AuthBloc>(ctx)
+                                    .add(ResetAuthentication());
+                              },
+                              color: Colors.black87,
+                              icon: Icon(
+                                Icons.logout,
+                                size: Dim.tm4(),
+                              ),
+                            ),
+                          ],
                         ),
                       )
                     : CircularProgressIndicator(),
@@ -137,3 +223,28 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
     );
   }
 }
+
+// BlocBuilder<ProfileBloc, ProfileState>(
+//   builder: (ctx, state) => state is ProfileLoaded
+//       ? ListTile(
+//           contentPadding: padding,
+//           leading: ImageAvatar(state.thumbnail),
+//           title: Text(
+//             '${state.firstName} ${state.lastName}',
+//             style: Theme.of(context).textTheme.headline5,
+//           ), // TODO configure the styles
+//           trailing: IconButton(
+//             onPressed: () async {
+//               await CookieManager().clearCookies();
+//               BlocProvider.of<AuthBloc>(ctx)
+//                   .add(ResetAuthentication());
+//             },
+//             color: Colors.black87,
+//             icon: Icon(
+//               Icons.logout,
+//               size: Dim.tm4(),
+//             ),
+//           ),
+//         )
+//       : CircularProgressIndicator(),
+// ),

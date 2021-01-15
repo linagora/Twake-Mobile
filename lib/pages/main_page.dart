@@ -99,13 +99,15 @@ class _MainPageState extends State<MainPage>
                                       // Divider(height: Dim.hm5),
                                       ChannelsGroup(),
                                       Divider(
-                                        thickness: 1.0,
+                                        thickness: 2.0,
+                                        height: 2.0,
                                         color: Color(0xffEEEEEE),
                                       ),
                                       SizedBox(height: 8),
                                       DirectMessagesGroup(),
                                       Divider(
-                                        thickness: 1.0,
+                                        thickness: 2.0,
+                                        height: 2.0,
                                         color: Color(0xffEEEEEE),
                                       ),
                                       SizedBox(height: Dim.hm2),
