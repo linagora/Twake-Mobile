@@ -35,37 +35,38 @@ class ChannelTile extends StatelessWidget {
               emoji: true,
             ),
             SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  channel.name,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff444444),
-                  ),
-                ),
-                if (channel.description.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      channel.description,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff444444),
-                      ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    channel.name,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff444444),
                     ),
                   ),
-              ],
+                  if (channel.description?.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        channel.description,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff444444),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-            Spacer(flex: 2),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
