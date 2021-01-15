@@ -42,6 +42,15 @@ class StageUpdated extends AddChannelState {
   List<Object> get props => [stage];
 }
 
+class Updated extends AddChannelState {
+  final AddChannelRepository repository;
+
+  Updated(this.repository);
+
+  @override
+  List<Object> get props => [repository];
+}
+
 class Creation extends AddChannelState {
   @override
   List<Object> get props => [];

@@ -12,7 +12,6 @@ enum FlowStage {
   groups,
   type,
   participants,
-  finish,
 }
 
 enum ChannelType {

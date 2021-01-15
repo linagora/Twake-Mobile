@@ -24,8 +24,7 @@ class Create extends AddChannelEvent {
   List<Object> get props => [];
 }
 
-class SetFlowStage extends AddChannelEvent {
-  final FlowStage stage;
+class Update extends AddChannelEvent {
   final String name;
   final String description;
   final String groupName;
@@ -33,8 +32,7 @@ class SetFlowStage extends AddChannelEvent {
   final bool automaticallyAddNew;
   final List<String> participants;
 
-  SetFlowStage(
-    this.stage, {
+  Update({
     this.name,
     this.description,
     this.groupName,
@@ -42,6 +40,22 @@ class SetFlowStage extends AddChannelEvent {
     this.automaticallyAddNew,
     this.participants,
   });
+
+  @override
+  List<Object> get props => [
+        name,
+        description,
+        groupName,
+        type,
+        automaticallyAddNew,
+        participants,
+      ];
+}
+
+class SetFlowStage extends AddChannelEvent {
+  final FlowStage stage;
+
+  SetFlowStage(this.stage);
 
   @override
   List<Object> get props => [];

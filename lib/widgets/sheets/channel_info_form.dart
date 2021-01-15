@@ -13,10 +13,7 @@ class ChannelInfoForm extends StatefulWidget {
 }
 
 class _ChannelInfoFormState extends State<ChannelInfoForm> {
-  var _channelName = '';
-  var _description = '';
-  var _groupName = '';
-  var _canGoNext = true;
+  var _canGoNext = false;
 
   final _channelNameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -32,6 +29,29 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
     _groupNameFocusNode.addListener(() {
       print(_groupNameFocusNode.hasFocus);
       setState(() {});
+    });
+
+    _channelNameController.addListener(() {
+      context
+          .read<AddChannelBloc>()
+          .add(Update(name: _channelNameController.text));
+      if (_channelNameController.text.isNotEmpty) {
+        setState(() {
+          _canGoNext = true;
+        });
+      }
+    });
+
+    _descriptionController.addListener(() {
+      context
+          .read<AddChannelBloc>()
+          .add(Update(description: _descriptionController.text));
+    });
+
+    _groupNameController.addListener(() {
+      context
+          .read<AddChannelBloc>()
+          .add(Update(groupName: _groupNameController.text));
     });
   }
 

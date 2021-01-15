@@ -11,34 +11,38 @@ class AddChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AddChannelBloc, AddChannelState>(
-        builder: (context, state) {
-      var i = 0;
-      if (state is StageUpdated) {
-        print(state.stage);
-        switch (state.stage) {
-          case FlowStage.info:
-            i = 0;
-            break;
-          case FlowStage.type:
-            i = 1;
-            break;
-          case FlowStage.groups:
-            i = 2;
-            break;
-          case FlowStage.participants:
-            i = 3;
-            break;
+      buildWhen: (previous, current) {
+        return (current is StageUpdated);
+      },
+      builder: (context, state) {
+        var i = 0;
+        if (state is StageUpdated) {
+          print(state.stage);
+          switch (state.stage) {
+            case FlowStage.info:
+              i = 0;
+              break;
+            case FlowStage.type:
+              i = 1;
+              break;
+            case FlowStage.groups:
+              i = 2;
+              break;
+            case FlowStage.participants:
+              i = 3;
+              break;
+          }
         }
-      }
-      return IndexedStack(
-        index: i,
-        children: [
-          ChannelInfoForm(),
-          ChannelTypeForm(),
-          ChannelGroupsList(),
-          ChannelParticipantsList(),
-        ],
-      );
-    });
+        return IndexedStack(
+          index: i,
+          children: [
+            ChannelInfoForm(),
+            ChannelTypeForm(),
+            ChannelGroupsList(),
+            ChannelParticipantsList(),
+          ],
+        );
+      },
+    );
   }
 }
