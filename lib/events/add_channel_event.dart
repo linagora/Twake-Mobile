@@ -46,7 +46,7 @@ class Update extends AddChannelEvent {
         name,
         description,
         groupName,
-        type,
+        type.index,
         automaticallyAddNew,
         participants,
       ];

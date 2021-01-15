@@ -29,9 +29,9 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       repository.name = event.name ?? repository.name;
       repository.description = event.description ?? repository.description;
       repository.channelGroup = event.groupName ?? repository.channelGroup;
-      repository.type = event.type ?? repository.type;
-      repository.members = event.participants ?? repository.members;
-      repository.def = event.automaticallyAddNew ?? repository.def;
+      repository.type = event.type ?? repository.type ?? ChannelType.public;
+      repository.members = event.participants ?? repository.members ?? [];
+      repository.def = event.automaticallyAddNew ?? repository.def ?? false;
 
       print('Updated data: ${repository.toJson()}');
       yield Updated(repository);
