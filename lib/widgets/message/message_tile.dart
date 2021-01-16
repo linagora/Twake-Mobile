@@ -19,6 +19,7 @@ import 'package:twake/widgets/message/message_modal_sheet.dart';
 class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
   final bool hideShowAnswers;
   final Message message;
+
   MessageTile({
     this.message,
     this.hideShowAnswers: false,
@@ -103,66 +104,93 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                     right: Dim.wm4,
                     bottom: Dim.heightMultiplier,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      BlocProvider<UserBloc>(
-                        create: (_) => UserBloc(messageState.userId),
-                        child: BlocBuilder<UserBloc, UserState>(
-                          builder: (_, state) {
-                            if (state is UserReady)
-                              return ListTile(
-                                dense: true,
-                                contentPadding: EdgeInsets.zero,
-                                leading: ImageAvatar(state.thumbnail),
-                                title: Text(
-                                  '${state.firstName} ${state.lastName}',
-                                  style: Theme.of(context).textTheme.bodyText1,
-                                  overflow: TextOverflow.fade,
+                  child: BlocProvider<UserBloc>(
+                    create: (_) => UserBloc(messageState.userId),
+                    child: BlocBuilder<UserBloc, UserState>(
+                        builder: (_, state) {
+                          if (state is UserReady) {
+                            return Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  children: [
+                                    if (state is UserReady)
+                                      ImageAvatar(
+                                      state.thumbnail,
+                                      width: 30,
+                                      height: 30,
+                                    ),
+                                    if (state is !UserReady)
+                                      CircularProgressIndicator(),
+                                  ],
                                 ),
-                                subtitle: Text(
-                                  messageState.threadId != null
-                                      ? DateFormatter.getVerboseDateTime(
-                                          messageState.creationDate)
-                                      : DateFormatter.getVerboseTime(
-                                          messageState.creationDate),
-                                  style: Theme.of(context).textTheme.subtitle2,
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '${state.firstName} ${state.lastName}',
+                                            style: TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600,
+                                              color: Color(0xff444444),
+                                            ),
+                                            overflow: TextOverflow.fade,
+                                          ),
+                                          Text(
+                                            messageState.threadId != null
+                                                ? DateFormatter.getVerboseDateTime(
+                                                messageState.creationDate)
+                                                : DateFormatter.getVerboseTime(
+                                                messageState.creationDate),
+                                            style: TextStyle(
+                                              fontSize: 10.0,
+                                              fontWeight: FontWeight.w400,
+                                              color: Color(0xff92929C),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Parser(messageState.content, messageState.charCount)
+                                          .render(context),
+                                      SizedBox(height: Dim.tm2()),
+                                      Wrap(
+                                        runSpacing: Dim.heightMultiplier,
+                                        crossAxisAlignment: WrapCrossAlignment.center,
+                                        textDirection: TextDirection.ltr,
+                                        children: [
+                                          ...messageState.reactions.keys.map((r) {
+                                            return Reaction(
+                                              r,
+                                              messageState.reactions[r]['count'],
+                                            );
+                                          }),
+                                          if (messageState.responsesCount > 0 &&
+                                              messageState.threadId == null &&
+                                              !hideShowAnswers)
+                                            Text(
+                                              'See all answers (${messageState.responsesCount})',
+                                              style: StylesConfig.miniPurple,
+                                            ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              );
-                            else
-                              return CircularProgressIndicator();
-                          },
-                        ),
-                      ),
-                      Parser(messageState.content, messageState.charCount)
-                          .render(context),
-                      SizedBox(height: Dim.tm2()),
-                      Wrap(
-                        runSpacing: Dim.heightMultiplier,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        textDirection: TextDirection.ltr,
-                        children: [
-                          ...messageState.reactions.keys.map((r) {
-                            return Reaction(
-                              r,
-                              messageState.reactions[r]['count'],
+                              ],
                             );
-                          }),
-                          if (messageState.responsesCount > 0 &&
-                              messageState.threadId == null &&
-                              !hideShowAnswers)
-                            Text(
-                              'See all answers (${messageState.responsesCount})',
-                              style: StylesConfig.miniPurple,
-                            ),
-                        ],
-                      ),
-                    ],
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                    }
                   ),
                 ),
-              );
-            else
+              )); else
               return CircularProgressIndicator();
           },
         ));
