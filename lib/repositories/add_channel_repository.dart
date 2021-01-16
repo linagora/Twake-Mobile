@@ -100,7 +100,6 @@ class AddChannelRepository {
   }
 
   Future<bool> create() async {
-
     this.companyId = ProfileBloc.selectedCompany;
     this.workspaceId = ProfileBloc.selectedWorkspace;
 
@@ -113,15 +112,16 @@ class AddChannelRepository {
         break;
       case ChannelType.direct:
         this.visibility = 'direct';
-        this.workspaceId = '';
+        this.workspaceId = 'direct';
         break;
     }
 
     if (this.name.isEmpty ||
         this.companyId.isEmpty ||
+        this.workspaceId.isEmpty ||
         this.visibility.isEmpty) {
       _logger.d(
-          'Channel creation: validation error. Not all mandatory fields are filled.');
+          'Channel creation: validation error. Not all mandatory fields exist in request body.');
       return false;
     } else {
       final channelJson = this.toJson();
