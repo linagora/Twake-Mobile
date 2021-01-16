@@ -116,6 +116,9 @@ class AddChannelRepository {
         break;
     }
 
+    String myId = ProfileBloc.userId;
+    this.members.add(myId);
+
     if (this.name.isEmpty ||
         this.companyId.isEmpty ||
         this.workspaceId.isEmpty ||
