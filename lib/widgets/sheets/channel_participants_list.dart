@@ -76,18 +76,37 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
           } else if (state is MultipleUsersLoaded) {
             users = state.users;
           }
-          return ListView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.only(top: 0),
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              return RadioItem(
-                title: users[index].name,
-                selected: selectedIndex == index,
-                onTap: () => selectedIndex = index,
-              );
-            },
-          );
+          return BlocBuilder<AddChannelBloc, AddChannelState>(
+              buildWhen: (_, current) {
+            return current is Updated;
+          }, builder: (context, state) {
+            var selectedIds = <String>[];
+            if (state is Updated) {
+              selectedIds = state.repository?.members;
+            }
+            return ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.only(top: 0),
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                var user = users[index];
+                return RadioItem(
+                  title: ('${user.firstName} ${user.lastName}'),
+                  selected: selectedIds.contains(user.id),
+                  onTap: () {
+                    if (selectedIds.contains(user.id)) {
+                      selectedIds.remove(user.id);
+                    } else {
+                      selectedIds.add(user.id);
+                    }
+                    context
+                        .read<AddChannelBloc>()
+                        .add(Update(participants: selectedIds));
+                  },
+                );
+              },
+            );
+          });
         }),
       ],
     );

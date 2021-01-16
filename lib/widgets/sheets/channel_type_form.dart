@@ -35,8 +35,8 @@ class ChannelTypeForm extends StatelessWidget {
           ));
         }
       },
-      buildWhen: (previous, current) {
-        return (current is Updated);
+      buildWhen: (_, current) {
+        return (current is Updated || current is StageUpdated);
       },
       builder: (context, state) {
         var channelType = ChannelType.public;

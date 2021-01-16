@@ -93,21 +93,20 @@ class UserRepository {
 
   Future<List<User>> searchUsers(String request) async {
     var companyId = ProfileBloc.selectedCompany;
-
-      List response = [];
-      try {
-        response = await _api.get(
-          Endpoint.usersSearch,
-          params: {
-            'company_id': companyId,
-            'name': request,
-          },
-        );
-      } on ApiError catch (error) {
-        logger.d('ERROR WHILE SEARCHING users FROM API\n${error.message}');
-        return [];
-      }
-      final users = List<User>.from(response.map((u) => User.fromJson(u)));
+    List response = [];
+    try {
+      response = await _api.get(
+        Endpoint.usersSearch,
+        params: {
+          'company_id': companyId,
+          'name': request,
+        },
+      );
+    } on ApiError catch (error) {
+      logger.d('ERROR WHILE SEARCHING users FROM API\n${error.message}');
+      return [];
+    }
+    final users = List<User>.from(response.map((u) => User.fromJson(u)));
 
     logger.d('Found ${users.length} users');
     return users;

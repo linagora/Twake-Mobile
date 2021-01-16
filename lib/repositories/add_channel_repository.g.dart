@@ -23,15 +23,22 @@ AddChannelRepository _$AddChannelRepositoryFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$AddChannelRepositoryToJson(
-        AddChannelRepository instance) =>
-    <String, dynamic>{
-      'company_id': instance.companyId,
-      'workspace_id': instance.workspaceId,
-      'name': instance.name,
-      'visibility': instance.visibility,
-      'icon': instance.icon,
-      'description': instance.description,
-      'channel_group': instance.channelGroup,
-      'default': instance.def,
-      'members': instance.members,
-    };
+        AddChannelRepository instance) {
+  var map = <String, dynamic>{
+    'company_id': instance.companyId,
+    'workspace_id': instance.workspaceId,
+    'name': instance.name,
+    'visibility': instance.visibility,
+    'icon': instance.icon,
+    'description': instance.description,
+    'channel_group': instance.channelGroup,
+    'default': instance.def,
+    'members': instance.members,
+  };
+
+  if (instance.workspaceId.isEmpty) {
+    map.remove('workspace_id');
+  }
+
+  return map;
+}
