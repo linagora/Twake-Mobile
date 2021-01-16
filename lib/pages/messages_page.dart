@@ -44,14 +44,23 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       width: Dim.widthPercent(67),
                       child: Text(
                         state.parentChannel.name,
-                        style: Theme.of(ctx).textTheme.headline6,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff444444),
+                        ),
                         overflow: TextOverflow.fade,
                       ),
                     ),
                     if (state.parentChannel is Channel)
                       Text(
-                          '${state.parentChannel.membersCount ?? 'No'} members',
-                          style: Theme.of(ctx).textTheme.bodyText2),
+                        '${state.parentChannel.membersCount ?? 'No'} members',
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff92929C),
+                        ),
+                      ),
                     if (state.parentChannel is Direct &&
                         state.parentChannel.membersCount > 1)
                       Text('${state.parentChannel.membersCount} members',
