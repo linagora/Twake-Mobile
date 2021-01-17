@@ -10,74 +10,78 @@ import 'package:twake/widgets/message/message_tile.dart';
 
 class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
   Widget buildMessagesList(context, MessagesState state) {
-    if (state is MessagesLoaded)
-      return StickyGroupedListView<Message, DateTime>(
-          order: StickyGroupedListOrder.DESC,
-          stickyHeaderBackgroundColor:
-              Theme.of(context).scaffoldBackgroundColor,
-          reverse: true,
-          elements: state.messages,
-          groupBy: (Message m) {
-            final DateTime dt =
-                DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
-            return DateTime(dt.year, dt.month, dt.day);
-          },
-          groupComparator: (DateTime value1, DateTime value2) =>
-              value1.compareTo(value2),
-          itemComparator: (Message m1, Message m2) {
-            return m1.creationDate.compareTo(m2.creationDate);
-          },
-          separator: SizedBox(height: Dim.hm2),
-          groupSeparatorBuilder: (Message message) {
-            return GestureDetector(
-              onTap: () {
-                FocusManager.instance.primaryFocus.unfocus();
-              },
-              child: Container(
-                height: Dim.hm3,
-                margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                color: Theme.of(context).scaffoldBackgroundColor,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: Divider(
-                        thickness: 0.0,
+    if (state is MessagesLoaded) {
+      return GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+        behavior: HitTestBehavior.opaque,
+        child: StickyGroupedListView<Message, DateTime>(
+            order: StickyGroupedListOrder.DESC,
+            stickyHeaderBackgroundColor:
+                Theme.of(context).scaffoldBackgroundColor,
+            reverse: true,
+            elements: state.messages,
+            groupBy: (Message m) {
+              final DateTime dt =
+                  DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
+              return DateTime(dt.year, dt.month, dt.day);
+            },
+            groupComparator: (DateTime value1, DateTime value2) =>
+                value1.compareTo(value2),
+            itemComparator: (Message m1, Message m2) {
+              return m1.creationDate.compareTo(m2.creationDate);
+            },
+            separator: SizedBox(height: Dim.hm2),
+            groupSeparatorBuilder: (Message message) {
+              return GestureDetector(
+                onTap: () {
+                  FocusManager.instance.primaryFocus.unfocus();
+                },
+                child: Container(
+                  height: Dim.hm3,
+                  margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: Divider(
+                          thickness: 0.0,
+                        ),
                       ),
-                    ),
-                    Align(
-                      // alignment: Alignment.center,
-                      child: Container(
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        width: Dim.widthPercent(30),
-                        child: Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: Text(
-                            DateFormatter.getVerboseDate(message.creationDate),
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff92929C),
+                      Align(
+                        // alignment: Alignment.center,
+                        child: Container(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          width: Dim.widthPercent(30),
+                          child: Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: Text(
+                              DateFormatter.getVerboseDate(message.creationDate),
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff92929C),
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-          indexedItemBuilder: (_, Message message, int i) {
-            return MessageTile<T>(
-              message: message,
-              key: ValueKey(
-                message.id + message.responsesCount.toString(),
-              ),
-            );
-          });
-    else if (state is MessagesEmpty)
+              );
+            },
+            indexedItemBuilder: (_, Message message, int i) {
+              return MessageTile<T>(
+                message: message,
+                key: ValueKey(
+                  message.id + message.responsesCount.toString(),
+                ),
+              );
+            }),
+      );
+    } else if (state is MessagesEmpty)
       return Center(
         child: Text(
           state is ErrorLoadingMessages
