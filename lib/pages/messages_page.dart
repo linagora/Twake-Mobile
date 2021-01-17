@@ -36,7 +36,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                     emoji: true,
                     fontSize: Dim.tm4(),
                   ),
-                SizedBox(width: Dim.widthMultiplier),
+                SizedBox(width: 12.0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -63,8 +63,14 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       ),
                     if (state.parentChannel is Direct &&
                         state.parentChannel.membersCount > 1)
-                      Text('${state.parentChannel.membersCount} members',
-                          style: Theme.of(ctx).textTheme.bodyText2),
+                      Text(
+                        '${state.parentChannel.membersCount} members',
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff92929C),
+                        ),
+                      ),
                   ],
                 ),
               ],
