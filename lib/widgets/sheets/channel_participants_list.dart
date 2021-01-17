@@ -26,6 +26,13 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => context.read<UserBloc>().add(LoadUsers('')),
     );
+
+    _controller.addListener(() {
+      var searchRequest = _controller.text;
+      if (searchRequest.length > 2) {
+        context.read<UserBloc>().add(LoadUsers(searchRequest));
+      }
+    });
   }
 
   @override
@@ -42,15 +49,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
 
   @override
   Widget build(BuildContext context) {
-    var participants = [
-      'Jean Paul Loreain',
-      'Ralph Lauren',
-      'Pierre Sortireux',
-      'Walles Chemberlin',
-    ];
-
-    var selectedIndex = 0;
-
     return Column(
       children: [
         SheetTitleBar(

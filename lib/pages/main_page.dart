@@ -82,6 +82,8 @@ class _MainPageState extends State<MainPage>
                               onRefresh: () {
                                 BlocProvider.of<ChannelsBloc>(ctx)
                                     .add(ReloadChannels(forceFromApi: true));
+                                BlocProvider.of<DirectsBloc>(ctx)
+                                    .add(ReloadChannels(forceFromApi: true));
                                 return Future.delayed(Duration(seconds: 1));
                               },
                               child: GestureDetector(
