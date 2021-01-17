@@ -29,9 +29,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
 
     _controller.addListener(() {
       var searchRequest = _controller.text;
-      if (searchRequest.length > 2) {
-        context.read<UserBloc>().add(LoadUsers(searchRequest));
-      }
+      context.read<UserBloc>().add(LoadUsers(searchRequest));
     });
   }
 
