@@ -53,7 +53,7 @@ class DirectsBloc extends BaseChannelBloc {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
       final filter = {
-        'company_id': ProfileBloc.selectedCompany,//event.companyId,
+        'company_id': event.companyId ?? selectedParentId,
       };
       await repository.reload(
         queryParams: filter,
