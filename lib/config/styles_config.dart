@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
-  // static const Color accentColor = Color.fromRGBO(198, 46, 222, 1.0);
-  // static const Color lightAppColor = Colors.white;
-
   StylesConfig._();
 
   static const Color subTitleTextColor = Color(0xFF9F988F);
@@ -12,13 +9,10 @@ class StylesConfig {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: Colors.blue,
     accentColor: accentColorRGB,
-    // brightness: Brightness.light,
     textTheme: lightTextTheme,
     useTextSelectionTheme: true,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: Color(0xff837cfe),
-      // selectionColor: darkPrimarySwatchColor,
-      // selectionHandleColor: darkPrimarySwatchColor,
     ),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
@@ -31,13 +25,6 @@ class StylesConfig {
     ),
     // fontFamily: 'PT',
   );
-
-  /// For future use
-  // static final ThemeData darkTheme = ThemeData(
-  // primaryColor: lightAppColor,
-  // brightness: Brightness.dark,
-  // textTheme: darkTextTheme,
-  // );
 
   static final TextTheme lightTextTheme = TextTheme(
     headline1: _headline1,
@@ -111,29 +98,10 @@ class StylesConfig {
     fontSize: Dim.tm2(),
   );
 
-  static final miniPurple =
-      TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
-
-  /// For future use in dark theme
-  // static final TextStyle _titleDark = _titleLight.copyWith(color: Colors.white);
-//
-  // static final TextStyle _subTitleDark =
-  // _subTitleLight.copyWith(color: Colors.white70);
-//
-  // static final TextStyle _buttonDark =
-  // _buttonLight.copyWith(color: Colors.black);
-//
-  // static final TextStyle _greetingDark =
-  // _greetingLight.copyWith(color: Colors.black);
-//
-  // static final TextStyle _searchDark =
-  // _searchDark.copyWith(color: Colors.black);
-//
-  // static final TextStyle _selectedTabDark =
-  // _selectedTabDark.copyWith(color: Colors.white);
-//
-  // static final TextStyle _unSelectedTabDark =
-  // _selectedTabDark.copyWith(color: Colors.white70);
-//
-  /// This class should not be instantiated !!!
+  static final miniPurple = TextStyle(
+    color: Color(0xff837DFF),
+    fontSize: 12.0,
+    fontWeight: FontWeight.w400,
+  );
+//TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
 }

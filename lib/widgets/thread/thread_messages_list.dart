@@ -8,6 +8,7 @@ import 'package:twake/blocs/single_message_bloc.dart';
 class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
   final List<Message> responses;
   final Message threadMessage;
+
   ThreadMessagesList(this.responses, {this.threadMessage});
 
   @override
@@ -24,15 +25,36 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 MessageTile<T>(message: threadMessage, hideShowAnswers: true),
-                Divider(color: Colors.grey[200]),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: Dim.heightMultiplier,
-                    horizontal: Dim.wm4,
-                  ),
-                  child: Text(threadMessage.respCountStr + ' responses'),
+                Divider(
+                  thickness: 1.0,
+                  height: 1.0,
+                  color: Color(0xffEEEEEE),
                 ),
-                Divider(color: Colors.grey[200]),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Text(
+                    threadMessage.respCountStr + ' responses',
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff92929C),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 8.0,
+                ),
+                Divider(
+                  thickness: 1.0,
+                  height: 1.0,
+                  color: Color(0xffEEEEEE),
+                ),
+                SizedBox(
+                  height: 12.0,
+                ),
                 MessageTile<T>(message: responses[i]),
               ],
             );

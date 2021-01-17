@@ -85,9 +85,24 @@ class AddChannelRepository {
 
   Future<void> cache() async {}
 
-  Future<void> clear() async {}
+  Future<void> clear() async {
+    companyId = '';
+    workspaceId = '';
+    name = '';
+    visibility = '';
+    icon = '';
+    description = '';
+    channelGroup = '';
+    def = false;
+    members = [];
+    flow = FlowStage.info;
+    type = ChannelType.public;
+  }
 
   Future<bool> create() async {
+    this.companyId = ProfileBloc.selectedCompany;
+    this.workspaceId = ProfileBloc.selectedWorkspace;
+
     switch (type) {
       case ChannelType.public:
         this.visibility = 'public';
@@ -97,17 +112,19 @@ class AddChannelRepository {
         break;
       case ChannelType.direct:
         this.visibility = 'direct';
+        this.workspaceId = 'direct';
         break;
     }
-    this.companyId = ProfileBloc.selectedCompany;
-    this.workspaceId = ProfileBloc.selectedWorkspace;
+
+    String myId = ProfileBloc.userId;
+    this.members.add(myId);
 
     if (this.name.isEmpty ||
         this.companyId.isEmpty ||
         this.workspaceId.isEmpty ||
         this.visibility.isEmpty) {
       _logger.d(
-          'Channel creation: validation error. Not all mandatory fields are filled.');
+          'Channel creation: validation error. Not all mandatory fields exist in request body.');
       return false;
     } else {
       final channelJson = this.toJson();

@@ -1,3 +1,4 @@
+import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -29,7 +30,13 @@ class UserRepository {
       }
     }
     if (item == null) {
-      final list = await _api.get(apiEndpoint, params: {'id': userId});
+      List list;
+      try {
+        list = await _api.get(apiEndpoint, params: {'id': userId});
+      } on ApiError catch (error) {
+        logger.d('ERROR WHILE FETCHING user FROM API\n${error.message}');
+        throw error;
+      }
       final Map userMap = list[0];
       if (userMap.isNotEmpty) {
         item = User.fromJson(userMap);
@@ -40,7 +47,7 @@ class UserRepository {
     return item;
   }
 
-  Future<void> batchUsersLoad(Set<String> userIds) async {
+  Future<bool> batchUsersLoad(Set<String> userIds) async {
     items.removeWhere((id, _) => !userIds.contains(id));
     userIds.retainAll(items.keys);
     List<String> toBeFetched = [];
@@ -52,12 +59,18 @@ class UserRepository {
         items[id] = User.fromJson(item);
     }
     if (toBeFetched.isNotEmpty) {
-      final List response = await _api.get(
-        apiEndpoint,
-        params: {
-          'id': toBeFetched,
-        },
-      );
+      List response = [];
+      try {
+        response = await _api.get(
+          apiEndpoint,
+          params: {
+            'id': toBeFetched,
+          },
+        );
+      } on ApiError catch (error) {
+        logger.d('ERROR WHILE FETCHING users FROM API\n${error.message}');
+        return false;
+      }
       final users =
           response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
       items.addEntries(users);
@@ -67,6 +80,7 @@ class UserRepository {
       type: StorageType.User,
     );
     logger.d('Loaded ${items.length} users for messages');
+    return true;
   }
 
   Future<void> save(User user) async {
@@ -75,5 +89,26 @@ class UserRepository {
       type: StorageType.User,
       key: user.id,
     );
+  }
+
+  Future<List<User>> searchUsers(String request) async {
+    var companyId = ProfileBloc.selectedCompany;
+    List response = [];
+    try {
+      response = await _api.get(
+        Endpoint.usersSearch,
+        params: {
+          'company_id': companyId,
+          'name': request,
+        },
+      );
+    } on ApiError catch (error) {
+      logger.d('ERROR WHILE SEARCHING users FROM API\n${error.message}');
+      return [];
+    }
+    final users = List<User>.from(response.map((u) => User.fromJson(u)));
+
+    logger.d('Found ${users.length} users');
+    return users;
   }
 }

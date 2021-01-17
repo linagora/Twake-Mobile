@@ -1,12 +1,13 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
-const _CONNECT_TIMEOUT = 50000;
 const String _HOST = 'mobile.api.twake.app';
 const String _SHOST = 'https://mobile.api.twake.app';
 const String _SCHEME = 'https';
 const _RECEIVE_TIMEOUT = 7000;
 const _SEND_TIMEOUT = 5000;
+const _CONNECT_TIMEOUT = 50000;
 
 class Api {
   // singleton Api class instance
@@ -73,10 +74,21 @@ class Api {
     _resetAuthentication = value;
   }
 
+  Future<void> checkConnection() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      throw ApiError(
+        message: 'No internet connection',
+        type: ApiErrorType.NoInternetAccess,
+      );
+    }
+  }
+
   Future<dynamic> delete(
     String method, {
     Map<String, dynamic> body,
   }) async {
+    await checkConnection();
     final url = _SHOST + method;
     try {
       final response = await dio.delete(url, data: body);
@@ -90,6 +102,7 @@ class Api {
     String method, {
     Map<String, dynamic> params: const {},
   }) async {
+    await checkConnection();
     final uri = Uri(
       scheme: _SCHEME,
       host: _HOST,
@@ -112,9 +125,24 @@ class Api {
     String method, {
     Map<String, dynamic> body,
   }) async {
+    await checkConnection();
     final url = _SHOST + method;
     try {
       final response = await dio.patch(url, data: body);
+      return response.data;
+    } catch (e) {
+      throw ApiError.fromDioError(e);
+    }
+  }
+
+  Future<dynamic> put(
+    String method, {
+    Map<String, dynamic> body,
+  }) async {
+    await checkConnection();
+    final url = _SHOST + method;
+    try {
+      final response = await dio.put(url, data: body);
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -126,8 +154,12 @@ class Api {
     Map<String, dynamic> body,
     bool useTokenDio = false,
   }) async {
+    await checkConnection();
     final url = _SHOST + method;
     try {
+      logger.d('METHOD: $url');
+      logger.d('HEADERS: ${dio.options.headers}');
+      logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
       return response.data;
@@ -178,6 +210,7 @@ class Api {
 }
 
 enum ApiErrorType {
+  NoInternetAccess,
   TokenExpired,
   Unauthorized,
   BadRequest,

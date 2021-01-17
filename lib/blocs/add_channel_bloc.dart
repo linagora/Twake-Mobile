@@ -54,6 +54,8 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       } else {
         yield Error('Channel creation failure!');
       }
+    } else if (event is Clear) {
+      repository.clear();
     }
   }
 }

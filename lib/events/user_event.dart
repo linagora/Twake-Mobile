@@ -21,3 +21,12 @@ class RemoveUser extends UserEvent {
   @override
   List<Object> get props => [userId];
 }
+
+class LoadUsers extends UserEvent {
+  final String request;
+
+  LoadUsers(this.request);
+
+  @override
+  List<Object> get props => [request];
+}

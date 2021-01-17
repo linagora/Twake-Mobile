@@ -22,27 +22,41 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
             titleSpacing: 0.0,
             shadowColor: Colors.grey[300],
             toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
-            title: ListTile(
-              dense: true,
-              visualDensity: VisualDensity.compact,
-              contentPadding: EdgeInsets.zero,
-              leading: state.parentChannel is Direct
-                  ? StackedUserAvatars((state.parentChannel as Direct).members)
-                  : TextAvatar(
-                      state.parentChannel.icon,
-                      emoji: true,
-                      fontSize: Dim.tm4(),
+            title: Row(
+              children: [
+                state.parentChannel is Direct
+                    ? StackedUserAvatars((state.parentChannel as Direct).members)
+                    : TextAvatar(
+                  state.parentChannel.icon,
+                  emoji: true,
+                  fontSize: Dim.tm4(),
+                ),
+                SizedBox(width: 12.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Threaded replies',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff444444),
+                      ),
                     ),
-              title: Text(
-                'Threaded replies',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              subtitle: Text(
-                state.parentChannel.name,
-                style: Theme.of(context).textTheme.bodyText2,
-                overflow: TextOverflow.fade,
-                maxLines: 1,
-              ),
+                    SizedBox(height: 1.0),
+                    Text(
+                      state.parentChannel.name,
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff92929C),
+                      ),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           body: SafeArea(
@@ -62,7 +76,11 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   if (state is MessagesEmpty)
                     Expanded(
                       child: Center(
-                        child: Text('No responses yet'),
+                        child: Text(
+                          state is ErrorLoadingMessages
+                              ? 'Couldn\'t load messages, no connection'
+                              : 'No responses yet',
+                        ),
                       ),
                     ),
                   if (state is MessagesLoading)

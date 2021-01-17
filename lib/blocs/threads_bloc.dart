@@ -65,12 +65,21 @@ class ThreadsBloc<T extends BaseChannelBloc>
       List<List> filters = [
         ['thread_id', '=', event.threadId],
       ];
-      await repository.reload(
+      bool success = await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: filters,
         sortFields: {'creation_date': true},
         limit: _THREAD_MESSAGES_LIMIT,
       );
+      if (!success) {
+        repository.clean();
+        yield ErrorLoadingMessages(
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+          force: DateTime.now().toString(),
+        );
+        return;
+      }
       if (repository.items.isEmpty)
         yield MessagesEmpty(
           threadMessage: threadMessage,

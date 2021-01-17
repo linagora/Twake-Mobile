@@ -14,7 +14,7 @@ class Cache extends AddChannelEvent {
   List<Object> get props => [];
 }
 
-class ClearCache extends AddChannelEvent {
+class Clear extends AddChannelEvent {
   @override
   List<Object> get props => [];
 }

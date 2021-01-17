@@ -1,7 +1,5 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io' show Platform;
-import 'dart:math';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:package_info/package_info.dart';
@@ -30,7 +28,7 @@ class AuthRepository extends JsonSerializable {
 
   // required by twake api
   @JsonKey(ignore: true)
-  final timeZoneOffset = DateTime.now().timeZoneOffset.inHours;
+  final timeZoneOffset = -DateTime.now().timeZoneOffset.inMinutes;
 
   @JsonKey(ignore: true)
   static final _storage = Storage();
@@ -102,18 +100,28 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
-  Future<void> setAuthData(Map<String, dynamic> authData) async {
+  Future<bool> setAuthData(Map<String, dynamic> authData) async {
+    try {
+      authData = await initSession(
+          token: authData['token'], username: authData['username']);
+      logger.d('AUTH FROM INIT $authData');
+    } on ApiError catch (error) {
+      logger.e('ERROR AFTER SUCCESSFUL AUTH: ${error.message}');
+      return false;
+    }
     _updateFromMap(authData);
-    await initSession(Random().nextInt(1000000).toString());
+    return true;
   }
 
-  Future<void> initSession(String username) async {
+  Future<Map<String, dynamic>> initSession(
+      {String username, String token}) async {
     final body = {
       "timezoneoffset": timeZoneOffset,
       "fcm_token": fcmToken,
+      "token": token,
       "username": username,
     };
-    await _api.post(Endpoint.init, body: body);
+    return await _api.post(Endpoint.init, body: body);
   }
 
   Future<void> clean() async {
@@ -164,7 +172,7 @@ class AuthRepository extends JsonSerializable {
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
   TokenStatus tokenIsValid() {
-    // logger.d('Requesting token validation');
+    logger.d('Requesting token validation\n${this.toJson()}');
     if (this.accessToken == null) {
       logger.w('Token is empty');
       return TokenStatus.BothExpired;
