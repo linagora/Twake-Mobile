@@ -102,7 +102,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                   padding: EdgeInsets.only(
                     left: 12.0,
                     right: 12.0,
-                    bottom: Dim.heightMultiplier,
+                    bottom: 12.0,
                   ),
                   child: BlocProvider<UserBloc>(
                     create: (_) => UserBloc(messageState.userId),
