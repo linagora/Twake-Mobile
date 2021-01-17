@@ -100,8 +100,8 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                 },
                 child: Padding(
                   padding: EdgeInsets.only(
-                    left: Dim.wm4,
-                    right: Dim.wm4,
+                    left: 12.0,
+                    right: 12.0,
                     bottom: Dim.heightMultiplier,
                   ),
                   child: BlocProvider<UserBloc>(
@@ -156,9 +156,10 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                           ),
                                         ],
                                       ),
+                                      SizedBox(height: 5.0),
                                       Parser(messageState.content, messageState.charCount)
                                           .render(context),
-                                      SizedBox(height: Dim.tm2()),
+                                      SizedBox(height: 5.0),
                                       Wrap(
                                         runSpacing: Dim.heightMultiplier,
                                         crossAxisAlignment: WrapCrossAlignment.center,
