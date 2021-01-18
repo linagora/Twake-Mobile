@@ -27,23 +27,8 @@ class Api {
   factory Api({Map<String, String> headers}) {
     // if the headers are present, e.g. token has changed,
     // reinitialize Dio
-    if (_api == null || headers != null) {
-      bool notNull = _api != null;
-      // save and restore the callbacks
-      var tiv;
-      var pt;
-      var ra;
-      if (notNull) {
-        tiv = _api._tokenIsValid;
-        pt = _api._prolongToken;
-        ra = _api._resetAuthentication;
-      }
+    if (_api == null) {
       _api = Api._(headers);
-      if (notNull) {
-        _api._tokenIsValid = tiv;
-        _api._prolongToken = pt;
-        _api._resetAuthentication = ra;
-      }
     }
     return _api;
   }
@@ -59,6 +44,10 @@ class Api {
           headers: headers),
     );
     _addDioInterceptors();
+  }
+
+  set headers(value) {
+    dio.options.headers = value;
   }
 
   // if referesh has changed, then we reset dio interceptor to account for this
@@ -196,11 +185,13 @@ class Api {
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
               '\nError: ${error.response.data}' +
+              '\nHeaders: ${error.request.headers}' +
               '\nData: ${error.request.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
           } else {
+            logger.e('status code: ${error.response.statusCode}');
             return error;
           }
         },
