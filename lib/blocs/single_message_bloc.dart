@@ -51,6 +51,8 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
     } else if (event is UpdateResponseCount) {
       message.responsesCount += event.modifier;
       yield messageReady;
+    } else if (event is UpdateViewport) {
+      yield ViewportUpdated(event.position);
     }
   }
 
