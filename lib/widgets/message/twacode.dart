@@ -109,7 +109,7 @@ class _TwacodeState extends State<Twacode> {
                 color: Theme.of(context).canvasColor,
                 child: RichText(
                   maxLines: maxRichTextHeight,
-                  overflow: TextOverflow.fade,
+                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.left,
                   text: TextSpan(children: spans),
                 ),

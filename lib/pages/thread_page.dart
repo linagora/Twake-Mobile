@@ -51,7 +51,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         color: Color(0xff92929C),
                       ),
-                      overflow: TextOverflow.fade,
+                      overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
                   ],
