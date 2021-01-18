@@ -10,7 +10,7 @@ enum DraftType {
   direct,
 }
 
-class Drafts {
+class DraftRepository {
   static var _draftsMap = {};
   static final _storage = Storage();
 
