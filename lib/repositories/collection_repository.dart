@@ -157,8 +157,6 @@ class CollectionRepository<T extends CollectionItem> {
     }
     if (itemsList.isNotEmpty) {
       _updateItems(itemsList, saveToStore: saveToStore, extendItems: true);
-    } else {
-      return false;
     }
     return true;
   }
