@@ -30,13 +30,24 @@ class Drafts {
   }) async {
     final key = '$id-${describeEnum(type)}';
     _draftsMap[key] = draft;
+    _store();
+  }
+
+  static Future<void> _store() async {
     await _storage.store(
       item: {
-          'id': _DRAFTS_STORE_KEY,
-          _storage.settingsField: jsonEncode(_draftsMap),
-        },
+        'id': _DRAFTS_STORE_KEY,
+        _storage.settingsField: jsonEncode(_draftsMap),
+      },
       type: StorageType.Drafts,
     );
+  }
+
+  static Future<void> remove(
+      {@required String byId, @required DraftType type}) async {
+    final key = '$byId-${describeEnum(type)}';
+    _draftsMap.remove(key);
+    _store();
   }
 
   static String getById(String id, {@required DraftType forType}) {
