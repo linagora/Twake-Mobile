@@ -28,7 +28,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       throw 'Not implemented yet';
     } else if (event is LoadUsers) {
       yield MultipleUsersLoading();
-      final users = await repository.users();
+      final users = await repository.searchUsers(event.request);
       if (users != null) {
         yield MultipleUsersLoaded(users);
       } else {

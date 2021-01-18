@@ -25,39 +25,41 @@ class _WebAuthPageState extends State<WebAuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WebView(
-        initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-        onWebViewCreated: (ctrl) => webViewController = ctrl,
-        navigationDelegate: (r) async {
-          // Logger().d('URL IS: ' + r.url);
-          if (r.url.contains('redirect_to_app')) {
-            final qp = Uri.parse(r.url).queryParameters;
-            // Logger().d('PARAMS: $qp');
-            if (qp['token'] == null || qp['username'] == null)
-              webViewController.loadUrl(twakeConsole);
-            BlocProvider.of<AuthBloc>(context).add(
-              SetAuthData(qp),
-            );
-            await CookieManager().clearCookies();
-          }
-          return NavigationDecision.navigate;
-        },
-        javascriptMode: JavascriptMode.unrestricted,
-        initialUrl: twakeConsole,
-        // javascriptChannels: Set.from([
-        // JavascriptChannel(
-        // name: 'AuthData',
-        // onMessageReceived: (jsmsg) async {
-        // await CookieManager().clearCookies();
-        // if (hasMessage) return;
-        // hasMessage = true;
-        // BlocProvider.of<AuthBloc>(context).add(
-        // SetAuthData(jsonDecode(jsmsg.message)),
-        // );
-        // Logger().d('GOT DATA FROM WEBVIEW: ' + jsmsg.message);
-        // webViewController.clearCache();
-        // }),
-        // ]),
+      body: SafeArea(
+        child: WebView(
+          initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          onWebViewCreated: (ctrl) => webViewController = ctrl,
+          navigationDelegate: (r) async {
+            // Logger().d('URL IS: ' + r.url);
+            if (r.url.contains('redirect_to_app')) {
+              final qp = Uri.parse(r.url).queryParameters;
+              // Logger().d('PARAMS: $qp');
+              if (qp['token'] == null || qp['username'] == null)
+                webViewController.loadUrl(twakeConsole);
+              BlocProvider.of<AuthBloc>(context).add(
+                SetAuthData(qp),
+              );
+              await CookieManager().clearCookies();
+            }
+            return NavigationDecision.navigate;
+          },
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: twakeConsole,
+          // javascriptChannels: Set.from([
+          // JavascriptChannel(
+          // name: 'AuthData',
+          // onMessageReceived: (jsmsg) async {
+          // await CookieManager().clearCookies();
+          // if (hasMessage) return;
+          // hasMessage = true;
+          // BlocProvider.of<AuthBloc>(context).add(
+          // SetAuthData(jsonDecode(jsmsg.message)),
+          // );
+          // Logger().d('GOT DATA FROM WEBVIEW: ' + jsmsg.message);
+          // webViewController.clearCache();
+          // }),
+          // ]),
+        ),
       ),
     );
   }

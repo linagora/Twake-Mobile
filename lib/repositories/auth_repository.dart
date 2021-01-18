@@ -172,7 +172,7 @@ class AuthRepository extends JsonSerializable {
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
   TokenStatus tokenIsValid() {
-    // logger.d('Requesting token validation');
+    logger.d('Requesting token validation\n${this.toJson()}');
     if (this.accessToken == null) {
       logger.w('Token is empty');
       return TokenStatus.BothExpired;

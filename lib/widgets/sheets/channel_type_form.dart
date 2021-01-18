@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_bloc.dart';
+import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -16,6 +17,8 @@ class ChannelTypeForm extends StatelessWidget {
         if (state is Created) {
           // Reload channels
           context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
+          // Reload directs
+          context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
           // Close sheet
           context.read<SheetBloc>().add(CloseSheet());
           // Clear sheet
@@ -35,8 +38,8 @@ class ChannelTypeForm extends StatelessWidget {
           ));
         }
       },
-      buildWhen: (previous, current) {
-        return (current is Updated);
+      buildWhen: (_, current) {
+        return (current is Updated || current is StageUpdated);
       },
       builder: (context, state) {
         var channelType = ChannelType.public;

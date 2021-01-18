@@ -70,3 +70,28 @@ class MessageSelected extends MessagesLoaded {
   @override
   List<Object> get props => [threadMessage, responsesCount];
 }
+
+class ErrorLoadingMessages extends MessagesEmpty {
+  final String force;
+  const ErrorLoadingMessages(
+      {BaseChannel parentChannel, Message threadMessage, this.force})
+      : super(parentChannel: parentChannel, threadMessage: threadMessage);
+
+  @override
+  List<Object> get props => [parentChannel, threadMessage, force];
+}
+
+class ErrorLoadingMoreMessages extends MessagesLoaded {
+  const ErrorLoadingMoreMessages({
+    BaseChannel parentChannel,
+    Message threadMessage,
+    List<Message> messages,
+  }) : super(
+          parentChannel: parentChannel,
+          threadMessage: threadMessage,
+          messages: messages,
+        );
+
+  @override
+  List<Object> get props => [parentChannel, threadMessage];
+}

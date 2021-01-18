@@ -98,6 +98,10 @@ class StylesConfig {
     fontSize: Dim.tm2(),
   );
 
-  static final miniPurple =
-      TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
+  static final miniPurple = TextStyle(
+    color: Color(0xff837DFF),
+    fontSize: 12.0,
+    fontWeight: FontWeight.w400,
+  );
+//TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
 }

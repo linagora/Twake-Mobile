@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
+import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/events/channel_event.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -52,7 +53,7 @@ class DirectsBloc extends BaseChannelBloc {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
       final filter = {
-        'company_id': event.companyId,
+        'company_id': event.companyId ?? selectedParentId,
       };
       await repository.reload(
         queryParams: filter,
