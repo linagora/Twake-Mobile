@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/radio_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:twake/blocs/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelParticipantsList extends StatefulWidget {
@@ -15,6 +18,20 @@ class ChannelParticipantsList extends StatefulWidget {
 class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<UserBloc>().add(LoadUsers('')),
+    );
+
+    _controller.addListener(() {
+      var searchRequest = _controller.text;
+      context.read<UserBloc>().add(LoadUsers(searchRequest));
+    });
+  }
 
   @override
   void dispose() {
@@ -30,15 +47,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
 
   @override
   Widget build(BuildContext context) {
-    var participants = [
-      'Jean Paul Loreain',
-      'Ralph Lauren',
-      'Pierre Sortireux',
-      'Walles Chemberlin',
-    ];
-
-    var selectedIndex = 0;
-
     return Column(
       children: [
         SheetTitleBar(
@@ -56,18 +64,46 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
             focusNode: _focusNode,
           ),
         ),
-        ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.only(top: 0),
-          itemCount: participants.length,
-          itemBuilder: (context, index) {
-            return RadioItem(
-              title: participants[index],
-              selected: selectedIndex == index,
-              onTap: () => selectedIndex = index,
+        BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+          var users = <User>[];
+
+          if (state is MultipleUsersLoading) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is MultipleUsersLoaded) {
+            users = state.users;
+          }
+          return BlocBuilder<AddChannelBloc, AddChannelState>(
+              buildWhen: (_, current) {
+            return current is Updated;
+          }, builder: (context, state) {
+            var selectedIds = <String>[];
+            if (state is Updated) {
+              selectedIds = state.repository?.members;
+            }
+            return ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.only(top: 0),
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                var user = users[index];
+                return RadioItem(
+                  title: ('${user.firstName} ${user.lastName}'),
+                  selected: selectedIds.contains(user.id),
+                  onTap: () {
+                    if (selectedIds.contains(user.id)) {
+                      selectedIds.remove(user.id);
+                    } else {
+                      selectedIds.add(user.id);
+                    }
+                    context
+                        .read<AddChannelBloc>()
+                        .add(Update(participants: selectedIds));
+                  },
+                );
+              },
             );
-          },
-        ),
+          });
+        }),
       ],
     );
   }

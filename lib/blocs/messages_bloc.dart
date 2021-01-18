@@ -85,7 +85,7 @@ class MessagesBloc<T extends BaseChannelBloc>
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
       yield MessagesLoading(parentChannel: selectedChannel);
-      await repository.reload(
+      bool success = await repository.reload(
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],
@@ -94,6 +94,14 @@ class MessagesBloc<T extends BaseChannelBloc>
         sortFields: {'creation_date': false},
         limit: _MESSAGE_LIMIT,
       );
+      if (!success) {
+        repository.clear();
+        yield ErrorLoadingMessages(
+          parentChannel: selectedChannel,
+          force: DateTime.now().toString(),
+        );
+        return;
+      }
       if (repository.items.isEmpty)
         yield MessagesEmpty(parentChannel: selectedChannel);
       else {
@@ -114,7 +122,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
         parentChannel: selectedChannel,
       );
-      final bool _ = await repository.loadMore(
+      bool success = await repository.loadMore(
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],
@@ -123,6 +131,14 @@ class MessagesBloc<T extends BaseChannelBloc>
         ],
         sortFields: {'creation_date': false},
       );
+      if (!success) {
+        repository.clear();
+        yield ErrorLoadingMoreMessages(
+          parentChannel: selectedChannel,
+          messages: repository.items,
+        );
+        return;
+      }
       _sortItems();
       yield MessagesLoaded(
         messages: repository.items,

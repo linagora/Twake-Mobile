@@ -79,18 +79,23 @@ class TextInput extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300], width: 2.0)),
       ),
-      child: Column(
-        children: [
-          TextField(
-            style: Theme.of(context).textTheme.headline2,
-            maxLines: 4,
-            minLines: 1,
-            cursorHeight: Dim.tm3(),
-            autofocus: autofocus,
-            controller: controller,
-            decoration: InputDecoration(
-              suffixIcon: IconButton(
-                padding: EdgeInsets.only(top: Dim.hm2),
+      child: TextField(
+        style: TextStyle(
+          fontSize: 17.0,
+          fontWeight: FontWeight.w400,
+          color: Color(0xff444444),
+        ),
+        maxLines: 4,
+        minLines: 1,
+        // cursorHeight: Dim.tm3(),
+        autofocus: autofocus,
+        controller: controller,
+        decoration: InputDecoration(
+          suffixIcon: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                padding: EdgeInsetsDirectional.only(top: 12),
                 iconSize: Dim.tm4(),
                 icon: Transform(
                   transform: Matrix4.rotationZ(
@@ -110,15 +115,15 @@ class TextInput extends StatelessWidget {
                       }
                     : null,
               ),
-              isCollapsed: true,
-              floatingLabelBehavior: FloatingLabelBehavior.never,
-              labelText: 'Reply',
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(width: 0.0, style: BorderStyle.none),
-              ),
-            ),
+            ],
           ),
-        ],
+          isCollapsed: true,
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+          labelText: 'Reply',
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(width: 0.0, style: BorderStyle.none),
+          ),
+        ),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:twake/widgets/common/stacked_image_avatars.dart';
 
 class DirectTile extends StatelessWidget {
   final Direct direct;
+
   DirectTile(this.direct);
 
   @override
@@ -22,39 +23,73 @@ class DirectTile extends StatelessWidget {
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => MessagesPage<DirectsBloc>()));
       },
-      child: ListTile(
-        contentPadding: EdgeInsets.only(bottom: Dim.textMultiplier),
-        leading: StackedUserAvatars(direct.members),
-        title: Text(
-          direct.name,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.headline6,
-        ),
-        trailing: FittedBox(
-          fit: BoxFit.fitWidth,
-          child: Row(
-            children: [
-              Text(
-                DateFormatter.getVerboseDateTime(direct.lastActivity),
-                style: Theme.of(context).textTheme.subtitle2,
+      child: SizedBox(
+        height: 62.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            // SizedBox(width: 12),
+            StackedUserAvatars(direct.members),
+            SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    direct.name,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff444444),
+                    ),
+                  ),
+                  if (direct.description?.isNotEmpty ?? false)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        direct.description,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff444444),
+                        ),
+                      ),
+                    ),
+                ],
               ),
-              if (direct.messagesUnread != 0) SizedBox(width: Dim.wm2),
-              if (direct.messagesUnread != 0)
-                Chip(
-                  labelPadding:
-                      EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
-                  label: Text(
-                    '${direct.messagesUnread}',
-                    style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  backgroundColor: Color.fromRGBO(255, 81, 84, 1),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  DateFormatter.getVerboseDateTime(direct.lastActivity),
+                  style: Theme.of(context).textTheme.subtitle2,
                 ),
-            ],
-          ),
+                if (direct.messagesUnread != 0) SizedBox(width: Dim.wm2),
+                if (direct.messagesUnread != 0)
+                  Chip(
+                    labelPadding:
+                        EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
+                    label: Text(
+                      '${direct.messagesUnread}',
+                      style:
+                          TextStyle(color: Colors.white, fontSize: Dim.tm2()),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    backgroundColor: Color.fromRGBO(255, 81, 84, 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ),
       ),
     );

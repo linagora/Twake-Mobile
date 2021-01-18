@@ -6,7 +6,7 @@ part 'user.g.dart';
 class User {
   @JsonKey(required: true)
   final String id;
-  final String username;
+  String username;
   @JsonKey(name: 'firstname')
   String firstName;
   @JsonKey(name: 'lastname')

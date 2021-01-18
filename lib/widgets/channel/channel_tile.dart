@@ -20,9 +20,19 @@ class ChannelTile extends StatelessWidget {
           ChangeSelectedChannel(channel.id),
         );
         // Navigator.of(context).pushNamed(Routes.messages);
-        Navigator.of(context).push(MaterialPageRoute(
+        Navigator.of(context)
+            .push(MaterialPageRoute(
           builder: (context) => MessagesPage<ChannelsBloc>(),
-        ));
+        ))
+            .then((r) {
+          if (r is bool && r) {
+            Scaffold.of(context).hideCurrentSnackBar();
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('No connection to internet'),
+              backgroundColor: Theme.of(context).errorColor,
+            ));
+          }
+        });
       },
       child: SizedBox(
         height: 62.0,
@@ -35,37 +45,38 @@ class ChannelTile extends StatelessWidget {
               emoji: true,
             ),
             SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  channel.name,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xff444444),
-                  ),
-                ),
-                if (channel.description.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      channel.description,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff444444),
-                      ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    channel.name,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff444444),
                     ),
                   ),
-              ],
+                  if (channel.description?.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.0),
+                      child: Text(
+                        channel.description,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff444444),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-            Spacer(flex: 2),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -78,10 +89,11 @@ class ChannelTile extends StatelessWidget {
                 if (channel.messagesUnread != 0)
                   Chip(
                     labelPadding:
-                    EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
+                        EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
                     label: Text(
                       '${channel.messagesUnread}',
-                      style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
+                      style:
+                          TextStyle(color: Colors.white, fontSize: Dim.tm2()),
                     ),
                     clipBehavior: Clip.antiAlias,
                     backgroundColor: Color.fromRGBO(255, 81, 84, 1),
@@ -94,52 +106,6 @@ class ChannelTile extends StatelessWidget {
           ],
         ),
       ),
-      // child: ListTile(
-      //   contentPadding: EdgeInsets.zero,
-      //   leading: SizedBox(
-      //     width: 35,
-      //     height: 35,
-      //     child: TextAvatar(
-      //       channel.icon,
-      //       emoji: true,
-      //     ),
-      //   ),
-      //   title: Container(
-      //     color: Colors.red,
-      //     child: Text(
-      //       channel.name,
-      //       overflow: TextOverflow.ellipsis,
-      //       textAlign: TextAlign.start,
-      //       style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400, color: Color(0xff444444)),
-      //     ),
-      //   ),
-      //   trailing: FittedBox(
-      //     fit: BoxFit.fitWidth,
-      //     child: Row(
-      //       children: [
-      //         Text(
-      //           DateFormatter.getVerboseDateTime(channel.lastActivity),
-      //           style: Theme.of(context).textTheme.subtitle2,
-      //         ),
-      //         if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
-      //         if (channel.messagesUnread != 0)
-      //           Chip(
-      //             labelPadding:
-      //                 EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
-      //             label: Text(
-      //               '${channel.messagesUnread}',
-      //               style: TextStyle(color: Colors.white, fontSize: Dim.tm2()),
-      //             ),
-      //             clipBehavior: Clip.antiAlias,
-      //             backgroundColor: Color.fromRGBO(255, 81, 84, 1),
-      //             shape: RoundedRectangleBorder(
-      //               borderRadius: BorderRadius.circular(30),
-      //             ),
-      //           ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

@@ -14,12 +14,12 @@ AddChannelRepository _$AddChannelRepositoryFromJson(Map<String, dynamic> json) {
     json['workspace_id'] as String,
     json['name'] as String,
     json['visibility'] as String,
-  )
-    ..icon = json['icon'] as String
-    ..description = json['description'] as String
-    ..channelGroup = json['channel_group'] as String
-    ..def = json['default'] as bool
-    ..members = (json['members'] as List)?.map((e) => e as String)?.toList();
+    icon: json['icon'] as String,
+    description: json['description'] as String,
+    channelGroup: json['channel_group'] as String,
+    def: json['default'] as bool,
+    members: (json['members'] as List)?.map((e) => e as String)?.toList(),
+  );
 }
 
 Map<String, dynamic> _$AddChannelRepositoryToJson(

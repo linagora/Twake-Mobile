@@ -8,7 +8,7 @@ import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:logger/logger.dart';
 
-const Color defaultColor = Colors.blueGrey;
+const Color defaultColor = Color(0xff444444);
 const Color linkColor = Colors.blue;
 const Color codeColor = Colors.indigo;
 const Color errorColor = Colors.red;
@@ -27,7 +27,7 @@ TextStyle generateStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: Dim.tm2(decimal: fontSize),
+      fontSize: fontSize,//Dim.tm2(decimal: fontSize),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -185,7 +185,7 @@ class TwacodeItem {
 
     switch (type) {
       case 'text':
-        this.style = generateStyle();
+        this.style = generateStyle(fontSize: 14.0);
         this.type = TwacodeType.text;
         break;
       case 'bold':

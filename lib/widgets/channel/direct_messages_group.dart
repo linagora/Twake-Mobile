@@ -13,10 +13,12 @@ class DirectMessagesGroup extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(height: 8),
             MainPageTitle(
               title: 'Direct Messages',
               isDirect: true,
             ),
+            SizedBox(height: 11),
             if (state is ChannelsLoaded)
               ...state.channels.map((d) => DirectTile(d)).toList(),
             if (state is ChannelsEmpty)
