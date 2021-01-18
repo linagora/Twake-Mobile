@@ -35,6 +35,11 @@ class _MainPageState extends State<MainPage>
       vsync: this,
       duration: _duration,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SheetBloc>().add(SetClosed());
+    });
+
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
         context.read<SheetBloc>().add(SetClosed());
