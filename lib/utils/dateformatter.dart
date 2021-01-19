@@ -8,8 +8,8 @@ class DateFormatter {
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     final localDT = dateTime.toLocal();
     // if timestamp is less than a minute old return 'Now'
-    DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
-    if (!localDT.difference(justNow).isNegative) {
+    DateTime justNow = DateTime.now();
+    if (justNow.difference(localDT).abs() < Duration(minutes: 1)) {
       return 'Now';
     }
 
@@ -22,20 +22,12 @@ class DateFormatter {
       return approximateTime;
     }
 
-    // if the date is one day before (less), return time prepended with
-    // 'Yesterday'
-    DateTime yesterday = justNow.subtract(Duration(days: 1));
-    if (localDT.year == yesterday.year &&
-        localDT.month == yesterday.month &&
-        localDT.day == yesterday.day) {
-      return 'Ystd, ' + approximateTime;
-    }
     // include year in date if message is from previous year
-    if (localDT.year < justNow.year) {
-      return '${DateFormat('d/M/y H:mm').format(dateTime)}';
+    if (justNow.difference(localDT) > Duration(days: 365)) {
+      return '${DateFormat('d MMM y HH:mm').format(dateTime)}';
     }
 
-    return '${DateFormat('d/M H:mm').format(dateTime)}';
+    return '${DateFormat('d MMM HH:mm').format(dateTime)}';
 
     // by default return 'year/month/day, time'
   }
@@ -65,7 +57,7 @@ class DateFormatter {
   static String getVerboseTime(int timestamp) {
     DateTime dateTime =
         DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toLocal();
-    return '${DateFormat('jm').format(dateTime)}';
+    return '${DateFormat('HH:mm').format(dateTime)}';
   }
 }
 // TODO localize everything

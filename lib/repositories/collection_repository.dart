@@ -73,7 +73,8 @@ class CollectionRepository<T extends CollectionItem> {
       }
       saveToStore = true;
     }
-    final items = itemsList.map((i) => (_typeToConstructor[T](i) as T)).toList();
+    final items =
+        itemsList.map((i) => (_typeToConstructor[T](i) as T)).toList();
     final collection =
         CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
     if (saveToStore) collection.save();
@@ -85,12 +86,9 @@ class CollectionRepository<T extends CollectionItem> {
     var oldSelected = selected;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
-    // assert(selected.id == item.id);
-    if (saveToStore)
-      Future.wait([
-        saveOne(oldSelected),
-        saveOne(item),
-      ]);
+    assert(selected.id == item.id);
+    if (saveToStore) saveOne(item);
+    saveOne(oldSelected);
   }
 
   Future<bool> reload({

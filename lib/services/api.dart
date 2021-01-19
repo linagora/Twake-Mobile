@@ -151,7 +151,7 @@ class Api {
       // logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
-      logger.d('RESPONSE ${response.data}');
+      // logger.d('RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
       logger.wtf(e);
