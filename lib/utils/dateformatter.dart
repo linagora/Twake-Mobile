@@ -15,7 +15,7 @@ class DateFormatter {
 
     // if the date is the same return time without seconds, taking
     // locale into account
-    String approximateTime = DateFormat('jm').format(dateTime);
+    String approximateTime = DateFormat('HH:mm').format(dateTime);
     if (localDT.year == justNow.year &&
         localDT.month == justNow.month &&
         localDT.day == justNow.day) {
@@ -50,7 +50,7 @@ class DateFormatter {
         dateTime.day == justNow.day) {
       return 'Today';
     }
-    return '${DateFormat('d MMMM y').format(dateTime)}';
+    return '${DateFormat('d MMM y').format(dateTime)}';
   }
 
   // Return just time
