@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/profile_bloc.dart';
@@ -18,6 +20,7 @@ class ChannelParticipantsList extends StatefulWidget {
 class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+  Timer _debounce;
 
   @override
   void initState() {
@@ -28,8 +31,11 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
     );
 
     _controller.addListener(() {
-      var searchRequest = _controller.text;
-      context.read<UserBloc>().add(LoadUsers(searchRequest));
+      if (_debounce?.isActive ?? false) _debounce.cancel();
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        final searchRequest = _controller.text;
+        context.read<UserBloc>().add(LoadUsers(searchRequest));
+      });
     });
   }
 
@@ -37,6 +43,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
+    _debounce.cancel();
     super.dispose();
   }
 
@@ -87,7 +94,9 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
               itemBuilder: (context, index) {
                 var user = users[index];
                 return RadioItem(
-                  title: ('${user.firstName} ${user.lastName}'),
+                  title: user.firstName.isNotEmpty || user.lastName.isNotEmpty
+                      ? '${user.firstName} ${user.lastName}'
+                      : '${user.username}',
                   selected: selectedIds.contains(user.id),
                   onTap: () {
                     if (selectedIds.contains(user.id)) {

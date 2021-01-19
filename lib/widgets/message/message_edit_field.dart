@@ -1,50 +1,91 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/repositories/draft_repository.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String) onMessageSend;
+
   MessageEditField(this.onMessageSend, {this.autofocus: false});
+
   @override
   _MessageEditField createState() => _MessageEditField();
 }
 
 class _MessageEditField extends State<MessageEditField> {
-  bool _canSend = false;
   bool _emojiVisible = false;
+  String _channelId = '';
+  DraftType _channelType = DraftType.channel;
+  // Timer _debounce;
+
   final _focus = FocusNode();
   final _controller = TextEditingController();
 
   @override
   void initState() {
+    super.initState();
+
     _controller.addListener(() {
       if (_controller.text.isEmpty) {
-        setState(() => _canSend = false);
-      } else if (!_canSend) {
-        setState(() => _canSend = true);
+        // setState(() => );
+        // print('DRAFT TO RESET: $_channelId : ${_controller.text}');
+        context.read<DraftBloc>().add(ResetDraft(
+          id: _channelId,
+          type: _channelType,
+        ));
+      // } else if (!_canSend) {
+        // setState(() => _canSend = true);
+      } else {
+        // print('DRAFT TO SAVE: $_channelId : ${_controller.text}');
+        // if (_debounce?.isActive ?? false) _debounce.cancel();
+        // _debounce = Timer(const Duration(milliseconds: 1500), () {
+          final draft = _controller.text;
+          context.read<DraftBloc>().add(SaveDraft(
+            id: _channelId,
+            type: _channelType,
+            draft: draft,
+          ));
+        // });
       }
     });
-    super.initState();
   }
 
   @override
   void dispose() {
     _focus.dispose();
     _controller.dispose();
+
+    // _debounce.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
-    return TextInput(
-      controller: _controller,
-      autofocus: widget.autofocus,
-      emojiVisible: _emojiVisible,
-      keyboardVisible: _keyboardVisible,
-      onMessageSend: widget.onMessageSend,
-      canSend: _canSend,
+    return BlocBuilder<DraftBloc, DraftState>(
+      buildWhen: (_, current) {
+        return current is DraftLoaded || current is DraftSaved;
+      },
+      builder: (context, state) {
+        if (state is DraftLoaded) {
+          _controller.text = state.draft;
+          _channelId = state.id;
+          _channelType = state.type;
+        }
+        var canSend = _controller.text.isNotEmpty;
+        return TextInput(
+          controller: _controller,
+          autofocus: widget.autofocus,
+          emojiVisible: _emojiVisible,
+          keyboardVisible: _keyboardVisible,
+          onMessageSend: widget.onMessageSend,
+          canSend: canSend,
+        );
+      },
     );
   }
 }
@@ -58,6 +99,7 @@ class TextInput extends StatelessWidget {
   final bool keyboardVisible;
   final bool canSend;
   final Function onMessageSend;
+
   TextInput({
     this.onMessageSend,
     this.controller,

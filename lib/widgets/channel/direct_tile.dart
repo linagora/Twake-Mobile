@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/messages_page.dart';
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 
@@ -20,6 +22,11 @@ class DirectTile extends StatelessWidget {
         BlocProvider.of<DirectsBloc>(context).add(
           ChangeSelectedChannel(direct.id),
         );
+        var draftType = DraftType.direct;
+        final id = direct.id;
+        // Load draft from local storage
+        context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
+
         Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => MessagesPage<DirectsBloc>()));
       },

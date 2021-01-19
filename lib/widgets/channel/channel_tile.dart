@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 
@@ -19,6 +21,12 @@ class ChannelTile extends StatelessWidget {
         BlocProvider.of<ChannelsBloc>(context).add(
           ChangeSelectedChannel(channel.id),
         );
+
+        var draftType = DraftType.channel;
+        final id = channel.id;
+        // Load draft from local storage
+        context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
+
         // Navigator.of(context).pushNamed(Routes.messages);
         Navigator.of(context)
             .push(MaterialPageRoute(
