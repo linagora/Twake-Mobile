@@ -83,6 +83,12 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   content: Text('Error sending message, no connection'),
                 ),
               );
+            } else if (state is ErrorLoadingMoreMessages) {
+              Scaffold.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text('Error loading more, no connection'),
+                ),
+              );
             }
           },
           child: BlocBuilder<MessagesBloc<T>, MessagesState>(

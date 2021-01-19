@@ -132,7 +132,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         sortFields: {'creation_date': false},
       );
       if (!success) {
-        repository.clear();
         yield ErrorLoadingMoreMessages(
           parentChannel: selectedChannel,
           messages: repository.items,
