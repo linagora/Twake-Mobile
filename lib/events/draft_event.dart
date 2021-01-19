@@ -6,7 +6,7 @@ abstract class DraftEvent extends Equatable {
 
 class LoadDraft extends DraftEvent {
   final String id;
-  final String type;
+  final DraftType type;
 
   const LoadDraft({@required this.id, @required this.type});
 
@@ -16,7 +16,7 @@ class LoadDraft extends DraftEvent {
 
 class SaveDraft extends DraftEvent {
   final String id;
-  final String type;
+  final DraftType type;
   final String draft;
 
   const SaveDraft({
@@ -31,7 +31,7 @@ class SaveDraft extends DraftEvent {
 
 class ResetDraft extends DraftEvent {
   final String id;
-  final String type;
+  final DraftType type;
 
   const ResetDraft({@required this.id, @required this.type});
 

@@ -133,6 +133,8 @@ class SQLite with Storage {
       table = 'user';
     else if (type == StorageType.Emojis)
       table = 'setting';
+    else if (type == StorageType.Drafts)
+      table = 'draft';
     else
       throw 'Storage type does not exist';
     return table;

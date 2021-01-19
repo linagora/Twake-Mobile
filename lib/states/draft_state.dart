@@ -23,6 +23,16 @@ class DraftLoaded extends DraftState {
   List<Object> get props => [draft];
 }
 
+class DraftSaving extends DraftState {
+  @override
+  List<Object> get props => [];
+}
+
+class DraftSaved extends DraftState {
+  @override
+  List<Object> get props => [];
+}
+
 class DraftError extends DraftState {
   final String message;
 
