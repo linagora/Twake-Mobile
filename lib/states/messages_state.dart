@@ -95,3 +95,20 @@ class ErrorLoadingMoreMessages extends MessagesLoaded {
   @override
   List<Object> get props => [parentChannel, threadMessage];
 }
+
+class ErrorSendingMessage extends MessagesLoaded {
+  final String force;
+  const ErrorSendingMessage({
+    this.force,
+    BaseChannel parentChannel,
+    Message threadMessage,
+    List<Message> messages,
+  }) : super(
+          parentChannel: parentChannel,
+          threadMessage: threadMessage,
+          messages: messages,
+        );
+
+  @override
+  List<Object> get props => [parentChannel, threadMessage, force];
+}

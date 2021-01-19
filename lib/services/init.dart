@@ -11,6 +11,7 @@ import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/utils/emojis.dart';
+import 'package:twake/repositories/draft_repository.dart';
 
 import 'service_bundle.dart';
 
@@ -30,6 +31,7 @@ Future<AuthRepository> initAuth() async {
 
 Future<InitData> initMain() async {
   await Emojis.load();
+  // await Drafts.load();
   final profile = await ProfileRepository.load();
   final sheet = await SheetRepository.load();
   final addChannel = await AddChannelRepository.load();
