@@ -166,13 +166,13 @@ class Api {
       InterceptorsWrapper(
         // token validation causes infinite loop
         onRequest: (options) async {
-          // logger.d('URI: ${options.uri}\nQP: ${options.queryParameters}');
           if (_tokenIsValid != null) {
             switch (_tokenIsValid()) {
               case TokenStatus.Valid:
                 break;
               case TokenStatus.AccessExpired:
                 await _prolongToken();
+                options.headers = dio.options.headers;
                 break;
               case TokenStatus.BothExpired:
                 _resetAuthentication();

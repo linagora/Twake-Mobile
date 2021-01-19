@@ -149,7 +149,6 @@ class MessagesBloc<T extends BaseChannelBloc>
           .d('IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}');
       await repository.pullOne(
         _makeQueryParams(event),
-        // addToItems: event.channelId == selectedChannel.id,
         addToItems: event.channelId == selectedChannel.id,
       );
       _sortItems();
