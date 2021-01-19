@@ -132,7 +132,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         sortFields: {'creation_date': false},
       );
       if (!success) {
-        repository.clear();
         yield ErrorLoadingMoreMessages(
           parentChannel: selectedChannel,
           messages: repository.items,
@@ -150,7 +149,6 @@ class MessagesBloc<T extends BaseChannelBloc>
           .d('IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}');
       await repository.pullOne(
         _makeQueryParams(event),
-        // addToItems: event.channelId == selectedChannel.id,
         addToItems: event.channelId == selectedChannel.id,
       );
       _sortItems();

@@ -43,6 +43,7 @@ class _MainPageState extends State<MainPage>
     _animationController.addStatusListener((status) {
       if (status == AnimationStatus.dismissed) {
         context.read<SheetBloc>().add(SetClosed());
+        FocusScope.of(context).requestFocus(new FocusNode());
       }
       if (status == AnimationStatus.completed) {
         context.read<SheetBloc>().add(SetOpened());

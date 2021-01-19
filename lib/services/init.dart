@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
@@ -31,10 +32,10 @@ Future<AuthRepository> initAuth() async {
 
 Future<InitData> initMain() async {
   await Emojis.load();
-  // await Drafts.load();
   final profile = await ProfileRepository.load();
   final sheet = await SheetRepository.load();
   final addChannel = await AddChannelRepository.load();
+  final draft = DraftRepository();
   final _ = UserRepository(Endpoint.users);
   final companies = await CollectionRepository.load<Company>(
     Endpoint.companies,
@@ -86,6 +87,7 @@ Future<InitData> initMain() async {
     threads: threads,
     sheet: sheet,
     addChannel: addChannel,
+    draft: draft,
   );
 }
 
@@ -99,6 +101,7 @@ class InitData {
   final CollectionRepository<Message> threads;
   final SheetRepository sheet;
   final AddChannelRepository addChannel;
+  final DraftRepository draft;
 
   InitData({
     this.profile,
@@ -110,5 +113,6 @@ class InitData {
     this.threads,
     this.sheet,
     this.addChannel,
+    this.draft,
   });
 }

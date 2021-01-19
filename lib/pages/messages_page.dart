@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
@@ -83,6 +85,12 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   content: Text('Error sending message, no connection'),
                 ),
               );
+            } else if (state is ErrorLoadingMoreMessages) {
+              Scaffold.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text('Error loading more, no connection'),
+                ),
+              );
             }
           },
           child: BlocBuilder<MessagesBloc<T>, MessagesState>(
@@ -100,10 +108,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         ),
                       MessagesGroupedList<T>(),
                       MessageEditField((content) {
-                        BlocProvider.of<MessagesBloc<T>>(context).add(
-                          SendMessage(content: content),
-                        );
-                      }),
+                          BlocProvider.of<MessagesBloc<T>>(context).add(
+                            SendMessage(content: content),
+                          );
+                        },
+                      ),
                     ],
                   )),
         ),

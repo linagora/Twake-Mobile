@@ -5,6 +5,7 @@ import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc.dart';
@@ -134,6 +135,10 @@ class _InitialPageState extends State<InitialPage> {
               ),
               BlocProvider<AddChannelBloc>(
                 create: (_) => AddChannelBloc(state.initData.addChannel),
+                lazy: false,
+              ),
+              BlocProvider<DraftBloc>(
+                create: (_) => DraftBloc(state.initData.draft),
                 lazy: false,
               ),
             ],

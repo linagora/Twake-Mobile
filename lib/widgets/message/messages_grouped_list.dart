@@ -56,7 +56,8 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(1.0),
                             child: Text(
-                              DateFormatter.getVerboseDate(message.creationDate),
+                              DateFormatter.getVerboseDate(
+                                  message.creationDate),
                               style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.w400,
