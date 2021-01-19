@@ -62,65 +62,41 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
       ),
       body: SafeArea(
         child: BlocListener<ThreadsBloc<T>, MessagesState>(
-          listener: (ctx, state) {
-            if (state is ErrorSendingMessage) {
-              FocusManager.instance.primaryFocus.unfocus();
-              Scaffold.of(ctx).showSnackBar(
-                SnackBar(
-                  content: Text('Error sending message, no connection'),
-                ),
-              );
-            }
-          },
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: Dim.heightPercent(88),
-              minHeight: Dim.heightPercent(78),
-            ),
-            child: BlocBuilder<ThreadsBloc<T>, MessagesState>(
-                builder: (ctx, state) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (state is MessagesLoaded)
-                    ThreadMessagesList<T>(
-                      state.messages,
-                      threadMessage: state.threadMessage,
-                    ),
-                  if (state is MessagesEmpty)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          state is ErrorLoadingMessages
-                              ? 'Couldn\'t load messages, no connection'
-                              : 'No responses yet',
-                        ),
-                      ),
-                    ),
-                  if (state is MessagesLoading)
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  MessageEditField(
-                    (content) {
-                      BlocProvider.of<ThreadsBloc<T>>(ctx).add(
-                        SendMessage(
-                          content: content,
-                          channelId: state.parentChannel.id,
-                          threadId: state.threadMessage.id,
-                        ),
-                      );
-                    },
-                    autofocus: autofocus,
+            listener: (ctx, state) {
+              if (state is ErrorSendingMessage) {
+                FocusManager.instance.primaryFocus.unfocus();
+                Scaffold.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text('Error sending message, no connection'),
                   ),
-                ],
-              );
-            }),
-          ),
-        ),
+                );
+              }
+            },
+            child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: Dim.heightPercent(88),
+                  minHeight: Dim.heightPercent(78),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ThreadMessagesList<T>(),
+                    MessageEditField(
+                      (content) {
+                        final state =
+                            BlocProvider.of<ThreadsBloc<T>>(context).state;
+                        BlocProvider.of<ThreadsBloc<T>>(context).add(
+                          SendMessage(
+                            content: content,
+                            channelId: state.parentChannel.id,
+                            threadId: state.threadMessage.id,
+                          ),
+                        );
+                      },
+                      autofocus: autofocus,
+                    ),
+                  ],
+                ))),
       ),
     );
   }
