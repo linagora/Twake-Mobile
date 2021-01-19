@@ -1,11 +1,15 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String) onMessageSend;
+
   MessageEditField(this.onMessageSend, {this.autofocus: false});
+
   @override
   _MessageEditField createState() => _MessageEditField();
 }
@@ -13,6 +17,7 @@ class MessageEditField extends StatefulWidget {
 class _MessageEditField extends State<MessageEditField> {
   bool _canSend = false;
   bool _emojiVisible = false;
+  String _draftId = '';
   final _focus = FocusNode();
   final _controller = TextEditingController();
 
@@ -23,6 +28,8 @@ class _MessageEditField extends State<MessageEditField> {
         setState(() => _canSend = false);
       } else if (!_canSend) {
         setState(() => _canSend = true);
+      } else {
+        print('DRAFT TO SAVE: $_draftId : ${_controller.text}');
       }
     });
     super.initState();
@@ -38,13 +45,24 @@ class _MessageEditField extends State<MessageEditField> {
   @override
   Widget build(BuildContext context) {
     bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
-    return TextInput(
-      controller: _controller,
-      autofocus: widget.autofocus,
-      emojiVisible: _emojiVisible,
-      keyboardVisible: _keyboardVisible,
-      onMessageSend: widget.onMessageSend,
-      canSend: _canSend,
+    return BlocBuilder<DraftBloc, DraftState>(
+      buildWhen: (_, current) {
+        return current is DraftLoaded;
+      },
+      builder: (context, state) {
+        if (state is DraftLoaded) {
+          _controller.text = state.draft;
+          _draftId = state.id;
+        }
+        return TextInput(
+          controller: _controller,
+          autofocus: widget.autofocus,
+          emojiVisible: _emojiVisible,
+          keyboardVisible: _keyboardVisible,
+          onMessageSend: widget.onMessageSend,
+          canSend: _canSend,
+        );
+      },
     );
   }
 }
@@ -58,6 +76,7 @@ class TextInput extends StatelessWidget {
   final bool keyboardVisible;
   final bool canSend;
   final Function onMessageSend;
+
   TextInput({
     this.onMessageSend,
     this.controller,
@@ -110,9 +129,9 @@ class TextInput extends StatelessWidget {
                 ),
                 onPressed: canSend
                     ? () async {
-                        await onMessageSend(controller.text);
-                        controller.clear();
-                      }
+                  await onMessageSend(controller.text);
+                  controller.clear();
+                }
                     : null,
               ),
             ],

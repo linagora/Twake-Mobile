@@ -20,7 +20,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
     if (event is LoadDraft) {
       yield DraftLoading();
       final draft = await repository.load(id: event.id, type: event.type);
-      yield DraftLoaded(draft);
+      yield DraftLoaded(id: event.id, draft: draft);
     } else if (event is SaveDraft) {
       yield DraftSaving();
       try {

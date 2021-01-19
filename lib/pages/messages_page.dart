@@ -119,10 +119,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         ),
                       MessagesGroupedList<T>(),
                       MessageEditField((content) {
-                        BlocProvider.of<MessagesBloc<T>>(context).add(
-                          SendMessage(content: content),
-                        );
-                      }),
+                          BlocProvider.of<MessagesBloc<T>>(context).add(
+                            SendMessage(content: content),
+                          );
+                        },
+                      ),
                     ],
                   )),
         ),
