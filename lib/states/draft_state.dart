@@ -16,15 +16,17 @@ class DraftLoading extends DraftState {
 
 class DraftLoaded extends DraftState {
   final String id;
+  final DraftType type;
   final String draft;
 
   const DraftLoaded({
     @required this.id,
+    @required this.type,
     @required this.draft,
   });
 
   @override
-  List<Object> get props => [id, draft];
+  List<Object> get props => [id, type, draft];
 }
 
 class DraftSaving extends DraftState {
@@ -33,8 +35,18 @@ class DraftSaving extends DraftState {
 }
 
 class DraftSaved extends DraftState {
+  final String id;
+  final DraftType type;
+  final String draft;
+
+  DraftSaved({
+    @required this.id,
+    @required this.type,
+    @required this.draft,
+  });
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [id, type, draft];
 }
 
 class DraftError extends DraftState {

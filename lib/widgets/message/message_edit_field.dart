@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/repositories/draft_repository.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
@@ -17,28 +19,50 @@ class MessageEditField extends StatefulWidget {
 class _MessageEditField extends State<MessageEditField> {
   bool _canSend = false;
   bool _emojiVisible = false;
-  String _draftId = '';
+  String _channelId = '';
+  DraftType _channelType = DraftType.channel;
+  // Timer _debounce;
+
   final _focus = FocusNode();
   final _controller = TextEditingController();
 
   @override
   void initState() {
+    super.initState();
+
     _controller.addListener(() {
       if (_controller.text.isEmpty) {
-        setState(() => _canSend = false);
+        // setState(() => );
+        _canSend = false;
+        print('DRAFT TO RESET: $_channelId : ${_controller.text}');
+        context.read<DraftBloc>().add(ResetDraft(
+          id: _channelId,
+          type: _channelType,
+        ));
       } else if (!_canSend) {
-        setState(() => _canSend = true);
+        // setState(() => _canSend = true);
+        _canSend = true;
       } else {
-        print('DRAFT TO SAVE: $_draftId : ${_controller.text}');
+        print('DRAFT TO SAVE: $_channelId : ${_controller.text}');
+        // if (_debounce?.isActive ?? false) _debounce.cancel();
+        // _debounce = Timer(const Duration(milliseconds: 1500), () {
+          final draft = _controller.text;
+          context.read<DraftBloc>().add(SaveDraft(
+            id: _channelId,
+            type: _channelType,
+            draft: draft,
+          ));
+        // });
       }
     });
-    super.initState();
   }
 
   @override
   void dispose() {
     _focus.dispose();
     _controller.dispose();
+
+    // _debounce.cancel();
     super.dispose();
   }
 
@@ -52,7 +76,8 @@ class _MessageEditField extends State<MessageEditField> {
       builder: (context, state) {
         if (state is DraftLoaded) {
           _controller.text = state.draft;
-          _draftId = state.id;
+          _channelId = state.id;
+          _channelType = state.type;
         }
         return TextInput(
           controller: _controller,
@@ -129,9 +154,9 @@ class TextInput extends StatelessWidget {
                 ),
                 onPressed: canSend
                     ? () async {
-                  await onMessageSend(controller.text);
-                  controller.clear();
-                }
+                        await onMessageSend(controller.text);
+                        controller.clear();
+                      }
                     : null,
               ),
             ],

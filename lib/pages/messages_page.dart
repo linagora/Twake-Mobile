@@ -20,18 +20,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
-        title: BlocConsumer<MessagesBloc<T>, MessagesState>(
-          listener: (context, state) {
-            var draftType = DraftType.channel;
-            if (state.parentChannel is Direct) {
-              draftType = DraftType.direct;
-            } else if (state.parentChannel is Channel) {
-              draftType = DraftType.channel;
-            }
-            final id = state.parentChannel.id;
-            // Load draft from local storage
-            context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
-          },
+        title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) => Row(
             mainAxisSize: MainAxisSize.min,
             children: [
