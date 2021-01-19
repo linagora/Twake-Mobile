@@ -92,7 +92,7 @@ CREATE TABLE user (
 )
 ''';
 
-const String CREATE_DRAFT_V1 = '''
+const String CREATE_DRAFT_V2 = '''
 CREATE TABLE draft (
     id TEXT PRIMARY KEY,
     value TEXT NOT NULL
@@ -107,5 +107,13 @@ const DDL_V1 = [
   CREATE_DIRECT_V1,
   CREATE_MESSAGE_V1,
   CREATE_USER_V1,
-  CREATE_DRAFT_V1,
+];
+
+const DDL_V2 = [
+  ...DDL_V1,
+  ...MIGRATION_2,
+];
+
+const MIGRATION_2 = [
+  CREATE_DRAFT_V2,
 ];

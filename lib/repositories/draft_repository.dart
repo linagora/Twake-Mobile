@@ -23,7 +23,7 @@ class DraftRepository {
       type: StorageType.Drafts,
       key: key,
     );
-    final draft = map['value'];
+    final draft = map != null ? map['value'] : '';
     return draft;
   }
 

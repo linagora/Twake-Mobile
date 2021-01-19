@@ -9,7 +9,7 @@ import 'package:twake/services/storage/storage.dart';
 import 'package:twake/sql/v1.dart';
 
 const String _DATABASE_FILE = 'twakesql.db';
-const int _CURRENT_MIGRATION = 1;
+const int _CURRENT_MIGRATION = 2;
 
 class SQLite with Storage {
   static Database _db;
@@ -32,17 +32,31 @@ class SQLite with Storage {
       throw e;
     }
 
-    _db = await openDatabase(path, version: _CURRENT_MIGRATION,
-        onConfigure: (Database db) async {
-      await db.execute("PRAGMA foreign_keys = ON");
-    }, onCreate: (Database db, int version) async {
-      for (var ddl in DDL_V1) {
-        await db.execute(ddl);
-      }
-    }, onOpen: (Database db) async {
-      final v = await db.getVersion();
-      logger.d('Opened twake db v.$v');
-    });
+    _db = await openDatabase(
+      path,
+      version: _CURRENT_MIGRATION,
+      onConfigure: (Database db) async {
+        await db.execute("PRAGMA foreign_keys = ON");
+      },
+      onCreate: (Database db, int version) async {
+        for (var ddl in DDL_V2) {
+          await db.execute(ddl);
+        }
+      },
+      onOpen: (Database db) async {
+        final v = await db.getVersion();
+        logger.d('Opened twake db v.$v');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        logger.d('SQFlite onUpdate called with new version: $newVersion');
+        if (oldVersion == 1) {
+          logger.d('Migration to twake db v.$newVersion');
+          for (var migrationDdl in MIGRATION_2) {
+            await db.execute(migrationDdl);
+          }
+        }
+      },
+    );
   }
 
   @override
