@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
@@ -18,7 +20,18 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
-        title: BlocBuilder<MessagesBloc<T>, MessagesState>(
+        title: BlocConsumer<MessagesBloc<T>, MessagesState>(
+          listener: (context, state) {
+            var draftType = DraftType.channel;
+            if (state.parentChannel is Direct) {
+              draftType = DraftType.direct;
+            } else if (state.parentChannel is Channel) {
+              draftType = DraftType.channel;
+            }
+            final id = state.parentChannel.id;
+            // Load draft from local storage
+            context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
+          },
           builder: (ctx, state) => Row(
             mainAxisSize: MainAxisSize.min,
             children: [
