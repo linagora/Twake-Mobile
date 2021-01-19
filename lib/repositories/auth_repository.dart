@@ -155,6 +155,7 @@ class AuthRepository extends JsonSerializable {
       _updateFromMap(response);
       return AuthResult.Ok;
     } on ApiError catch (error) {
+      logger.e('ERROR PROLONGING TOKEN');
       return _handleError(error);
     }
   }
@@ -207,7 +208,7 @@ class AuthRepository extends JsonSerializable {
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,
     };
-    _api = Api(headers: headers);
+    _api.headers = headers;
   }
 
   // Set api (dio) interceptors to validate token before requests
