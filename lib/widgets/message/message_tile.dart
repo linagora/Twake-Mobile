@@ -140,7 +140,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                               fontWeight: FontWeight.w600,
                                               color: Color(0xff444444),
                                             ),
-                                            overflow: TextOverflow.fade,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
                                             messageState.threadId != null

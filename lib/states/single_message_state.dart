@@ -30,3 +30,11 @@ class MessageReady extends SingleMessageState {
   @override
   List<Object> get props => [id, content, reactions.length, responsesCount];
 }
+
+class ViewportUpdated extends SingleMessageState {
+  final double position;
+
+  ViewportUpdated(this.position);
+
+  List<Object> get props => [position];
+}
