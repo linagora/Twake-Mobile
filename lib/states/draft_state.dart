@@ -35,18 +35,8 @@ class DraftSaving extends DraftState {
 }
 
 class DraftSaved extends DraftState {
-  final String id;
-  final DraftType type;
-  final String draft;
-
-  DraftSaved({
-    @required this.id,
-    @required this.type,
-    @required this.draft,
-  });
-
   @override
-  List<Object> get props => [id, type, draft];
+  List<Object> get props => [];
 }
 
 class DraftError extends DraftState {

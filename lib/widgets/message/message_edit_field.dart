@@ -17,7 +17,6 @@ class MessageEditField extends StatefulWidget {
 }
 
 class _MessageEditField extends State<MessageEditField> {
-  bool _canSend = false;
   bool _emojiVisible = false;
   String _channelId = '';
   DraftType _channelType = DraftType.channel;
@@ -33,17 +32,15 @@ class _MessageEditField extends State<MessageEditField> {
     _controller.addListener(() {
       if (_controller.text.isEmpty) {
         // setState(() => );
-        _canSend = false;
-        print('DRAFT TO RESET: $_channelId : ${_controller.text}');
+        // print('DRAFT TO RESET: $_channelId : ${_controller.text}');
         context.read<DraftBloc>().add(ResetDraft(
           id: _channelId,
           type: _channelType,
         ));
-      } else if (!_canSend) {
+      // } else if (!_canSend) {
         // setState(() => _canSend = true);
-        _canSend = true;
       } else {
-        print('DRAFT TO SAVE: $_channelId : ${_controller.text}');
+        // print('DRAFT TO SAVE: $_channelId : ${_controller.text}');
         // if (_debounce?.isActive ?? false) _debounce.cancel();
         // _debounce = Timer(const Duration(milliseconds: 1500), () {
           final draft = _controller.text;
@@ -71,7 +68,7 @@ class _MessageEditField extends State<MessageEditField> {
     bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
     return BlocBuilder<DraftBloc, DraftState>(
       buildWhen: (_, current) {
-        return current is DraftLoaded;
+        return current is DraftLoaded || current is DraftSaved;
       },
       builder: (context, state) {
         if (state is DraftLoaded) {
@@ -79,13 +76,14 @@ class _MessageEditField extends State<MessageEditField> {
           _channelId = state.id;
           _channelType = state.type;
         }
+        var canSend = _controller.text.isNotEmpty;
         return TextInput(
           controller: _controller,
           autofocus: widget.autofocus,
           emojiVisible: _emojiVisible,
           keyboardVisible: _keyboardVisible,
           onMessageSend: widget.onMessageSend,
-          canSend: _canSend,
+          canSend: canSend,
         );
       },
     );
