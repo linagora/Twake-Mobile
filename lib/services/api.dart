@@ -28,25 +28,25 @@ class Api {
     // if the headers are present, e.g. token has changed,
     // reinitialize Dio
     if (_api == null) {
-      _api = Api._(headers);
+      _api = Api._();
     }
     return _api;
   }
 
   // internal private constructor (singleton pattern)
-  Api._(Map<String, String> headers) {
-    tokenDio.options.headers = headers;
+  Api._() {
     dio = Dio(
       BaseOptions(
-          connectTimeout: _CONNECT_TIMEOUT,
-          receiveTimeout: _RECEIVE_TIMEOUT,
-          sendTimeout: _SEND_TIMEOUT,
-          headers: headers),
+        connectTimeout: _CONNECT_TIMEOUT,
+        receiveTimeout: _RECEIVE_TIMEOUT,
+        sendTimeout: _SEND_TIMEOUT,
+      ),
     );
     _addDioInterceptors();
   }
 
   set headers(value) {
+    tokenDio.options.headers = value;
     dio.options.headers = value;
   }
 
@@ -146,13 +146,15 @@ class Api {
     await checkConnection();
     final url = _SHOST + method;
     try {
-      logger.d('METHOD: $url');
-      logger.d('HEADERS: ${dio.options.headers}');
-      logger.d('BODY: $body');
+      // logger.d('METHOD: $url');
+      // logger.d('HEADERS: ${dio.options.headers}');
+      // logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
+      logger.d('RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
+      logger.wtf(e);
       throw ApiError.fromDioError(e);
     }
   }
@@ -184,7 +186,7 @@ class Api {
           // referesh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
-              '\nError: ${error.response.data}' +
+              '\nError: $error' +
               '\nHeaders: ${error.request.headers}' +
               '\nData: ${error.request.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {

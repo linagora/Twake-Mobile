@@ -210,15 +210,21 @@ class MessagesBloc<T extends BaseChannelBloc>
       }
     } else if (event is SendMessage) {
       final success = await repository.pushOne(_makeQueryParams(event));
-      if (success) {
-        _sortItems();
-        yield MessagesLoaded(
+      if (!success) {
+        yield ErrorSendingMessage(
           messages: repository.items,
-          messageCount: repository.itemsCount,
+          force: DateTime.now().toString(),
           parentChannel: selectedChannel,
         );
-        _updateParentChannel();
+        return;
       }
+      _sortItems();
+      yield MessagesLoaded(
+        messages: repository.items,
+        messageCount: repository.itemsCount,
+        parentChannel: selectedChannel,
+      );
+      _updateParentChannel();
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty(parentChannel: selectedChannel);

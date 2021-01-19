@@ -120,16 +120,23 @@ class ThreadsBloc<T extends BaseChannelBloc>
       _updateParentChannel(totalModifier: -1);
     } else if (event is SendMessage) {
       final success = await repository.pushOne(_makeQueryParams(event));
-      if (success) {
-        _sortItems();
-        yield messagesLoaded;
-        messagesBloc.add(ModifyResponsesCount(
-          channelId: event.channelId,
-          threadId: event.threadId,
-          modifier: 1,
-        ));
-        _updateParentChannel();
+      if (!success) {
+        yield ErrorSendingMessage(
+          messages: repository.items,
+          force: DateTime.now().toString(),
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+        );
+        return;
       }
+      _sortItems();
+      yield messagesLoaded;
+      messagesBloc.add(ModifyResponsesCount(
+        channelId: event.channelId,
+        threadId: event.threadId,
+        modifier: 1,
+      ));
+      _updateParentChannel();
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty(
