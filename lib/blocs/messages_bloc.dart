@@ -132,7 +132,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         sortFields: {'creation_date': false},
       );
       if (!success) {
-        repository.clear();
         yield ErrorLoadingMoreMessages(
           parentChannel: selectedChannel,
           messages: repository.items,
@@ -150,7 +149,6 @@ class MessagesBloc<T extends BaseChannelBloc>
           .d('IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}');
       await repository.pullOne(
         _makeQueryParams(event),
-        // addToItems: event.channelId == selectedChannel.id,
         addToItems: event.channelId == selectedChannel.id,
       );
       _sortItems();
@@ -210,15 +208,21 @@ class MessagesBloc<T extends BaseChannelBloc>
       }
     } else if (event is SendMessage) {
       final success = await repository.pushOne(_makeQueryParams(event));
-      if (success) {
-        _sortItems();
-        yield MessagesLoaded(
+      if (!success) {
+        yield ErrorSendingMessage(
           messages: repository.items,
-          messageCount: repository.itemsCount,
+          force: DateTime.now().toString(),
           parentChannel: selectedChannel,
         );
-        _updateParentChannel();
+        return;
       }
+      _sortItems();
+      yield MessagesLoaded(
+        messages: repository.items,
+        messageCount: repository.itemsCount,
+        parentChannel: selectedChannel,
+      );
+      _updateParentChannel();
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty(parentChannel: selectedChannel);

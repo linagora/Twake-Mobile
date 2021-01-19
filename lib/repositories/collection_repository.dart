@@ -12,7 +12,7 @@ class CollectionRepository<T extends CollectionItem> {
 
   // Ugly hack, but there's no other way to get constructor from generic type
   static Map<Type, CollectionItem Function(Map<String, dynamic>)>
-      _typeToConstuctor = {
+      _typeToConstructor = {
     Company: (Map<String, dynamic> json) => Company.fromJson(json),
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
     Channel: (Map<String, dynamic> json) => Channel.fromJson(json),
@@ -73,7 +73,8 @@ class CollectionRepository<T extends CollectionItem> {
       }
       saveToStore = true;
     }
-    final items = itemsList.map((i) => (_typeToConstuctor[T](i) as T)).toList();
+    final items =
+        itemsList.map((i) => (_typeToConstructor[T](i) as T)).toList();
     final collection =
         CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
     if (saveToStore) collection.save();
@@ -85,12 +86,9 @@ class CollectionRepository<T extends CollectionItem> {
     var oldSelected = selected;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
-    // assert(selected.id == item.id);
-    if (saveToStore)
-      Future.wait([
-        saveOne(oldSelected),
-        saveOne(item),
-      ]);
+    assert(selected.id == item.id);
+    if (saveToStore) saveOne(item);
+    saveOne(oldSelected);
   }
 
   Future<bool> reload({
@@ -157,8 +155,6 @@ class CollectionRepository<T extends CollectionItem> {
     }
     if (itemsList.isNotEmpty) {
       _updateItems(itemsList, saveToStore: saveToStore, extendItems: true);
-    } else {
-      return false;
     }
     return true;
   }
@@ -176,7 +172,7 @@ class CollectionRepository<T extends CollectionItem> {
       return false;
     }
     if (resp.isEmpty) return false;
-    final item = _typeToConstuctor[T](resp[0]);
+    final item = _typeToConstructor[T](resp[0]);
     if (addToItems) this.items.add(item);
     saveOne(item);
     return true;
@@ -195,7 +191,7 @@ class CollectionRepository<T extends CollectionItem> {
       return false;
     }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
-    final item = _typeToConstuctor[T](resp);
+    final item = _typeToConstructor[T](resp);
     if (addToItems) this.items.add(item);
     saveOne(item);
     return true;
@@ -206,7 +202,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (item == null) {
       final map = await _storage.load(type: _typeToStorageType[T], key: id);
       if (map == null) return null;
-      item = _typeToConstuctor[T](map);
+      item = _typeToConstructor[T](map);
     }
     return item;
   }
@@ -244,7 +240,7 @@ class CollectionRepository<T extends CollectionItem> {
     bool saveToStore: false,
     bool extendItems: false,
   }) {
-    final items = itemsList.map((c) => (_typeToConstuctor[T](c) as T));
+    final items = itemsList.map((c) => (_typeToConstructor[T](c) as T));
     if (extendItems)
       this.items.addAll(items);
     else

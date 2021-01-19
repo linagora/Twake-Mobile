@@ -27,38 +27,27 @@ class Api {
   factory Api({Map<String, String> headers}) {
     // if the headers are present, e.g. token has changed,
     // reinitialize Dio
-    if (_api == null || headers != null) {
-      bool notNull = _api != null;
-      // save and restore the callbacks
-      var tiv;
-      var pt;
-      var ra;
-      if (notNull) {
-        tiv = _api._tokenIsValid;
-        pt = _api._prolongToken;
-        ra = _api._resetAuthentication;
-      }
-      _api = Api._(headers);
-      if (notNull) {
-        _api._tokenIsValid = tiv;
-        _api._prolongToken = pt;
-        _api._resetAuthentication = ra;
-      }
+    if (_api == null) {
+      _api = Api._();
     }
     return _api;
   }
 
   // internal private constructor (singleton pattern)
-  Api._(Map<String, String> headers) {
-    tokenDio.options.headers = headers;
+  Api._() {
     dio = Dio(
       BaseOptions(
-          connectTimeout: _CONNECT_TIMEOUT,
-          receiveTimeout: _RECEIVE_TIMEOUT,
-          sendTimeout: _SEND_TIMEOUT,
-          headers: headers),
+        connectTimeout: _CONNECT_TIMEOUT,
+        receiveTimeout: _RECEIVE_TIMEOUT,
+        sendTimeout: _SEND_TIMEOUT,
+      ),
     );
     _addDioInterceptors();
+  }
+
+  set headers(value) {
+    tokenDio.options.headers = value;
+    dio.options.headers = value;
   }
 
   // if referesh has changed, then we reset dio interceptor to account for this
@@ -157,13 +146,15 @@ class Api {
     await checkConnection();
     final url = _SHOST + method;
     try {
-      logger.d('METHOD: $url');
-      logger.d('HEADERS: ${dio.options.headers}');
-      logger.d('BODY: $body');
+      // logger.d('METHOD: $url');
+      // logger.d('HEADERS: ${dio.options.headers}');
+      // logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
+      // logger.d('RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
+      logger.wtf(e);
       throw ApiError.fromDioError(e);
     }
   }
@@ -175,13 +166,13 @@ class Api {
       InterceptorsWrapper(
         // token validation causes infinite loop
         onRequest: (options) async {
-          // logger.d('URI: ${options.uri}\nQP: ${options.queryParameters}');
           if (_tokenIsValid != null) {
             switch (_tokenIsValid()) {
               case TokenStatus.Valid:
                 break;
               case TokenStatus.AccessExpired:
                 await _prolongToken();
+                options.headers = dio.options.headers;
                 break;
               case TokenStatus.BothExpired:
                 _resetAuthentication();
@@ -195,12 +186,14 @@ class Api {
           // referesh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
-              '\nError: ${error.response.data}' +
+              '\nError: $error' +
+              '\nHeaders: ${error.request.headers}' +
               '\nData: ${error.request.data}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
           } else {
+            logger.e('status code: ${error.response.statusCode}');
             return error;
           }
         },

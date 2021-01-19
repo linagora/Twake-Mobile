@@ -71,4 +71,5 @@ enum StorageType {
   Company,
   User,
   Emojis,
+  Drafts,
 }

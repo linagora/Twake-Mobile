@@ -7,6 +7,7 @@ abstract class SingleMessageEvent extends Equatable {
 
 class UpdateContent extends SingleMessageEvent {
   final MessageTwacode content;
+
   const UpdateContent(this.content);
 
   @override
@@ -37,4 +38,13 @@ class UpdateResponseCount extends SingleMessageEvent {
 
   @override
   List<Object> get props => [modifier];
+}
+
+class UpdateViewport extends SingleMessageEvent {
+  final double position;
+
+  UpdateViewport(this.position);
+
+  @override
+  List<Object> get props => [position];
 }

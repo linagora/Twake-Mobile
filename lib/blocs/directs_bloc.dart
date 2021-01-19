@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
 import 'package:twake/blocs/notification_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/events/channel_event.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/collection_repository.dart';
@@ -65,12 +64,16 @@ class DirectsBloc extends BaseChannelBloc {
       );
       if (repository.isEmpty)
         yield ChannelsEmpty();
-      else
+      else {
+        _sortItems();
         yield ChannelsLoaded(
           channels: repository.items,
         );
+      }
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);
+      repository.logger
+          .d('REORDERING DIRECTS ${event.companyId == selectedParentId}');
       if (event.companyId == selectedParentId) {
         _sortItems();
         yield ChannelsLoaded(
