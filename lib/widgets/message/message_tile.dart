@@ -21,18 +21,19 @@ import 'package:twake/widgets/message/message_modal_sheet.dart';
 class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
   final bool hideShowAnswers;
   final Message message;
+  final Function onShowThread;
 
   MessageTile({
     this.message,
     this.hideShowAnswers: false,
+    this.onShowThread,
     Key key,
   }) : super(key: key);
 
   void onReply(context, String messageId, {bool autofocus: false}) {
+    onShowThread();
+
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
-    // context.read<DraftBloc>().add(LoadDraft(id: message.id, type: DraftType.thread));
-    BlocProvider.of<DraftBloc>(context)
-        .add((LoadDraft(id: messageId, type: DraftType.thread)));
 
     Navigator.of(context).push(
       MaterialPageRoute(

@@ -13,6 +13,7 @@ class MessageEditField extends StatefulWidget {
   final String initialText;
 
   MessageEditField({
+    Key key,
     @required this.onMessageSend,
     @required this.onTextUpdated,
     this.autofocus = false,

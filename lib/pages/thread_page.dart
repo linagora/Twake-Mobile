@@ -19,28 +19,46 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final threadState = BlocProvider.of<ThreadsBloc<T>>(context).state;
+    String parentChannelId = threadState.parentChannel.id;
+    DraftType parentChannelDraftType;
+    if (threadState.parentChannel is Channel) {
+      parentChannelDraftType = DraftType.channel;
+    } else if (threadState.parentChannel is Direct) {
+      parentChannelDraftType = DraftType.direct;
+    }
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         leading: BlocBuilder<DraftBloc, DraftState>(
-            buildWhen: (_, current) => current is MessagesLoading,
+            buildWhen: (_, current) => current is DraftUpdated,
             builder: (context, state) {
+              String threadId;
+              String draft;
+
+              if (state is DraftUpdated) {
+                threadId = state.id;
+                draft = state.draft;
+              }
+
               return BackButton(
                 onPressed: () {
-                  String threadId;
-                  String draft;
-
-                  if (state is DraftUpdated) {
-                    threadId = state.id;
-                    draft = state.draft;
+                  if (draft != null && draft.isNotEmpty) {
+                    context.read<DraftBloc>().add(SaveDraft(
+                          id: threadId,
+                          type: DraftType.thread,
+                          draft: draft,
+                        ));
+                  } else {
+                    if (draft != '') {
+                      context
+                          .read<DraftBloc>()
+                          .add(ResetDraft(id: threadId, type: DraftType.thread));
+                    }
                   }
-                  context.read<DraftBloc>().add(SaveDraft(
-                        id: threadId,
-                        type: DraftType.thread,
-                        draft: draft,
-                      ));
                   Navigator.of(context).pop();
                 },
               );
@@ -88,6 +106,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
       body: SafeArea(
         child: BlocListener<ThreadsBloc<T>, MessagesState>(
             listener: (ctx, state) {
+              state = state;
               if (state is ErrorSendingMessage) {
                 FocusManager.instance.primaryFocus.unfocus();
                 Scaffold.of(ctx).showSnackBar(
@@ -106,30 +125,44 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ThreadMessagesList<T>(),
-                    MessageEditField(
-                      onMessageSend: (content) {
-                        final state =
-                            BlocProvider.of<ThreadsBloc<T>>(context).state;
-                        BlocProvider.of<ThreadsBloc<T>>(context).add(
-                          SendMessage(
-                            content: content,
-                            channelId: state.parentChannel.id,
-                            threadId: state.threadMessage.id,
-                          ),
-                        );
-                      },
-                      onTextUpdated: (text) {
-                        final state =
-                            BlocProvider.of<ThreadsBloc<T>>(context).state;
-                        final threadId = state.threadMessage.id;
-                        context.read<DraftBloc>().add(UpdateDraft(
-                              id: threadId,
-                              type: DraftType.thread,
-                              draft: text,
-                            ));
-                      },
-                      autofocus: autofocus,
-                    ),
+                    BlocBuilder<DraftBloc, DraftState>(
+                        buildWhen: (_, current) => current is DraftLoaded,
+                        builder: (context, state) {
+                          var draft = '';
+                          if (state is DraftLoaded &&
+                              state.type != DraftType.channel &&
+                              state.type != DraftType.direct) {
+                            draft = state.draft;
+                            print('DRAFT IS LOADED: $draft');
+                          }
+                          final threadState =
+                              BlocProvider.of<ThreadsBloc<T>>(context).state;
+                          return MessageEditField(
+                            key: UniqueKey(),
+                            initialText: draft,
+                            onMessageSend: (content) {
+                              BlocProvider.of<ThreadsBloc<T>>(context).add(
+                                SendMessage(
+                                  content: content,
+                                  channelId: threadState.parentChannel.id,
+                                  threadId: threadState.threadMessage.id,
+                                ),
+                              );
+                              context.read<DraftBloc>().add(ResetDraft(
+                                  id: threadState.threadMessage.id,
+                                  type: DraftType.thread));
+                            },
+                            onTextUpdated: (text) {
+                              final threadId = threadState.threadMessage.id;
+                              context.read<DraftBloc>().add(UpdateDraft(
+                                    id: threadId,
+                                    type: DraftType.thread,
+                                    draft: text,
+                                  ));
+                            },
+                            autofocus: autofocus,
+                          );
+                        }),
                   ],
                 ))),
       ),

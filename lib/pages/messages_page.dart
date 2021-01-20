@@ -27,23 +27,25 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             String draft;
             DraftType type;
 
-            if (state is DraftUpdated) {
+            if (state is DraftUpdated && state.type != DraftType.thread) {
               channelId = state.id;
               draft = state.draft;
               type = state.type;
             }
             return BackButton(
               onPressed: () {
-                if (draft != null && draft.isNotEmpty) {
-                  context.read<DraftBloc>().add(SaveDraft(
-                        id: channelId,
-                        type: type,
-                        draft: draft,
-                      ));
-                } else {
-                  context
-                      .read<DraftBloc>()
-                      .add(ResetDraft(id: channelId, type: type));
+                if (type != null) {
+                  if (draft != null && draft.isNotEmpty) {
+                    context.read<DraftBloc>().add(SaveDraft(
+                      id: channelId,
+                      type: type,
+                      draft: draft,
+                    ));
+                  } else {
+                    context
+                        .read<DraftBloc>()
+                        .add(ResetDraft(id: channelId, type: type));
+                  }
                 }
                 Navigator.of(context).pop();
               },
@@ -156,6 +158,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       }
 
                       return MessageEditField(
+                        key: UniqueKey(),
                         initialText: draft,
                         onMessageSend: (content) {
                           BlocProvider.of<MessagesBloc<T>>(context).add(
