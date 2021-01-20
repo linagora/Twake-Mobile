@@ -6,6 +6,7 @@ import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelInfoForm extends StatefulWidget {
@@ -36,11 +37,12 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
       context
           .read<AddChannelBloc>()
           .add(Update(name: _channelNameController.text));
-      if (_channelNameController.text.isNotEmpty && !_canGoNext) {
+      final channelName = _channelNameController.text;
+      if (channelName.isNotReallyEmpty && !_canGoNext) {
         setState(() {
           _canGoNext = true;
         });
-      } else if (_channelNameController.text.isEmpty && _canGoNext) {
+      } else if (channelName.isReallyEmpty && _canGoNext) {
         setState(() {
           _canGoNext = false;
         });
