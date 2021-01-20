@@ -122,7 +122,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
         parentChannel: selectedChannel,
       );
-      bool success = await repository.loadMore(
+      repository.loadMore(
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],
@@ -130,19 +130,24 @@ class MessagesBloc<T extends BaseChannelBloc>
           ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
-      );
-      if (!success) {
-        yield ErrorLoadingMoreMessages(
-          parentChannel: selectedChannel,
-          messages: repository.items,
-        );
-        return;
-      }
+      ).then((success) {
+        if (!success) {
+          this.add(GenerateErrorLoadingMore());
+          return;
+        }
+        this.add(FinishLoadingMessages());
+      });
+    } else if (event is FinishLoadingMessages) {
       _sortItems();
       yield MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
+      );
+    } else if (event is ErrorLoadingMoreMessages) {
+      yield ErrorLoadingMoreMessages(
+        parentChannel: selectedChannel,
+        messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
       repository.logger

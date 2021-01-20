@@ -28,7 +28,6 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
 
   void onReply(context, String messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
-
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ThreadPage<T>(

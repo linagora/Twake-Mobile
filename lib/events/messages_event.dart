@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twake/models/base_channel.dart';
 
 abstract class MessagesEvent extends Equatable {
   const MessagesEvent();
@@ -166,5 +167,25 @@ class SelectMessage extends MessagesEvent {
     return {
       'thread_id': messageId,
     };
+  }
+}
+
+class GenerateErrorLoadingMore extends MessagesEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {};
+  }
+}
+
+class FinishLoadingMessages extends MessagesEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {};
   }
 }
