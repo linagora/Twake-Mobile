@@ -74,7 +74,8 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                           userId: messageState.userId,
                           messageId: messageState.id,
                           responsesCount: messageState.responsesCount,
-                          isThread: messageState.threadId != null,
+                          isThread:
+                              messageState.threadId != null || hideShowAnswers,
                           onReply: onReply,
                           ctx: ctx,
                           onDelete: (ctx) => onDelete(
