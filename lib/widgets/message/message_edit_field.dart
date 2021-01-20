@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/repositories/draft_repository.dart';
+import 'package:twake/utils/extensions.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String) onMessageSend;
   final Function(String) onTextUpdated;
+  final String initialText;
 
   MessageEditField({
     @required this.onMessageSend,
     @required this.onTextUpdated,
     this.autofocus = false,
+    this.initialText = '',
   });
 
   @override
@@ -23,6 +25,7 @@ class MessageEditField extends StatefulWidget {
 
 class _MessageEditField extends State<MessageEditField> {
   bool _emojiVisible = false;
+  bool _canSend = false;
 
   final _focus = FocusNode();
   final _controller = TextEditingController();
@@ -31,23 +34,18 @@ class _MessageEditField extends State<MessageEditField> {
   void initState() {
     super.initState();
 
-    print('ON CHANNEL INIt');
+    _controller.text = widget.initialText; // possibly retrieved from cache.
 
     _controller.addListener(() {
-      if (_controller.text.isEmpty) {
-        // context.read<DraftBloc>().add(ResetDraft(
-        //   id: _channelId,
-        //   type: _draftType,
-        // ));
-      } else {
-        // final draft = _controller.text;
-        // context.read<DraftBloc>().add(SaveDraft(
-        //   id: _channelId,
-        //   type: _draftType,
-        //   draft: draft,
-        // ));
-        // print('Saved: id $_channelId : type - $_draftType : draft - $draft');
-        // });
+      var text = _controller.text;
+      // Update for cache handlers
+      widget.onTextUpdated(text);
+
+      // Sendability  validation
+      if (text.isReallyEmpty && _canSend) {
+        _canSend = false;
+      } else if (text.isNotReallyEmpty && !_canSend) {
+        _canSend = true;
       }
     });
   }
@@ -62,30 +60,13 @@ class _MessageEditField extends State<MessageEditField> {
   @override
   Widget build(BuildContext context) {
     bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
-    return BlocBuilder<DraftBloc, DraftState>(
-      buildWhen: (_, current) {
-        return current is DraftLoaded;
-      },
-      builder: (context, state) {
-        if (state is DraftLoaded) {
-          if (_controller.text.isEmpty) {
-            _controller.text = state.draft;
-          }
-          // _channelId = state.id;
-          // _draftType = state.type;
-          print(
-              'Loaded: id ${state.id} : type - ${state.type} : draft - ${state.draft}');
-        }
-        var canSend = _controller.text.isNotEmpty;
-        return TextInput(
-          controller: _controller,
-          autofocus: widget.autofocus,
-          emojiVisible: _emojiVisible,
-          keyboardVisible: _keyboardVisible,
-          onMessageSend: widget.onMessageSend,
-          canSend: canSend,
-        );
-      },
+    return TextInput(
+      controller: _controller,
+      autofocus: widget.autofocus,
+      emojiVisible: _emojiVisible,
+      keyboardVisible: _keyboardVisible,
+      onMessageSend: widget.onMessageSend,
+      canSend: _canSend,
     );
   }
 }
