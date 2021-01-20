@@ -13,6 +13,7 @@ class MessageReady extends SingleMessageState {
   final String text;
   final int charCount;
   final Map<String, dynamic> reactions;
+  final int hash;
   final String userId;
 
   const MessageReady({
@@ -24,11 +25,17 @@ class MessageReady extends SingleMessageState {
     this.text,
     this.charCount,
     this.reactions,
+    this.hash,
     this.userId,
   });
 
   @override
-  List<Object> get props => [id, content, reactions.length, responsesCount];
+  List<Object> get props => [
+        id,
+        content,
+        responsesCount,
+        hash,
+      ];
 }
 
 class ViewportUpdated extends SingleMessageState {

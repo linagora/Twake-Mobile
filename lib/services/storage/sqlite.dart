@@ -161,6 +161,16 @@ class SQLite with Storage {
   }
 
   @override
+  Future<void> batchDelete({
+    StorageType type,
+    List<List> filters,
+  }) async {
+    final table = mapTypeToStore(type);
+    final filter = filtersBuild(filters);
+    await _db.delete(table, where: filter.item1, whereArgs: filter.item2);
+  }
+
+  @override
   Future<void> truncate(StorageType type) async {
     final table = mapTypeToStore(type);
     await _db.delete(table);

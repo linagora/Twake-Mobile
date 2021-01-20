@@ -56,15 +56,20 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
     }
   }
 
-  MessageReady get messageReady => MessageReady(
-        id: message.id,
-        responsesCount: message.responsesCount,
-        creationDate: message.creationDate,
-        content: message.content.prepared,
-        text: message.content.originalStr.replaceFirst(_userId, ''),
-        charCount: (message.content.originalStr ?? '').length,
-        reactions: message.reactions,
-        userId: message.userId,
-        threadId: message.threadId,
-      );
+  MessageReady get messageReady {
+    final hash = message.reactions.keys.hashCode +
+        message.reactions.values.fold(0, (count, v) => count += v['count']);
+    return MessageReady(
+      id: message.id,
+      responsesCount: message.responsesCount,
+      creationDate: message.creationDate,
+      content: message.content.prepared,
+      text: message.content.originalStr.replaceFirst(_userId, ''),
+      charCount: (message.content.originalStr ?? '').length,
+      reactions: message.reactions,
+      hash: hash,
+      userId: message.userId,
+      threadId: message.threadId,
+    );
+  }
 }
