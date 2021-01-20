@@ -43,7 +43,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
     }
 
     BlocProvider.of<SingleMessageBloc>(widget.ctx)
-        .add(UpdateReaction(userId: widget.userId, emojiCode: emojiCode));
+        .add(UpdateReaction(emojiCode: emojiCode));
   }
 
   @override
