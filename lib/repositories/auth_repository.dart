@@ -125,9 +125,9 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<void> clean() async {
+    logger.d('Requesting storage cleaning');
     // So that we don't try to validate token if we are not
     // authenticated
-    logger.d('Requesting storage cleaning');
     _api.prolongToken = null;
     _api.tokenIsValid = null;
     accessToken = null;
@@ -173,7 +173,7 @@ class AuthRepository extends JsonSerializable {
   Map<String, dynamic> toJson() => _$AuthRepositoryToJson(this);
 
   TokenStatus tokenIsValid() {
-    logger.d('Requesting token validation\n${this.toJson()}');
+    // logger.d('Requesting token validation\n${this.toJson()}');
     if (this.accessToken == null) {
       logger.w('Token is empty');
       return TokenStatus.BothExpired;

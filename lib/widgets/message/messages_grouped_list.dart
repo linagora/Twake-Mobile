@@ -102,13 +102,14 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
       return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            if (state is MessagesLoaded)
+            if (state is MessagesLoaded) {
               BlocProvider.of<MessagesBloc<T>>(context).add(
                 LoadMoreMessages(
                   beforeId: state.messages.first.id,
                   beforeTimeStamp: state.messages.first.creationDate,
                 ),
               );
+            }
           }
           return true;
         },
