@@ -34,11 +34,13 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             }
             return BackButton(
               onPressed: () {
-                context.read<DraftBloc>().add(SaveDraft(
-                      id: channelId,
-                      type: type,
-                      draft: draft,
-                    ));
+                if (draft != null && draft.isNotEmpty) {
+                  context.read<DraftBloc>().add(SaveDraft(
+                    id: channelId,
+                    type: type,
+                    draft: draft,
+                  ));
+                }
                 Navigator.of(context).pop();
               },
             );
@@ -118,42 +120,58 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             }
           },
           child: BlocBuilder<MessagesBloc<T>, MessagesState>(
-              builder: (ctx, state) => Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (state is MoreMessagesLoading)
-                        SizedBox(
-                          height: Dim.hm4,
-                          width: Dim.hm4,
-                          child: Padding(
-                            padding: EdgeInsets.all(Dim.widthMultiplier),
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      MessagesGroupedList<T>(),
-                      MessageEditField(
+              builder: (ctx, messagesState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (messagesState is MoreMessagesLoading)
+                  SizedBox(
+                    height: Dim.hm4,
+                    width: Dim.hm4,
+                    child: Padding(
+                      padding: EdgeInsets.all(Dim.widthMultiplier),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                MessagesGroupedList<T>(),
+                BlocBuilder<DraftBloc, DraftState>(
+                    buildWhen: (_, current) => current is DraftLoaded,
+                    builder: (context, state) {
+                      var draft = '';
+                      if (state is DraftLoaded) {
+                        draft = state.draft;
+                      }
+
+                      final channelId = messagesState.parentChannel.id;
+                      var draftType;
+                      if (messagesState.parentChannel is Channel) {
+                        draftType = DraftType.channel;
+                      } else if (messagesState.parentChannel is Direct) {
+                        draftType = DraftType.direct;
+                      }
+
+                      return MessageEditField(
+                        initialText: draft,
                         onMessageSend: (content) {
                           BlocProvider.of<MessagesBloc<T>>(context).add(
                             SendMessage(content: content),
                           );
+                          context.read<DraftBloc>().add(ResetDraft(
+                              id: messagesState.parentChannel.id,
+                              type: draftType));
                         },
                         onTextUpdated: (text) {
-                          final channelId = state.parentChannel.id;
-                          var draftType;
-                          if (state.parentChannel is Channel) {
-                            draftType = DraftType.channel;
-                          } else if (state.parentChannel is Direct) {
-                            draftType = DraftType.direct;
-                          }
                           context.read<DraftBloc>().add(UpdateDraft(
                                 id: channelId,
                                 type: draftType,
                                 draft: text,
                               ));
                         },
-                      ),
-                    ],
-                  )),
+                      );
+                    }),
+              ],
+            );
+          }),
         ),
       ),
     );

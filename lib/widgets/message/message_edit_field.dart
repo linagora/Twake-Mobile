@@ -34,18 +34,26 @@ class _MessageEditField extends State<MessageEditField> {
   void initState() {
     super.initState();
 
-    _controller.text = widget.initialText; // possibly retrieved from cache.
+    if (widget.initialText.isNotReallyEmpty) {
+      _controller.text = widget.initialText; // possibly retrieved from cache.
+      setState(() {
+        _canSend = true;
+      });
+    }
 
     _controller.addListener(() {
       var text = _controller.text;
       // Update for cache handlers
       widget.onTextUpdated(text);
-
       // Sendability  validation
       if (text.isReallyEmpty && _canSend) {
-        _canSend = false;
+        setState(() {
+          _canSend = false;
+        });
       } else if (text.isNotReallyEmpty && !_canSend) {
-        _canSend = true;
+        setState(() {
+          _canSend = true;
+        });
       }
     });
   }
