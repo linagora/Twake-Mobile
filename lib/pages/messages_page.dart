@@ -15,6 +15,10 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String draft = '';
+    String channelId;
+    DraftType draftType;
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
@@ -23,28 +27,24 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         leading: BlocBuilder<DraftBloc, DraftState>(
           buildWhen: (_, current) => current is DraftUpdated,
           builder: (context, state) {
-            String channelId;
-            String draft;
-            DraftType type;
-
             if (state is DraftUpdated && state.type != DraftType.thread) {
               channelId = state.id;
               draft = state.draft;
-              type = state.type;
+              draftType = state.type;
             }
             return BackButton(
               onPressed: () {
-                if (type != null) {
+                if (draftType != null) {
                   if (draft != null && draft.isNotEmpty) {
                     context.read<DraftBloc>().add(SaveDraft(
                       id: channelId,
-                      type: type,
+                      type: draftType,
                       draft: draft,
                     ));
                   } else {
                     context
                         .read<DraftBloc>()
-                        .add(ResetDraft(id: channelId, type: type));
+                        .add(ResetDraft(id: channelId, type: draftType));
                   }
                 }
                 Navigator.of(context).pop();
@@ -143,14 +143,12 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                 BlocBuilder<DraftBloc, DraftState>(
                     buildWhen: (_, current) => current is DraftLoaded,
                     builder: (context, state) {
-                      var draft = '';
-                      if (state is DraftLoaded) {
+                      if (state is DraftLoaded && state.type != DraftType.thread) {
                         draft = state.draft;
                         print('DRAFT IS LOADED: $draft');
                       }
 
                       final channelId = messagesState.parentChannel.id;
-                      var draftType;
                       if (messagesState.parentChannel is Channel) {
                         draftType = DraftType.channel;
                       } else if (messagesState.parentChannel is Direct) {

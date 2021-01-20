@@ -33,7 +33,11 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
-        leading: BlocBuilder<DraftBloc, DraftState>(
+        leading: BlocConsumer<DraftBloc, DraftState>(
+          listener: (context, state) {
+              if (state is DraftSaved || state is DraftError)
+              Navigator.of(context).pop();
+            },
             buildWhen: (_, current) => current is DraftUpdated,
             builder: (context, state) {
               String threadId;
@@ -46,20 +50,21 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
 
               return BackButton(
                 onPressed: () {
-                  if (draft != null && draft.isNotEmpty) {
-                    context.read<DraftBloc>().add(SaveDraft(
-                          id: threadId,
-                          type: DraftType.thread,
-                          draft: draft,
-                        ));
-                  } else {
-                    if (draft != '') {
+                  if (draft != null) {
+                    if (draft.isNotEmpty) {
+                      context.read<DraftBloc>().add(SaveDraft(
+                        id: threadId,
+                        type: DraftType.thread,
+                        draft: draft,
+                      ));
+                    } else {
                       context
                           .read<DraftBloc>()
                           .add(ResetDraft(id: threadId, type: DraftType.thread));
                     }
+                  } else {
+                    Navigator.of(context).pop();
                   }
-                  Navigator.of(context).pop();
                 },
               );
             }),
