@@ -145,6 +145,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                           } else if (state.parentChannel is Direct) {
                             draftType = DraftType.direct;
                           }
+                          context.read<DraftBloc>().add(UpdateDraft(
+                                id: channelId,
+                                type: draftType,
+                                draft: text,
+                              ));
                         },
                       ),
                     ],
