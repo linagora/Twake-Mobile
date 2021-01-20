@@ -28,24 +28,27 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
       parentChannelDraftType = DraftType.direct;
     }
 
+    String threadId;
+    String draft;
+
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         leading: BlocConsumer<DraftBloc, DraftState>(
-          listener: (context, state) {
+            listener: (context, state) {
               if (state is DraftSaved || state is DraftError)
-              Navigator.of(context).pop();
+                Navigator.of(context).pop();
             },
-            buildWhen: (_, current) => current is DraftUpdated,
+            buildWhen: (_, current) =>
+                current is DraftUpdated || current is DraftReset,
             builder: (context, state) {
-              String threadId;
-              String draft;
-
               if (state is DraftUpdated) {
                 threadId = state.id;
                 draft = state.draft;
+              } else if (state is DraftReset) {
+                draft = '';
               }
 
               return BackButton(
@@ -53,14 +56,14 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   if (draft != null) {
                     if (draft.isNotEmpty) {
                       context.read<DraftBloc>().add(SaveDraft(
-                        id: threadId,
-                        type: DraftType.thread,
-                        draft: draft,
-                      ));
+                            id: threadId,
+                            type: DraftType.thread,
+                            draft: draft,
+                          ));
                     } else {
-                      context
-                          .read<DraftBloc>()
-                          .add(ResetDraft(id: threadId, type: DraftType.thread));
+                      context.read<DraftBloc>().add(
+                          ResetDraft(id: threadId, type: DraftType.thread));
+                      Navigator.of(context).pop();
                     }
                   } else {
                     Navigator.of(context).pop();
@@ -131,17 +134,21 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   children: [
                     ThreadMessagesList<T>(),
                     BlocBuilder<DraftBloc, DraftState>(
-                        buildWhen: (_, current) => current is DraftLoaded,
+                        buildWhen: (_, current) =>
+                            current is DraftLoaded || current is DraftReset,
                         builder: (context, state) {
-                          var draft = '';
                           if (state is DraftLoaded &&
                               state.type != DraftType.channel &&
                               state.type != DraftType.direct) {
                             draft = state.draft;
                             print('DRAFT IS LOADED: $draft');
+                          } else if (state is DraftReset) {
+                            draft = '';
                           }
                           final threadState =
                               BlocProvider.of<ThreadsBloc<T>>(context).state;
+                          threadId = threadState.threadMessage.id;
+
                           return MessageEditField(
                             key: UniqueKey(),
                             initialText: draft,
@@ -158,7 +165,6 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                                   type: DraftType.thread));
                             },
                             onTextUpdated: (text) {
-                              final threadId = threadState.threadMessage.id;
                               context.read<DraftBloc>().add(UpdateDraft(
                                     id: threadId,
                                     type: DraftType.thread,

@@ -25,29 +25,33 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         leading: BlocBuilder<DraftBloc, DraftState>(
-          buildWhen: (_, current) => current is DraftUpdated,
+          buildWhen: (_, current) =>
+              current is DraftUpdated || current is DraftReset,
           builder: (context, state) {
             if (state is DraftUpdated && state.type != DraftType.thread) {
               channelId = state.id;
               draft = state.draft;
               draftType = state.type;
             }
+            if (state is DraftReset) {
+              draft = '';
+            }
             return BackButton(
               onPressed: () {
                 if (draftType != null) {
-                  if (draft != null && draft.isNotEmpty) {
+                  if (draft.isNotEmpty) {
                     context.read<DraftBloc>().add(SaveDraft(
-                      id: channelId,
-                      type: draftType,
-                      draft: draft,
-                    ));
+                          id: channelId,
+                          type: draftType,
+                          draft: draft,
+                        ));
                   } else {
                     context
                         .read<DraftBloc>()
                         .add(ResetDraft(id: channelId, type: draftType));
                   }
+                  Navigator.of(context).pop();
                 }
-                Navigator.of(context).pop();
               },
             );
           },
@@ -141,11 +145,15 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   ),
                 MessagesGroupedList<T>(),
                 BlocBuilder<DraftBloc, DraftState>(
-                    buildWhen: (_, current) => current is DraftLoaded,
+                    buildWhen: (_, current) =>
+                        current is DraftLoaded || current is DraftReset,
                     builder: (context, state) {
-                      if (state is DraftLoaded && state.type != DraftType.thread) {
+                      if (state is DraftLoaded &&
+                          state.type != DraftType.thread) {
                         draft = state.draft;
                         print('DRAFT IS LOADED: $draft');
+                      } else if (state is DraftReset) {
+                        draft = '';
                       }
 
                       final channelId = messagesState.parentChannel.id;
@@ -162,9 +170,9 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                           BlocProvider.of<MessagesBloc<T>>(context).add(
                             SendMessage(content: content),
                           );
-                          context.read<DraftBloc>().add(ResetDraft(
-                              id: messagesState.parentChannel.id,
-                              type: draftType));
+                          context
+                              .read<DraftBloc>()
+                              .add(ResetDraft(id: channelId, type: draftType));
                         },
                         onTextUpdated: (text) {
                           context.read<DraftBloc>().add(UpdateDraft(

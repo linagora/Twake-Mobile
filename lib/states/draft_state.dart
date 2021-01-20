@@ -54,6 +54,11 @@ class DraftSaved extends DraftState {
   List<Object> get props => [];
 }
 
+class DraftReset extends DraftState {
+  @override
+  List<Object> get props => [];
+}
+
 class DraftError extends DraftState {
   final String message;
 

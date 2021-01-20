@@ -44,7 +44,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
       yield DraftSaving();
       try {
         await repository.remove(id: event.id, type: event.type);
-        yield DraftSaved();
+        yield DraftReset();
         print('DRAFT RESET: ${event.type}');
       } on Exception {
         yield DraftError('Draft reset failure');
