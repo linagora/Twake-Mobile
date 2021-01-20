@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:twake/blocs/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/message/twacode.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
@@ -28,6 +30,9 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
 
   void onReply(context, String messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
+    // context.read<DraftBloc>().add(LoadDraft(id: message.id, type: DraftType.thread));
+    BlocProvider.of<DraftBloc>(context)
+        .add((LoadDraft(id: message.id, type: DraftType.thread)));
 
     Navigator.of(context).push(
       MaterialPageRoute(

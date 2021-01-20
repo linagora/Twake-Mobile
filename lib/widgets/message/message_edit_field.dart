@@ -18,7 +18,7 @@ class MessageEditField extends StatefulWidget {
 
 class _MessageEditField extends State<MessageEditField> {
   bool _emojiVisible = false;
-  String _channelId = '';
+  String _channelId;
   DraftType _channelType = DraftType.channel;
   // Timer _debounce;
 
@@ -28,6 +28,8 @@ class _MessageEditField extends State<MessageEditField> {
   @override
   void initState() {
     super.initState();
+
+    print('ON CHANNEL INIt');
 
     _controller.addListener(() {
       if (_controller.text.isEmpty) {
@@ -68,7 +70,7 @@ class _MessageEditField extends State<MessageEditField> {
     bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
     return BlocBuilder<DraftBloc, DraftState>(
       buildWhen: (_, current) {
-        return current is DraftLoaded || current is DraftSaved;
+        return current is DraftLoaded;
       },
       builder: (context, state) {
         if (state is DraftLoaded) {

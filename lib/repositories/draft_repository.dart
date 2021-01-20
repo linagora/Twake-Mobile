@@ -6,6 +6,7 @@ import 'package:twake/services/service_bundle.dart';
 enum DraftType {
   channel,
   direct,
+  thread,
 }
 
 class DraftRepository {
