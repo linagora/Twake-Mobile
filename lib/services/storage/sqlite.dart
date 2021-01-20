@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/services/storage/storage.dart';
-import 'package:twake/sql/v1.dart';
+import 'package:twake/sql/migrations.dart';
 
 const String _DATABASE_FILE = 'twakesql.db';
 const int _CURRENT_MIGRATION = 2;
