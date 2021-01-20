@@ -14,6 +14,21 @@ class LoadDraft extends DraftEvent {
   List<Object> get props => [id, type];
 }
 
+class UpdateDraft extends DraftEvent {
+  final String id;
+  final DraftType type;
+  final String draft;
+
+  const UpdateDraft({
+    @required this.id,
+    @required this.type,
+    @required this.draft,
+  });
+
+  @override
+  List<Object> get props => [id, type, draft];
+}
+
 class SaveDraft extends DraftEvent {
   final String id;
   final DraftType type;

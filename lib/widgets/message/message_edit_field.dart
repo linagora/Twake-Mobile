@@ -9,8 +9,13 @@ import 'package:twake/repositories/draft_repository.dart';
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String) onMessageSend;
+  final Function(String) onTextUpdated;
 
-  MessageEditField(this.onMessageSend, {this.autofocus: false});
+  MessageEditField({
+    @required this.onMessageSend,
+    @required this.onTextUpdated,
+    this.autofocus = false,
+  });
 
   @override
   _MessageEditField createState() => _MessageEditField();
@@ -18,9 +23,6 @@ class MessageEditField extends StatefulWidget {
 
 class _MessageEditField extends State<MessageEditField> {
   bool _emojiVisible = false;
-  String _channelId;
-  DraftType _channelType = DraftType.channel;
-  // Timer _debounce;
 
   final _focus = FocusNode();
   final _controller = TextEditingController();
@@ -33,24 +35,18 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       if (_controller.text.isEmpty) {
-        // setState(() => );
-        // print('DRAFT TO RESET: $_channelId : ${_controller.text}');
-        context.read<DraftBloc>().add(ResetDraft(
-          id: _channelId,
-          type: _channelType,
-        ));
-      // } else if (!_canSend) {
-        // setState(() => _canSend = true);
+        // context.read<DraftBloc>().add(ResetDraft(
+        //   id: _channelId,
+        //   type: _draftType,
+        // ));
       } else {
-        // print('DRAFT TO SAVE: $_channelId : ${_controller.text}');
-        // if (_debounce?.isActive ?? false) _debounce.cancel();
-        // _debounce = Timer(const Duration(milliseconds: 1500), () {
-          final draft = _controller.text;
-          context.read<DraftBloc>().add(SaveDraft(
-            id: _channelId,
-            type: _channelType,
-            draft: draft,
-          ));
+        // final draft = _controller.text;
+        // context.read<DraftBloc>().add(SaveDraft(
+        //   id: _channelId,
+        //   type: _draftType,
+        //   draft: draft,
+        // ));
+        // print('Saved: id $_channelId : type - $_draftType : draft - $draft');
         // });
       }
     });
@@ -60,8 +56,6 @@ class _MessageEditField extends State<MessageEditField> {
   void dispose() {
     _focus.dispose();
     _controller.dispose();
-
-    // _debounce.cancel();
     super.dispose();
   }
 
@@ -74,9 +68,13 @@ class _MessageEditField extends State<MessageEditField> {
       },
       builder: (context, state) {
         if (state is DraftLoaded) {
-          _controller.text = state.draft;
-          _channelId = state.id;
-          _channelType = state.type;
+          if (_controller.text.isEmpty) {
+            _controller.text = state.draft;
+          }
+          // _channelId = state.id;
+          // _draftType = state.type;
+          print(
+              'Loaded: id ${state.id} : type - ${state.type} : draft - ${state.draft}');
         }
         var canSend = _controller.text.isNotEmpty;
         return TextInput(

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
@@ -18,6 +20,30 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
+        leading: BlocBuilder<DraftBloc, DraftState>(
+          buildWhen: (_, current) => current is DraftUpdated,
+          builder: (context, state) {
+            String channelId;
+            String draft;
+            DraftType type;
+
+            if (state is DraftUpdated) {
+              channelId = state.id;
+              draft = state.draft;
+              type = state.type;
+            }
+            return BackButton(
+              onPressed: () {
+                context.read<DraftBloc>().add(SaveDraft(
+                      id: channelId,
+                      type: type,
+                      draft: draft,
+                    ));
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) => Row(
             mainAxisSize: MainAxisSize.min,
@@ -105,10 +131,20 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                           ),
                         ),
                       MessagesGroupedList<T>(),
-                      MessageEditField((content) {
+                      MessageEditField(
+                        onMessageSend: (content) {
                           BlocProvider.of<MessagesBloc<T>>(context).add(
                             SendMessage(content: content),
                           );
+                        },
+                        onTextUpdated: (text) {
+                          final channelId = state.parentChannel.id;
+                          var draftType;
+                          if (state.parentChannel is Channel) {
+                            draftType = DraftType.channel;
+                          } else if (state.parentChannel is Direct) {
+                            draftType = DraftType.direct;
+                          }
                         },
                       ),
                     ],

@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:twake/services/service_bundle.dart';
 
 enum DraftType {
+  none,
   channel,
   direct,
   thread,

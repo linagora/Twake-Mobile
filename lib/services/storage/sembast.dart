@@ -192,4 +192,10 @@ class Sembast with Storage {
     }
     return sortOrders;
   }
+
+  @override
+  Future<void> batchDelete({StorageType type, List<List> filters}) {
+    // TODO: implement batchDelete
+    throw UnimplementedError();
+  }
 }

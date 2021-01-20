@@ -32,7 +32,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
     // context.read<DraftBloc>().add(LoadDraft(id: message.id, type: DraftType.thread));
     BlocProvider.of<DraftBloc>(context)
-        .add((LoadDraft(id: message.id, type: DraftType.thread)));
+        .add((LoadDraft(id: messageId, type: DraftType.thread)));
 
     Navigator.of(context).push(
       MaterialPageRoute(

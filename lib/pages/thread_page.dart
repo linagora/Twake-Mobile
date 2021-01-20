@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
+import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
@@ -20,6 +23,24 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
+        leading: BlocBuilder<ThreadsBloc<T>, MessagesState>(
+          buildWhen: (_, current) => current is MessagesLoading,
+          builder: (context, state) {
+            return BackButton(
+              onPressed: () {
+                final parentId = state.parentChannel.id;
+                var parentDraftType = DraftType.channel;
+                if (state.parentChannel is Direct) {
+                  parentDraftType = DraftType.direct;
+                } else if (state.parentChannel is Channel) {
+                  parentDraftType = DraftType.channel;
+                }
+                context.read<DraftBloc>().add(LoadDraft(id: parentId, type: parentDraftType));
+                Navigator.of(context).pop();
+              },
+            );
+          }
+        ),
         title:
             BlocBuilder<ThreadsBloc<T>, MessagesState>(builder: (ctx, state) {
           return Row(
@@ -82,7 +103,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   children: [
                     ThreadMessagesList<T>(),
                     MessageEditField(
-                      (content) {
+                      onMessageSend: (content) {
                         final state =
                             BlocProvider.of<ThreadsBloc<T>>(context).state;
                         BlocProvider.of<ThreadsBloc<T>>(context).add(
@@ -92,6 +113,9 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                             threadId: state.threadMessage.id,
                           ),
                         );
+                      },
+                      onTextUpdated: (content) {
+
                       },
                       autofocus: autofocus,
                     ),
