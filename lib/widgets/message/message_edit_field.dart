@@ -66,6 +66,14 @@ class _MessageEditField extends State<MessageEditField> {
   }
 
   @override
+  void didUpdateWidget(covariant MessageEditField oldWidget) {
+    if (oldWidget.initialText != widget.initialText) {
+      _controller.text = widget.initialText;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
     return TextInput(

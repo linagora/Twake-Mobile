@@ -140,6 +140,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       var draft = '';
                       if (state is DraftLoaded) {
                         draft = state.draft;
+                        print('DRAFT IS LOADED: $draft');
                       }
 
                       final channelId = messagesState.parentChannel.id;
