@@ -34,6 +34,7 @@ class _MessageEditField extends State<MessageEditField> {
   void initState() {
     super.initState();
 
+    widget.onTextUpdated(widget.initialText);
     if (widget.initialText.isNotReallyEmpty) {
       _controller.text = widget.initialText; // possibly retrieved from cache.
       setState(() {

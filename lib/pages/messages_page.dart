@@ -36,10 +36,14 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
               onPressed: () {
                 if (draft != null && draft.isNotEmpty) {
                   context.read<DraftBloc>().add(SaveDraft(
-                    id: channelId,
-                    type: type,
-                    draft: draft,
-                  ));
+                        id: channelId,
+                        type: type,
+                        draft: draft,
+                      ));
+                } else {
+                  context
+                      .read<DraftBloc>()
+                      .add(ResetDraft(id: channelId, type: type));
                 }
                 Navigator.of(context).pop();
               },
