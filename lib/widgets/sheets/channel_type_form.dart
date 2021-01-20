@@ -39,9 +39,13 @@ class ChannelTypeForm extends StatelessWidget {
         }
       },
       buildWhen: (_, current) {
-        return (current is Updated || current is StageUpdated);
+        return (current is Updated ||
+            current is StageUpdated ||
+            current is Creation);
       },
       builder: (context, state) {
+        bool createIsBlocked = state is Creation;
+
         var channelType = ChannelType.public;
         if (state is Updated) {
           channelType = state.repository?.type;
@@ -57,8 +61,9 @@ class ChannelTypeForm extends StatelessWidget {
                   .read<AddChannelBloc>()
                   .add(SetFlowStage(FlowStage.info)),
               trailingTitle: 'Create',
-              trailingAction: () =>
-                  context.read<AddChannelBloc>().add(Create()),
+              trailingAction: createIsBlocked
+                  ? null
+                  : () => context.read<AddChannelBloc>().add(Create()),
             ),
             SizedBox(height: 23),
             Padding(

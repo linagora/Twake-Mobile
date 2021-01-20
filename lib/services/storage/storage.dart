@@ -44,6 +44,11 @@ abstract class Storage {
     int offset,
   });
 
+  Future<void> batchDelete({
+    StorageType type,
+    List<List> filters,
+  });
+
   Future<void> delete({StorageType type, dynamic key});
 
   Future<void> truncate(StorageType type);

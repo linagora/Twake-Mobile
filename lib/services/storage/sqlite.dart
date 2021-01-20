@@ -6,7 +6,7 @@ import 'package:tuple/tuple.dart';
 
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/services/storage/storage.dart';
-import 'package:twake/sql/v1.dart';
+import 'package:twake/sql/migrations.dart';
 
 const String _DATABASE_FILE = 'twakesql.db';
 const int _CURRENT_MIGRATION = 2;
@@ -158,6 +158,16 @@ class SQLite with Storage {
   Future<void> delete({StorageType type, key}) async {
     final table = mapTypeToStore(type);
     await _db.delete(table, where: 'id = ?', whereArgs: [key]);
+  }
+
+  @override
+  Future<void> batchDelete({
+    StorageType type,
+    List<List> filters,
+  }) async {
+    final table = mapTypeToStore(type);
+    final filter = filtersBuild(filters);
+    await _db.delete(table, where: filter.item1, whereArgs: filter.item2);
   }
 
   @override
