@@ -16,6 +16,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
 class _MessagesGroupedListState<T extends BaseChannelBloc>
     extends State<MessagesGroupedList<T>> {
 
+  final ValueNotifier<double> _scrollViewPaddingNotifier = ValueNotifier(0);
   GroupedItemScrollController _groupedItemScrollController;
   List<Message> _messages = <Message>[];
 
@@ -30,81 +31,87 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
 
   Widget buildMessagesList(context, MessagesState state) {
     if (state is MessagesLoaded) {
-      _messages = state.messages.reversed.toList();
+      _messages = state.messages; //.reversed.toList();
 
       return GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         behavior: HitTestBehavior.opaque,
-        child: StickyGroupedListView<Message, DateTime>(
-            itemScrollController: _groupedItemScrollController,
-            order: StickyGroupedListOrder.DESC,
-            stickyHeaderBackgroundColor:
-                Theme.of(context).scaffoldBackgroundColor,
-            reverse: true,
-            initialAlignment: 0.1,
-            initialScrollIndex: 1,
-            elements: _messages,
-            groupBy: (Message m) {
-              final DateTime dt =
-                  DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
-              return DateTime(dt.year, dt.month, dt.day);
-            },
-            groupComparator: (DateTime value1, DateTime value2) =>
-                value1.compareTo(value2),
-            itemComparator: (Message m1, Message m2) {
-              return m1.creationDate.compareTo(m2.creationDate);
-            },
-            separator: SizedBox(height: Dim.hm2),
-            groupSeparatorBuilder: (Message message) {
-              return GestureDetector(
-                onTap: () {
-                  FocusManager.instance.primaryFocus.unfocus();
-                },
-                child: Container(
-                  height: Dim.hm3,
-                  margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: Stack(
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Divider(
-                          thickness: 0.0,
+        child: ValueListenableBuilder<double>(
+          builder: (BuildContext context, double paddingBottom, Widget child) {
+            valueListenable: _scrollViewPaddingNotifier;
+            return StickyGroupedListView<Message, DateTime>(
+              itemScrollController: _groupedItemScrollController,
+              order: StickyGroupedListOrder.DESC,
+              stickyHeaderBackgroundColor:
+                  Theme.of(context).scaffoldBackgroundColor,
+              reverse: true,
+              initialAlignment: 1.0,
+              initialScrollIndex: _messages.length - 1,
+              elements: _messages,
+              groupBy: (Message m) {
+                final DateTime dt =
+                    DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
+                return DateTime(dt.year, dt.month, dt.day);
+              },
+              groupComparator: (DateTime value1, DateTime value2) =>
+                  value1.compareTo(value2),
+              itemComparator: (Message m1, Message m2) {
+                return m1.creationDate.compareTo(m2.creationDate);
+              },
+              separator: SizedBox(height: Dim.hm2),
+              groupSeparatorBuilder: (Message message) {
+                return GestureDetector(
+                  onTap: () {
+                    FocusManager.instance.primaryFocus.unfocus();
+                  },
+                  child: Container(
+                    height: Dim.hm3,
+                    margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Divider(
+                            thickness: 0.0,
+                          ),
                         ),
-                      ),
-                      Align(
-                        // alignment: Alignment.center,
-                        child: Container(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          width: Dim.widthPercent(30),
-                          child: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              DateFormatter.getVerboseDate(
-                                  message.creationDate),
-                              style: TextStyle(
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff92929C),
+                        Align(
+                          // alignment: Alignment.center,
+                          child: Container(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            width: Dim.widthPercent(30),
+                            child: Padding(
+                              padding: const EdgeInsets.all(1.0),
+                              child: Text(
+                                DateFormatter.getVerboseDate(
+                                    message.creationDate),
+                                style: TextStyle(
+                                  fontSize: 12.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff92929C),
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-            indexedItemBuilder: (_, Message message, int i) {
-              return MessageTile<T>(
-                message: message,
-                key: ValueKey(
-                  message.id + message.responsesCount.toString(),
-                ),
-              );
-            }),
+                );
+              },
+              indexedItemBuilder: (_, Message message, int i) {
+                return MessageTile<T>(
+                  message: message,
+                  key: ValueKey(
+                    message.id + message.responsesCount.toString(),
+                  ),
+                );
+              },
+            );
+          },
+        ),
       );
     } else if (state is MessagesEmpty)
       return Center(
@@ -125,6 +132,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
     return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
       return NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
+          // print(scrollInfo.metrics.maxScrollExtent);
           if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
             if (state is MessagesLoaded) {
               BlocProvider.of<MessagesBloc<T>>(context).add(
