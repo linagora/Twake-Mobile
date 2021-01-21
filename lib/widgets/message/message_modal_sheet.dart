@@ -118,12 +118,12 @@ class EmojiLine extends StatelessWidget {
   final Function showEmojiBoard;
   EmojiLine({this.onEmojiSelected, this.showEmojiBoard});
   static const EMOJISET = [
-    '😁',
     '😅',
-    '🤣',
     '😂',
     '😇',
     '👍',
+    '👌',
+    '👋',
     '🙏',
   ];
 
