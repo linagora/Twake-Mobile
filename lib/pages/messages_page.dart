@@ -134,6 +134,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Divider(
+                  thickness: 1.0,
+                  height: 1.0,
+                  color: Color(0xffEEEEEE),
+                ),
                 if (messagesState is MoreMessagesLoading)
                   SizedBox(
                     height: Dim.hm4,

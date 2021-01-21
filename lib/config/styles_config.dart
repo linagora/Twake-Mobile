@@ -11,6 +11,7 @@ class StylesConfig {
     accentColor: accentColorRGB,
     textTheme: lightTextTheme,
     useTextSelectionTheme: true,
+    scaffoldBackgroundColor: Colors.white,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: Color(0xff837cfe),
     ),

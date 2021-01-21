@@ -132,6 +132,11 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Divider(
+                      thickness: 1.0,
+                      height: 1.0,
+                      color: Color(0xffEEEEEE),
+                    ),
                     ThreadMessagesList<T>(),
                     BlocBuilder<DraftBloc, DraftState>(
                         buildWhen: (_, current) =>

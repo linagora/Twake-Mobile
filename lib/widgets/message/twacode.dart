@@ -100,17 +100,13 @@ class _TwacodeState extends State<Twacode> {
     print('SPANS: $spans');
     return widget.charCount > 300
         ? Column(
-            // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                color: Theme.of(context).canvasColor,
-                child: RichText(
-                  maxLines: maxRichTextHeight,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.left,
-                  text: TextSpan(children: spans),
-                ),
+              RichText(
+                maxLines: maxRichTextHeight,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.left,
+                text: TextSpan(children: spans),
               ),
               buildButton(
                 heightIncreased ? 'show less' : '...Show more',
@@ -118,13 +114,10 @@ class _TwacodeState extends State<Twacode> {
               ),
             ],
           )
-        : Container(
-            color: Theme.of(context).canvasColor,
-            child: RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(children: spans),
-            ),
-          );
+        : RichText(
+          textAlign: TextAlign.left,
+          text: TextSpan(children: spans),
+        );
   }
 }
 
