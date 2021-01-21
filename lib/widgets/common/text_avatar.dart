@@ -4,7 +4,15 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 class TextAvatar extends StatelessWidget {
   final String text;
   final double fontSize;
-  TextAvatar(this.text, {this.fontSize});
+  final double width;
+  final double height;
+
+  TextAvatar(
+    this.text, {
+    this.fontSize,
+    this.width = 30.0,
+    this.height = 30.0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,8 +21,8 @@ class TextAvatar extends StatelessWidget {
         Dim.widthMultiplier * 0.5,
       ),
       child: Container(
-        width: 30,
-        height: 30,
+        width: width,
+        height: height,
         alignment: Alignment.center,
         child: Text(
           text,
