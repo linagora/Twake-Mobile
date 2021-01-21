@@ -23,13 +23,13 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
   @override
   void initState() {
     super.initState();
-    _groupedItemScrollController = GroupedItemScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_groupedItemScrollController != null) {
-        _groupedItemScrollController?.jumpTo(index: 0);
-      }
-      _updateScrollViewPadding();
-    });
+    // _groupedItemScrollController = GroupedItemScrollController();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (_groupedItemScrollController != null) {
+    //     _groupedItemScrollController.jumpTo(index: 0);
+    //   }
+    //   _updateScrollViewPadding();
+    // });
   }
 
   Widget buildMessagesList(context, MessagesState state) {

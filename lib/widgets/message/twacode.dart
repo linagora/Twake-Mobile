@@ -115,6 +115,7 @@ class _TwacodeState extends State<Twacode> {
           )
         : RichText(
           textAlign: TextAlign.left,
+          softWrap: true,
           text: TextSpan(children: spans),
         );
   }
@@ -317,7 +318,8 @@ class TwacodeItem {
       }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
-
+    // Workaround for softWrap = true of RichText
+    content = content.replaceAll('', '\u200b');
     return TextSpan(
         text: content, style: this.style, recognizer: this.recognizer);
   }
