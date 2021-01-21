@@ -25,7 +25,12 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
     super.initState();
     _groupedItemScrollController = GroupedItemScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _groupedItemScrollController?.jumpTo(index: 0);
+      if (_groupedItemScrollController != null) {
+        _groupedItemScrollController?.jumpTo(index: 0);
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateScrollViewPadding();
     });
   }
 
@@ -37,8 +42,8 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         behavior: HitTestBehavior.opaque,
         child: ValueListenableBuilder<double>(
-          builder: (BuildContext context, double paddingBottom, Widget child) {
-            valueListenable: _scrollViewPaddingNotifier;
+            valueListenable: _scrollViewPaddingNotifier,
+            builder: (BuildContext context, double paddingBottom, Widget child) {
             return StickyGroupedListView<Message, DateTime>(
               itemScrollController: _groupedItemScrollController,
               order: StickyGroupedListOrder.DESC,
@@ -155,5 +160,13 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         ),
       );
     });
+  }
+
+  void _updateScrollViewPadding() {
+    print('Scroll View Padding Notifier Value: ${_scrollViewPaddingNotifier.value}');
+    // final height = _textFieldKey.currentContext.size.height;
+    // SchedulerBinding.instance.addPostFrameCallback((_) {
+    //   _scrollViewPaddingNotifier.value = height;
+    // });
   }
 }
