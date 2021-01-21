@@ -97,7 +97,6 @@ class _TwacodeState extends State<Twacode> {
     widget.items.forEach((element) {
       spans.add((element as TwacodeItem).render());
     });
-    print('SPANS: $spans');
     return widget.charCount > 300
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,14 +306,14 @@ class TwacodeItem {
       );
     } else if (this.type == TwacodeType.emoji) {
       if (this.id != null) {
-        // logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
+        logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
         List<int> codePoints = [];
         for (String cp in this.id.split('-')) {
           codePoints.add(int.parse(cp, radix: 16));
         }
         this.content = String.fromCharCodes(codePoints);
       } else {
-        this.content = Emojis.getByName(this.content);
+        this.content = this.content;
       }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;

@@ -65,7 +65,6 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
               if (state.parentChannel is Channel)
                 TextAvatar(
                   state.parentChannel.icon,
-                  emoji: true,
                   fontSize: Dim.tm4(),
                 ),
               SizedBox(width: 12.0),
