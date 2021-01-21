@@ -20,9 +20,9 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
   ) async* {
     if (event is LoadDraft) {
       yield DraftLoading();
-      print('DRAFT Loading');
+      // print('DRAFT Loading');
       final draft = await repository.load(id: event.id, type: event.type);
-      print('DRAFT Loaded: ${event.type}');
+      // print('DRAFT Loaded: ${event.type}');
       yield DraftLoaded(id: event.id, type: event.type, draft: draft);
     } else if (event is UpdateDraft) {
       yield DraftUpdated(id: event.id, type: event.type, draft: event.draft);
@@ -34,9 +34,9 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
           type: event.type,
           draft: event.draft,
         );
-        print('DRAFT SAVING: ${event.draft}');
+        // print('DRAFT SAVING: ${event.draft}');
         yield DraftSaved();
-        print('DRAFT SAVED: ${event.draft}');
+        // print('DRAFT SAVED: ${event.draft}');
       } on Exception {
         DraftError('Draft saving failure.');
       }
@@ -45,7 +45,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
       try {
         await repository.remove(id: event.id, type: event.type);
         yield DraftReset();
-        print('DRAFT RESET: ${event.type}');
+        // print('DRAFT RESET: ${event.type}');
       } on Exception {
         yield DraftError('Draft reset failure');
       }

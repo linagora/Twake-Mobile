@@ -141,7 +141,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                               state.type != DraftType.channel &&
                               state.type != DraftType.direct) {
                             draft = state.draft;
-                            print('DRAFT IS LOADED: $draft');
+                            // print('DRAFT IS LOADED: $draft');
                           } else if (state is DraftReset) {
                             draft = '';
                           }

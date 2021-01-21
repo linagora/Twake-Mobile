@@ -151,7 +151,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       if (state is DraftLoaded &&
                           state.type != DraftType.thread) {
                         draft = state.draft;
-                        print('DRAFT IS LOADED: $draft');
+                        // print('DRAFT IS LOADED: $draft');
                       } else if (state is DraftReset) {
                         draft = '';
                       }
