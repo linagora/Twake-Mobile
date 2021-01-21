@@ -151,7 +151,7 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
 
                           return MessageEditField(
                             key: UniqueKey(),
-                            initialText: draft,
+                            initialText: draft ?? '',
                             onMessageSend: (content) {
                               BlocProvider.of<ThreadsBloc<T>>(context).add(
                                 SendMessage(

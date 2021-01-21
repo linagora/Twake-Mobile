@@ -4,6 +4,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/widgets/message/message_tile.dart';
+import 'package:twake/models/message.dart';
 
 class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
   ThreadMessagesList();
@@ -52,7 +53,6 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
         if (state is MessagesLoaded)
           MessageTile<T>(message: state.messages.last),
         if (state is MessagesEmpty)
-          // Expanded( child:
           Center(
             child: Text(
               state is ErrorLoadingMessages
@@ -60,14 +60,11 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
                   : 'No responses yet',
             ),
           ),
-        // ),
         if (state is MessagesLoading)
-          // Expanded( child:
           Align(
             alignment: Alignment.center,
             child: CircularProgressIndicator(),
           ),
-        // ),
       ],
     );
   }
@@ -75,24 +72,32 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThreadsBloc<T>, MessagesState>(
-      builder: (ctx, state) => Expanded(
-        child: state is MessagesLoaded
-            ? ScrollablePositionedList.builder(
-                reverse: true,
-                itemCount: state.messageCount,
-                itemBuilder: (ctx, i) {
-                  if (i == state.messageCount - 1) {
-                    return buildThreadMessageColumn(state);
-                  } else {
-                    return MessageTile<T>(
-                      message: state.messages[i],
-                      key: ValueKey(state.messages[i].id),
-                    );
-                  }
-                },
-              )
-            : SingleChildScrollView(child: buildThreadMessageColumn(state)),
-      ),
+      builder: (ctx, state) {
+        var reversedMessages = <Message>[];
+        if (state is MessagesLoaded) {
+          reversedMessages = state.messages.reversed.toList();
+        }
+        return Expanded(
+          child: state is MessagesLoaded
+              ? ScrollablePositionedList.builder(
+                  reverse: false,
+                  initialAlignment: 0.0,
+                  initialScrollIndex: 0,
+                  itemCount: reversedMessages.length,
+                  itemBuilder: (ctx, i) {
+                    if (i == 0) {
+                      return buildThreadMessageColumn(state);
+                    } else {
+                      return MessageTile<T>(
+                        message: reversedMessages[i],
+                        key: ValueKey(reversedMessages[i].id),
+                      );
+                    }
+                  },
+                )
+              : SingleChildScrollView(child: buildThreadMessageColumn(state)),
+        );
+      },
     );
   }
 }
