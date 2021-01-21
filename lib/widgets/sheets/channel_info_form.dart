@@ -89,6 +89,11 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         children: [
           SheetTitleBar(
             title: 'New Channel',
+            leadingTitle: 'Close',
+            leadingAction: () {
+              context.read<SheetBloc>().add(CloseSheet());
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
             trailingTitle: 'Next',
             trailingAction: _canGoNext
                 ? () => context
