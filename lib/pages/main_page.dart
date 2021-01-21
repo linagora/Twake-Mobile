@@ -181,9 +181,7 @@ class _MainPageState extends State<MainPage>
 
   void _openSheet() {
     if (_animationController.isDismissed) {
-      // _animationController.forward();
-      _animationController.animateTo(1.0,
-          duration: Duration(milliseconds: 400), curve: Curves.bounceOut);
+      _animationController.forward();
     }
     setState(() {
       _shouldBlur = true;

@@ -33,6 +33,10 @@ class SheetBloc extends Bloc<SheetEvent, SheetState> {
       yield SheetOpened();
     } else if (event is ClearSheet) {
       yield SheetShouldClear();
+    } else if (event is ResetSheet) {
+      yield SheetShouldReset();
+    } else if (event is ProcessSheet) {
+      yield SheetProcessing();
     }
   }
 }

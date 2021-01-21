@@ -59,3 +59,10 @@ class SetOpened extends SheetEvent {
   @override
   List<Object> get props => [];
 }
+
+class ResetSheet extends SheetEvent {
+  const ResetSheet();
+
+  @override
+  List<Object> get props => [];
+}

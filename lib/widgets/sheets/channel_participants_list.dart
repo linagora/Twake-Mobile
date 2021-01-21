@@ -43,7 +43,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
-    _debounce.cancel();
+    _debounce?.cancel();
     super.dispose();
   }
 
