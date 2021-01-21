@@ -102,7 +102,7 @@ class _MessageEditField extends State<MessageEditField> {
     return false;
   }
 
-  Widget buildSticker() {
+  Widget buildEmojiBoard() {
     return EmojiKeyboard(
       onEmojiSelected: (emoji) {
         _controller.text += emoji.text;
@@ -128,7 +128,7 @@ class _MessageEditField extends State<MessageEditField> {
             onMessageSend: widget.onMessageSend,
             canSend: _canSend,
           ),
-          _emojiVisible ? buildSticker() : Container(),
+          _emojiVisible ? buildEmojiBoard() : Container(),
         ],
       ),
     );
@@ -140,7 +140,6 @@ class TextInput extends StatelessWidget {
   final FocusNode focusNode;
   final ScrollController scrollController;
   final Function toggleEmojiBoard;
-  final Function onEmojiPicked;
   final bool autofocus;
   final bool emojiVisible;
   final bool canSend;
@@ -154,7 +153,6 @@ class TextInput extends StatelessWidget {
     this.emojiVisible,
     this.scrollController,
     this.toggleEmojiBoard,
-    this.onEmojiPicked,
     this.canSend,
   });
 
@@ -162,7 +160,7 @@ class TextInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[300], width: 2.0)),
+        border: Border(top: BorderSide(color: Colors.grey[400], width: 1.5)),
       ),
       child: Row(
         children: [
