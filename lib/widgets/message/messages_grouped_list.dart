@@ -16,10 +16,22 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
 class _MessagesGroupedListState<T extends BaseChannelBloc>
     extends State<MessagesGroupedList<T>> {
 
-  final _groupedItemScrollController = GroupedItemScrollController();
+  GroupedItemScrollController _groupedItemScrollController;
+  List<Message> _messages = <Message>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _groupedItemScrollController = GroupedItemScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _groupedItemScrollController?.jumpTo(index: 0);
+    });
+  }
 
   Widget buildMessagesList(context, MessagesState state) {
     if (state is MessagesLoaded) {
+      _messages = state.messages.reversed.toList();
+
       return GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         behavior: HitTestBehavior.opaque,
@@ -29,7 +41,9 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
             stickyHeaderBackgroundColor:
                 Theme.of(context).scaffoldBackgroundColor,
             reverse: true,
-            elements: state.messages,
+            initialAlignment: 0.1,
+            initialScrollIndex: 1,
+            elements: _messages,
             groupBy: (Message m) {
               final DateTime dt =
                   DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
@@ -105,7 +119,6 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         child: CircularProgressIndicator(),
       );
   }
-
 
   @override
   Widget build(BuildContext context) {
