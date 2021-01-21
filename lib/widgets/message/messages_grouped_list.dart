@@ -8,13 +8,23 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 
-class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
+class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
+  @override
+  _MessagesGroupedListState<T> createState() => _MessagesGroupedListState<T>();
+}
+
+class _MessagesGroupedListState<T extends BaseChannelBloc>
+    extends State<MessagesGroupedList<T>> {
+
+  final _groupedItemScrollController = GroupedItemScrollController();
+
   Widget buildMessagesList(context, MessagesState state) {
     if (state is MessagesLoaded) {
       return GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
         behavior: HitTestBehavior.opaque,
         child: StickyGroupedListView<Message, DateTime>(
+            itemScrollController: _groupedItemScrollController,
             order: StickyGroupedListOrder.DESC,
             stickyHeaderBackgroundColor:
                 Theme.of(context).scaffoldBackgroundColor,
@@ -95,6 +105,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
         child: CircularProgressIndicator(),
       );
   }
+
 
   @override
   Widget build(BuildContext context) {

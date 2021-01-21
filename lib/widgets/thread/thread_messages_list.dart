@@ -75,15 +75,15 @@ class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMe
     );
   }
 
-  final ItemScrollController _itemScrollController = ItemScrollController();
+  ItemScrollController _itemScrollController;
   var _messages = <Message>[];
 
   @override
   void initState() {
     super.initState();
-
+    _itemScrollController = ItemScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _itemScrollController.jumpTo(index: _messages.length - 1);
+      _itemScrollController?.jumpTo(index: _messages.length - 1);
     });
   }
 

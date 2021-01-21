@@ -19,14 +19,14 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final threadState = BlocProvider.of<ThreadsBloc<T>>(context).state;
-    String parentChannelId = threadState.parentChannel.id;
-    DraftType parentChannelDraftType;
-    if (threadState.parentChannel is Channel) {
-      parentChannelDraftType = DraftType.channel;
-    } else if (threadState.parentChannel is Direct) {
-      parentChannelDraftType = DraftType.direct;
-    }
+    // final threadState = BlocProvider.of<ThreadsBloc<T>>(context).state;
+    // String parentChannelId = threadState.parentChannel.id;
+    // DraftType parentChannelDraftType;
+    // if (threadState.parentChannel is Channel) {
+    //   parentChannelDraftType = DraftType.channel;
+    // } else if (threadState.parentChannel is Direct) {
+    //   parentChannelDraftType = DraftType.direct;
+    // }
 
     String threadId;
     String draft;
