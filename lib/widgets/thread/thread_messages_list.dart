@@ -6,9 +6,14 @@ import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/models/message.dart';
 
-class ThreadMessagesList<T extends BaseChannelBloc> extends StatelessWidget {
+class ThreadMessagesList<T extends BaseChannelBloc> extends StatefulWidget {
   ThreadMessagesList();
 
+  @override
+  _ThreadMessagesListState<T> createState() => _ThreadMessagesListState<T>();
+}
+
+class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMessagesList<T>> {
   Widget buildThreadMessageColumn(MessagesState state) {
     return Column(
       mainAxisSize: MainAxisSize.min,
