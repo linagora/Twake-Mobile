@@ -14,6 +14,7 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatefulWidget {
 }
 
 class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMessagesList<T>> {
+
   Widget buildThreadMessageColumn(MessagesState state) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -74,13 +75,24 @@ class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMe
     );
   }
 
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  var _messages = <Message>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _itemScrollController.jumpTo(index: _messages.length - 1);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThreadsBloc<T>, MessagesState>(
       builder: (ctx, state) {
-        var reversedMessages = <Message>[];
         if (state is MessagesLoaded) {
-          reversedMessages = state.messages.reversed.toList();
+          _messages = state.messages.reversed.toList();
         }
         return Expanded(
           child: state is MessagesLoaded
@@ -88,14 +100,15 @@ class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMe
                   reverse: false,
                   initialAlignment: 0.0,
                   initialScrollIndex: 0,
-                  itemCount: reversedMessages.length,
+                  itemScrollController: _itemScrollController,
+                  itemCount: _messages.length,
                   itemBuilder: (ctx, i) {
                     if (i == 0) {
                       return buildThreadMessageColumn(state);
                     } else {
                       return MessageTile<T>(
-                        message: reversedMessages[i],
-                        key: ValueKey(reversedMessages[i].id),
+                        message: _messages[i],
+                        key: ValueKey(_messages[i].id),
                       );
                     }
                   },
