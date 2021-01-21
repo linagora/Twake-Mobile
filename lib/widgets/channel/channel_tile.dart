@@ -48,10 +48,7 @@ class ChannelTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // SizedBox(width: 12),
-            TextAvatar(
-              channel.icon,
-              emoji: true,
-            ),
+            TextAvatar(channel.icon),
             SizedBox(width: 12),
             Expanded(
               child: Column(

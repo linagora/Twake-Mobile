@@ -42,3 +42,15 @@ class SheetShouldClear extends SheetState {
   @override
   List<Object> get props => [];
 }
+
+class SheetShouldReset extends SheetState {
+  SheetShouldReset();
+  @override
+  List<Object> get props => [];
+}
+
+class SheetProcessing extends SheetState {
+  SheetProcessing();
+  @override
+  List<Object> get props => [];
+}

@@ -52,6 +52,7 @@ class Emojis {
   }
 
   static String reverseLookup(String value) {
+    print('EMOJI CODE: $value');
     String hexcode =
         value.runes.map((r) => r.toRadixString(16).toUpperCase()).join('-');
     return _reverseEmojimap[hexcode];

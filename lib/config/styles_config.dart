@@ -11,6 +11,7 @@ class StylesConfig {
     accentColor: accentColorRGB,
     textTheme: lightTextTheme,
     useTextSelectionTheme: true,
+    scaffoldBackgroundColor: Colors.white,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: Color(0xff837cfe),
     ),
@@ -83,7 +84,7 @@ class StylesConfig {
 
   static final TextStyle _headline3 = TextStyle(
     color: Colors.black,
-    fontSize: Dim.tm3(decimal: .3),
+    fontSize: Dim.tm3(decimal: .7),
     fontWeight: FontWeight.bold,
   );
 

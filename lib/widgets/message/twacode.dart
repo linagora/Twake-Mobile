@@ -13,7 +13,7 @@ const Color linkColor = Colors.blue;
 const Color codeColor = Colors.indigo;
 const Color errorColor = Colors.red;
 const Color quoteColor = Colors.grey;
-const DefaultFontSize = 0.5;
+const DefaultFontSize = 14.0;
 
 TextStyle generateStyle(
     {Color color = defaultColor,
@@ -27,7 +27,7 @@ TextStyle generateStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: fontSize,//Dim.tm2(decimal: fontSize),
+      fontSize: fontSize, //Dim.tm2(decimal: fontSize),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -97,22 +97,15 @@ class _TwacodeState extends State<Twacode> {
     widget.items.forEach((element) {
       spans.add((element as TwacodeItem).render());
     });
-    // if (widget.charCount > 300) {
-    // spans.add(buildButton('...Show more', onHeightIncrease));
-    // }
     return widget.charCount > 300
         ? Column(
-            // mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                color: Theme.of(context).canvasColor,
-                child: RichText(
-                  maxLines: maxRichTextHeight,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.left,
-                  text: TextSpan(children: spans),
-                ),
+              RichText(
+                maxLines: maxRichTextHeight,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.left,
+                text: TextSpan(children: spans),
               ),
               buildButton(
                 heightIncreased ? 'show less' : '...Show more',
@@ -120,13 +113,10 @@ class _TwacodeState extends State<Twacode> {
               ),
             ],
           )
-        : Container(
-            color: Theme.of(context).canvasColor,
-            child: RichText(
-              textAlign: TextAlign.left,
-              text: TextSpan(children: spans),
-            ),
-          );
+        : RichText(
+          textAlign: TextAlign.left,
+          text: TextSpan(children: spans),
+        );
   }
 }
 
@@ -285,7 +275,7 @@ class TwacodeItem {
         break;
       case 'system':
         this.style =
-            generateStyle(color: quoteColor, italic: true, fontSize: 0.3);
+            generateStyle(color: quoteColor, italic: true, fontSize: 11.0);
         this.type = TwacodeType.system;
         break;
       case 'attachment': // TODO: implementation needed
@@ -297,7 +287,7 @@ class TwacodeItem {
         this.type = TwacodeType.progress_bar;
         break;
       case 'unparseable':
-        this.style = generateStyle(color: errorColor, fontSize: 0.3);
+        this.style = generateStyle(color: errorColor, fontSize: 11.0);
         this.type = TwacodeType.text;
         break;
       default:
@@ -316,14 +306,14 @@ class TwacodeItem {
       );
     } else if (this.type == TwacodeType.emoji) {
       if (this.id != null) {
-        // logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
+        logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
         List<int> codePoints = [];
         for (String cp in this.id.split('-')) {
           codePoints.add(int.parse(cp, radix: 16));
         }
         this.content = String.fromCharCodes(codePoints);
       } else {
-        this.content = Emojis.getByName(this.content);
+        this.content = this.content;
       }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;

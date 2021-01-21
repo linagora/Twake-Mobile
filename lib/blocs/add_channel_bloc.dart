@@ -56,6 +56,8 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       }
     } else if (event is Clear) {
       repository.clear();
+    } else if (event is SetFlowType) {
+      yield FlowTypeSet(event.isDirect);
     }
   }
 }

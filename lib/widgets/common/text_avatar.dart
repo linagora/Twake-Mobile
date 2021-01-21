@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/utils/emojis.dart';
 
 class TextAvatar extends StatelessWidget {
   final String text;
-  final bool emoji;
   final double fontSize;
-  TextAvatar(this.text, {this.emoji: false, this.fontSize});
+  TextAvatar(this.text, {this.fontSize});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +18,7 @@ class TextAvatar extends StatelessWidget {
         alignment: Alignment.center,
         child: FittedBox(
           child: Text(
-            emoji ? Emojis.getByName(text) : text,
+            text,
             style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
           ),
         ),

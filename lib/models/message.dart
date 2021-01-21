@@ -66,8 +66,12 @@ class Message extends CollectionItem {
       if (users.contains(userId)) {
         logger.d('Found userId: $users');
         users.remove(userId);
+        r.value['count'] -= 1;
         if (users.isEmpty) reactions.remove(r.key);
-        emojiCode = '';
+        if (emojiCode == r.key) {
+          emojiCode = '';
+          body['reactions'] = '';
+        }
         break;
       }
     }
@@ -79,8 +83,8 @@ class Message extends CollectionItem {
     }
 
     _api.post(Endpoint.reactions, body: body).then((_) {
-      logger.d('Successfully updated reaction');
       save();
+      logger.d('Successfully updated reaction\n$reactions');
     }).catchError((_) {
       logger.e('Error updating reaction');
       reactions = oldReactions;
