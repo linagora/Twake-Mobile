@@ -4,6 +4,7 @@ import 'package:twake/widgets/message/message_edit_field.dart';
 
 class MessageEditModalSheet extends StatelessWidget {
   final Message message;
+
   MessageEditModalSheet(this.message);
 
   @override
@@ -24,7 +25,11 @@ class MessageEditModalSheet extends StatelessWidget {
             Text('Edit'),
           ]),
           // Divider(),
-          MessageEditField((content) {}, autofocus: true),
+          MessageEditField(
+            onMessageSend: (content) {},
+            onTextUpdated: (content) {},
+            autofocus: true,
+          ),
         ],
       ),
     );

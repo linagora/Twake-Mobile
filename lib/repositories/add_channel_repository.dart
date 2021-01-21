@@ -116,20 +116,25 @@ class AddChannelRepository {
         break;
     }
 
+    if (this.name.isEmpty) {
+      this.workspaceId = 'direct';
+      this.visibility = 'direct';
+    }
+
     String myId = ProfileBloc.userId;
     this.members.add(myId);
 
-    if (this.name.isEmpty ||
-        this.companyId.isEmpty ||
-        this.workspaceId.isEmpty ||
-        this.visibility.isEmpty) {
-      _logger.d(
-          'Channel creation: validation error. Not all mandatory fields exist in request body.');
-      return false;
-    } else {
+    // if (this.name.isEmpty ||
+    //     this.companyId.isEmpty ||
+    //     this.workspaceId.isEmpty ||
+    //     this.visibility.isEmpty) {
+    //   _logger.d(
+    //       'Channel creation: validation error. Not all mandatory fields exist in request body.');
+    //   return false;
+    // } else {
       final channelJson = this.toJson();
       return process(channelJson);
-    }
+    // }
   }
 
   Future<bool> process(Map<String, dynamic> body) async {

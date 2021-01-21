@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
-import 'package:twake/utils/emojis.dart';
 
 class Reaction extends StatelessWidget {
   final String reaction;
@@ -33,7 +32,7 @@ class Reaction extends StatelessWidget {
               text: TextSpan(
                 style: Theme.of(context).textTheme.bodyText2,
                 children: [
-                  TextSpan(text: Emojis.getByName(reaction)),
+                  TextSpan(text: reaction),
                   TextSpan(text: ' '),
                   TextSpan(
                     text: '$count',

@@ -69,3 +69,13 @@ class Error extends AddChannelState {
   @override
   List<Object> get props => [message];
 }
+
+class FlowTypeSet extends AddChannelState {
+  final bool isDirect;
+
+  FlowTypeSet(this.isDirect);
+
+  @override
+  List<Object> get props => [isDirect];
+}
+

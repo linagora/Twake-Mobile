@@ -15,10 +15,14 @@ class AddChannelFlow extends StatelessWidget {
     return BlocProvider<UserBloc>(
       create: (_) => UserBloc(ProfileBloc.userId),
       child: BlocBuilder<AddChannelBloc, AddChannelState>(
-        buildWhen: (previous, current) {
-          return (current is StageUpdated);
-        },
+        buildWhen: (previous, current) =>
+            current is StageUpdated || current is FlowTypeSet,
         builder: (context, state) {
+          if (state is FlowTypeSet) {
+            if (state.isDirect) {
+              return ChannelParticipantsList(isDirect: true,);
+            }
+          }
           var i = 0;
           if (state is StageUpdated) {
             switch (state.stage) {

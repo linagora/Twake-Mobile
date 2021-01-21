@@ -80,8 +80,10 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                   child: SizedBox(
                                     height: 62,
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         ImageAvatar(
                                           state.workspaces[i].logo,
@@ -190,7 +192,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (ctx, state) => state is ProfileLoaded
                     ? Container(
-                  height: 52,
+                        height: 52,
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
                         child: Row(
                           children: [
@@ -233,28 +235,3 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
     );
   }
 }
-
-// BlocBuilder<ProfileBloc, ProfileState>(
-//   builder: (ctx, state) => state is ProfileLoaded
-//       ? ListTile(
-//           contentPadding: padding,
-//           leading: ImageAvatar(state.thumbnail),
-//           title: Text(
-//             '${state.firstName} ${state.lastName}',
-//             style: Theme.of(context).textTheme.headline5,
-//           ), // TODO configure the styles
-//           trailing: IconButton(
-//             onPressed: () async {
-//               await CookieManager().clearCookies();
-//               BlocProvider.of<AuthBloc>(ctx)
-//                   .add(ResetAuthentication());
-//             },
-//             color: Colors.black87,
-//             icon: Icon(
-//               Icons.logout,
-//               size: Dim.tm4(),
-//             ),
-//           ),
-//         )
-//       : CircularProgressIndicator(),
-// ),

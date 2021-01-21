@@ -1,16 +1,21 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/draft_bloc.dart';
-import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/repositories/draft_repository.dart';
+import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:twake/utils/extensions.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String) onMessageSend;
+  final Function(String) onTextUpdated;
+  final String initialText;
 
-  MessageEditField(this.onMessageSend, {this.autofocus: false});
+  MessageEditField({
+    Key key,
+    @required this.onMessageSend,
+    @required this.onTextUpdated,
+    this.autofocus = false,
+    this.initialText = '',
+  });
 
   @override
   _MessageEditField createState() => _MessageEditField();
@@ -18,154 +23,194 @@ class MessageEditField extends StatefulWidget {
 
 class _MessageEditField extends State<MessageEditField> {
   bool _emojiVisible = false;
-  String _channelId = '';
-  DraftType _channelType = DraftType.channel;
-  // Timer _debounce;
+  bool _canSend = false;
 
-  final _focus = FocusNode();
+  final _focusNode = FocusNode();
   final _controller = TextEditingController();
+  final _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
 
+    widget.onTextUpdated(widget.initialText);
+    if (widget.initialText.isNotReallyEmpty) {
+      _controller.text = widget.initialText; // possibly retrieved from cache.
+      setState(() {
+        _canSend = true;
+      });
+    }
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasPrimaryFocus)
+        setState(() {
+          _emojiVisible = false;
+        });
+    });
+
     _controller.addListener(() {
-      if (_controller.text.isEmpty) {
-        // setState(() => );
-        // print('DRAFT TO RESET: $_channelId : ${_controller.text}');
-        context.read<DraftBloc>().add(ResetDraft(
-          id: _channelId,
-          type: _channelType,
-        ));
-      // } else if (!_canSend) {
-        // setState(() => _canSend = true);
-      } else {
-        // print('DRAFT TO SAVE: $_channelId : ${_controller.text}');
-        // if (_debounce?.isActive ?? false) _debounce.cancel();
-        // _debounce = Timer(const Duration(milliseconds: 1500), () {
-          final draft = _controller.text;
-          context.read<DraftBloc>().add(SaveDraft(
-            id: _channelId,
-            type: _channelType,
-            draft: draft,
-          ));
-        // });
+      var text = _controller.text;
+      // Update for cache handlers
+      widget.onTextUpdated(text);
+      // Sendability  validation
+      if (text.isReallyEmpty && _canSend) {
+        setState(() {
+          _canSend = false;
+        });
+      } else if (text.isNotReallyEmpty && !_canSend) {
+        setState(() {
+          _canSend = true;
+        });
       }
     });
   }
 
   @override
   void dispose() {
-    _focus.dispose();
+    _focusNode.dispose();
     _controller.dispose();
-
-    // _debounce.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
+  void didUpdateWidget(covariant MessageEditField oldWidget) {
+    if (oldWidget.initialText != widget.initialText) {
+      _controller.text = widget.initialText;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void toggleEmojiBoard() async {
+    if (_focusNode.hasPrimaryFocus) _focusNode.unfocus();
+    await Future.delayed(Duration(milliseconds: 200));
+    setState(() {
+      _emojiVisible = !_emojiVisible;
+    });
+    if (!_emojiVisible) _focusNode.requestFocus();
+  }
+
+  Future<bool> onBackPress() async {
+    if (_emojiVisible) {
+      setState(() {
+        _emojiVisible = false;
+      });
+    } else {
+      Navigator.pop(context);
+    }
+
+    return false;
+  }
+
+  Widget buildEmojiBoard() {
+    return EmojiKeyboard(
+      onEmojiSelected: (emoji) {
+        _controller.text += emoji.text;
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      },
+      height: MediaQuery.of(context).size.height * 0.35,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    bool _keyboardVisible = !(MediaQuery.of(context).viewInsets.bottom == 0.0);
-    return BlocBuilder<DraftBloc, DraftState>(
-      buildWhen: (_, current) {
-        return current is DraftLoaded || current is DraftSaved;
-      },
-      builder: (context, state) {
-        if (state is DraftLoaded) {
-          _controller.text = state.draft;
-          _channelId = state.id;
-          _channelType = state.type;
-        }
-        var canSend = _controller.text.isNotEmpty;
-        return TextInput(
-          controller: _controller,
-          autofocus: widget.autofocus,
-          emojiVisible: _emojiVisible,
-          keyboardVisible: _keyboardVisible,
-          onMessageSend: widget.onMessageSend,
-          canSend: canSend,
-        );
-      },
+    return WillPopScope(
+      onWillPop: onBackPress,
+      child: Column(
+        children: [
+          TextInput(
+            controller: _controller,
+            scrollController: _scrollController,
+            focusNode: _focusNode,
+            autofocus: widget.autofocus,
+            toggleEmojiBoard: toggleEmojiBoard,
+            emojiVisible: _emojiVisible,
+            onMessageSend: widget.onMessageSend,
+            canSend: _canSend,
+          ),
+          _emojiVisible ? buildEmojiBoard() : Container(),
+        ],
+      ),
     );
   }
 }
 
 class TextInput extends StatelessWidget {
   final TextEditingController controller;
+  final FocusNode focusNode;
+  final ScrollController scrollController;
   final Function toggleEmojiBoard;
-  final Function onEmojiPicked;
   final bool autofocus;
   final bool emojiVisible;
-  final bool keyboardVisible;
   final bool canSend;
   final Function onMessageSend;
 
   TextInput({
     this.onMessageSend,
     this.controller,
+    this.focusNode,
     this.autofocus,
     this.emojiVisible,
-    this.keyboardVisible,
+    this.scrollController,
     this.toggleEmojiBoard,
-    this.onEmojiPicked,
     this.canSend,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Dim.wm3,
-        vertical: Dim.heightMultiplier,
-      ),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[300], width: 2.0)),
+        border: Border(top: BorderSide(color: Colors.grey[400], width: 1.5)),
       ),
-      child: TextField(
-        style: TextStyle(
-          fontSize: 17.0,
-          fontWeight: FontWeight.w400,
-          color: Color(0xff444444),
-        ),
-        maxLines: 4,
-        minLines: 1,
-        // cursorHeight: Dim.tm3(),
-        autofocus: autofocus,
-        controller: controller,
-        decoration: InputDecoration(
-          suffixIcon: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                padding: EdgeInsetsDirectional.only(top: 12),
-                iconSize: Dim.tm4(),
-                icon: Transform(
-                  transform: Matrix4.rotationZ(
-                    -pi / 4,
-                  ), // rotate 45 degrees cc
-                  child: Icon(
-                    canSend ? Icons.send : Icons.send_outlined,
-                    color: canSend
-                        ? Theme.of(context).accentColor
-                        : Colors.grey[400],
-                  ),
+      child: Row(
+        children: [
+          IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(Icons.tag_faces),
+            onPressed: toggleEmojiBoard,
+            color: emojiVisible ? Colors.black87 : Colors.blueGrey,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 2),
+              child: TextField(
+                style: TextStyle(
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff444444),
                 ),
-                onPressed: canSend
-                    ? () async {
-                        await onMessageSend(controller.text);
-                        controller.clear();
-                      }
-                    : null,
+                maxLines: 4,
+                minLines: 1,
+                autofocus: autofocus,
+                focusNode: focusNode,
+                scrollController: scrollController,
+                controller: controller,
+                decoration: InputDecoration.collapsed(
+                  hintText: 'Type your message...',
+                  hintStyle: TextStyle(color: Colors.blueGrey),
+                ),
               ),
-            ],
+            ),
           ),
-          isCollapsed: true,
-          floatingLabelBehavior: FloatingLabelBehavior.never,
-          labelText: 'Reply',
-          border: UnderlineInputBorder(
-            borderSide: BorderSide(width: 0.0, style: BorderStyle.none),
+          IconButton(
+            padding: EdgeInsets.only(bottom: 5.0),
+            icon: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationZ(-pi / 4), // rotate 45 degrees cc
+              child: Icon(
+                canSend ? Icons.send : Icons.send_outlined,
+                color:
+                    canSend ? Theme.of(context).accentColor : Colors.grey[400],
+              ),
+            ),
+            onPressed: canSend
+                ? () async {
+                    await onMessageSend(controller.text);
+                    controller.clear();
+                  }
+                : null,
           ),
-        ),
+        ],
       ),
     );
   }
