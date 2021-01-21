@@ -32,7 +32,6 @@ class _DraggableScrollableState extends State<DraggableScrollable> {
 
   @override
   Widget build(BuildContext context) {
-    print('REBUILD!');
     return NotificationListener<DraggableScrollableNotification>(
       onNotification: (notification) {
         double extent = notification.extent;
