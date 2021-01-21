@@ -28,8 +28,6 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
       if (_groupedItemScrollController != null) {
         _groupedItemScrollController?.jumpTo(index: 0);
       }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateScrollViewPadding();
     });
   }
