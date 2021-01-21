@@ -79,7 +79,6 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                   ? StackedUserAvatars((state.parentChannel as Direct).members)
                   : TextAvatar(
                       state.parentChannel.icon,
-                      emoji: true,
                       fontSize: Dim.tm4(),
                     ),
               SizedBox(width: 12.0),
