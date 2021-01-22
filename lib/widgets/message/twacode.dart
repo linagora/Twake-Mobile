@@ -320,10 +320,7 @@ class TwacodeItem {
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
     // Workaround for softWrap = true of RichText
-    // if (this.type != TwacodeType.image &&
-    //     this.type != TwacodeType.emoji &&
-    //     this.type != TwacodeType.icon &&
-    //     this.type != TwacodeType.image) {
+    // if (this.type == TwacodeType.text) {
     //   content = content.replaceAll('', '\u200b');
     // }
     return TextSpan(

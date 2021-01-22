@@ -6,8 +6,14 @@ import 'image_avatar.dart';
 
 class StackedUserAvatars extends StatelessWidget {
   final List<String> userIds;
+  final double width;
+  final double height;
 
-  StackedUserAvatars(this.userIds);
+  StackedUserAvatars(
+    this.userIds, {
+    this.width = 30,
+    this.height = 30,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +21,8 @@ class StackedUserAvatars extends StatelessWidget {
     for (int i = 0; i < userIds.length; i++) {
       paddedAvatars.add(
         Container(
-          width: 30,
-          height: 30,
+          width: width,
+          height: height,
           child: BlocProvider<UserBloc>(
             create: (_) => UserBloc(userIds[i]),
             child: BlocBuilder<UserBloc, UserState>(builder: (ctx, state) {
