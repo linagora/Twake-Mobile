@@ -15,8 +15,8 @@ class ImageAvatar extends StatelessWidget {
 
   ImageAvatar(
     this.imageUrl, {
-    this.width,
-    this.height,
+    this.width = 30,
+    this.height = 30,
   });
 
   @override
@@ -28,22 +28,26 @@ class ImageAvatar extends StatelessWidget {
       ),
       child: imageUrl == null || imageUrl.isEmpty
           ? onErrorFallbackImg(width ?? Dim.tm5(), height ?? Dim.tm5())
-          : FadeInImage.assetNetwork(
-              placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
-                width ?? Dim.tm5(),
-                height ?? Dim.tm5(),
+          : Container(
+        width: width,
+            height: height,
+            child: FadeInImage.assetNetwork(
+                placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
+                  width ?? Dim.tm5(),
+                  height ?? Dim.tm5(),
+                ),
+                fit: BoxFit.cover,
+                image: imageUrl,
+                width: width ?? Dim.tm5(),
+                height: height ?? Dim.tm5(),
+                placeholder: _FALLBACK_IMG,
+                // headers: {
+                // 'CONTENT-TYPE': mime,
+                // 'ACCEPT':
+                // 'image/png, image/jpeg, image/jpg, application/octet-stream'
+                // },
               ),
-              fit: BoxFit.cover,
-              image: imageUrl,
-              width: width ?? Dim.tm5(),
-              height: height ?? Dim.tm5(),
-              placeholder: _FALLBACK_IMG,
-              // headers: {
-              // 'CONTENT-TYPE': mime,
-              // 'ACCEPT':
-              // 'image/png, image/jpeg, image/jpg, application/octet-stream'
-              // },
-            ),
+          ),
     );
   }
 }

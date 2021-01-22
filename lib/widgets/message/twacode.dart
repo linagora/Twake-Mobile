@@ -27,7 +27,8 @@ TextStyle generateStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: fontSize, //Dim.tm2(decimal: fontSize),
+      fontSize: fontSize,
+      //Dim.tm2(decimal: fontSize),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -114,10 +115,10 @@ class _TwacodeState extends State<Twacode> {
             ],
           )
         : RichText(
-          textAlign: TextAlign.left,
-          softWrap: true,
-          text: TextSpan(children: spans),
-        );
+            textAlign: TextAlign.left,
+            softWrap: true,
+            text: TextSpan(children: spans),
+          );
   }
 }
 
@@ -319,7 +320,12 @@ class TwacodeItem {
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
     // Workaround for softWrap = true of RichText
-    content = content.replaceAll('', '\u200b');
+    // if (this.type != TwacodeType.image &&
+    //     this.type != TwacodeType.emoji &&
+    //     this.type != TwacodeType.icon &&
+    //     this.type != TwacodeType.image) {
+    //   content = content.replaceAll('', '\u200b');
+    // }
     return TextSpan(
         text: content, style: this.style, recognizer: this.recognizer);
   }
