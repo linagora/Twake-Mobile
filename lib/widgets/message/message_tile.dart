@@ -30,7 +30,8 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
 
   void onReply(context, String messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
-    BlocProvider.of<DraftBloc>(context).add(LoadDraft(id: message.id, type: DraftType.thread));
+    BlocProvider.of<DraftBloc>(context)
+        .add(LoadDraft(id: message.id, type: DraftType.thread));
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -149,7 +150,8 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        messageState.threadId != null
+                                        messageState.threadId != null ||
+                                                hideShowAnswers
                                             ? DateFormatter.getVerboseDateTime(
                                                 messageState.creationDate)
                                             : DateFormatter.getVerboseTime(
