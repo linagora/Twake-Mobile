@@ -210,8 +210,8 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> clean() async {
-    await _storage.truncate(_typeToStorageType[T]);
     items.clear();
+    await _storage.truncate(_typeToStorageType[T]);
   }
 
   Future<bool> delete(
