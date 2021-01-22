@@ -24,6 +24,7 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   void initState() {
     super.initState();
@@ -142,10 +143,15 @@ class _InitialPageState extends State<InitialPage> {
                 lazy: false,
               ),
             ],
-            child: Navigator(
-              initialRoute: Routes.main,
-              onGenerateRoute: (settings) =>
-                  Routes.onGenerateRoute(settings.name),
+            child: WillPopScope(
+              onWillPop: () async =>
+                  !await _navigatorKey.currentState.maybePop(),
+              child: Navigator(
+                key: _navigatorKey,
+                initialRoute: Routes.main,
+                onGenerateRoute: (settings) =>
+                    Routes.onGenerateRoute(settings.name),
+              ),
             ),
           );
         } else // is Authenticating
