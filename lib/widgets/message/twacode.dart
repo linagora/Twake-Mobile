@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
-import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:logger/logger.dart';
 
@@ -13,7 +12,7 @@ const Color linkColor = Colors.blue;
 const Color codeColor = Colors.indigo;
 const Color errorColor = Colors.red;
 const Color quoteColor = Colors.grey;
-const DefaultFontSize = 14.0;
+const DefaultFontSize = 16.0;
 
 TextStyle generateStyle(
     {Color color = defaultColor,
@@ -177,7 +176,7 @@ class TwacodeItem {
 
     switch (type) {
       case 'text':
-        this.style = generateStyle(fontSize: 14.0);
+        this.style = generateStyle(fontSize: 16.0);
         this.type = TwacodeType.text;
         break;
       case 'bold':

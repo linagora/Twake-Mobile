@@ -143,8 +143,8 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                       Text(
                                         '${state.firstName} ${state.lastName}',
                                         style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w500,
                                           color: Color(0xff444444),
                                         ),
                                         overflow: TextOverflow.ellipsis,
@@ -157,7 +157,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                             : DateFormatter.getVerboseTime(
                                                 messageState.creationDate),
                                         style: TextStyle(
-                                          fontSize: 10.0,
+                                          fontSize: 11.0,
                                           fontWeight: FontWeight.w400,
                                           color: Color(0xff92929C),
                                         ),
