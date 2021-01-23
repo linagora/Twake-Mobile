@@ -50,6 +50,10 @@ dependencies:
     # path: ../emoji_keyboard
     git: https://github.com/bobs4462/emoji_keyboard.git
 
+  flutter_markdown: 
+    git: https://github.com/bobs4462/flutter_markdown.git
+
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0

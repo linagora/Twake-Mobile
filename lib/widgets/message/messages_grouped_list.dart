@@ -12,17 +12,16 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
   Widget buildMessagesList(context, MessagesState state) {
     if (state is MessagesLoaded) {
       return GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
         child: StickyGroupedListView<Message, DateTime>(
             order: StickyGroupedListOrder.DESC,
             stickyHeaderBackgroundColor:
-            Theme.of(context).scaffoldBackgroundColor,
+                Theme.of(context).scaffoldBackgroundColor,
             reverse: true,
             elements: state.messages,
             groupBy: (Message m) {
               final DateTime dt =
-              DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
+                  DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
               return DateTime(dt.year, dt.month, dt.day);
             },
             groupComparator: (DateTime value1, DateTime value2) =>
@@ -73,7 +72,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                 ),
               );
             },
-            indexedItemBuilder: (_, Message message, int i) {
+            itemBuilder: (_, Message message) {
               return MessageTile<T>(
                 message: message,
                 key: ValueKey(

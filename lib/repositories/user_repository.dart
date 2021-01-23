@@ -59,6 +59,7 @@ class UserRepository {
         items[id] = User.fromJson(item);
     }
     if (toBeFetched.isNotEmpty) {
+      logger.d('TOBE FETCHED FROM API: $toBeFetched');
       List response = [];
       try {
         response = await _api.get(
@@ -67,6 +68,7 @@ class UserRepository {
             'id': toBeFetched,
           },
         );
+        logger.d('$response');
       } on ApiError catch (error) {
         logger.d('ERROR WHILE FETCHING users FROM API\n${error.message}');
         return false;
@@ -74,11 +76,11 @@ class UserRepository {
       final users =
           response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
       items.addEntries(users);
+      _storage.batchStore(
+        items: items.values.map((u) => u.toJson()),
+        type: StorageType.User,
+      );
     }
-    _storage.batchStore(
-      items: items.values.map((u) => u.toJson()),
-      type: StorageType.User,
-    );
     logger.d('Loaded ${items.length} users for messages');
     return true;
   }
@@ -108,7 +110,7 @@ class UserRepository {
     }
     final users = List<User>.from(response.map((u) => User.fromJson(u)));
 
-    logger.d('Found ${users.length} users');
+    // logger.d('Found ${users.length} users');
     return users;
   }
 }

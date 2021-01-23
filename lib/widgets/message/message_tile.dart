@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
@@ -11,7 +12,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
-import 'package:twake/widgets/message/twacode.dart';
+// import 'package:twake/widgets/message/twacode.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
@@ -63,148 +64,154 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SingleMessageBloc>(
-        create: (_) => SingleMessageBloc(message),
-        child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
-          builder: (ctx, messageState) {
-            if (messageState is MessageReady)
-              return InkWell(
-                onLongPress: () {
-                  showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (_) {
-                        return MessageModalSheet(
-                          userId: messageState.userId,
-                          messageId: messageState.id,
-                          responsesCount: messageState.responsesCount,
-                          isThread:
-                              messageState.threadId != null || hideShowAnswers,
-                          onReply: onReply,
-                          ctx: ctx,
-                          onDelete: (ctx) => onDelete(
-                              ctx,
-                              RemoveMessage(
-                                channelId: message.channelId,
-                                messageId: messageState.id,
-                                threadId: messageState.threadId,
-                              )),
-                          onCopy: () {
-                            print('TEXT: ${messageState.text}');
-                            onCopy(context: ctx, text: messageState.text);
-                          },
-                        );
-                      });
-                },
-                onTap: () {
-                  FocusManager.instance.primaryFocus.unfocus();
-                  if (messageState.threadId == null &&
-                      messageState.responsesCount != 0 &&
-                      !hideShowAnswers) {
-                    onReply(context, messageState.id);
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 12.0,
-                    right: 12.0,
-                    bottom: 12.0,
-                  ),
-                  child: BlocProvider<UserBloc>(
-                    create: (_) => UserBloc(messageState.userId),
-                    child:
-                        BlocBuilder<UserBloc, UserState>(builder: (_, state) {
-                      if (state is UserReady) {
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SingleMessageBloc>(
+          create: (_) => SingleMessageBloc(message),
+          lazy: false,
+        ),
+        BlocProvider<UserBloc>(
+          create: (_) => UserBloc(message.userId),
+          lazy: false,
+        )
+      ],
+      child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
+        builder: (ctx, messageState) {
+          if (messageState is MessageReady)
+            return InkWell(
+              onLongPress: () {
+                showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (_) {
+                      return MessageModalSheet(
+                        userId: messageState.userId,
+                        messageId: messageState.id,
+                        responsesCount: messageState.responsesCount,
+                        isThread:
+                            messageState.threadId != null || hideShowAnswers,
+                        onReply: onReply,
+                        ctx: ctx,
+                        onDelete: (ctx) => onDelete(
+                            ctx,
+                            RemoveMessage(
+                              channelId: message.channelId,
+                              messageId: messageState.id,
+                              threadId: messageState.threadId,
+                            )),
+                        onCopy: () {
+                          print('TEXT: ${messageState.text}');
+                          onCopy(context: ctx, text: messageState.text);
+                        },
+                      );
+                    });
+              },
+              onTap: () {
+                FocusManager.instance.primaryFocus.unfocus();
+                if (messageState.threadId == null &&
+                    messageState.responsesCount != 0 &&
+                    !hideShowAnswers) {
+                  onReply(context, messageState.id);
+                }
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 12.0,
+                  right: 12.0,
+                  bottom: 12.0,
+                ),
+                child: BlocBuilder<UserBloc, UserState>(builder: (_, state) {
+                  if (state is UserReady) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Column(
                           children: [
-                            Column(
-                              children: [
-                                if (state is UserReady)
-                                  ImageAvatar(
-                                    state.thumbnail,
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                if (state is! UserReady)
-                                  CircularProgressIndicator(),
-                              ],
-                            ),
-                            SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            if (state is UserReady)
+                              ImageAvatar(
+                                state.thumbnail,
+                                width: 30,
+                                height: 30,
+                              ),
+                            if (state is! UserReady)
+                              CircularProgressIndicator(),
+                          ],
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        '${state.firstName} ${state.lastName}',
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xff444444),
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        messageState.threadId != null ||
-                                                hideShowAnswers
-                                            ? DateFormatter.getVerboseDateTime(
-                                                messageState.creationDate)
-                                            : DateFormatter.getVerboseTime(
-                                                messageState.creationDate),
-                                        style: TextStyle(
-                                          fontSize: 11.0,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color(0xff92929C),
-                                        ),
-                                      ),
-                                    ],
+                                  Text(
+                                    '${state.firstName} ${state.lastName}',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xff444444),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 5.0),
-                                  Parser(messageState.content,
-                                          messageState.charCount)
-                                      .render(context),
-                                  SizedBox(height: 5.0),
-                                  Wrap(
-                                    runSpacing: Dim.heightMultiplier,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    textDirection: TextDirection.ltr,
-                                    children: [
-                                      ...messageState.reactions.keys.map((r) {
-                                        return Reaction(
-                                          r,
-                                          messageState.reactions[r]['count'],
-                                        );
-                                      }),
-                                      if (messageState.responsesCount > 0 &&
-                                          messageState.threadId == null &&
-                                          !hideShowAnswers)
-                                        Text(
-                                          'See all answers (${messageState.responsesCount})',
-                                          style: StylesConfig.miniPurple,
-                                        ),
-                                    ],
+                                  Text(
+                                    messageState.threadId != null ||
+                                            hideShowAnswers
+                                        ? DateFormatter.getVerboseDateTime(
+                                            messageState.creationDate)
+                                        : DateFormatter.getVerboseTime(
+                                            messageState.creationDate),
+                                    style: TextStyle(
+                                      fontSize: 11.0,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff92929C),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return CircularProgressIndicator();
-                      }
-                    }),
-                  ),
-                ),
-              );
-            else
-              return CircularProgressIndicator();
-          },
-        ));
+                              SizedBox(height: 5.0),
+                              MarkdownBody(data: messageState.text),
+                              // Parser(messageState.content,
+                              // messageState.charCount)
+                              // .render(context),
+                              SizedBox(height: 5.0),
+                              Wrap(
+                                runSpacing: Dim.heightMultiplier,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                textDirection: TextDirection.ltr,
+                                children: [
+                                  ...messageState.reactions.keys.map((r) {
+                                    return Reaction(
+                                      r,
+                                      messageState.reactions[r]['count'],
+                                    );
+                                  }),
+                                  if (messageState.responsesCount > 0 &&
+                                      messageState.threadId == null &&
+                                      !hideShowAnswers)
+                                    Text(
+                                      'See all answers (${messageState.responsesCount})',
+                                      style: StylesConfig.miniPurple,
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return Container();
+                  }
+                }),
+              ),
+            );
+          else
+            return CircularProgressIndicator();
+        },
+      ),
+    );
   }
 }
