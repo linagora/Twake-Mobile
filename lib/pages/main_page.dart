@@ -34,6 +34,7 @@ class _MainPageState extends State<MainPage> {
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
         onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
+        onPanelSlide: _onPanelSlide,
         minHeight: 0,
         maxHeight: MediaQuery.of(context).size.height * 0.9,
         snapPoint: 0.4,
@@ -44,9 +45,13 @@ class _MainPageState extends State<MainPage> {
                 current is SheetShouldOpen || current is SheetShouldClose,
             builder: (context, state) {
               if (state is SheetShouldOpen) {
-                _openSheet();
+                if (_panelController.isPanelClosed) {
+                  _openSheet();
+                }
               } else if (state is SheetShouldClose) {
-                _closeSheet();
+                if (_panelController.isPanelOpen) {
+                  _closeSheet();
+                }
               }
               return DraggableScrollable();
             }),
@@ -125,5 +130,11 @@ class _MainPageState extends State<MainPage> {
 
   void _closeSheet() {
     _panelController.close();
+  }
+
+  _onPanelSlide(double position) {
+    if (position < 0.1) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
   }
 }
