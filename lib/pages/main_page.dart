@@ -27,10 +27,6 @@ class _MainPageState extends State<MainPage>
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SheetBloc>().add(SetClosed());
-    });
-
     // _animationController.addStatusListener((status) {
     //   if (status == AnimationStatus.dismissed) {
     //     context.read<SheetBloc>().add(SetClosed());
@@ -52,6 +48,9 @@ class _MainPageState extends State<MainPage>
       body: SafeArea(
         child: SlidingUpPanel(
           controller: _panelController,
+          onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
+          onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
+          onPanelSlide: _onPanelSlide,
           minHeight: 0,
           panel: BlocBuilder<SheetBloc, SheetState>(
               buildWhen: (_, current) =>
@@ -168,5 +167,14 @@ class _MainPageState extends State<MainPage>
     // setState(() {
     //   _shouldBlur = false;
     // });
+  }
+
+  _onPanelSlide(double position) {
+
+    // if (position < 0.2) {
+    //   panelProvider.updateExpandPanel(false);
+    // } else if (position > 0.2 && !panelProvider.expandPanel) {
+    //   panelProvider.updateExpandPanel(true);
+    // }
   }
 }
