@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
@@ -36,10 +35,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
     super.initState();
 
     _isDirect = widget.isDirect;
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => context.read<UserBloc>().add(LoadUsers('')),
-    );
 
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();

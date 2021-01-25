@@ -14,7 +14,7 @@ import 'package:twake/widgets/thread/thread_messages_list.dart';
 class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
   final bool autofocus;
 
-  ThreadPage({this.autofocus: false});
+  const ThreadPage({this.autofocus: false});
 
   @override
   Widget build(BuildContext context) {

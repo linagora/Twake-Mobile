@@ -14,28 +14,14 @@ import 'package:twake/widgets/drawer/twake_drawer.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
 class MainPage extends StatefulWidget {
+  const MainPage();
   @override
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage>
-    with SingleTickerProviderStateMixin {
+class _MainPageState extends State<MainPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final PanelController _panelController = PanelController();
-
-  @override
-  void initState() {
-    super.initState();
-    // _animationController.addStatusListener((status) {
-    //   if (status == AnimationStatus.dismissed) {
-    //     context.read<SheetBloc>().add(SetClosed());
-    //     FocusScope.of(context).requestFocus(new FocusNode());
-    //   }
-    //   if (status == AnimationStatus.completed) {
-    //     context.read<SheetBloc>().add(SetOpened());
-    //   }
-    // });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +34,6 @@ class _MainPageState extends State<MainPage>
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
         onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
-        onPanelSlide: _onPanelSlide,
         minHeight: 0,
         maxHeight: MediaQuery.of(context).size.height * 0.9,
         snapPoint: 0.4,
@@ -134,50 +119,11 @@ class _MainPageState extends State<MainPage>
     );
   }
 
-  // // Sheet for channel/direct adding
-  // BlocConsumer<SheetBloc, SheetState>(
-  // listener: (context, state) {
-  // if (state is SheetShouldOpen) {
-  // _openSheet();
-  // }
-  // if (state is SheetShouldClose) {
-  // _closeSheet();
-  // }
-  // },
-  // builder: (context, state) {
-  // return SlideTransition(
-  // position: _tween.animate(_animationController),
-  // child: DraggableScrollable(),
-  // );
-  // },
-  // ),
-
   void _openSheet() {
     _panelController.open();
-    // if (_animationController.isDismissed) {
-    //   _animationController.forward();
-    // }
-    // setState(() {
-    //   _shouldBlur = true;
-    // });
   }
 
   void _closeSheet() {
     _panelController.close();
-    // if (_animationController.isCompleted) {
-    //   _animationController.reverse();
-    // }
-    // setState(() {
-    //   _shouldBlur = false;
-    // });
-  }
-
-  _onPanelSlide(double position) {
-
-    // if (position < 0.2) {
-    //   panelProvider.updateExpandPanel(false);
-    // } else if (position > 0.2 && !panelProvider.expandPanel) {
-    //   panelProvider.updateExpandPanel(true);
-    // }
   }
 }
