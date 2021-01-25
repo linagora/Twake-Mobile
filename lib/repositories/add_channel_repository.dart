@@ -93,7 +93,7 @@ class AddChannelRepository {
     icon = '';
     description = '';
     channelGroup = '';
-    def = false;
+    def = true;
     members = [];
     flow = FlowStage.info;
     type = ChannelType.public;
