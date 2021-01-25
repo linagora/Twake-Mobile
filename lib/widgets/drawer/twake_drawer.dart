@@ -7,7 +7,6 @@ import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/auth/logout_dialog.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 const double ICON_SIZE_MULTIPLIER = 4.5;
 
@@ -233,20 +232,19 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
   }
 
   void _handleLogout(BuildContext parentContext) async {
-    showDialog(context: parentContext,
+    showDialog(
+        context: parentContext,
         builder: (BuildContext context) {
           return LogoutDialog(
             title: 'Are you sure you want to log out of your account?',
             leadingActionTitle: 'Cancel',
             trailingActionTitle: 'Log out',
             trailingAction: () async {
-              await CookieManager().clearCookies();
               BlocProvider.of<AuthBloc>(parentContext)
                   .add(ResetAuthentication());
               Navigator.of(context).pop();
             },
           );
-        }
-    );
+        });
   }
 }
