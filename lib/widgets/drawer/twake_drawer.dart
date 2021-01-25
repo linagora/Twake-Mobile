@@ -232,17 +232,18 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
     );
   }
 
-  void _handleLogout(BuildContext context) {
-    showDialog(context: context,
-        builder: (BuildContext context){
+  void _handleLogout(BuildContext parentContext) async {
+    showDialog(context: parentContext,
+        builder: (BuildContext context) {
           return LogoutDialog(
             title: 'Are you sure you want to log out of your account?',
             leadingActionTitle: 'Cancel',
             trailingActionTitle: 'Log out',
             trailingAction: () async {
               await CookieManager().clearCookies();
-              BlocProvider.of<AuthBloc>(context)
+              BlocProvider.of<AuthBloc>(parentContext)
                   .add(ResetAuthentication());
+              Navigator.of(context).pop();
             },
           );
         }

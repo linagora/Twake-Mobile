@@ -46,6 +46,7 @@ dependencies:
   image_picker: ^0.6.7+21
   connectivity: ^2.0.2
   shared_preferences: ^0.5.12+4
+  sliding_up_panel: ^1.0.2
   flutter_emoji_keyboard:
     # path: ../emoji_keyboard
     git: https://github.com/bobs4462/emoji_keyboard.git
