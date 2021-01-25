@@ -21,41 +21,25 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage>
     with SingleTickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final Duration _duration = Duration(milliseconds: 400);
-  final Tween<Offset> _tween = Tween(
-    begin: Offset(0, 1),
-    end: Offset(0, 0),
-  );
-  AnimationController _animationController;
-  bool _shouldBlur = false;
+  final PanelController _panelController = PanelController();
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: _duration,
-    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetClosed());
     });
 
-    _animationController.addStatusListener((status) {
-      if (status == AnimationStatus.dismissed) {
-        context.read<SheetBloc>().add(SetClosed());
-        FocusScope.of(context).requestFocus(new FocusNode());
-      }
-      if (status == AnimationStatus.completed) {
-        context.read<SheetBloc>().add(SetOpened());
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+    // _animationController.addStatusListener((status) {
+    //   if (status == AnimationStatus.dismissed) {
+    //     context.read<SheetBloc>().add(SetClosed());
+    //     FocusScope.of(context).requestFocus(new FocusNode());
+    //   }
+    //   if (status == AnimationStatus.completed) {
+    //     context.read<SheetBloc>().add(SetOpened());
+    //   }
+    // });
   }
 
   @override
@@ -67,11 +51,17 @@ class _MainPageState extends State<MainPage>
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SlidingUpPanel(
+          controller: _panelController,
           minHeight: 0,
           panel: BlocBuilder<SheetBloc, SheetState>(
               buildWhen: (_, current) =>
                   current is SheetShouldOpen || current is SheetShouldClose,
               builder: (context, state) {
+                if (state is SheetShouldOpen) {
+                  _openSheet();
+                } else if (state is SheetShouldClose) {
+                  _closeSheet();
+                }
                 return DraggableScrollable();
               }),
           body: Column(
@@ -161,20 +151,22 @@ class _MainPageState extends State<MainPage>
   // ),
 
   void _openSheet() {
-    if (_animationController.isDismissed) {
-      _animationController.forward();
-    }
-    setState(() {
-      _shouldBlur = true;
-    });
+    _panelController.open();
+    // if (_animationController.isDismissed) {
+    //   _animationController.forward();
+    // }
+    // setState(() {
+    //   _shouldBlur = true;
+    // });
   }
 
   void _closeSheet() {
-    if (_animationController.isCompleted) {
-      _animationController.reverse();
-    }
-    setState(() {
-      _shouldBlur = false;
-    });
+    _panelController.close();
+    // if (_animationController.isCompleted) {
+    //   _animationController.reverse();
+    // }
+    // setState(() {
+    //   _shouldBlur = false;
+    // });
   }
 }
