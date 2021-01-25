@@ -96,9 +96,12 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
             },
             trailingTitle: 'Next',
             trailingAction: _canGoNext
-                ? () => context
-                    .read<AddChannelBloc>()
-                    .add(SetFlowStage(FlowStage.type))
+                ? () {
+                    FocusScope.of(context).unfocus();
+                    context
+                        .read<AddChannelBloc>()
+                        .add(SetFlowStage(FlowStage.type));
+                  }
                 : null,
           ),
           SizedBox(height: 16),
