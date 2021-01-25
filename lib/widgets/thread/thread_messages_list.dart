@@ -86,15 +86,15 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   _itemScrollController?.jumpTo(index: _messages.length - 1);
     // });
-    _itemPositionsListener.itemPositions.addListener(() {
-      final lastPosition = _itemPositionsListener.itemPositions.value.last;
-      final index = lastPosition.index;
-      if (_lastIndex != index) {
+    // _itemPositionsListener.itemPositions.addListener(() {
+      // final lastPosition = _itemPositionsListener.itemPositions.value.last;
+      // final index = lastPosition.index;
+      // if (_lastIndex != index) {
         // print(_lastIndex);
-        _lastIndex = index;
+        // _lastIndex = index;
         // _itemScrollController?.jumpTo(index: _lastIndex);
-      }
-    });
+      // }
+    // });
   }
 
   @override
