@@ -88,7 +88,7 @@ class ChannelTypeForm extends StatelessWidget {
             ),
             if (channelType == ChannelType.public) AddAllSwitcher(),
             if (channelType == ChannelType.private) SizedBox(),
-            if (channelType == ChannelType.direct) ParticipantsButton(),
+            // if (channelType == ChannelType.direct) ParticipantsButton(),
             HintLine(
               text: channelType != ChannelType.private
                   ? (channelType != ChannelType.direct
@@ -135,13 +135,13 @@ class ChannelTypesContainer extends StatelessWidget {
               .read<AddChannelBloc>()
               .add(Update(type: ChannelType.private)),
         ),
-        SelectableItem(
-          title: 'Direct',
-          selected: type == ChannelType.direct,
-          onTap: () => context
-              .read<AddChannelBloc>()
-              .add(Update(type: ChannelType.direct)),
-        ),
+        // SelectableItem(
+        //   title: 'Direct',
+        //   selected: type == ChannelType.direct,
+        //   onTap: () => context
+        //       .read<AddChannelBloc>()
+        //       .add(Update(type: ChannelType.direct)),
+        // ),
       ],
     );
   }
