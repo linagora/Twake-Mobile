@@ -43,7 +43,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         if (_searchRequest != _controller.text) {
           _searchRequest = _controller.text;
           if (_searchRequest.length > 1) {
-            print('Call!');
             context.read<UserBloc>().add(LoadUsers(_searchRequest));
           }
         }
