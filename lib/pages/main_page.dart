@@ -45,25 +45,26 @@ class _MainPageState extends State<MainPage>
       drawer: TwakeDrawer(),
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: SlidingUpPanel(
-          controller: _panelController,
-          onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
-          onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
-          onPanelSlide: _onPanelSlide,
-          minHeight: 0,
-          panel: BlocBuilder<SheetBloc, SheetState>(
-              buildWhen: (_, current) =>
-                  current is SheetShouldOpen || current is SheetShouldClose,
-              builder: (context, state) {
-                if (state is SheetShouldOpen) {
-                  _openSheet();
-                } else if (state is SheetShouldClose) {
-                  _closeSheet();
-                }
-                return DraggableScrollable();
-              }),
-          body: Column(
+      body: SlidingUpPanel(
+        controller: _panelController,
+        onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
+        onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
+        onPanelSlide: _onPanelSlide,
+        minHeight: 0,
+        backdropEnabled: true,
+        panel: BlocBuilder<SheetBloc, SheetState>(
+            buildWhen: (_, current) =>
+                current is SheetShouldOpen || current is SheetShouldClose,
+            builder: (context, state) {
+              if (state is SheetShouldOpen) {
+                _openSheet();
+              } else if (state is SheetShouldClose) {
+                _closeSheet();
+              }
+              return DraggableScrollable();
+            }),
+        body: SafeArea(
+          child: Column(
             children: [
               MainAppBar(
                 scaffoldKey: _scaffoldKey,
