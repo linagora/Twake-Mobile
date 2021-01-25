@@ -12,6 +12,13 @@ import 'package:twake/widgets/sheets/channel_participants_list.dart';
 class AddChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final widgets = [
+      ChannelInfoForm(),
+      ChannelTypeForm(),
+      ChannelGroupsList(),
+      ChannelParticipantsList(),
+    ];
+
     return BlocProvider<UserBloc>(
       create: (_) => UserBloc(ProfileBloc.userId),
       child: BlocBuilder<AddChannelBloc, AddChannelState>(
@@ -20,7 +27,9 @@ class AddChannelFlow extends StatelessWidget {
         builder: (context, state) {
           if (state is FlowTypeSet) {
             if (state.isDirect) {
-              return ChannelParticipantsList(isDirect: true,);
+              return ChannelParticipantsList(
+                isDirect: true,
+              );
             }
           }
           var i = 0;
@@ -42,12 +51,7 @@ class AddChannelFlow extends StatelessWidget {
           }
           return IndexedStack(
             index: i,
-            children: [
-              ChannelInfoForm(),
-              ChannelTypeForm(),
-              ChannelGroupsList(),
-              ChannelParticipantsList(),
-            ],
+            children: widgets,
           );
         },
       ),

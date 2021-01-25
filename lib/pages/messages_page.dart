@@ -13,6 +13,8 @@ import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
+  const MessagesPage();
+
   @override
   Widget build(BuildContext context) {
     String draft = '';

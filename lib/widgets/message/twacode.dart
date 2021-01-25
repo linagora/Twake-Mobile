@@ -97,27 +97,32 @@ class _TwacodeState extends State<Twacode> {
     widget.items.forEach((element) {
       spans.add((element as TwacodeItem).render());
     });
-    return widget.charCount > 300
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                maxLines: maxRichTextHeight,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.left,
-                text: TextSpan(children: spans),
-              ),
-              buildButton(
-                heightIncreased ? 'show less' : '...Show more',
-                heightIncreased ? onHeightDecrease : onHeightIncrease,
-              ),
-            ],
-          )
-        : RichText(
-            textAlign: TextAlign.left,
-            softWrap: true,
-            text: TextSpan(children: spans),
-          );
+    return RichText(
+      textAlign: TextAlign.left,
+      softWrap: true,
+      text: TextSpan(children: spans),
+    );
+    // return widget.charCount > 300
+    //     ? Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           RichText(
+    //             maxLines: maxRichTextHeight,
+    //             overflow: TextOverflow.ellipsis,
+    //             textAlign: TextAlign.left,
+    //             text: TextSpan(children: spans),
+    //           ),
+    //           buildButton(
+    //             heightIncreased ? 'show less' : '...Show more',
+    //             heightIncreased ? onHeightDecrease : onHeightIncrease,
+    //           ),
+    //         ],
+    //       )
+    //     : RichText(
+    //         textAlign: TextAlign.left,
+    //         softWrap: true,
+    //         text: TextSpan(children: spans),
+    //       );
   }
 }
 

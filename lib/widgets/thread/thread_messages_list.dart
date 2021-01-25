@@ -75,15 +75,25 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 
-  ItemScrollController _itemScrollController;
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   var _messages = <Message>[];
+  var _lastIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _itemScrollController = ItemScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _itemScrollController?.jumpTo(index: _messages.length - 1);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _itemScrollController?.jumpTo(index: _messages.length - 1);
+    // });
+    _itemPositionsListener.itemPositions.addListener(() {
+      final lastPosition = _itemPositionsListener.itemPositions.value.last;
+      final index = lastPosition.index;
+      if (_lastIndex != index) {
+        // print(_lastIndex);
+        _lastIndex = index;
+        // _itemScrollController?.jumpTo(index: _lastIndex);
+      }
     });
   }
 
@@ -101,6 +111,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                   initialAlignment: 0.0,
                   initialScrollIndex: 0,
                   itemScrollController: _itemScrollController,
+                  itemPositionsListener: _itemPositionsListener,
                   itemCount: _messages.length,
                   itemBuilder: (ctx, i) {
                     if (i == 0) {
