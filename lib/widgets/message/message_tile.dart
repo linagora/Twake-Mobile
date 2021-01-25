@@ -12,6 +12,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
+
 // import 'package:twake/widgets/message/twacode.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
@@ -172,7 +173,9 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                 ],
                               ),
                               SizedBox(height: 5.0),
-                              MarkdownBody(data: messageState.text),
+                              MarkdownBody(
+                                data: messageState.text,
+                              ),
                               // Parser(messageState.content,
                               // messageState.charCount)
                               // .render(context),
