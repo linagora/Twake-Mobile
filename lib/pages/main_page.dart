@@ -37,7 +37,6 @@ class _MainPageState extends State<MainPage> {
         onPanelSlide: _onPanelSlide,
         minHeight: 0,
         maxHeight: MediaQuery.of(context).size.height * 0.9,
-        snapPoint: 0.4,
         backdropEnabled: true,
         renderPanelSheet: false,
         panel: BlocBuilder<SheetBloc, SheetState>(
@@ -133,7 +132,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   _onPanelSlide(double position) {
-    if (position < 0.1) {
+    if (position < 0.4 && _panelController.isPanelAnimating) {
       FocusScope.of(context).requestFocus(FocusNode());
     }
   }

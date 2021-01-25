@@ -40,7 +40,9 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
       if (_debounce?.isActive ?? false) _debounce.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
         final searchRequest = _controller.text;
-        context.read<UserBloc>().add(LoadUsers(searchRequest));
+        if (searchRequest.length > 1) {
+          context.read<UserBloc>().add(LoadUsers(searchRequest));
+        }
       });
     });
   }
@@ -78,7 +80,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         .add(Update(name: '', type: ChannelType.direct));
     // context.read<AddChannelBloc>().add(Clear());
     context.read<AddChannelBloc>().add(Create());
-    FocusScope.of(context).requestFocus(new FocusNode());
+    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   @override
@@ -158,6 +160,8 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
                           : '${user.username}',
                       selected: selectedIds.contains(user.id),
                       onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+
                         if (selectedIds.contains(user.id)) {
                           selectedIds.remove(user.id);
                         } else {
