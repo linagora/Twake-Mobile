@@ -72,8 +72,6 @@ flutter_icons:
   adaptive_icon_background: '#837DFF'
   adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
 
-
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
