@@ -26,7 +26,6 @@ class _MainPageState extends State<MainPage>
   @override
   void initState() {
     super.initState();
-
     // _animationController.addStatusListener((status) {
     //   if (status == AnimationStatus.dismissed) {
     //     context.read<SheetBloc>().add(SetClosed());
@@ -51,7 +50,10 @@ class _MainPageState extends State<MainPage>
         onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
         onPanelSlide: _onPanelSlide,
         minHeight: 0,
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+        snapPoint: 0.4,
         backdropEnabled: true,
+        renderPanelSheet: false,
         panel: BlocBuilder<SheetBloc, SheetState>(
             buildWhen: (_, current) =>
                 current is SheetShouldOpen || current is SheetShouldClose,
