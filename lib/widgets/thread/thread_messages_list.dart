@@ -13,8 +13,8 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatefulWidget {
   _ThreadMessagesListState<T> createState() => _ThreadMessagesListState<T>();
 }
 
-class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMessagesList<T>> {
-
+class _ThreadMessagesListState<T extends BaseChannelBloc>
+    extends State<ThreadMessagesList<T>> {
   Widget buildThreadMessageColumn(MessagesState state) {
     return Column(
       mainAxisSize: MainAxisSize.min,

@@ -4,7 +4,6 @@ import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
@@ -19,15 +18,6 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final threadState = BlocProvider.of<ThreadsBloc<T>>(context).state;
-    // String parentChannelId = threadState.parentChannel.id;
-    // DraftType parentChannelDraftType;
-    // if (threadState.parentChannel is Channel) {
-    //   parentChannelDraftType = DraftType.channel;
-    // } else if (threadState.parentChannel is Direct) {
-    //   parentChannelDraftType = DraftType.direct;
-    // }
-
     String threadId;
     String draft;
 
