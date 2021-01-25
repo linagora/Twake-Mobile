@@ -217,38 +217,39 @@ class ParticipantsButton extends StatelessWidget {
         child: ParticipantsCommonWidget(
           title: 'Added participants',
           trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
-              builder: (context, state) {
-            var participantsCount = 0;
-            if (state is Updated) {
-              final participants = state.repository?.members;
-              participantsCount = participants.length;
-            }
-            return participantsCount > 0
-                ? Row(
-                    children: [
-                      Text(
-                        '$participantsCount',
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w400,
+            builder: (context, state) {
+              var participantsCount = 0;
+              if (state is Updated) {
+                final participants = state.repository?.members;
+                participantsCount = participants.length;
+              }
+              return participantsCount > 0
+                  ? Row(
+                      children: [
+                        Text(
+                          '$participantsCount',
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xff837cfe),
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.forward,
                           color: Color(0xff837cfe),
                         ),
-                      ),
-                      Icon(
-                        CupertinoIcons.forward,
+                      ],
+                    )
+                  : Text(
+                      'Add',
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.w400,
                         color: Color(0xff837cfe),
                       ),
-                    ],
-                  )
-                : Text(
-                    'Add',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff837cfe),
-                    ),
-                  );
-          }),
+                    );
+            },
+          ),
         ),
       ),
     );
