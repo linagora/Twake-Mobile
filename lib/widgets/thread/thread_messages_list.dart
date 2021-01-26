@@ -76,25 +76,28 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
   }
 
   final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
   var _messages = <Message>[];
   var _lastIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _itemScrollController?.jumpTo(index: _messages.length - 1);
-    // });
-    // _itemPositionsListener.itemPositions.addListener(() {
-      // final lastPosition = _itemPositionsListener.itemPositions.value.last;
-      // final index = lastPosition.index;
-      // if (_lastIndex != index) {
-        // print(_lastIndex);
-        // _lastIndex = index;
-        // _itemScrollController?.jumpTo(index: _lastIndex);
-      // }
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_itemScrollController.isAttached) {
+        _itemScrollController?.jumpTo(index: _messages.length);
+      }
+    });
+    _itemPositionsListener.itemPositions.addListener(() {
+      final lastPosition = _itemPositionsListener.itemPositions.value.last;
+      final index = lastPosition.index;
+      if (_lastIndex != index) {
+      print(_lastIndex);
+      _lastIndex = index;
+      _itemScrollController?.jumpTo(index: _lastIndex);
+      }
+    });
   }
 
   @override
@@ -103,6 +106,12 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
       builder: (ctx, state) {
         if (state is MessagesLoaded) {
           _messages = state.messages.reversed.toList();
+          if (_itemScrollController.isAttached) {
+            _itemScrollController?.jumpTo(
+              index: _messages.length,
+              alignment: 1.0,
+            );
+          }
         }
         return Expanded(
           child: state is MessagesLoaded
