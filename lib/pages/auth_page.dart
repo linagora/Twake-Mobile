@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/auth/auth_form.dart';
+import 'package:twake/widgets/common/no_internet_snackbar.dart';
 
 class AuthPage extends StatelessWidget {
   static const route = '/auth';
@@ -39,9 +42,12 @@ class AuthPage extends StatelessWidget {
                 ),
               ),
             ),
-            Align(
-              child: AuthForm(),
-              alignment: Alignment.bottomCenter,
+            BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
+              listener: connectionListener,
+              child: Align(
+                child: AuthForm(),
+                alignment: Alignment.bottomCenter,
+              ),
             ),
           ],
         ),

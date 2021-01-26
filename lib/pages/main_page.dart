@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:twake/blocs/channels_bloc.dart';
+import 'package:twake/blocs/connection_bloc.dart' as cb;
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/bars/main_app_bar.dart';
 import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/widgets/channel/direct_messages_group.dart';
+import 'package:twake/widgets/common/no_internet_snackbar.dart';
 import 'package:twake/widgets/drawer/twake_drawer.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
@@ -30,45 +32,39 @@ class _MainPageState extends State<MainPage> {
       drawer: TwakeDrawer(),
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
-      body: SlidingUpPanel(
-        controller: _panelController,
-        onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
-        onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
-        onPanelSlide: _onPanelSlide,
-        minHeight: 0,
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-        backdropEnabled: true,
-        renderPanelSheet: false,
-        panel: BlocBuilder<SheetBloc, SheetState>(
-            buildWhen: (_, current) =>
-                current is SheetShouldOpen || current is SheetShouldClose,
-            builder: (context, state) {
-              if (state is SheetShouldOpen) {
-                if (_panelController.isPanelClosed) {
-                  _openSheet();
+      body: BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
+        listener: connectionListener,
+        child: SlidingUpPanel(
+          controller: _panelController,
+          onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
+          onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
+          onPanelSlide: _onPanelSlide,
+          minHeight: 0,
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
+          backdropEnabled: true,
+          renderPanelSheet: false,
+          panel: BlocBuilder<SheetBloc, SheetState>(
+              buildWhen: (_, current) =>
+                  current is SheetShouldOpen || current is SheetShouldClose,
+              builder: (context, state) {
+                if (state is SheetShouldOpen) {
+                  if (_panelController.isPanelClosed) {
+                    _openSheet();
+                  }
+                } else if (state is SheetShouldClose) {
+                  if (_panelController.isPanelOpen) {
+                    _closeSheet();
+                  }
                 }
-              } else if (state is SheetShouldClose) {
-                if (_panelController.isPanelOpen) {
-                  _closeSheet();
-                }
-              }
-              return DraggableScrollable();
-            }),
-        body: SafeArea(
-          child: Column(
-            children: [
-              MainAppBar(
-                scaffoldKey: _scaffoldKey,
-              ),
-              Expanded(
-                child: BlocListener<ChannelsBloc, ChannelState>(
-                  listener: (ctx, state) {
-                    if (state is ErrorLoadingChannels)
-                      Scaffold.of(ctx).showSnackBar(SnackBar(
-                        content: Text('No connection to internet'),
-                        backgroundColor: Theme.of(ctx).errorColor,
-                      ));
-                  },
+                return DraggableScrollable();
+              }),
+          body: SafeArea(
+            child: Column(
+              children: [
+                MainAppBar(
+                  scaffoldKey: _scaffoldKey,
+                ),
+                Expanded(
                   child: BlocBuilder<ChannelsBloc, ChannelState>(
                     builder: (ctx, state) =>
                         (state is ChannelsLoaded || state is ChannelsEmpty)
@@ -115,8 +111,8 @@ class _MainPageState extends State<MainPage> {
                             : Center(child: CircularProgressIndicator()),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

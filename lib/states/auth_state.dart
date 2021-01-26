@@ -18,6 +18,12 @@ class Unauthenticated extends AuthState {
   List<Object> get props => [message];
 }
 
+class WrongCredentials extends Unauthenticated {
+  const WrongCredentials();
+  @override
+  List<Object> get props => [];
+}
+
 class Authenticating extends AuthState {
   const Authenticating();
   @override
