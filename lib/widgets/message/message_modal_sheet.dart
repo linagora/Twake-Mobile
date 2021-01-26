@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:twake_mobile/providers/messages_provider.dart';
-import 'package:twake_mobile/services/twake_api.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
-import 'package:twake_mobile/models/message.dart';
-import 'package:twake_mobile/providers/profile_provider.dart';
-import 'package:twake_mobile/utils/emojis.dart';
-import 'package:twake_mobile/widgets/common/emoji_piker_keyboard.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class MessageModalSheet extends StatefulWidget {
-  final Message message;
-  final void Function(BuildContext) onReply;
+  final String userId;
+  final String messageId;
+  final int responsesCount;
+  final void Function(BuildContext, String, {bool autofocus}) onReply;
   final void Function(BuildContext) onDelete;
-  final void Function() onCopy;
+  final Function onCopy;
   final bool isThread;
+  final BuildContext ctx;
 
-  const MessageModalSheet(
-    this.message, {
+  const MessageModalSheet({
+    this.userId,
+    this.messageId,
+    this.responsesCount,
     this.isThread: false,
     this.onReply,
     this.onDelete,
     this.onCopy,
+    this.ctx,
     Key key,
   }) : super(key: key);
 
@@ -29,154 +32,165 @@ class MessageModalSheet extends StatefulWidget {
 }
 
 class _MessageModalSheetState extends State<MessageModalSheet> {
-  bool emojiBoardHidden = true;
-  onEmojiSelected(String emojiCode, {bool reverse: false}) {
-    if (mounted) {
-      setState(() {
-        emojiBoardHidden = true;
-      });
-    }
+  bool _emojiVisible = false;
 
-    String userId = Provider.of<ProfileProvider>(context, listen: false)
-        .currentProfile
-        .userId;
-    if (reverse) {
-      emojiCode = Emojis().reverseLookup(emojiCode);
-      emojiCode = ':$emojiCode:';
-    }
-
-    TwakeApi api = Provider.of<TwakeApi>(context, listen: false);
-    if (widget.message.channelId == null) {
-      widget.message.channelId =
-          Provider.of<MessagesProvider>(context, listen: false).channelId;
-    }
-    widget.message.updateReactions(
-      emojiCode: emojiCode,
-      userId: userId,
-      api: api,
-    );
+  onEmojiSelected(String emojiCode) {
+    BlocProvider.of<SingleMessageBloc>(widget.ctx)
+        .add(UpdateReaction(emojiCode: emojiCode));
+    FocusManager.instance.primaryFocus.unfocus();
   }
 
-  void toggleEmojiBoard() {
+  void showEmojiBoard() async {
     setState(() {
-      emojiBoardHidden = !emojiBoardHidden;
+      _emojiVisible = !_emojiVisible;
     });
+  }
+
+  Widget buildEmojiBoard() {
+    return EmojiKeyboard(
+      onEmojiSelected: (emoji) {
+        onEmojiSelected(emoji.text);
+        Navigator.of(context).pop();
+      },
+      height: MediaQuery.of(context).size.height * 0.35,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool isMe = Provider.of<ProfileProvider>(context, listen: false)
-        .isMe(widget.message.sender.userId);
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// Show edit only if the sender of the message is the person,
-          /// who's currently logged in
-          if (emojiBoardHidden) EmojiLine(onEmojiSelected, toggleEmojiBoard),
-          if (emojiBoardHidden) Divider(),
-          // if (emojiBoardHidden)
-          // ListTile(
-          // leading: Icon(Icons.edit_outlined),
-          // title: Text(
-          // 'Edit',
-          // style: Theme.of(context).textTheme.headline6,
-          // ),
-          // onTap: () {
-          // widget.onEdit(context);
-          // },
-          // ),
-          // if (isMe && emojiBoardHidden) Divider(),
-          if (!widget.isThread && emojiBoardHidden)
-            ListTile(
-              leading: Icon(Icons.reply_sharp),
-              title: Text(
-                'Reply',
-                style: Theme.of(context).textTheme.headline6,
+    final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
+    return _emojiVisible
+        ? buildEmojiBoard()
+        : SafeArea(
+          child: Container(
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  EmojiLine(
+                      onEmojiSelected: onEmojiSelected,
+                      showEmojiBoard: showEmojiBoard),
+                  Divider(
+                    thickness: 1.0,
+                    height: 1.0,
+                    color: Color(0xffEEEEEE),
+                  ),
+                  if (!widget.isThread)
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      leading: Icon(Icons.reply_sharp),
+                      title: Text(
+                        'Reply',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff444444),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        widget.onReply(context, widget.messageId,
+                            autofocus: true);
+                      },
+                    ),
+                  if (!widget.isThread)
+                    Divider(
+                      thickness: 1.0,
+                      height: 1.0,
+                      color: Color(0xffEEEEEE),
+                    ),
+                  if (isMe && widget.responsesCount == 0)
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      leading: Icon(Icons.delete, color: Color(0xffFF5154)),
+                      title: Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xffFF5154),
+                        ),
+                      ),
+                      onTap: () {
+                        widget.onDelete(context);
+                      },
+                    ),
+                  if (isMe && widget.responsesCount == 0)
+                    Divider(
+                      thickness: 1.0,
+                      height: 1.0,
+                      color: Color(0xffEEEEEE),
+                    ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    leading: Icon(Icons.copy),
+                    title: Text(
+                      'Copy',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff444444),
+                      ),
+                    ),
+                    onTap: widget.onCopy,
+                  ),
+                ],
               ),
-              onTap: () {
-                Navigator.of(context).pop();
-                widget.onReply(context);
-              },
-            ),
-          if (!widget.isThread && emojiBoardHidden) Divider(),
-          if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
-            ListTile(
-              leading: Icon(Icons.delete, color: Colors.red),
-              title: Text(
-                'Delete',
-                style: Theme.of(context)
-                    .textTheme
-                    .headline6
-                    .copyWith(color: Colors.red),
-              ),
-              onTap: () {
-                widget.onDelete(context);
-              },
-            ),
-          if (isMe && emojiBoardHidden && widget.message.responses.isEmpty)
-            Divider(),
-          if (emojiBoardHidden)
-            ListTile(
-              leading: Icon(Icons.copy),
-              title: Text(
-                'Copy',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              onTap: widget.onCopy,
-            ),
-          Offstage(
-              offstage: emojiBoardHidden,
-              child: EmojiPickerKeyboard(onEmojiPicked: (emoji) {
-                Navigator.of(context).pop();
-                onEmojiSelected(emoji.emoji, reverse: true);
-              })),
-        ],
-      ),
-    );
+          ),
+        );
   }
 }
 
 class EmojiLine extends StatelessWidget {
-  final Function emojiPicked;
-  final Function toggleEmojiBoard;
-  EmojiLine(this.emojiPicked, this.toggleEmojiBoard);
+  final Function onEmojiSelected;
+  final Function showEmojiBoard;
+
+  EmojiLine({this.onEmojiSelected, this.showEmojiBoard});
+
   static const EMOJISET = [
-    ':smiley:',
-    ':sweat_smile:',
-    ':thumbsup:',
-    ':thumbsdown:',
-    ':laughing:',
-    ':heart:',
+    '😅',
+    '😂',
+    '😇',
+    '👍',
+    '👌',
+    '👋',
+    '🙏',
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final fontSize = 27.0;
+    return Container(
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,
-        horizontal: Dim.wm2,
+        horizontal: 16.0,//Dim.wm2,
       ),
+      constraints: BoxConstraints(maxHeight: Dim.hm7),
       child: Row(
-          // mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ...EMOJISET.map((e) => InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    emojiPicked(e);
-                  },
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ...EMOJISET.map((e) => InkWell(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  onEmojiSelected(e);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
                   child: Text(
-                    Emojis.getByName(e),
-                    style: Theme.of(context).textTheme.headline3,
+                    e,
+                    style: TextStyle(fontSize: fontSize),
                   ),
-                )),
-            IconButton(
-              icon: Icon(Icons.tag_faces),
-              onPressed: toggleEmojiBoard,
-              iconSize: Dim.tm4(),
-            ),
-          ]),
+                ),
+              )),
+          IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(Icons.tag_faces),
+            onPressed: showEmojiBoard,
+            iconSize: fontSize + 3,
+          ),
+        ],
+      ),
     );
   }
 }

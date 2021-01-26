@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:twake_mobile/config/styles_config.dart';
-import 'package:twake_mobile/screens/webview_screen.dart';
-import 'package:twake_mobile/services/twake_api.dart';
-import 'package:twake_mobile/config/dimensions_config.dart' show Dim;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc.dart';
+import 'package:twake/blocs/connection_bloc.dart' as cb;
+import 'package:twake/config/styles_config.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
   @override
@@ -36,9 +36,9 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   initState() {
+    super.initState();
     passwordController.addListener(onPasswordSaved);
     usernameController.addListener(onUsernameSaved);
-    super.initState();
   }
 
   @override
@@ -64,26 +64,13 @@ class _AuthFormState extends State<AuthForm> {
     return null;
   }
 
-  Future<void> onSubmit(BuildContext ctx) async {
-    if (!formKey.currentState.validate()) return;
-    _usernameFocusNode.unfocus();
-    _passwordFocusNode.unfocus();
-    formKey.currentState.save();
-    try {
-      await Provider.of<TwakeApi>(ctx, listen: false)
-          .authenticate(username, password);
-    } catch (error) {
-      Scaffold.of(ctx).hideCurrentSnackBar();
-      Scaffold.of(ctx).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Login failed, wrong credentials',
-            textAlign: TextAlign.center,
-          ),
-          backgroundColor: Theme.of(context).errorColor,
-        ),
-      );
-    }
+  void onSubmit() {
+    BlocProvider.of<AuthBloc>(context).add(
+      Authenticate(
+        username,
+        password,
+      ),
+    );
   }
 
   @override
@@ -136,42 +123,55 @@ class _AuthFormState extends State<AuthForm> {
                 focusNode: _passwordFocusNode,
               ),
               SizedBox(height: Dim.heightMultiplier),
-              Align(
-                alignment: Alignment.centerRight,
-                child: FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(
-                      WebViewScreen.route,
-                      arguments: 'https://web.twake.app/',
-                    );
-                  },
-                  child: Text(
-                    'Forgot password?',
-                    style: StylesConfig.miniPurple,
-                  ),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (ctx, state) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (state is WrongCredentials)
+                      Text(
+                        'Incorrect email or password',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: FlatButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Forgot password?',
+                            style: StylesConfig.miniPurple,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Spacer(),
               SizedBox(
                 width: double.infinity,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                  builder: (context, state) => RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dim.wm4,
+                      vertical: Dim.tm2(decimal: -.2),
+                    ),
+                    color: Theme.of(context).accentColor,
+                    textColor: Colors.white,
+                    disabledColor: Color.fromRGBO(238, 238, 238, 1),
+                    child: Text(
+                      'Login',
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                    onPressed: username.isNotEmpty &&
+                            password.isNotEmpty &&
+                            !(state is cb.ConnectionLost)
+                        ? () => onSubmit()
+                        : null,
                   ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dim.wm4,
-                    vertical: Dim.tm2(decimal: -.2),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  disabledColor: Color.fromRGBO(238, 238, 238, 1),
-                  child: Text(
-                    'Login',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                  onPressed: username.isNotEmpty && password.isNotEmpty
-                      ? () => onSubmit(context)
-                      : null,
                 ),
               ),
               Spacer(),
@@ -186,12 +186,7 @@ class _AuthFormState extends State<AuthForm> {
                             .copyWith(color: Colors.black87),
                       ),
                       FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                            WebViewScreen.route,
-                            arguments: 'https://web.twake.app/',
-                          );
-                        },
+                        onPressed: () {},
                         child: Text(
                           ' Sign up',
                           style: StylesConfig.miniPurple,
@@ -232,17 +227,18 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
-      // onFieldSubmitted: widget.onSaved,
       controller: widget.controller,
       focusNode: widget.focusNode,
       keyboardType: TextInputType.emailAddress,
+      style: Theme.of(context).textTheme.headline2,
       decoration: InputDecoration(
         fillColor: Color.fromRGBO(239, 239, 245, 1),
         filled: true,
         labelText: widget.label,
-        labelStyle: TextStyle(fontSize: Dim.tm2(decimal: .1)),
+        labelStyle: TextStyle(fontSize: Dim.tm2(decimal: .1), height: 0.9),
         contentPadding: EdgeInsets.fromLTRB(
           Dim.wm3,
           Dim.heightMultiplier,

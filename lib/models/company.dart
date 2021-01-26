@@ -1,42 +1,42 @@
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:twake_mobile/models/workspace.dart';
+import 'package:twake/models/collection_item.dart';
 
 part 'company.g.dart';
 
+// Model class for a company entity
 @JsonSerializable(explicitToJson: true)
-class Company {
+class Company extends CollectionItem {
   @JsonKey(required: true)
   final String id;
+
   @JsonKey(required: true)
   final String name;
-  final String logo;
-  @JsonKey(required: true)
-  final List<Workspace> workspaces;
 
-  @JsonKey(defaultValue: false)
-  bool isSelected;
+  final String logo;
+
+  @JsonKey(name: 'total_members', defaultValue: 0)
+  final int totalMembers;
+
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
 
   Company({
-    @required this.id,
-    @required this.name,
-    @required this.workspaces,
+    this.id,
+    this.name,
     this.logo,
-  });
-
-  int get workspaceCount => workspaces.length;
+    this.totalMembers,
+  }) : super(id);
 
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Company.fromJson(Map<String, dynamic> json) {
-    return _$CompanyFromJson(json)..isSelected = json['isSelected'] ?? false;
+    return _$CompanyFromJson(json);
   }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
     var map = _$CompanyToJson(this);
-    map['isSelected'] = isSelected;
     return map;
   }
 }

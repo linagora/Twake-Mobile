@@ -1,22 +1,34 @@
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
-import 'package:twake_mobile/services/twake_api.dart';
+import 'package:twake/models/collection_item.dart';
+import 'package:twake/services/endpoints.dart';
+import 'package:twake/services/service_bundle.dart';
+
+import 'twacode.dart';
 
 part 'message.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class Message extends JsonSerializable with ChangeNotifier {
+class Message extends CollectionItem {
   @JsonKey(required: true)
-  final String id;
+  String id;
 
   @JsonKey(name: 'thread_id')
   String threadId;
 
-  @JsonKey(name: 'responses_count')
+  @JsonKey(name: 'responses_count', defaultValue: 0)
   int responsesCount;
 
-  @JsonKey(required: true)
-  final Sender sender;
+  @JsonKey(ignore: true)
+  String get respCountStr =>
+      responsesCount == 0 ? 'No' : responsesCount.toString();
+
+  @JsonKey(name: 'user_id')
+  final String userId;
+
+  @JsonKey(name: 'app_id')
+  final String appId;
 
   @JsonKey(required: true, name: 'creation_date')
   int creationDate;
@@ -24,195 +36,83 @@ class Message extends JsonSerializable with ChangeNotifier {
   @JsonKey(required: true)
   MessageTwacode content;
 
+  @JsonKey(defaultValue: {})
   Map<String, dynamic> reactions;
 
-  List<Message> responses;
-
-  @JsonKey(ignore: true)
-  bool responsesLoaded = false;
-
-  @JsonKey(ignore: true)
+  @JsonKey(required: true, name: 'channel_id')
   String channelId;
 
-  // used when deleting messages
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
+
   @JsonKey(ignore: true)
-  bool hidden = false;
+  final _api = Api();
 
-  Message({
-    @required this.id,
-    this.responsesCount,
-    this.sender,
-    this.creationDate,
-    this.content,
-    this.reactions,
-    this.responses,
-    this.threadId,
-  });
+  @JsonKey(ignore: true)
+  final logger = Logger();
 
-  void doPartialUpdate(Message other) {
-    this.responsesCount = other.responsesCount;
-    this.creationDate = other.creationDate;
-    this.content = other.content;
-    this.reactions = other.reactions;
-  }
+  @JsonKey(ignore: true)
+  final _storage = Storage();
 
-  void updateReactions({
-    String emojiCode,
-    String userId,
-    TwakeApi api,
-  }) {
+  Message({this.id, this.userId, this.appId, this.creationDate}) : super(id);
+
+  void updateReactions({String userId, Map<String, dynamic> body}) {
+    String emojiCode = body['reaction'];
+    logger.d('Updating reaction: $emojiCode');
     if (emojiCode == null) return;
-    var unreact = false;
-    if (reactions == null) {
-      reactions = {};
-    }
     final oldReactions = Map<String, dynamic>.from(reactions);
-    // If user has already reacted to this message then
-    // we just remove him from reacted users only to readd him
-    // with a different Emoji
-    final previousEmoji = _userReactedWith(emojiCode, userId);
-    if (previousEmoji != null) {
-      List users = reactions[previousEmoji]['users'];
-      reactions[previousEmoji]['count']--;
-      users.remove(userId);
-      if (users.isEmpty) {
-        reactions.remove(previousEmoji);
-      }
-    }
-    // In case if someone already reacted with this emoji, keep working with it
-    if (reactions[emojiCode] != null) {
-      // Get the list of people, who reacted with this emoji
-      List users = reactions[emojiCode]['users'];
-      // If user already reacted with this emoji, then decrement the count
-      // and remove the user from list
+    for (var r in reactions.entries) {
+      final users = r.value['users'] as List;
       if (users.contains(userId)) {
-        reactions[emojiCode]['count']--;
+        logger.d('Found userId: $users');
         users.remove(userId);
-        unreact = true;
-        if (users.isEmpty) {
-          reactions.remove(emojiCode);
-        }
-        if (reactions.isEmpty) {
-          reactions = null;
-        }
-      } else {
-        // otherwise increment count and add the user
-        reactions[emojiCode]['count']++;
-        users.add(userId);
-      }
-    } // otherwise create a new entry and populate with data
-    else {
-      reactions[emojiCode] = {
-        'users': [userId],
-        'count': 1,
-      };
-    }
-    notifyListeners();
-    if (unreact) emojiCode = '';
-    api
-        .reactionSend(
-      this.channelId,
-      this.id,
-      emojiCode,
-      threadId: threadId,
-    )
-        .catchError((_) {
-      reactions = oldReactions;
-      if (reactions.isEmpty) {
-        reactions = null;
-      }
-      notifyListeners();
-    });
-  }
-
-  // Helper method to check, if the user has already reacted with different emoji
-  String _userReactedWith(String emojiCode, String userId) {
-    bool reacted = false;
-    String _emojiCode;
-    final emojis = reactions.keys;
-    for (int i = 0; i < emojis.length; i++) {
-      final users = reactions[emojis.elementAt(i)]['users'] as List;
-      reacted = users.contains(userId);
-      if (reacted) {
-        if (emojis.elementAt(i) != emojiCode) {
-          _emojiCode = emojis.elementAt(i);
+        r.value['count'] -= 1;
+        if (users.isEmpty) reactions.remove(r.key);
+        if (emojiCode == r.key) {
+          emojiCode = '';
+          body['reactions'] = '';
         }
         break;
       }
     }
-    return _emojiCode;
+    if (emojiCode.isNotEmpty) {
+      final r = reactions[emojiCode] ?? {'users': [], 'count': 0};
+      r['users'].add(userId);
+      r['count'] += 1;
+      reactions[emojiCode] = r;
+    }
+
+    _api.post(Endpoint.reactions, body: body).then((_) {
+      save();
+      logger.d('Successfully updated reaction\n$reactions');
+    }).catchError((_) {
+      logger.e('Error updating reaction');
+      reactions = oldReactions;
+    });
   }
 
-  /// Convenience methods to avoid serializing this class from JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  /// channelId is saved on per message basis in order to save and retrieve
-  /// messages from data store later.
+  Future<void> save() async {
+    await _storage.store(
+      item: this.toJson(),
+      type: StorageType.Message,
+      key: id,
+    );
+  }
+
   factory Message.fromJson(Map<String, dynamic> json) {
+    if (json['content'] is String) {
+      json['content'] = jsonDecode(json['content']);
+    }
+    if (json['reactions'] is String) {
+      json['reactions'] = jsonDecode(json['reactions']);
+    }
     return _$MessageFromJson(json);
   }
 
-  /// Convenience methods to avoid serializing this class to JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
     var map = _$MessageToJson(this);
-    // Channel Id should be set explicitly, because of ignore JSONKEY
-    map['channelId'] = this.channelId;
+    map['content'] = jsonEncode(map['content']);
+    map['reactions'] = jsonEncode(map['reactions']);
     return map;
   }
-}
-
-@JsonSerializable()
-class MessageTwacode {
-  @JsonKey(name: 'original_str')
-  final String originalStr;
-
-  // @JsonKey(required: true)
-  final List<dynamic> prepared;
-
-  MessageTwacode({
-    this.originalStr,
-    this.prepared,
-  });
-
-  /// Convenience methods to avoid serializing this class from JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory MessageTwacode.fromJson(Map<String, dynamic> json) =>
-      _$MessageTwacodeFromJson(json);
-
-  /// Convenience methods to avoid serializing this class to JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  Map<String, dynamic> toJson() => _$MessageTwacodeToJson(this);
-}
-
-@JsonSerializable()
-class Sender {
-  @JsonKey(defaultValue: 'BOT')
-  final String username;
-
-  final String thumbnail;
-
-  @JsonKey(required: true)
-  final String userId;
-
-  @JsonKey(name: 'firstname')
-  final String firstName;
-
-  @JsonKey(name: 'lastname')
-  final String lastName;
-
-  Sender({
-    @required this.username,
-    this.thumbnail,
-    this.userId,
-    this.firstName,
-    this.lastName,
-  });
-
-  /// Convenience methods to avoid serializing this class from JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory Sender.fromJson(Map<String, dynamic> json) => _$SenderFromJson(json);
-
-  /// Convenience methods to avoid serializing this class to JSON
-  /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  Map<String, dynamic> toJson() => _$SenderToJson(this);
 }
