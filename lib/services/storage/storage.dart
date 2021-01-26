@@ -1,4 +1,4 @@
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
 // import 'package:twake/services/storage/sembast.dart';
 import 'package:twake/services/storage/sqlite.dart';
@@ -8,10 +8,12 @@ abstract class Storage {
   static Storage _storage;
   factory Storage() {
     if (_storage == null) {
-      if (Platform.isIOS || Platform.isAndroid) {
+      if ((defaultTargetPlatform == TargetPlatform.iOS) || (defaultTargetPlatform == TargetPlatform.android)) {
         _storage = SQLite();
-      } else {
-        throw '${Platform.operatingSystem} is not supported';
+      }  else if ((defaultTargetPlatform == TargetPlatform.linux) || (defaultTargetPlatform == TargetPlatform.macOS) || (defaultTargetPlatform == TargetPlatform.windows)) {
+        throw 'Desktop is not supported yet';
+      }  else {
+        throw 'Web is not supported yet';
       }
     }
     return _storage;
