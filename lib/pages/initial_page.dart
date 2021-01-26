@@ -71,8 +71,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
           return buildSplashScreen();
         }
         if (state is Unauthenticated) {
-          // return AuthPage();
-          return WebAuthPage();
+          return AuthPage();
+          // return WebAuthPage();
         }
         if (state is Authenticated) {
           return MultiBlocProvider(
