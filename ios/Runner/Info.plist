@@ -35,12 +35,6 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>Making pictures and videos to posting directly to the chat</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Video recording requires microphone</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Uploading pictures to the chat</string>
 	<key>UIBackgroundModes</key>
 	<array/>
 	<key>UILaunchStoryboardName</key>
