@@ -144,7 +144,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
-    } else if (event is ErrorLoadingMoreMessages) {
+    } else if (event is GenerateErrorLoadingMore) {
       yield ErrorLoadingMoreMessages(
         parentChannel: selectedChannel,
         messages: repository.items,

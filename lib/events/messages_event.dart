@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/base_channel.dart';
 
 abstract class MessagesEvent extends Equatable {
   const MessagesEvent();

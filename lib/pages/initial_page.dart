@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/auth_bloc.dart';
 import 'package:twake/blocs/channels_bloc.dart';
 import 'package:twake/blocs/companies_bloc.dart';
+import 'package:twake/blocs/connection_bloc.dart';
 import 'package:twake/blocs/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
@@ -23,12 +24,26 @@ class InitialPage extends StatefulWidget {
   _InitialPageState createState() => _InitialPageState();
 }
 
-class _InitialPageState extends State<InitialPage> {
+class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     BlocProvider.of<AuthBloc>(context).add(AuthInitialize());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      BlocProvider.of<ConnectionBloc>(context).add(CheckConnectionState());
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Widget buildSplashScreen() {

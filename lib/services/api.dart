@@ -1,4 +1,3 @@
-import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
@@ -20,6 +19,8 @@ class Api {
   TokenStatus Function() _tokenIsValid;
   // callback to reset authentication if for e.g. token has expired
   void Function() _resetAuthentication;
+
+  bool hasConnection = false;
 
   Dio dio;
   final Dio tokenDio = Dio();
@@ -63,21 +64,20 @@ class Api {
     _resetAuthentication = value;
   }
 
-  Future<void> checkConnection() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
+  void checkConnection() {
+    // logger.d('HAS CONNECTION: $hasConnection');
+    if (!hasConnection)
       throw ApiError(
         message: 'No internet connection',
         type: ApiErrorType.NoInternetAccess,
       );
-    }
   }
 
   Future<dynamic> delete(
     String method, {
     Map<String, dynamic> body,
   }) async {
-    await checkConnection();
+    checkConnection();
     final url = _SHOST + method;
     try {
       final response = await dio.delete(url, data: body);
@@ -91,7 +91,7 @@ class Api {
     String method, {
     Map<String, dynamic> params: const {},
   }) async {
-    await checkConnection();
+    checkConnection();
     final uri = Uri(
       scheme: _SCHEME,
       host: _HOST,
@@ -114,7 +114,7 @@ class Api {
     String method, {
     Map<String, dynamic> body,
   }) async {
-    await checkConnection();
+    checkConnection();
     final url = _SHOST + method;
     try {
       final response = await dio.patch(url, data: body);
@@ -128,7 +128,7 @@ class Api {
     String method, {
     Map<String, dynamic> body,
   }) async {
-    await checkConnection();
+    checkConnection();
     final url = _SHOST + method;
     try {
       final response = await dio.put(url, data: body);
@@ -143,7 +143,7 @@ class Api {
     Map<String, dynamic> body,
     bool useTokenDio = false,
   }) async {
-    await checkConnection();
+    checkConnection();
     final url = _SHOST + method;
     try {
       // logger.d('METHOD: $url');
