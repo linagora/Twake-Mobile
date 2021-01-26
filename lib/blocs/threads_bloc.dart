@@ -58,27 +58,31 @@ class ThreadsBloc<T extends BaseChannelBloc>
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
-      yield MessagesLoading(
-        threadMessage: threadMessage,
-        parentChannel: parentChannel,
-      );
-      List<List> filters = [
-        ['thread_id', '=', event.threadId],
-      ];
-      bool success = await repository.reload(
-        queryParams: _makeQueryParams(event),
-        filters: filters,
-        sortFields: {'creation_date': true},
-        limit: _THREAD_MESSAGES_LIMIT,
-      );
-      if (!success) {
-        repository.clean();
-        yield ErrorLoadingMessages(
+      if (threadMessage.responsesCount > 0) {
+        yield MessagesLoading(
           threadMessage: threadMessage,
           parentChannel: parentChannel,
-          force: DateTime.now().toString(),
         );
-        return;
+        List<List> filters = [
+          ['thread_id', '=', event.threadId],
+        ];
+        bool success = await repository.reload(
+          queryParams: _makeQueryParams(event),
+          filters: filters,
+          sortFields: {'creation_date': true},
+          limit: _THREAD_MESSAGES_LIMIT,
+        );
+        if (!success) {
+          repository.clean();
+          yield ErrorLoadingMessages(
+            threadMessage: threadMessage,
+            parentChannel: parentChannel,
+            force: DateTime.now().toString(),
+          );
+          return;
+        }
+      } else {
+        repository.clean();
       }
       if (repository.items.isEmpty)
         yield MessagesEmpty(

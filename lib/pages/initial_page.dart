@@ -14,9 +14,9 @@ import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc.dart';
 import 'package:twake/blocs/add_channel_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-// import 'package:twake/pages/auth_page.dart';
+import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
-import 'package:twake/pages/web_auth_page.dart';
+// import 'package:twake/pages/web_auth_page.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -24,6 +24,7 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   void initState() {
     super.initState();
@@ -54,7 +55,7 @@ class _InitialPageState extends State<InitialPage> {
           return buildSplashScreen();
         }
         if (state is Unauthenticated) {
-          return WebAuthPage();
+          return AuthPage();
         }
         if (state is Authenticated) {
           return MultiBlocProvider(
@@ -142,10 +143,15 @@ class _InitialPageState extends State<InitialPage> {
                 lazy: false,
               ),
             ],
-            child: Navigator(
-              initialRoute: Routes.main,
-              onGenerateRoute: (settings) =>
-                  Routes.onGenerateRoute(settings.name),
+            child: WillPopScope(
+              onWillPop: () async =>
+                  !await _navigatorKey.currentState.maybePop(),
+              child: Navigator(
+                key: _navigatorKey,
+                initialRoute: Routes.main,
+                onGenerateRoute: (settings) =>
+                    Routes.onGenerateRoute(settings.name),
+              ),
             ),
           );
         } else // is Authenticating

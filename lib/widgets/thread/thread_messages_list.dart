@@ -13,8 +13,8 @@ class ThreadMessagesList<T extends BaseChannelBloc> extends StatefulWidget {
   _ThreadMessagesListState<T> createState() => _ThreadMessagesListState<T>();
 }
 
-class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMessagesList<T>> {
-
+class _ThreadMessagesListState<T extends BaseChannelBloc>
+    extends State<ThreadMessagesList<T>> {
   Widget buildThreadMessageColumn(MessagesState state) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -75,16 +75,26 @@ class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMe
     );
   }
 
-  ItemScrollController _itemScrollController;
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   var _messages = <Message>[];
+  var _lastIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _itemScrollController = ItemScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _itemScrollController?.jumpTo(index: _messages.length - 1);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _itemScrollController?.jumpTo(index: _messages.length - 1);
+    // });
+    // _itemPositionsListener.itemPositions.addListener(() {
+      // final lastPosition = _itemPositionsListener.itemPositions.value.last;
+      // final index = lastPosition.index;
+      // if (_lastIndex != index) {
+        // print(_lastIndex);
+        // _lastIndex = index;
+        // _itemScrollController?.jumpTo(index: _lastIndex);
+      // }
+    // });
   }
 
   @override
@@ -101,6 +111,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc> extends State<ThreadMe
                   initialAlignment: 0.0,
                   initialScrollIndex: 0,
                   itemScrollController: _itemScrollController,
+                  itemPositionsListener: _itemPositionsListener,
                   itemCount: _messages.length,
                   itemBuilder: (ctx, i) {
                     if (i == 0) {

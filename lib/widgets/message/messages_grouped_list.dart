@@ -8,42 +8,17 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 
-class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
-  @override
-  _MessagesGroupedListState<T> createState() => _MessagesGroupedListState<T>();
-}
-
-class _MessagesGroupedListState<T extends BaseChannelBloc>
-    extends State<MessagesGroupedList<T>> {
-
-  GroupedItemScrollController _groupedItemScrollController;
-  List<Message> _messages = <Message>[];
-
-  @override
-  void initState() {
-    super.initState();
-    _groupedItemScrollController = GroupedItemScrollController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _groupedItemScrollController?.jumpTo(index: 0);
-    });
-  }
-
+class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
   Widget buildMessagesList(context, MessagesState state) {
     if (state is MessagesLoaded) {
-      _messages = state.messages.reversed.toList();
-
       return GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
-        behavior: HitTestBehavior.opaque,
+        onTap: () => FocusScope.of(context).unfocus(),
         child: StickyGroupedListView<Message, DateTime>(
-            itemScrollController: _groupedItemScrollController,
             order: StickyGroupedListOrder.DESC,
             stickyHeaderBackgroundColor:
                 Theme.of(context).scaffoldBackgroundColor,
             reverse: true,
-            initialAlignment: 0.1,
-            initialScrollIndex: 1,
-            elements: _messages,
+            elements: state.messages,
             groupBy: (Message m) {
               final DateTime dt =
                   DateTime.fromMillisecondsSinceEpoch(m.creationDate * 1000);
@@ -97,7 +72,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
                 ),
               );
             },
-            indexedItemBuilder: (_, Message message, int i) {
+            itemBuilder: (_, Message message) {
               return MessageTile<T>(
                 message: message,
                 key: ValueKey(

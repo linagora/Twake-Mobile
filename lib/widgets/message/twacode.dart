@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
-import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:logger/logger.dart';
 
@@ -13,7 +12,7 @@ const Color linkColor = Colors.blue;
 const Color codeColor = Colors.indigo;
 const Color errorColor = Colors.red;
 const Color quoteColor = Colors.grey;
-const DefaultFontSize = 14.0;
+const DefaultFontSize = 16.0;
 
 TextStyle generateStyle(
     {Color color = defaultColor,
@@ -27,7 +26,8 @@ TextStyle generateStyle(
       color: color,
       fontWeight: bold ? FontWeight.bold : FontWeight.normal,
       fontStyle: italic ? FontStyle.italic : FontStyle.normal,
-      fontSize: fontSize, //Dim.tm2(decimal: fontSize),
+      fontSize: fontSize,
+      //Dim.tm2(decimal: fontSize),
       decoration: underline
           ? TextDecoration.underline
           : (strikethrough ? TextDecoration.lineThrough : TextDecoration.none),
@@ -97,26 +97,32 @@ class _TwacodeState extends State<Twacode> {
     widget.items.forEach((element) {
       spans.add((element as TwacodeItem).render());
     });
-    return widget.charCount > 300
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                maxLines: maxRichTextHeight,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.left,
-                text: TextSpan(children: spans),
-              ),
-              buildButton(
-                heightIncreased ? 'show less' : '...Show more',
-                heightIncreased ? onHeightDecrease : onHeightIncrease,
-              ),
-            ],
-          )
-        : RichText(
-          textAlign: TextAlign.left,
-          text: TextSpan(children: spans),
-        );
+    return RichText(
+      textAlign: TextAlign.left,
+      softWrap: true,
+      text: TextSpan(children: spans),
+    );
+    // return widget.charCount > 300
+    //     ? Column(
+    //         crossAxisAlignment: CrossAxisAlignment.start,
+    //         children: [
+    //           RichText(
+    //             maxLines: maxRichTextHeight,
+    //             overflow: TextOverflow.ellipsis,
+    //             textAlign: TextAlign.left,
+    //             text: TextSpan(children: spans),
+    //           ),
+    //           buildButton(
+    //             heightIncreased ? 'show less' : '...Show more',
+    //             heightIncreased ? onHeightDecrease : onHeightIncrease,
+    //           ),
+    //         ],
+    //       )
+    //     : RichText(
+    //         textAlign: TextAlign.left,
+    //         softWrap: true,
+    //         text: TextSpan(children: spans),
+    //       );
   }
 }
 
@@ -175,7 +181,7 @@ class TwacodeItem {
 
     switch (type) {
       case 'text':
-        this.style = generateStyle(fontSize: 14.0);
+        this.style = generateStyle(fontSize: 16.0);
         this.type = TwacodeType.text;
         break;
       case 'bold':
@@ -317,7 +323,10 @@ class TwacodeItem {
       }
     }
     var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
-
+    // Workaround for softWrap = true of RichText
+    // if (this.type == TwacodeType.text) {
+    //   content = content.replaceAll('', '\u200b');
+    // }
     return TextSpan(
         text: content, style: this.style, recognizer: this.recognizer);
   }

@@ -22,7 +22,7 @@ Direct _$DirectFromJson(Map<String, dynamic> json) {
   )
     ..id = json['id'] as String
     ..name = json['name'] as String
-    ..icon = json['icon'] as String ?? ':+1:'
+    ..icon = json['icon'] as String ?? '👽'
     ..description = json['description'] as String
     ..membersCount = json['members_count'] as int
     ..lastActivity = json['last_activity'] as int ?? 0

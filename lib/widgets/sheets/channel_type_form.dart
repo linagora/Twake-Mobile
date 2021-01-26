@@ -88,7 +88,7 @@ class ChannelTypeForm extends StatelessWidget {
             ),
             if (channelType == ChannelType.public) AddAllSwitcher(),
             if (channelType == ChannelType.private) SizedBox(),
-            if (channelType == ChannelType.direct) ParticipantsButton(),
+            // if (channelType == ChannelType.direct) ParticipantsButton(),
             HintLine(
               text: channelType != ChannelType.private
                   ? (channelType != ChannelType.direct
@@ -135,13 +135,13 @@ class ChannelTypesContainer extends StatelessWidget {
               .read<AddChannelBloc>()
               .add(Update(type: ChannelType.private)),
         ),
-        SelectableItem(
-          title: 'Direct',
-          selected: type == ChannelType.direct,
-          onTap: () => context
-              .read<AddChannelBloc>()
-              .add(Update(type: ChannelType.direct)),
-        ),
+        // SelectableItem(
+        //   title: 'Direct',
+        //   selected: type == ChannelType.direct,
+        //   onTap: () => context
+        //       .read<AddChannelBloc>()
+        //       .add(Update(type: ChannelType.direct)),
+        // ),
       ],
     );
   }
@@ -217,38 +217,39 @@ class ParticipantsButton extends StatelessWidget {
         child: ParticipantsCommonWidget(
           title: 'Added participants',
           trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
-              builder: (context, state) {
-            var participantsCount = 0;
-            if (state is Updated) {
-              final participants = state.repository?.members;
-              participantsCount = participants.length;
-            }
-            return participantsCount > 0
-                ? Row(
-                    children: [
-                      Text(
-                        '$participantsCount',
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w400,
+            builder: (context, state) {
+              var participantsCount = 0;
+              if (state is Updated) {
+                final participants = state.repository?.members;
+                participantsCount = participants.length;
+              }
+              return participantsCount > 0
+                  ? Row(
+                      children: [
+                        Text(
+                          '$participantsCount',
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xff837cfe),
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.forward,
                           color: Color(0xff837cfe),
                         ),
-                      ),
-                      Icon(
-                        CupertinoIcons.forward,
+                      ],
+                    )
+                  : Text(
+                      'Add',
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.w400,
                         color: Color(0xff837cfe),
                       ),
-                    ],
-                  )
-                : Text(
-                    'Add',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff837cfe),
-                    ),
-                  );
-          }),
+                    );
+            },
+          ),
         ),
       ),
     );

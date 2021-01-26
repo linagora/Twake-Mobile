@@ -24,6 +24,9 @@ class StylesConfig {
       elevation: 0.0,
       brightness: Brightness.light,
     ),
+    cardTheme: CardTheme(
+      color: Colors.transparent,
+    ),
     // fontFamily: 'PT',
   );
 

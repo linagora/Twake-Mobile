@@ -160,25 +160,26 @@ class TextInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[400], width: 1.5)),
+        border: Border(top: BorderSide(color: Colors.grey[300], width: 1.5)),
       ),
       child: Row(
         children: [
           IconButton(
             padding: EdgeInsets.zero,
-            icon: Icon(Icons.tag_faces),
+            icon: Icon(emojiVisible ? Icons.keyboard : Icons.tag_faces),
             onPressed: toggleEmojiBoard,
-            color: emojiVisible ? Colors.black87 : Colors.blueGrey,
+            color: Colors.black54,
           ),
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 2),
               child: TextField(
                 style: TextStyle(
-                  fontSize: 17.0,
+                  fontSize: 16.0,
                   fontWeight: FontWeight.w400,
                   color: Color(0xff444444),
                 ),
+                cursorHeight: 20,
                 maxLines: 4,
                 minLines: 1,
                 autofocus: autofocus,

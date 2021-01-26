@@ -33,6 +33,7 @@ class MessageModalSheet extends StatefulWidget {
 
 class _MessageModalSheetState extends State<MessageModalSheet> {
   bool _emojiVisible = false;
+
   onEmojiSelected(String emojiCode) {
     BlocProvider.of<SingleMessageBloc>(widget.ctx)
         .add(UpdateReaction(emojiCode: emojiCode));
@@ -60,21 +61,30 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
     final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
     return _emojiVisible
         ? buildEmojiBoard()
-        : Container(
-            child: SafeArea(
-              child: Column(
+        : SafeArea(
+          child: Container(
+            child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   EmojiLine(
                       onEmojiSelected: onEmojiSelected,
                       showEmojiBoard: showEmojiBoard),
-                  Divider(),
+                  Divider(
+                    thickness: 1.0,
+                    height: 1.0,
+                    color: Color(0xffEEEEEE),
+                  ),
                   if (!widget.isThread)
                     ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       leading: Icon(Icons.reply_sharp),
                       title: Text(
                         'Reply',
-                        style: Theme.of(context).textTheme.headline2,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff444444),
+                        ),
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
@@ -82,41 +92,60 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                             autofocus: true);
                       },
                     ),
-                  if (!widget.isThread) Divider(),
+                  if (!widget.isThread)
+                    Divider(
+                      thickness: 1.0,
+                      height: 1.0,
+                      color: Color(0xffEEEEEE),
+                    ),
                   if (isMe && widget.responsesCount == 0)
                     ListTile(
-                      leading: Icon(Icons.delete, color: Colors.red),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      leading: Icon(Icons.delete, color: Color(0xffFF5154)),
                       title: Text(
                         'Delete',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline2
-                            .copyWith(color: Colors.red),
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xffFF5154),
+                        ),
                       ),
                       onTap: () {
                         widget.onDelete(context);
                       },
                     ),
-                  if (isMe && widget.responsesCount == 0) Divider(),
+                  if (isMe && widget.responsesCount == 0)
+                    Divider(
+                      thickness: 1.0,
+                      height: 1.0,
+                      color: Color(0xffEEEEEE),
+                    ),
                   ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                     leading: Icon(Icons.copy),
                     title: Text(
                       'Copy',
-                      style: Theme.of(context).textTheme.headline2,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff444444),
+                      ),
                     ),
                     onTap: widget.onCopy,
                   ),
                 ],
               ),
-            ),
-          );
+          ),
+        );
   }
 }
 
 class EmojiLine extends StatelessWidget {
   final Function onEmojiSelected;
   final Function showEmojiBoard;
+
   EmojiLine({this.onEmojiSelected, this.showEmojiBoard});
+
   static const EMOJISET = [
     '😅',
     '😂',
@@ -133,7 +162,7 @@ class EmojiLine extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,
-        horizontal: Dim.wm2,
+        horizontal: 16.0,//Dim.wm2,
       ),
       constraints: BoxConstraints(maxHeight: Dim.hm7),
       child: Row(
