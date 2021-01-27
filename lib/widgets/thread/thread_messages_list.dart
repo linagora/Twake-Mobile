@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/models/message.dart';
 
@@ -21,6 +22,11 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
+        Divider(
+          thickness: 1.0,
+          height: 1.0,
+          color: Color(0xffEEEEEE),
+        ),
         Padding(
           padding: const EdgeInsets.only(top: 12.0),
           child: MessageTile<T>(
@@ -75,29 +81,18 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 
-  final ItemScrollController _itemScrollController = ItemScrollController();
-  final ItemPositionsListener _itemPositionsListener =
-      ItemPositionsListener.create();
+  double _sizedBoxHeight;
+  Size _screenSize;
+  double _textHeight;
+  final GlobalKey _redKey = GlobalKey();
+  double appBarHeight;
+  List<Widget> widgets = [];
+
   var _messages = <Message>[];
-  var _lastIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_itemScrollController.isAttached) {
-        _itemScrollController?.jumpTo(index: _messages.length);
-      }
-    });
-    _itemPositionsListener.itemPositions.addListener(() {
-      final lastPosition = _itemPositionsListener.itemPositions.value.last;
-      final index = lastPosition.index;
-      if (_lastIndex != index) {
-      print(_lastIndex);
-      _lastIndex = index;
-      _itemScrollController?.jumpTo(index: _lastIndex);
-      }
-    });
   }
 
   @override
@@ -106,36 +101,59 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
       builder: (ctx, state) {
         if (state is MessagesLoaded) {
           _messages = state.messages.reversed.toList();
-          if (_itemScrollController.isAttached) {
-            _itemScrollController?.jumpTo(
-              index: _messages.length,
-              alignment: 1.0,
-            );
-          }
         }
-        return Expanded(
+        return Flexible(
           child: state is MessagesLoaded
-              ? ScrollablePositionedList.builder(
-                  reverse: false,
-                  initialAlignment: 0.0,
-                  initialScrollIndex: 0,
-                  itemScrollController: _itemScrollController,
-                  itemPositionsListener: _itemPositionsListener,
-                  itemCount: _messages.length,
-                  itemBuilder: (ctx, i) {
-                    if (i == 0) {
-                      return buildThreadMessageColumn(state);
-                    } else {
-                      return MessageTile<T>(
-                        message: _messages[i],
-                        key: ValueKey(_messages[i].id),
-                      );
-                    }
-                  },
-                )
+              ? Container(
+            color: Colors.red,
+                child: ListView.builder(
+                    reverse: false,
+                    shrinkWrap: true,
+                    itemCount: _messages.length,
+                    itemBuilder: (context, i) {
+                      if (i == 0) {
+                        return buildThreadMessageColumn(state);
+                      } else {
+                        return MessageTile<T>(
+                          message: _messages[i],
+                          key: ValueKey(_messages[i].id),
+                        );
+                      }
+                    },
+                  ),
+              )
               : SingleChildScrollView(child: buildThreadMessageColumn(state)),
         );
       },
     );
+  }
+
+  Size _getSizes(GlobalKey key) {
+    final RenderBox renderBoxRed = key.currentContext.findRenderObject();
+    final sizeRed = renderBoxRed.size;
+    return sizeRed;
+  }
+
+  _insertBlanks() async {
+    final Size _appBarSize = Size.fromHeight(Dim.heightPercent(
+      (kToolbarHeight * 0.15).round(),
+    ));//_getSizes(_appBarKey);
+    final Size _containerSize = _getSizes(_redKey);
+
+    final int _blankLinesTotal = ((_screenSize.height -
+        _appBarSize.height -
+        _containerSize.height -
+        60) ~/
+        _textHeight);
+
+    final double blankLinesHeight = _textHeight * _blankLinesTotal;
+    _sizedBoxHeight = blankLinesHeight +
+        (_screenSize.height -
+            _appBarSize.height -
+            _containerSize.height -
+            60 -
+            blankLinesHeight);
+    widgets.insert(0, SizedBox(height: _sizedBoxHeight));
+    setState(() {});
   }
 }

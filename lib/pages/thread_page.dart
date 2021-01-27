@@ -122,13 +122,9 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
             child: BlocProvider<MessageEditBloc>(
               create: (ctx) => MessageEditBloc(),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Divider(
-                    thickness: 1.0,
-                    height: 1.0,
-                    color: Color(0xffEEEEEE),
-                  ),
                   ThreadMessagesList<T>(),
                   BlocBuilder<DraftBloc, DraftState>(
                       buildWhen: (_, current) =>
