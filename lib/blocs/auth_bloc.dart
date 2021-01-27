@@ -130,6 +130,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
       yield Unauthenticated(message: event.message);
       runWebView();
+    } else if (event is RegistrationInit) {
+      yield Registration('https://console.twake.app/signup');
+    } else if (event is ResetPassword) {
+      yield PasswordReset('https://console.twake.app/password-recovery');
     }
   }
 

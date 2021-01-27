@@ -37,6 +37,22 @@ class Authenticated extends AuthState {
   List<Object> get props => [];
 }
 
+class Registration extends AuthState {
+  final String link;
+  const Registration(this.link);
+
+  @override
+  List<Object> get props => [link];
+}
+
+class PasswordReset extends AuthState {
+  final String link;
+  const PasswordReset(this.link);
+
+  @override
+  List<Object> get props => [link];
+}
+
 class AuthenticationError extends AuthState {
   const AuthenticationError();
   @override

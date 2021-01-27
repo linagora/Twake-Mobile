@@ -169,6 +169,16 @@ class SelectMessage extends MessagesEvent {
   }
 }
 
+class GenerateErrorSendingMessage extends MessagesEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {};
+  }
+}
+
 class GenerateErrorLoadingMore extends MessagesEvent {
   @override
   List<Object> get props => [];

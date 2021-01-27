@@ -6,6 +6,7 @@ import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/service_bundle.dart';
 
 import 'twacode.dart';
+export 'twacode.dart';
 
 part 'message.g.dart';
 
@@ -54,7 +55,17 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
-  Message({this.id, this.userId, this.appId, this.creationDate}) : super(id);
+  Message(
+      {this.id,
+      this.userId,
+      this.appId,
+      this.creationDate,
+      this.threadId,
+      this.content,
+      this.channelId,
+      this.responsesCount,
+      this.reactions})
+      : super(id);
 
   void updateContent(Map<String, dynamic> body) {
     String prevStr = '' + content.originalStr;
