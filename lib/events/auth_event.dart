@@ -41,6 +41,16 @@ class ResetAuthentication extends AuthEvent {
   List<Object> get props => [message];
 }
 
+class ResetPassword extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class RegistrationInit extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class AuthInitialize extends AuthEvent {
   @override
   List<Object> get props => [];

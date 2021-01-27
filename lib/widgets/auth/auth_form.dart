@@ -135,11 +135,22 @@ class _AuthFormState extends State<AuthForm> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,
-                        child: FlatButton(
-                          onPressed: () {},
-                          child: Text(
-                            'Forgot password?',
-                            style: StylesConfig.miniPurple,
+                        child:
+                            BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                          builder: (context, state) => FlatButton(
+                            onPressed: state is cb.ConnectionLost
+                                ? null
+                                : () {
+                                    context
+                                        .read<AuthBloc>()
+                                        .add(ResetPassword());
+                                  },
+                            child: Text(
+                              'Forgot password?',
+                              style: state is cb.ConnectionLost
+                                  ? StylesConfig.disabled
+                                  : StylesConfig.miniPurple,
+                            ),
                           ),
                         ),
                       ),
@@ -185,11 +196,21 @@ class _AuthFormState extends State<AuthForm> {
                         style: StylesConfig.miniPurple
                             .copyWith(color: Colors.black87),
                       ),
-                      FlatButton(
-                        onPressed: () {},
-                        child: Text(
-                          ' Sign up',
-                          style: StylesConfig.miniPurple,
+                      BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                        builder: (context, state) => FlatButton(
+                          onPressed: state is cb.ConnectionLost
+                              ? null
+                              : () {
+                                  context
+                                      .read<AuthBloc>()
+                                      .add(RegistrationInit());
+                                },
+                          child: Text(
+                            ' Sign up',
+                            style: state is cb.ConnectionLost
+                                ? StylesConfig.disabled
+                                : StylesConfig.miniPurple,
+                          ),
                         ),
                       ),
                     ],
