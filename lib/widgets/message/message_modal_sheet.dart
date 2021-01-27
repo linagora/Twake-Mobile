@@ -11,6 +11,7 @@ class MessageModalSheet extends StatefulWidget {
   final int responsesCount;
   final void Function(BuildContext, String, {bool autofocus}) onReply;
   final void Function(BuildContext) onDelete;
+  final void Function(BuildContext) onEdit;
   final Function onCopy;
   final bool isThread;
   final BuildContext ctx;
@@ -22,6 +23,7 @@ class MessageModalSheet extends StatefulWidget {
     this.isThread: false,
     this.onReply,
     this.onDelete,
+    this.onEdit,
     this.onCopy,
     this.ctx,
     Key key,
@@ -62,8 +64,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
     return _emojiVisible
         ? buildEmojiBoard()
         : SafeArea(
-          child: Container(
-            child: Column(
+            child: Container(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   EmojiLine(
@@ -74,9 +76,27 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                     height: 1.0,
                     color: Color(0xffEEEEEE),
                   ),
+                  if (isMe)
+                    ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16.0),
+                      leading: Icon(Icons.edit),
+                      title: Text(
+                        'Edit',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff444444),
+                        ),
+                      ),
+                      onTap: () {
+                        widget.onEdit(widget.ctx);
+                      },
+                    ),
                   if (!widget.isThread)
                     ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16.0),
                       leading: Icon(Icons.reply_sharp),
                       title: Text(
                         'Reply',
@@ -100,7 +120,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                     ),
                   if (isMe && widget.responsesCount == 0)
                     ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16.0),
                       leading: Icon(Icons.delete, color: Color(0xffFF5154)),
                       title: Text(
                         'Delete',
@@ -121,7 +142,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       color: Color(0xffEEEEEE),
                     ),
                   ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
                     leading: Icon(Icons.copy),
                     title: Text(
                       'Copy',
@@ -135,8 +157,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                   ),
                 ],
               ),
-          ),
-        );
+            ),
+          );
   }
 }
 
@@ -162,7 +184,7 @@ class EmojiLine extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,
-        horizontal: 16.0,//Dim.wm2,
+        horizontal: 16.0, //Dim.wm2,
       ),
       constraints: BoxConstraints(maxHeight: Dim.hm7),
       child: Row(

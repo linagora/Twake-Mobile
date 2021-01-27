@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc.dart';
+import 'package:twake/blocs/connection_bloc.dart' as cb;
 import 'package:twake/config/styles_config.dart';
-// import 'package:twake/pages/webview_page.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class AuthForm extends StatefulWidget {
@@ -123,37 +123,66 @@ class _AuthFormState extends State<AuthForm> {
                 focusNode: _passwordFocusNode,
               ),
               SizedBox(height: Dim.heightMultiplier),
-              Align(
-                alignment: Alignment.centerRight,
-                child: FlatButton(
-                  onPressed: () {},
-                  child: Text(
-                    'Forgot password?',
-                    style: StylesConfig.miniPurple,
-                  ),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (ctx, state) => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    if (state is WrongCredentials)
+                      Text(
+                        'Incorrect email or password',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child:
+                            BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                          builder: (context, state) => FlatButton(
+                            onPressed: state is cb.ConnectionLost
+                                ? null
+                                : () {
+                                    context
+                                        .read<AuthBloc>()
+                                        .add(ResetPassword());
+                                  },
+                            child: Text(
+                              'Forgot password?',
+                              style: state is cb.ConnectionLost
+                                  ? StylesConfig.disabled
+                                  : StylesConfig.miniPurple,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Spacer(),
               SizedBox(
                 width: double.infinity,
-                child: RaisedButton(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+                child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                  builder: (context, state) => RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dim.wm4,
+                      vertical: Dim.tm2(decimal: -.2),
+                    ),
+                    color: Theme.of(context).accentColor,
+                    textColor: Colors.white,
+                    disabledColor: Color.fromRGBO(238, 238, 238, 1),
+                    child: Text(
+                      'Login',
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                    onPressed: username.isNotEmpty &&
+                            password.isNotEmpty &&
+                            !(state is cb.ConnectionLost)
+                        ? () => onSubmit()
+                        : null,
                   ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Dim.wm4,
-                    vertical: Dim.tm2(decimal: -.2),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  textColor: Colors.white,
-                  disabledColor: Color.fromRGBO(238, 238, 238, 1),
-                  child: Text(
-                    'Login',
-                    style: Theme.of(context).textTheme.button,
-                  ),
-                  onPressed: username.isNotEmpty && password.isNotEmpty
-                      ? () => onSubmit()
-                      : null,
                 ),
               ),
               Spacer(),
@@ -167,11 +196,21 @@ class _AuthFormState extends State<AuthForm> {
                         style: StylesConfig.miniPurple
                             .copyWith(color: Colors.black87),
                       ),
-                      FlatButton(
-                        onPressed: () {},
-                        child: Text(
-                          ' Sign up',
-                          style: StylesConfig.miniPurple,
+                      BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                        builder: (context, state) => FlatButton(
+                          onPressed: state is cb.ConnectionLost
+                              ? null
+                              : () {
+                                  context
+                                      .read<AuthBloc>()
+                                      .add(RegistrationInit());
+                                },
+                          child: Text(
+                            ' Sign up',
+                            style: state is cb.ConnectionLost
+                                ? StylesConfig.disabled
+                                : StylesConfig.miniPurple,
+                          ),
                         ),
                       ),
                     ],

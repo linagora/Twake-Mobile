@@ -5,7 +5,7 @@ part 'twacode.g.dart';
 @JsonSerializable()
 class MessageTwacode {
   @JsonKey(name: 'original_str')
-  final String originalStr;
+  String originalStr;
 
   // @JsonKey(required: true)
   final List<dynamic> prepared;

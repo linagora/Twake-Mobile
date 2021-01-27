@@ -18,6 +18,12 @@ class Unauthenticated extends AuthState {
   List<Object> get props => [message];
 }
 
+class WrongCredentials extends Unauthenticated {
+  const WrongCredentials();
+  @override
+  List<Object> get props => [];
+}
+
 class Authenticating extends AuthState {
   const Authenticating();
   @override
@@ -29,6 +35,22 @@ class Authenticated extends AuthState {
   const Authenticated(this.initData);
   @override
   List<Object> get props => [];
+}
+
+class Registration extends AuthState {
+  final String link;
+  const Registration(this.link);
+
+  @override
+  List<Object> get props => [link];
+}
+
+class PasswordReset extends AuthState {
+  final String link;
+  const PasswordReset(this.link);
+
+  @override
+  List<Object> get props => [link];
 }
 
 class AuthenticationError extends AuthState {

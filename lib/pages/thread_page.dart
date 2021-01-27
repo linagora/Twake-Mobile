@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
+import 'package:twake/blocs/message_edit_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
@@ -102,74 +103,87 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
       ),
       body: SafeArea(
         child: BlocListener<ThreadsBloc<T>, MessagesState>(
-            listener: (ctx, state) {
-              state = state;
-              if (state is ErrorSendingMessage) {
-                FocusManager.instance.primaryFocus.unfocus();
-                Scaffold.of(ctx).showSnackBar(
-                  SnackBar(
-                    content: Text('Error sending message, no connection'),
-                  ),
-                );
-              }
-            },
-            child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: Dim.heightPercent(88),
-                  minHeight: Dim.heightPercent(78),
+          listener: (ctx, state) {
+            state = state;
+            if (state is ErrorSendingMessage) {
+              FocusManager.instance.primaryFocus.unfocus();
+              Scaffold.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text('Error sending message, no connection'),
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Divider(
-                      thickness: 1.0,
-                      height: 1.0,
-                      color: Color(0xffEEEEEE),
-                    ),
-                    ThreadMessagesList<T>(),
-                    BlocBuilder<DraftBloc, DraftState>(
-                        buildWhen: (_, current) =>
-                            current is DraftLoaded || current is DraftReset,
-                        builder: (context, state) {
-                          if (state is DraftLoaded &&
-                              state.type != DraftType.channel &&
-                              state.type != DraftType.direct) {
-                            draft = state.draft;
-                            // print('DRAFT IS LOADED: $draft');
-                          } else if (state is DraftReset) {
-                            draft = '';
-                          }
-                          final threadState =
-                              BlocProvider.of<ThreadsBloc<T>>(context).state;
-                          threadId = threadState.threadMessage.id;
+              );
+            }
+          },
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: Dim.heightPercent(88),
+              minHeight: Dim.heightPercent(78),
+            ),
+            child: BlocProvider<MessageEditBloc>(
+              create: (ctx) => MessageEditBloc(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Divider(
+                    thickness: 1.0,
+                    height: 1.0,
+                    color: Color(0xffEEEEEE),
+                  ),
+                  ThreadMessagesList<T>(),
+                  BlocBuilder<DraftBloc, DraftState>(
+                      buildWhen: (_, current) =>
+                          current is DraftLoaded || current is DraftReset,
+                      builder: (context, state) {
+                        if (state is DraftLoaded &&
+                            state.type != DraftType.channel &&
+                            state.type != DraftType.direct) {
+                          draft = state.draft;
+                        } else if (state is DraftReset) {
+                          draft = '';
+                        }
+                        final threadState =
+                            BlocProvider.of<ThreadsBloc<T>>(context).state;
+                        threadId = threadState.threadMessage.id;
 
-                          return MessageEditField(
+                        return BlocBuilder<MessageEditBloc, MessageEditState>(
+                          builder: (ctx, state) => MessageEditField(
                             key: UniqueKey(),
-                            initialText: draft ?? '',
-                            onMessageSend: (content) {
-                              BlocProvider.of<ThreadsBloc<T>>(context).add(
-                                SendMessage(
-                                  content: content,
-                                  channelId: threadState.parentChannel.id,
-                                  threadId: threadState.threadMessage.id,
-                                ),
-                              );
-                              context.read<DraftBloc>().add(ResetDraft(
-                                  id: threadState.threadMessage.id,
-                                  type: DraftType.thread));
-                            },
-                            onTextUpdated: (text) {
-                              context.read<DraftBloc>().add(UpdateDraft(
-                                    id: threadId,
-                                    type: DraftType.thread,
-                                    draft: text,
-                                  ));
-                            },
-                            autofocus: autofocus,
-                          );
-                        }),
-                  ],
-                ))),
+                            initialText: state is MessageEditing
+                                ? state.originalStr
+                                : draft ?? '',
+                            onMessageSend: state is MessageEditing
+                                ? state.onMessageEditComplete
+                                : (content) {
+                                    BlocProvider.of<ThreadsBloc<T>>(context)
+                                        .add(
+                                      SendMessage(
+                                        content: content,
+                                        channelId: threadState.parentChannel.id,
+                                        threadId: threadState.threadMessage.id,
+                                      ),
+                                    );
+                                    context.read<DraftBloc>().add(ResetDraft(
+                                        id: threadState.threadMessage.id,
+                                        type: DraftType.thread));
+                                  },
+                            onTextUpdated: state is MessageEditing
+                                ? (text) {}
+                                : (text) {
+                                    context.read<DraftBloc>().add(UpdateDraft(
+                                          id: threadId,
+                                          type: DraftType.thread,
+                                          draft: text,
+                                        ));
+                                  },
+                            autofocus: autofocus || state is MessageEditing,
+                          ),
+                        );
+                      }),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

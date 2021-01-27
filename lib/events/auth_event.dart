@@ -17,6 +17,13 @@ class Authenticate extends AuthEvent {
       ];
 }
 
+class WrongAuthCredentials extends AuthEvent {
+  const WrongAuthCredentials();
+
+  @override
+  List<Object> get props => [];
+}
+
 class SetAuthData extends AuthEvent {
   final Map<String, String> authData;
 
@@ -32,6 +39,16 @@ class ResetAuthentication extends AuthEvent {
 
   @override
   List<Object> get props => [message];
+}
+
+class ResetPassword extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class RegistrationInit extends AuthEvent {
+  @override
+  List<Object> get props => [];
 }
 
 class AuthInitialize extends AuthEvent {

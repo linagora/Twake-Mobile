@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
@@ -19,7 +20,9 @@ Future<AuthRepository> initAuth() async {
   final store = Storage();
   await store.initDb();
 
-  final _ = Api();
+  final _api = Api();
+  final _state = await Connectivity().checkConnectivity();
+  _api.hasConnection = _state != ConnectivityResult.none;
 
   if (kDebugMode)
     Logger.level = Level.debug;

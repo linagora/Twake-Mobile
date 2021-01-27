@@ -144,7 +144,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
-    } else if (event is ErrorLoadingMoreMessages) {
+    } else if (event is GenerateErrorLoadingMore) {
       yield ErrorLoadingMoreMessages(
         parentChannel: selectedChannel,
         messages: repository.items,
@@ -212,25 +212,47 @@ class MessagesBloc<T extends BaseChannelBloc>
         yield newState;
       }
     } else if (event is SendMessage) {
-      final success = await repository.pushOne(_makeQueryParams(event));
-      if (!success) {
-        yield ErrorSendingMessage(
-          messages: repository.items,
-          force: DateTime.now().toString(),
-          parentChannel: selectedChannel,
-        );
-        return;
-      }
+      final String dummyId = DateTime.now().toString();
+      final body = _makeQueryParams(event);
+      var tempItem = Message(
+        id: dummyId,
+        threadId: body['thread_id'],
+        userId: ProfileBloc.userId,
+        creationDate: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        content: MessageTwacode(originalStr: body['original_str']),
+        reactions: {},
+        responsesCount: 0,
+        channelId: body['channel_id'],
+      );
+      repository.pushOne(
+        body,
+        addToItems: false,
+        onError: () {
+          this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.add(GenerateErrorSendingMessage());
+        },
+        onSuccess: (message) {
+          tempItem.id = message.id;
+          this.add(FinishLoadingMessages());
+          _updateParentChannel();
+        },
+      );
+      this.repository.items.add(tempItem);
       _sortItems();
       yield MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
-      _updateParentChannel();
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty(parentChannel: selectedChannel);
+    } else if (event is GenerateErrorSendingMessage) {
+      yield ErrorSendingMessage(
+        messages: repository.items,
+        force: DateTime.now().toString(),
+        parentChannel: selectedChannel,
+      );
     } else if (event is SelectMessage) {
       repository.select(event.messageId);
       yield MessageSelected(

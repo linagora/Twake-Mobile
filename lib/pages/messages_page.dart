@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
+import 'package:twake/blocs/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
-import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
-import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
+import 'package:twake/widgets/message/messages_grouped_list.dart';
 
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   const MessagesPage();
@@ -111,28 +112,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: BlocListener<MessagesBloc<T>, MessagesState>(
-          listener: (ctx, state) {
-            if (state is ErrorLoadingMessages) {
-              Navigator.of(ctx).pop(true);
-            } else if (state is ErrorSendingMessage) {
-              FocusManager.instance.primaryFocus.unfocus();
-              Scaffold.of(ctx).showSnackBar(
-                SnackBar(
-                  content: Text('Error sending message, no connection'),
-                ),
-              );
-            } else if (state is ErrorLoadingMoreMessages) {
-              Scaffold.of(ctx).showSnackBar(
-                SnackBar(
-                  content: Text('Error loading more, no connection'),
-                ),
-              );
-            }
-          },
-          child: BlocBuilder<MessagesBloc<T>, MessagesState>(
-              builder: (ctx, messagesState) {
-            return Column(
+        child: BlocBuilder<MessagesBloc<T>, MessagesState>(
+            builder: (ctx, messagesState) {
+          return BlocProvider<MessageEditBloc>(
+            create: (ctx) => MessageEditBloc(),
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Divider(
@@ -140,7 +124,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   height: 1.0,
                   color: Color(0xffEEEEEE),
                 ),
-                if (messagesState is MoreMessagesLoading)
+                if (messagesState is MoreMessagesLoading &&
+                    !(messagesState is ErrorLoadingMoreMessages))
                   SizedBox(
                     height: Dim.hm4,
                     width: Dim.hm4,
@@ -169,30 +154,38 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         draftType = DraftType.direct;
                       }
 
-                      return MessageEditField(
-                        key: UniqueKey(),
-                        initialText: draft,
-                        onMessageSend: (content) {
-                          BlocProvider.of<MessagesBloc<T>>(context).add(
-                            SendMessage(content: content),
-                          );
-                          context
-                              .read<DraftBloc>()
-                              .add(ResetDraft(id: channelId, type: draftType));
-                        },
-                        onTextUpdated: (text) {
-                          context.read<DraftBloc>().add(UpdateDraft(
-                                id: channelId,
-                                type: draftType,
-                                draft: text,
-                              ));
-                        },
+                      return BlocBuilder<MessageEditBloc, MessageEditState>(
+                        builder: (ctx, state) => MessageEditField(
+                          key: UniqueKey(),
+                          autofocus: state is MessageEditing,
+                          initialText: state is MessageEditing
+                              ? state.originalStr
+                              : draft,
+                          onMessageSend: state is MessageEditing
+                              ? state.onMessageEditComplete
+                              : (content) {
+                                  BlocProvider.of<MessagesBloc<T>>(context).add(
+                                    SendMessage(content: content),
+                                  );
+                                  context.read<DraftBloc>().add(ResetDraft(
+                                      id: channelId, type: draftType));
+                                },
+                          onTextUpdated: state is MessageEditing
+                              ? (text) {}
+                              : (text) {
+                                  context.read<DraftBloc>().add(UpdateDraft(
+                                        id: channelId,
+                                        type: draftType,
+                                        draft: text,
+                                      ));
+                                },
+                        ),
                       );
                     }),
               ],
-            );
-          }),
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

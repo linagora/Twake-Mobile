@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
+import 'package:twake/blocs/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
@@ -12,12 +13,10 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
-
 // import 'package:twake/widgets/message/twacode.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
-
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
 class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
@@ -41,6 +40,18 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
           autofocus: autofocus,
         ),
       ),
+    );
+  }
+
+  void onEdit(context) {
+    Navigator.of(context).pop();
+    BlocProvider.of<MessageEditBloc>(context).add(
+      EditMessage(
+          originalStr: message.content.originalStr,
+          onMessageEditComplete: (text) {
+            BlocProvider.of<SingleMessageBloc>(context)
+                .add(UpdateContent(text));
+          }),
     );
   }
 
@@ -92,6 +103,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                         isThread:
                             messageState.threadId != null || hideShowAnswers,
                         onReply: onReply,
+                        onEdit: onEdit,
                         ctx: ctx,
                         onDelete: (ctx) => onDelete(
                             ctx,
