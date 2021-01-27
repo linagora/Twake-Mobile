@@ -78,6 +78,12 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             return AuthPage();
             // return WebAuthPage();
           }
+          if (state is Registration) {
+            return WebAuthPage(state.link);
+          }
+          if (state is PasswordReset) {
+            return WebAuthPage(state.link);
+          }
           if (state is Authenticated) {
             return MultiBlocProvider(
               providers: [
