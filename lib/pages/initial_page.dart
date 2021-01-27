@@ -85,7 +85,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   create: (_) => ProfileBloc(state.initData.profile),
                   lazy: false,
                 ),
-                BlocProvider<NotificationBloc>(create: (_) => NotificationBloc()),
+                BlocProvider<NotificationBloc>(
+                    create: (_) => NotificationBloc()),
                 BlocProvider<CompaniesBloc>(
                   create: (ctx) => CompaniesBloc(state.initData.companies),
                 ),
@@ -175,19 +176,44 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                       onGenerateRoute: (settings) =>
                           Routes.onGenerateRoute(settings.name),
                     ),
-                    BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                      builder: (context, state) {
+                    Positioned(
+                      top: Dim.heightPercent(
+                          (kToolbarHeight * 0.15).round()) +
+                          MediaQuery.of(context).padding.top,
+                      child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                          builder: (context, state) {
                         print('Connection state: $state');
+                        return AnimatedSwitcher(
+                          duration: Duration(milliseconds: 250),
+                          switchOutCurve: Threshold(0),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) {
+                            return SlideTransition(
+                              position: Tween<Offset>(
+                                begin: const Offset(0, -1),
+                                end: const Offset(0, 0),
+                              ).animate(animation),
+                              child: child,
+                            );
+                          },
+                          child: state is cb.ConnectionLost
+                              ? Container(
+                                  key: UniqueKey(),
+                                  child: NetworkStatusBar(),
+                                )
+                              : SizedBox(key: UniqueKey()),
+                        );
                         if (state is cb.ConnectionLost) {
                           return Positioned(
-                            top: Dim.heightPercent((kToolbarHeight * 0.15).round()) +
+                            top: Dim.heightPercent(
+                                    (kToolbarHeight * 0.15).round()) +
                                 MediaQuery.of(context).padding.top,
                             child: NetworkStatusBar(),
                           );
                         } else {
                           return const SizedBox();
                         }
-                      }
+                      }),
                     ),
                   ],
                 ),
