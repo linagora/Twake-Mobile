@@ -17,6 +17,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
+import 'package:twake/widgets/message/message_edit_modal_sheet.dart';
 
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
@@ -42,6 +43,18 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void onEdit(context, onMessageSend) {
+    Navigator.of(context).pop();
+    showModalBottomSheet(
+        context: context,
+        builder: (ctx) {
+          return MessageEditModalSheet(
+            message,
+            onMessageSend: onMessageSend,
+          );
+        });
   }
 
   onCopy({context, text}) {
@@ -92,6 +105,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                         isThread:
                             messageState.threadId != null || hideShowAnswers,
                         onReply: onReply,
+                        onEdit: onEdit,
                         ctx: ctx,
                         onDelete: (ctx) => onDelete(
                             ctx,

@@ -1,12 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/twacode.dart';
 
 abstract class SingleMessageEvent extends Equatable {
   const SingleMessageEvent();
 }
 
 class UpdateContent extends SingleMessageEvent {
-  final MessageTwacode content;
+  final String content;
 
   const UpdateContent(this.content);
 

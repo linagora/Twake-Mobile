@@ -34,7 +34,15 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
   @override
   Stream<SingleMessageState> mapEventToState(SingleMessageEvent event) async* {
     if (event is UpdateContent) {
-      throw 'Not implemented yet!';
+      message.updateContent({
+        'company_id': ProfileBloc.selectedCompany,
+        'channel_id': message.channelId,
+        'workspace_id': ProfileBloc.selectedWorkspace,
+        'message_id': message.id,
+        'thread_id': message.threadId,
+        'original_str': event.content,
+      });
+      yield messageReady;
     } else if (event is UpdateReaction) {
       message.updateReactions(
         userId: event.userId ?? ProfileBloc.userId,

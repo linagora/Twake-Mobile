@@ -56,6 +56,15 @@ class Message extends CollectionItem {
 
   Message({this.id, this.userId, this.appId, this.creationDate}) : super(id);
 
+  void updateContent(Map<String, dynamic> body) {
+    String prevStr = '' + content.originalStr;
+    content.originalStr = body['original_str'];
+    _api.put(Endpoint.messages, body: body).then((_) => save()).catchError((e) {
+      logger.e('ERROR updating message content\n$e');
+      content.originalStr = prevStr;
+    });
+  }
+
   void updateReactions({String userId, Map<String, dynamic> body}) {
     String emojiCode = body['reaction'];
     logger.d('Updating reaction: $emojiCode');
