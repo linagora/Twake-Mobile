@@ -90,9 +90,27 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
 
   var _messages = <Message>[];
 
+  var _controller = ScrollController();
+  ScrollPhysics _physics = BouncingScrollPhysics();
+
   @override
   void initState() {
     super.initState();
+
+    _controller.addListener(() {
+      // print(_controller.position.pixels);
+      if (_controller.position.pixels > 100 && _physics is! ClampingScrollPhysics) {
+        setState(() => _physics = ClampingScrollPhysics());
+      } else if (_physics is! BouncingScrollPhysics) {
+        setState(() => _physics = BouncingScrollPhysics());
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -100,28 +118,27 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     return BlocBuilder<ThreadsBloc<T>, MessagesState>(
       builder: (ctx, state) {
         if (state is MessagesLoaded) {
-          _messages = state.messages.reversed.toList();
+          _messages = state.messages;
         }
         return Flexible(
           child: state is MessagesLoaded
-              ? Container(
-            color: Colors.red,
-                child: ListView.builder(
-                    reverse: false,
-                    shrinkWrap: true,
-                    itemCount: _messages.length,
-                    itemBuilder: (context, i) {
-                      if (i == 0) {
-                        return buildThreadMessageColumn(state);
-                      } else {
-                        return MessageTile<T>(
-                          message: _messages[i],
-                          key: ValueKey(_messages[i].id),
-                        );
-                      }
-                    },
-                  ),
-              )
+              ? ListView.builder(
+                  controller: _controller,
+                  physics: _physics,
+                  reverse: true,
+                  shrinkWrap: true,
+                  itemCount: _messages.length,
+                  itemBuilder: (context, i) {
+                    if (i == _messages.length - 1) {
+                      return buildThreadMessageColumn(state);
+                    } else {
+                      return MessageTile<T>(
+                        message: _messages[i],
+                        key: ValueKey(_messages[i].id),
+                      );
+                    }
+                  },
+                )
               : SingleChildScrollView(child: buildThreadMessageColumn(state)),
         );
       },
@@ -137,13 +154,13 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
   _insertBlanks() async {
     final Size _appBarSize = Size.fromHeight(Dim.heightPercent(
       (kToolbarHeight * 0.15).round(),
-    ));//_getSizes(_appBarKey);
+    )); //_getSizes(_appBarKey);
     final Size _containerSize = _getSizes(_redKey);
 
     final int _blankLinesTotal = ((_screenSize.height -
-        _appBarSize.height -
-        _containerSize.height -
-        60) ~/
+            _appBarSize.height -
+            _containerSize.height -
+            60) ~/
         _textHeight);
 
     final double blankLinesHeight = _textHeight * _blankLinesTotal;
