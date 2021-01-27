@@ -182,6 +182,8 @@ class CollectionRepository<T extends CollectionItem> {
 
   Future<bool> pushOne(
     Map<String, dynamic> body, {
+    Function onError,
+    Function(T) onSuccess,
     addToItems = true,
   }) async {
     logger.d('Sending item $T to api...');
@@ -190,11 +192,13 @@ class CollectionRepository<T extends CollectionItem> {
       resp = (await _api.post(apiEndpoint, body: body));
     } catch (error) {
       logger.e('Error while sending $T item to api\n${error.message}');
+      if (onError != null) onError();
       return false;
     }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = _typeToConstructor[T](resp);
     if (addToItems) this.items.add(item);
+    if (onSuccess != null) onSuccess(item);
     saveOne(item);
     return true;
   }
