@@ -114,7 +114,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<MessagesBloc<T>, MessagesState>(
             builder: (ctx, messagesState) {
-          return BlocProvider(
+          return BlocProvider<MessageEditBloc>(
             create: (ctx) => MessageEditBloc(),
             child: Column(
               mainAxisSize: MainAxisSize.min,
