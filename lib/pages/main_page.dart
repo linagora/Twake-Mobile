@@ -17,6 +17,7 @@ import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage();
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -60,9 +61,15 @@ class _MainPageState extends State<MainPage> {
               }),
           body: SafeArea(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                MainAppBar(
-                  scaffoldKey: _scaffoldKey,
+                SizedBox(
+                  height: Dim.heightPercent(
+                    (kToolbarHeight * 0.15).round(),
+                  ),
+                  child: MainAppBar(
+                    scaffoldKey: _scaffoldKey,
+                  ),
                 ),
                 Expanded(
                   child: BlocBuilder<ChannelsBloc, ChannelState>(
