@@ -11,7 +11,7 @@ class MessageModalSheet extends StatefulWidget {
   final int responsesCount;
   final void Function(BuildContext, String, {bool autofocus}) onReply;
   final void Function(BuildContext) onDelete;
-  final void Function(BuildContext, Function) onEdit;
+  final void Function(BuildContext) onEdit;
   final Function onCopy;
   final bool isThread;
   final BuildContext ctx;
@@ -90,10 +90,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                         ),
                       ),
                       onTap: () {
-                        widget.onEdit(context, (content) {
-                          BlocProvider.of<SingleMessageBloc>(widget.ctx)
-                              .add(UpdateContent(content));
-                        });
+                        widget.onEdit(widget.ctx);
                       },
                     ),
                   if (!widget.isThread)
