@@ -101,7 +101,8 @@ class CollectionRepository<T extends CollectionItem> {
   }) async {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
-      logger.d('Reloading $T items from storage...\nFilters: $filters');
+      logger.d(
+          'Reloading $T items from storage...\nFilters: $filters\nLIMIT: $limit\nOFFSET: $offset');
       itemsList = await _storage.batchLoad(
         type: _typeToStorageType[T],
         filters: filters,
@@ -109,6 +110,7 @@ class CollectionRepository<T extends CollectionItem> {
         limit: limit,
         offset: offset,
       );
+      logger.d('Loaded ${itemsList.length} items');
     }
     bool saveToStore = false;
     if (itemsList.isEmpty) {
@@ -121,8 +123,9 @@ class CollectionRepository<T extends CollectionItem> {
       }
       saveToStore = true;
     }
-    if (forceFromApi)
+    if (forceFromApi) {
       await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+    }
     _updateItems(itemsList, saveToStore: saveToStore);
     return true;
   }

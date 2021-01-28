@@ -65,7 +65,8 @@ class ChannelTile extends StatelessWidget {
                       color: Color(0xff444444),
                     ),
                   ),
-                  if (channel.description != null && channel.description.isNotEmpty)
+                  if (channel.description != null &&
+                      channel.description.isNotEmpty)
                     Padding(
                       padding: EdgeInsets.only(top: 4.0),
                       child: Text(

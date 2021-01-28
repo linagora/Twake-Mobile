@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,23 +10,40 @@ import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/services/init.dart';
+import 'package:twake/utils/sentry.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded<Future<void>>(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  final AuthRepository repository = await initAuth();
-  cb.ConnectionState connectionState;
-  final res = await Connectivity().checkConnectivity();
-  if (res == ConnectivityResult.none) {
-    connectionState = cb.ConnectionLost('');
-  } else if (res == ConnectivityResult.wifi) {
-    connectionState = cb.ConnectionWifi();
-  } else if (res == ConnectivityResult.mobile) {
-    connectionState = cb.ConnectionCellular();
-  }
+    final AuthRepository repository = await initAuth();
+    cb.ConnectionState connectionState;
+    final res = await Connectivity().checkConnectivity();
+    if (res == ConnectivityResult.none) {
+      connectionState = cb.ConnectionLost('');
+    } else if (res == ConnectivityResult.wifi) {
+      connectionState = cb.ConnectionWifi();
+    } else if (res == ConnectivityResult.mobile) {
+      connectionState = cb.ConnectionCellular();
+    }
+    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) => runApp(TwakeMobileApp(repository, connectionState)));
+    FlutterError.onError = (FlutterErrorDetails details) {
+      if (isInDebugMode) {
+        // In development mode, simply print to console.
+        FlutterError.dumpErrorToConsole(details);
+      } else {
+        // In production mode, report to the application zone to report to
+        // Sentry.
+        Zone.current.handleUncaughtError(details.exception, details.stack);
+      }
+    };
+    runApp(TwakeMobileApp(repository, connectionState));
+  }, (Object error, StackTrace stackTrace) {
+    // Whenever an error occurs, call the `reportError` function. This sends
+    // Dart errors to the dev console or Sentry depending on the environment.
+    reportError(error, stackTrace);
+  });
 }
 
 class TwakeMobileApp extends StatelessWidget {

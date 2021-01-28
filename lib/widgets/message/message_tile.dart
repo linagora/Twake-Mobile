@@ -51,6 +51,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
           onMessageEditComplete: (text) {
             BlocProvider.of<SingleMessageBloc>(context)
                 .add(UpdateContent(text));
+            BlocProvider.of<MessageEditBloc>(context).add(CancelMessageEdit());
           }),
     );
   }
@@ -103,7 +104,19 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                         isThread:
                             messageState.threadId != null || hideShowAnswers,
                         onReply: onReply,
-                        onEdit: onEdit,
+                        onEdit: () {
+                          Navigator.of(ctx).pop();
+                          BlocProvider.of<MessageEditBloc>(ctx).add(
+                            EditMessage(
+                                originalStr: message.content.originalStr,
+                                onMessageEditComplete: (text) {
+                                  BlocProvider.of<SingleMessageBloc>(ctx)
+                                      .add(UpdateContent(text));
+                                  BlocProvider.of<MessageEditBloc>(ctx)
+                                      .add(CancelMessageEdit());
+                                }),
+                          );
+                        },
                         ctx: ctx,
                         onDelete: (ctx) => onDelete(
                             ctx,
@@ -113,7 +126,6 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                               threadId: messageState.threadId,
                             )),
                         onCopy: () {
-                          print('TEXT: ${messageState.text}');
                           onCopy(context: ctx, text: messageState.text);
                         },
                       );

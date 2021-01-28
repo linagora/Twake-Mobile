@@ -5,7 +5,7 @@ class DateFormatter {
   /// like [just now] or [today]
   static String getVerboseDateTime(int timestamp) {
     if (timestamp == null) return '';
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final localDT = dateTime.toLocal();
     // if timestamp is less than a minute old return 'Now'
     DateTime justNow = DateTime.now();
@@ -15,7 +15,7 @@ class DateFormatter {
 
     // if the date is the same return time without seconds, taking
     // locale into account
-    String approximateTime = DateFormat('HH:mm').format(dateTime);
+    String approximateTime = DateFormat('HH:mm').format(localDT);
     if (localDT.year == justNow.year &&
         localDT.month == justNow.month &&
         localDT.day == justNow.day) {
@@ -24,17 +24,15 @@ class DateFormatter {
 
     // include year in date if message is from previous year
     if (justNow.difference(localDT) > Duration(days: 365)) {
-      return '${DateFormat('d MMM y HH:mm').format(dateTime)}';
+      return '${DateFormat('d MMM y HH:mm').format(localDT)}';
     }
 
-    return '${DateFormat('d MMM HH:mm').format(dateTime)}';
-
-    // by default return 'year/month/day, time'
+    return '${DateFormat('d MMM HH:mm').format(localDT)}';
   }
 
   static String getVerboseDate(int timestamp) {
     DateTime dateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toLocal();
+        DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
     DateTime justNow = DateTime.now().subtract(Duration(minutes: 1));
     if (!dateTime.difference(justNow).isNegative) {
       return 'Now';
@@ -56,7 +54,7 @@ class DateFormatter {
   // Return just time
   static String getVerboseTime(int timestamp) {
     DateTime dateTime =
-        DateTime.fromMillisecondsSinceEpoch(timestamp * 1000).toLocal();
+        DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
     return '${DateFormat('HH:mm').format(dateTime)}';
   }
 }
