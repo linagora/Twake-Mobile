@@ -11,7 +11,7 @@ class MessageModalSheet extends StatefulWidget {
   final int responsesCount;
   final void Function(BuildContext, String, {bool autofocus}) onReply;
   final void Function(BuildContext) onDelete;
-  final void Function(BuildContext) onEdit;
+  final Function onEdit;
   final Function onCopy;
   final bool isThread;
   final BuildContext ctx;
@@ -89,9 +89,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                           color: Color(0xff444444),
                         ),
                       ),
-                      onTap: () {
-                        widget.onEdit(widget.ctx);
-                      },
+                      onTap: widget.onEdit,
                     ),
                   if (!widget.isThread)
                     ListTile(

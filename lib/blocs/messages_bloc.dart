@@ -218,7 +218,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         id: dummyId,
         threadId: body['thread_id'],
         userId: ProfileBloc.userId,
-        creationDate: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        creationDate: DateTime.now().millisecondsSinceEpoch,
         content: MessageTwacode(originalStr: body['original_str']),
         reactions: {},
         responsesCount: 0,

@@ -30,7 +30,7 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
       ch.messagesTotal += event.totalModifier ?? 0;
       ch.messagesUnread += event.unreadModifier ?? 0;
       ch.lastActivity =
-          event.timeStamp ?? DateTime.now().millisecondsSinceEpoch ~/ 1000;
+          event.timeStamp ?? DateTime.now().millisecondsSinceEpoch;
       repository.saveOne(ch);
     } else
       return;

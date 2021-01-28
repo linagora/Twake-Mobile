@@ -165,6 +165,7 @@ class SQLite with Storage {
     StorageType type,
     List<List> filters,
   }) async {
+    logger.e('REQUESTING BATCH DELETE\nTYPE: $type\nFILTERS: $filters');
     final table = mapTypeToStore(type);
     final filter = filtersBuild(filters);
     await _db.delete(table, where: filter.item1, whereArgs: filter.item2);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+// import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -99,7 +99,8 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
 
     _controller.addListener(() {
       // print(_controller.position.pixels);
-      if (_controller.position.pixels > 100 && _physics is! ClampingScrollPhysics) {
+      if (_controller.position.pixels > 100 &&
+          _physics is! ClampingScrollPhysics) {
         setState(() => _physics = ClampingScrollPhysics());
       } else if (_physics is! BouncingScrollPhysics) {
         setState(() => _physics = BouncingScrollPhysics());
