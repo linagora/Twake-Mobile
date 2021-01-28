@@ -33,6 +33,7 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
 
   @override
   Stream<SingleMessageState> mapEventToState(SingleMessageEvent event) async* {
+    message.logger.d('GOT MESSAGE EVENT $event');
     if (event is UpdateContent) {
       message.updateContent({
         'company_id': ProfileBloc.selectedCompany,

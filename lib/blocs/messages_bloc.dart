@@ -39,9 +39,9 @@ class MessagesBloc<T extends BaseChannelBloc>
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     _subscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelPicked) {
-        repository.logger.d('TRIGGERED MESSAGE FETCH');
-        repository.logger
-            .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
+        // repository.logger.d('TRIGGERED MESSAGE FETCH');
+        // repository.logger
+        // .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
         this.add(LoadMessages());
       }

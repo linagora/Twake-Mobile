@@ -1,4 +1,5 @@
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:logger/logger.dart';
 
 final SentryClient _sentry = SentryClient(
   SentryOptions(
@@ -14,17 +15,16 @@ bool get isInDebugMode {
   // in production. Therefore, this code only sets `inDebugMode` to true
   // in a development environment.
   assert(inDebugMode = true);
-  print('IN DEBUG: $inDebugMode');
 
   return inDebugMode;
 }
 
 Future<void> reportError(dynamic error, dynamic stackTrace) async {
   // Print the exception to the console.
-  print('Caught error: $error');
+  Logger().e('Caught error: $error');
   if (isInDebugMode) {
     // Print the full stacktrace in debug mode.
-    print(stackTrace);
+    Logger().e(stackTrace);
   } else {
     // Send the Exception and Stacktrace to Sentry in Production mode.
     _sentry.captureException(

@@ -68,6 +68,7 @@ class Message extends CollectionItem {
       : super(id);
 
   void updateContent(Map<String, dynamic> body) {
+    logger.d('UPDATING MESSAGE CONTENT');
     String prevStr = '' + content.originalStr;
     content.originalStr = body['original_str'];
     _api.put(Endpoint.messages, body: body).then((_) => save()).catchError((e) {

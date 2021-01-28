@@ -43,19 +43,6 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
     );
   }
 
-  void onEdit(context) {
-    Navigator.of(context).pop();
-    BlocProvider.of<MessageEditBloc>(context).add(
-      EditMessage(
-          originalStr: message.content.originalStr,
-          onMessageEditComplete: (text) {
-            BlocProvider.of<SingleMessageBloc>(context)
-                .add(UpdateContent(text));
-            BlocProvider.of<MessageEditBloc>(context).add(CancelMessageEdit());
-          }),
-    );
-  }
-
   onCopy({context, text}) {
     FlutterClipboard.copy(text);
     Navigator.of(context).pop();
@@ -106,14 +93,17 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                         onReply: onReply,
                         onEdit: () {
                           Navigator.of(ctx).pop();
-                          BlocProvider.of<MessageEditBloc>(ctx).add(
+                          final smbloc = ctx.read<SingleMessageBloc>();
+                          final mebloc = ctx.read<MessageEditBloc>();
+                          mebloc.add(
                             EditMessage(
                                 originalStr: message.content.originalStr,
                                 onMessageEditComplete: (text) {
-                                  BlocProvider.of<SingleMessageBloc>(ctx)
-                                      .add(UpdateContent(text));
-                                  BlocProvider.of<MessageEditBloc>(ctx)
-                                      .add(CancelMessageEdit());
+                                  // smbloc get's closed if
+                                  // listview disposes of message tile
+                                  smbloc.add(UpdateContent(text));
+                                  mebloc.add(CancelMessageEdit());
+                                  FocusManager.instance.primaryFocus.unfocus();
                                 }),
                           );
                         },
