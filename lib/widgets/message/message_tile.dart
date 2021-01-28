@@ -19,7 +19,7 @@ import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
-class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
+class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
   final bool hideShowAnswers;
   final Message message;
 
@@ -29,10 +29,26 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
+  @override
+  _MessageTileState<T> createState() => _MessageTileState<T>();
+}
+
+class _MessageTileState<T extends BaseChannelBloc>
+    extends State<MessageTile<T>> {
+  bool _hideShowAnswers;
+  Message _message;
+
+  @override
+  void initState() {
+    super.initState();
+    _hideShowAnswers = widget.hideShowAnswers;
+    _message = widget.message;
+  }
+
   void onReply(context, String messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
     BlocProvider.of<DraftBloc>(context)
-        .add(LoadDraft(id: message.id, type: DraftType.thread));
+        .add(LoadDraft(id: _message.id, type: DraftType.thread));
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -55,7 +71,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
   }
 
   void onDelete(context, RemoveMessage event) {
-    if (message.threadId == null)
+    if (_message.threadId == null)
       BlocProvider.of<MessagesBloc<T>>(context).add(event);
     else
       BlocProvider.of<ThreadsBloc<T>>(context).add(event);
@@ -67,11 +83,11 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<SingleMessageBloc>(
-          create: (_) => SingleMessageBloc(message),
+          create: (_) => SingleMessageBloc(_message),
           lazy: false,
         ),
         BlocProvider<UserBloc>(
-          create: (_) => UserBloc(message.userId),
+          create: (_) => UserBloc(_message.userId),
           lazy: false,
         )
       ],
@@ -89,7 +105,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                         messageId: messageState.id,
                         responsesCount: messageState.responsesCount,
                         isThread:
-                            messageState.threadId != null || hideShowAnswers,
+                            messageState.threadId != null || _hideShowAnswers,
                         onReply: onReply,
                         onEdit: () {
                           Navigator.of(ctx).pop();
@@ -97,7 +113,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                           final mebloc = ctx.read<MessageEditBloc>();
                           mebloc.add(
                             EditMessage(
-                                originalStr: message.content.originalStr,
+                                originalStr: _message.content.originalStr,
                                 onMessageEditComplete: (text) {
                                   // smbloc get's closed if
                                   // listview disposes of message tile
@@ -111,7 +127,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                         onDelete: (ctx) => onDelete(
                             ctx,
                             RemoveMessage(
-                              channelId: message.channelId,
+                              channelId: _message.channelId,
                               messageId: messageState.id,
                               threadId: messageState.threadId,
                             )),
@@ -125,7 +141,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                 FocusManager.instance.primaryFocus.unfocus();
                 if (messageState.threadId == null &&
                     messageState.responsesCount != 0 &&
-                    !hideShowAnswers) {
+                    !_hideShowAnswers) {
                   onReply(context, messageState.id);
                 }
               },
@@ -173,7 +189,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                   ),
                                   Text(
                                     messageState.threadId != null ||
-                                            hideShowAnswers
+                                            _hideShowAnswers
                                         ? DateFormatter.getVerboseDateTime(
                                             messageState.creationDate)
                                         : DateFormatter.getVerboseTime(
@@ -207,7 +223,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatelessWidget {
                                   }),
                                   if (messageState.responsesCount > 0 &&
                                       messageState.threadId == null &&
-                                      !hideShowAnswers)
+                                      !_hideShowAnswers)
                                     Text(
                                       'See all answers (${messageState.responsesCount})',
                                       style: StylesConfig.miniPurple,
