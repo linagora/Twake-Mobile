@@ -69,6 +69,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (ctx, state) {
           if (state is AuthInitializing) {
@@ -188,7 +189,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                           MediaQuery.of(context).padding.top,
                       child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
                           builder: (context, state) {
-                        print('Connection state: $state');
+                        // print('Connection state: $state');
                         return AnimatedSwitcher(
                           duration: Duration(milliseconds: 250),
                           switchOutCurve: Threshold(0),
