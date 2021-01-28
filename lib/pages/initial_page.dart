@@ -69,6 +69,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (ctx, state) {
           if (state is AuthInitializing) {
