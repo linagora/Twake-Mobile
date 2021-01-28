@@ -123,7 +123,7 @@ class _MessageTileState<T extends BaseChannelBloc> extends State<MessageTile<T>>
                           Navigator.of(ctx).pop();
                           BlocProvider.of<MessageEditBloc>(ctx).add(
                             EditMessage(
-                                originalStr: message.content.originalStr,
+                                originalStr: _message.content.originalStr,
                                 onMessageEditComplete: (text) {
                                   BlocProvider.of<SingleMessageBloc>(ctx)
                                       .add(UpdateContent(text));
