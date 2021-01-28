@@ -101,7 +101,8 @@ class CollectionRepository<T extends CollectionItem> {
   }) async {
     List<dynamic> itemsList = [];
     if (!forceFromApi) {
-      logger.d('Reloading $T items from storage...\nFilters: $filters');
+      // logger.d(
+      // 'Reloading $T items from storage...\nFilters: $filters\nLIMIT: $limit\nOFFSET: $offset');
       itemsList = await _storage.batchLoad(
         type: _typeToStorageType[T],
         filters: filters,
@@ -109,6 +110,7 @@ class CollectionRepository<T extends CollectionItem> {
         limit: limit,
         offset: offset,
       );
+      // logger.d('Loaded ${itemsList.length} items');
     }
     bool saveToStore = false;
     if (itemsList.isEmpty) {
@@ -121,8 +123,9 @@ class CollectionRepository<T extends CollectionItem> {
       }
       saveToStore = true;
     }
-    if (forceFromApi)
+    if (forceFromApi) {
       await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+    }
     _updateItems(itemsList, saveToStore: saveToStore);
     return true;
   }
@@ -135,7 +138,7 @@ class CollectionRepository<T extends CollectionItem> {
     int offset,
   }) async {
     List<dynamic> itemsList = [];
-    logger.d('Loading more $T items from storage...\nFilters: $filters');
+    // logger.d('Loading more $T items from storage...\nFilters: $filters');
     itemsList = await _storage.batchLoad(
       type: _typeToStorageType[T],
       filters: filters,
@@ -182,6 +185,8 @@ class CollectionRepository<T extends CollectionItem> {
 
   Future<bool> pushOne(
     Map<String, dynamic> body, {
+    Function onError,
+    Function(T) onSuccess,
     addToItems = true,
   }) async {
     logger.d('Sending item $T to api...');
@@ -190,11 +195,13 @@ class CollectionRepository<T extends CollectionItem> {
       resp = (await _api.post(apiEndpoint, body: body));
     } catch (error) {
       logger.e('Error while sending $T item to api\n${error.message}');
+      if (onError != null) onError();
       return false;
     }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = _typeToConstructor[T](resp);
     if (addToItems) this.items.add(item);
+    if (onSuccess != null) onSuccess(item);
     saveOne(item);
     return true;
   }

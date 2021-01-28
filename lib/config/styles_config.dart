@@ -107,5 +107,11 @@ class StylesConfig {
     fontSize: 12.0,
     fontWeight: FontWeight.w400,
   );
+
+  static final disabled = TextStyle(
+    color: Color(0xff696969),
+    fontSize: 12.0,
+    fontWeight: FontWeight.w400,
+  );
 //TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
 }

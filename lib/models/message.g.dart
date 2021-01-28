@@ -14,15 +14,14 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     userId: json['user_id'] as String,
     appId: json['app_id'] as String,
     creationDate: json['creation_date'] as int,
-  )
-    ..threadId = json['thread_id'] as String
-    ..responsesCount = json['responses_count'] as int ?? 0
-    ..content = json['content'] == null
+    threadId: json['thread_id'] as String,
+    content: json['content'] == null
         ? null
-        : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>)
-    ..reactions = json['reactions'] as Map<String, dynamic> ?? {}
-    ..channelId = json['channel_id'] as String
-    ..isSelected = json['is_selected'] as int ?? 0;
+        : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
+    channelId: json['channel_id'] as String,
+    responsesCount: json['responses_count'] as int ?? 0,
+    reactions: json['reactions'] as Map<String, dynamic> ?? {},
+  )..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{

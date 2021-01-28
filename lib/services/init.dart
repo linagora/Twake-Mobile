@@ -22,7 +22,7 @@ Future<AuthRepository> initAuth() async {
 
   final _api = Api();
   final _state = await Connectivity().checkConnectivity();
-  if (_state == ConnectivityResult.none) _api.hasConnection = false;
+  _api.hasConnection = _state != ConnectivityResult.none;
 
   if (kDebugMode)
     Logger.level = Level.debug;

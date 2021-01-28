@@ -78,6 +78,9 @@ class _MessageEditField extends State<MessageEditField> {
     if (oldWidget.initialText != widget.initialText) {
       _controller.text = widget.initialText;
     }
+    if (widget.autofocus) {
+      _focusNode.requestFocus();
+    }
     super.didUpdateWidget(oldWidget);
   }
 

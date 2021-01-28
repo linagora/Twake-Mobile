@@ -39,9 +39,9 @@ class MessagesBloc<T extends BaseChannelBloc>
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     _subscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelPicked) {
-        repository.logger.d('TRIGGERED MESSAGE FETCH');
-        repository.logger
-            .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
+        // repository.logger.d('TRIGGERED MESSAGE FETCH');
+        // repository.logger
+        // .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
         this.add(LoadMessages());
       }
@@ -212,25 +212,47 @@ class MessagesBloc<T extends BaseChannelBloc>
         yield newState;
       }
     } else if (event is SendMessage) {
-      final success = await repository.pushOne(_makeQueryParams(event));
-      if (!success) {
-        yield ErrorSendingMessage(
-          messages: repository.items,
-          force: DateTime.now().toString(),
-          parentChannel: selectedChannel,
-        );
-        return;
-      }
+      final String dummyId = DateTime.now().toString();
+      final body = _makeQueryParams(event);
+      var tempItem = Message(
+        id: dummyId,
+        threadId: body['thread_id'],
+        userId: ProfileBloc.userId,
+        creationDate: DateTime.now().millisecondsSinceEpoch,
+        content: MessageTwacode(originalStr: body['original_str']),
+        reactions: {},
+        responsesCount: 0,
+        channelId: body['channel_id'],
+      );
+      repository.pushOne(
+        body,
+        addToItems: false,
+        onError: () {
+          this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.add(GenerateErrorSendingMessage());
+        },
+        onSuccess: (message) {
+          tempItem.id = message.id;
+          this.add(FinishLoadingMessages());
+          _updateParentChannel();
+        },
+      );
+      this.repository.items.add(tempItem);
       _sortItems();
       yield MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
-      _updateParentChannel();
     } else if (event is ClearMessages) {
       await repository.clean();
       yield MessagesEmpty(parentChannel: selectedChannel);
+    } else if (event is GenerateErrorSendingMessage) {
+      yield ErrorSendingMessage(
+        messages: repository.items,
+        force: DateTime.now().toString(),
+        parentChannel: selectedChannel,
+      );
     } else if (event is SelectMessage) {
       repository.select(event.messageId);
       yield MessageSelected(

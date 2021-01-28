@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc.dart';
+import 'package:twake/blocs/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel.dart';
@@ -113,65 +114,76 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<MessagesBloc<T>, MessagesState>(
             builder: (ctx, messagesState) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Divider(
-                thickness: 1.0,
-                height: 1.0,
-                color: Color(0xffEEEEEE),
-              ),
-              if (messagesState is MoreMessagesLoading &&
-                  !(messagesState is ErrorLoadingMoreMessages))
-                SizedBox(
-                  height: Dim.hm4,
-                  width: Dim.hm4,
-                  child: Padding(
-                    padding: EdgeInsets.all(Dim.widthMultiplier),
-                    child: CircularProgressIndicator(),
-                  ),
+          return BlocProvider<MessageEditBloc>(
+            create: (ctx) => MessageEditBloc(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Divider(
+                  thickness: 1.0,
+                  height: 1.0,
+                  color: Color(0xffEEEEEE),
                 ),
-              MessagesGroupedList<T>(),
-              BlocBuilder<DraftBloc, DraftState>(
-                  buildWhen: (_, current) =>
-                      current is DraftLoaded || current is DraftReset,
-                  builder: (context, state) {
-                    if (state is DraftLoaded &&
-                        state.type != DraftType.thread) {
-                      draft = state.draft;
-                      // print('DRAFT IS LOADED: $draft');
-                    } else if (state is DraftReset) {
-                      draft = '';
-                    }
+                if (messagesState is MoreMessagesLoading &&
+                    !(messagesState is ErrorLoadingMoreMessages))
+                  SizedBox(
+                    height: Dim.hm4,
+                    width: Dim.hm4,
+                    child: Padding(
+                      padding: EdgeInsets.all(Dim.widthMultiplier),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                MessagesGroupedList<T>(),
+                BlocBuilder<DraftBloc, DraftState>(
+                    buildWhen: (_, current) =>
+                        current is DraftLoaded || current is DraftReset,
+                    builder: (context, state) {
+                      if (state is DraftLoaded &&
+                          state.type != DraftType.thread) {
+                        draft = state.draft;
+                        // print('DRAFT IS LOADED: $draft');
+                      } else if (state is DraftReset) {
+                        draft = '';
+                      }
 
-                    final channelId = messagesState.parentChannel.id;
-                    if (messagesState.parentChannel is Channel) {
-                      draftType = DraftType.channel;
-                    } else if (messagesState.parentChannel is Direct) {
-                      draftType = DraftType.direct;
-                    }
+                      final channelId = messagesState.parentChannel.id;
+                      if (messagesState.parentChannel is Channel) {
+                        draftType = DraftType.channel;
+                      } else if (messagesState.parentChannel is Direct) {
+                        draftType = DraftType.direct;
+                      }
 
-                    return MessageEditField(
-                      key: UniqueKey(),
-                      initialText: draft,
-                      onMessageSend: (content) {
-                        BlocProvider.of<MessagesBloc<T>>(context).add(
-                          SendMessage(content: content),
-                        );
-                        context
-                            .read<DraftBloc>()
-                            .add(ResetDraft(id: channelId, type: draftType));
-                      },
-                      onTextUpdated: (text) {
-                        context.read<DraftBloc>().add(UpdateDraft(
-                              id: channelId,
-                              type: draftType,
-                              draft: text,
-                            ));
-                      },
-                    );
-                  }),
-            ],
+                      return BlocBuilder<MessageEditBloc, MessageEditState>(
+                        builder: (ctx, state) => MessageEditField(
+                          key: UniqueKey(),
+                          autofocus: state is MessageEditing,
+                          initialText: state is MessageEditing
+                              ? state.originalStr
+                              : draft,
+                          onMessageSend: state is MessageEditing
+                              ? state.onMessageEditComplete
+                              : (content) {
+                                  BlocProvider.of<MessagesBloc<T>>(context).add(
+                                    SendMessage(content: content),
+                                  );
+                                  context.read<DraftBloc>().add(ResetDraft(
+                                      id: channelId, type: draftType));
+                                },
+                          onTextUpdated: state is MessageEditing
+                              ? (text) {}
+                              : (text) {
+                                  context.read<DraftBloc>().add(UpdateDraft(
+                                        id: channelId,
+                                        type: draftType,
+                                        draft: text,
+                                      ));
+                                },
+                        ),
+                      );
+                    }),
+              ],
+            ),
           );
         }),
       ),
