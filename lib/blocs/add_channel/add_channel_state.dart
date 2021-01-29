@@ -48,8 +48,13 @@ class Creation extends AddChannelState {
 }
 
 class Created extends AddChannelState {
+  final String id;
+  final ChannelType channelType;
+
+  Created(this.id, this.channelType);
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [id, channelType];
 }
 
 class Error extends AddChannelState {
