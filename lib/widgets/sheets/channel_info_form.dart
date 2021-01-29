@@ -99,8 +99,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               context.read<SheetBloc>().add(CloseSheet());
               // Clear sheet
               context.read<SheetBloc>().add(ClearSheet());
-              // Return to initial page
-              context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
             } else if (state is Error) {
               // Show an error
               Scaffold.of(context).showSnackBar(SnackBar(
@@ -116,7 +114,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           },
           buildWhen: (_, current) {
             return (current is Updated ||
-                current is StageUpdated ||
                 current is Creation);
           },
         builder: (context, state) {
@@ -299,56 +296,56 @@ class SelectableItem extends StatelessWidget {
   }
 }
 
-class ParticipantsButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context
-          .read<AddChannelBloc>()
-          .add(SetFlowStage(FlowStage.participants)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-        child: ParticipantsCommonWidget(
-          title: 'Added participants',
-          trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
-            builder: (context, state) {
-              var participantsCount = 0;
-              if (state is Updated) {
-                final participants = state.repository?.members;
-                participantsCount = participants.length;
-              }
-              return participantsCount > 0
-                  ? Row(
-                children: [
-                  Text(
-                    '$participantsCount',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff837cfe),
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.forward,
-                    color: Color(0xff837cfe),
-                  ),
-                ],
-              )
-                  : Text(
-                'Add',
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff837cfe),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class ParticipantsButton extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () => context
+//           .read<AddChannelBloc>()
+//           .add(SetFlowStage(FlowStage.participants)),
+//       child: Padding(
+//         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+//         child: ParticipantsCommonWidget(
+//           title: 'Added participants',
+//           trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
+//             builder: (context, state) {
+//               var participantsCount = 0;
+//               if (state is Updated) {
+//                 final participants = state.repository?.members;
+//                 participantsCount = participants.length;
+//               }
+//               return participantsCount > 0
+//                   ? Row(
+//                 children: [
+//                   Text(
+//                     '$participantsCount',
+//                     style: TextStyle(
+//                       fontSize: 17.0,
+//                       fontWeight: FontWeight.w400,
+//                       color: Color(0xff837cfe),
+//                     ),
+//                   ),
+//                   Icon(
+//                     CupertinoIcons.forward,
+//                     color: Color(0xff837cfe),
+//                   ),
+//                 ],
+//               )
+//                   : Text(
+//                 'Add',
+//                 style: TextStyle(
+//                   fontSize: 17.0,
+//                   fontWeight: FontWeight.w400,
+//                   color: Color(0xff837cfe),
+//                 ),
+//               );
+//             },
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class AddAllSwitcher extends StatelessWidget {
   @override

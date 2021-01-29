@@ -52,15 +52,6 @@ class Update extends AddChannelEvent {
       ];
 }
 
-class SetFlowStage extends AddChannelEvent {
-  final FlowStage stage;
-
-  SetFlowStage(this.stage);
-
-  @override
-  List<Object> get props => [stage];
-}
-
 class SetFlowType extends AddChannelEvent {
   final bool isDirect;
 

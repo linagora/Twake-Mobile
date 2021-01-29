@@ -75,8 +75,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
         // Close sheet
         context.read<SheetBloc>().add(CloseSheet());
-        // Return to initial page
-        context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
       } else if (state is Error) {
         // Show an error
         Scaffold.of(context).showSnackBar(SnackBar(
@@ -91,7 +89,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
       }
     }, buildWhen: (_, current) {
       return (current is Updated ||
-          current is StageUpdated ||
           current is Creation);
     }, builder: (context, state) {
       return Column(

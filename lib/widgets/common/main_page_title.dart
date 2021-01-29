@@ -48,13 +48,12 @@ class MainPageTitle extends StatelessWidget {
               // by preselecting desired type
               // according the title opposite plus button
               if (isDirect) {
-                context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.participants));
                 context.read<AddChannelBloc>().add(SetFlowType(isDirect: true));
               } else {
                 context
                     .read<AddChannelBloc>()
                     .add(Update(type: ChannelType.public));
-                context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
+                context.read<AddChannelBloc>().add(SetFlowType(isDirect: false));
               }
               trailingAction?.call();
             },

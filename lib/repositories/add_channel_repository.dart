@@ -7,11 +7,6 @@ import 'package:twake/services/storage/storage.dart';
 
 part 'add_channel_repository.g.dart';
 
-enum FlowStage {
-  info,
-  participants,
-}
-
 enum ChannelType {
   public,
   private,
@@ -47,8 +42,6 @@ class AddChannelRepository {
   @JsonKey(ignore: true)
   static final _storage = Storage();
   @JsonKey(ignore: true)
-  FlowStage flow;
-  @JsonKey(ignore: true)
   ChannelType type;
 
   AddChannelRepository(
@@ -77,9 +70,6 @@ class AddChannelRepository {
   //
   // }
 
-  void setStage(FlowStage flow) {
-    this.flow = flow;
-  }
 
   Future<void> cache() async {}
 
@@ -93,7 +83,6 @@ class AddChannelRepository {
     channelGroup = '';
     def = true;
     members = [];
-    flow = FlowStage.info;
     type = ChannelType.public;
   }
 

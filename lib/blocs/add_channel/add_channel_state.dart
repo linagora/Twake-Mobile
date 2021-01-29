@@ -33,15 +33,6 @@ class AddChannelCached extends AddChannelState {
   List<Object> get props => [];
 }
 
-class StageUpdated extends AddChannelState {
-  final FlowStage stage;
-
-  StageUpdated(this.stage);
-
-  @override
-  List<Object> get props => [stage];
-}
-
 class Updated extends AddChannelState {
   final AddChannelRepository repository;
 
