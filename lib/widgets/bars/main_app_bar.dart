@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/workspaces_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 

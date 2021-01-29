@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/connection_bloc.dart' as cb;
-import 'package:twake/events/auth_event.dart';
+import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
+import 'package:twake/blocs/auth_bloc/auth_event.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/init.dart';
-import 'package:twake/states/auth_state.dart';
+import 'package:twake/blocs/auth_bloc/auth_state.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-export 'package:twake/events/auth_event.dart';
-export 'package:twake/states/auth_state.dart';
+export 'package:twake/blocs/auth_bloc/auth_event.dart';
+export 'package:twake/blocs/auth_bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;

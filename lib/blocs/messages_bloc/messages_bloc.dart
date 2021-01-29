@@ -1,21 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/channels_bloc.dart';
-import 'package:twake/blocs/directs_bloc.dart';
-import 'package:twake/blocs/notification_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/blocs/threads_bloc.dart';
-import 'package:twake/events/messages_event.dart';
+import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
+import 'package:twake/blocs/messages_bloc/messages_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
-import 'package:twake/states/messages_state.dart';
+import 'package:twake/blocs/messages_bloc/messages_state.dart';
 
-export 'package:twake/states/messages_state.dart';
-export 'package:twake/events/messages_event.dart';
+export 'package:twake/blocs/messages_bloc/messages_state.dart';
+export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
 const _MESSAGE_LIMIT = 50;
 

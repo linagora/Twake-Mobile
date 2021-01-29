@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:twake/blocs/user_bloc.dart';
+import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'image_avatar.dart';
 

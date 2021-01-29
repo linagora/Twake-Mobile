@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
-import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/messages_bloc.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';

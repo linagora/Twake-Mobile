@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/events/single_message_event.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/single_message_bloc/single_message_event.dart';
 import 'package:twake/models/message.dart';
-import 'package:twake/states/single_message_state.dart';
+import 'package:twake/blocs/single_message_bloc/single_message_state.dart';
 
-export 'package:twake/events/single_message_event.dart';
+export 'package:twake/blocs/single_message_bloc/single_message_event.dart';
 export 'package:twake/models/message.dart';
-export 'package:twake/states/single_message_state.dart';
+export 'package:twake/blocs/single_message_bloc/single_message_state.dart';
 
 class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
   final Message message;

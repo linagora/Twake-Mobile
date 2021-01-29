@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
 

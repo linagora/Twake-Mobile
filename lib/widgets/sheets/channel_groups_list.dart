@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/radio_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelGroupsList extends StatelessWidget {

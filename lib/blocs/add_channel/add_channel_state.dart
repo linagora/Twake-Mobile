@@ -1,4 +1,4 @@
-part of '../blocs/add_channel_bloc.dart';
+part of '../../blocs/add_channel/add_channel_bloc.dart';
 
 abstract class AddChannelState extends Equatable {
   const AddChannelState();

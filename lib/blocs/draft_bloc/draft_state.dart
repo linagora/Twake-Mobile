@@ -1,4 +1,4 @@
-part of '../blocs/draft_bloc.dart';
+part of '../../blocs/draft_bloc/draft_bloc.dart';
 
 abstract class DraftState extends Equatable {
   const DraftState();

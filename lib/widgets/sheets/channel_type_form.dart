@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:twake/blocs/channels_bloc.dart';
-import 'package:twake/blocs/directs_bloc.dart';
-import 'package:twake/blocs/sheet_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelTypeForm extends StatelessWidget {

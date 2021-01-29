@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
+import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 

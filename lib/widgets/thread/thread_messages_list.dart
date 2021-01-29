@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/threads_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/models/message.dart';

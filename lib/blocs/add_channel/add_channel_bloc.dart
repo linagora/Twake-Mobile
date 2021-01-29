@@ -5,9 +5,9 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/services/init.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 
-part '../events/add_channel_event.dart';
+part 'add_channel_event.dart';
 
-part '../states/add_channel_state.dart';
+part 'add_channel_state.dart';
 
 class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
   final AddChannelRepository repository;

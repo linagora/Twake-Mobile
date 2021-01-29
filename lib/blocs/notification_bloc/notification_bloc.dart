@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/events/notification_event.dart';
+import 'package:twake/blocs/notification_bloc/notification_event.dart';
 import 'package:twake/services/notifications.dart';
-import 'package:twake/states/notification_state.dart';
+import 'package:twake/blocs/notification_bloc/notification_state.dart';
 import 'package:twake/models/notification.dart';
 
-export 'package:twake/events/notification_event.dart';
-export 'package:twake/states/notification_state.dart';
+export 'package:twake/blocs/notification_bloc/notification_event.dart';
+export 'package:twake/blocs/notification_bloc/notification_state.dart';
 export 'package:twake/models/notification.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/draft_bloc.dart';
-import 'package:twake/blocs/message_edit_bloc.dart';
-import 'package:twake/blocs/threads_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
+import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/draft_repository.dart';

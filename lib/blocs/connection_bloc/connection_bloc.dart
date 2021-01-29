@@ -1,11 +1,11 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/events/connection_event.dart';
+import 'package:twake/blocs/connection_bloc/connection_event.dart';
 import 'package:twake/services/api.dart';
-import 'package:twake/states/connection_state.dart';
+import 'package:twake/blocs/connection_bloc/connection_state.dart';
 
-export 'package:twake/events/connection_event.dart';
-export 'package:twake/states/connection_state.dart';
+export 'package:twake/blocs/connection_bloc/connection_event.dart';
+export 'package:twake/blocs/connection_bloc/connection_state.dart';
 
 class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
   var _subscribtion;
