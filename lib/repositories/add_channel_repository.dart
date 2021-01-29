@@ -9,8 +9,6 @@ part 'add_channel_repository.g.dart';
 
 enum FlowStage {
   info,
-  groups,
-  type,
   participants,
 }
 

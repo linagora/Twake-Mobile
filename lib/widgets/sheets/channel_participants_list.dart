@@ -14,11 +14,6 @@ import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelParticipantsList extends StatefulWidget {
-  final bool isDirect;
-
-  const ChannelParticipantsList({Key key, this.isDirect = false})
-      : super(key: key);
-
   @override
   _ChannelParticipantsListState createState() =>
       _ChannelParticipantsListState();
@@ -28,14 +23,11 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   Timer _debounce;
-  bool _isDirect;
   String _searchRequest;
 
   @override
   void initState() {
     super.initState();
-
-    _isDirect = widget.isDirect;
 
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
@@ -56,20 +48,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
     _focusNode.dispose();
     _debounce?.cancel();
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant ChannelParticipantsList oldWidget) {
-    if (oldWidget.isDirect != widget.isDirect) {
-      _isDirect = widget.isDirect;
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  void _return() {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    context.read<SheetBloc>().add(ClearSheet());
-    context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.type));
   }
 
   void _close() {
@@ -120,10 +98,10 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         children: [
           SheetTitleBar(
             title: 'Add participants',
-            leadingTitle: _isDirect ? 'Close' : 'Back',
-            leadingAction: _isDirect ? () => _close() : () => _return(),
-            trailingTitle: _isDirect ? 'Create' : 'Add',
-            trailingAction: _isDirect ? () => _createDirect() : () => _return(),
+            leadingTitle: 'Close',
+            leadingAction: () => _close(),
+            trailingTitle: 'Create',
+            trailingAction: () => _createDirect(),
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),

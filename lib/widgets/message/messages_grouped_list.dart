@@ -46,80 +46,75 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
         },
         child: Expanded(
           child: GestureDetector(
-            onTap: () {
-              FocusManager.instance.primaryFocus.unfocus();
-            },
-            child: GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              child: StickyGroupedListView<Message, DateTime>(
-                  order: StickyGroupedListOrder.DESC,
-                  stickyHeaderBackgroundColor:
-                      Theme.of(context).scaffoldBackgroundColor,
-                  reverse: true,
-                  elements: messages,
-                  groupBy: (Message m) {
-                    final DateTime dt = DateTime.fromMillisecondsSinceEpoch(
-                        m.creationDate * 1000);
-                    return DateTime(dt.year, dt.month, dt.day);
-                  },
-                  groupComparator: (DateTime value1, DateTime value2) =>
-                      value1.compareTo(value2),
-                  itemComparator: (Message m1, Message m2) {
-                    return m1.creationDate.compareTo(m2.creationDate);
-                  },
-                  separator: SizedBox(height: Dim.hm2),
-                  groupSeparatorBuilder: (Message message) {
-                    return GestureDetector(
-                      onTap: () {
-                        FocusManager.instance.primaryFocus.unfocus();
-                      },
-                      child: Container(
-                        height: Dim.hm3,
-                        margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-                        color: Theme.of(context).scaffoldBackgroundColor,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.center,
-                              child: Divider(
-                                thickness: 0.0,
-                              ),
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: StickyGroupedListView<Message, DateTime>(
+                order: StickyGroupedListOrder.DESC,
+                stickyHeaderBackgroundColor:
+                    Theme.of(context).scaffoldBackgroundColor,
+                reverse: true,
+                elements: messages,
+                groupBy: (Message m) {
+                  final DateTime dt = DateTime.fromMillisecondsSinceEpoch(
+                      m.creationDate * 1000);
+                  return DateTime(dt.year, dt.month, dt.day);
+                },
+                groupComparator: (DateTime value1, DateTime value2) =>
+                    value1.compareTo(value2),
+                itemComparator: (Message m1, Message m2) {
+                  return m1.creationDate.compareTo(m2.creationDate);
+                },
+                separator: SizedBox(height: Dim.hm2),
+                groupSeparatorBuilder: (Message message) {
+                  return GestureDetector(
+                    onTap: () {
+                      FocusManager.instance.primaryFocus.unfocus();
+                    },
+                    child: Container(
+                      height: Dim.hm3,
+                      margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.center,
+                            child: Divider(
+                              thickness: 0.0,
                             ),
-                            Align(
-                              // alignment: Alignment.center,
-                              child: Container(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                width: Dim.widthPercent(30),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(1.0),
-                                  child: Text(
-                                    DateFormatter.getVerboseDate(
-                                        message.creationDate),
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff92929C),
-                                    ),
-                                    textAlign: TextAlign.center,
+                          ),
+                          Align(
+                            // alignment: Alignment.center,
+                            child: Container(
+                              color:
+                                  Theme.of(context).scaffoldBackgroundColor,
+                              width: Dim.widthPercent(30),
+                              child: Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Text(
+                                  DateFormatter.getVerboseDate(
+                                      message.creationDate),
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff92929C),
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                  itemBuilder: (_, Message message) {
-                    return MessageTile<T>(
-                      message: message,
-                      key: ValueKey(
-                        message.id + message.responsesCount.toString(),
-                      ),
-                    );
-                  }),
-            ),
+                    ),
+                  );
+                },
+                itemBuilder: (_, Message message) {
+                  return MessageTile<T>(
+                    message: message,
+                    key: ValueKey(
+                      message.id + message.responsesCount.toString(),
+                    ),
+                  );
+                }),
           ),
         ),
       );
