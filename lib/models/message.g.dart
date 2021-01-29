@@ -21,7 +21,12 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     channelId: json['channel_id'] as String,
     responsesCount: json['responses_count'] as int ?? 0,
     reactions: json['reactions'] as Map<String, dynamic> ?? {},
-  )..isSelected = json['is_selected'] as int ?? 0;
+  )
+    ..isSelected = json['is_selected'] as int ?? 0
+    ..username = json['username'] as String
+    ..firstName = json['firstname'] as String
+    ..lastName = json['lastname'] as String
+    ..thumbnail = json['thumbnail'] as String;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -35,4 +40,8 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'reactions': instance.reactions,
       'channel_id': instance.channelId,
       'is_selected': instance.isSelected,
+      'username': instance.username,
+      'firstname': instance.firstName,
+      'lastname': instance.lastName,
+      'thumbnail': instance.thumbnail,
     };

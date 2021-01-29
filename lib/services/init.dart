@@ -3,11 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
-import 'package:twake/models/message.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
@@ -75,9 +75,8 @@ Future<InitData> initMain() async {
   // final directs =
   // CollectionRepository<Direct>(items: [], apiEndpoint: Endpoint.directs);
   final messages =
-      CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
-  final threads =
-      CollectionRepository<Message>(items: [], apiEndpoint: Endpoint.messages);
+      MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
+  final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
 
   return InitData(
     profile: profile,
@@ -99,8 +98,8 @@ class InitData {
   final CollectionRepository<Workspace> workspaces;
   final CollectionRepository<Channel> channels;
   final CollectionRepository<Direct> directs;
-  final CollectionRepository<Message> messages;
-  final CollectionRepository<Message> threads;
+  final MessagesRepository messages;
+  final MessagesRepository threads;
   final SheetRepository sheet;
   final AddChannelRepository addChannel;
   final DraftRepository draft;

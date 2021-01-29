@@ -8,8 +8,8 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
-import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/messages_bloc/messages_state.dart';
+import 'package:twake/repositories/messages_repository.dart';
 
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
@@ -18,7 +18,7 @@ const _THREAD_MESSAGES_LIMIT = 1000;
 
 class ThreadsBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
-  final CollectionRepository<Message> repository;
+  final MessagesRepository repository;
   final MessagesBloc<T> messagesBloc;
   final NotificationBloc notificationBloc;
 

@@ -24,6 +24,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   bool isMe(String userId) => repository.id == userId;
 
   static String get userId => repository.id;
+  static String get firstName => repository.firstName;
+  static String get lastName => repository.lastName;
+  static String get thumbnail => repository.thumbnail;
+  static String get username => repository.username;
 
   static String get selectedCompany => repository.selectedCompanyId;
   static String get selectedWorkspace => repository.selectedWorkspaceId;
