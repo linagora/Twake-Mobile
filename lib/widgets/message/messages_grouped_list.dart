@@ -17,16 +17,20 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
       if (state is MessagesLoaded) {
         messages = state.messages;
       } else if (state is MessagesEmpty) {
-        return Center(
-          child: Text(
-            state is ErrorLoadingMessages
-                ? 'Couldn\'t load messages'
-                : 'No messages yet',
+        return Expanded(
+          child: Center(
+            child: Text(
+              state is ErrorLoadingMessages
+                  ? 'Couldn\'t load messages'
+                  : 'No messages yet',
+            ),
           ),
         );
       } else {
-        return Center(
-          child: CircularProgressIndicator(),
+        return Expanded(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
         );
       }
 
