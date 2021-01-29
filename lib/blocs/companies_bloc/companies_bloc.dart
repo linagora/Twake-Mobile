@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/events/company_event.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/companies_bloc/company_event.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/repositories/collection_repository.dart';
-import 'package:twake/states/company_state.dart';
+import 'package:twake/blocs/companies_bloc/company_state.dart';
 
-export 'package:twake/events/company_event.dart';
-export 'package:twake/states/company_state.dart';
+export 'package:twake/blocs/companies_bloc/company_event.dart';
+export 'package:twake/blocs/companies_bloc/company_state.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   final CollectionRepository<Company> repository;

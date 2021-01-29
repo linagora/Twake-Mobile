@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/events/user_event.dart';
+import 'package:twake/blocs/user_bloc/user_event.dart';
 import 'package:twake/repositories/user_repository.dart';
-import 'package:twake/states/user_state.dart';
+import 'package:twake/blocs/user_bloc/user_state.dart';
 
-export 'package:twake/events/user_event.dart';
-export 'package:twake/states/user_state.dart';
+export 'package:twake/blocs/user_bloc/user_event.dart';
+export 'package:twake/blocs/user_bloc/user_state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
   final repository = UserRepository();

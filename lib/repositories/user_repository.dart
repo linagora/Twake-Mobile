@@ -1,4 +1,4 @@
-import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/services/service_bundle.dart';
 

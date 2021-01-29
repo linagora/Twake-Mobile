@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/events/message_edit_event.dart';
+import 'package:twake/blocs/message_edit_bloc/message_edit_event.dart';
 import 'package:twake/services/service_bundle.dart';
-import 'package:twake/states/message_edit_state.dart';
+import 'package:twake/blocs/message_edit_bloc/message_edit_state.dart';
 
-export 'package:twake/events/message_edit_event.dart';
-export 'package:twake/states/message_edit_state.dart';
+export 'package:twake/blocs/message_edit_bloc/message_edit_event.dart';
+export 'package:twake/blocs/message_edit_bloc/message_edit_state.dart';
 
 class MessageEditBloc extends Bloc<MessageEditEvent, MessageEditState> {
   MessageEditBloc() : super(NoMessageToEdit());

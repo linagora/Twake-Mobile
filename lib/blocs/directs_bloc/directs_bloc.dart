@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/companies_bloc.dart';
-import 'package:twake/blocs/notification_bloc.dart';
-import 'package:twake/events/channel_event.dart';
+import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channel_event.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/collection_repository.dart';
-import 'package:twake/states/channel_state.dart';
+import 'package:twake/blocs/channels_bloc/channel_state.dart';
 
-export 'package:twake/events/channel_event.dart';
-export 'package:twake/states/channel_state.dart';
+export 'package:twake/blocs/channels_bloc/channel_event.dart';
+export 'package:twake/blocs/channels_bloc/channel_state.dart';
 
 class DirectsBloc extends BaseChannelBloc {
   final CompaniesBloc companiesBloc;

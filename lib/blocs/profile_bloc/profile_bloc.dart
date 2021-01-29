@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/events/profile_event.dart';
+import 'package:twake/blocs/profile_bloc/profile_event.dart';
 import 'package:twake/repositories/profile_repository.dart';
-import 'package:twake/states/profile_state.dart';
+import 'package:twake/blocs/profile_bloc/profile_state.dart';
 
-export 'package:twake/events/profile_event.dart';
-export 'package:twake/states/profile_state.dart';
+export 'package:twake/blocs/profile_bloc/profile_event.dart';
+export 'package:twake/blocs/profile_bloc/profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static ProfileRepository repository;

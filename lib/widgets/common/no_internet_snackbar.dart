@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake/blocs/connection_bloc.dart' as cb;
+import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 
 void connectionListener(BuildContext ctx, cb.ConnectionState state) {
   Scaffold.of(ctx).hideCurrentSnackBar();

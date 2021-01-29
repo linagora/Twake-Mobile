@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/add_channel_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/blocs/user_bloc.dart';
+import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/channel_info_form.dart';
 import 'package:twake/widgets/sheets/channel_type_form.dart';

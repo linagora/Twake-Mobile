@@ -5,9 +5,9 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:twake/repositories/draft_repository.dart';
 
-part '../events/draft_event.dart';
+part 'draft_event.dart';
 
-part '../states/draft_state.dart';
+part 'draft_state.dart';
 
 class DraftBloc extends Bloc<DraftEvent, DraftState> {
   final DraftRepository repository;

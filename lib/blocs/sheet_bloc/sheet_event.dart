@@ -1,4 +1,4 @@
-part of '../blocs/sheet_bloc.dart';
+part of '../../blocs/sheet_bloc/sheet_bloc.dart';
 
 abstract class SheetEvent extends Equatable {
   const SheetEvent();

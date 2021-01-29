@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/companies_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/events/workspace_event.dart';
+import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc/workspace_event.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/collection_repository.dart';
-import 'package:twake/states/company_state.dart';
-import 'package:twake/states/workspace_state.dart';
+import 'package:twake/blocs/companies_bloc/company_state.dart';
+import 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
 
-export 'package:twake/events/workspace_event.dart';
-export 'package:twake/states/workspace_state.dart';
+export 'package:twake/blocs/workspaces_bloc/workspace_event.dart';
+export 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
 
 class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   final CollectionRepository<Workspace> repository;
