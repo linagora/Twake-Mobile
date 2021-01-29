@@ -141,6 +141,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       _sortItems();
       yield MessagesLoaded(
         messages: repository.items,
+        force: DateTime.now().toString(),
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
@@ -232,7 +233,8 @@ class MessagesBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorSendingMessage());
         },
         onSuccess: (message) {
-          tempItem.id = message.id;
+          this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.repository.items.add(message);
           this.add(FinishLoadingMessages());
           _updateParentChannel();
         },

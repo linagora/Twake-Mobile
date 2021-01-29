@@ -143,7 +143,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorSendingMessage());
         },
         onSuccess: (message) {
-          tempItem.id = message.id;
+          this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.repository.items.add(message);
           this.add(FinishLoadingMessages());
           messagesBloc.add(ModifyResponsesCount(
             channelId: event.channelId,
@@ -198,6 +199,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
 
   MessagesLoaded get messagesLoaded => MessagesLoaded(
         messageCount: repository.itemsCount,
+        force: DateTime.now().toString(),
         messages: repository.items,
         threadMessage: threadMessage,
         parentChannel: parentChannel,
