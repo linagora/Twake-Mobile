@@ -42,8 +42,12 @@ class _MainPageState extends State<MainPage> {
         renderPanelSheet: false,
         panel: BlocBuilder<SheetBloc, SheetState>(
             buildWhen: (_, current) =>
-                current is SheetShouldOpen || current is SheetShouldClose,
+                current is SheetShouldOpen ||
+                current is SheetShouldClose ||
+                current is SheetOpened ||
+                current is SheetClosed,
             builder: (context, state) {
+              // print('Strange state: $state');
               if (state is SheetShouldOpen) {
                 if (_panelController.isPanelClosed) {
                   _openSheet();
@@ -79,35 +83,31 @@ class _MainPageState extends State<MainPage> {
                                     .add(ReloadChannels(forceFromApi: true));
                                 return Future.delayed(Duration(seconds: 1));
                               },
-                              child: GestureDetector(
-                                onTap: () => _closeSheet(),
-                                behavior: HitTestBehavior.translucent,
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.0,
-                                  ),
-                                  child: ListView(
-                                    padding: EdgeInsets.only(top: 0),
-                                    children: [
-                                      // Starred channels will be implemented in version 2
-                                      // StarredChannelsBlock([]),
-                                      // Divider(height: Dim.hm5),
-                                      ChannelsGroup(),
-                                      Divider(
-                                        thickness: 2.0,
-                                        height: 2.0,
-                                        color: Color(0xffEEEEEE),
-                                      ),
-                                      SizedBox(height: 8),
-                                      DirectMessagesGroup(),
-                                      Divider(
-                                        thickness: 2.0,
-                                        height: 2.0,
-                                        color: Color(0xffEEEEEE),
-                                      ),
-                                      SizedBox(height: Dim.hm2),
-                                    ],
-                                  ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.0,
+                                ),
+                                child: ListView(
+                                  padding: EdgeInsets.only(top: 0),
+                                  children: [
+                                    // Starred channels will be implemented in version 2
+                                    // StarredChannelsBlock([]),
+                                    // Divider(height: Dim.hm5),
+                                    ChannelsGroup(),
+                                    Divider(
+                                      thickness: 2.0,
+                                      height: 2.0,
+                                      color: Color(0xffEEEEEE),
+                                    ),
+                                    SizedBox(height: 8),
+                                    DirectMessagesGroup(),
+                                    Divider(
+                                      thickness: 2.0,
+                                      height: 2.0,
+                                      color: Color(0xffEEEEEE),
+                                    ),
+                                    SizedBox(height: Dim.hm2),
+                                  ],
                                 ),
                               ),
                             )
