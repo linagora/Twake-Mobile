@@ -8,11 +8,14 @@ abstract class Storage {
   static Storage _storage;
   factory Storage() {
     if (_storage == null) {
-      if ((defaultTargetPlatform == TargetPlatform.iOS) || (defaultTargetPlatform == TargetPlatform.android)) {
+      if ((defaultTargetPlatform == TargetPlatform.iOS) ||
+          (defaultTargetPlatform == TargetPlatform.android)) {
         _storage = SQLite();
-      }  else if ((defaultTargetPlatform == TargetPlatform.linux) || (defaultTargetPlatform == TargetPlatform.macOS) || (defaultTargetPlatform == TargetPlatform.windows)) {
+      } else if ((defaultTargetPlatform == TargetPlatform.linux) ||
+          (defaultTargetPlatform == TargetPlatform.macOS) ||
+          (defaultTargetPlatform == TargetPlatform.windows)) {
         throw 'Desktop is not supported yet';
-      }  else {
+      } else {
         throw 'Web is not supported yet';
       }
     }
@@ -25,6 +28,14 @@ abstract class Storage {
     StorageType type,
     dynamic key,
     List<String> fields,
+  });
+
+  Future<dynamic> customQuery(
+    String query, {
+    List<List> filters,
+    Map<String, bool> orderings,
+    int limit,
+    int offset,
   });
 
   Future<void> store({

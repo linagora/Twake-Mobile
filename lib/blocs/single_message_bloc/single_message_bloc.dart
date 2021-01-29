@@ -29,6 +29,10 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
           charCount: (message.content.originalStr ?? ' ').length,
           reactions: message.reactions,
           userId: message.userId,
+          username: message.username,
+          firstName: message.firstName,
+          lastName: message.lastName,
+          thumbnail: message.thumbnail,
         ));
 
   @override
@@ -79,6 +83,10 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
       hash: hash,
       userId: message.userId,
       threadId: message.threadId,
+      username: message.username,
+      firstName: message.firstName,
+      lastName: message.lastName,
+      thumbnail: message.thumbnail,
     );
   }
 }

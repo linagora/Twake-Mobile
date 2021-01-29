@@ -8,8 +8,8 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
-import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/messages_bloc/messages_state.dart';
+import 'package:twake/repositories/messages_repository.dart';
 
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
@@ -18,7 +18,7 @@ const _THREAD_MESSAGES_LIMIT = 1000;
 
 class ThreadsBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
-  final CollectionRepository<Message> repository;
+  final MessagesRepository repository;
   final MessagesBloc<T> messagesBloc;
   final NotificationBloc notificationBloc;
 
@@ -143,7 +143,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorSendingMessage());
         },
         onSuccess: (message) {
-          tempItem.id = message.id;
+          this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.repository.items.add(message);
           this.add(FinishLoadingMessages());
           messagesBloc.add(ModifyResponsesCount(
             channelId: event.channelId,
@@ -198,6 +199,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
 
   MessagesLoaded get messagesLoaded => MessagesLoaded(
         messageCount: repository.itemsCount,
+        force: DateTime.now().toString(),
         messages: repository.items,
         threadMessage: threadMessage,
         parentChannel: parentChannel,

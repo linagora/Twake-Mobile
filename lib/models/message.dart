@@ -46,6 +46,13 @@ class Message extends CollectionItem {
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 
+  String username;
+  @JsonKey(name: 'firstname')
+  String firstName;
+  @JsonKey(name: 'lastname')
+  String lastName;
+  String thumbnail;
+
   @JsonKey(ignore: true)
   final _api = Api();
 
@@ -55,17 +62,21 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
-  Message(
-      {this.id,
-      this.userId,
-      this.appId,
-      this.creationDate,
-      this.threadId,
-      this.content,
-      this.channelId,
-      this.responsesCount,
-      this.reactions})
-      : super(id);
+  Message({
+    this.id,
+    this.userId,
+    this.appId,
+    this.creationDate,
+    this.threadId,
+    this.content,
+    this.channelId,
+    this.responsesCount,
+    this.reactions,
+    this.username,
+    this.lastName,
+    this.firstName,
+    this.thumbnail,
+  }) : super(id);
 
   void updateContent(Map<String, dynamic> body) {
     logger.d('UPDATING MESSAGE CONTENT');
@@ -121,6 +132,7 @@ class Message extends CollectionItem {
   }
 
   factory Message.fromJson(Map<String, dynamic> json) {
+    json = Map.from(json);
     if (json['content'] is String) {
       json['content'] = jsonDecode(json['content']);
     }
@@ -134,6 +146,10 @@ class Message extends CollectionItem {
     var map = _$MessageToJson(this);
     map['content'] = jsonEncode(map['content']);
     map['reactions'] = jsonEncode(map['reactions']);
+    map.remove('username');
+    map.remove('thumbnail');
+    map.remove('lastname');
+    map.remove('firstname');
     return map;
   }
 }

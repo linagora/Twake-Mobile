@@ -10,7 +10,7 @@ import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
-import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/blocs/messages_bloc/messages_state.dart';
 
@@ -21,7 +21,7 @@ const _MESSAGE_LIMIT = 50;
 
 class MessagesBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
-  final CollectionRepository<Message> repository;
+  final MessagesRepository repository;
   final T channelsBloc;
   final NotificationBloc notificationBloc;
 
@@ -105,9 +105,6 @@ class MessagesBloc<T extends BaseChannelBloc>
       if (repository.items.isEmpty)
         yield MessagesEmpty(parentChannel: selectedChannel);
       else {
-        await UserRepository().batchUsersLoad(
-          repository.items.map((i) => i.userId).toSet(),
-        );
         _sortItems();
         yield MessagesLoaded(
           messages: repository.items,
@@ -141,6 +138,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       _sortItems();
       yield MessagesLoaded(
         messages: repository.items,
+        force: DateTime.now().toString(),
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
@@ -223,6 +221,10 @@ class MessagesBloc<T extends BaseChannelBloc>
         reactions: {},
         responsesCount: 0,
         channelId: body['channel_id'],
+        username: ProfileBloc.username,
+        firstName: ProfileBloc.firstName,
+        lastName: ProfileBloc.lastName,
+        thumbnail: ProfileBloc.thumbnail,
       );
       repository.pushOne(
         body,
@@ -232,7 +234,12 @@ class MessagesBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorSendingMessage());
         },
         onSuccess: (message) {
-          tempItem.id = message.id;
+          this.repository.items.removeWhere((m) => m.id == dummyId);
+          message.thumbnail = ProfileBloc.thumbnail;
+          message.username = ProfileBloc.username;
+          message.firstName = ProfileBloc.firstName;
+          message.lastName = ProfileBloc.lastName;
+          this.repository.items.add(message);
           this.add(FinishLoadingMessages());
           _updateParentChannel();
         },

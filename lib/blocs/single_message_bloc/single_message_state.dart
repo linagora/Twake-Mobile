@@ -15,6 +15,10 @@ class MessageReady extends SingleMessageState {
   final Map<String, dynamic> reactions;
   final int hash;
   final String userId;
+  final String username;
+  final String firstName;
+  final String lastName;
+  final String thumbnail;
 
   const MessageReady({
     this.id,
@@ -27,6 +31,10 @@ class MessageReady extends SingleMessageState {
     this.reactions,
     this.hash,
     this.userId,
+    this.lastName,
+    this.firstName,
+    this.username,
+    this.thumbnail,
   });
 
   @override

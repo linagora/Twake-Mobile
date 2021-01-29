@@ -184,8 +184,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                           Routes.onGenerateRoute(settings.name),
                     ),
                     Positioned(
-                      top: Dim.heightPercent(
-                          (kToolbarHeight * 0.15).round()) +
+                      top: Dim.heightPercent((kToolbarHeight * 0.15).round()) +
                           MediaQuery.of(context).padding.top,
                       child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
                           builder: (context, state) {

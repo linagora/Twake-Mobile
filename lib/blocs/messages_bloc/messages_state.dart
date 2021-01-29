@@ -20,16 +20,18 @@ class MessagesLoaded extends MessagesState {
   final List<Message> messages;
   final int messageCount;
   final Message threadMessage;
+  final String force;
 
   const MessagesLoaded({
     this.messageCount,
+    this.force,
     this.messages,
     this.threadMessage,
     BaseChannel parentChannel,
   }) : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props => [messageCount, messages, parentChannel];
+  List<Object> get props => [messageCount, messages, parentChannel, force];
 }
 
 class MoreMessagesLoading extends MessagesLoaded {

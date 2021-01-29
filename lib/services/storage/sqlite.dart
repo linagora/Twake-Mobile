@@ -60,6 +60,22 @@ class SQLite with Storage {
   }
 
   @override
+  Future<dynamic> customQuery(
+    String sqlQuery, {
+    filters,
+    orderings,
+    limit: 100000,
+    offset: 0,
+  }) async {
+    final orderBy = orderingsBuild(orderings);
+    final where = filtersBuild(filters);
+    sqlQuery +=
+        ' WHERE ${where.item1} ORDER BY $orderBy LIMIT $limit OFFSET $offset;';
+    final result = await _db.rawQuery(sqlQuery, where.item2);
+    return result;
+  }
+
+  @override
   Future<void> store({
     Map<String, dynamic> item,
     StorageType type,
