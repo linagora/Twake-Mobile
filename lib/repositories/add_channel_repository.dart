@@ -86,7 +86,7 @@ class AddChannelRepository {
     type = ChannelType.public;
   }
 
-  Future<bool> create() async {
+  Future<String> create() async {
     this.companyId = ProfileBloc.selectedCompany;
     this.workspaceId = ProfileBloc.selectedWorkspace;
 
@@ -119,21 +119,22 @@ class AddChannelRepository {
     //       'Channel creation: validation error. Not all mandatory fields exist in request body.');
     //   return false;
     // } else {
-      final channelJson = this.toJson();
-      return process(channelJson);
+      final addChannelJson = this.toJson();
+      return process(addChannelJson);
     // }
   }
 
-  Future<bool> process(Map<String, dynamic> body) async {
+  Future<String> process(Map<String, dynamic> body) async {
     _logger.d('Channel creation request...');
-    var resp;
+    Map<String, dynamic> resp;
     try {
       resp = await _api.post(Endpoint.channels, body: body);
     } catch (error) {
       _logger.e('Error while trying to create a channel:\n${error.message}');
-      return false;
+      return '';
     }
     _logger.d('RESPONSE AFTER CHANNEL CREATION: $resp');
-    return true;
+    String channelId = resp['id'];
+    return channelId;
   }
 }

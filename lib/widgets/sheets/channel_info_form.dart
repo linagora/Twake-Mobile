@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
+import 'package:twake/pages/messages_page.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
@@ -90,113 +91,125 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
       },
       child: BlocConsumer<AddChannelBloc, AddChannelState>(
           listener: (context, state) {
-            if (state is Created) {
-              // Reload channels
-              context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
-              // Reload directs
-              context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
-              // Close sheet
-              context.read<SheetBloc>().add(CloseSheet());
-              // Clear sheet
-              context.read<SheetBloc>().add(ClearSheet());
-            } else if (state is Error) {
-              // Show an error
+        if (state is Created) {
+          // Reload channels
+          context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
+          // Reload directs
+          context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
+          // Close sheet
+          context.read<SheetBloc>().add(CloseSheet());
+          // Clear sheet
+          context.read<SheetBloc>().add(ClearSheet());
+          // Redirect user to created channel
+          String channelId = state.id;
+          context.read<ChannelsBloc>().add(ChangeSelectedChannel(channelId));
+          Navigator.of(context)
+              .push(MaterialPageRoute(
+            builder: (context) => MessagesPage<ChannelsBloc>(),
+          ))
+              .then((r) {
+            if (r is bool && r) {
+              Scaffold.of(context).hideCurrentSnackBar();
               Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text(
-                  state.message,
-                  style: TextStyle(
-                    color: Colors.red,
-                  ),
-                ),
-                duration: Duration(seconds: 2),
+                content: Text('No connection to internet'),
+                backgroundColor: Theme.of(context).errorColor,
               ));
             }
-          },
-          buildWhen: (_, current) {
-            return (current is Updated ||
-                current is Creation);
-          },
-        builder: (context, state) {
-          bool createIsBlocked = state is Creation;
-
-          var channelType = ChannelType.public;
-          if (state is Updated) {
-            channelType = state.repository?.type;
-          }
-
-          return Column(
-            children: [
-              SheetTitleBar(
-                title: 'New Channel',
-                leadingTitle: 'Close',
-                leadingAction: () {
-                  context.read<SheetBloc>().add(CloseSheet());
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                trailingTitle: 'Create',
-                trailingAction: createIsBlocked || !_canGoNext
-                    ? null
-                    : () => context.read<AddChannelBloc>().add(Create()),
+          });
+        } else if (state is Error) {
+          // Show an error
+          Scaffold.of(context).showSnackBar(SnackBar(
+            content: Text(
+              state.message,
+              style: TextStyle(
+                color: Colors.red,
               ),
-              SizedBox(height: 16),
-              ChannelNameContainer(
-                controller: _channelNameController,
-                focusNode: _channelNameFocusNode,
-              ),
-              SizedBox(height: 8),
-              HintLine(
-                text: 'Please provide a channel name and optional channel icon',
-              ),
-              SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.only(left: 14.0, right: 7),
-                color: Colors.white,
-                child: ChannelInfoTextForm(
-                  hint: 'Channel description',
-                  controller: _descriptionController,
-                  focusNode: _channelDescriptionFocusNode,
-                ),
-              ),
-              SizedBox(height: 8),
-              HintLine(
-                text: 'Please provide an optional description for your channel',
-              ),
-              SizedBox(height: 30),
-              Container(
-                padding: const EdgeInsets.only(left: 14.0),
-                width: MediaQuery.of(context).size.width,
-                child: Text(
-                  'CHANNEL TYPE',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontSize: 13.0,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black.withOpacity(0.4),
-                  ),
-                ),
-              ),
-              SizedBox(height: 6),
-              ChannelTypesContainer(type: channelType),
-              SizedBox(height: 8),
-              HintLine(
-                text: channelType != ChannelType.direct
-                    ? 'Public channels can be found by everyone, though private can only be joined by invitation'
-                    : 'Direct channels involve correspondence between selected members',
-              ),
-              if (channelType == ChannelType.public) AddAllSwitcher(),
-              if (channelType == ChannelType.private) SizedBox(),
-              // if (channelType == ChannelType.direct) ParticipantsButton(),
-              HintLine(
-                text: channelType != ChannelType.private
-                    ? (channelType != ChannelType.direct
-                    ? 'Only available for public channels'
-                    : 'Only available for direct channels')
-                    : '',
-              ),
-            ],
-          );
+            ),
+            duration: Duration(seconds: 2),
+          ));
         }
-      ),
+      }, buildWhen: (_, current) {
+        return (current is Updated || current is Creation);
+      }, builder: (context, state) {
+        bool createIsBlocked = state is Creation;
+
+        var channelType = ChannelType.public;
+        if (state is Updated) {
+          channelType = state.repository?.type;
+        }
+
+        return Column(
+          children: [
+            SheetTitleBar(
+              title: 'New Channel',
+              leadingTitle: 'Close',
+              leadingAction: () {
+                context.read<SheetBloc>().add(CloseSheet());
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              trailingTitle: 'Create',
+              trailingAction: createIsBlocked || !_canGoNext
+                  ? null
+                  : () => context.read<AddChannelBloc>().add(Create()),
+            ),
+            SizedBox(height: 16),
+            ChannelNameContainer(
+              controller: _channelNameController,
+              focusNode: _channelNameFocusNode,
+            ),
+            SizedBox(height: 8),
+            HintLine(
+              text: 'Please provide a channel name and optional channel icon',
+            ),
+            SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.only(left: 14.0, right: 7),
+              color: Colors.white,
+              child: ChannelInfoTextForm(
+                hint: 'Channel description',
+                controller: _descriptionController,
+                focusNode: _channelDescriptionFocusNode,
+              ),
+            ),
+            SizedBox(height: 8),
+            HintLine(
+              text: 'Please provide an optional description for your channel',
+            ),
+            SizedBox(height: 30),
+            Container(
+              padding: const EdgeInsets.only(left: 14.0),
+              width: MediaQuery.of(context).size.width,
+              child: Text(
+                'CHANNEL TYPE',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black.withOpacity(0.4),
+                ),
+              ),
+            ),
+            SizedBox(height: 6),
+            ChannelTypesContainer(type: channelType),
+            SizedBox(height: 8),
+            HintLine(
+              text: channelType != ChannelType.direct
+                  ? 'Public channels can be found by everyone, though private can only be joined by invitation'
+                  : 'Direct channels involve correspondence between selected members',
+            ),
+            if (channelType == ChannelType.public) AddAllSwitcher(),
+            if (channelType == ChannelType.private) SizedBox(),
+            // if (channelType == ChannelType.direct) ParticipantsButton(),
+            HintLine(
+              text: channelType != ChannelType.private
+                  ? (channelType != ChannelType.direct
+                      ? 'Only available for public channels'
+                      : 'Only available for direct channels')
+                  : '',
+            ),
+          ],
+        );
+      }),
     );
   }
 }

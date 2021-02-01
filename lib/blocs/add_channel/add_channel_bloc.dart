@@ -46,8 +46,8 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       yield Creation();
       final type = repository.type;
       final result = await repository.create();
-      if (result) {
-        yield Created('0', type);
+      if (result.isNotEmpty) {
+        yield Created(result, type);
       } else {
         yield Error('Channel creation failure!');
       }
