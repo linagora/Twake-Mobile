@@ -130,40 +130,6 @@ class CollectionRepository<T extends CollectionItem> {
     return true;
   }
 
-  Future<bool> loadMore({
-    Map<String, dynamic> queryParams,
-    List<List> filters, // fields to filter by in store
-    Map<String, bool> sortFields, // fields to sort by + sort direction
-    int limit,
-    int offset,
-  }) async {
-    List<dynamic> itemsList = [];
-    // logger.d('Loading more $T items from storage...\nFilters: $filters');
-    itemsList = await _storage.batchLoad(
-      type: _typeToStorageType[T],
-      filters: filters,
-      orderings: sortFields,
-      limit: limit,
-      offset: offset,
-    );
-    bool saveToStore = false;
-    if (itemsList.isEmpty) {
-      logger.d('Non in storage. Reloading $T items from api...');
-      try {
-        itemsList = await _api.get(apiEndpoint, params: queryParams);
-      } on ApiError catch (error) {
-        logger
-            .d('ERROR while loading more $T items from api\n${error.message}');
-        return false;
-      }
-      saveToStore = true;
-    }
-    if (itemsList.isNotEmpty) {
-      _updateItems(itemsList, saveToStore: saveToStore, extendItems: true);
-    }
-    return true;
-  }
-
   Future<bool> pullOne(
     Map<String, dynamic> queryParams, {
     bool addToItems = true,

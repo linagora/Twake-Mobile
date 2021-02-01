@@ -8,7 +8,7 @@ import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
-import 'package:twake/blocs/user_bloc/user_bloc.dart';
+// import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
@@ -190,7 +190,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                           ),
                           SizedBox(height: 5.0),
                           MarkdownBody(
-                            data: messageState.text,
+                            data: messageState.text.replaceAll('\n', '\\\n'),
                           ),
                           // Parser(messageState.content,
                           // messageState.charCount)
