@@ -29,9 +29,9 @@ class ImageAvatar extends StatelessWidget {
       child: imageUrl == null || imageUrl.isEmpty
           ? onErrorFallbackImg(width ?? Dim.tm5(), height ?? Dim.tm5())
           : Container(
-        width: width,
-            height: height,
-            child: FadeInImage.assetNetwork(
+              width: width,
+              height: height,
+              child: FadeInImage.assetNetwork(
                 placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
                   width ?? Dim.tm5(),
                   height ?? Dim.tm5(),
@@ -47,7 +47,7 @@ class ImageAvatar extends StatelessWidget {
                 // 'image/png, image/jpeg, image/jpg, application/octet-stream'
                 // },
               ),
-          ),
+            ),
     );
   }
 }

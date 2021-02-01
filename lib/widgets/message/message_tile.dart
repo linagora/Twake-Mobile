@@ -80,17 +80,9 @@ class _MessageTileState<T extends BaseChannelBloc>
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<SingleMessageBloc>(
-          create: (_) => SingleMessageBloc(_message),
-          lazy: false,
-        ),
-        BlocProvider<UserBloc>(
-          create: (_) => UserBloc(_message.userId),
-          lazy: false,
-        )
-      ],
+    return BlocProvider<SingleMessageBloc>(
+      create: (_) => SingleMessageBloc(_message),
+      lazy: false,
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
         builder: (ctx, messageState) {
           if (messageState is MessageReady)

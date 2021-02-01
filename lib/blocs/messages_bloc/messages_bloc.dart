@@ -11,7 +11,6 @@ import 'package:twake/blocs/messages_bloc/messages_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/messages_repository.dart';
-import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/blocs/messages_bloc/messages_state.dart';
 
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
@@ -119,7 +118,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
         parentChannel: selectedChannel,
       );
-      repository.loadMore(
+      repository
+          .loadMore(
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],
@@ -127,7 +127,9 @@ class MessagesBloc<T extends BaseChannelBloc>
           ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
-      ).then((success) {
+        limit: _MESSAGE_LIMIT,
+      )
+          .then((success) {
         if (!success) {
           this.add(GenerateErrorLoadingMore());
           return;
