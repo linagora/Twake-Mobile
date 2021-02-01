@@ -179,7 +179,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   children: [
                     Navigator(
                       key: _navigatorKey,
-                      initialRoute: Routes.main,
+                      initialRoute: Routes.root,
                       onGenerateRoute: (settings) =>
                           Routes.onGenerateRoute(settings.name),
                     ),

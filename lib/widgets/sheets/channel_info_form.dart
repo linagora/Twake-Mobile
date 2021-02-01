@@ -32,6 +32,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   @override
   void initState() {
     super.initState();
+
     _groupNameFocusNode.addListener(() {
       print(_groupNameFocusNode.hasFocus);
       setState(() {});

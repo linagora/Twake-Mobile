@@ -15,7 +15,6 @@ import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage();
-
   @override
   _MainPageState createState() => _MainPageState();
 }

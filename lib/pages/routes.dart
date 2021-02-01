@@ -5,7 +5,7 @@ import 'package:twake/pages/thread_page.dart';
 
 class Routes {
   static const root = '/';
-  static const main = '/main';
+  // static const main = '/main';
   static const messages = '/messages';
   static const thread = '/thread';
 
@@ -13,7 +13,7 @@ class Routes {
     Widget page;
     switch (routeName) {
       case Routes.root:
-      case Routes.main:
+      // case Routes.main:
         page = MainPage();
         break;
       case Routes.messages:

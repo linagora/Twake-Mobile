@@ -28,7 +28,6 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   @override
   void initState() {
     super.initState();
-
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
