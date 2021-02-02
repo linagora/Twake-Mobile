@@ -7,6 +7,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/radio_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
@@ -74,6 +75,13 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
         // Close sheet
         context.read<SheetBloc>().add(CloseSheet());
+        // Reset selected participants
+        context
+            .read<AddChannelBloc>()
+            .add(Update(participants: []));
+        // Redirect user to created direct
+        String channelId = state.id;
+        openDirect(context, channelId);
       } else if (state is Error) {
         // Show an error
         Scaffold.of(context).showSnackBar(SnackBar(

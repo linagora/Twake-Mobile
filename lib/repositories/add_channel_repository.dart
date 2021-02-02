@@ -108,8 +108,8 @@ class AddChannelRepository {
       this.visibility = 'direct';
     }
 
-    String myId = ProfileBloc.userId;
-    this.members.add(myId);
+    // String myId = ProfileBloc.userId;
+    // this.members.add(myId);
 
     // if (this.name.isEmpty ||
     //     this.companyId.isEmpty ||
@@ -125,7 +125,7 @@ class AddChannelRepository {
   }
 
   Future<String> process(Map<String, dynamic> body) async {
-    _logger.d('Channel creation request...');
+    _logger.d('Channel creation request body: $body');
     Map<String, dynamic> resp;
     try {
       resp = await _api.post(Endpoint.channels, body: body);

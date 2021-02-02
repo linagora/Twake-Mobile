@@ -7,6 +7,7 @@ import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 
 class ChannelTile extends StatelessWidget {
@@ -18,29 +19,12 @@ class ChannelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        BlocProvider.of<ChannelsBloc>(context).add(
-          ChangeSelectedChannel(channel.id),
-        );
-
         var draftType = DraftType.channel;
         final id = channel.id;
         // Load draft from local storage
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
 
-        // Navigator.of(context).pushNamed(Routes.messages);
-        Navigator.of(context)
-            .push(MaterialPageRoute(
-          builder: (context) => MessagesPage<ChannelsBloc>(),
-        ))
-            .then((r) {
-          if (r is bool && r) {
-            Scaffold.of(context).hideCurrentSnackBar();
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text('No connection to internet'),
-              backgroundColor: Theme.of(context).errorColor,
-            ));
-          }
-        });
+        openChannel(context, channel.id);
       },
       child: SizedBox(
         height: 62.0,

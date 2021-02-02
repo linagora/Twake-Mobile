@@ -5,6 +5,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -103,20 +104,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           context.read<SheetBloc>().add(ClearSheet());
           // Redirect user to created channel
           String channelId = state.id;
-          context.read<ChannelsBloc>().add(ChangeSelectedChannel(channelId));
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-            builder: (context) => MessagesPage<ChannelsBloc>(),
-          ))
-              .then((r) {
-            if (r is bool && r) {
-              Scaffold.of(context).hideCurrentSnackBar();
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text('No connection to internet'),
-                backgroundColor: Theme.of(context).errorColor,
-              ));
-            }
-          });
+          openChannel(context, channelId);
         } else if (state is Error) {
           // Show an error
           Scaffold.of(context).showSnackBar(SnackBar(

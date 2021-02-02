@@ -8,6 +8,7 @@ import 'package:twake/models/direct.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 
 class DirectTile extends StatelessWidget {
@@ -19,16 +20,13 @@ class DirectTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        BlocProvider.of<DirectsBloc>(context).add(
-          ChangeSelectedChannel(direct.id),
-        );
+
         var draftType = DraftType.direct;
         final id = direct.id;
         // Load draft from local storage
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
 
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => MessagesPage<DirectsBloc>()));
+        openDirect(context, direct.id);
       },
       child: SizedBox(
         height: 62.0,
