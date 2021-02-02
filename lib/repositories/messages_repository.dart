@@ -42,8 +42,12 @@ class MessagesRepository {
     int limit,
   }) async {
     List<dynamic> itemsList = [];
-    final query =
-        'SELECT * FROM message INNER JOIN user ON user.id = message.user_id';
+    final query = 'SELECT message.*, '
+        'user.username, '
+        'user.firstname, '
+        'user.lastname, '
+        'user.thumbnail '
+        'FROM message JOIN user ON user.id = message.user_id';
     if (!forceFromApi) {
       itemsList = await _storage.customQuery(
         query,
@@ -52,9 +56,8 @@ class MessagesRepository {
         limit: limit,
         offset: 0,
       );
-      // logger.d('Loaded ${itemsList.length} items');
+      logger.d('Loaded ${itemsList.length} items');
     }
-    bool saveToStore = false;
     if (itemsList.isEmpty) {
       try {
         itemsList = await _api.get(apiEndpoint, params: queryParams);
@@ -62,11 +65,17 @@ class MessagesRepository {
         logger.d('ERROR while reloading Messages from api\n${error.message}');
         return false;
       }
-      saveToStore = true;
+      logger.d('Loaded ${itemsList.length} items');
       final Set<String> userIds =
           itemsList.map((i) => (i['user_id'] as String)).toSet();
       await UserRepository().batchUsersLoad(userIds);
-      _updateItems(itemsList, saveToStore: saveToStore);
+      await _storage.batchStore(
+        items: itemsList.map((i) {
+          final m = Message.fromJson(i).toJson();
+          return m;
+        }),
+        type: StorageType.Message,
+      );
       itemsList = await _storage.customQuery(
         query,
         filters: filters,
@@ -74,11 +83,12 @@ class MessagesRepository {
         limit: limit,
         offset: 0,
       );
+      logger.d('Loaded ${itemsList.length} items');
     }
     if (forceFromApi) {
       await _storage.batchDelete(type: StorageType.Message, filters: filters);
     }
-    _updateItems(itemsList, saveToStore: saveToStore);
+    await _updateItems(itemsList, saveToStore: false);
     return true;
   }
 
@@ -90,27 +100,47 @@ class MessagesRepository {
     int offset,
   }) async {
     List<dynamic> itemsList = [];
-    // logger.d('Loading more $T items from storage...\nFilters: $filters');
-    itemsList = await _storage.batchLoad(
-      type: StorageType.Message,
+    logger.d('Loading more messages from storage...\nFilters: $filters');
+    final query = 'SELECT message.*, '
+        'user.username, '
+        'user.firstname, '
+        'user.lastname, '
+        'user.thumbnail '
+        'FROM message INNER JOIN user ON user.id = message.user_id';
+    itemsList = await _storage.customQuery(
+      query,
       filters: filters,
       orderings: sortFields,
       limit: limit,
-      offset: offset,
+      offset: 0,
     );
-    bool saveToStore = false;
+    logger.d('Loaded ${itemsList.length} items');
     if (itemsList.isEmpty) {
       try {
         itemsList = await _api.get(apiEndpoint, params: queryParams);
+        logger.d('Loaded ${itemsList.length} MESSAGES FROM API');
       } on ApiError catch (error) {
         logger
             .d('ERROR while loading more Messages from api\n${error.message}');
         return false;
       }
-      saveToStore = true;
+      final Set<String> userIds =
+          itemsList.map((i) => (i['user_id'] as String)).toSet();
+      await UserRepository().batchUsersLoad(userIds);
+      await _storage.batchStore(
+        items: itemsList.map((i) => Message.fromJson(i).toJson()),
+        type: StorageType.Message,
+      );
+      itemsList = await _storage.customQuery(
+        query,
+        filters: filters,
+        orderings: sortFields,
+        limit: limit,
+        offset: 0,
+      );
     }
     if (itemsList.isNotEmpty) {
-      _updateItems(itemsList, saveToStore: saveToStore, extendItems: true);
+      await _updateItems(itemsList, saveToStore: false, extendItems: true);
     }
     return true;
   }
@@ -195,17 +225,17 @@ class MessagesRepository {
     this.items.clear();
   }
 
-  void _updateItems(
+  Future<void> _updateItems(
     List<dynamic> itemsList, {
     bool saveToStore: false,
     bool extendItems: false,
-  }) {
+  }) async {
     final items = itemsList.map((c) => Message.fromJson(c));
     if (extendItems)
       this.items.addAll(items);
     else
       this.items = items.toList();
-    if (saveToStore) this.save();
+    if (saveToStore) await this.save();
   }
 
   Future<void> save() async {

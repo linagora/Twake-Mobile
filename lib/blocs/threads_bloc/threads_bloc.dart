@@ -134,6 +134,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
         reactions: {},
         responsesCount: 0,
         channelId: body['channel_id'],
+        username: ProfileBloc.username,
+        firstName: ProfileBloc.firstName,
+        lastName: ProfileBloc.lastName,
+        thumbnail: ProfileBloc.thumbnail,
       );
       repository.pushOne(
         body,
@@ -144,6 +148,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
         },
         onSuccess: (message) {
           this.repository.items.removeWhere((m) => m.id == dummyId);
+          message.thumbnail = ProfileBloc.thumbnail;
+          message.username = ProfileBloc.username;
+          message.firstName = ProfileBloc.firstName;
+          message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
           messagesBloc.add(ModifyResponsesCount(

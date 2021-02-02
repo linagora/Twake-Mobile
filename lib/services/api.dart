@@ -100,7 +100,7 @@ class Api {
     );
     try {
       final response = await dio.getUri(uri);
-      // logger.d('METHOD: ${uri.toString()}');
+      logger.d('METHOD: ${uri.toString()}');
       // logger.d('HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
       // logger.d('RESPONSE: ${response.data}');
@@ -186,9 +186,9 @@ class Api {
           // referesh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
-              '\nError: $error' +
               '\nHeaders: ${error.request.headers}' +
-              '\nData: ${error.request.data}');
+              '\nResponse: ${error.response.data}' +
+              '\nQUERY: ${error.request.queryParameters}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
