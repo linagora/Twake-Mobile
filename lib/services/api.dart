@@ -186,9 +186,9 @@ class Api {
           // referesh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
-              '\nError: $error' +
               '\nHeaders: ${error.request.headers}' +
-              '\nData: ${error.response.data}');
+              '\nResponse: ${error.response.data}' +
+              '\nQUERY: ${error.request.queryParameters}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
