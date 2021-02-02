@@ -1,4 +1,4 @@
-part of '../../blocs/add_channel/add_channel_bloc.dart';
+part of '../../blocs/add_channel_bloc/add_channel_bloc.dart';
 
 abstract class AddChannelState extends Equatable {
   const AddChannelState();
@@ -75,3 +75,11 @@ class FlowTypeSet extends AddChannelState {
   List<Object> get props => [isDirect];
 }
 
+class StageUpdated extends AddChannelState {
+  final FlowStage stage;
+
+  StageUpdated(this.stage);
+
+  @override
+  List<Object> get props => [stage];
+}

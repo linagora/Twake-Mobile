@@ -7,6 +7,11 @@ import 'package:twake/services/storage/storage.dart';
 
 part 'add_channel_repository.g.dart';
 
+enum FlowStage {
+  info,
+  participants,
+}
+
 enum ChannelType {
   public,
   private,

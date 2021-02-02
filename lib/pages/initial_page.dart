@@ -13,7 +13,7 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
-import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';

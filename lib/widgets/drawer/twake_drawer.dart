@@ -40,19 +40,36 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                     ),
                     Spacer(),
                     _companiesHidden
-                        ? IconButton(
-                            color: Color(0xff444444),
-                            onPressed: () {
-                              setState(() {
-                                _companiesHidden = false;
-                              });
-                            },
-                            iconSize: Dim.tm4(),
-                            icon: Icon(
-                              Icons.loop,
-                              color: Color(0xff444444),
-                            ),
-                          )
+                        ?
+                    IconButton(
+                      icon: Icon(
+                        Icons.add,
+                        size: Dim.tm3(decimal: .3),
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        final isDrawerOpen = Scaffold.of(context).isDrawerOpen;
+                        if (isDrawerOpen) {
+                          Navigator.pop(context); // close the drawer
+                          return Future.value(false); // don't allow app to navigate back
+                        } else {
+                          return Future.value(true); // allow app to navigate back
+                        }
+                      },
+                    )
+                    // IconButton(
+                    //         color: Color(0xff444444),
+                    //         onPressed: () {
+                    //           setState(() {
+                    //             _companiesHidden = false;
+                    //           });
+                    //         },
+                    //         iconSize: Dim.tm4(),
+                    //         icon: Icon(
+                    //           Icons.loop,
+                    //           color: Color(0xff444444),
+                    //         ),
+                    //       )
                         : SizedBox(width: 0, height: 0),
                   ],
                 ),

@@ -1,16 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
-import 'package:twake/pages/messages_page.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -186,9 +186,11 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                   ? 'Public channels can be found by everyone, though private can only be joined by invitation'
                   : 'Direct channels involve correspondence between selected members',
             ),
+            SizedBox(height: 8),
+            ParticipantsButton(),
+            SizedBox(height: 8),
             if (channelType == ChannelType.public) AddAllSwitcher(),
             if (channelType == ChannelType.private) SizedBox(),
-            // if (channelType == ChannelType.direct) ParticipantsButton(),
             HintLine(
               text: channelType != ChannelType.private
                   ? (channelType != ChannelType.direct
@@ -298,56 +300,59 @@ class SelectableItem extends StatelessWidget {
   }
 }
 
-// class ParticipantsButton extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: () => context
-//           .read<AddChannelBloc>()
-//           .add(SetFlowStage(FlowStage.participants)),
-//       child: Padding(
-//         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-//         child: ParticipantsCommonWidget(
-//           title: 'Added participants',
-//           trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
-//             builder: (context, state) {
-//               var participantsCount = 0;
-//               if (state is Updated) {
-//                 final participants = state.repository?.members;
-//                 participantsCount = participants.length;
-//               }
-//               return participantsCount > 0
-//                   ? Row(
-//                 children: [
-//                   Text(
-//                     '$participantsCount',
-//                     style: TextStyle(
-//                       fontSize: 17.0,
-//                       fontWeight: FontWeight.w400,
-//                       color: Color(0xff837cfe),
-//                     ),
-//                   ),
-//                   Icon(
-//                     CupertinoIcons.forward,
-//                     color: Color(0xff837cfe),
-//                   ),
-//                 ],
-//               )
-//                   : Text(
-//                 'Add',
-//                 style: TextStyle(
-//                   fontSize: 17.0,
-//                   fontWeight: FontWeight.w400,
-//                   color: Color(0xff837cfe),
-//                 ),
-//               );
-//             },
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+class ParticipantsButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context
+          .read<AddChannelBloc>()
+          .add(SetFlowStage(FlowStage.participants)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+        child: ParticipantsCommonWidget(
+          title: 'Added participants',
+          trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
+            builder: (context, state) {
+              var participantsCount = 0;
+              if (state is Updated) {
+                final participants = state.repository?.members;
+                participantsCount = participants.length;
+              }
+              return participantsCount > 0
+                  ? Row(
+                children: [
+                  Text(
+                    '$participantsCount',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff837cfe),
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.forward,
+                    color: Color(0xff837cfe),
+                  ),
+                ],
+              )
+                  : Padding(
+                    padding: const EdgeInsets.only(right: 9.0),
+                    child: Text(
+                'Add',
+                style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff837cfe),
+                ),
+              ),
+                  );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class AddAllSwitcher extends StatelessWidget {
   @override

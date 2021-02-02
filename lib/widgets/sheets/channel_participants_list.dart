@@ -10,7 +10,7 @@ import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/search_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
