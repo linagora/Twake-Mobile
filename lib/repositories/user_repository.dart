@@ -48,11 +48,11 @@ class UserRepository {
   }
 
   Future<bool> batchUsersLoad(Set<String> userIds) async {
-    print('USERIDS: $userIds');
-    print('EXISTING USERS: $items');
+    // print('USERIDS: $userIds');
+    // print('EXISTING USERS: $items');
     items.removeWhere((id, _) => !userIds.contains(id));
     userIds.removeAll(items.keys);
-    print('USERIDS: $userIds');
+    // print('USERIDS: $userIds');
     List<String> toBeFetched = [];
     for (String id in userIds) {
       final item = await _storage.load(type: StorageType.User, key: id);
@@ -98,6 +98,7 @@ class UserRepository {
   }
 
   Future<List<User>> searchUsers(String request) async {
+    if (request.isEmpty) return <User>[];
     var companyId = ProfileBloc.selectedCompany;
     List response = [];
     try {

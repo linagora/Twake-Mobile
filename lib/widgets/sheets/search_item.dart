@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class RadioItem extends StatelessWidget {
+class SearchItem extends StatelessWidget {
   final String title;
-  final bool selected;
   final Function onTap;
+  final bool selected;
+  final bool allowMultipleChoice;
 
-  const RadioItem({
+  const SearchItem({
     Key key,
     @required this.title,
-    @required this.selected,
     @required this.onTap,
+    this.selected = false,
+    this.allowMultipleChoice = false,
   }) : super(key: key);
 
   @override
@@ -37,12 +39,12 @@ class RadioItem extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    if (selected)
+                    if (allowMultipleChoice && selected)
                       Icon(
                         CupertinoIcons.check_mark_circled_solid,
                         color: Color(0xff837cfe),
                       ),
-                    if (!selected)
+                    if (allowMultipleChoice && !selected)
                       Icon(
                         CupertinoIcons.circle,
                         color: Color(0xffaeaeb2),

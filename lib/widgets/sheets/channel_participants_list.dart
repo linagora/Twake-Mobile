@@ -8,7 +8,7 @@ import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
-import 'package:twake/widgets/sheets/radio_item.dart';
+import 'package:twake/widgets/sheets/search_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/blocs/add_channel/add_channel_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
@@ -36,6 +36,8 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
           _searchRequest = _controller.text;
           if (_searchRequest.length > 1) {
             context.read<UserBloc>().add(LoadUsers(_searchRequest));
+          } else if (_searchRequest.isEmpty) {
+            context.read<UserBloc>().add(LoadUsers(''));
           }
         }
       });
@@ -55,12 +57,14 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
     context.read<SheetBloc>().add(CloseSheet());
   }
 
-  void _createDirect() {
-    context
-        .read<AddChannelBloc>()
-        .add(Update(name: '', type: ChannelType.direct));
-    // context.read<AddChannelBloc>().add(Clear());
-    context.read<AddChannelBloc>().add(Create());
+  void _createDirect(List<String> participantsIds) {
+    context.read<AddChannelBloc>()
+      ..add(Update(
+        name: '',
+        type: ChannelType.direct,
+        participants: participantsIds,
+      ))
+      ..add(Create());
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
@@ -76,9 +80,8 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         // Close sheet
         context.read<SheetBloc>().add(CloseSheet());
         // Reset selected participants
-        context
-            .read<AddChannelBloc>()
-            .add(Update(participants: []));
+        context.read<AddChannelBloc>().add(Update(participants: []));
+        _controller.clear();
         // Redirect user to created direct
         String channelId = state.id;
         openDirect(context, channelId);
@@ -95,17 +98,16 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
         ));
       }
     }, buildWhen: (_, current) {
-      return (current is Updated ||
-          current is Creation);
+      return (current is Updated || current is Creation);
     }, builder: (context, state) {
       return Column(
         children: [
           SheetTitleBar(
-            title: 'Add participants',
+            title: 'New direct chat',
             leadingTitle: 'Close',
             leadingAction: () => _close(),
-            trailingTitle: 'Create',
-            trailingAction: () => _createDirect(),
+            // trailingTitle: 'Create',
+            // trailingAction: () => _createDirect(),
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
@@ -136,7 +138,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
                   itemCount: users.length,
                   itemBuilder: (context, index) {
                     var user = users[index];
-                    return RadioItem(
+                    return SearchItem(
                       title:
                           user.firstName.isNotEmpty || user.lastName.isNotEmpty
                               ? '${user.firstName} ${user.lastName}'
@@ -144,19 +146,20 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
                       selected: selectedIds.contains(user.id),
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode());
-
-                        if (selectedIds.contains(user.id)) {
-                          setState(() {
-                            selectedIds.remove(user.id);
-                          });
-                        } else {
-                          setState(() {
-                            selectedIds.add(user.id);
-                          });
-                        }
-                        context
-                            .read<AddChannelBloc>()
-                            .add(Update(participants: selectedIds));
+                        selectedIds = [user.id];
+                        _createDirect(selectedIds);
+                        // if (selectedIds.contains(user.id)) {
+                        //   setState(() {
+                        //     selectedIds.remove(user.id);
+                        //   });
+                        // } else {
+                        //   setState(() {
+                        //     selectedIds.add(user.id);
+                        //   });
+                        // }
+                        // context
+                        //     .read<AddChannelBloc>()
+                        //     .add(Update(participants: selectedIds));
                       },
                     );
                   },
