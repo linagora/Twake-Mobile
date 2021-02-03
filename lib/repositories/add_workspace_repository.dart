@@ -24,8 +24,8 @@ class AddWorkspaceRepository {
   static final _api = Api();
 
   AddWorkspaceRepository(
-    this.companyId,
     this.name, {
+    this.companyId,
     this.workspaceId,
     this.members,
   });
@@ -34,4 +34,51 @@ class AddWorkspaceRepository {
       _$AddWorkspaceRepositoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddWorkspaceRepositoryToJson(this);
+
+  Future<void> clear() async {
+    companyId = '';
+    workspaceId = '';
+    name = '';
+    members = [];
+  }
+
+  Future<String> create() async {
+    this.companyId = ProfileBloc.selectedCompany;
+    final body = this.toJson();
+
+    _logger.d('Workspace creation request body: $body');
+    Map<String, dynamic> resp;
+    try {
+      resp = await _api.post(Endpoint.workspaces, body: body);
+    } catch (error) {
+      _logger.e('Error while trying to create a workspace:\n${error.message}');
+      return '';
+    }
+    _logger.d('RESPONSE AFTER WORKSPACE CREATION: $resp');
+    String workspaceId = resp['id'];
+    return workspaceId;
+  }
+
+  Future<bool> updateMembers({
+    @required List<String> members,
+    @required String workspaceId,
+  }) async {
+    String companyId = ProfileBloc.selectedCompany;
+
+    final body = <String, dynamic>{
+      'company_id': companyId,
+      'workspace_id': workspaceId,
+      'members': members,
+    };
+    _logger.d('Member update request body: $body');
+    Map<String, dynamic> resp;
+    try {
+      resp = await _api.post(Endpoint.workspaceMembers, body: body);
+    } catch (error) {
+      _logger.e('Error while trying to update members of a workspace: $error');
+      return false;
+    }
+    _logger.d('RESPONSE AFTER MEMBERS UPDATE: $resp');
+    return true;
+  }
 }

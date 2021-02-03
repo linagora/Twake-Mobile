@@ -73,8 +73,6 @@ class AddChannelRepository {
   //
   // }
 
-  Future<void> cache() async {}
-
   Future<void> clear() async {
     companyId = '';
     workspaceId = '';
