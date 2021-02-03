@@ -109,8 +109,10 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
           context.read<AddChannelBloc>().add(Update(participants: []));
           _controller.clear();
           // Redirect user to created direct
-          String channelId = state.id;
-          openDirect(context, channelId);
+          if (_isDirect) {
+            String channelId = state.id;
+            openDirect(context, channelId);
+          }
         } else if (state is Error) {
           // Show an error
           Scaffold.of(context).showSnackBar(SnackBar(
