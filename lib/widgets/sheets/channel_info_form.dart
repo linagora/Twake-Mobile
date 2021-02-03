@@ -6,8 +6,9 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
-import 'package:twake/widgets/sheets/channel_info_text_form.dart';
-import 'package:twake/widgets/sheets/channel_name_container.dart';
+import 'package:twake/widgets/sheets/participants_widget.dart';
+import 'package:twake/widgets/sheets/sheet_text_field.dart';
+import 'package:twake/widgets/sheets/name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/utils/extensions.dart';
@@ -142,7 +143,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                   : () => context.read<AddChannelBloc>().add(Create()),
             ),
             SizedBox(height: 16),
-            ChannelNameContainer(
+            NameContainer(
               controller: _channelNameController,
               focusNode: _channelNameFocusNode,
             ),
@@ -154,7 +155,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
             Container(
               padding: const EdgeInsets.only(left: 14.0, right: 7),
               color: Colors.white,
-              child: ChannelInfoTextForm(
+              child: SheetTextField(
                 hint: 'Channel description',
                 controller: _descriptionController,
                 focusNode: _channelDescriptionFocusNode,
@@ -322,7 +323,7 @@ class ParticipantsButton extends StatelessWidget {
           .add(SetFlowStage(FlowStage.participants)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-        child: ParticipantsCommonWidget(
+        child: ParticipantsWidget(
           title: 'Added participants',
           trailingWidget: count > 0
               ? Row(
@@ -372,51 +373,12 @@ class AddAllSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-      child: ParticipantsCommonWidget(
+      child: ParticipantsWidget(
         title: 'Automatically add new users',
         trailingWidget: CupertinoSwitch(
           value: automaticallyAddNew,
           onChanged: onChanged,
         ),
-      ),
-    );
-  }
-}
-
-class ParticipantsCommonWidget extends StatelessWidget {
-  final String title;
-  final Widget trailingWidget;
-
-  const ParticipantsCommonWidget({
-    Key key,
-    @required this.title,
-    @required this.trailingWidget,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      height: 44,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 15),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-          ),
-          Spacer(),
-          trailingWidget,
-          SizedBox(width: 20),
-        ],
       ),
     );
   }

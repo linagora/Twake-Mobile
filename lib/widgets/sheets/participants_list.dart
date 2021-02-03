@@ -14,20 +14,20 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ChannelParticipantsList extends StatefulWidget {
+class ParticipantsList extends StatefulWidget {
   final bool isDirect;
 
-  const ChannelParticipantsList({
+  const ParticipantsList({
     Key key,
     this.isDirect = false,
   }) : super(key: key);
 
   @override
-  _ChannelParticipantsListState createState() =>
-      _ChannelParticipantsListState();
+  _ParticipantsListState createState() =>
+      _ParticipantsListState();
 }
 
-class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
+class _ParticipantsListState extends State<ParticipantsList> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   Timer _debounce;
@@ -64,7 +64,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   }
 
   @override
-  void didUpdateWidget(covariant ChannelParticipantsList oldWidget) {
+  void didUpdateWidget(covariant ParticipantsList oldWidget) {
     if (oldWidget.isDirect != widget.isDirect) {
       _isDirect = widget.isDirect;
     }

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ChannelInfoTextForm extends StatefulWidget {
+class SheetTextField extends StatefulWidget {
   final String hint;
   final Function leadingAction;
   final Function trailingAction;
@@ -9,7 +9,7 @@ class ChannelInfoTextForm extends StatefulWidget {
   final FocusNode focusNode;
   final String Function(String) validator;
 
-  const ChannelInfoTextForm({
+  const SheetTextField({
     @required this.controller,
     @required this.focusNode,
     @required this.hint,
@@ -19,10 +19,10 @@ class ChannelInfoTextForm extends StatefulWidget {
   });
 
   @override
-  _ChannelInfoTextFormState createState() => _ChannelInfoTextFormState();
+  _SheetTextFieldState createState() => _SheetTextFieldState();
 }
 
-class _ChannelInfoTextFormState extends State<ChannelInfoTextForm> {
+class _SheetTextFieldState extends State<SheetTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
