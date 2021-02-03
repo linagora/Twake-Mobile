@@ -61,8 +61,10 @@ class _MainPageState extends State<MainPage> {
             var sheetFlow = SheetFlow.channel;
             if (state is FlowUpdated) {
               sheetFlow = state.flow;
+              return DraggableScrollable(flow: sheetFlow);
+            } else {
+              return SizedBox();
             }
-            return DraggableScrollable(flow: sheetFlow);
           },
         ),
         body: SafeArea(
