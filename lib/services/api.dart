@@ -46,9 +46,9 @@ class Api {
     _addDioInterceptors();
   }
 
-  set headers(value) {
-    tokenDio.options.headers = value;
+  set headers(Map<String, String> value) {
     dio.options.headers = value;
+    tokenDio.options.headers = Map.from(value)..remove('Authorization');
   }
 
   // if referesh has changed, then we reset dio interceptor to account for this
@@ -100,8 +100,8 @@ class Api {
     );
     try {
       final response = await dio.getUri(uri);
-      logger.d('METHOD: ${uri.toString()}');
-      // logger.d('HEADERS: ${dio.options.headers}');
+      // logger.d('METHOD: ${uri.toString()}');
+      logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
       // logger.d('RESPONSE: ${response.data}');
       return response.data;
@@ -146,9 +146,8 @@ class Api {
     checkConnection();
     final url = _SHOST + method;
     try {
-      // logger.d('METHOD: $url');
-      // logger.d('HEADERS: ${dio.options.headers}');
-      // logger.d('BODY: $body');
+      logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
+      logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
       // logger.d('RESPONSE ${response.data}');
