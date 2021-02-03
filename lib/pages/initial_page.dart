@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
@@ -169,6 +170,10 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 ),
                 BlocProvider<DraftBloc>(
                   create: (_) => DraftBloc(state.initData.draft),
+                  lazy: false,
+                ),
+                BlocProvider<AddWorkspaceCubit>(
+                  create: (_) => AddWorkspaceCubit(state.initData.addWorkspace),
                   lazy: false,
                 ),
               ],

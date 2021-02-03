@@ -10,7 +10,7 @@ AddWorkspaceRepository _$AddWorkspaceRepositoryFromJson(
     Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['company_id', 'workspace_id', 'name']);
   return AddWorkspaceRepository(
-    json['name'] as String,
+    name: json['name'] as String,
     companyId: json['company_id'] as String,
     workspaceId: json['workspace_id'] as String,
     members: (json['members'] as List)?.map((e) => e as String)?.toList(),

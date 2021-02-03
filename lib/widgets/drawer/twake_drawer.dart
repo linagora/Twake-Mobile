@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/auth/logout_dialog.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
@@ -40,36 +42,36 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                     ),
                     Spacer(),
                     _companiesHidden
-                        ?
-                    IconButton(
-                      icon: Icon(
-                        Icons.add,
-                        size: Dim.tm3(decimal: .3),
-                        color: Colors.black,
-                      ),
-                      onPressed: () {
-                        final isDrawerOpen = Scaffold.of(context).isDrawerOpen;
-                        if (isDrawerOpen) {
-                          Navigator.pop(context); // close the drawer
-                          return Future.value(false); // don't allow app to navigate back
-                        } else {
-                          return Future.value(true); // allow app to navigate back
-                        }
-                      },
-                    )
-                    // IconButton(
-                    //         color: Color(0xff444444),
-                    //         onPressed: () {
-                    //           setState(() {
-                    //             _companiesHidden = false;
-                    //           });
-                    //         },
-                    //         iconSize: Dim.tm4(),
-                    //         icon: Icon(
-                    //           Icons.loop,
-                    //           color: Color(0xff444444),
-                    //         ),
-                    //       )
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.add,
+                              size: Dim.tm3(decimal: .3),
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              final isDrawerOpen =
+                                  Scaffold.of(context).isDrawerOpen;
+                              if (isDrawerOpen) {
+                                Navigator.pop(context); // close the drawer
+                                context.read<SheetBloc>()
+                                  ..add(SetFlow(flow: SheetFlow.workspace))
+                                  ..add(OpenSheet());
+                              }
+                            },
+                          )
+                        // IconButton(
+                        //         color: Color(0xff444444),
+                        //         onPressed: () {
+                        //           setState(() {
+                        //             _companiesHidden = false;
+                        //           });
+                        //         },
+                        //         iconSize: Dim.tm4(),
+                        //         icon: Icon(
+                        //           Icons.loop,
+                        //           color: Color(0xff444444),
+                        //         ),
+                        //       )
                         : SizedBox(width: 0, height: 0),
                   ],
                 ),

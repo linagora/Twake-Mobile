@@ -7,6 +7,11 @@ import 'package:twake/services/endpoints.dart';
 
 part 'add_workspace_repository.g.dart';
 
+enum FlowStage {
+  info,
+  collaborators,
+}
+
 @JsonSerializable(explicitToJson: true)
 class AddWorkspaceRepository {
   @JsonKey(required: true, name: 'company_id')
@@ -23,8 +28,8 @@ class AddWorkspaceRepository {
   @JsonKey(ignore: true)
   static final _api = Api();
 
-  AddWorkspaceRepository(
-    this.name, {
+  AddWorkspaceRepository({
+    this.name,
     this.companyId,
     this.workspaceId,
     this.members,

@@ -41,6 +41,15 @@ class Error extends AddWorkspaceState {
   List<Object> get props => [message];
 }
 
+class StageUpdated extends AddWorkspaceState {
+  final FlowStage stage;
+
+  StageUpdated(this.stage);
+
+  @override
+  List<Object> get props => [stage];
+}
+
 class MembersUpdated extends AddWorkspaceState {
   final String workspaceId;
   final List<String> members;
