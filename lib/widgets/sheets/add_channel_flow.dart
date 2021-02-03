@@ -19,7 +19,7 @@ class AddChannelFlow extends StatelessWidget {
       ),
     ];
     return BlocBuilder<AddChannelBloc, AddChannelState>(
-      buildWhen: (previous, current) => current is StageUpdated,
+      buildWhen: (_, current) => current is StageUpdated,
       builder: (context, state) {
         print('State! - $state');
 
@@ -33,11 +33,13 @@ class AddChannelFlow extends StatelessWidget {
               i = 1;
               break;
           }
+          return IndexedStack(
+            index: i,
+            children: channelFlowWidgets,
+          );
+        } else {
+          return SizedBox();
         }
-        return IndexedStack(
-          index: i,
-          children: channelFlowWidgets,
-        );
       },
     );
   }

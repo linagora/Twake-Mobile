@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
@@ -79,7 +78,7 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
 
   void _return() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    context.read<SheetBloc>().add(ClearSheet());
+    // context.read<SheetBloc>().add(ClearSheet());
     context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
   }
 
@@ -164,7 +163,11 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
                 buildWhen: (previous, current) => current is Updated,
                 builder: (context, state) {
                   var selectedIds = <String>[];
+                  var name = '';
+                  var description = '';
                   if (state is Updated) {
+                    name = state.repository?.name;
+                    description = state.repository?.description;
                     selectedIds = state.repository?.members;
                   }
                   return ListView.builder(
@@ -195,9 +198,11 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
                                 selectedIds.add(user.id);
                               });
                             }
-                            context
-                                .read<AddChannelBloc>()
-                                .add(Update(participants: selectedIds));
+                            context.read<AddChannelBloc>().add(Update(
+                                  name: name,
+                                  description: description,
+                                  participants: selectedIds,
+                                ));
                           }
                         },
                       );
