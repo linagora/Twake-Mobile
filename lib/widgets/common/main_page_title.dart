@@ -47,14 +47,7 @@ class MainPageTitle extends StatelessWidget {
               // Let's provide a different experience to channel creation flow
               // by preselecting desired type
               // according the title opposite plus button
-              if (isDirect) {
-                context.read<AddChannelBloc>().add(SetFlowType(isDirect: true));
-              } else {
-                context
-                    .read<AddChannelBloc>()
-                    .add(Update(type: ChannelType.public));
-                context.read<AddChannelBloc>().add(SetFlowType(isDirect: false));
-              }
+              context.read<AddChannelBloc>().add(SetFlowType(isDirect: isDirect));
               trailingAction?.call();
             },
           );

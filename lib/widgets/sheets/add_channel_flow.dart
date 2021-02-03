@@ -10,6 +10,7 @@ import 'package:twake/widgets/sheets/channel_participants_list.dart';
 class AddChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('Build call');
     final channelFlowWidgets = [
       ChannelInfoForm(),
       ChannelParticipantsList(),
@@ -20,11 +21,11 @@ class AddChannelFlow extends StatelessWidget {
         buildWhen: (previous, current) =>
             current is FlowTypeSet || current is StageUpdated,
         builder: (context, state) {
+          print('State! - $state');
           if (state is FlowTypeSet) {
+            print('Flow type is direct? - ${state.isDirect}');
             if (state.isDirect) {
               return ChannelParticipantsList(isDirect: true);
-            } else {
-              return ChannelInfoForm();
             }
           }
           var i = 0;

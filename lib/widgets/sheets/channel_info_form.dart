@@ -33,6 +33,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   @override
   void initState() {
     super.initState();
+    print('Init');
 
     _channelNameController.addListener(() {
       final channelName = _channelNameController.text;
@@ -55,6 +56,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
 
   @override
   void dispose() {
+    print('dispose');
     _channelNameController.dispose();
     _descriptionController.dispose();
     _channelNameFocusNode.dispose();
