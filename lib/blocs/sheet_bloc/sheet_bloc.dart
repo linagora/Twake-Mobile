@@ -18,9 +18,7 @@ class SheetBloc extends Bloc<SheetEvent, SheetState> {
     SheetEvent event,
   ) async* {
     if (event is InitSheet) {
-      yield SheetInitial(
-        flow: repository.flow,
-      );
+      yield SheetInitial(flow: repository.flow);
     } else if (event is OpenSheet) {
       yield SheetShouldOpen();
       // await repository.clean();
@@ -37,6 +35,9 @@ class SheetBloc extends Bloc<SheetEvent, SheetState> {
       yield SheetShouldReset();
     } else if (event is ProcessSheet) {
       yield SheetProcessing();
+    } else if (event is SetFlow) {
+      final flow = event.flow;
+      yield FlowUpdated(flow: flow);
     }
   }
 }

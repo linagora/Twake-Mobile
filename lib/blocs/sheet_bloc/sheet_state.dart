@@ -15,42 +15,58 @@ class SheetInitial extends SheetState {
 
 class SheetShouldOpen extends SheetState {
   SheetShouldOpen();
+
   @override
   List<Object> get props => [];
 }
 
 class SheetOpened extends SheetState {
   SheetOpened();
+
   @override
   List<Object> get props => [];
 }
 
 class SheetShouldClose extends SheetState {
   SheetShouldClose();
+
   @override
   List<Object> get props => [];
 }
 
 class SheetClosed extends SheetState {
   SheetClosed();
+
   @override
   List<Object> get props => [];
 }
 
 class SheetShouldClear extends SheetState {
   SheetShouldClear();
+
   @override
   List<Object> get props => [];
 }
 
 class SheetShouldReset extends SheetState {
   SheetShouldReset();
+
   @override
   List<Object> get props => [];
 }
 
 class SheetProcessing extends SheetState {
   SheetProcessing();
+
   @override
   List<Object> get props => [];
+}
+
+class FlowUpdated extends SheetState {
+  final SheetFlow flow;
+
+  FlowUpdated({@required this.flow});
+
+  @override
+  List<Object> get props => [flow];
 }

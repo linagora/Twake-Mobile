@@ -1,6 +1,7 @@
 enum SheetFlow {
   channel,
   direct,
+  workspace,
 }
 
 class SheetRepository {

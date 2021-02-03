@@ -66,3 +66,12 @@ class ResetSheet extends SheetEvent {
   @override
   List<Object> get props => [];
 }
+
+class SetFlow extends SheetEvent {
+  final SheetFlow flow;
+
+  const SetFlow({@required this.flow});
+
+  @override
+  List<Object> get props => [flow];
+}
