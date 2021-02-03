@@ -69,3 +69,16 @@ class SetFlowStage extends AddChannelEvent {
   @override
   List<Object> get props => [stage];
 }
+
+class UpdateMembers extends AddChannelEvent {
+  final String channelId;
+  final List<String> members;
+
+  UpdateMembers({
+    @required this.channelId,
+    @required this.members,
+  });
+
+  @override
+  List<Object> get props => [channelId, members];
+}

@@ -83,3 +83,16 @@ class StageUpdated extends AddChannelState {
   @override
   List<Object> get props => [stage];
 }
+
+class MembersUpdated extends AddChannelState {
+  final String channelId;
+  final List<String> members;
+
+  MembersUpdated({
+    @required this.channelId,
+    @required this.members,
+  });
+
+  @override
+  List<Object> get props => [channelId, members];
+}

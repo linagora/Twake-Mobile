@@ -81,6 +81,8 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         ));
   }
 
+  void _create() {}
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SheetBloc, SheetState>(
@@ -95,6 +97,13 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
       child: BlocConsumer<AddChannelBloc, AddChannelState>(
           listener: (context, state) {
         if (state is Created) {
+          if (_channelType == ChannelType.private &&
+              _participants.length != 0) {
+            context.read<AddChannelBloc>().add(UpdateMembers(
+                  channelId: state.id,
+                  members: _participants,
+                ));
+          }
           // Reload channels
           context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
           // Reload directs
@@ -104,7 +113,13 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           // Clear sheet
           context.read<SheetBloc>().add(ClearSheet());
           // Redirect user to created channel
-          String channelId = state.id;
+          if (_channelType != ChannelType.private ||
+              _participants.length == 0) {
+            String channelId = state.id;
+            openChannel(context, channelId);
+          }
+        } else if (state is MembersUpdated) {
+          String channelId = state.channelId;
           openChannel(context, channelId);
         } else if (state is Error) {
           // Show an error
@@ -191,8 +206,9 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                   ? 'Public channels can be found by everyone, though private can only be joined by invitation'
                   : 'Direct channels involve correspondence between selected members',
             ),
-            SizedBox(height: 8),
-            ParticipantsButton(count: _participants.length),
+            if (_channelType == ChannelType.private) SizedBox(height: 8),
+            if (_channelType == ChannelType.private)
+              ParticipantsButton(count: _participants.length),
             SizedBox(height: 8),
             if (_channelType == ChannelType.public)
               AddAllSwitcher(
