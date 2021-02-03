@@ -11,13 +11,32 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
   AddWorkspaceCubit(this.repository) : super(AddWorkspaceInitial());
 
   void create({
-    @required String companyId,
     @required String name,
   }) async {
-    // final result = await repository
+    final result = await repository.create();
+    if (result.isNotEmpty) {
+      emit(Created(result));
+    } else {
+      emit(Error('Workspace creation failure!'));
+    }
   }
 
-  void updateMembers() {}
+  void updateMembers({
+    @required String workspaceId,
+    @required List<String> members,
+  }) async {
+    final result = await repository.updateMembers(
+      members: members,
+      workspaceId: workspaceId,
+    );
+    if (result) {
+      emit(MembersUpdated(workspaceId: workspaceId, members: members));
+    } else {
+      emit(Error('Members update failure!'));
+    }
+  }
 
-  void clear() {}
+  void clear() {
+    repository.clear();
+  }
 }

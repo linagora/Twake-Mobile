@@ -42,16 +42,14 @@ class Error extends AddWorkspaceState {
 }
 
 class MembersUpdated extends AddWorkspaceState {
-  final String companyId;
   final String workspaceId;
   final List<String> members;
 
   MembersUpdated({
-    @required this.companyId,
     @required this.workspaceId,
     @required this.members,
   });
 
   @override
-  List<Object> get props => [companyId, workspaceId, members];
+  List<Object> get props => [workspaceId, members];
 }
