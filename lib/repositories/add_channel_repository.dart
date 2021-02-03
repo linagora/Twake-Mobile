@@ -1,12 +1,9 @@
-import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
+import 'package:meta/meta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
-import 'package:twake/services/storage/storage.dart';
 
 part 'add_channel_repository.g.dart';
 
@@ -47,8 +44,6 @@ class AddChannelRepository {
   static final _logger = Logger();
   @JsonKey(ignore: true)
   static final _api = Api();
-  @JsonKey(ignore: true)
-  static final _storage = Storage();
   @JsonKey(ignore: true)
   ChannelType type;
 
