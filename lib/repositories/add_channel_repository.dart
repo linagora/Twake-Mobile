@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
-import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/storage/storage.dart';
@@ -9,8 +9,6 @@ part 'add_channel_repository.g.dart';
 
 enum FlowStage {
   info,
-  groups,
-  type,
   participants,
 }
 
@@ -49,8 +47,6 @@ class AddChannelRepository {
   @JsonKey(ignore: true)
   static final _storage = Storage();
   @JsonKey(ignore: true)
-  FlowStage flow;
-  @JsonKey(ignore: true)
   ChannelType type;
 
   AddChannelRepository(
@@ -79,9 +75,6 @@ class AddChannelRepository {
   //
   // }
 
-  void setStage(FlowStage flow) {
-    this.flow = flow;
-  }
 
   Future<void> cache() async {}
 
@@ -95,11 +88,10 @@ class AddChannelRepository {
     channelGroup = '';
     def = true;
     members = [];
-    flow = FlowStage.info;
     type = ChannelType.public;
   }
 
-  Future<bool> create() async {
+  Future<String> create() async {
     this.companyId = ProfileBloc.selectedCompany;
     this.workspaceId = ProfileBloc.selectedWorkspace;
 
@@ -121,8 +113,8 @@ class AddChannelRepository {
       this.visibility = 'direct';
     }
 
-    String myId = ProfileBloc.userId;
-    this.members.add(myId);
+    // String myId = ProfileBloc.userId;
+    // this.members.add(myId);
 
     // if (this.name.isEmpty ||
     //     this.companyId.isEmpty ||
@@ -132,21 +124,22 @@ class AddChannelRepository {
     //       'Channel creation: validation error. Not all mandatory fields exist in request body.');
     //   return false;
     // } else {
-      final channelJson = this.toJson();
-      return process(channelJson);
+      final addChannelJson = this.toJson();
+      return process(addChannelJson);
     // }
   }
 
-  Future<bool> process(Map<String, dynamic> body) async {
-    _logger.d('Channel creation request...');
-    var resp;
+  Future<String> process(Map<String, dynamic> body) async {
+    _logger.d('Channel creation request body: $body');
+    Map<String, dynamic> resp;
     try {
       resp = await _api.post(Endpoint.channels, body: body);
     } catch (error) {
       _logger.e('Error while trying to create a channel:\n${error.message}');
-      return false;
+      return '';
     }
     _logger.d('RESPONSE AFTER CHANNEL CREATION: $resp');
-    return true;
+    String channelId = resp['id'];
+    return channelId;
   }
 }

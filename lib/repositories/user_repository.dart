@@ -1,4 +1,4 @@
-import 'package:twake/blocs/profile_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -49,7 +49,7 @@ class UserRepository {
 
   Future<bool> batchUsersLoad(Set<String> userIds) async {
     items.removeWhere((id, _) => !userIds.contains(id));
-    userIds.retainAll(items.keys);
+    userIds.removeAll(items.keys);
     List<String> toBeFetched = [];
     for (String id in userIds) {
       final item = await _storage.load(type: StorageType.User, key: id);
@@ -94,6 +94,7 @@ class UserRepository {
   }
 
   Future<List<User>> searchUsers(String request) async {
+    if (request.isEmpty) return <User>[];
     var companyId = ProfileBloc.selectedCompany;
     List response = [];
     try {

@@ -46,12 +46,12 @@ class Api {
     _addDioInterceptors();
   }
 
-  set headers(value) {
-    tokenDio.options.headers = value;
+  set headers(Map<String, String> value) {
     dio.options.headers = value;
+    tokenDio.options.headers = Map.from(value)..remove('Authorization');
   }
 
-  // if referesh has changed, then we reset dio interceptor to account for this
+  // if refresh has changed, then we reset dio interceptor to account for this
   set prolongToken(value) {
     _prolongToken = value;
   }
@@ -101,7 +101,7 @@ class Api {
     try {
       final response = await dio.getUri(uri);
       // logger.d('METHOD: ${uri.toString()}');
-      // logger.d('HEADERS: ${dio.options.headers}');
+      logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
       // logger.d('RESPONSE: ${response.data}');
       return response.data;
@@ -146,9 +146,8 @@ class Api {
     checkConnection();
     final url = _SHOST + method;
     try {
-      // logger.d('METHOD: $url');
-      // logger.d('HEADERS: ${dio.options.headers}');
-      // logger.d('BODY: $body');
+      logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
+      logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
       // logger.d('RESPONSE ${response.data}');
@@ -183,12 +182,12 @@ class Api {
         onError: (DioError error) async {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
-          // referesh token, we automatically use it to get a new token
+          // refresh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
-              '\nError: $error' +
               '\nHeaders: ${error.request.headers}' +
-              '\nData: ${error.request.data}');
+              '\nResponse: ${error.response.data}' +
+              '\nQUERY: ${error.request.queryParameters}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();

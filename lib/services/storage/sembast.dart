@@ -198,4 +198,10 @@ class Sembast with Storage {
     // TODO: implement batchDelete
     throw UnimplementedError();
   }
+
+  @override
+  Future customQuery(String query, {List<List> filters, Map<String, bool> orderings, int limit, int offset}) {
+    // TODO: implement customQuery
+    throw UnimplementedError();
+  }
 }

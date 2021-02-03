@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/add_channel_flow.dart';
+import 'package:twake/widgets/sheets/add_direct_flow.dart';
+import 'package:twake/widgets/sheets/add_workspace_flow.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DraggableScrollable extends StatelessWidget {
+  final SheetFlow flow;
+
+  const DraggableScrollable({Key key, this.flow}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    Widget content = AddChannelFlow();
+    switch (flow) {
+      case SheetFlow.channel:
+        context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
+        content = AddChannelFlow();
+        break;
+      case SheetFlow.direct:
+        content = AddDirectFlow();
+        break;
+      case SheetFlow.workspace:
+        content = AddWorkspaceFlow();
+    }
     return ClipRRect(
       borderRadius: new BorderRadius.only(
         topLeft: const Radius.circular(10.0),
@@ -14,7 +36,7 @@ class DraggableScrollable extends StatelessWidget {
           color: Color(0xffefeef3),
         ),
         child: SingleChildScrollView(
-          child: AddChannelFlow(),
+          child: content,
         ),
       ),
     );

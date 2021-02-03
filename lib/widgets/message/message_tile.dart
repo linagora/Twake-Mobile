@@ -2,13 +2,13 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:twake/blocs/base_channel_bloc.dart';
-import 'package:twake/blocs/draft_bloc.dart';
-import 'package:twake/blocs/message_edit_bloc.dart';
-import 'package:twake/blocs/messages_bloc.dart';
-import 'package:twake/blocs/single_message_bloc.dart';
-import 'package:twake/blocs/threads_bloc.dart';
-import 'package:twake/blocs/user_bloc.dart';
+import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
+import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
+import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
+// import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
@@ -80,22 +80,15 @@ class _MessageTileState<T extends BaseChannelBloc>
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<SingleMessageBloc>(
-          create: (_) => SingleMessageBloc(_message),
-          lazy: false,
-        ),
-        BlocProvider<UserBloc>(
-          create: (_) => UserBloc(_message.userId),
-          lazy: false,
-        )
-      ],
+    return BlocProvider<SingleMessageBloc>(
+      create: (_) => SingleMessageBloc(_message),
+      lazy: false,
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
         builder: (ctx, messageState) {
           if (messageState is MessageReady)
             return InkWell(
               onLongPress: () {
+                FocusManager.instance.primaryFocus.unfocus();
                 showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
@@ -151,94 +144,84 @@ class _MessageTileState<T extends BaseChannelBloc>
                   right: 12.0,
                   bottom: 12.0,
                 ),
-                child: BlocBuilder<UserBloc, UserState>(builder: (_, state) {
-                  if (state is UserReady) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Column(
                       children: [
-                        Column(
-                          children: [
-                            if (state is UserReady)
-                              ImageAvatar(
-                                state.thumbnail,
-                                width: 30,
-                                height: 30,
-                              ),
-                            if (state is! UserReady)
-                              CircularProgressIndicator(),
-                          ],
+                        ImageAvatar(
+                          messageState.thumbnail,
+                          width: 30,
+                          height: 30,
                         ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      ],
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${state.firstName} ${state.lastName}',
-                                    style: TextStyle(
-                                      fontSize: 18.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xff444444),
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    messageState.threadId != null ||
-                                            _hideShowAnswers
-                                        ? DateFormatter.getVerboseDateTime(
-                                            messageState.creationDate)
-                                        : DateFormatter.getVerboseTime(
-                                            messageState.creationDate),
-                                    style: TextStyle(
-                                      fontSize: 11.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff92929C),
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                '${messageState.firstName} ${messageState.lastName}',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xff444444),
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              SizedBox(height: 5.0),
-                              MarkdownBody(
-                                data: messageState.text,
-                              ),
-                              // Parser(messageState.content,
-                              // messageState.charCount)
-                              // .render(context),
-                              SizedBox(height: 5.0),
-                              Wrap(
-                                runSpacing: Dim.heightMultiplier,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                textDirection: TextDirection.ltr,
-                                children: [
-                                  ...messageState.reactions.keys.map((r) {
-                                    return Reaction(
-                                      r,
-                                      messageState.reactions[r]['count'],
-                                    );
-                                  }),
-                                  if (messageState.responsesCount > 0 &&
-                                      messageState.threadId == null &&
-                                      !_hideShowAnswers)
-                                    Text(
-                                      'See all answers (${messageState.responsesCount})',
-                                      style: StylesConfig.miniPurple,
-                                    ),
-                                ],
+                              Text(
+                                messageState.threadId != null ||
+                                        _hideShowAnswers
+                                    ? DateFormatter.getVerboseDateTime(
+                                        messageState.creationDate)
+                                    : DateFormatter.getVerboseTime(
+                                        messageState.creationDate),
+                                style: TextStyle(
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff92929C),
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Container();
-                  }
-                }),
+                          SizedBox(height: 5.0),
+                          MarkdownBody(
+                            data: messageState.text.replaceAll('\n', '\\\n'),
+                          ),
+                          // Parser(messageState.content,
+                          // messageState.charCount)
+                          // .render(context),
+                          SizedBox(height: 5.0),
+                          Wrap(
+                            runSpacing: Dim.heightMultiplier,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            textDirection: TextDirection.ltr,
+                            children: [
+                              ...messageState.reactions.keys.map((r) {
+                                return Reaction(
+                                  r,
+                                  messageState.reactions[r]['count'],
+                                );
+                              }),
+                              if (messageState.responsesCount > 0 &&
+                                  messageState.threadId == null &&
+                                  !_hideShowAnswers)
+                                Text(
+                                  'See all answers (${messageState.responsesCount})',
+                                  style: StylesConfig.miniPurple,
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           else

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/connection_bloc.dart' as cb;
+import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/auth/auth_form.dart';
 import 'package:twake/widgets/common/no_internet_snackbar.dart';

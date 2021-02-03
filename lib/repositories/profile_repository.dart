@@ -47,6 +47,7 @@ class ProfileRepository extends JsonSerializable {
     if (profileMap == null) {
       logger.d('No profile in storage, requesting from api...');
       profileMap = await _api.get(Endpoint.profile);
+      logger.d('RECEIVED PROFILE: $profileMap');
       loadedFromNetwork = true;
     } else {
       profileMap = jsonDecode(profileMap[_storage.settingsField]);

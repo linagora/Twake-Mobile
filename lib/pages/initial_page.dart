@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
-import 'package:twake/blocs/auth_bloc.dart';
-import 'package:twake/blocs/channels_bloc.dart';
-import 'package:twake/blocs/companies_bloc.dart';
-import 'package:twake/blocs/connection_bloc.dart';
-import 'package:twake/blocs/directs_bloc.dart';
-import 'package:twake/blocs/draft_bloc.dart';
-import 'package:twake/blocs/messages_bloc.dart';
-import 'package:twake/blocs/notification_bloc.dart';
-import 'package:twake/blocs/profile_bloc.dart';
-import 'package:twake/blocs/sheet_bloc.dart';
-import 'package:twake/blocs/threads_bloc.dart';
-import 'package:twake/blocs/workspaces_bloc.dart';
-import 'package:twake/blocs/add_channel_bloc.dart';
+import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
+import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
+import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
+import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
 import 'package:twake/pages/web_auth_page.dart';
 import 'package:twake/widgets/common/network_status_bar.dart';
-import 'package:twake/blocs/connection_bloc.dart' as cb;
+import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 // import 'package:twake/pages/web_auth_page.dart';
 
 class InitialPage extends StatefulWidget {
@@ -179,13 +179,12 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   children: [
                     Navigator(
                       key: _navigatorKey,
-                      initialRoute: Routes.main,
+                      initialRoute: Routes.root,
                       onGenerateRoute: (settings) =>
                           Routes.onGenerateRoute(settings.name),
                     ),
                     Positioned(
-                      top: Dim.heightPercent(
-                          (kToolbarHeight * 0.15).round()) +
+                      top: Dim.heightPercent((kToolbarHeight * 0.15).round()) +
                           MediaQuery.of(context).padding.top,
                       child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
                           builder: (context, state) {

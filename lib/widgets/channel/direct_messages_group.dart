@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/directs_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/widgets/channel/direct_tile.dart';
 import 'package:twake/widgets/common/main_page_title.dart';
 
