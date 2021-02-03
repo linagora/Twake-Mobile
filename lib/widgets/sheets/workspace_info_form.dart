@@ -9,8 +9,8 @@ import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
-import 'package:twake/widgets/sheets/name_container.dart';
 import 'package:twake/widgets/sheets/participants_widget.dart';
+import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 
 class WorkspaceInfoForm extends StatefulWidget {
@@ -118,7 +118,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
           return Column(
             children: [
               SheetTitleBar(
-                title: 'New workspace',
+                title: 'New Workspace',
                 leadingTitle: 'Cancel',
                 leadingAction: () {
                   context.read<SheetBloc>().add(CloseSheet());
@@ -132,9 +132,17 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
                         .create(name: _workspaceNameController.text),
               ),
               SizedBox(height: 16),
-              NameContainer(
-                controller: _workspaceNameController,
-                focusNode: _workspaceNameFocusNode,
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
+                  color: Colors.white,
+                  child: SheetTextField(
+                    hint: 'Workspace name',
+                    controller: _workspaceNameController,
+                    focusNode: _workspaceNameFocusNode,
+                  ),
+                ),
               ),
               SizedBox(height: 8),
               HintLine(text: 'Please provide a name for your new workspace'),
