@@ -22,7 +22,7 @@ class AddChannelFlow extends StatelessWidget {
         builder: (context, state) {
           if (state is FlowTypeSet) {
             if (state.isDirect) {
-              return ChannelParticipantsList();
+              return ChannelParticipantsList(isDirect: true);
             } else {
               return ChannelInfoForm();
             }

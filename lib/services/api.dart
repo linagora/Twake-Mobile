@@ -51,7 +51,7 @@ class Api {
     dio.options.headers = value;
   }
 
-  // if referesh has changed, then we reset dio interceptor to account for this
+  // if refresh has changed, then we reset dio interceptor to account for this
   set prolongToken(value) {
     _prolongToken = value;
   }
@@ -183,7 +183,7 @@ class Api {
         onError: (DioError error) async {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
-          // referesh token, we automatically use it to get a new token
+          // refresh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
               '\nMethod: ${error.request.path}' +
               '\nHeaders: ${error.request.headers}' +

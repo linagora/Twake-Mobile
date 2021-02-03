@@ -15,6 +15,13 @@ import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChannelParticipantsList extends StatefulWidget {
+  final bool isDirect;
+
+  const ChannelParticipantsList({
+    Key key,
+    this.isDirect = false,
+  }) : super(key: key);
+
   @override
   _ChannelParticipantsListState createState() =>
       _ChannelParticipantsListState();
@@ -25,10 +32,14 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
   final _focusNode = FocusNode();
   Timer _debounce;
   String _searchRequest;
+  bool _isDirect;
 
   @override
   void initState() {
     super.initState();
+
+    _isDirect = widget.isDirect;
+
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -52,9 +63,23 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
     super.dispose();
   }
 
+  @override
+  void didUpdateWidget(covariant ChannelParticipantsList oldWidget) {
+    if (oldWidget.isDirect != widget.isDirect) {
+      _isDirect = widget.isDirect;
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
   void _close() {
     FocusScope.of(context).requestFocus(new FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
+  }
+
+  void _return() {
+    FocusScope.of(context).requestFocus(new FocusNode());
+    context.read<SheetBloc>().add(ClearSheet());
+    context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
   }
 
   void _createDirect(List<String> participantsIds) {
@@ -103,11 +128,11 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
       return Column(
         children: [
           SheetTitleBar(
-            title: 'New direct chat',
-            leadingTitle: 'Close',
-            leadingAction: () => _close(),
-            // trailingTitle: 'Create',
-            // trailingAction: () => _createDirect(),
+            title: _isDirect ? 'New direct chat' : 'Add participants',
+            leadingTitle: _isDirect ? 'Close' : 'Back',
+            leadingAction: _isDirect ? () => _close() : () => _return(),
+            trailingTitle: _isDirect ? null : 'Add',
+            trailingAction: _isDirect ? null : () => _return(),
           ),
           Container(
             padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
@@ -124,6 +149,11 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
               return Center(child: CircularProgressIndicator());
             } else if (state is MultipleUsersLoaded) {
               users = state.users;
+              // print('-------------------------------');
+              // for (var u in users) {
+              //   print('${u.id} - ${u.username}');
+              // }
+              // print('-------------------------------');
             }
             return BlocBuilder<AddChannelBloc, AddChannelState>(
               buildWhen: (previous, current) => current is Updated,
@@ -144,22 +174,26 @@ class _ChannelParticipantsListState extends State<ChannelParticipantsList> {
                               ? '${user.firstName} ${user.lastName}'
                               : '${user.username}',
                       selected: selectedIds.contains(user.id),
+                      allowMultipleChoice: !_isDirect,
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode());
-                        selectedIds = [user.id];
-                        _createDirect(selectedIds);
-                        // if (selectedIds.contains(user.id)) {
-                        //   setState(() {
-                        //     selectedIds.remove(user.id);
-                        //   });
-                        // } else {
-                        //   setState(() {
-                        //     selectedIds.add(user.id);
-                        //   });
-                        // }
-                        // context
-                        //     .read<AddChannelBloc>()
-                        //     .add(Update(participants: selectedIds));
+                        if (_isDirect) {
+                          selectedIds = [user.id];
+                          _createDirect(selectedIds);
+                        } else {
+                          if (selectedIds.contains(user.id)) {
+                            setState(() {
+                              selectedIds.remove(user.id);
+                            });
+                          } else {
+                            setState(() {
+                              selectedIds.add(user.id);
+                            });
+                          }
+                          context
+                              .read<AddChannelBloc>()
+                              .add(Update(participants: selectedIds));
+                        }
                       },
                     );
                   },

@@ -10,7 +10,6 @@ import 'package:twake/widgets/sheets/channel_info_text_form.dart';
 import 'package:twake/widgets/sheets/channel_name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,30 +19,24 @@ class ChannelInfoForm extends StatefulWidget {
 }
 
 class _ChannelInfoFormState extends State<ChannelInfoForm> {
-  var _canGoNext = false;
-
   final _channelNameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _groupNameController = TextEditingController();
 
   final _channelNameFocusNode = FocusNode();
   final _channelDescriptionFocusNode = FocusNode();
-  final _groupNameFocusNode = FocusNode();
+
+  var _canGoNext = false;
+  var _channelType = ChannelType.public;
+  var _participants = <String>[];
+  var _automaticallyAddNew = true;
 
   @override
   void initState() {
     super.initState();
 
-    _groupNameFocusNode.addListener(() {
-      print(_groupNameFocusNode.hasFocus);
-      setState(() {});
-    });
-
     _channelNameController.addListener(() {
-      context
-          .read<AddChannelBloc>()
-          .add(Update(name: _channelNameController.text));
       final channelName = _channelNameController.text;
+      _batchUpdateState(name: channelName);
       if (channelName.isNotReallyEmpty && !_canGoNext) {
         setState(() {
           _canGoNext = true;
@@ -56,15 +49,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
     });
 
     _descriptionController.addListener(() {
-      context
-          .read<AddChannelBloc>()
-          .add(Update(description: _descriptionController.text));
-    });
-
-    _groupNameController.addListener(() {
-      context
-          .read<AddChannelBloc>()
-          .add(Update(groupName: _groupNameController.text));
+      _batchUpdateState(description: _descriptionController.text);
     });
   }
 
@@ -72,11 +57,25 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   void dispose() {
     _channelNameController.dispose();
     _descriptionController.dispose();
-    _groupNameController.dispose();
     _channelNameFocusNode.dispose();
     _channelDescriptionFocusNode.dispose();
-    _groupNameFocusNode.dispose();
     super.dispose();
+  }
+
+  void _batchUpdateState({
+    String name,
+    String description,
+    ChannelType type,
+    List<String> participants,
+    bool automaticallyAddNew,
+  }) {
+    context.read<AddChannelBloc>().add(Update(
+          name: name ?? _channelNameController.text,
+          description: description ?? _descriptionController.text,
+          type: type ?? _channelType,
+          participants: participants ?? _participants,
+          automaticallyAddNew: automaticallyAddNew ?? _automaticallyAddNew,
+        ));
   }
 
   @override
@@ -86,7 +85,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         if (state is SheetShouldClear) {
           _channelNameController.clear();
           _descriptionController.clear();
-          _groupNameController.clear();
           FocusScope.of(context).requestFocus(new FocusNode());
           context.read<AddChannelBloc>().add(Clear());
         }
@@ -121,10 +119,10 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         return (current is Updated || current is Creation);
       }, builder: (context, state) {
         bool createIsBlocked = state is Creation;
-
-        var channelType = ChannelType.public;
         if (state is Updated) {
-          channelType = state.repository?.type;
+          _channelType = state.repository?.type;
+          _participants = state.repository?.members;
+          _automaticallyAddNew = state.repository.def;
         }
 
         return Column(
@@ -179,21 +177,30 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               ),
             ),
             SizedBox(height: 6),
-            ChannelTypesContainer(type: channelType),
+            ChannelTypesContainer(
+              type: _channelType,
+              onPublicTap: () => _batchUpdateState(type: ChannelType.public),
+              onPrivateTap: () => _batchUpdateState(type: ChannelType.private),
+            ),
             SizedBox(height: 8),
             HintLine(
-              text: channelType != ChannelType.direct
+              text: _channelType != ChannelType.direct
                   ? 'Public channels can be found by everyone, though private can only be joined by invitation'
                   : 'Direct channels involve correspondence between selected members',
             ),
             SizedBox(height: 8),
-            ParticipantsButton(),
+            ParticipantsButton(count: _participants.length),
             SizedBox(height: 8),
-            if (channelType == ChannelType.public) AddAllSwitcher(),
-            if (channelType == ChannelType.private) SizedBox(),
+            if (_channelType == ChannelType.public)
+              AddAllSwitcher(
+                automaticallyAddNew: _automaticallyAddNew,
+                onChanged: (value) =>
+                    _batchUpdateState(automaticallyAddNew: value),
+              ),
+            if (_channelType == ChannelType.private) SizedBox(),
             HintLine(
-              text: channelType != ChannelType.private
-                  ? (channelType != ChannelType.direct
+              text: _channelType != ChannelType.private
+                  ? (_channelType != ChannelType.direct
                       ? 'Only available for public channels'
                       : 'Only available for direct channels')
                   : '',
@@ -207,10 +214,14 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
 
 class ChannelTypesContainer extends StatelessWidget {
   final ChannelType type;
+  final Function onPublicTap;
+  final Function onPrivateTap;
 
   const ChannelTypesContainer({
     Key key,
     @required this.type,
+    @required this.onPublicTap,
+    @required this.onPrivateTap,
   }) : super(key: key);
 
   @override
@@ -226,16 +237,12 @@ class ChannelTypesContainer extends StatelessWidget {
         SelectableItem(
           title: 'Public',
           selected: type == ChannelType.public,
-          onTap: () => context
-              .read<AddChannelBloc>()
-              .add(Update(type: ChannelType.public)),
+          onTap: onPublicTap,
         ),
         SelectableItem(
           title: 'Private',
           selected: type == ChannelType.private,
-          onTap: () => context
-              .read<AddChannelBloc>()
-              .add(Update(type: ChannelType.private)),
+          onTap: onPrivateTap,
         ),
       ],
     );
@@ -301,6 +308,10 @@ class SelectableItem extends StatelessWidget {
 }
 
 class ParticipantsButton extends StatelessWidget {
+  final int count;
+
+  const ParticipantsButton({Key key, this.count = 0}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -311,43 +322,34 @@ class ParticipantsButton extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
         child: ParticipantsCommonWidget(
           title: 'Added participants',
-          trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
-            builder: (context, state) {
-              var participantsCount = 0;
-              if (state is Updated) {
-                final participants = state.repository?.members;
-                participantsCount = participants.length;
-              }
-              return participantsCount > 0
-                  ? Row(
-                children: [
-                  Text(
-                    '$participantsCount',
+          trailingWidget: count > 0
+              ? Row(
+                  children: [
+                    Text(
+                      '$count',
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff837cfe),
+                      ),
+                    ),
+                    Icon(
+                      CupertinoIcons.forward,
+                      color: Color(0xff837cfe),
+                    ),
+                  ],
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(right: 9.0),
+                  child: Text(
+                    'Add',
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.w400,
                       color: Color(0xff837cfe),
                     ),
                   ),
-                  Icon(
-                    CupertinoIcons.forward,
-                    color: Color(0xff837cfe),
-                  ),
-                ],
-              )
-                  : Padding(
-                    padding: const EdgeInsets.only(right: 9.0),
-                    child: Text(
-                'Add',
-                style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xff837cfe),
                 ),
-              ),
-                  );
-            },
-          ),
         ),
       ),
     );
@@ -355,27 +357,24 @@ class ParticipantsButton extends StatelessWidget {
 }
 
 class AddAllSwitcher extends StatelessWidget {
+  final bool automaticallyAddNew;
+  final Function(bool) onChanged;
+
+  const AddAllSwitcher({
+    Key key,
+    @required this.automaticallyAddNew,
+    @required this.onChanged,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
       child: ParticipantsCommonWidget(
         title: 'Automatically add new users',
-        trailingWidget: BlocBuilder<AddChannelBloc, AddChannelState>(
-          builder: (context, state) {
-            var shouldAddAll = true;
-            if (state is Updated) {
-              shouldAddAll = state.repository.def;
-            }
-            return CupertinoSwitch(
-              value: shouldAddAll,
-              onChanged: (value) {
-                context
-                    .read<AddChannelBloc>()
-                    .add(Update(automaticallyAddNew: value));
-              },
-            );
-          },
+        trailingWidget: CupertinoSwitch(
+          value: automaticallyAddNew,
+          onChanged: onChanged,
         ),
       ),
     );
