@@ -5,6 +5,7 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 
 class MainPageTitle extends StatelessWidget {
   final String title;
@@ -32,24 +33,25 @@ class MainPageTitle extends StatelessWidget {
           ),
         ),
         BlocBuilder<SheetBloc, SheetState>(builder: (context, state) {
-          if (state is SheetClosed || state is SheetInitial) {
-            trailingAction = () => context.read<SheetBloc>().add(OpenSheet());
-          } else {
-            trailingAction = () => context.read<SheetBloc>().add(CloseSheet());
-          }
+          // Let's provide a different experience to channel creation flow
+          // by preselecting desired type
+          // according the title opposite the adding button
+          trailingAction = () => context.read<SheetBloc>()
+            ..add(state is SheetClosed || state is SheetInitial
+                ? OpenSheet()
+                : CloseSheet())
+            ..add(
+              SetFlow(
+                flow: isDirect ? SheetFlow.direct : SheetFlow.channel,
+              ),
+            );
           return IconButton(
             icon: Icon(
               Icons.add,
               size: Dim.tm3(decimal: .3),
               color: Colors.black,
             ),
-            onPressed: () {
-              // Let's provide a different experience to channel creation flow
-              // by preselecting desired type
-              // according the title opposite plus button
-              context.read<AddChannelBloc>().add(SetFlowType(isDirect: isDirect));
-              trailingAction?.call();
-            },
+            onPressed: () => trailingAction?.call(),
           );
         }),
       ],

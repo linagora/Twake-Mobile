@@ -13,38 +13,32 @@ class AddChannelFlow extends StatelessWidget {
     print('Build call');
     final channelFlowWidgets = [
       ChannelInfoForm(),
-      ChannelParticipantsList(),
-    ];
-    return BlocProvider<UserBloc>(
-      create: (_) => UserBloc(ProfileBloc.userId),
-      child: BlocBuilder<AddChannelBloc, AddChannelState>(
-        buildWhen: (previous, current) =>
-            current is FlowTypeSet || current is StageUpdated,
-        builder: (context, state) {
-          print('State! - $state');
-          if (state is FlowTypeSet) {
-            print('Flow type is direct? - ${state.isDirect}');
-            if (state.isDirect) {
-              return ChannelParticipantsList(isDirect: true);
-            }
-          }
-          var i = 0;
-          if (state is StageUpdated) {
-            switch (state.stage) {
-              case FlowStage.info:
-                i = 0;
-                break;
-              case FlowStage.participants:
-                i = 1;
-                break;
-            }
-          }
-          return IndexedStack(
-            index: i,
-            children: channelFlowWidgets,
-          );
-        },
+      BlocProvider<UserBloc>(
+        create: (_) => UserBloc(ProfileBloc.userId),
+        child: ChannelParticipantsList(),
       ),
+    ];
+    return BlocBuilder<AddChannelBloc, AddChannelState>(
+      buildWhen: (previous, current) => current is StageUpdated,
+      builder: (context, state) {
+        print('State! - $state');
+
+        var i = 0;
+        if (state is StageUpdated) {
+          switch (state.stage) {
+            case FlowStage.info:
+              i = 0;
+              break;
+            case FlowStage.participants:
+              i = 1;
+              break;
+          }
+        }
+        return IndexedStack(
+          index: i,
+          children: channelFlowWidgets,
+        );
+      },
     );
   }
 }

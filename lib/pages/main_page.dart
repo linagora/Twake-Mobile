@@ -7,6 +7,7 @@ import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/bars/main_app_bar.dart';
 import 'package:twake/widgets/channel/channels_group.dart';
 import 'package:twake/widgets/channel/direct_messages_group.dart';
@@ -15,6 +16,7 @@ import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage();
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -39,25 +41,30 @@ class _MainPageState extends State<MainPage> {
         maxHeight: MediaQuery.of(context).size.height * 0.9,
         backdropEnabled: true,
         renderPanelSheet: false,
-        panel: BlocBuilder<SheetBloc, SheetState>(
-            buildWhen: (_, current) =>
-                current is SheetShouldOpen ||
-                current is SheetShouldClose ||
-                current is SheetOpened ||
-                current is SheetClosed,
-            builder: (context, state) {
-              // print('Strange state: $state');
-              if (state is SheetShouldOpen) {
-                if (_panelController.isPanelClosed) {
-                  _openSheet();
-                }
-              } else if (state is SheetShouldClose) {
-                if (_panelController.isPanelOpen) {
-                  _closeSheet();
-                }
+        panel: BlocConsumer<SheetBloc, SheetState>(
+          listenWhen: (_, current) =>
+              current is SheetShouldOpen || current is SheetShouldClose,
+          listener: (context, state) {
+            // print('Strange state: $state');
+            if (state is SheetShouldOpen) {
+              if (_panelController.isPanelClosed) {
+                _openSheet();
               }
-              return DraggableScrollable();
-            }),
+            } else if (state is SheetShouldClose) {
+              if (_panelController.isPanelOpen) {
+                _closeSheet();
+              }
+            }
+          },
+          buildWhen: (_, current) => current is FlowUpdated,
+          builder: (context, state) {
+            var sheetFlow = SheetFlow.channel;
+            if (state is FlowUpdated) {
+              sheetFlow = state.flow;
+            }
+            return DraggableScrollable(flow: sheetFlow);
+          },
+        ),
         body: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
