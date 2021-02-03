@@ -81,8 +81,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         ));
   }
 
-  void _create() {}
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<SheetBloc, SheetState>(

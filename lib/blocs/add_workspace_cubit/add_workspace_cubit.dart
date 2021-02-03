@@ -39,4 +39,19 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
   void clear() {
     repository.clear();
   }
+
+  void update({String name, List<String> members}) {
+    repository.name = name ?? repository.name;
+    repository.members = members ?? repository.members ?? [];
+
+    var newRepo = AddWorkspaceRepository(
+      name: repository.name,
+      members: repository.members,
+    );
+    emit(Updated(newRepo));
+  }
+
+  void setFlowStage(FlowStage stage) {
+    emit(StageUpdated(stage));
+  }
 }

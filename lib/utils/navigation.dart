@@ -20,6 +20,10 @@ void _open<T extends BaseChannelBloc>(BuildContext context, String channelId) {
       .then((r) => handleError(r, context));
 }
 
+void selectWorkspace(BuildContext context, String workspaceId) {
+
+}
+
 void handleError(dynamic r, BuildContext context) {
   if (r is bool && r) {
     Scaffold.of(context).hideCurrentSnackBar();
