@@ -4,16 +4,6 @@ abstract class AddChannelEvent extends Equatable {
   const AddChannelEvent();
 }
 
-class LoadFromCache extends AddChannelEvent {
-  @override
-  List<Object> get props => [];
-}
-
-class Cache extends AddChannelEvent {
-  @override
-  List<Object> get props => [];
-}
-
 class Clear extends AddChannelEvent {
   @override
   List<Object> get props => [];

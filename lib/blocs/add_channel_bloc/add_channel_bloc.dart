@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:twake/services/init.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 
 part 'add_channel_event.dart';
