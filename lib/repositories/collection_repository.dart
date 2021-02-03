@@ -64,7 +64,7 @@ class CollectionRepository<T extends CollectionItem> {
     );
     bool saveToStore = false;
     if (itemsList.isEmpty) {
-      Logger().d('Requesting $T items from api...');
+      // Logger().d('Requesting $T items from api...');
       try {
         itemsList = await _api.get(apiEndpoint, params: queryParams);
       } on ApiError catch (error) {
@@ -114,7 +114,7 @@ class CollectionRepository<T extends CollectionItem> {
     }
     bool saveToStore = false;
     if (itemsList.isEmpty) {
-      logger.d('Non in storage. Reloading $T items from api...');
+      // logger.d('Non in storage. Reloading $T items from api...');
       try {
         itemsList = await _api.get(apiEndpoint, params: queryParams);
       } on ApiError catch (error) {
@@ -134,7 +134,7 @@ class CollectionRepository<T extends CollectionItem> {
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
-    logger.d('Pulling item $T from api...');
+    // logger.d('Pulling item $T from api...');
     List resp = [];
     try {
       resp = (await _api.get(apiEndpoint, params: queryParams));
@@ -155,7 +155,7 @@ class CollectionRepository<T extends CollectionItem> {
     Function(T) onSuccess,
     addToItems = true,
   }) async {
-    logger.d('Sending item $T to api...');
+    // logger.d('Sending item $T to api...');
     var resp;
     try {
       resp = (await _api.post(apiEndpoint, body: body));
@@ -224,7 +224,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> save() async {
-    logger.d('SAVING $T items to store!');
+    // logger.d('SAVING $T items to store!');
     await _storage.batchStore(
       items: this.items.map((i) => i.toJson()),
       type: _typeToStorageType[T],

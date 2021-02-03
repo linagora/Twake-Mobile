@@ -23,6 +23,7 @@ class MessageEditField extends StatefulWidget {
 
 class _MessageEditField extends State<MessageEditField> {
   bool _emojiVisible = false;
+  bool _forceLooseFocus = false;
   bool _canSend = false;
 
   final _focusNode = FocusNode();
@@ -78,19 +79,25 @@ class _MessageEditField extends State<MessageEditField> {
     if (oldWidget.initialText != widget.initialText) {
       _controller.text = widget.initialText;
     }
-    if (widget.autofocus) {
+    if (widget.autofocus && !_forceLooseFocus) {
       _focusNode.requestFocus();
     }
     super.didUpdateWidget(oldWidget);
   }
 
   void toggleEmojiBoard() async {
-    if (_focusNode.hasPrimaryFocus) _focusNode.unfocus();
-    await Future.delayed(Duration(milliseconds: 200));
+    if (_focusNode.hasPrimaryFocus) {
+      _focusNode.unfocus();
+      _forceLooseFocus = true;
+    }
+    await Future.delayed(Duration(milliseconds: 150));
     setState(() {
       _emojiVisible = !_emojiVisible;
     });
-    if (!_emojiVisible) _focusNode.requestFocus();
+    if (!_emojiVisible) {
+      _forceLooseFocus = false;
+      _focusNode.requestFocus();
+    }
   }
 
   Future<bool> onBackPress() async {

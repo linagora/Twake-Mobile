@@ -121,7 +121,8 @@ class AuthRepository extends JsonSerializable {
       "token": token,
       "username": username,
     };
-    return await _api.post(Endpoint.init, body: body);
+    print('INIT SESSION: $body');
+    return await _api.post(Endpoint.init, body: body, useTokenDio: true);
   }
 
   Future<void> clean() async {

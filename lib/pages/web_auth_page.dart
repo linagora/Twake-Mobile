@@ -3,7 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-// import 'package:twake/services/service_bundle.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebAuthPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _WebAuthPageState extends State<WebAuthPage> {
             initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
             onWebViewCreated: (ctrl) => webViewController = ctrl,
             navigationDelegate: (r) async {
-              // Logger().d('URL IS: ' + r.url);
+              Logger().d('URL IS: ' + r.url);
               // if (r.url.contains('redirect_to_app')) {
               // final qp = Uri.parse(r.url).queryParameters;
               // Logger().d('PARAMS: $qp');

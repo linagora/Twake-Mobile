@@ -62,7 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           this.add(
             SetAuthData(qp),
           );
-          ctrl.clearCache();
+          await ctrl.clearCache();
           await CookieManager().deleteAllCookies();
         }
       },
@@ -109,10 +109,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (connectionLost) return;
       yield Authenticating();
       print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
-      await webView.webViewController.evaluateJavascript(
-          source:
-              '''!function(l,p){function f(){document.getElementById("userfield").value=l,document.getElementById("passwordfield").value=p,document.getElementById("lform").submit()}"complete"===document.readyState||"interactive"===document.readyState?setTimeout(f,1):document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password}");''');
+      final js =
+          '''!function(l,p){function f(){document.getElementById("userfield").value=l,document.getElementById("passwordfield").value=p,document.getElementById("lform").submit()}"complete"===document.readyState||"interactive"===document.readyState?setTimeout(f,1):document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
+      print('JS: $js');
+      await webView.webViewController.evaluateJavascript(source: js);
     } else if (event is SetAuthData) {
+      print('AUTH DATA ${event.authData}');
       yield Authenticating();
       await repository.setAuthData(event.authData);
       final InitData initData = await initMain();
@@ -139,6 +141,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<void> runWebView() async {
     await CookieManager.instance().deleteAllCookies();
+    final c = await CookieManager.instance().getCookies(url: 'auth.twake.app');
+    print('COOKIES: $c');
     _prevUrl = '';
     await webView.dispose();
     webView.run();
