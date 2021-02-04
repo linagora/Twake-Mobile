@@ -13,8 +13,12 @@ class Endpoint {
   static const companies = '/companies';
   // API Endpoint for working with user's workspaces in all companies
   static const workspaces = '/workspaces';
+  // API Endpoint for working with the members of workspace
+  static const workspaceMembers = '/workspaces/members';
   // API Endpoint for working with user's channels in a workspace
   static const channels = '/channels';
+  // API Endpoint for working with the members of user's channels
+  static const channelMembers = '/channels/members';
   // API Endpoint for working with user's direct channels with other users
   static const directs = '/direct';
   // API Endpoint for working with messages in a channel

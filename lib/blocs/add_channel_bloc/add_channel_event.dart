@@ -4,16 +4,6 @@ abstract class AddChannelEvent extends Equatable {
   const AddChannelEvent();
 }
 
-class LoadFromCache extends AddChannelEvent {
-  @override
-  List<Object> get props => [];
-}
-
-class Cache extends AddChannelEvent {
-  @override
-  List<Object> get props => [];
-}
-
 class Clear extends AddChannelEvent {
   @override
   List<Object> get props => [];
@@ -68,4 +58,17 @@ class SetFlowStage extends AddChannelEvent {
 
   @override
   List<Object> get props => [stage];
+}
+
+class UpdateMembers extends AddChannelEvent {
+  final String channelId;
+  final List<String> members;
+
+  UpdateMembers({
+    @required this.channelId,
+    @required this.members,
+  });
+
+  @override
+  List<Object> get props => [channelId, members];
 }

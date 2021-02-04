@@ -1,9 +1,9 @@
+import 'package:meta/meta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
-import 'package:twake/services/storage/storage.dart';
 
 part 'add_channel_repository.g.dart';
 
@@ -45,8 +45,6 @@ class AddChannelRepository {
   @JsonKey(ignore: true)
   static final _api = Api();
   @JsonKey(ignore: true)
-  static final _storage = Storage();
-  @JsonKey(ignore: true)
   ChannelType type;
 
   AddChannelRepository(
@@ -74,9 +72,6 @@ class AddChannelRepository {
   // Future<AddChannelData> load() async {
   //
   // }
-
-
-  Future<void> cache() async {}
 
   Future<void> clear() async {
     companyId = '';
@@ -124,9 +119,35 @@ class AddChannelRepository {
     //       'Channel creation: validation error. Not all mandatory fields exist in request body.');
     //   return false;
     // } else {
-      final addChannelJson = this.toJson();
-      return process(addChannelJson);
+    final addChannelJson = this.toJson();
+    return process(addChannelJson);
     // }
+  }
+
+  Future<bool> updateMembers({
+    @required List<String> members,
+    @required String channelId,
+  }) async {
+    String companyId = ProfileBloc.selectedCompany;
+    String workspaceId = ProfileBloc.selectedWorkspace;
+
+    final body = <String, dynamic>{
+      'company_id': companyId,
+      'workspace_id': workspaceId,
+      'channel_id': channelId,
+      'members': members,
+    };
+    _logger.d('Member update request body: $body');
+    Map<String, dynamic> resp;
+    try {
+      resp = await _api.post(Endpoint.channelMembers, body: body);
+    } catch (error) {
+      _logger.e(
+          'Error while trying to update members of a channel: $error');
+      return false;
+    }
+    _logger.d('RESPONSE AFTER MEMBERS UPDATE: $resp');
+    return true;
   }
 
   Future<String> process(Map<String, dynamic> body) async {

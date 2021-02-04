@@ -24,7 +24,9 @@ class SheetTitleBar extends StatelessWidget {
       height: 52,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(
-        left: leadingAction != null ? ((leadingTitle != 'Back') ? 12.0 : 0.0) : 12.0,
+        left: leadingAction != null
+            ? ((leadingTitle != 'Back') ? 12.0 : 0.0)
+            : 12.0,
         right: 12.0,
       ),
       child: Row(
@@ -35,7 +37,9 @@ class SheetTitleBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                if (leadingAction != null && leadingTitle != 'Close')
+                if (leadingAction != null &&
+                    leadingTitle != 'Close' &&
+                    leadingTitle != 'Cancel')
                   Icon(
                     CupertinoIcons.back,
                     color: Color(0xff837cfe),

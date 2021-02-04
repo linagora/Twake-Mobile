@@ -9,30 +9,6 @@ class AddChannelInitial extends AddChannelState {
   List<Object> get props => [];
 }
 
-class AddChannelLoading extends AddChannelState {
-  @override
-  List<Object> get props => [];
-}
-
-class AddChannelLoaded extends AddChannelState {
-  final InitData initData;
-
-  AddChannelLoaded(this.initData);
-
-  @override
-  List<Object> get props => [];
-}
-
-class AddChannelCaching extends AddChannelState {
-  @override
-  List<Object> get props => [];
-}
-
-class AddChannelCached extends AddChannelState {
-  @override
-  List<Object> get props => [];
-}
-
 class Updated extends AddChannelState {
   final AddChannelRepository repository;
 
@@ -82,4 +58,17 @@ class StageUpdated extends AddChannelState {
 
   @override
   List<Object> get props => [stage];
+}
+
+class MembersUpdated extends AddChannelState {
+  final String channelId;
+  final List<String> members;
+
+  MembersUpdated({
+    @required this.channelId,
+    @required this.members,
+  });
+
+  @override
+  List<Object> get props => [channelId, members];
 }
