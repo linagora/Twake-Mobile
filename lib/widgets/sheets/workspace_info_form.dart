@@ -77,7 +77,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
         listener: (context, state) {
           if (state is Created) {
             _workspaceId = state.workspaceId;
-            _collaborators = ['31a4a6a4-54f2-11eb-a382-0242ac120004'];
+            _collaborators = ['senjertomat@yandex.ru']; //['31a4a6a4-54f2-11eb-a382-0242ac120004'];
             if (_collaborators.length != 0) {
               context.read<AddWorkspaceCubit>().updateMembers(
                     workspaceId: state.workspaceId,
@@ -85,9 +85,9 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
                   );
             }
             // Reload workspaces
-            context
-                .read<WorkspacesBloc>()
-                .add(ReloadWorkspaces(ProfileBloc.selectedCompany));
+            // context
+            //     .read<WorkspacesBloc>()
+            //     .add(ReloadWorkspaces(ProfileBloc.selectedCompany));
             // Close sheet
             context.read<SheetBloc>().add(CloseSheet());
             // Clear sheet

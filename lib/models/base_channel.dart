@@ -15,7 +15,7 @@ abstract class BaseChannel extends CollectionItem {
 
   String description;
 
-  @JsonKey(required: true, name: 'members_count')
+  @JsonKey(name: 'members_count')
   int membersCount;
 
   @JsonKey(name: 'last_activity', defaultValue: 0)

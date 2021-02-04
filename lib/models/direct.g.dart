@@ -10,7 +10,6 @@ Direct _$DirectFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const [
     'id',
     'name',
-    'members_count',
     'messages_total',
     'messages_unread',
     'company_id',
