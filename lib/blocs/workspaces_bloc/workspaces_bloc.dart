@@ -45,6 +45,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         ],
         queryParams: {'company_id': event.companyId},
         sortFields: {'name': true},
+        forceFromApi: true,
       );
       yield WorkspacesLoaded(
         workspaces: repository.items,

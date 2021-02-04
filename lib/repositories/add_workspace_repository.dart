@@ -60,6 +60,10 @@ class AddWorkspaceRepository {
       return '';
     }
     _logger.d('RESPONSE AFTER WORKSPACE CREATION: $resp');
+    // {id: e587ca3c-66a1-11eb-b421-0242ac120004, private: false, logo: , wallpaper: , color: #7E7A6D,
+    // group: {id: 0e9337d6-54eb-11eb-9e45-0242ac120004, unique_name: 9922ca9a-11e3-4873-bb61-6de5461b0d46,
+    // name: Dave Company, plan: {name: Free plan, limits: []}, logo: , isBlocked: false, total_members: 0},
+    // name: w1, total_members: 1, total_guests: 0, total_pending: 0, unique_name: w1-387091468a, is_archived: false, is_new: true}
     String workspaceId = resp['id'];
     return workspaceId;
   }
