@@ -14,8 +14,9 @@ class CollaboratorsList extends StatefulWidget {
 }
 
 class _CollaboratorsListState extends State<CollaboratorsList> {
-  var _canInvite = false;
+  var _canInvite = true;
   List<Widget> _fields = [];
+  List<String> _members = [];
 
   @override
   void initState() {
@@ -32,53 +33,64 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
 
   void _return() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    context.read<AddWorkspaceCubit>().setFlowStage(FlowStage.info);
+    context.read<AddWorkspaceCubit>()
+      ..update(members: _members)
+      ..setFlowStage(FlowStage.info);
   }
 
   void _invite() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    context.read<AddWorkspaceCubit>().setFlowStage(FlowStage.info);
+    context.read<AddWorkspaceCubit>()
+      ..update(members: _members)
+      ..setFlowStage(FlowStage.info);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FieldsCubit, FieldsState>(builder: (context, state) {
-      if (state is Added || state is Removed || state is Cleared) {
-        _fields = state.fields;
-      }
-      return Column(
-        children: [
-          SheetTitleBar(
-            title: 'Invite',
-            leadingTitle: 'Back',
-            leadingAction: () => _return(),
-            trailingTitle: 'Invite',
-            trailingAction: _canInvite ? () => _invite() : null,
-          ),
-          SizedBox(height: 32.0),
-          Container(
-            padding: const EdgeInsets.only(left: 14.0),
-            width: MediaQuery.of(context).size.width,
-            child: Text(
-              'ADD COLLABORATORS',
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                fontSize: 13.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black.withOpacity(0.4),
+    return BlocConsumer<FieldsCubit, FieldsState>(
+      listener: (context, state) {
+        if (state is Updated) {
+          _members = state.data.values.toList();
+        }
+      },
+      builder: (context, state) {
+        if (state is Added || state is Removed || state is Cleared) {
+          _fields = state.fields;
+        }
+        return Column(
+          children: [
+            SheetTitleBar(
+              title: 'Invite',
+              leadingTitle: 'Back',
+              leadingAction: () => _return(),
+              trailingTitle: 'Invite',
+              trailingAction: () => _canInvite ? _invite() : null,
+            ),
+            SizedBox(height: 32.0),
+            Container(
+              padding: const EdgeInsets.only(left: 14.0),
+              width: MediaQuery.of(context).size.width,
+              child: Text(
+                'ADD COLLABORATORS',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black.withOpacity(0.4),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 8.0),
-          Divider(
-            thickness: 0.5,
-            height: 0.5,
-            color: Colors.black.withOpacity(0.2),
-          ),
-          ..._fields,
-        ],
-      );
-    });
+            SizedBox(height: 8.0),
+            Divider(
+              thickness: 0.5,
+              height: 0.5,
+              color: Colors.black.withOpacity(0.2),
+            ),
+            ..._fields,
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -211,8 +223,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                           onTap: () => _controller.clear(),
                           child: Icon(
                             CupertinoIcons.clear_thick_circled,
-                            color:
-                            _inFocus ? Colors.grey : Colors.transparent,
+                            color: _inFocus ? Colors.grey : Colors.transparent,
                             size: 20,
                           ),
                         ),

@@ -10,19 +10,19 @@ class FieldsCubit extends Cubit<FieldsState> {
 
   void add(Widget field, int index) async {
     final result = await repository.add(field, index);
-    print('Current map: ${repository.data}');
+    // print('Current map: ${repository.data}');
     emit(Added(fields: result));
   }
 
   void remove(int index) async {
     final result = await repository.remove(index);
-    print('Current map: ${repository.data}');
+    // print('Current map: ${repository.data}');
     emit(Removed(fields: result));
   }
 
   void update(int index, String content) async {
     final result = await repository.updateData(index, content);
-    print('Current map: $result');
+    // print('Current map: $result');
     emit(Updated(data: result));
   }
 
