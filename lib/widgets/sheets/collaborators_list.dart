@@ -5,6 +5,7 @@ import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_state.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
+import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CollaboratorsList extends StatefulWidget {
@@ -111,7 +112,12 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     _isLastOne = widget.isLastOne;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _controller.addListener(() {});
+      _controller.addListener(() {
+        String text = _controller.text;
+        if (text.isNotReallyEmpty) {
+          context.read<FieldsCubit>().update(_index, text);
+        }
+      });
     });
   }
 

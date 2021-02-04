@@ -20,6 +20,7 @@ class FieldsCubit extends Cubit<FieldsState> {
 
   void update(int index, String content) async {
     final result = await repository.updateData(index, content);
+    print('Current map: $result');
     emit(Updated(data: result));
   }
 

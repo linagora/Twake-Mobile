@@ -40,7 +40,7 @@ Future<InitData> initMain() async {
   final sheet = await SheetRepository.load();
   final addChannel = await AddChannelRepository.load();
   final addWorkspace = AddWorkspaceRepository();
-  final fields = FieldsRepository(fields: []);
+  final fields = FieldsRepository(fields: [], data: {});
   final draft = DraftRepository();
   final _ = UserRepository(Endpoint.users);
   final companies = await CollectionRepository.load<Company>(
