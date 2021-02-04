@@ -2,12 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 abstract class FieldsState extends Equatable {
+  List<Widget> get fields;
   const FieldsState();
 }
 
 class FieldsInitial extends FieldsState {
   @override
   List<Object> get props => [];
+
+  @override
+  List<Widget> get fields => [];
 }
 
 class Added extends FieldsState {
@@ -31,6 +35,8 @@ class Removed extends FieldsState {
 class Cleared extends FieldsState {
   @override
   List<Object> get props => [];
+  @override
+  List<Widget> get fields => [];
 }
 
 class Error extends FieldsState {
@@ -40,4 +46,6 @@ class Error extends FieldsState {
 
   @override
   List<Object> get props => [];
+  @override
+  List<Widget> get fields => [];
 }
