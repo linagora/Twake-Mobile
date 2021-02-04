@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
+import 'package:twake/blocs/add_workspace_cubit/add_workspace_state.dart';
 import 'package:twake/repositories/add_channel_repository.dart'
     as add_channel_repo;
 import 'package:twake/repositories/add_workspace_repository.dart'

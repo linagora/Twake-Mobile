@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
+import 'package:twake/blocs/add_workspace_cubit/add_workspace_state.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/widgets/sheets/collaborators_list.dart';
 import 'package:twake/widgets/sheets/workspace_info_form.dart';

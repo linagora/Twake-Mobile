@@ -1,4 +1,6 @@
-part of 'add_workspace_cubit.dart';
+import 'package:meta/meta.dart';
+import 'package:equatable/equatable.dart';
+import 'package:twake/repositories/add_workspace_repository.dart';
 
 abstract class AddWorkspaceState extends Equatable {
   const AddWorkspaceState();

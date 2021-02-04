@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
+import 'package:twake/blocs/add_workspace_cubit/add_workspace_state.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
@@ -76,7 +77,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
         listener: (context, state) {
           if (state is Created) {
             _workspaceId = state.workspaceId;
-
+            _collaborators = ['31a4a6a4-54f2-11eb-a382-0242ac120004'];
             if (_collaborators.length != 0) {
               context.read<AddWorkspaceCubit>().updateMembers(
                     workspaceId: state.workspaceId,

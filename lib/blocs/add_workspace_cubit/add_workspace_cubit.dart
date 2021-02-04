@@ -1,9 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
-
-part 'add_workspace_state.dart';
+import 'add_workspace_state.dart';
 
 class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
   final AddWorkspaceRepository repository;
