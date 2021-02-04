@@ -88,7 +88,8 @@ class _MessageTileState<T extends BaseChannelBloc>
           if (messageState is MessageReady)
             return InkWell(
               onLongPress: () {
-                FocusManager.instance.primaryFocus.unfocus();
+                BlocProvider.of<MessageEditBloc>(context)
+                    .add(CancelMessageEdit());
                 showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,

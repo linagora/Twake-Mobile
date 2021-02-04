@@ -79,6 +79,7 @@ class _MessageEditField extends State<MessageEditField> {
     if (oldWidget.initialText != widget.initialText) {
       _controller.text = widget.initialText;
     }
+    print('FORCE LOOSE FOCUS: $_forceLooseFocus');
     if (widget.autofocus && !_forceLooseFocus) {
       _focusNode.requestFocus();
     }
