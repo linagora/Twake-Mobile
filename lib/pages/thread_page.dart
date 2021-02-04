@@ -12,10 +12,23 @@ import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
-class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
+class ThreadPage<T extends BaseChannelBloc> extends StatefulWidget {
   final bool autofocus;
 
   const ThreadPage({this.autofocus: false});
+
+  @override
+  _ThreadPageState<T> createState() => _ThreadPageState<T>();
+}
+
+class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
+  bool autofocus = false;
+
+  @override
+  void initState() {
+    autofocus = widget.autofocus;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,37 +154,54 @@ class ThreadPage<T extends BaseChannelBloc> extends StatelessWidget {
                             BlocProvider.of<ThreadsBloc<T>>(context).state;
                         threadId = threadState.threadMessage.id;
 
-                        return BlocBuilder<MessageEditBloc, MessageEditState>(
-                          builder: (ctx, state) => MessageEditField(
-                            key: UniqueKey(),
-                            initialText: state is MessageEditing
-                                ? state.originalStr
-                                : draft ?? '',
-                            onMessageSend: state is MessageEditing
-                                ? state.onMessageEditComplete
-                                : (content) {
-                                    BlocProvider.of<ThreadsBloc<T>>(context)
-                                        .add(
-                                      SendMessage(
-                                        content: content,
-                                        channelId: threadState.parentChannel.id,
-                                        threadId: threadState.threadMessage.id,
-                                      ),
-                                    );
-                                    context.read<DraftBloc>().add(ResetDraft(
-                                        id: threadState.threadMessage.id,
-                                        type: DraftType.thread));
-                                  },
-                            onTextUpdated: state is MessageEditing
-                                ? (text) {}
-                                : (text) {
-                                    context.read<DraftBloc>().add(UpdateDraft(
-                                          id: threadId,
-                                          type: DraftType.thread,
-                                          draft: text,
-                                        ));
-                                  },
-                            autofocus: autofocus || state is MessageEditing,
+                        return BlocListener<MessageEditBloc, MessageEditState>(
+                          listener: (ctx, state) {
+                            if (state is NoMessageToEdit) {
+                              setState(() {
+                                autofocus = false;
+                              });
+                            }
+                          },
+                          child: BlocBuilder<MessageEditBloc, MessageEditState>(
+                            builder: (ctx, state) {
+                              return MessageEditField(
+                                key: UniqueKey(),
+                                initialText: state is MessageEditing
+                                    ? state.originalStr
+                                    : draft ?? '',
+                                onMessageSend: state is MessageEditing
+                                    ? state.onMessageEditComplete
+                                    : (content) {
+                                        BlocProvider.of<ThreadsBloc<T>>(context)
+                                            .add(
+                                          SendMessage(
+                                            content: content,
+                                            channelId:
+                                                threadState.parentChannel.id,
+                                            threadId:
+                                                threadState.threadMessage.id,
+                                          ),
+                                        );
+                                        context.read<DraftBloc>().add(
+                                            ResetDraft(
+                                                id: threadState
+                                                    .threadMessage.id,
+                                                type: DraftType.thread));
+                                      },
+                                onTextUpdated: state is MessageEditing
+                                    ? (text) {}
+                                    : (text) {
+                                        context
+                                            .read<DraftBloc>()
+                                            .add(UpdateDraft(
+                                              id: threadId,
+                                              type: DraftType.thread,
+                                              draft: text,
+                                            ));
+                                      },
+                                autofocus: autofocus || state is MessageEditing,
+                              );
+                            },
                           ),
                         );
                       }),

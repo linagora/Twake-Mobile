@@ -37,17 +37,20 @@ class _WebAuthPageState extends State<WebAuthPage> {
             onWebViewCreated: (ctrl) => webViewController = ctrl,
             navigationDelegate: (r) async {
               Logger().d('URL IS: ' + r.url);
-              // if (r.url.contains('redirect_to_app')) {
-              // final qp = Uri.parse(r.url).queryParameters;
-              // Logger().d('PARAMS: $qp');
-              // if (qp['token'] == null || qp['username'] == null)
-              // webViewController.loadUrl(widget.initLink);
-              // BlocProvider.of<AuthBloc>(context).add(
-              // SetAuthData(qp),
-              // );
-              // await CookieManager().clearCookies();
-              // }
-              return NavigationDecision.navigate;
+              if (r.url.contains('response_type=code')) {
+                context.read<AuthBloc>().add(ResetAuthentication());
+                // final qp = Uri.parse(r.url).queryParameters;
+                // Logger().d('PARAMS: $qp');
+                // if (qp['token'] == null || qp['username'] == null)
+                // webViewController.loadUrl(widget.initLink);
+                // BlocProvider.of<AuthBloc>(context).add(
+                // SetAuthData(qp),
+                // );
+                // await CookieManager().clearCookies();
+                return NavigationDecision.prevent;
+              } else {
+                return NavigationDecision.navigate;
+              }
             },
             javascriptMode: JavascriptMode.unrestricted,
             initialUrl: widget.initLink,
