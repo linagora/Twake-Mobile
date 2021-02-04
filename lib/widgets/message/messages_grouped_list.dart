@@ -52,6 +52,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: StickyGroupedListView<Message, DateTime>(
+                key: ValueKey(state is MessagesLoaded ? state.messageCount : 0),
                 order: StickyGroupedListOrder.DESC,
                 stickyHeaderBackgroundColor:
                     Theme.of(context).scaffoldBackgroundColor,
@@ -88,8 +89,7 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                           Align(
                             // alignment: Alignment.center,
                             child: Container(
-                              color:
-                                  Theme.of(context).scaffoldBackgroundColor,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               width: Dim.widthPercent(30),
                               child: Padding(
                                 padding: const EdgeInsets.all(1.0),

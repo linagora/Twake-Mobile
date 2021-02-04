@@ -138,12 +138,15 @@ class MessagesBloc<T extends BaseChannelBloc>
       });
     } else if (event is FinishLoadingMessages) {
       _sortItems();
-      yield MessagesLoaded(
+      final newState = MessagesLoaded(
         messages: repository.items,
         force: DateTime.now().toString(),
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
       );
+
+      repository.logger.d('New state will yield: ${newState != state}');
+      yield newState;
     } else if (event is GenerateErrorLoadingMore) {
       yield ErrorLoadingMoreMessages(
         parentChannel: selectedChannel,
@@ -208,7 +211,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
 
         repository.logger
-            .d('Removed message, new state will yield: ${newState == state}');
+            .d('Removed message, new state will yield: ${newState != state}');
         yield newState;
       }
     } else if (event is SendMessage) {
