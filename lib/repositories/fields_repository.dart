@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:twake/widgets/sheets/collaborators_list.dart';
 
 class FieldsRepository {
   List<Widget> fields;
@@ -27,10 +28,14 @@ class FieldsRepository {
     var newFields = <Widget>[];
     var newMap = <int, String>{};
 
-    for (var i = 0; i < fields.length; i++) {
-      if (i != index) {
-        final field = fields[i];
-        final content = data[i];
+    for (var key in data.keys) {
+      if (key != index) {
+        final content = data[key];
+        final field = RemovableTextField(
+          index: newIndex,
+          isLastOne: newIndex == fields.length - 2,
+          initialText: content,
+        );
         newFields.add(field);
         newMap[newIndex] = content;
         newIndex++;
