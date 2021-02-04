@@ -23,9 +23,22 @@ class FieldsRepository {
   }
 
   Future<List<Widget>> remove(int index) async {
-    fields.removeAt(index);
-    data.remove(index);
-    return List<Widget>.from(fields);
+    var newIndex = 0;
+    var newFields = <Widget>[];
+    var newMap = <int, String>{};
+
+    for (var i = 0; i < fields.length; i++) {
+      if (i != index) {
+        final field = fields[i];
+        final content = data[i];
+        newFields.add(field);
+        newMap[newIndex] = content;
+        newIndex++;
+      }
+    }
+    data = newMap;
+    fields = newFields;
+    return fields;
   }
 
   Future<Map<int, String>> updateData(int index, String content) async {
