@@ -101,7 +101,7 @@ class Api {
     try {
       final response = await dio.getUri(uri);
       // logger.d('METHOD: ${uri.toString()}');
-      logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
       // logger.d('RESPONSE: ${response.data}');
       return response.data;
