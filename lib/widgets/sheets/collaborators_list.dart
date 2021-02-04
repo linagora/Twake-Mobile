@@ -13,7 +13,6 @@ class CollaboratorsList extends StatefulWidget {
 }
 
 class _CollaboratorsListState extends State<CollaboratorsList> {
-  final _formKey = GlobalKey<FormState>();
   var _canInvite = false;
 
   @override
@@ -21,12 +20,12 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
     super.initState();
     // First field init
     context.read<FieldsCubit>().add(
-          RemovableTextField(
-            key: UniqueKey(),
-            index: 0,
-            isLastOne: true,
-          ),
-        );
+        RemovableTextField(
+          key: UniqueKey(),
+          index: 0,
+          isLastOne: true,
+        ),
+        0);
   }
 
   void _return() {
@@ -110,6 +109,10 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     super.initState();
     _index = widget.index;
     _isLastOne = widget.isLastOne;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller.addListener(() {});
+    });
   }
 
   @override
@@ -135,6 +138,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
             index: _index + 1,
             isLastOne: true,
           ),
+          _index + 1,
         );
     setState(() {
       _isLastOne = false;
@@ -200,9 +204,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                           onTap: () => _controller.clear(),
                           child: Icon(
                             CupertinoIcons.clear_thick_circled,
-                            color: _inFocus
-                                ? Colors.grey
-                                : Colors.transparent,
+                            color: _inFocus ? Colors.grey : Colors.transparent,
                             size: 20,
                           ),
                         ),

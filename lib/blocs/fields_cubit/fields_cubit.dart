@@ -8,14 +8,19 @@ class FieldsCubit extends Cubit<FieldsState> {
 
   FieldsCubit(this.repository) : super(FieldsInitial());
 
-  void add(Widget field) async {
-    final result = await repository.add(field);
+  void add(Widget field, int index) async {
+    final result = await repository.add(field, index);
     emit(Added(fields: result));
   }
 
   void remove(int index) async {
     final result = await repository.remove(index);
     emit(Removed(fields: result));
+  }
+
+  void update(int index, String content) async {
+    final result = await repository.updateData(index, content);
+    emit(Updated(data: result));
   }
 
   void clear() async {
