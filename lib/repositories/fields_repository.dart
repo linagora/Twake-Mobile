@@ -8,16 +8,16 @@ class FieldsRepository {
 
   Future<List<Widget>> clear() async {
     fields = [];
-    return fields;
+    return List<Widget>.from(fields);
   }
 
   Future<List<Widget>> add(Widget field) async {
     fields.add(field);
-    return fields;
+    return List<Widget>.from(fields);
   }
 
   Future<List<Widget>> remove(int index) async {
     fields.removeAt(index);
-    return fields;
+    return List<Widget>.from(fields);
   }
 }

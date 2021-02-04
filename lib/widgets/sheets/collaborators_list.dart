@@ -46,34 +46,37 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
         List<Widget> fields = [];
         if (state is Added || state is Removed || state is Cleared) {
           fields = state.fields;
-        }
-        return Column(
-          children: [
-            SheetTitleBar(
-              title: 'Invite',
-              leadingTitle: 'Back',
-              leadingAction: () => _return(),
-              trailingTitle: 'Invite',
-              trailingAction: _canInvite ? () => _invite() : null,
-            ),
-            SizedBox(height: 32.0),
-            Container(
-              padding: const EdgeInsets.only(left: 14.0),
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                'ADD COLLABORATORS',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.4),
+
+          return Column(
+            children: [
+              SheetTitleBar(
+                title: 'Invite',
+                leadingTitle: 'Back',
+                leadingAction: () => _return(),
+                trailingTitle: 'Invite',
+                trailingAction: _canInvite ? () => _invite() : null,
+              ),
+              SizedBox(height: 32.0),
+              Container(
+                padding: const EdgeInsets.only(left: 14.0),
+                width: MediaQuery.of(context).size.width,
+                child: Text(
+                  'ADD COLLABORATORS',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black.withOpacity(0.4),
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 8.0),
-            ...fields,
-          ],
-        );
+              SizedBox(height: 8.0),
+              ...fields,
+            ],
+          );
+        } else {
+          return SizedBox();
+        }
       },
     );
   }
@@ -160,6 +163,8 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
         alignLabelWithHint: true,
         fillColor: Colors.transparent,
         filled: true,
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        isDense: true,
         prefix: Container(
           width: 30,
           height: 25,
@@ -172,7 +177,9 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
               _isLastOne
                   ? CupertinoIcons.add_circled_solid
                   : CupertinoIcons.minus_circle_fill,
-              color: _isLastOne ? Color(0xff837cfe) : Color(0xfff14620),
+              color: _isLastOne
+                  ? Color(0xff837cfe)
+                  : Color(0xfff14620),
             ),
           ),
         ),

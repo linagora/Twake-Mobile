@@ -8,9 +8,7 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
 
   AddWorkspaceCubit(this.repository) : super(AddWorkspaceInitial());
 
-  void create({
-    @required String name,
-  }) async {
+  void create() async {
     final result = await repository.create();
     if (result.isNotEmpty) {
       emit(Created(result));
@@ -19,20 +17,20 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
     }
   }
 
-  void updateMembers({
-    @required String workspaceId,
-    @required List<String> members,
-  }) async {
-    final result = await repository.updateMembers(
-      members: members,
-      workspaceId: workspaceId,
-    );
-    if (result) {
-      emit(MembersUpdated(workspaceId: workspaceId, members: members));
-    } else {
-      emit(Error('Members update failure!'));
-    }
-  }
+  // void updateMembers({
+  //   @required String workspaceId,
+  //   @required List<String> members,
+  // }) async {
+  //   final result = await repository.updateMembers(
+  //     members: members,
+  //     workspaceId: workspaceId,
+  //   );
+  //   if (result) {
+  //     emit(MembersUpdated(workspaceId: workspaceId, members: members));
+  //   } else {
+  //     emit(Error('Members update failure!'));
+  //   }
+  // }
 
   void clear() {
     repository.clear();
