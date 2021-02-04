@@ -31,9 +31,12 @@ class FieldsRepository {
     for (var key in data.keys) {
       if (key != index) {
         final content = data[key];
+        // print('key: $key');
+        // print('newIndex: $newIndex');
         final field = RemovableTextField(
+          key: UniqueKey(),
           index: newIndex,
-          isLastOne: newIndex == fields.length - 2,
+          isLastOne: data.length > 1 ? newIndex == data.length - 2 : true,
           initialText: content,
         );
         newFields.add(field);

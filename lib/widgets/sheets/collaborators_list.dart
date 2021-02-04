@@ -141,6 +141,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
   void _add() {
     context.read<FieldsCubit>().add(
           RemovableTextField(
+            key: UniqueKey(),
             index: _index + 1,
             isLastOne: true,
           ),
