@@ -8,6 +8,7 @@ import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -174,6 +175,10 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 ),
                 BlocProvider<AddWorkspaceCubit>(
                   create: (_) => AddWorkspaceCubit(state.initData.addWorkspace),
+                  lazy: false,
+                ),
+                BlocProvider<FieldsCubit>(
+                  create: (_) => FieldsCubit(state.initData.fields),
                   lazy: false,
                 ),
               ],
