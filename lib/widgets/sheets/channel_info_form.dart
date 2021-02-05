@@ -34,8 +34,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   @override
   void initState() {
     super.initState();
-    print('Init');
-
     _channelNameController.addListener(() {
       final channelName = _channelNameController.text;
       _batchUpdateState(name: channelName);

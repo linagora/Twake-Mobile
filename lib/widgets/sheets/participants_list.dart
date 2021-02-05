@@ -23,8 +23,7 @@ class ParticipantsList extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ParticipantsListState createState() =>
-      _ParticipantsListState();
+  _ParticipantsListState createState() => _ParticipantsListState();
 }
 
 class _ParticipantsListState extends State<ParticipantsList> {
@@ -33,6 +32,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
   Timer _debounce;
   String _searchRequest;
   bool _isDirect;
+  bool _shouldFocus = true;
 
   @override
   void initState() {
@@ -45,11 +45,12 @@ class _ParticipantsListState extends State<ParticipantsList> {
       _debounce = Timer(const Duration(milliseconds: 500), () {
         if (_searchRequest != _controller.text) {
           _searchRequest = _controller.text;
-          if (_searchRequest.length > 1) {
-            context.read<UserBloc>().add(LoadUsers(_searchRequest));
-          } else if (_searchRequest.isEmpty) {
-            context.read<UserBloc>().add(LoadUsers(''));
-          }
+          context.read<UserBloc>().add(LoadUsers(_searchRequest));
+          // if (_searchRequest.length > 1) {
+          //   context.read<UserBloc>().add(LoadUsers(_searchRequest));
+          // } else if (_searchRequest.isEmpty) {
+          //   context.read<UserBloc>().add(LoadUsers(''));
+          // }
         }
       });
     });
@@ -58,7 +59,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
   @override
   void dispose() {
     _controller.dispose();
-    _focusNode.dispose();
     _debounce?.cancel();
     super.dispose();
   }
@@ -126,9 +126,18 @@ class _ParticipantsListState extends State<ParticipantsList> {
         }
       },
       buildWhen: (_, current) {
-        return (current is Updated || current is Creation);
+        return (current is Updated ||
+            current is Creation ||
+            current is StageUpdated);
       },
       builder: (context, state) {
+        if (state is StageUpdated) {
+          print('STAGE REBUILD: ${state.stage}');
+          if (state.stage == FlowStage.participants && _shouldFocus) {
+            if (_focusNode.canRequestFocus) _focusNode.requestFocus();
+            _shouldFocus = false;
+          }
+        }
         return Column(
           children: [
             SheetTitleBar(
@@ -218,7 +227,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
   }
 }
 
-class SearchTextField extends StatelessWidget {
+class SearchTextField extends StatefulWidget {
   final String hint;
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -231,13 +240,18 @@ class SearchTextField extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SearchTextFieldState createState() => _SearchTextFieldState();
+}
+
+class _SearchTextFieldState extends State<SearchTextField> {
+  @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context)
           .copyWith(primaryColor: Colors.black.withOpacity(0.36)),
       child: TextField(
-        controller: controller,
-        focusNode: focusNode,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
         style: TextStyle(
           color: Colors.black,
           fontSize: 17.0,
@@ -246,7 +260,7 @@ class SearchTextField extends StatelessWidget {
         decoration: InputDecoration(
           contentPadding: EdgeInsets.zero,
           prefixIcon: Icon(CupertinoIcons.search),
-          hintText: hint,
+          hintText: widget.hint,
           hintStyle: TextStyle(
             color: Colors.black.withOpacity(0.4),
             fontSize: 17.0,

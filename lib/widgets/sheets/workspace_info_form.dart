@@ -24,6 +24,8 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   final _workspaceNameFocusNode = FocusNode();
 
   var _canCreate = false;
+  // A workaround for unintended redirects when panel is closed.
+  var _shouldRedirect = false;
   var _collaborators = <String>[];
   var _workspaceId = '';
 
@@ -59,7 +61,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   }) {
     context.read<AddWorkspaceCubit>().update(
           name: name ?? _workspaceNameController.text,
-          members: ['senjertomat@yandex.ru'], //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//collaborators ?? _collaborators,
+          members: collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
         );
   }
 
@@ -77,10 +79,13 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
         listener: (context, state) {
           if (state is Created) {
             _workspaceId = state.workspaceId;
+
+            selectWorkspace(context, _workspaceId);
             // Reload workspaces
             context
                 .read<WorkspacesBloc>()
                 .add(ReloadWorkspaces(ProfileBloc.selectedCompany));
+            _shouldRedirect = true;
             // Close sheet
             context.read<SheetBloc>().add(CloseSheet());
             // Clear sheet
@@ -103,12 +108,17 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
           bool createIsBlocked = state is Creation;
           if (state is Updated) {
             _collaborators = state.repository?.members;
+            // print('Collaborators: $_collaborators');
           }
           return BlocListener<WorkspacesBloc, WorkspaceState>(
             listener: (context, state) {
+              // print('Workspaces status: $state');
               if (state is WorkspacesLoaded) {
-                // Redirect user to created workspace
-                selectWorkspace(context, _workspaceId);
+                // Redirect user to created workspace.
+                if (_shouldRedirect) {
+                  selectWorkspace(context, _workspaceId);
+                  _shouldRedirect = false;
+                }
               }
             },
             child: Column(
