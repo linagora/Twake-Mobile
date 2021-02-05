@@ -37,7 +37,7 @@ class ChannelsBloc extends BaseChannelBloc {
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (state is BaseChannelMessageNotification) {
+      if (state is ChannelMessageNotification) {
         this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           workspaceId: state.data.workspaceId,

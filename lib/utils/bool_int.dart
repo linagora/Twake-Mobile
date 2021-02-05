@@ -1,9 +1,12 @@
-int boolToInt(bool val) {
+int boolToInt(val) {
   print('RENDERING $val');
-  return val ? 1 : 0;
+  if (val is bool)
+    return val ? 1 : 0;
+  else
+    return val ?? 0;
 }
 
-bool intToBool(int val) {
+bool intToBool(val) {
   print('RENDERING $val');
   return val == 0 ? false : true;
 }
