@@ -9,9 +9,8 @@ ALTER TABLE direct ADD COLUMN has_unread INT DEFAULT 0;
 ''';
 
 const DDL_V3 = [
-  ...DDL_V1,
   ...DDL_V2,
-  MIGRATION_3,
+  ...MIGRATION_3,
 ];
 
 const MIGRATION_3 = [

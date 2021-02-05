@@ -18,6 +18,7 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
   final bool hideShowAnswers;
@@ -193,7 +194,17 @@ class _MessageTileState<T extends BaseChannelBloc>
                           SizedBox(height: 5.0),
                           MarkdownBody(
                             onTapLink:
-                                (String text, String href, String title) {},
+                                (String text, String href, String title) async {
+                              if (await canLaunch(href)) {
+                                await launch(
+                                  href,
+                                  forceSafariVC: false,
+                                  forceWebView: false,
+                                );
+                              } else {
+                                throw 'Could not launch $href';
+                              }
+                            },
                             data: messageState.text.replaceAll('\n', '\\\n'),
                           ),
                           // Parser(messageState.content,
