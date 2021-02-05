@@ -44,6 +44,16 @@ class ChannelsBloc extends BaseChannelBloc {
           totalModifier: 1,
           unreadModifier: 1,
         ));
+      } else if (state is ChannnelUpdateNotification) {
+        this.add(
+          ModifyChannelState(
+            channelId: state.data.channelId,
+            workspaceId: state.data.workspaceId,
+            companyId: state.data.companyId,
+            threadId: state.data.threadId,
+            messageId: state.data.messageId,
+          ),
+        );
       }
     });
     selectedParentId = workspacesBloc.repository.selected.id;
@@ -79,10 +89,12 @@ class ChannelsBloc extends BaseChannelBloc {
       repository.select(event.channelId, saveToStore: false);
 
       repository.selected.messagesUnread = 0;
+      repository.selected.hasUnread = 0;
       repository.saveOne(repository.selected);
       final newState = ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
+        hasUnread: repository.selected.hasUnread,
       );
       yield newState;
     } else if (event is ModifyMessageCount) {
@@ -103,6 +115,12 @@ class ChannelsBloc extends BaseChannelBloc {
       // channels: repository.items,
       // selected: selected,
       // );
+    } else if (event is ModifyChannelState) {
+      await updateChannelState(event);
+      yield ChannelsLoaded(
+        channels: repository.items,
+        force: DateTime.now().toString(),
+      );
     }
   }
 

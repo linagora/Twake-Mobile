@@ -29,7 +29,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelMessageNotification(event.data);
     } else if (event is ThreadMessageEvent) {
       yield ThreadMessageNotification(event.data);
-    } else if (event is UpdateDirectChannel) {}
+    } else if (event is UpdateDirectChannel) {
+      yield DirectMessageNotification(event.data);
+    } else if (event is UpdateClassicChannel) {
+      yield ChannelMessageNotification(event.data);
+    }
   }
 
   void onMessageCallback(NotificationData data) {

@@ -41,11 +41,17 @@ class WhatsNewItem extends NotificationData {
   final String workspaceId;
   @JsonKey(required: true, name: 'channel_id')
   final String channelId;
+  @JsonKey(name: 'thread_id')
+  final String threadId;
+  @JsonKey(name: 'message_id')
+  final String messageId;
 
   WhatsNewItem({
     this.companyId,
     this.workspaceId,
     this.channelId,
+    this.threadId,
+    this.messageId,
   });
 
   factory WhatsNewItem.fromJson(Map<String, dynamic> json) =>

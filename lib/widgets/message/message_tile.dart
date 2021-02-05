@@ -192,6 +192,8 @@ class _MessageTileState<T extends BaseChannelBloc>
                           ),
                           SizedBox(height: 5.0),
                           MarkdownBody(
+                            onTapLink:
+                                (String text, String href, String title) {},
                             data: messageState.text.replaceAll('\n', '\\\n'),
                           ),
                           // Parser(messageState.content,

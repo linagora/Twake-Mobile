@@ -42,7 +42,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         // repository.logger
         // .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
         selectedChannel = state.selected;
-        this.add(LoadMessages());
+        this.add(LoadMessages(forceFromApi: state.hasUnread == 1));
       }
     });
     _notificationSubscription =
@@ -85,6 +85,7 @@ class MessagesBloc<T extends BaseChannelBloc>
     if (event is LoadMessages) {
       yield MessagesLoading(parentChannel: selectedChannel);
       bool success = await repository.reload(
+        forceFromApi: event.forceFromApi,
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],

@@ -219,16 +219,16 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                                 )
                               : SizedBox(key: UniqueKey()),
                         );
-                        if (state is cb.ConnectionLost) {
-                          return Positioned(
-                            top: Dim.heightPercent(
-                                    (kToolbarHeight * 0.15).round()) +
-                                MediaQuery.of(context).padding.top,
-                            child: NetworkStatusBar(),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
+                        // if (state is cb.ConnectionLost) {
+                        //   return Positioned(
+                        //     top: Dim.heightPercent(
+                        //             (kToolbarHeight * 0.15).round()) +
+                        //         MediaQuery.of(context).padding.top,
+                        //     child: NetworkStatusBar(),
+                        //   );
+                        // } else {
+                        //   return const SizedBox();
+                        // }
                       }),
                     ),
                   ],

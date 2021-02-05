@@ -9,7 +9,12 @@ abstract class MessagesEvent extends Equatable {
 class LoadMessages extends MessagesEvent {
   final String channelId;
   final String threadId;
-  const LoadMessages({this.channelId, this.threadId});
+  final bool forceFromApi;
+  const LoadMessages({
+    this.channelId,
+    this.threadId,
+    this.forceFromApi,
+  });
 
   @override
   List<Object> get props => [threadId, channelId];

@@ -21,6 +21,15 @@ abstract class BaseChannelMessageNotification extends NotificationState {
   List<Object> get props => [data];
 }
 
+class DirectUpdateNotification extends NotificationState {
+  final WhatsNewItem data;
+
+  const DirectUpdateNotification(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class ChannnelUpdateNotification extends NotificationState {
   final WhatsNewItem data;
 
