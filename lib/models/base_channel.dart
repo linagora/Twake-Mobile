@@ -1,5 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
+import 'package:twake/utils/bool_int.dart';
+
+export 'package:twake/utils/bool_int.dart';
 
 // part 'base_channel.g.dart';
 
@@ -21,8 +24,15 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(name: 'last_activity', defaultValue: 0)
   int lastActivity;
 
-  @JsonKey(required: true, name: 'messages_total', defaultValue: 0)
-  int messagesTotal;
+  // @JsonKey(required: true, name: 'messages_total', defaultValue: 0)
+  // int messagesTotal;
+  @JsonKey(
+    name: 'has_unread',
+    // defaultValue: 0,
+    fromJson: boolToInt,
+    toJson: boolToInt,
+  )
+  int hasUnread;
 
   @JsonKey(required: true, name: 'messages_unread', defaultValue: 0)
   int messagesUnread;

@@ -27,7 +27,7 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
   Future<void> updateMessageCount(ModifyMessageCount event) async {
     final ch = await repository.getItemById(event.channelId);
     if (ch != null) {
-      ch.messagesTotal += event.totalModifier ?? 0;
+      // ch.messagesTotal += event.totalModifier ?? 0;
       ch.messagesUnread += event.unreadModifier ?? 0;
       ch.lastActivity =
           event.timeStamp ?? DateTime.now().millisecondsSinceEpoch;

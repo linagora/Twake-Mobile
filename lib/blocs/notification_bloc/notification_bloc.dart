@@ -29,7 +29,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelMessageNotification(event.data);
     } else if (event is ThreadMessageEvent) {
       yield ThreadMessageNotification(event.data);
-    }
+    } else if (event is UpdateDirectChannel) {}
   }
 
   void onMessageCallback(NotificationData data) {
@@ -44,6 +44,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         this.add(DirectMessageEvent(data));
       } else {
         this.add(ChannelMessageEvent(data));
+      }
+    } else if (data is WhatsNewItem) {
+      if (data.workspaceId == null) {
+        this.add(UpdateDirectChannel(data));
+      } else {
+        this.add(UpdateClassicChannel(data));
       }
     }
   }
