@@ -7,6 +7,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/search_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
@@ -138,89 +139,108 @@ class _ParticipantsListState extends State<ParticipantsList> {
             _shouldFocus = false;
           }
         }
-        return Column(
-          children: [
-            SheetTitleBar(
-              title: _isDirect ? 'New direct chat' : 'Add participants',
-              leadingTitle: _isDirect ? 'Close' : 'Back',
-              leadingAction: _isDirect ? () => _close() : () => _return(),
-              trailingTitle: _isDirect ? null : 'Add',
-              trailingAction: _isDirect ? null : () => _return(),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
-              child: SearchTextField(
-                hint: 'Search members',
-                controller: _controller,
-                focusNode: _focusNode,
-              ),
-            ),
-            BlocBuilder<UserBloc, UserState>(builder: (context, state) {
-              var users = <User>[];
-
-              if (state is MultipleUsersLoading) {
-                return Center(child: CircularProgressIndicator());
-              } else if (state is MultipleUsersLoaded) {
-                users = state.users;
-                // print('-------------------------------');
-                // for (var u in users) {
-                //   print('${u.id} - ${u.username}');
-                // }
-                // print('-------------------------------');
+        return BlocBuilder<SheetBloc, SheetState>(
+          // Using SheetBloc for keyboard behavior management in directs
+          // because directs have only one stage in its creation flow.
+          buildWhen: (_, current) {
+            if (current is FlowUpdated) {
+              return current.flow == SheetFlow.direct;
+            }
+            return false;
+          },
+          builder: (context, state) {
+            if (state is FlowUpdated) {
+              if (state.flow == SheetFlow.direct && _shouldFocus) {
+                if (_focusNode.canRequestFocus) _focusNode.requestFocus();
+                _shouldFocus = false;
               }
-              return BlocBuilder<AddChannelBloc, AddChannelState>(
-                buildWhen: (previous, current) => current is Updated,
-                builder: (context, state) {
-                  var selectedIds = <String>[];
-                  var name = '';
-                  var description = '';
-                  if (state is Updated) {
-                    name = state.repository?.name;
-                    description = state.repository?.description;
-                    selectedIds = state.repository?.members;
+            }
+
+            return Column(
+              children: [
+                SheetTitleBar(
+                  title: _isDirect ? 'New direct chat' : 'Add participants',
+                  leadingTitle: _isDirect ? 'Close' : 'Back',
+                  leadingAction: _isDirect ? () => _close() : () => _return(),
+                  trailingTitle: _isDirect ? null : 'Add',
+                  trailingAction: _isDirect ? null : () => _return(),
+                ),
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
+                  child: SearchTextField(
+                    hint: 'Search members',
+                    controller: _controller,
+                    focusNode: _focusNode,
+                  ),
+                ),
+                BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+                  var users = <User>[];
+
+                  if (state is MultipleUsersLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is MultipleUsersLoaded) {
+                    users = state.users;
+                    // print('-------------------------------');
+                    // for (var u in users) {
+                    //   print('${u.id} - ${u.username}');
+                    // }
+                    // print('-------------------------------');
                   }
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(top: 0),
-                    itemCount: users.length,
-                    itemBuilder: (context, index) {
-                      var user = users[index];
-                      return SearchItem(
-                        title: user.firstName.isNotEmpty ||
-                                user.lastName.isNotEmpty
-                            ? '${user.firstName} ${user.lastName}'
-                            : '${user.username}',
-                        selected: selectedIds.contains(user.id),
-                        allowMultipleChoice: !_isDirect,
-                        onTap: () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          if (_isDirect) {
-                            selectedIds = [user.id];
-                            _createDirect(selectedIds);
-                          } else {
-                            if (selectedIds.contains(user.id)) {
-                              setState(() {
-                                selectedIds.remove(user.id);
-                              });
-                            } else {
-                              setState(() {
-                                selectedIds.add(user.id);
-                              });
-                            }
-                            context.read<AddChannelBloc>().add(Update(
-                                  name: name,
-                                  description: description,
-                                  participants: selectedIds,
-                                ));
-                          }
+                  return BlocBuilder<AddChannelBloc, AddChannelState>(
+                    buildWhen: (previous, current) => current is Updated,
+                    builder: (context, state) {
+                      var selectedIds = <String>[];
+                      var name = '';
+                      var description = '';
+                      if (state is Updated) {
+                        name = state.repository?.name;
+                        description = state.repository?.description;
+                        selectedIds = state.repository?.members;
+                      }
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(top: 0),
+                        itemCount: users.length,
+                        itemBuilder: (context, index) {
+                          var user = users[index];
+                          return SearchItem(
+                            title: user.firstName.isNotEmpty ||
+                                    user.lastName.isNotEmpty
+                                ? '${user.firstName} ${user.lastName}'
+                                : '${user.username}',
+                            selected: selectedIds.contains(user.id),
+                            allowMultipleChoice: !_isDirect,
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              if (_isDirect) {
+                                selectedIds = [user.id];
+                                _createDirect(selectedIds);
+                              } else {
+                                if (selectedIds.contains(user.id)) {
+                                  setState(() {
+                                    selectedIds.remove(user.id);
+                                  });
+                                } else {
+                                  setState(() {
+                                    selectedIds.add(user.id);
+                                  });
+                                }
+                                context.read<AddChannelBloc>().add(Update(
+                                      name: name,
+                                      description: description,
+                                      participants: selectedIds,
+                                    ));
+                              }
+                            },
+                          );
                         },
                       );
                     },
                   );
-                },
-              );
-            }),
-          ],
+                }),
+              ],
+            );
+          }
         );
       },
     );
