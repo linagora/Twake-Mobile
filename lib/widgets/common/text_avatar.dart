@@ -24,9 +24,12 @@ class TextAvatar extends StatelessWidget {
         width: width,
         height: height,
         alignment: Alignment.center,
-        child: Text(
-          text,
-          style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: Text(
+            text,
+            style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
+          ),
         ),
       ),
     );
