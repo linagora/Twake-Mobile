@@ -22,9 +22,9 @@ class DraggableScrollable extends StatelessWidget {
     Widget content = AddChannelFlow();
     switch (flow) {
       case SheetFlow.channel:
-        context
-            .read<AddChannelBloc>()
-            .add(SetFlowStage(add_channel_repo.FlowStage.info));
+        // context
+        //     .read<AddChannelBloc>()
+        //     .add(SetFlowStage(add_channel_repo.FlowStage.info));
         content = AddChannelFlow();
         break;
       case SheetFlow.direct:
