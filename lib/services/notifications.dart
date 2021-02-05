@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/notification.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -38,7 +39,10 @@ class Notifications {
   Future<void> checkWhatsNew(String workspaceId) async {
     final List<dynamic> news = await _api.get(
       Endpoint.whatsNew,
-      params: {'workspace_id': workspaceId},
+      params: {
+        'company_id': ProfileBloc.selectedCompany,
+        'workspace_id': workspaceId
+      },
     );
     for (Map item in news) {
       final update = WhatsNewItem.fromJson(item);

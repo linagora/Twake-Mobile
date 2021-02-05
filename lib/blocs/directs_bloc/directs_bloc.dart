@@ -35,7 +35,7 @@ class DirectsBloc extends BaseChannelBloc {
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (state is BaseChannelMessageNotification) {
+      if (state is DirectMessageNotification) {
         this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           companyId: state.data.companyId,
