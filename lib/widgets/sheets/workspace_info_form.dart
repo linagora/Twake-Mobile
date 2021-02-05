@@ -59,7 +59,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   }) {
     context.read<AddWorkspaceCubit>().update(
           name: name ?? _workspaceNameController.text,
-          members: ['senjertomat@yandex.ru'], //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//collaborators ?? _collaborators,
+          members: collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
         );
   }
 
@@ -103,6 +103,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
           bool createIsBlocked = state is Creation;
           if (state is Updated) {
             _collaborators = state.repository?.members;
+            print('Collaborators: $_collaborators');
           }
           return BlocListener<WorkspacesBloc, WorkspaceState>(
             listener: (context, state) {

@@ -170,84 +170,87 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Container(
-              padding: EdgeInsets.only(left: 16),
-              child: GestureDetector(
-                onTap: () => _isLastOne ? _add() : _remove(),
-                child: Icon(
-                  _isLastOne
-                      ? CupertinoIcons.add_circled_solid
-                      : CupertinoIcons.minus_circle_fill,
-                  color: _isLastOne ? Color(0xff837cfe) : Color(0xfff14620),
-                  size: 25,
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 16),
+                child: GestureDetector(
+                  onTap: () => _isLastOne ? _add() : _remove(),
+                  child: Icon(
+                    _isLastOne
+                        ? CupertinoIcons.add_circled_solid
+                        : CupertinoIcons.minus_circle_fill,
+                    color: _isLastOne ? Color(0xff837cfe) : Color(0xfff14620),
+                    size: 25,
+                  ),
                 ),
               ),
-            ),
-            Expanded(
-              child: FocusScope(
-                child: Focus(
-                  onFocusChange: (focus) {
-                    setState(() {
-                      _inFocus = focus;
-                    });
-                  },
-                  child: TextFormField(
-                    // validator: widget.validator,
-                    controller: _controller,
-                    autofocus: true,
-                    keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: 'Type email address',
-                      contentPadding: EdgeInsets.all(15.0),
-                      hintStyle: TextStyle(
+              Expanded(
+                child: FocusScope(
+                  child: Focus(
+                    onFocusChange: (focus) {
+                      setState(() {
+                        _inFocus = focus;
+                      });
+                    },
+                    child: TextFormField(
+                      // validator: widget.validator,
+                      controller: _controller,
+                      autofocus: true,
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xffc8c8c8),
+                        color: Colors.black,
                       ),
-                      alignLabelWithHint: true,
-                      fillColor: Colors.transparent,
-                      filled: true,
-                      suffixIcon: Container(
-                        height: 20,
-                        width: 20,
-                        child: GestureDetector(
-                          onTap: () => _controller.clear(),
-                          child: Icon(
-                            CupertinoIcons.clear_thick_circled,
-                            color: _inFocus ? Colors.grey : Colors.transparent,
-                            size: 20,
+                      decoration: InputDecoration(
+                        hintText: 'Type email address',
+                        contentPadding: EdgeInsets.all(15.0),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xffc8c8c8),
+                        ),
+                        alignLabelWithHint: true,
+                        fillColor: Colors.transparent,
+                        filled: true,
+                        suffixIcon: Container(
+                          height: 20,
+                          width: 20,
+                          child: GestureDetector(
+                            onTap: () => _controller.clear(),
+                            child: Icon(
+                              CupertinoIcons.clear_thick_circled,
+                              color: _inFocus ? Colors.grey : Colors.transparent,
+                              size: 20,
+                            ),
                           ),
                         ),
-                      ),
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(
-                          width: 0.0,
-                          style: BorderStyle.none,
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(
+                            width: 0.0,
+                            style: BorderStyle.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(width: 5),
-          ],
-        ),
-        Divider(
-          thickness: 0.5,
-          height: 0.5,
-          color: Colors.black.withOpacity(0.2),
-        ),
-      ],
+              SizedBox(width: 5),
+            ],
+          ),
+          Divider(
+            thickness: 0.5,
+            height: 0.5,
+            color: Colors.black.withOpacity(0.2),
+          ),
+        ],
+      ),
     );
   }
 }
