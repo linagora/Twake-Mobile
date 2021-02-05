@@ -33,13 +33,11 @@ class AddChannelFlow extends StatelessWidget {
               i = 1;
               break;
           }
-          return IndexedStack(
-            index: i,
-            children: channelFlowWidgets,
-          );
-        } else {
-          return SizedBox();
         }
+        return IndexedStack(
+          index: i,
+          children: channelFlowWidgets,
+        );
       },
     );
   }

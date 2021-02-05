@@ -18,6 +18,7 @@ class AddWorkspaceFlow extends StatelessWidget {
       builder: (context, state) {
         var i = 0;
         if (state is StageUpdated) {
+          // print('Current stage: ${state.stage}');
           switch (state.stage) {
             case FlowStage.info:
               i = 0;
@@ -26,13 +27,11 @@ class AddWorkspaceFlow extends StatelessWidget {
               i = 1;
               break;
           }
-          return IndexedStack(
-            index: i,
-            children: workspaceFlowWidgets,
-          );
-        } else {
-          return SizedBox();
         }
+        return IndexedStack(
+          index: i,
+          children: workspaceFlowWidgets,
+        );
       },
     );
   }
