@@ -7,7 +7,7 @@ part 'channel.g.dart';
 class Channel extends BaseChannel {
   @JsonKey(name: 'workspace_id')
   String workspaceId;
-  @JsonKey(name: 'visibility')
+  @JsonKey(name: 'visibility', defaultValue: 'public')
   String visibility;
 
   Channel({

@@ -10,7 +10,7 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['id', 'name']);
   return Channel(
     workspaceId: json['workspace_id'] as String,
-    visibility: json['visibility'] as String,
+    visibility: json['visibility'] as String ?? 'public',
   )
     ..id = json['id'] as String
     ..name = json['name'] as String
