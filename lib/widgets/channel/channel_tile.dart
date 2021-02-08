@@ -39,15 +39,23 @@ class ChannelTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    channel.name,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff444444),
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        channel.name,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff444444),
+                        ),
+                      ),
+                      SizedBox(width: 6),
+                      if (channel.visibility != null &&
+                          channel.visibility == 'private')
+                        Icon(Icons.lock_outline, size: 15.0, color: Color(0xff444444)),
+                    ],
                   ),
                   if (channel.description != null &&
                       channel.description.isNotEmpty)
