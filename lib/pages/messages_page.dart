@@ -61,7 +61,6 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) => Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               if ((state.parentChannel is Direct))
                 StackedUserAvatars((state.parentChannel as Direct).members),
@@ -74,17 +73,25 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: Dim.widthPercent(67),
-                    child: Text(
-                      state.parentChannel.name,
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff444444),
+                  Row(
+                    children: [
+                      Text(
+                        state.parentChannel.name,
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xff444444),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                      SizedBox(width: 6),
+                      if (state.parentChannel is Channel &&
+                          (state.parentChannel as Channel).visibility != null &&
+                          (state.parentChannel as Channel).visibility ==
+                              'private')
+                        Icon(Icons.lock_outline,
+                            size: 15.0, color: Color(0xff444444)),
+                    ],
                   ),
                   if (state.parentChannel is Channel)
                     Text(
