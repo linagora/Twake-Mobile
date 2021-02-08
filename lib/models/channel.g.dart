@@ -7,7 +7,7 @@ part of 'channel.dart';
 // **************************************************************************
 
 Channel _$ChannelFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const ['id', 'name', 'messages_unread']);
+  $checkKeys(json, requiredKeys: const ['id', 'name']);
   return Channel(
     workspaceId: json['workspace_id'] as String,
   )

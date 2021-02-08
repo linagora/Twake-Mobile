@@ -7,13 +7,7 @@ part of 'direct.dart';
 // **************************************************************************
 
 Direct _$DirectFromJson(Map<String, dynamic> json) {
-  $checkKeys(json, requiredKeys: const [
-    'id',
-    'name',
-    'messages_unread',
-    'company_id',
-    'members'
-  ]);
+  $checkKeys(json, requiredKeys: const ['id', 'name', 'company_id', 'members']);
   return Direct(
     companyId: json['company_id'] as String,
     members: (json['members'] as List)?.map((e) => e as String)?.toList(),

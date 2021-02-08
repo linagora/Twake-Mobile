@@ -34,7 +34,7 @@ abstract class BaseChannel extends CollectionItem {
   )
   int hasUnread;
 
-  @JsonKey(required: true, name: 'messages_unread', defaultValue: 0)
+  @JsonKey(name: 'messages_unread', defaultValue: 0)
   int messagesUnread;
 
   @JsonKey(name: 'is_selected', defaultValue: 0)
