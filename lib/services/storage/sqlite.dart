@@ -9,7 +9,7 @@ import 'package:twake/services/storage/storage.dart';
 import 'package:twake/sql/migrations.dart';
 
 const String _DATABASE_FILE = 'twakesql.db';
-const int _CURRENT_MIGRATION = 3;
+const int _CURRENT_MIGRATION = 4;
 
 class SQLite with Storage {
   static Database _db;
@@ -39,7 +39,7 @@ class SQLite with Storage {
         await db.execute("PRAGMA foreign_keys = ON");
       },
       onCreate: (Database db, int version) async {
-        for (var ddl in DDL_V3) {
+        for (var ddl in DDL_V4) {
           await db.execute(ddl);
         }
       },
@@ -57,6 +57,11 @@ class SQLite with Storage {
         } else if (oldVersion == 2) {
           logger.d('Migration to twake db v.$newVersion');
           for (var migrationDdl in MIGRATION_3) {
+            await db.execute(migrationDdl);
+          }
+        } else if (oldVersion == 3) {
+          logger.d('Migration to twake db v.$newVersion');
+          for (var migrationDdl in MIGRATION_4) {
             await db.execute(migrationDdl);
           }
         }

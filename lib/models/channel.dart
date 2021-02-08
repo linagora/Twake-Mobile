@@ -7,9 +7,12 @@ part 'channel.g.dart';
 class Channel extends BaseChannel {
   @JsonKey(name: 'workspace_id')
   String workspaceId;
+  @JsonKey(name: 'visibility')
+  String visibility;
 
   Channel({
     this.workspaceId,
+    this.visibility,
   });
 
   factory Channel.fromJson(Map<String, dynamic> json) {

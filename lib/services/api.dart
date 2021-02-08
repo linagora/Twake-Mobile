@@ -103,7 +103,7 @@ class Api {
       // logger.d('METHOD: ${uri.toString()}');
       // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
-      // logger.d('RESPONSE: ${response.data}');
+      logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);

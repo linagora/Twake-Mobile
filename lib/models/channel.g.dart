@@ -10,6 +10,7 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['id', 'name']);
   return Channel(
     workspaceId: json['workspace_id'] as String,
+    visibility: json['visibility'] as String,
   )
     ..id = json['id'] as String
     ..name = json['name'] as String
@@ -33,4 +34,5 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'messages_unread': instance.messagesUnread,
       'is_selected': instance.isSelected,
       'workspace_id': instance.workspaceId,
+      'visibility': instance.visibility,
     };

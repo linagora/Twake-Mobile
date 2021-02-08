@@ -1,5 +1,5 @@
 int boolToInt(val) {
-  print('RENDERING $val');
+  // print('RENDERING $val');
   if (val is bool)
     return val ? 1 : 0;
   else
@@ -7,6 +7,6 @@ int boolToInt(val) {
 }
 
 bool intToBool(val) {
-  print('RENDERING $val');
+  // print('RENDERING $val');
   return val == 0 ? false : true;
 }
