@@ -12,7 +12,8 @@ class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
   Api _api = Api();
   ConnectionBloc(ConnectionState initState) : super(initState) {
     _subscribtion = Connectivity().onConnectivityChanged.listen((_) {
-      this.add(CheckConnectionState());
+      Future.delayed(
+          Duration(seconds: 1), () => this.add(CheckConnectionState()));
     });
     Future.delayed(
         Duration(seconds: 3), () => this.add(CheckConnectionState()));
@@ -32,10 +33,13 @@ class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
     } else if (event is CheckConnectionState) {
       final state = await Connectivity().checkConnectivity();
       if (state == ConnectivityResult.none) {
+        print('LOST CONNECTION');
         this.add(NotifyConnectionLost());
       } else if (state == ConnectivityResult.wifi) {
+        print('CONNECTION IS BACK ON WIFI');
         this.add(NotifyConnectionWiFi());
       } else if (state == ConnectivityResult.mobile) {
+        print('CONNECTION IS BACK ON MOBILE');
         this.add(NotifyConnectionCellular());
       }
     }
