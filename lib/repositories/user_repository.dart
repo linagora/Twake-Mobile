@@ -94,7 +94,7 @@ class UserRepository {
   }
 
   Future<List<User>> searchUsers(String request) async {
-    if (request.isEmpty) return <User>[];
+    // if (request.isEmpty) return <User>[];
     var companyId = ProfileBloc.selectedCompany;
     List response = [];
     try {
@@ -110,7 +110,6 @@ class UserRepository {
       return [];
     }
     final users = List<User>.from(response.map((u) => User.fromJson(u)));
-
     // logger.d('Found ${users.length} users');
     return users;
   }

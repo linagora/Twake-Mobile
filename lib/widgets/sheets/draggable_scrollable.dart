@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
-import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/add_channel_flow.dart';
 import 'package:twake/widgets/sheets/add_direct_flow.dart';
 import 'package:twake/widgets/sheets/add_workspace_flow.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DraggableScrollable extends StatelessWidget {
   final SheetFlow flow;
@@ -14,10 +11,10 @@ class DraggableScrollable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print('Current flow: $flow');
     Widget content = AddChannelFlow();
     switch (flow) {
       case SheetFlow.channel:
-        context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
         content = AddChannelFlow();
         break;
       case SheetFlow.direct:

@@ -18,11 +18,15 @@ class ChannelsLoaded extends ChannelState {
 
 class ChannelPicked extends ChannelsLoaded {
   final BaseChannel selected;
-  const ChannelPicked({List<BaseChannel> channels, this.selected})
-      : super(channels: channels);
+  final int hasUnread;
+  const ChannelPicked({
+    List<BaseChannel> channels,
+    this.selected,
+    this.hasUnread: 0,
+  }) : super(channels: channels);
 
   @override
-  List<Object> get props => [selected.id];
+  List<Object> get props => [selected.id, hasUnread];
 }
 
 class ChannelsLoading extends ChannelState {

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
+import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -171,6 +173,14 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   create: (_) => DraftBloc(state.initData.draft),
                   lazy: false,
                 ),
+                BlocProvider<AddWorkspaceCubit>(
+                  create: (_) => AddWorkspaceCubit(state.initData.addWorkspace),
+                  lazy: false,
+                ),
+                BlocProvider<FieldsCubit>(
+                  create: (_) => FieldsCubit(state.initData.fields),
+                  lazy: false,
+                ),
               ],
               child: WillPopScope(
                 onWillPop: () async =>
@@ -209,16 +219,16 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                                 )
                               : SizedBox(key: UniqueKey()),
                         );
-                        if (state is cb.ConnectionLost) {
-                          return Positioned(
-                            top: Dim.heightPercent(
-                                    (kToolbarHeight * 0.15).round()) +
-                                MediaQuery.of(context).padding.top,
-                            child: NetworkStatusBar(),
-                          );
-                        } else {
-                          return const SizedBox();
-                        }
+                        // if (state is cb.ConnectionLost) {
+                        //   return Positioned(
+                        //     top: Dim.heightPercent(
+                        //             (kToolbarHeight * 0.15).round()) +
+                        //         MediaQuery.of(context).padding.top,
+                        //     child: NetworkStatusBar(),
+                        //   );
+                        // } else {
+                        //   return const SizedBox();
+                        // }
                       }),
                     ),
                   ],

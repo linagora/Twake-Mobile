@@ -101,9 +101,9 @@ class Api {
     try {
       final response = await dio.getUri(uri);
       // logger.d('METHOD: ${uri.toString()}');
-      logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
-      // logger.d('RESPONSE: ${response.data}');
+      // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -187,6 +187,7 @@ class Api {
               '\nMethod: ${error.request.path}' +
               '\nHeaders: ${error.request.headers}' +
               '\nResponse: ${error.response.data}' +
+              '\nBODY: ${error.request.data}' +
               '\nQUERY: ${error.request.queryParameters}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');

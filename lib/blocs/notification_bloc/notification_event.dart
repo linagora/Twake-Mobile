@@ -22,6 +22,14 @@ class DirectMessageEvent extends BaseChannelMessageEvent {
   const DirectMessageEvent(MessageNotification data) : super(data);
 }
 
+class UpdateDirectChannel extends BaseChannelMessageEvent {
+  const UpdateDirectChannel(WhatsNewItem data) : super(data);
+}
+
+class UpdateClassicChannel extends BaseChannelMessageEvent {
+  const UpdateClassicChannel(WhatsNewItem data) : super(data);
+}
+
 class ThreadMessageEvent extends NotificationEvent {
   final MessageNotification data;
 

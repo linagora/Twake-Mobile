@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:logger/logger.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/notification.dart';
+import 'package:twake/services/service_bundle.dart';
 
 class Notifications {
   final logger = Logger();
@@ -12,6 +13,7 @@ class Notifications {
   final Function(NotificationData) onResumeCallback;
   final Function(NotificationData) onLaunchCallback;
   FirebaseMessaging _fcm = FirebaseMessaging();
+  final _api = Api();
 
   Notifications({
     this.onMessageCallback,
@@ -32,6 +34,19 @@ class Notifications {
       onResume: onResume,
       onLaunch: onLaunch,
     );
+  }
+
+  Future<void> checkWhatsNew(String workspaceId) async {
+    final List<dynamic> news = await _api.get(
+      Endpoint.whatsNew,
+      params: {
+        'company_id': ProfileBloc.selectedCompany,
+        'workspace_id': workspaceId
+      },
+    );
+    for (Map item in news) {
+      final update = WhatsNewItem.fromJson(item);
+    }
   }
 
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
@@ -58,11 +73,6 @@ class Notifications {
     }
     logger.d("ok, that's what we have:\n$data");
     MessageNotification notification = MessageNotification.fromJson(data);
-    // Monkey patch TODO burn this piece of code
-    // https://github.com/TwakeApp/Mobile/issues/99
-    // if (notification.channelId[14] == '1') {
-    // notification.channelId = notification.channelId.replaceRange(14, 15, '4');
-    // }
     return notification;
   }
 

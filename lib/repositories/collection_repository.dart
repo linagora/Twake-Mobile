@@ -124,7 +124,8 @@ class CollectionRepository<T extends CollectionItem> {
       saveToStore = true;
     }
     if (forceFromApi) {
-      await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+      // await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+      _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
     }
     _updateItems(itemsList, saveToStore: saveToStore);
     return true;

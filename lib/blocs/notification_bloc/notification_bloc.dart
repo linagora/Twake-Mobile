@@ -29,21 +29,31 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelMessageNotification(event.data);
     } else if (event is ThreadMessageEvent) {
       yield ThreadMessageNotification(event.data);
+    } else if (event is UpdateDirectChannel) {
+      yield DirectMessageNotification(event.data);
+    } else if (event is UpdateClassicChannel) {
+      yield ChannelMessageNotification(event.data);
     }
   }
 
   void onMessageCallback(NotificationData data) {
     if (data is MessageNotification) {
       // TODO remove monkey patch
-      if (data.channelId[14] == '1') {
-        data.channelId = data.channelId.replaceRange(14, 15, '4');
-      }
+      // if (data.channelId[14] == '1') {
+      // data.channelId = data.channelId.replaceRange(14, 15, '4');
+      // }
       if (data.threadId.isNotEmpty) {
         this.add(ThreadMessageEvent(data));
       } else if (data.workspaceId == null) {
         this.add(DirectMessageEvent(data));
       } else {
         this.add(ChannelMessageEvent(data));
+      }
+    } else if (data is WhatsNewItem) {
+      if (data.workspaceId == null) {
+        this.add(UpdateDirectChannel(data));
+      } else {
+        this.add(UpdateClassicChannel(data));
       }
     }
   }

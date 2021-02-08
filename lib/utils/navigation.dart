@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,6 +19,10 @@ void _open<T extends BaseChannelBloc>(BuildContext context, String channelId) {
         builder: (context) => MessagesPage<T>(),
       ))
       .then((r) => handleError(r, context));
+}
+
+void selectWorkspace(BuildContext context, String workspaceId) {
+  context.read<WorkspacesBloc>().add(ChangeSelectedWorkspace(workspaceId));
 }
 
 void handleError(dynamic r, BuildContext context) {

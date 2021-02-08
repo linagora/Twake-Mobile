@@ -35,13 +35,22 @@ class DirectsBloc extends BaseChannelBloc {
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (state is BaseChannelMessageNotification) {
+      if (state is DirectMessageNotification) {
         this.add(ModifyMessageCount(
           channelId: state.data.channelId,
           companyId: state.data.companyId,
           totalModifier: 1,
           unreadModifier: 1,
         ));
+      } else if (state is DirectUpdateNotification) {
+        this.add(
+          ModifyChannelState(
+            channelId: state.data.channelId,
+            companyId: state.data.companyId,
+            threadId: state.data.threadId,
+            messageId: state.data.messageId,
+          ),
+        );
       }
     });
     selectedParentId = companiesBloc.repository.selected.id;
@@ -86,15 +95,15 @@ class DirectsBloc extends BaseChannelBloc {
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
       repository.select(event.channelId);
-
       repository.selected.messagesUnread = 0;
+      repository.selected.hasUnread = 0;
       repository.saveOne(repository.selected);
       yield ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
       );
     } else if (event is LoadSingleChannel) {
-      // TODO implement single company loading
+      // TODO implement single channel loading
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
       throw 'Not implemented yet';
@@ -103,6 +112,12 @@ class DirectsBloc extends BaseChannelBloc {
       // channels: repository.items,
       // selected: selected,
       // );
+    } else if (event is ModifyChannelState) {
+      await updateChannelState(event);
+      yield ChannelsLoaded(
+        channels: repository.items,
+        force: DateTime.now().toString(),
+      );
     }
   }
 

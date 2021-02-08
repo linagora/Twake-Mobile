@@ -61,6 +61,25 @@ class ModifyMessageCount extends ChannelsEvent {
   List<Object> get props => [channelId];
 }
 
+class ModifyChannelState extends ChannelsEvent {
+  final String channelId;
+  final String workspaceId;
+  final String companyId;
+  final String threadId;
+  final String messageId;
+
+  ModifyChannelState({
+    this.channelId,
+    this.workspaceId,
+    this.companyId,
+    this.threadId,
+    this.messageId,
+  });
+
+  @override
+  List<Object> get props => [channelId];
+}
+
 class RemoveChannel extends ChannelsEvent {
   final String channelId;
   RemoveChannel(this.channelId);

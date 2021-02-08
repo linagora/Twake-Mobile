@@ -10,7 +10,7 @@ import 'package:twake/widgets/sheets/participants_list.dart';
 class AddChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('Build call');
+    // print('Build call');
     final channelFlowWidgets = [
       ChannelInfoForm(),
       BlocProvider<UserBloc>(
@@ -21,8 +21,7 @@ class AddChannelFlow extends StatelessWidget {
     return BlocBuilder<AddChannelBloc, AddChannelState>(
       buildWhen: (_, current) => current is StageUpdated,
       builder: (context, state) {
-        print('State! - $state');
-
+        // print('State! - $state');
         var i = 0;
         if (state is StageUpdated) {
           switch (state.stage) {
@@ -33,13 +32,11 @@ class AddChannelFlow extends StatelessWidget {
               i = 1;
               break;
           }
-          return IndexedStack(
-            index: i,
-            children: channelFlowWidgets,
-          );
-        } else {
-          return SizedBox();
         }
+        return IndexedStack(
+          index: i,
+          children: channelFlowWidgets,
+        );
       },
     );
   }

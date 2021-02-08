@@ -5,8 +5,10 @@ import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/fields_repository.dart';
 import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
@@ -37,6 +39,8 @@ Future<InitData> initMain() async {
   final profile = await ProfileRepository.load();
   final sheet = await SheetRepository.load();
   final addChannel = await AddChannelRepository.load();
+  final addWorkspace = AddWorkspaceRepository();
+  final fields = FieldsRepository(fields: [], data: {});
   final draft = DraftRepository();
   final _ = UserRepository(Endpoint.users);
   final companies = await CollectionRepository.load<Company>(
@@ -88,7 +92,9 @@ Future<InitData> initMain() async {
     threads: threads,
     sheet: sheet,
     addChannel: addChannel,
+    addWorkspace: addWorkspace,
     draft: draft,
+    fields: fields,
   );
 }
 
@@ -102,7 +108,9 @@ class InitData {
   final MessagesRepository threads;
   final SheetRepository sheet;
   final AddChannelRepository addChannel;
+  final AddWorkspaceRepository addWorkspace;
   final DraftRepository draft;
+  final FieldsRepository fields;
 
   InitData({
     this.profile,
@@ -114,6 +122,8 @@ class InitData {
     this.threads,
     this.sheet,
     this.addChannel,
+    this.addWorkspace,
     this.draft,
+    this.fields,
   });
 }

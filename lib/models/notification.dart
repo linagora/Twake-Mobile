@@ -13,7 +13,7 @@ class MessageNotification extends NotificationData {
   @JsonKey(name: 'workspace_id')
   final String workspaceId;
   @JsonKey(name: 'channel_id')
-  String channelId;
+  final String channelId;
   @JsonKey(name: 'thread_id')
   final String threadId;
   @JsonKey(name: 'message_id')
@@ -31,4 +31,31 @@ class MessageNotification extends NotificationData {
       _$MessageNotificationFromJson(json);
 
   Map<String, dynamic> toJson() => _$MessageNotificationToJson(this);
+}
+
+@JsonSerializable()
+class WhatsNewItem extends NotificationData {
+  @JsonKey(required: true, name: 'company_id')
+  final String companyId;
+  @JsonKey(required: true, name: 'workspace_id')
+  final String workspaceId;
+  @JsonKey(required: true, name: 'channel_id')
+  final String channelId;
+  @JsonKey(name: 'thread_id')
+  final String threadId;
+  @JsonKey(name: 'message_id')
+  final String messageId;
+
+  WhatsNewItem({
+    this.companyId,
+    this.workspaceId,
+    this.channelId,
+    this.threadId,
+    this.messageId,
+  });
+
+  factory WhatsNewItem.fromJson(Map<String, dynamic> json) =>
+      _$WhatsNewItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WhatsNewItemToJson(this);
 }
