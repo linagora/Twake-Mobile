@@ -42,7 +42,7 @@ class SearchItem extends StatelessWidget {
                     if (allowMultipleChoice && selected)
                       Icon(
                         CupertinoIcons.check_mark_circled_solid,
-                        color: Color(0xff837cfe),
+                        color: Color(0xff3840F7),
                       ),
                     if (allowMultipleChoice && !selected)
                       Icon(

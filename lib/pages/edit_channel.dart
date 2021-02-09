@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:twake/widgets/sheets/name_container.dart';
+import 'package:twake/widgets/sheets/sheet_text_field.dart';
 
 class EditChannel extends StatefulWidget {
   @override
@@ -10,6 +13,15 @@ class EditChannel extends StatefulWidget {
 }
 
 class _EditChannelState extends State<EditChannel> {
+  final _channelNameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  final _channelNameFocusNode = FocusNode();
+  final _channelDescriptionFocusNode = FocusNode();
+
+  var _channelType = ChannelType.public;
+  var _participants = <String>[];
+  var _automaticallyAddNew = true;
   var _canSave = false;
 
   @override
@@ -39,10 +51,7 @@ class _EditChannelState extends State<EditChannel> {
                   ),
                   Column(
                     children: [
-                      SelectableAvatar(
-                        width: 74.0,
-                        height: 74.0,
-                      ),
+                      SelectableAvatar(size: 74.0),
                       SizedBox(height: 4.0),
                       Text('Change avatar',
                           style: TextStyle(
@@ -77,13 +86,35 @@ class _EditChannelState extends State<EditChannel> {
                   title: 'add',
                   onTap: () => print('Add'),
                 ),
-                SizedBox(width: 8.0),
+                SizedBox(width: 10.0),
                 RoundedBoxButton(
                   cover: Image.asset('assets/images/leave.png'),
                   title: 'leave',
                   onTap: () => print('leave'),
                 ),
               ],
+            ),
+            Container(
+              padding: const EdgeInsets.only(
+                left: 12.0,
+                top: 24.0,
+                bottom: 12.0,
+              ),
+              width: MediaQuery.of(context).size.width,
+              child: Text(
+                'CHANNEL TYPE',
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black.withOpacity(0.4),
+                ),
+              ),
+            ),
+            SheetTextField(
+              hint: 'Channel name',
+              controller: _channelNameController,
+              focusNode: _channelNameFocusNode,
             )
           ],
         ),

@@ -184,7 +184,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                     _isLastOne
                         ? CupertinoIcons.add_circled_solid
                         : CupertinoIcons.minus_circle_fill,
-                    color: _isLastOne ? Color(0xff837cfe) : Color(0xfff14620),
+                    color: _isLastOne ? Color(0xff3840F7) : Color(0xfff14620),
                     size: 25,
                   ),
                 ),

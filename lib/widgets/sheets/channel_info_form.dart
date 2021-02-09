@@ -154,7 +154,8 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                   : () => context.read<AddChannelBloc>().add(Create()),
             ),
             SizedBox(height: 16),
-            NameContainer(
+            SheetTextField(
+              hint: 'Channel name',
               controller: _channelNameController,
               focusNode: _channelNameFocusNode,
             ),
@@ -163,14 +164,10 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               text: 'Please provide a channel name and optional channel icon',
             ),
             SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.only(left: 14.0, right: 7),
-              color: Colors.white,
-              child: SheetTextField(
-                hint: 'Channel description',
-                controller: _descriptionController,
-                focusNode: _channelDescriptionFocusNode,
-              ),
+            SheetTextField(
+              hint: 'Channel description',
+              controller: _descriptionController,
+              focusNode: _channelDescriptionFocusNode,
             ),
             SizedBox(height: 8),
             HintLine(
@@ -303,7 +300,7 @@ class SelectableItem extends StatelessWidget {
                     if (selected)
                       Icon(
                         CupertinoIcons.check_mark,
-                        color: Color(0xff837cfe),
+                        color: Color(0xff3840F7),
                       ),
                   ],
                 ),
@@ -345,12 +342,12 @@ class ParticipantsButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 17.0,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xff837cfe),
+                        color: Color(0xff3840F7),
                       ),
                     ),
                     Icon(
                       CupertinoIcons.forward,
-                      color: Color(0xff837cfe),
+                      color: Color(0xff3840F7),
                     ),
                   ],
                 )
@@ -361,7 +358,7 @@ class ParticipantsButton extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff837cfe),
+                      color: Color(0xff3840F7),
                     ),
                   ),
                 ),

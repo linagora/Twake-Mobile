@@ -186,12 +186,12 @@ class CollaboratorsButton extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 17.0,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xff837cfe),
+                        color: Color(0xff3840F7),
                       ),
                     ),
                     Icon(
                       CupertinoIcons.forward,
-                      color: Color(0xff837cfe),
+                      color: Color(0xff3840F7),
                     ),
                   ],
                 )
@@ -202,7 +202,7 @@ class CollaboratorsButton extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff837cfe),
+                      color: Color(0xff3840F7),
                     ),
                   ),
                 ),
