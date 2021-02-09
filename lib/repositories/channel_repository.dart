@@ -168,4 +168,17 @@ class ChannelRepository {
     String channelId = resp['id'];
     return channelId;
   }
+
+  Future<bool> edit(Map<String, dynamic> body) async {
+    _logger.d('Channel editing request body: $body');
+    Map<String, dynamic> resp;
+    try {
+      resp = await _api.put(Endpoint.channels, body: body);
+    } catch (error) {
+      _logger.e('Error while trying to edit a channel:\n${error.message}');
+      return false;
+    }
+    _logger.d('RESPONSE AFTER CHANNEL EDITING: $resp');
+    return true;
+  }
 }
