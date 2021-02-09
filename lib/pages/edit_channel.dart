@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:twake/widgets/sheets/name_container.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 
 class EditChannel extends StatefulWidget {

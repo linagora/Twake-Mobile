@@ -8,7 +8,6 @@ import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/participants_widget.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
-import 'package:twake/widgets/sheets/name_container.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/utils/extensions.dart';
