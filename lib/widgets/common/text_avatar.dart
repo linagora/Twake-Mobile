@@ -22,7 +22,7 @@ class TextAvatar extends StatelessWidget {
       height: height,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius:  BorderRadius.circular(
+        borderRadius: BorderRadius.circular(
           Dim.widthMultiplier * 0.5,
         ),
       ),

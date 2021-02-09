@@ -21,7 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   bool connectionLost = false;
   final twakeConsole =
-      'https://beta.twake.app/ajax/users/console/openid?mobile=1';
+      'https://web.qa.twake.app/ajax/users/console/openid?mobile=1';
   String _prevUrl = '';
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
