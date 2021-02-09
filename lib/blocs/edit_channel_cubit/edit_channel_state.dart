@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:twake/repositories/channel_repository.dart';
 
 abstract class EditChannelState extends Equatable {
   const EditChannelState();
@@ -10,19 +11,23 @@ class EditChannelInitial extends EditChannelState {
   List<Object> get props => [];
 }
 
-class EditChannelLoading extends EditChannelState {
-  @override
-  List<Object> get props => [];
-}
-
 class EditChannelLoaded extends EditChannelState {
   @override
   List<Object> get props => [];
 }
 
-class EditChannelUpdate extends EditChannelState {
+class EditChannelSaved extends EditChannelState {
   @override
   List<Object> get props => [];
+}
+
+class EditChannelUpdated extends EditChannelState {
+  final ChannelRepository repository;
+
+  EditChannelUpdated(this.repository);
+
+  @override
+  List<Object> get props => [repository];
 }
 
 class EditChannelError extends EditChannelState {
@@ -35,12 +40,12 @@ class EditChannelError extends EditChannelState {
 }
 
 class EditChannelStageUpdated extends EditChannelState {
-  // final EditFlowStage stage;
+  final EditFlowStage stage;
 
-  // EditChannelStageUpdated(this.stage);
+  EditChannelStageUpdated(this.stage);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [stage];
 }
 
 class EditChannelMembersUpdated extends EditChannelState {

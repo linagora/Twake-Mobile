@@ -31,7 +31,7 @@ class ChannelRepository {
   String workspaceId;
   @JsonKey(required: true)
   String name;
-  @JsonKey(required: true)
+  @JsonKey(required: false, defaultValue: 'public')
   String visibility;
 
   @JsonKey(required: false)
@@ -55,8 +55,8 @@ class ChannelRepository {
   ChannelRepository(
     this.companyId,
     this.workspaceId,
-    this.name,
-    this.visibility, {
+    this.name, {
+    this.visibility,
     this.icon,
     this.description,
     this.channelGroup,
@@ -71,7 +71,7 @@ class ChannelRepository {
   Map<String, dynamic> toJson() => _$ChannelRepositoryToJson(this);
 
   static Future<ChannelRepository> load() async {
-    return ChannelRepository('', '', '', '');
+    return ChannelRepository('', '', '',);
   }
 
   // Future<AddChannelData> load() async {
@@ -147,8 +147,7 @@ class ChannelRepository {
     try {
       resp = await _api.post(Endpoint.channelMembers, body: body);
     } catch (error) {
-      _logger.e(
-          'Error while trying to update members of a channel: $error');
+      _logger.e('Error while trying to update members of a channel: $error');
       return false;
     }
     _logger.d('RESPONSE AFTER MEMBERS UPDATE: $resp');

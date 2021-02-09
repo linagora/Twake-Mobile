@@ -7,13 +7,12 @@ part of 'channel_repository.dart';
 // **************************************************************************
 
 ChannelRepository _$ChannelRepositoryFromJson(Map<String, dynamic> json) {
-  $checkKeys(json,
-      requiredKeys: const ['company_id', 'workspace_id', 'name', 'visibility']);
+  $checkKeys(json, requiredKeys: const ['company_id', 'workspace_id', 'name']);
   return ChannelRepository(
     json['company_id'] as String,
     json['workspace_id'] as String,
     json['name'] as String,
-    json['visibility'] as String,
+    visibility: json['visibility'] as String ?? 'public',
     icon: json['icon'] as String,
     description: json['description'] as String,
     channelGroup: json['channel_group'] as String,
@@ -22,8 +21,7 @@ ChannelRepository _$ChannelRepositoryFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ChannelRepositoryToJson(
-        ChannelRepository instance) =>
+Map<String, dynamic> _$ChannelRepositoryToJson(ChannelRepository instance) =>
     <String, dynamic>{
       'company_id': instance.companyId,
       'workspace_id': instance.workspaceId,

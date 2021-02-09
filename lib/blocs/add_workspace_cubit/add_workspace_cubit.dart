@@ -8,7 +8,7 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
 
   AddWorkspaceCubit(this.repository) : super(AddWorkspaceInitial());
 
-  void create() async {
+  Future<void> create() async {
     final result = await repository.create();
     if (result.isNotEmpty) {
       emit(Created(result));

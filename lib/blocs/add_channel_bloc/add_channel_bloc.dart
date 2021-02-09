@@ -31,7 +31,7 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
         repository.companyId,
         repository.workspaceId,
         repository.name,
-        repository.visibility,
+        visibility: repository.visibility,
         description: repository.description,
         channelGroup: repository.channelGroup,
         type: repository.type,
