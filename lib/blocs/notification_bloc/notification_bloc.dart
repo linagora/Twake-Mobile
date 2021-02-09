@@ -5,6 +5,8 @@ import 'package:twake/blocs/notification_bloc/notification_event.dart';
 import 'package:twake/services/notifications.dart';
 import 'package:twake/blocs/notification_bloc/notification_state.dart';
 import 'package:twake/models/notification.dart';
+// import 'package:socket_io/socket_io.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 export 'package:twake/blocs/notification_bloc/notification_event.dart';
 export 'package:twake/blocs/notification_bloc/notification_state.dart';
@@ -12,13 +14,30 @@ export 'package:twake/models/notification.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   Notifications service;
-
+  IO.Socket socket;
   NotificationBloc() : super(NotificationsAbsent()) {
     service = Notifications(
       onMessageCallback: onMessageCallback,
       onResumeCallback: onResumeCallback,
       onLaunchCallback: onLaunchCallback,
     );
+    socket = IO.io(
+      'https://mobile.api.twake.app',
+      IO.OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .build(),
+    );
+    socket.onConnect((_) {
+      print('CONNECT');
+      socket.emit('msg', 'test');
+    });
+    socket.onError((e) => print('ERROR ON CONNECT $e'));
+    socket.on('event', (data) => print(data));
+    socket.onDisconnect((_) => print('disconnect'));
+    socket.on('fromServer', (_) => print(_));
+    // print('DONE SOCKETING');
+    socket.connect();
   }
 
   @override
