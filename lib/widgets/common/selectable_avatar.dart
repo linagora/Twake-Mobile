@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SelectableAvatar extends StatefulWidget {
+  final double width;
+  final double height;
+
+  const SelectableAvatar({Key key, this.width = 48.0, this.height = 48.0,}) : super(key: key);
   @override
   _SelectableAvatarState createState() => _SelectableAvatarState();
 }
@@ -31,8 +35,8 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: Container(
-        width: 48,
-        height: 48,
+        width: widget.width,
+        height: widget.height,
         child: _bytes != null
             ? SizedBox()
             : (_image != null
