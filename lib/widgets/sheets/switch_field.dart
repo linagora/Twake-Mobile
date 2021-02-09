@@ -30,6 +30,7 @@ class SwitchField extends StatelessWidget {
           onChanged: onChanged,
           activeColor: Color(0xff3840F7),
         ),
+        isExtended: isExtended,
       ),
     );
   }

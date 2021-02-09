@@ -5,6 +5,7 @@ class ButtonField extends StatelessWidget {
   final String title;
   final String trailingTitle;
   final bool hasArrow;
+  final bool isExtended;
   final Widget trailingWidget;
 
   const ButtonField({
@@ -12,6 +13,7 @@ class ButtonField extends StatelessWidget {
     @required this.title,
     this.trailingTitle,
     this.hasArrow = false,
+    this.isExtended = false,
     this.trailingWidget,
   }) : super(key: key);
 
@@ -20,7 +22,8 @@ class ButtonField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius:
+            isExtended ? BorderRadius.zero : BorderRadius.circular(10.0),
       ),
       height: 44,
       child: Row(
@@ -65,8 +68,7 @@ class ButtonField extends StatelessWidget {
                       ),
                     ),
                   ),
-          if (trailingWidget != null)
-            trailingWidget,
+          if (trailingWidget != null) trailingWidget,
           SizedBox(width: 14),
         ],
       ),

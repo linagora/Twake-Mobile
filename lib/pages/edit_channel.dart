@@ -123,38 +123,63 @@ class _EditChannelState extends State<EditChannel> {
             SizedBox(height: 24.0),
             HintLine(text: 'CHANNEL INFORMATION', isLarge: true),
             SizedBox(height: 12.0),
+            Divider(
+              thickness: 0.5,
+              height: 0.5,
+              color: Colors.black.withOpacity(0.2),
+            ),
             SheetTextField(
               hint: 'Channel name',
               controller: _nameController,
               focusNode: _nameFocusNode,
+            ),
+            Divider(
+              thickness: 0.5,
+              height: 0.5,
+              color: Colors.black.withOpacity(0.2),
             ),
             SheetTextField(
               hint: 'Description',
               controller: _descriptionController,
               focusNode: _descriptionFocusNode,
             ),
-            ButtonField(
-              title: 'Channel type',
-              trailingTitle: 'Public',
-              hasArrow: true,
+            Divider(
+              thickness: 0.5,
+              height: 0.5,
+              color: Colors.black.withOpacity(0.2),
             ),
+            // ButtonField(
+            //   title: 'Channel type',
+            //   trailingTitle: 'Public',
+            //   hasArrow: true,
+            // ),
             SizedBox(height: 32.0),
             HintLine(text: 'MEMBERS', isLarge: true),
             SizedBox(height: 12.0),
+            Divider(
+              thickness: 0.5,
+              height: 0.5,
+              color: Colors.black.withOpacity(0.2),
+            ),
             ButtonField(
               title: 'Member management',
               trailingTitle: 'Manage',
               hasArrow: true,
             ),
-            SwitchField(
-              title: 'Chat history for new members',
-              value: _showHistoryForNew,
-              onChanged: (value) =>
-                  _batchUpdateState(showHistoryForNew: value),
-              isExtended: true,
+            Divider(
+              thickness: 0.5,
+              height: 0.5,
+              color: Colors.black.withOpacity(0.2),
             ),
-            SizedBox(height: 8.0),
-            HintLine(text: 'Show previous chat history for newly added members'),
+            // SwitchField(
+            //   title: 'Chat history for new members',
+            //   value: _showHistoryForNew,
+            //   onChanged: (value) =>
+            //       _batchUpdateState(showHistoryForNew: value),
+            //   isExtended: true,
+            // ),
+            // SizedBox(height: 8.0),
+            // HintLine(text: 'Show previous chat history for newly added members'),
           ],
         ),
       ),
