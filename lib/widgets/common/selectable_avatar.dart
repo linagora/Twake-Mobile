@@ -50,9 +50,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
         )
             : BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: _image != null
-              ? Colors.transparent
-              : Colors.white,
+          color: Colors.transparent,
         ),
       ),
       onTap: null, //_getImage,
