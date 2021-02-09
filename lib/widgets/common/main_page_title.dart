@@ -42,7 +42,7 @@ class MainPageTitle extends StatelessWidget {
                 : CloseSheet())
             ..add(
               SetFlow(
-                flow: isDirect ? SheetFlow.direct : SheetFlow.channel,
+                flow: isDirect ? SheetFlow.direct : SheetFlow.addChannel,
               ),
             );
           return IconButton(

@@ -58,7 +58,7 @@ class _MainPageState extends State<MainPage> {
           },
           buildWhen: (_, current) => current is FlowUpdated,
           builder: (context, state) {
-            var sheetFlow = SheetFlow.channel;
+            var sheetFlow = SheetFlow.addChannel;
             if (state is FlowUpdated) {
               sheetFlow = state.flow;
               return DraggableScrollable(flow: sheetFlow);

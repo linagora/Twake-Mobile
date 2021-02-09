@@ -10,6 +10,8 @@ class EditChannelCubit extends Cubit<EditChannelState> {
   Future<void> load() async {}
 
   Future<bool> save() async {
+    // final result = repository.edit(body)
+    print('Save channel called.');
     return true;
   }
 
@@ -32,7 +34,6 @@ class EditChannelCubit extends Cubit<EditChannelState> {
       members: repository.members,
       def: repository.def,
     );
-
     emit(EditChannelUpdated(newRepo));
   }
 

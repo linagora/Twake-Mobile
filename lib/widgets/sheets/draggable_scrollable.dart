@@ -3,6 +3,7 @@ import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/add_channel_flow.dart';
 import 'package:twake/widgets/sheets/add_direct_flow.dart';
 import 'package:twake/widgets/sheets/add_workspace_flow.dart';
+import 'package:twake/widgets/sheets/edit_channel_flow.dart';
 
 class DraggableScrollable extends StatelessWidget {
   final SheetFlow flow;
@@ -14,8 +15,11 @@ class DraggableScrollable extends StatelessWidget {
     // print('Current flow: $flow');
     Widget content = AddChannelFlow();
     switch (flow) {
-      case SheetFlow.channel:
+      case SheetFlow.addChannel:
         content = AddChannelFlow();
+        break;
+      case SheetFlow.editChannel:
+        content = EditChannelFlow();
         break;
       case SheetFlow.direct:
         content = AddDirectFlow();

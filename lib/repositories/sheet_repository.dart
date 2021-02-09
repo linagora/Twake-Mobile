@@ -1,5 +1,6 @@
 enum SheetFlow {
-  channel,
+  addChannel,
+  editChannel,
   direct,
   workspace,
 }
@@ -9,7 +10,7 @@ class SheetRepository {
   SheetRepository({this.flow});
 
   static Future<SheetRepository> load() async {
-    return SheetRepository(flow: SheetFlow.channel);
+    return SheetRepository(flow: SheetFlow.addChannel);
   }
 
   Future<void> cache() async {
