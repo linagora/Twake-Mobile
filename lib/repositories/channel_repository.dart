@@ -5,11 +5,16 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
 
-part 'add_channel_repository.g.dart';
+part 'channel_repository.g.dart';
 
 enum FlowStage {
   info,
   participants,
+}
+
+enum EditFlowStage {
+  manage,
+  add,
 }
 
 enum ChannelType {
@@ -19,7 +24,7 @@ enum ChannelType {
 }
 
 @JsonSerializable(explicitToJson: true)
-class AddChannelRepository {
+class ChannelRepository {
   @JsonKey(required: true, name: 'company_id')
   String companyId;
   @JsonKey(required: true, name: 'workspace_id')
@@ -47,7 +52,7 @@ class AddChannelRepository {
   @JsonKey(ignore: true)
   ChannelType type;
 
-  AddChannelRepository(
+  ChannelRepository(
     this.companyId,
     this.workspaceId,
     this.name,
@@ -60,13 +65,13 @@ class AddChannelRepository {
     this.type,
   });
 
-  factory AddChannelRepository.fromJson(Map<String, dynamic> json) =>
-      _$AddChannelRepositoryFromJson(json);
+  factory ChannelRepository.fromJson(Map<String, dynamic> json) =>
+      _$ChannelRepositoryFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AddChannelRepositoryToJson(this);
+  Map<String, dynamic> toJson() => _$ChannelRepositoryToJson(this);
 
-  static Future<AddChannelRepository> load() async {
-    return AddChannelRepository('', '', '', '');
+  static Future<ChannelRepository> load() async {
+    return ChannelRepository('', '', '', '');
   }
 
   // Future<AddChannelData> load() async {

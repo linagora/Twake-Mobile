@@ -1,15 +1,15 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_channel_repository.dart';
+part of 'channel_repository.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-AddChannelRepository _$AddChannelRepositoryFromJson(Map<String, dynamic> json) {
+ChannelRepository _$ChannelRepositoryFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['company_id', 'workspace_id', 'name', 'visibility']);
-  return AddChannelRepository(
+  return ChannelRepository(
     json['company_id'] as String,
     json['workspace_id'] as String,
     json['name'] as String,
@@ -22,8 +22,8 @@ AddChannelRepository _$AddChannelRepositoryFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$AddChannelRepositoryToJson(
-        AddChannelRepository instance) =>
+Map<String, dynamic> _$ChannelRepositoryToJson(
+        ChannelRepository instance) =>
     <String, dynamic>{
       'company_id': instance.companyId,
       'workspace_id': instance.workspaceId,

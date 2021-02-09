@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 
 class MainPageTitle extends StatelessWidget {

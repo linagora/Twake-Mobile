@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/channel_repository.dart';
 
 abstract class AddChannelEvent extends Equatable {
   const AddChannelEvent();

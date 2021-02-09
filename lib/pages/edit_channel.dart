@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
-import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/widgets/sheets/button_field.dart';
