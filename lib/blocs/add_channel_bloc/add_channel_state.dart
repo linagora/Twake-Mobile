@@ -1,4 +1,6 @@
-part of '../../blocs/add_channel_bloc/add_channel_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:meta/meta.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 
 abstract class AddChannelState extends Equatable {
   const AddChannelState();

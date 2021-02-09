@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_event.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';

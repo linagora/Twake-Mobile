@@ -5,15 +5,15 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
-import 'package:twake/widgets/sheets/channel_info_form.dart';
+import 'package:twake/widgets/sheets/collaborators_list.dart';
 import 'package:twake/widgets/sheets/participants_list.dart';
 
-class AddChannelFlow extends StatelessWidget {
+class EditChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print('Build call');
-    final channelFlowWidgets = [
-      ChannelInfoForm(),
+    final editChannelFlowWidgets = [
+      CollaboratorsList(),
       BlocProvider<UserBloc>(
         create: (_) => UserBloc(ProfileBloc.userId),
         child: ParticipantsList(),
@@ -36,7 +36,7 @@ class AddChannelFlow extends StatelessWidget {
         }
         return IndexedStack(
           index: i,
-          children: channelFlowWidgets,
+          children: editChannelFlowWidgets,
         );
       },
     );

@@ -4,10 +4,8 @@ import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
-
-part 'add_channel_event.dart';
-
-part 'add_channel_state.dart';
+import 'add_channel_event.dart';
+import 'add_channel_state.dart';
 
 class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
   final AddChannelRepository repository;
