@@ -48,6 +48,7 @@ dependencies:
   connectivity: ^2.0.2
   sliding_up_panel: ^1.0.2
   socket_io_client: ^0.9.12
+  auto_size_text: ^2.1.0
   flutter_emoji_keyboard:
     # path: ../emoji_keyboard
     git: https://github.com/bobs4462/emoji_keyboard.git

@@ -13,7 +13,7 @@ class StylesConfig {
     useTextSelectionTheme: true,
     scaffoldBackgroundColor: Colors.white,
     textSelectionTheme: TextSelectionThemeData(
-      cursorColor: Color(0xff837cfe),
+      cursorColor: Color(0xff3840F7),
     ),
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(

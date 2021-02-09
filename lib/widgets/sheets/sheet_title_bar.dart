@@ -42,13 +42,13 @@ class SheetTitleBar extends StatelessWidget {
                     leadingTitle != 'Cancel')
                   Icon(
                     CupertinoIcons.back,
-                    color: Color(0xff837cfe),
+                    color: Color(0xff3840F7),
                   ),
                 Text(
                   leadingTitle ?? '',
                   style: TextStyle(
                     color: leadingAction != null
-                        ? Color(0xff837cfe)
+                        ? Color(0xff3840F7)
                         : Color(0xffa2a2a2),
                     fontSize: 17.0,
                     fontWeight: FontWeight.w500,
@@ -74,7 +74,7 @@ class SheetTitleBar extends StatelessWidget {
               trailingTitle ?? '',
               style: TextStyle(
                 color: trailingAction != null
-                    ? Color(0xff837cfe)
+                    ? Color(0xff3840F7)
                     : Color(0xffa2a2a2),
                 fontSize: 17.0,
                 fontWeight: FontWeight.w500,
