@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:twake/widgets/sheets/button_field.dart';
+import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
+import 'package:twake/widgets/sheets/switch_field.dart';
 
 class EditChannel extends StatefulWidget {
   @override
@@ -12,16 +15,32 @@ class EditChannel extends StatefulWidget {
 }
 
 class _EditChannelState extends State<EditChannel> {
-  final _channelNameController = TextEditingController();
+  final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  final _channelNameFocusNode = FocusNode();
-  final _channelDescriptionFocusNode = FocusNode();
+  final _nameFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
 
   var _channelType = ChannelType.public;
   var _participants = <String>[];
-  var _automaticallyAddNew = true;
+  var _showHistoryForNew = true;
   var _canSave = false;
+
+  void _batchUpdateState({
+    String name,
+    String description,
+    ChannelType type,
+    List<String> participants,
+    bool showHistoryForNew,
+  }) {
+    // context.read<AddChannelBloc>().add(Update(
+    //   name: name ?? _channelNameController.text,
+    //   description: description ?? _descriptionController.text,
+    //   type: type ?? _channelType,
+    //   participants: participants ?? _participants,
+    //   automaticallyAddNew: automaticallyAddNew ?? _automaticallyAddNew,
+    // ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +51,13 @@ class _EditChannelState extends State<EditChannel> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 14.0, 16.0, 20.0),
+              padding: EdgeInsets.fromLTRB(16.0, 17.0, 16.0, 20.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
                     child: Text(
                       'Cancel',
                       style: TextStyle(
@@ -60,8 +79,8 @@ class _EditChannelState extends State<EditChannel> {
                           )),
                     ],
                   ),
-                  TextButton(
-                    onPressed: () => print('Save channel.'),
+                  GestureDetector(
+                    onTap: () => print('Save channel.'),
                     child: Text(
                       'Save',
                       style: TextStyle(
@@ -71,7 +90,6 @@ class _EditChannelState extends State<EditChannel> {
                         fontSize: 17.0,
                         fontWeight: FontWeight.w500,
                       ),
-                      textAlign: TextAlign.end,
                     ),
                   ),
                 ],
@@ -93,28 +111,69 @@ class _EditChannelState extends State<EditChannel> {
                 ),
               ],
             ),
-            Container(
-              padding: const EdgeInsets.only(
-                left: 12.0,
-                top: 24.0,
-                bottom: 12.0,
-              ),
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                'CHANNEL TYPE',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.4),
-                ),
-              ),
-            ),
+            SizedBox(height: 24.0),
+            HintLine(text: 'CHANNEL INFORMATION', isLarge: true),
+            SizedBox(height: 12.0),
             SheetTextField(
               hint: 'Channel name',
-              controller: _channelNameController,
-              focusNode: _channelNameFocusNode,
-            )
+              controller: _nameController,
+              focusNode: _nameFocusNode,
+            ),
+            SheetTextField(
+              hint: 'Description',
+              controller: _descriptionController,
+              focusNode: _descriptionFocusNode,
+            ),
+            ButtonField(
+              title: 'Channel type',
+              trailingWidget: Row(
+                children: [
+                  Text(
+                    'Public',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff3840F7),
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.forward,
+                    color: Color(0xff3840F7),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 32.0),
+            HintLine(text: 'MEMBERS', isLarge: true),
+            SizedBox(height: 12.0),
+            ButtonField(
+              title: 'Member management',
+              trailingWidget: Row(
+                children: [
+                  Text(
+                    'Manage',
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff3840F7),
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.forward,
+                    color: Color(0xff3840F7),
+                  ),
+                ],
+              ),
+            ),
+            SwitchField(
+              title: 'Chat history for new members',
+              value: _showHistoryForNew,
+              onChanged: (value) =>
+                  _batchUpdateState(showHistoryForNew: value),
+              isExtended: true,
+            ),
+            SizedBox(height: 8.0),
+            HintLine(text: 'Show previous chat history for newly added members'),
           ],
         ),
       ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class ParticipantsWidget extends StatelessWidget {
+class ButtonField extends StatelessWidget {
   final String title;
   final Widget trailingWidget;
 
-  const ParticipantsWidget({
+  const ButtonField({
     Key key,
     @required this.title,
     @required this.trailingWidget,
@@ -15,13 +15,13 @@ class ParticipantsWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius:  BorderRadius.circular(10.0),
       ),
       height: 44,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(width: 15),
+          SizedBox(width: 14),
           Text(
             title,
             style: TextStyle(
@@ -32,7 +32,7 @@ class ParticipantsWidget extends StatelessWidget {
           ),
           Spacer(),
           trailingWidget,
-          SizedBox(width: 20),
+          SizedBox(width: 14),
         ],
       ),
     );

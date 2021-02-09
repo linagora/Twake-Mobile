@@ -10,7 +10,7 @@ import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
-import 'package:twake/widgets/sheets/participants_widget.dart';
+import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 
@@ -176,7 +176,7 @@ class CollaboratorsButton extends StatelessWidget {
           .setFlowStage(FlowStage.collaborators),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-        child: ParticipantsWidget(
+        child: ButtonField(
           title: 'Invited collaborators',
           trailingWidget: count > 0
               ? Row(

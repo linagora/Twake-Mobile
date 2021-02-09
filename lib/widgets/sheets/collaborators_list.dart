@@ -4,6 +4,7 @@ import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_state.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
+import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,19 +68,7 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
               trailingAction: () => _canInvite ? _invite() : null,
             ),
             SizedBox(height: 32.0),
-            Container(
-              padding: const EdgeInsets.only(left: 14.0),
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                'ADD COLLABORATORS',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.4),
-                ),
-              ),
-            ),
+            HintLine(text: 'ADD COLLABORATORS', isLarge: true),
             SizedBox(height: 8.0),
             Divider(
               thickness: 0.5,

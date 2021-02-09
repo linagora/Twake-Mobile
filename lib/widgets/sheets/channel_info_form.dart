@@ -6,10 +6,11 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
-import 'package:twake/widgets/sheets/participants_widget.dart';
+import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
+import 'package:twake/widgets/sheets/switch_field.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -173,18 +174,9 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               text: 'Please provide an optional description for your channel',
             ),
             SizedBox(height: 30),
-            Container(
-              padding: const EdgeInsets.only(left: 14.0),
-              width: MediaQuery.of(context).size.width,
-              child: Text(
-                'CHANNEL TYPE',
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.4),
-                ),
-              ),
+            HintLine(
+              text: 'CHANNEL TYPE',
+              isLarge: true,
             ),
             SizedBox(height: 6),
             ChannelTypesContainer(
@@ -203,8 +195,9 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               ParticipantsButton(count: _participants.length),
             SizedBox(height: 8),
             if (_channelType == ChannelType.public)
-              AddAllSwitcher(
-                automaticallyAddNew: _automaticallyAddNew,
+              SwitchField(
+                title: 'Automatically add new users',
+                value: _automaticallyAddNew,
                 onChanged: (value) =>
                     _batchUpdateState(automaticallyAddNew: value),
               ),
@@ -331,7 +324,7 @@ class ParticipantsButton extends StatelessWidget {
           .add(SetFlowStage(FlowStage.participants)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-        child: ParticipantsWidget(
+        child: ButtonField(
           title: 'Added participants',
           trailingWidget: count > 0
               ? Row(
@@ -361,31 +354,6 @@ class ParticipantsButton extends StatelessWidget {
                     ),
                   ),
                 ),
-        ),
-      ),
-    );
-  }
-}
-
-class AddAllSwitcher extends StatelessWidget {
-  final bool automaticallyAddNew;
-  final Function(bool) onChanged;
-
-  const AddAllSwitcher({
-    Key key,
-    @required this.automaticallyAddNew,
-    @required this.onChanged,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-      child: ParticipantsWidget(
-        title: 'Automatically add new users',
-        trailingWidget: CupertinoSwitch(
-          value: automaticallyAddNew,
-          onChanged: onChanged,
         ),
       ),
     );
