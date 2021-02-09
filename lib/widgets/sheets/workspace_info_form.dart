@@ -24,6 +24,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   final _workspaceNameFocusNode = FocusNode();
 
   var _canCreate = false;
+
   // A workaround for unintended redirects when panel is closed.
   var _shouldRedirect = false;
   var _collaborators = <String>[];
@@ -61,7 +62,8 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   }) {
     context.read<AddWorkspaceCubit>().update(
           name: name ?? _workspaceNameController.text,
-          members: collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
+          members:
+              collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
         );
   }
 
@@ -178,34 +180,8 @@ class CollaboratorsButton extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
         child: ButtonField(
           title: 'Invited collaborators',
-          trailingWidget: count > 0
-              ? Row(
-                  children: [
-                    Text(
-                      '$count',
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff3840F7),
-                      ),
-                    ),
-                    Icon(
-                      CupertinoIcons.forward,
-                      color: Color(0xff3840F7),
-                    ),
-                  ],
-                )
-              : Padding(
-                  padding: const EdgeInsets.only(right: 9.0),
-                  child: Text(
-                    'Add',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff3840F7),
-                    ),
-                  ),
-                ),
+          trailingTitle: count > 0 ? '$count' : 'Add',
+          hasArrow: count > 0,
         ),
       ),
     );

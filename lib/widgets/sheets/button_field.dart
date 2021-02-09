@@ -1,13 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ButtonField extends StatelessWidget {
   final String title;
+  final String trailingTitle;
+  final bool hasArrow;
   final Widget trailingWidget;
 
   const ButtonField({
     Key key,
     @required this.title,
-    @required this.trailingWidget,
+    this.trailingTitle,
+    this.hasArrow = false,
+    this.trailingWidget,
   }) : super(key: key);
 
   @override
@@ -15,7 +20,7 @@ class ButtonField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:  BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(10.0),
       ),
       height: 44,
       child: Row(
@@ -31,7 +36,37 @@ class ButtonField extends StatelessWidget {
             ),
           ),
           Spacer(),
-          trailingWidget,
+          if (trailingWidget == null)
+            hasArrow
+                ? Row(
+                    children: [
+                      Text(
+                        trailingTitle,
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff3840F7),
+                        ),
+                      ),
+                      Icon(
+                        CupertinoIcons.forward,
+                        color: Color(0xff3840F7),
+                      ),
+                    ],
+                  )
+                : Padding(
+                    padding: const EdgeInsets.only(right: 9.0),
+                    child: Text(
+                      trailingTitle,
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff3840F7),
+                      ),
+                    ),
+                  ),
+          if (trailingWidget != null)
+            trailingWidget,
           SizedBox(width: 14),
         ],
       ),

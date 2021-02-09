@@ -55,7 +55,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
 
   @override
   void dispose() {
-    print('dispose');
     _channelNameController.dispose();
     _descriptionController.dispose();
     _channelNameFocusNode.dispose();
@@ -326,34 +325,8 @@ class ParticipantsButton extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
         child: ButtonField(
           title: 'Added participants',
-          trailingWidget: count > 0
-              ? Row(
-                  children: [
-                    Text(
-                      '$count',
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff3840F7),
-                      ),
-                    ),
-                    Icon(
-                      CupertinoIcons.forward,
-                      color: Color(0xff3840F7),
-                    ),
-                  ],
-                )
-              : Padding(
-                  padding: const EdgeInsets.only(right: 9.0),
-                  child: Text(
-                    'Add',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff3840F7),
-                    ),
-                  ),
-                ),
+          trailingTitle: count > 0 ? '$count' : 'Add',
+          hasArrow: count > 0,
         ),
       ),
     );

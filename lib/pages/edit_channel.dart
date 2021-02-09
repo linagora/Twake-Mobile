@@ -26,6 +26,15 @@ class _EditChannelState extends State<EditChannel> {
   var _showHistoryForNew = true;
   var _canSave = false;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _nameFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    super.dispose();
+  }
+
   void _batchUpdateState({
     String name,
     String description,
@@ -126,44 +135,16 @@ class _EditChannelState extends State<EditChannel> {
             ),
             ButtonField(
               title: 'Channel type',
-              trailingWidget: Row(
-                children: [
-                  Text(
-                    'Public',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff3840F7),
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.forward,
-                    color: Color(0xff3840F7),
-                  ),
-                ],
-              ),
+              trailingTitle: 'Public',
+              hasArrow: true,
             ),
             SizedBox(height: 32.0),
             HintLine(text: 'MEMBERS', isLarge: true),
             SizedBox(height: 12.0),
             ButtonField(
               title: 'Member management',
-              trailingWidget: Row(
-                children: [
-                  Text(
-                    'Manage',
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff3840F7),
-                    ),
-                  ),
-                  Icon(
-                    CupertinoIcons.forward,
-                    color: Color(0xff3840F7),
-                  ),
-                ],
-              ),
+              trailingTitle: 'Manage',
+              hasArrow: true,
             ),
             SwitchField(
               title: 'Chat history for new members',
