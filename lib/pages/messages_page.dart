@@ -12,6 +12,7 @@ import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
+import 'package:twake/utils/navigation.dart';
 
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   const MessagesPage();
@@ -60,60 +61,63 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (ctx, state) => Row(
-            children: [
-              if ((state.parentChannel is Direct))
-                StackedUserAvatars((state.parentChannel as Direct).members),
-              if (state.parentChannel is Channel)
-                TextAvatar(
-                  state.parentChannel.icon,
-                ),
-              SizedBox(width: 12.0),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        state.parentChannel.name,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff444444),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      SizedBox(width: 6),
-                      if (state.parentChannel is Channel &&
-                          (state.parentChannel as Channel).visibility != null &&
-                          (state.parentChannel as Channel).visibility ==
-                              'private')
-                        Icon(Icons.lock_outline,
-                            size: 15.0, color: Color(0xff444444)),
-                    ],
+          builder: (ctx, state) => GestureDetector(
+            onTap: () => openEditChannel(context, state.parentChannel.id),
+            child: Row(
+              children: [
+                if ((state.parentChannel is Direct))
+                  StackedUserAvatars((state.parentChannel as Direct).members),
+                if (state.parentChannel is Channel)
+                  TextAvatar(
+                    state.parentChannel.icon,
                   ),
-                  if (state.parentChannel is Channel)
-                    Text(
-                      '${state.parentChannel.membersCount ?? 'No'} members',
-                      style: TextStyle(
-                        fontSize: 10.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff92929C),
-                      ),
+                SizedBox(width: 12.0),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          state.parentChannel.name,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff444444),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(width: 6),
+                        if (state.parentChannel is Channel &&
+                            (state.parentChannel as Channel).visibility != null &&
+                            (state.parentChannel as Channel).visibility ==
+                                'private')
+                          Icon(Icons.lock_outline,
+                              size: 15.0, color: Color(0xff444444)),
+                      ],
                     ),
-                  if (state.parentChannel is Direct &&
-                      state.parentChannel.membersCount > 2)
-                    Text(
-                      '${state.parentChannel.membersCount} members',
-                      style: TextStyle(
-                        fontSize: 10.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff92929C),
+                    if (state.parentChannel is Channel)
+                      Text(
+                        '${state.parentChannel.membersCount ?? 'No'} members',
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff92929C),
+                        ),
                       ),
-                    ),
-                ],
-              ),
-            ],
+                    if (state.parentChannel is Direct &&
+                        state.parentChannel.membersCount > 2)
+                      Text(
+                        '${state.parentChannel.membersCount} members',
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff92929C),
+                        ),
+                      ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

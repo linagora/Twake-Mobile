@@ -11,8 +11,8 @@ class StackedUserAvatars extends StatelessWidget {
 
   StackedUserAvatars(
     this.userIds, {
-    this.width = 30,
-    this.height = 30,
+    this.width = 32,
+    this.height = 32,
   });
 
   @override
