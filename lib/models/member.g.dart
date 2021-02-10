@@ -17,10 +17,11 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
     workspaceId: json['workspace_id'] as String,
     channelId: json['channel_id'] as String,
     favorite: json['favorite'] as bool,
-  );
+  )..isSelected = json['isSelected'] as int;
 }
 
 Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
+      'isSelected': instance.isSelected,
       'id': instance.id,
       'type': instance.type,
       'notification_level': instance.notificationLevel,

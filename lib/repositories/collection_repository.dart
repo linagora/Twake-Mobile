@@ -1,4 +1,5 @@
 import 'package:twake/models/direct.dart';
+import 'package:twake/models/member.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/company.dart';
@@ -23,7 +24,8 @@ class CollectionRepository<T extends CollectionItem> {
     Direct: (Map<String, dynamic> json) {
       json = Map.from(json);
       return Direct.fromJson(json);
-    }
+    },
+    Member: (Map<String, dynamic> json) => Member.fromJson(json),
   };
 
   List<T> get roItems => [...items];

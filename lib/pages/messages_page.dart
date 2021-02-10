@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
+import 'package:twake/models/member.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
@@ -65,61 +67,70 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             onTap: state.parentChannel is Channel
                 ? () => openEditChannel(context, state.parentChannel)
                 : null,
-            child: Row(
-              children: [
-                if ((state.parentChannel is Direct))
-                  StackedUserAvatars((state.parentChannel as Direct).members),
-                if (state.parentChannel is Channel)
-                  TextAvatar(
-                    state.parentChannel.icon,
-                  ),
-                SizedBox(width: 12.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: BlocBuilder<ChannelsBloc, ChannelState>(
+              buildWhen: (_, current) => current is MembersLoaded,
+              builder: (context, channelState) {
+                List<Member> members = [];
+                if (channelState is MembersLoaded) {
+                  // members = channelState.members;
+                }
+                return Row(
                   children: [
-                    Row(
+                    if ((state.parentChannel is Direct))
+                      StackedUserAvatars((state.parentChannel as Direct).members),
+                    if (state.parentChannel is Channel)
+                      TextAvatar(
+                        state.parentChannel.icon,
+                      ),
+                    SizedBox(width: 12.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          state.parentChannel.name,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff444444),
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                        Row(
+                          children: [
+                            Text(
+                              state.parentChannel.name,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff444444),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(width: 6),
+                            if (state.parentChannel is Channel &&
+                                (state.parentChannel as Channel).visibility !=
+                                    null &&
+                                (state.parentChannel as Channel).visibility ==
+                                    'private')
+                              Icon(Icons.lock_outline,
+                                  size: 15.0, color: Color(0xff444444)),
+                          ],
                         ),
-                        SizedBox(width: 6),
-                        if (state.parentChannel is Channel &&
-                            (state.parentChannel as Channel).visibility !=
-                                null &&
-                            (state.parentChannel as Channel).visibility ==
-                                'private')
-                          Icon(Icons.lock_outline,
-                              size: 15.0, color: Color(0xff444444)),
+                        if (state.parentChannel is Channel)
+                          Text(
+                            '${state.parentChannel.membersCount ?? 'No'} members',
+                            style: TextStyle(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xff92929C),
+                            ),
+                          ),
+                        if (state.parentChannel is Direct &&
+                            state.parentChannel.membersCount > 2)
+                          Text(
+                            '${state.parentChannel.membersCount} members',
+                            style: TextStyle(
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xff92929C),
+                            ),
+                          ),
                       ],
                     ),
-                    if (state.parentChannel is Channel)
-                      Text(
-                        '${state.parentChannel.membersCount ?? 'No'} members',
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff92929C),
-                        ),
-                      ),
-                    if (state.parentChannel is Direct &&
-                        state.parentChannel.membersCount > 2)
-                      Text(
-                        '${state.parentChannel.membersCount} members',
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff92929C),
-                        ),
-                      ),
                   ],
-                ),
-              ],
+                );
+              }
             ),
           ),
         ),

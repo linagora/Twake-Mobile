@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/collection_item.dart';
 
 part 'member.g.dart';
 
 @JsonSerializable()
-class Member {
+class Member extends CollectionItem {
   @JsonKey(required: true)
   final String id;
   @JsonKey(defaultValue: 'member')
@@ -29,7 +30,7 @@ class Member {
     this.workspaceId,
     this.channelId,
     this.favorite,
-  });
+  }) : super(id);
 
   factory Member.fromJson(Map<String, dynamic> json) => _$MemberFromJson(json);
 
