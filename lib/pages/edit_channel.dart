@@ -12,7 +12,7 @@ import 'package:twake/widgets/sheets/sheet_text_field.dart';
 class EditChannel extends StatefulWidget {
   final Channel channel;
 
-  const EditChannel({Key key, @required this.channel}) : super(key: key);
+  const EditChannel({Key key, this.channel}) : super(key: key);
 
   @override
   _EditChannelState createState() => _EditChannelState();
@@ -35,9 +35,11 @@ class _EditChannelState extends State<EditChannel> {
   @override
   void initState() {
     super.initState();
-    _channel = widget.channel;
-    _nameController.text = _channel.name;
-    _descriptionController.text = _channel.description;
+    if (_channel != null) {
+      _channel = widget.channel;
+      _nameController.text = _channel.name;
+      _descriptionController.text = _channel.description;
+    }
   }
 
   @override
