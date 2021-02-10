@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
+import 'package:twake/utils/bool_int.dart';
 
 part 'member.g.dart';
 
@@ -19,7 +20,11 @@ class Member extends CollectionItem {
   String channelId;
   @JsonKey(name: 'user_id')
   String userId;
-  bool favorite;
+  @JsonKey(
+    fromJson: boolToInt,
+    toJson: boolToInt,
+  )
+  int favorite;
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 

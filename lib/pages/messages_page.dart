@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
-import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/member_cubit/member_cubit.dart';
+import 'package:twake/blocs/member_cubit/member_state.dart' as member_state;
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -67,12 +68,14 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             onTap: state.parentChannel is Channel
                 ? () => openEditChannel(context, state.parentChannel)
                 : null,
-            child: BlocBuilder<ChannelsBloc, ChannelState>(
-              buildWhen: (_, current) => current is MembersLoaded,
-              builder: (context, channelState) {
+            child: BlocBuilder<MemberCubit, member_state.MemberState>(
+              buildWhen: (_, current) => current is member_state.MembersLoaded,
+              builder: (context, memberState) {
                 List<Member> members = [];
-                if (channelState is MembersLoaded) {
-                  // members = channelState.members;
+                if (memberState is member_state.MembersLoaded) {
+                  members = memberState.members;
+
+                  print('MEMBERS: $members');
                 }
                 return Row(
                   children: [
