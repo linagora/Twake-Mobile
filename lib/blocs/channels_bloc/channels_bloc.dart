@@ -22,12 +22,10 @@ class ChannelsBloc extends BaseChannelBloc {
 
   ChannelsBloc({
     CollectionRepository<Channel> repository,
-    ChannelRepository channelRepository,
     this.workspacesBloc,
     this.notificationBloc,
   }) : super(
             repository: repository,
-            channelRepository: channelRepository,
             initState: repository.isEmpty
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {

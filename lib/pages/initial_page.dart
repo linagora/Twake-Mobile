@@ -10,6 +10,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
+import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -109,7 +110,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 BlocProvider<ChannelsBloc>(create: (ctx) {
                   return ChannelsBloc(
                     repository: state.initData.channels,
-                    channelRepository: state.initData.channel,
                     workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
@@ -186,7 +186,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 BlocProvider<EditChannelCubit>(
                   create: (_) => EditChannelCubit(state.initData.editChannel),
                   lazy: false,
-                )
+                ),
+                BlocProvider<MemberCubit>(
+                  create: (_) => MemberCubit(state.initData.channelMembers),
+                  lazy: false,
+                ),
               ],
               child: WillPopScope(
                 onWillPop: () async =>

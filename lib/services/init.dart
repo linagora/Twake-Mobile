@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/direct.dart';
+import 'package:twake/models/member.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
@@ -13,6 +14,7 @@ import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
+
 // import 'package:twake/utils/emojis.dart';
 import 'package:twake/repositories/draft_repository.dart';
 
@@ -40,7 +42,6 @@ Future<InitData> initMain() async {
   final sheet = await SheetRepository.load();
   final addChannel = await ChannelRepository.load();
   final editChannel = await ChannelRepository.load();
-  final channel = await ChannelRepository.load();
   final addWorkspace = AddWorkspaceRepository();
   final fields = FieldsRepository(fields: [], data: {});
   final draft = DraftRepository();
@@ -83,6 +84,10 @@ Future<InitData> initMain() async {
   final messages =
       MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
   final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
+  final channelMembers = await CollectionRepository.load<Member>(
+    Endpoint.channelMembers,
+    sortFields: {'channel_id': true},
+  );
 
   return InitData(
     profile: profile,
@@ -95,7 +100,7 @@ Future<InitData> initMain() async {
     sheet: sheet,
     addChannel: addChannel,
     editChannel: editChannel,
-    channel: channel,
+    channelMembers: channelMembers,
     addWorkspace: addWorkspace,
     draft: draft,
     fields: fields,
@@ -108,12 +113,12 @@ class InitData {
   final CollectionRepository<Workspace> workspaces;
   final CollectionRepository<Channel> channels;
   final CollectionRepository<Direct> directs;
+  final CollectionRepository<Member> channelMembers;
   final MessagesRepository messages;
   final MessagesRepository threads;
   final SheetRepository sheet;
   final ChannelRepository addChannel;
   final ChannelRepository editChannel;
-  final ChannelRepository channel;
   final AddWorkspaceRepository addWorkspace;
   final DraftRepository draft;
   final FieldsRepository fields;
@@ -124,12 +129,12 @@ class InitData {
     this.workspaces,
     this.channels,
     this.directs,
+    this.channelMembers,
     this.messages,
     this.threads,
     this.sheet,
     this.addChannel,
     this.editChannel,
-    this.channel,
     this.addWorkspace,
     this.draft,
     this.fields,

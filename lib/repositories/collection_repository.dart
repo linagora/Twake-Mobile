@@ -1,11 +1,11 @@
 import 'package:twake/models/direct.dart';
 import 'package:twake/models/member.dart';
 import 'package:twake/models/message.dart';
-import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/collection_item.dart';
+import 'package:twake/services/service_bundle.dart';
 
 class CollectionRepository<T extends CollectionItem> {
   List<T> items;
@@ -36,6 +36,7 @@ class CollectionRepository<T extends CollectionItem> {
     Channel: StorageType.Channel,
     Message: StorageType.Message,
     Direct: StorageType.Direct,
+    // TODO: add Member to the local storage.
   };
 
   CollectionRepository({this.items, this.apiEndpoint});
