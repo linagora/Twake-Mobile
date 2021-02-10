@@ -124,6 +124,9 @@ class ChannelsBloc extends BaseChannelBloc {
         channels: repository.items,
         force: DateTime.now().toString(),
       );
+    } else if (event is FetchMembers) {
+      final members = await channelRepository.fetchMembers(channelId: event.channelId);
+      yield MembersLoaded();
     }
   }
 

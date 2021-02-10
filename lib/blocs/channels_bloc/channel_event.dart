@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:meta/meta.dart';
 
 abstract class ChannelsEvent extends Equatable {
   const ChannelsEvent();
@@ -83,6 +84,15 @@ class ModifyChannelState extends ChannelsEvent {
 class RemoveChannel extends ChannelsEvent {
   final String channelId;
   RemoveChannel(this.channelId);
+
+  @override
+  List<Object> get props => [channelId];
+}
+
+class FetchMembers extends ChannelsEvent {
+  final String channelId;
+
+  FetchMembers({@required this.channelId});
 
   @override
   List<Object> get props => [channelId];

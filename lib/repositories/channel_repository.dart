@@ -166,7 +166,7 @@ class ChannelRepository {
       'channel_id': channelId,
     };
     _logger.d('Members fetch query parameters: $queryParams');
-    Map<String, dynamic> resp;
+    List<dynamic> resp;
     try {
       resp = await _api.get(Endpoint.channelMembers, params: queryParams);
     } catch (error) {

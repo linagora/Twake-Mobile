@@ -48,3 +48,9 @@ class ErrorLoadingChannels extends ChannelsLoaded {
   @override
   List<Object> get props => [];
 }
+
+class MembersLoaded extends ChannelState {
+  const MembersLoaded();
+  @override
+  List<Object> get props => [];
+}
