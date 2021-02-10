@@ -40,6 +40,7 @@ Future<InitData> initMain() async {
   final sheet = await SheetRepository.load();
   final addChannel = await ChannelRepository.load();
   final editChannel = await ChannelRepository.load();
+  final channel = await ChannelRepository.load();
   final addWorkspace = AddWorkspaceRepository();
   final fields = FieldsRepository(fields: [], data: {});
   final draft = DraftRepository();
@@ -94,6 +95,7 @@ Future<InitData> initMain() async {
     sheet: sheet,
     addChannel: addChannel,
     editChannel: editChannel,
+    channel: channel,
     addWorkspace: addWorkspace,
     draft: draft,
     fields: fields,
@@ -111,6 +113,7 @@ class InitData {
   final SheetRepository sheet;
   final ChannelRepository addChannel;
   final ChannelRepository editChannel;
+  final ChannelRepository channel;
   final AddWorkspaceRepository addWorkspace;
   final DraftRepository draft;
   final FieldsRepository fields;
@@ -126,6 +129,7 @@ class InitData {
     this.sheet,
     this.addChannel,
     this.editChannel,
+    this.channel,
     this.addWorkspace,
     this.draft,
     this.fields,

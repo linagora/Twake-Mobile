@@ -5,6 +5,7 @@ import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channel_event.dart';
 import 'package:twake/models/channel.dart';
+import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/channels_bloc/channel_state.dart';
 import 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
@@ -21,10 +22,12 @@ class ChannelsBloc extends BaseChannelBloc {
 
   ChannelsBloc({
     CollectionRepository<Channel> repository,
+    ChannelRepository channelRepository,
     this.workspacesBloc,
     this.notificationBloc,
   }) : super(
             repository: repository,
+            channelRepository: channelRepository,
             initState: repository.isEmpty
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {

@@ -109,6 +109,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 BlocProvider<ChannelsBloc>(create: (ctx) {
                   return ChannelsBloc(
                     repository: state.initData.channels,
+                    channelRepository: state.initData.channel,
                     workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );

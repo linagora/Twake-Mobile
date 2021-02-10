@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channel_event.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/blocs/channels_bloc/channel_state.dart';
 
 export 'package:twake/blocs/channels_bloc/channel_event.dart';
@@ -11,11 +12,13 @@ export 'package:twake/blocs/channels_bloc/channel_state.dart';
 
 abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
   final CollectionRepository<BaseChannel> repository;
+  final ChannelRepository channelRepository;
   String selectedParentId;
   String selectedBeforeId;
 
   BaseChannelBloc({
     this.repository,
+    this.channelRepository,
     ChannelState initState,
   }) : super(initState);
 
