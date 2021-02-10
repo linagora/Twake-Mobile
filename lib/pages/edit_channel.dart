@@ -1,15 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/models/channel.dart';
 import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
-import 'package:twake/widgets/sheets/switch_field.dart';
 
 class EditChannel extends StatefulWidget {
+  final Channel channel;
+
+  const EditChannel({Key key, @required this.channel}) : super(key: key);
+
   @override
   _EditChannelState createState() => _EditChannelState();
 }
@@ -26,6 +30,16 @@ class _EditChannelState extends State<EditChannel> {
   var _showHistoryForNew = true;
   var _canSave = false;
 
+  Channel _channel;
+
+  @override
+  void initState() {
+    super.initState();
+    _channel = widget.channel;
+    _nameController.text = _channel.name;
+    _descriptionController.text = _channel.description;
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -33,6 +47,16 @@ class _EditChannelState extends State<EditChannel> {
     _nameFocusNode.dispose();
     _descriptionFocusNode.dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant EditChannel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.channel != widget.channel) {
+      setState(() {
+        _channel = widget.channel;
+      });
+    }
   }
 
   void _batchUpdateState({

@@ -62,7 +62,9 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) => GestureDetector(
-            onTap: () => openEditChannel(context, state.parentChannel.id),
+            onTap: state.parentChannel is Channel
+                ? () => openEditChannel(context, state.parentChannel)
+                : null,
             child: Row(
               children: [
                 if ((state.parentChannel is Direct))
@@ -88,7 +90,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         ),
                         SizedBox(width: 6),
                         if (state.parentChannel is Channel &&
-                            (state.parentChannel as Channel).visibility != null &&
+                            (state.parentChannel as Channel).visibility !=
+                                null &&
                             (state.parentChannel as Channel).visibility ==
                                 'private')
                           Icon(Icons.lock_outline,
