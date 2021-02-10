@@ -136,6 +136,8 @@ class ChannelRepository {
     String companyId = ProfileBloc.selectedCompany;
     String workspaceId = ProfileBloc.selectedWorkspace;
 
+    members.remove(ProfileBloc.userId); // Remove author.
+
     final body = <String, dynamic>{
       'company_id': companyId,
       'workspace_id': workspaceId,
