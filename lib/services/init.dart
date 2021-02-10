@@ -86,6 +86,11 @@ Future<InitData> initMain() async {
   final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
   final channelMembers = await CollectionRepository.load<Member>(
     Endpoint.channelMembers,
+    queryParams: {
+      'company_id': companies.selected.id,
+      'workspace_id': workspaces.selected.id,
+      'channel_id': channels.selected.id,
+    },
     sortFields: {'channel_id': true},
   );
 

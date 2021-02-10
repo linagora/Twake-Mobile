@@ -20,6 +20,8 @@ class Member extends CollectionItem {
   @JsonKey(name: 'user_id')
   String userId;
   bool favorite;
+  @JsonKey(name: 'is_selected', defaultValue: 0)
+  int isSelected;
 
   Member(
     this.id,

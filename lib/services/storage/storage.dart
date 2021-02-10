@@ -90,4 +90,5 @@ enum StorageType {
   User,
   Emojis,
   Drafts,
+  Member,
 }

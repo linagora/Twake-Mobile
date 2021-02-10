@@ -36,7 +36,7 @@ class CollectionRepository<T extends CollectionItem> {
     Channel: StorageType.Channel,
     Message: StorageType.Message,
     Direct: StorageType.Direct,
-    // TODO: add Member to the local storage.
+    Member: StorageType.Member,
   };
 
   CollectionRepository({this.items, this.apiEndpoint});
