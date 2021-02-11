@@ -46,3 +46,21 @@ Map<String, dynamic> _$WhatsNewItemToJson(WhatsNewItem instance) =>
       'thread_id': instance.threadId,
       'message_id': instance.messageId,
     };
+
+SocketMessageUpdateNotification _$SocketMessageUpdateNotificationFromJson(
+    Map<String, dynamic> json) {
+  $checkKeys(json, requiredKeys: const ['channel_id']);
+  return SocketMessageUpdateNotification(
+    channelId: json['channel_id'] as String,
+    threadId: json['thread_id'] as String,
+    messageId: json['message_id'] as String,
+  );
+}
+
+Map<String, dynamic> _$SocketMessageUpdateNotificationToJson(
+        SocketMessageUpdateNotification instance) =>
+    <String, dynamic>{
+      'channel_id': instance.channelId,
+      'thread_id': instance.threadId,
+      'message_id': instance.messageId,
+    };

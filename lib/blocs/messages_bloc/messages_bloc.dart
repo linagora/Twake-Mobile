@@ -39,27 +39,29 @@ class MessagesBloc<T extends BaseChannelBloc>
     _subscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelPicked) {
         // repository.logger.d('TRIGGERED MESSAGE FETCH');
-        // repository.logger
-        // .d('FETCHING CHANNEL MESSAGES: ${state.selected.name}');
+        // repository.logger.d(
+        // 'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
         selectedChannel = state.selected;
         this.add(LoadMessages(forceFromApi: state.hasUnread == 1));
       }
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (T == ChannelsBloc && state is ChannelMessageNotification) {
+      if (T == ChannelsBloc && state is ChannelMessageArrived) {
+        // repository.logger.d('GOT CHANNEL MESSAGE: $state');
+        // repository.logger.w('SELECTED CHANNEL IS $selectedChannel');
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
-          workspaceId: state.data.workspaceId,
-          companyId: state.data.companyId,
+          workspaceId: ProfileBloc.selectedWorkspace,
+          companyId: ProfileBloc.selectedCompany,
         ));
-      } else if (T == DirectsBloc && state is DirectMessageNotification) {
+      } else if (T == DirectsBloc && state is DirectMessageArrived) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
-          workspaceId: state.data.workspaceId,
-          companyId: state.data.companyId,
+          workspaceId: ProfileBloc.selectedWorkspace,
+          companyId: ProfileBloc.selectedCompany,
         ));
       }
       if (state is ThreadMessageNotification) {
@@ -77,7 +79,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           ));
       }
     });
-    selectedChannel = channelsBloc.repository.selected;
+    // selectedChannel = channelsBloc.repository.selected;
   }
 
   @override
@@ -112,6 +114,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           parentChannel: selectedChannel,
         );
       }
+      // repository.logger.w('SELECTED CHANNEL IS ${selectedChannel.id}');
     } else if (event is LoadMoreMessages) {
       if (_previousMessageId == event.beforeId) return;
       _previousMessageId = event.beforeId;
@@ -146,7 +149,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
 
-      repository.logger.d('New state will yield: ${newState != state}');
+      // repository.logger.d('New state will yield: ${newState != state}');
       yield newState;
     } else if (event is GenerateErrorLoadingMore) {
       yield ErrorLoadingMoreMessages(
@@ -154,8 +157,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
-      repository.logger
-          .d('IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}');
+      repository.logger.d(
+          'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
@@ -187,7 +190,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
         );
-        repository.logger.d('YIELDING STATE: ${newState != this.state}');
+        // repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
       }
     } else if (event is RemoveMessage) {

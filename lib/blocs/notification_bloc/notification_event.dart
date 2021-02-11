@@ -22,13 +22,23 @@ class DirectMessageEvent extends BaseChannelMessageEvent {
   const DirectMessageEvent(MessageNotification data) : super(data);
 }
 
-class UpdateDirectChannel extends BaseChannelMessageEvent {
-  const UpdateDirectChannel(WhatsNewItem data) : super(data);
+class DirectMessageSocketEvent extends BaseChannelMessageEvent {
+  const DirectMessageSocketEvent(SocketMessageUpdateNotification data)
+      : super(data);
 }
 
-class UpdateClassicChannel extends BaseChannelMessageEvent {
-  const UpdateClassicChannel(WhatsNewItem data) : super(data);
+class ChannelMessageSocketEvent extends BaseChannelMessageEvent {
+  const ChannelMessageSocketEvent(SocketMessageUpdateNotification data)
+      : super(data);
 }
+
+// class UpdateDirectChannel extends BaseChannelMessageEvent {
+// const UpdateDirectChannel(WhatsNewItem data) : super(data);
+// }
+//
+// class UpdateClassicChannel extends BaseChannelMessageEvent {
+// const UpdateClassicChannel(WhatsNewItem data) : super(data);
+// }
 
 class ThreadMessageEvent extends NotificationEvent {
   final MessageNotification data;

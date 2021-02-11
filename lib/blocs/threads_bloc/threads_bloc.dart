@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
@@ -45,7 +47,16 @@ class ThreadsBloc<T extends BaseChannelBloc>
     });
     notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (state is ThreadMessageNotification) {
+      if (state is ThreadMessageNotification &&
+          state.data.workspaceId == null &&
+          T == DirectsBloc) {
+        this.add(LoadSingleMessage(
+          messageId: state.data.messageId,
+          threadId: state.data.threadId,
+          channelId: state.data.channelId,
+        ));
+      }
+      if (T == ChannelsBloc && state is ThreadMessageNotification) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           threadId: state.data.threadId,

@@ -5,7 +5,7 @@ import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channel_event.dart';
 import 'package:twake/models/channel.dart';
-import 'package:twake/repositories/channel_repository.dart';
+// import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/channels_bloc/channel_state.dart';
 import 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
@@ -45,21 +45,18 @@ class ChannelsBloc extends BaseChannelBloc {
           totalModifier: 1,
           unreadModifier: 1,
         ));
-      } else if (state is ChannnelUpdateNotification) {
-        this.add(
-          ModifyChannelState(
-            channelId: state.data.channelId,
-            workspaceId: state.data.workspaceId,
-            companyId: state.data.companyId,
-            threadId: state.data.threadId,
-            messageId: state.data.messageId,
-          ),
-        );
       }
-    });
-    Future.delayed(Duration(seconds: 3), () async {
-      notificationBloc.subscribe(
-          'previous:collections/1612971160-ad675f201e3cd33daa362a2ce1a41661830ce2ca4564eee16ee97c6fb725');
+      // else if (state is ChannnelUpdateNotification) {
+      // this.add(
+      // ModifyChannelState(
+      // channelId: state.data.channelId,
+      // workspaceId: state.data.workspaceId,
+      // companyId: state.data.companyId,
+      // threadId: state.data.threadId,
+      // messageId: state.data.messageId,
+      // ),
+      // );
+      // }
     });
     selectedParentId = workspacesBloc.repository.selected.id;
   }

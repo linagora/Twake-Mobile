@@ -59,3 +59,25 @@ class WhatsNewItem extends NotificationData {
 
   Map<String, dynamic> toJson() => _$WhatsNewItemToJson(this);
 }
+
+@JsonSerializable()
+class SocketMessageUpdateNotification extends NotificationData {
+  @JsonKey(required: true, name: 'channel_id')
+  final String channelId;
+  @JsonKey(name: 'thread_id')
+  final String threadId;
+  @JsonKey(name: 'message_id')
+  final String messageId;
+
+  SocketMessageUpdateNotification({
+    this.channelId,
+    this.threadId,
+    this.messageId,
+  });
+
+  factory SocketMessageUpdateNotification.fromJson(Map<String, dynamic> json) =>
+      _$SocketMessageUpdateNotificationFromJson(json);
+
+  Map<String, dynamic> toJson() =>
+      _$SocketMessageUpdateNotificationToJson(this);
+}

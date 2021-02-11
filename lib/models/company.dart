@@ -1,3 +1,4 @@
+// import 'dart:convert' show jsonEncode, jsonDecode;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
 
@@ -20,6 +21,9 @@ class Company extends CollectionItem {
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 
+  // @JsonKey(name: 'notification_rooms')
+  // List<String> notificationRooms;
+
   Company({
     this.id,
     this.name,
@@ -30,6 +34,10 @@ class Company extends CollectionItem {
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Company.fromJson(Map<String, dynamic> json) {
+    // json = Map.from(json);
+    // if (json['notification_rooms'] is String) {
+    //   json['notification_rooms'] = jsonDecode(json['notification_rooms']);
+    // }
     return _$CompanyFromJson(json);
   }
 
@@ -37,6 +45,7 @@ class Company extends CollectionItem {
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
     var map = _$CompanyToJson(this);
+    // map['notification_rooms'] = jsonEncode(map['notification_rooms']);
     return map;
   }
 }
