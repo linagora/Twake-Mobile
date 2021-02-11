@@ -7,6 +7,7 @@ import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/member.dart';
@@ -164,10 +165,12 @@ class _EditChannelState extends State<EditChannel> {
         ),
         body: SafeArea(
           child: BlocBuilder<EditChannelCubit, EditChannelState>(
-              buildWhen: (_, current) =>
-                  current is EditChannelSaved,
+              buildWhen: (_, current) => current is EditChannelSaved,
               builder: (context, state) {
                 if (state is EditChannelSaved) {
+                  context
+                      .read<ChannelsBloc>()
+                      .add(ReloadChannels(forceFromApi: true));
                   Navigator.of(context).pop();
                 }
                 return Column(
