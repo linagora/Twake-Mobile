@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/repositories/member_repository.dart';
 import 'package:twake/models/member.dart';
+import 'package:twake/utils/extensions.dart';
 
 class MemberCubit extends Cubit<MemberState> {
   final MemberRepository repository;
@@ -14,10 +15,18 @@ class MemberCubit extends Cubit<MemberState> {
     emit(MembersLoaded(members: repository.items));
   }
 
-  void updateMembers({
+  Future<void> updateMembers({
     @required String channelId,
-    @required List<Member> members,
-  }) {
-    // await repository.updateMembers(members: null, channelId: null)
+    @required List<String> members,
+  }) async {
+    final isUpdated = await repository.updateMembers(
+      members: members,
+      channelId: channelId,
+    );
+    if (isUpdated) {
+      emit(MembersUpdated(channelId: channelId, members: members));
+    } else {
+      emit(MembersError('Error during members update.'));
+    }
   }
 }

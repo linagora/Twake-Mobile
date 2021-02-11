@@ -29,3 +29,12 @@ class MembersUpdated extends MemberState {
   @override
   List<Object> get props => [channelId, members];
 }
+
+class MembersError extends MemberState {
+  final String message;
+
+  MembersError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

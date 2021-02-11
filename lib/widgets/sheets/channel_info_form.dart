@@ -5,6 +5,8 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_event.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/member_cubit/member_cubit.dart';
+import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
@@ -82,24 +84,35 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SheetBloc, SheetState>(
-      listener: (context, state) {
-        if (state is SheetShouldClear) {
-          _channelNameController.clear();
-          _descriptionController.clear();
-          FocusScope.of(context).requestFocus(new FocusNode());
-          context.read<AddChannelBloc>().add(Clear());
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MemberCubit, MemberState>(
+          listener: (context, state) {
+            if (state is MembersUpdated) {
+              String channelId = state.channelId;
+              openChannel(context, channelId);
+            }
+          },
+        ),
+        BlocListener<SheetBloc, SheetState>(
+          listener: (context, state) {
+            if (state is SheetShouldClear) {
+              _channelNameController.clear();
+              _descriptionController.clear();
+              FocusScope.of(context).requestFocus(new FocusNode());
+              context.read<AddChannelBloc>().add(Clear());
+            }
+          },
+        ),
+      ],
       child: BlocConsumer<AddChannelBloc, AddChannelState>(
           listener: (context, state) {
         if (state is Created) {
           if (_channelType == ChannelType.private &&
               _participants.length != 0) {
-            context.read<AddChannelBloc>().add(UpdateMembers(
-                  channelId: state.id,
-                  members: _participants,
-                ));
+            context
+                .read<MemberCubit>()
+                .updateMembers(channelId: state.id, members: _participants);
           }
           // Reload channels
           context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
@@ -115,9 +128,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
             String channelId = state.id;
             openChannel(context, channelId);
           }
-        } else if (state is MembersUpdated) {
-          String channelId = state.channelId;
-          openChannel(context, channelId);
         } else if (state is Error) {
           // Show an error
           Scaffold.of(context).showSnackBar(SnackBar(

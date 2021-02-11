@@ -54,18 +54,6 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       repository.clear();
     } else if (event is SetFlowType) {
       yield FlowTypeSet(event.isDirect);
-    } else if (event is UpdateMembers) {
-      final channelId = event.channelId;
-      final members = event.members;
-      final result = await repository.updateMembers(
-        members: members,
-        channelId: channelId,
-      );
-      if (result) {
-        yield MembersUpdated(channelId: channelId, members: members);
-      } else {
-        yield Error('Members update failure!');
-      }
     }
   }
 }

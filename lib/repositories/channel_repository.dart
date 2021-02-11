@@ -129,32 +129,32 @@ class ChannelRepository {
     // }
   }
 
-  Future<bool> updateMembers({
-    @required List<String> members,
-    @required String channelId,
-  }) async {
-    String companyId = ProfileBloc.selectedCompany;
-    String workspaceId = ProfileBloc.selectedWorkspace;
-
-    members.remove(ProfileBloc.userId); // Remove author.
-
-    final body = <String, dynamic>{
-      'company_id': companyId,
-      'workspace_id': workspaceId,
-      'channel_id': channelId,
-      'members': members,
-    };
-    _logger.d('Members update request body: $body');
-    Map<String, dynamic> resp;
-    try {
-      resp = await _api.post(Endpoint.channelMembers, body: body);
-    } catch (error) {
-      _logger.e('Error while trying to update members of a channel: $error');
-      return false;
-    }
-    _logger.d('RESPONSE AFTER MEMBERS UPDATE: $resp');
-    return true;
-  }
+  // Future<bool> updateMembers({
+  //   @required List<String> members,
+  //   @required String channelId,
+  // }) async {
+  //   String companyId = ProfileBloc.selectedCompany;
+  //   String workspaceId = ProfileBloc.selectedWorkspace;
+  //
+  //   members.remove(ProfileBloc.userId); // Remove author.
+  //
+  //   final body = <String, dynamic>{
+  //     'company_id': companyId,
+  //     'workspace_id': workspaceId,
+  //     'channel_id': channelId,
+  //     'members': members,
+  //   };
+  //   _logger.d('Members update request body: $body');
+  //   Map<String, dynamic> resp;
+  //   try {
+  //     resp = await _api.post(Endpoint.channelMembers, body: body);
+  //   } catch (error) {
+  //     _logger.e('Error while trying to update members of a channel: $error');
+  //     return false;
+  //   }
+  //   _logger.d('RESPONSE AFTER MEMBERS UPDATE: $resp');
+  //   return true;
+  // }
 
   Future<String> process(Map<String, dynamic> body) async {
     _logger.d('Channel creation request body: $body');
