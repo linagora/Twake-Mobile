@@ -1,11 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:twake/blocs/member_cubit/member_state.dart';
-import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/member_repository.dart';
 import 'package:twake/models/member.dart';
 
 class MemberCubit extends Cubit<MemberState> {
-  final CollectionRepository<Member> repository;
+  final MemberRepository repository;
 
   MemberCubit(this.repository) : super(MemberInitial());
 

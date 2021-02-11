@@ -10,6 +10,7 @@ import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/fields_repository.dart';
+import 'package:twake/repositories/member_repository.dart';
 import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
@@ -84,7 +85,7 @@ Future<InitData> initMain() async {
   final messages =
       MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
   final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
-  final channelMembers = await CollectionRepository.load<Member>(
+  final channelMembers = await MemberRepository.load(
     Endpoint.channelMembers,
     queryParams: {
       'company_id': companies.selected.id,
@@ -118,7 +119,7 @@ class InitData {
   final CollectionRepository<Workspace> workspaces;
   final CollectionRepository<Channel> channels;
   final CollectionRepository<Direct> directs;
-  final CollectionRepository<Member> channelMembers;
+  final MemberRepository channelMembers;
   final MessagesRepository messages;
   final MessagesRepository threads;
   final SheetRepository sheet;
