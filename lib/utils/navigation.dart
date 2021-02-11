@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
@@ -17,6 +18,7 @@ void openDirect(BuildContext context, String channelId) =>
 
 void _open<T extends BaseChannelBloc>(BuildContext context, String channelId) {
   context.read<T>().add(ChangeSelectedChannel(channelId));
+  context.read<MemberCubit>().fetchMembers(channelId: channelId);
   Navigator.of(context)
       .push(MaterialPageRoute(
         builder: (context) => MessagesPage<T>(),

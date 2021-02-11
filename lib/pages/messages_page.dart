@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/member_cubit/member_cubit.dart';
+import 'package:twake/blocs/member_cubit/member_state.dart' as member_state;
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -65,62 +67,62 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             onTap: state.parentChannel is Channel
                 ? () => openEditChannel(context, state.parentChannel)
                 : null,
-            child: Row(
-              children: [
-                if ((state.parentChannel is Direct))
-                  StackedUserAvatars((state.parentChannel as Direct).members),
-                if (state.parentChannel is Channel)
-                  TextAvatar(
-                    state.parentChannel.icon,
-                  ),
-                SizedBox(width: 12.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          state.parentChannel.name,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xff444444),
+            child: BlocBuilder<MemberCubit, member_state.MemberState>(
+                buildWhen: (_, current) =>
+                    current is member_state.MembersLoaded,
+                builder: (context, memberState) {
+                  List<String> membersIds = [];
+                  if (memberState is member_state.MembersLoaded) {
+                    membersIds =
+                        memberState.members.map((e) => e.userId).toList();
+                  }
+                  return Row(
+                    children: [
+                      if ((state.parentChannel is Direct))
+                        StackedUserAvatars(membersIds),
+                      if (state.parentChannel is Channel)
+                        TextAvatar(state.parentChannel.icon),
+                      SizedBox(width: 12.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                state.parentChannel.name,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff444444),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(width: 6),
+                              if ((state.parentChannel is Channel) && (state.parentChannel as Channel).visibility !=
+                                      null &&
+                                  (state.parentChannel as Channel).visibility ==
+                                      'private')
+                                Icon(Icons.lock_outline,
+                                    size: 15.0, color: Color(0xff444444)),
+                            ],
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(width: 6),
-                        if (state.parentChannel is Channel &&
-                            (state.parentChannel as Channel).visibility !=
-                                null &&
-                            (state.parentChannel as Channel).visibility ==
-                                'private')
-                          Icon(Icons.lock_outline,
-                              size: 15.0, color: Color(0xff444444)),
-                      ],
-                    ),
-                    if (state.parentChannel is Channel)
-                      Text(
-                        '${state.parentChannel.membersCount ?? 'No'} members',
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff92929C),
-                        ),
+                          if (state.parentChannel is Channel)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0),
+                              child: Text(
+                                '${membersIds.length != 0 ? membersIds.length : 'No'} members',
+                                style: TextStyle(
+                                  fontSize: 10.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff92929C),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                    if (state.parentChannel is Direct &&
-                        state.parentChannel.membersCount > 2)
-                      Text(
-                        '${state.parentChannel.membersCount} members',
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff92929C),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+                    ],
+                  );
+                }),
           ),
         ),
       ),
