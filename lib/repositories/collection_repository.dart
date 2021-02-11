@@ -85,6 +85,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   void select(String itemId, {bool saveToStore: true}) {
+    // logger.w('BEFORE SELECT $T ${selected.id}');
     final item = items.firstWhere((i) => i.id == itemId);
     var oldSelected = selected;
     oldSelected.isSelected = 0;
@@ -92,6 +93,7 @@ class CollectionRepository<T extends CollectionItem> {
     assert(selected.id == item.id);
     if (saveToStore) saveOne(item);
     saveOne(oldSelected);
+    // logger.w('AFTER SELECT $T ${selected.id}');
   }
 
   Future<bool> reload({
@@ -184,6 +186,11 @@ class CollectionRepository<T extends CollectionItem> {
       item = _typeToConstructor[T](map);
     }
     return item;
+  }
+
+  Future<dynamic> customGet(
+      String method, Map<String, dynamic> queryParams) async {
+    return (await _api.get(method, params: queryParams));
   }
 
   Future<void> clean() async {

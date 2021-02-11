@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspace_event.dart';
 import 'package:twake/models/workspace.dart';
@@ -17,9 +18,13 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   final CompaniesBloc companiesBloc;
   StreamSubscription subscription;
   String selectedCompanyId;
+  final NotificationBloc notificationBloc;
 
-  WorkspacesBloc({this.repository, this.companiesBloc})
-      : super(WorkspacesLoaded(
+  WorkspacesBloc({
+    this.repository,
+    this.companiesBloc,
+    this.notificationBloc,
+  }) : super(WorkspacesLoaded(
           workspaces: repository.items,
           selected: repository.selected,
         )) {

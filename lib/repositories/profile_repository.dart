@@ -19,6 +19,10 @@ class ProfileRepository extends JsonSerializable {
   String lastName;
   // Avatar of user
   String thumbnail;
+
+  // @JsonKey(name: 'notification_rooms')
+  // List<String> notificationRooms;
+
   @JsonKey(required: true)
   ProfileRepository({
     this.id,
@@ -91,10 +95,18 @@ class ProfileRepository extends JsonSerializable {
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory ProfileRepository.fromJson(Map<String, dynamic> json) {
+    // json = Map.from(json);
+    // if (json['notification_rooms'] is String) {
+    // json['notification_rooms'] = jsonDecode(json['notification_rooms']);
+    // }
     return _$ProfileRepositoryFromJson(json);
   }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  Map<String, dynamic> toJson() => _$ProfileRepositoryToJson(this);
+  Map<String, dynamic> toJson() {
+    var map = _$ProfileRepositoryToJson(this);
+    // map['notification_rooms'] = jsonEncode(map['notification_rooms']);
+    return map;
+  }
 }

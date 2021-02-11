@@ -21,24 +21,47 @@ abstract class BaseChannelMessageNotification extends NotificationState {
   List<Object> get props => [data];
 }
 
-class DirectUpdateNotification extends NotificationState {
-  final WhatsNewItem data;
-
-  const DirectUpdateNotification(this.data);
-
-  @override
-  List<Object> get props => [data];
-}
-
-class ChannnelUpdateNotification extends NotificationState {
-  final WhatsNewItem data;
-
-  const ChannnelUpdateNotification(this.data);
+class DirectMessageArrived extends NotificationState {
+  final SocketMessageUpdateNotification data;
+  DirectMessageArrived(this.data);
 
   @override
   List<Object> get props => [data];
 }
 
+class ChannelMessageArrived extends NotificationState {
+  final SocketMessageUpdateNotification data;
+  ChannelMessageArrived(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class WorkspaceUpdated extends NotificationState {
+  const WorkspaceUpdated();
+
+  @override
+  List<Object> get props => [];
+}
+
+// class DirectUpdateNotification extends NotificationState {
+// final WhatsNewItem data;
+//
+// const DirectUpdateNotification(this.data);
+//
+// @override
+// List<Object> get props => [data];
+// }
+//
+// class ChannnelUpdateNotification extends NotificationState {
+// final WhatsNewItem data;
+//
+// const ChannnelUpdateNotification(this.data);
+//
+// @override
+// List<Object> get props => [data];
+// }
+//
 class ChannelMessageNotification extends BaseChannelMessageNotification {
   const ChannelMessageNotification(MessageNotification data) : super(data);
 }

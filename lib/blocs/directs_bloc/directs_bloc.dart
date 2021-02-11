@@ -42,16 +42,17 @@ class DirectsBloc extends BaseChannelBloc {
           totalModifier: 1,
           unreadModifier: 1,
         ));
-      } else if (state is DirectUpdateNotification) {
-        this.add(
-          ModifyChannelState(
-            channelId: state.data.channelId,
-            companyId: state.data.companyId,
-            threadId: state.data.threadId,
-            messageId: state.data.messageId,
-          ),
-        );
       }
+      // else if (state is DirectUpdateNotification) {
+      // this.add(
+      // ModifyChannelState(
+      // channelId: state.data.channelId,
+      // companyId: state.data.companyId,
+      // threadId: state.data.threadId,
+      // messageId: state.data.messageId,
+      // ),
+      // );
+      // }
     });
     selectedParentId = companiesBloc.repository.selected.id;
   }

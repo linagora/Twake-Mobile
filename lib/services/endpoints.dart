@@ -29,6 +29,8 @@ class Endpoint {
   static const emojis = '/settings/emoji';
   // API Endpoint for searching users by name
   static const usersSearch = '/users/search';
-  // API Endpoint getting latest updates about messages
+  // API Endpoint for getting latest updates about messages
   static const whatsNew = '/messages/whatsnew';
+  // API Endpoint for getting all the rooms to which it's possible to subscribe
+  static const notificationRooms = '/workspace/notifications';
 }

@@ -100,7 +100,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     lazy: false,
                     create: (_) => NotificationBloc(
                           BlocProvider.of<AuthBloc>(ctx).repository.accessToken,
-                        )),
+                        )..setSubscriptions()),
                 BlocProvider<CompaniesBloc>(
                   create: (ctx) => CompaniesBloc(state.initData.companies),
                 ),

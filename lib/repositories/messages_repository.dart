@@ -56,7 +56,7 @@ class MessagesRepository {
         limit: limit,
         offset: 0,
       );
-      logger.d('Loaded ${itemsList.length} items');
+      // logger.d('Loaded ${itemsList.length} items');
     }
     if (itemsList.isEmpty) {
       try {
@@ -65,7 +65,7 @@ class MessagesRepository {
         logger.d('ERROR while reloading Messages from api\n${error.message}');
         return false;
       }
-      logger.d('Loaded ${itemsList.length} items');
+      // logger.d('Loaded ${itemsList.length} items');
       final Set<String> userIds =
           itemsList.map((i) => (i['user_id'] as String)).toSet();
       await UserRepository().batchUsersLoad(userIds);
@@ -83,7 +83,7 @@ class MessagesRepository {
         limit: limit,
         offset: 0,
       );
-      logger.d('Loaded ${itemsList.length} items');
+      // logger.d('Loaded ${itemsList.length} items');
     }
     if (forceFromApi) {
       await _storage.batchDelete(type: StorageType.Message, filters: filters);
@@ -114,11 +114,11 @@ class MessagesRepository {
       limit: limit,
       offset: 0,
     );
-    logger.d('Loaded ${itemsList.length} items');
+    // logger.d('Loaded ${itemsList.length} items');
     if (itemsList.isEmpty) {
       try {
         itemsList = await _api.get(apiEndpoint, params: queryParams);
-        logger.d('Loaded ${itemsList.length} MESSAGES FROM API');
+        // logger.d('Loaded ${itemsList.length} MESSAGES FROM API');
       } on ApiError catch (error) {
         logger
             .d('ERROR while loading more Messages from api\n${error.message}');
@@ -158,9 +158,28 @@ class MessagesRepository {
       return false;
     }
     if (resp.isEmpty) return false;
-    final item = Message.fromJson(resp[0]);
-    if (addToItems) this.items.add(item);
+    var item = Message.fromJson(resp[0]);
     saveOne(item);
+    if (addToItems) {
+      final query = 'SELECT message.*, '
+          'user.username, '
+          'user.firstname, '
+          'user.lastname, '
+          'user.thumbnail '
+          'FROM message INNER JOIN user ON user.id = message.user_id';
+      final itemMap = (await _storage.customQuery(
+        query,
+        filters: [
+          ['message.id', '=', item.id]
+        ],
+        limit: 1,
+        offset: 0,
+      ))[0];
+
+      this.items.add(Message.fromJson(itemMap));
+    }
+
+    logger.d('Pulled item: ${item.toJson()}');
     return true;
   }
 
