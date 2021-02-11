@@ -18,6 +18,6 @@ class MemberCubit extends Cubit<MemberState> {
     @required String channelId,
     @required List<Member> members,
   }) {
-
+    // await repository.updateMembers(members: null, channelId: null)
   }
 }
