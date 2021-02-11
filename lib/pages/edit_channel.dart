@@ -43,6 +43,7 @@ class _EditChannelState extends State<EditChannel> {
   var _canSave = false;
 
   Channel _channel;
+  String _channelId;
 
   @override
   void initState() {
@@ -50,6 +51,7 @@ class _EditChannelState extends State<EditChannel> {
 
     if (widget.channel != null) {
       _channel = widget.channel;
+      _channelId = widget.channel.id;
       _nameController.text = _channel.name;
       _descriptionController.text = _channel.description;
     }
@@ -92,6 +94,7 @@ class _EditChannelState extends State<EditChannel> {
     if (oldWidget.channel != widget.channel) {
       setState(() {
         _channel = widget.channel;
+        _channelId = widget.channel.id;
       });
     }
     if (oldWidget.members != widget.members) {
@@ -102,16 +105,15 @@ class _EditChannelState extends State<EditChannel> {
   }
 
   void _batchUpdateState({
+    String channelId,
     String name,
     String description,
-    List<Member> members,
     bool showHistoryForNew,
   }) {
-    final ids = (members ?? _members).ids;
     context.read<EditChannelCubit>().update(
+          channelId: channelId ?? _channelId,
           name: name ?? _nameController.text,
           description: description ?? _descriptionController.text,
-          members: ids,
           automaticallyAddNew: showHistoryForNew ?? _showHistoryForNew,
         );
   }

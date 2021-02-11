@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/repositories/channel_repository.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 
 abstract class AddChannelState extends Equatable {
   const AddChannelState();
@@ -11,7 +11,7 @@ class AddChannelInitial extends AddChannelState {
 }
 
 class Updated extends AddChannelState {
-  final ChannelRepository repository;
+  final AddChannelRepository repository;
 
   Updated(this.repository);
 

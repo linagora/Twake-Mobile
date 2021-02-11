@@ -8,7 +8,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
-import 'package:twake/repositories/channel_repository.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';

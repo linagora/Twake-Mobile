@@ -6,7 +6,7 @@ import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
-import 'package:twake/repositories/channel_repository.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/search_item.dart';

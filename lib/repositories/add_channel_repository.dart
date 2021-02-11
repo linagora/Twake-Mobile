@@ -1,20 +1,15 @@
-import 'package:meta/meta.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:logger/logger.dart';
+import 'package:meta/meta.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/endpoints.dart';
 
-part 'channel_repository.g.dart';
+part 'add_channel_repository.g.dart';
 
 enum FlowStage {
   info,
   participants,
-}
-
-enum EditFlowStage {
-  manage,
-  add,
 }
 
 enum ChannelType {
@@ -24,7 +19,7 @@ enum ChannelType {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ChannelRepository {
+class AddChannelRepository {
   @JsonKey(required: true, name: 'company_id')
   String companyId;
   @JsonKey(required: true, name: 'workspace_id')
@@ -52,10 +47,10 @@ class ChannelRepository {
   @JsonKey(ignore: true)
   ChannelType type;
 
-  ChannelRepository(
-    this.companyId,
-    this.workspaceId,
-    this.name, {
+  AddChannelRepository({
+    @required this.companyId,
+    @required this.workspaceId,
+    @required this.name,
     this.visibility,
     this.icon,
     this.description,
@@ -65,18 +60,14 @@ class ChannelRepository {
     this.type,
   });
 
-  factory ChannelRepository.fromJson(Map<String, dynamic> json) =>
-      _$ChannelRepositoryFromJson(json);
+  factory AddChannelRepository.fromJson(Map<String, dynamic> json) =>
+      _$AddChannelRepositoryFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ChannelRepositoryToJson(this);
+  Map<String, dynamic> toJson() => _$AddChannelRepositoryToJson(this);
 
-  static Future<ChannelRepository> load() async {
-    return ChannelRepository('', '', '',);
+  static Future<AddChannelRepository> load() async {
+    return AddChannelRepository(companyId: '', workspaceId: '', name: '');
   }
-
-  // Future<AddChannelData> load() async {
-  //
-  // }
 
   Future<void> clear() async {
     companyId = '';
@@ -125,23 +116,5 @@ class ChannelRepository {
     _logger.d('RESPONSE AFTER CHANNEL CREATION: $resp');
     String channelId = resp['id'];
     return channelId;
-  }
-
-  Future<bool> edit() async {
-    this.companyId = ProfileBloc.selectedCompany;
-    this.workspaceId = ProfileBloc.selectedWorkspace;
-
-    final body = this.toJson();
-
-    _logger.d('Channel editing request body: $body');
-    Map<String, dynamic> resp;
-    try {
-      resp = await _api.put(Endpoint.channels, body: body);
-    } catch (error) {
-      _logger.e('Error while trying to edit a channel:\n${error.message}');
-      return false;
-    }
-    _logger.d('RESPONSE AFTER CHANNEL EDITING: $resp');
-    return true;
   }
 }

@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'package:meta/meta.dart';
-
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:twake/repositories/channel_repository.dart';
+import 'package:twake/repositories/add_channel_repository.dart';
 import 'add_channel_event.dart';
 import 'add_channel_state.dart';
 
 class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
-  final ChannelRepository repository;
+  final AddChannelRepository repository;
 
   AddChannelBloc(this.repository) : super(AddChannelInitial());
 
@@ -27,10 +24,10 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       repository.def = event.automaticallyAddNew ?? repository.def ?? true;
 
       // print('Updated data: ${repository.toJson()}');
-      var newRepo = ChannelRepository(
-        repository.companyId,
-        repository.workspaceId,
-        repository.name,
+      var newRepo = AddChannelRepository(
+        companyId: repository.companyId,
+        workspaceId: repository.workspaceId,
+        name: repository.name,
         visibility: repository.visibility,
         description: repository.description,
         channelGroup: repository.channelGroup,
