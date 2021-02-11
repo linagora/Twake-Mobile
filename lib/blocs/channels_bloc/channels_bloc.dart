@@ -59,6 +59,10 @@ class ChannelsBloc extends BaseChannelBloc {
         );
       }
     });
+    Future.delayed(Duration(seconds: 3), () async {
+      notificationBloc.subscribe(
+          'previous:collections/1612971160-ad675f201e3cd33daa362a2ce1a41661830ce2ca4564eee16ee97c6fb725');
+    });
     selectedParentId = workspacesBloc.repository.selected.id;
   }
 

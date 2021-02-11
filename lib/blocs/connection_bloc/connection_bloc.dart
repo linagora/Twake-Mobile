@@ -36,10 +36,10 @@ class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
         print('LOST CONNECTION');
         this.add(NotifyConnectionLost());
       } else if (state == ConnectivityResult.wifi) {
-        print('CONNECTION IS BACK ON WIFI');
+        // print('CONNECTION IS BACK ON WIFI');
         this.add(NotifyConnectionWiFi());
       } else if (state == ConnectivityResult.mobile) {
-        print('CONNECTION IS BACK ON MOBILE');
+        // print('CONNECTION IS BACK ON MOBILE');
         this.add(NotifyConnectionCellular());
       }
     }
