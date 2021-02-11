@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
-import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
+import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
+import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/repositories/channel_repository.dart';
@@ -11,7 +11,6 @@ import 'package:twake/widgets/sheets/participants_list.dart';
 class EditChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // print('Build call');
     final editChannelFlowWidgets = [
       CollaboratorsList(),
       BlocProvider<UserBloc>(
@@ -19,17 +18,17 @@ class EditChannelFlow extends StatelessWidget {
         child: ParticipantsList(),
       ),
     ];
-    return BlocBuilder<AddChannelBloc, AddChannelState>(
-      buildWhen: (_, current) => current is StageUpdated,
+    return BlocBuilder<EditChannelCubit, EditChannelState>(
+      buildWhen: (_, current) => current is EditChannelStageUpdated,
       builder: (context, state) {
-        // print('State! - $state');
+        print('State! - $state');
         var i = 0;
-        if (state is StageUpdated) {
+        if (state is EditChannelStageUpdated) {
           switch (state.stage) {
-            case FlowStage.info:
+            case EditFlowStage.manage:
               i = 0;
               break;
-            case FlowStage.participants:
+            case EditFlowStage.add:
               i = 1;
               break;
           }

@@ -6,5 +6,5 @@ extension StringExtension on String {
 }
 
 extension MemberExtension on List<Member> {
-  get ids => this.map((e) => e.userId).toList();
+  List<String> get ids => this.map((e) => e.userId).toList();
 }

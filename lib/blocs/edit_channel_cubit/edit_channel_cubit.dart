@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:twake/pages/edit_channel.dart';
 import 'package:twake/repositories/channel_repository.dart';
 import 'edit_channel_state.dart';
 
@@ -9,10 +10,13 @@ class EditChannelCubit extends Cubit<EditChannelState> {
 
   Future<void> load() async {}
 
-  Future<bool> save() async {
-    // final result = repository.edit(body)
-    print('Save channel called.');
-    return true;
+  Future<void> save() async {
+    final isSaved = await repository.edit();
+    if (isSaved) {
+      emit(EditChannelSaved());
+    } else {
+      emit(EditChannelError('Error on channel editing.'));
+    };
   }
 
   void update({

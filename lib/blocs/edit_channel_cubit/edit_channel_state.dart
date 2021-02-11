@@ -47,16 +47,3 @@ class EditChannelStageUpdated extends EditChannelState {
   @override
   List<Object> get props => [stage];
 }
-
-class EditChannelMembersUpdated extends EditChannelState {
-  final String workspaceId;
-  final List<String> members;
-
-  EditChannelMembersUpdated({
-    @required this.workspaceId,
-    @required this.members,
-  });
-
-  @override
-  List<Object> get props => [workspaceId, members];
-}

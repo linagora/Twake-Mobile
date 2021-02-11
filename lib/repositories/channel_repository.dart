@@ -113,50 +113,7 @@ class ChannelRepository {
       this.visibility = 'direct';
     }
 
-    // String myId = ProfileBloc.userId;
-    // this.members.add(myId);
-
-    // if (this.name.isEmpty ||
-    //     this.companyId.isEmpty ||
-    //     this.workspaceId.isEmpty ||
-    //     this.visibility.isEmpty) {
-    //   _logger.d(
-    //       'Channel creation: validation error. Not all mandatory fields exist in request body.');
-    //   return false;
-    // } else {
-    final addChannelJson = this.toJson();
-    return process(addChannelJson);
-    // }
-  }
-
-  // Future<bool> updateMembers({
-  //   @required List<String> members,
-  //   @required String channelId,
-  // }) async {
-  //   String companyId = ProfileBloc.selectedCompany;
-  //   String workspaceId = ProfileBloc.selectedWorkspace;
-  //
-  //   members.remove(ProfileBloc.userId); // Remove author.
-  //
-  //   final body = <String, dynamic>{
-  //     'company_id': companyId,
-  //     'workspace_id': workspaceId,
-  //     'channel_id': channelId,
-  //     'members': members,
-  //   };
-  //   _logger.d('Members update request body: $body');
-  //   Map<String, dynamic> resp;
-  //   try {
-  //     resp = await _api.post(Endpoint.channelMembers, body: body);
-  //   } catch (error) {
-  //     _logger.e('Error while trying to update members of a channel: $error');
-  //     return false;
-  //   }
-  //   _logger.d('RESPONSE AFTER MEMBERS UPDATE: $resp');
-  //   return true;
-  // }
-
-  Future<String> process(Map<String, dynamic> body) async {
+    final body = this.toJson();
     _logger.d('Channel creation request body: $body');
     Map<String, dynamic> resp;
     try {
@@ -170,7 +127,12 @@ class ChannelRepository {
     return channelId;
   }
 
-  Future<bool> edit(Map<String, dynamic> body) async {
+  Future<bool> edit() async {
+    this.companyId = ProfileBloc.selectedCompany;
+    this.workspaceId = ProfileBloc.selectedWorkspace;
+
+    final body = this.toJson();
+
     _logger.d('Channel editing request body: $body');
     Map<String, dynamic> resp;
     try {
