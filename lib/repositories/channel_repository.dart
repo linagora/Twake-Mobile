@@ -156,30 +156,6 @@ class ChannelRepository {
     return true;
   }
 
-  Future<bool> fetchMembers({
-    @required String channelId,
-  }) async {
-    String companyId = ProfileBloc.selectedCompany;
-    String workspaceId = ProfileBloc.selectedWorkspace;
-
-    final queryParams = <String, dynamic>{
-      'company_id': companyId,
-      'workspace_id': workspaceId,
-      'channel_id': channelId,
-    };
-    _logger.d('Members fetch query parameters: $queryParams');
-    List<dynamic> resp;
-    try {
-      resp = await _api.get(Endpoint.channelMembers, params: queryParams);
-    } catch (error) {
-      _logger.e('Error while trying to fetch members of a channel: $error');
-      return false;
-    }
-    _logger.d('RESPONSE AFTER MEMBERS FETCH: $resp');
-    return true;
-  }
-
-
   Future<String> process(Map<String, dynamic> body) async {
     _logger.d('Channel creation request body: $body');
     Map<String, dynamic> resp;
