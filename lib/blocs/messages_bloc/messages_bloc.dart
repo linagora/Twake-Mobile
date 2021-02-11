@@ -44,6 +44,13 @@ class MessagesBloc<T extends BaseChannelBloc>
         selectedChannel = state.selected;
         this.add(LoadMessages(forceFromApi: state.hasUnread == 1));
       }
+      if (state is ChannelsLoaded) {
+        final updatedChannel = state.channels.firstWhere((channel) => channel.id == selectedChannel.id);
+        if (updatedChannel != null) {
+          selectedChannel = updatedChannel;
+        }
+        this.add(LoadMessages(forceFromApi: true));
+      }
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
@@ -104,9 +111,9 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
         return;
       }
-      if (repository.items.isEmpty)
+      if (repository.items.isEmpty) {
         yield MessagesEmpty(parentChannel: selectedChannel);
-      else {
+      } else {
         _sortItems();
         yield MessagesLoaded(
           messages: repository.items,
