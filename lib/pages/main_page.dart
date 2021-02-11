@@ -48,11 +48,11 @@ class _MainPageState extends State<MainPage> {
             // print('Strange state: $state');
             if (state is SheetShouldOpen) {
               if (_panelController.isPanelClosed) {
-                _openSheet();
+                _panelController.open();
               }
             } else if (state is SheetShouldClose) {
               if (_panelController.isPanelOpen) {
-                _closeSheet();
+                _panelController.close();
               }
             }
           },
@@ -127,14 +127,6 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
-  }
-
-  void _openSheet() {
-    _panelController.open();
-  }
-
-  void _closeSheet() {
-    _panelController.close();
   }
 
   _onPanelSlide(double position) {

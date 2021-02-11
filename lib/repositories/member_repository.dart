@@ -4,7 +4,6 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/member.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/services/api.dart';
-import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/storage/storage.dart';
 
 class MemberRepository extends CollectionRepository<Member> {
@@ -48,7 +47,7 @@ class MemberRepository extends CollectionRepository<Member> {
     return collection;
   }
 
-  Future<bool> updateMembers({
+  Future<List<Member>> updateMembers({
     @required List<String> members,
     @required String channelId,
   }) async {
@@ -63,6 +62,18 @@ class MemberRepository extends CollectionRepository<Member> {
       'channel_id': channelId,
       'members': members,
     };
-    return super.pushOne(body);
+    // logger.d('Sending item $T to api...');
+    List response;
+    try {
+      response = (await _api.post(apiEndpoint, body: body));
+    } catch (error) {
+      logger.e('Error while sending members to api\n${error.message}');
+      return [];
+    }
+    logger.d('RESPONSE AFTER SENDING MEMBERS: $response');
+    final updatedMembers = response.map((json) => Member.fromJson(json)).toList();
+    super.items.addAll(updatedMembers);
+    super.save();
+    return updatedMembers;
   }
 }

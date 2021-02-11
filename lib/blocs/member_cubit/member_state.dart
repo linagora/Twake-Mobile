@@ -22,7 +22,7 @@ class MembersLoaded extends MemberState {
 
 class MembersUpdated extends MemberState {
   final String channelId;
-  final List<String> members;
+  final List<Member> members;
 
   MembersUpdated({@required this.channelId, @required this.members});
 
