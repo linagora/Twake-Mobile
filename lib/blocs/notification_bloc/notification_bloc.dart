@@ -75,6 +75,16 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
   }
 
+  void reinit() {
+    for (String room in subscriptionRooms.keys) {
+      unsubscribe(room);
+    }
+    socket = socket.close();
+    setupListeners();
+    socket = socket.connect();
+    setSubscriptions();
+  }
+
   Future<void> setSubscriptions() async {
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
@@ -110,6 +120,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelMessageArrived(event.data);
     } else if (event is DirectMessageSocketEvent) {
       yield DirectMessageArrived(event.data);
+    } else if (event is ChannelThreadSocketEvent) {
+      yield ChannelThreadMessageArrived(event.data);
+    } else if (event is DirectThreadSocketEvent) {
+      yield DirectThreadMessageArrived(event.data);
     }
   }
 
@@ -140,40 +154,58 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   NotificationData handleSocketEvent(Map event) {
-    final type = getNotificationType(event['name']);
+    final type = getNotificationType(event);
     final id = getRoomSubscriberId(event['name']);
     NotificationData data;
     switch (type) {
-      case SocketNotificationType.Unknown:
+      case SocketEventType.Unknown:
         throw Exception('Got unknown event:\n$event');
-      case SocketNotificationType.ChannelMessage:
+
+      case SocketEventType.ChannelMessage:
         event['data']['channel_id'] = id;
         data = SocketMessageUpdateNotification.fromJson(event['data']);
         this.add(ChannelMessageSocketEvent(data));
         break;
-      case SocketNotificationType.DirectMessage:
+
+      case SocketEventType.DirectMessage:
         event['data']['channel_id'] = id;
         data = SocketMessageUpdateNotification.fromJson(event['data']);
         this.add(DirectMessageSocketEvent(data));
         break;
-      case SocketNotificationType.WorkspaceChannel:
+
+      case SocketEventType.ChannelThreadMessage:
+        event['data']['channel_id'] = id;
+        data = SocketMessageUpdateNotification.fromJson(event['data']);
+        this.add(ChannelThreadSocketEvent(data));
+        break;
+
+      case SocketEventType.DirectThreadMessage:
+        event['data']['channel_id'] = id;
+        data = SocketMessageUpdateNotification.fromJson(event['data']);
+        this.add(DirectThreadSocketEvent(data));
         break;
     }
     return data;
   }
 
-  SocketNotificationType getNotificationType(String name) {
-    if (!subscriptionRooms.containsKey(name))
-      return SocketNotificationType.Unknown;
-    final type = subscriptionRooms[name]['type'];
-    if (type == 'CHANNELS_LIST') {
-      return SocketNotificationType.WorkspaceChannel;
-    } else if (type == 'CHANNEL') {
-      return SocketNotificationType.ChannelMessage;
+  SocketEventType getNotificationType(Map event) {
+    if (!subscriptionRooms.containsKey(event['name']))
+      return SocketEventType.Unknown;
+    final type = subscriptionRooms[event['name']]['type'];
+    if (type == 'CHANNEL') {
+      if (event['data']['thread_id'] != null &&
+          event['data']['thread_id'] != '') {
+        return SocketEventType.ChannelThreadMessage;
+      } else
+        return SocketEventType.ChannelMessage;
     } else if (type == 'DIRECT') {
-      return SocketNotificationType.DirectMessage;
+      if (event['data']['thread_id'] != null &&
+          event['data']['thread_id'] != '') {
+        return SocketEventType.DirectThreadMessage;
+      } else
+        return SocketEventType.DirectMessage;
     }
-    return SocketNotificationType.Unknown;
+    return SocketEventType.Unknown;
   }
 
   String getRoomSubscriberId(String name) {
@@ -199,9 +231,16 @@ enum SocketConnectionState {
   DISCONNECTED,
 }
 
-enum SocketNotificationType {
+enum SocketEventType {
   ChannelMessage,
+  ChannelThreadMessage,
   DirectMessage,
-  WorkspaceChannel,
+  DirectThreadMessage,
+  Unknown,
+}
+
+enum SocketResourceType {
+  ChannelUpdate,
+  DirectUpdate,
   Unknown,
 }

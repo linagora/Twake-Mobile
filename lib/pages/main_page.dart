@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/repositories/sheet_repository.dart';
@@ -89,6 +90,8 @@ class _MainPageState extends State<MainPage> {
                                     .add(ReloadChannels(forceFromApi: true));
                                 BlocProvider.of<DirectsBloc>(ctx)
                                     .add(ReloadChannels(forceFromApi: true));
+                                BlocProvider.of<NotificationBloc>(ctx)
+                                    .add(ReinitSubscriptions());
                                 return Future.delayed(Duration(seconds: 1));
                               },
                               child: Padding(

@@ -96,20 +96,23 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   create: (_) => ProfileBloc(state.initData.profile),
                   lazy: false,
                 ),
+                BlocProvider<CompaniesBloc>(
+                  lazy: false,
+                  create: (ctx) => CompaniesBloc(state.initData.companies),
+                ),
+                BlocProvider<WorkspacesBloc>(
+                    lazy: false,
+                    create: (ctx) {
+                      return WorkspacesBloc(
+                        repository: state.initData.workspaces,
+                        companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                      );
+                    }),
                 BlocProvider<NotificationBloc>(
                     lazy: false,
                     create: (_) => NotificationBloc(
                           BlocProvider.of<AuthBloc>(ctx).repository.accessToken,
                         )..setSubscriptions()),
-                BlocProvider<CompaniesBloc>(
-                  create: (ctx) => CompaniesBloc(state.initData.companies),
-                ),
-                BlocProvider<WorkspacesBloc>(create: (ctx) {
-                  return WorkspacesBloc(
-                    repository: state.initData.workspaces,
-                    companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
-                  );
-                }),
                 BlocProvider<ChannelsBloc>(create: (ctx) {
                   return ChannelsBloc(
                     repository: state.initData.channels,

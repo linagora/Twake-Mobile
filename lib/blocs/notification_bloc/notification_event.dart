@@ -14,6 +14,13 @@ class BaseChannelMessageEvent extends NotificationEvent {
   List<Object> get props => [data];
 }
 
+class ReinitSubscriptions extends NotificationEvent {
+  const ReinitSubscriptions();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ChannelMessageEvent extends BaseChannelMessageEvent {
   const ChannelMessageEvent(MessageNotification data) : super(data);
 }
@@ -29,6 +36,16 @@ class DirectMessageSocketEvent extends BaseChannelMessageEvent {
 
 class ChannelMessageSocketEvent extends BaseChannelMessageEvent {
   const ChannelMessageSocketEvent(SocketMessageUpdateNotification data)
+      : super(data);
+}
+
+class DirectThreadSocketEvent extends BaseChannelMessageEvent {
+  const DirectThreadSocketEvent(SocketMessageUpdateNotification data)
+      : super(data);
+}
+
+class ChannelThreadSocketEvent extends BaseChannelMessageEvent {
+  const ChannelThreadSocketEvent(SocketMessageUpdateNotification data)
       : super(data);
 }
 

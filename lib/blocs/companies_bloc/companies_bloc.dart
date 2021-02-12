@@ -17,6 +17,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
           companies: repository.items,
           selected: repository.selected,
         )) {
+    // repository.logger.w('SELECTED COMPANY: ${repository.selected.id}');
     ProfileBloc.selectedCompany = repository.selected.id;
   }
 

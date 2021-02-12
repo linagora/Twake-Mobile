@@ -47,16 +47,14 @@ class ThreadsBloc<T extends BaseChannelBloc>
     });
     notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (state is ThreadMessageNotification &&
-          state.data.workspaceId == null &&
-          T == DirectsBloc) {
+      if (state is DirectThreadMessageArrived && T == DirectsBloc) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           threadId: state.data.threadId,
           channelId: state.data.channelId,
         ));
       }
-      if (T == ChannelsBloc && state is ThreadMessageNotification) {
+      if (state is ChannelThreadMessageArrived && T == ChannelsBloc) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           threadId: state.data.threadId,
@@ -205,7 +203,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
-    map['workspace_id'] = map['workspace_id'] ?? ProfileBloc.selectedWorkspace;
+    map['workspace_id'] = map['workspace_id'] ??
+        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspace);
     map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }

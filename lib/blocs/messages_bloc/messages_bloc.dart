@@ -42,15 +42,16 @@ class MessagesBloc<T extends BaseChannelBloc>
         // repository.logger.d(
         // 'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
         selectedChannel = state.selected;
-        this.add(LoadMessages(forceFromApi: state.hasUnread == 1));
+        this.add(LoadMessages());
       }
-      if (state is ChannelsLoaded) {
-        final updatedChannel = state.channels.firstWhere((channel) => channel.id == selectedChannel.id);
-        if (updatedChannel != null) {
-          selectedChannel = updatedChannel;
-        }
-        this.add(LoadMessages(forceFromApi: true));
-      }
+      // if (state is ChannelsLoaded) {
+      // final updatedChannel = state.channels
+      // .firstWhere((channel) => channel.id == selectedChannel.id);
+      // if (updatedChannel != null) {
+      // selectedChannel = updatedChannel;
+      // }
+      // this.add(LoadMessages(forceFromApi: true));
+      // }
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
@@ -67,7 +68,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
-          workspaceId: ProfileBloc.selectedWorkspace,
           companyId: ProfileBloc.selectedCompany,
         ));
       }
@@ -86,7 +86,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           ));
       }
     });
-    // selectedChannel = channelsBloc.repository.selected;
+    selectedChannel = channelsBloc.repository.selected;
   }
 
   @override
@@ -94,7 +94,6 @@ class MessagesBloc<T extends BaseChannelBloc>
     if (event is LoadMessages) {
       yield MessagesLoading(parentChannel: selectedChannel);
       bool success = await repository.reload(
-        forceFromApi: event.forceFromApi,
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],
@@ -298,7 +297,8 @@ class MessagesBloc<T extends BaseChannelBloc>
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
     map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
-    map['workspace_id'] = map['workspace_id'] ?? ProfileBloc.selectedWorkspace;
+    map['workspace_id'] = map['workspace_id'] ??
+        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspace);
     return map;
   }
 

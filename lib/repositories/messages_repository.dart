@@ -68,6 +68,7 @@ class MessagesRepository {
       // logger.d('Loaded ${itemsList.length} items');
       final Set<String> userIds =
           itemsList.map((i) => (i['user_id'] as String)).toSet();
+      logger.d('USERIDS: $userIds');
       await UserRepository().batchUsersLoad(userIds);
       await _storage.batchStore(
         items: itemsList.map((i) {
@@ -149,7 +150,7 @@ class MessagesRepository {
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
-    logger.d('Pulling item Message from api...');
+    logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
     List resp = [];
     try {
       resp = (await _api.get(apiEndpoint, params: queryParams));
