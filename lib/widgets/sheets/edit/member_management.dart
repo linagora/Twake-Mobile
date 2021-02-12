@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/member_cubit/member_state.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/member.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -17,6 +18,7 @@ class MemberManagement extends StatefulWidget {
 class _MemberManagementState extends State<MemberManagement> {
   String _channelId;
   List<Member> _members = [];
+  Member _heself;
 
   void _cancel() {
     FocusScope.of(context).requestFocus(new FocusNode());
@@ -46,6 +48,11 @@ class _MemberManagementState extends State<MemberManagement> {
         if (state is MembersLoaded) {
           _channelId = state.channelId;
           _members = state.members;
+          _heself = _members.firstWhere(
+            (m) => m.userId == ProfileBloc.userId,
+            orElse: () => Member('no_id', 'no_id'),
+          );
+          _members.removeWhere((m) => m.userId == _heself.userId);
         }
         return Column(
           children: [
@@ -67,11 +74,10 @@ class _MemberManagementState extends State<MemberManagement> {
             ListView.builder(
               padding: EdgeInsets.only(top: 0),
               shrinkWrap: true,
-              itemCount: _members.length,
+              itemCount: _members.length + 1,
               itemBuilder: (context, index) {
-                final member = _members[index];
                 return RemovableItem(
-                  title: member.email,
+                  title: index == 0 ? _heself.email : _members[index].email,
                   removable: index != 0,
                   onRemove: () => _remove(index),
                 );
