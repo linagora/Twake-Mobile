@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:twake/widgets/sheets/collaborators_list.dart';
+import 'package:twake/widgets/sheets/add/collaborators_list.dart';
+import 'package:twake/widgets/sheets/removable_text_field.dart';
 
 class FieldsRepository {
   List<Widget> fields;
