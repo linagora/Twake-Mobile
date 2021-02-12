@@ -63,11 +63,13 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (ctx, state) => GestureDetector(
-            onTap: state.parentChannel is Channel
-                ? () => openEditChannel(context, state.parentChannel)
-                : null,
-            child: BlocBuilder<MemberCubit, member_state.MemberState>(
+          builder: (ctx, state) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: state.parentChannel is Channel
+                  ? () => openEditChannel(context, state.parentChannel)
+                  : null,
+              child: BlocBuilder<MemberCubit, member_state.MemberState>(
                 buildWhen: (_, current) =>
                     current is member_state.MembersLoaded,
                 builder: (context, memberState) {
@@ -99,7 +101,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(width: 6),
-                              if ((state.parentChannel is Channel) && (state.parentChannel as Channel).visibility !=
+                              if ((state.parentChannel is Channel) &&
+                                  (state.parentChannel as Channel).visibility !=
                                       null &&
                                   (state.parentChannel as Channel).visibility ==
                                       'private')
@@ -123,8 +126,10 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       ),
                     ],
                   );
-                }),
-          ),
+                },
+              ),
+            );
+          },
         ),
       ),
       body: SafeArea(

@@ -11,6 +11,7 @@ import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/member.dart';
+import 'package:twake/repositories/edit_channel_repository.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
@@ -77,6 +78,10 @@ class _EditChannelState extends State<EditChannel> {
 
     _descriptionController.addListener(() {
       _batchUpdateState(description: _descriptionController.text);
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.editChannel));
     });
   }
 
@@ -228,7 +233,7 @@ class _EditChannelState extends State<EditChannel> {
                           cover:
                               Image.asset('assets/images/add_new_member.png'),
                           title: 'add',
-                          onTap: () => _panelController.open(),
+                          onTap: () => _openAdd(context),
                         ),
                         SizedBox(width: 10.0),
                         RoundedBoxButton(
@@ -283,7 +288,7 @@ class _EditChannelState extends State<EditChannel> {
                       title: 'Member management',
                       trailingTitle: 'Manage',
                       hasArrow: true,
-                      onTap: () => _panelController.open(),
+                      onTap: () => _openManagement(context),
                     ),
                     Divider(
                       thickness: 0.5,
@@ -311,6 +316,16 @@ class _EditChannelState extends State<EditChannel> {
     if (position < 0.4 && _panelController.isPanelAnimating) {
       FocusScope.of(context).requestFocus(FocusNode());
     }
+  }
+
+  void _openManagement(BuildContext context) {
+    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.manage);
+    _panelController.open();
+  }
+
+  void _openAdd(BuildContext context) {
+    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.add);
+    _panelController.open();
   }
 }
 

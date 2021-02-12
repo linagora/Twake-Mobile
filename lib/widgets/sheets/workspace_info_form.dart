@@ -172,17 +172,15 @@ class CollaboratorsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context
-          .read<AddWorkspaceCubit>()
-          .setFlowStage(FlowStage.collaborators),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-        child: ButtonField(
-          title: 'Invited collaborators',
-          trailingTitle: count > 0 ? '$count' : 'Add',
-          hasArrow: count > 0,
-        ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+      child: ButtonField(
+        title: 'Invited collaborators',
+        trailingTitle: count > 0 ? '$count' : 'Add',
+        hasArrow: count > 0,
+        onTap: () => context
+            .read<AddWorkspaceCubit>()
+            .setFlowStage(FlowStage.collaborators),
       ),
     );
   }
