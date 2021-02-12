@@ -36,11 +36,11 @@ class MemberCubit extends Cubit<MemberState> {
       members: members,
       channelId: channelId,
     );
-    if (updatedMembers.length > 0) {
+    // if (updatedMembers.length > 0) {
       emit(MembersDeleted(channelId: channelId, members: updatedMembers));
-    } else {
-      emit(MembersError('Error during members deletion.'));
-    }
+    // } else {
+    //   emit(MembersError('Error during members deletion.'));
+    // }
   }
 
   Future<void> deleteYourself({

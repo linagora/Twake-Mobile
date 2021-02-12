@@ -18,16 +18,15 @@ class MemberManagement extends StatefulWidget {
 class _MemberManagementState extends State<MemberManagement> {
   String _channelId;
   List<Member> _members = [];
-  Member _heself;
+  List<Member> _toDelete = [];
 
   void _cancel() {
-    FocusScope.of(context).requestFocus(new FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
   }
 
   void _save() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    final ids = _members.ids;
+    final ids = _toDelete.ids;
     context.read<MemberCubit>().deleteMembers(
           channelId: _channelId,
           members: ids,
@@ -37,22 +36,39 @@ class _MemberManagementState extends State<MemberManagement> {
 
   void _remove(int index) {
     setState(() {
+      _toDelete.add(_members[index]);
       _members.removeAt(index);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MemberCubit, MemberState>(
+    return BlocConsumer<MemberCubit, MemberState>(
+      listener: (_, current) {
+        if (current is MembersDeleted) {
+          _cancel();
+        }
+      },
+      buildWhen: (_, current) => current is MembersLoaded,
       builder: (context, state) {
+        Member _himself;
+
         if (state is MembersLoaded) {
           _channelId = state.channelId;
           _members = state.members;
-          _heself = _members.firstWhere(
-            (m) => m.userId == ProfileBloc.userId,
-            orElse: () => Member('no_id', 'no_id'),
+
+          print(_members.map((e) => e.email));
+
+          _himself ??= _members.firstWhere(
+            (m) => m.id == ProfileBloc.userId,
+            orElse: () => Member('no_id', 'no_id', email: 'email unknown'),
           );
-          _members.removeWhere((m) => m.userId == _heself.userId);
+          _members.removeWhere((m) => m.userId == _himself.userId);
+          _members.insert(0, _himself);
+
+          print(_members.map((e) => e.email));
+          print(_members.map((e) => e.userId));
+          print(ProfileBloc.userId);
         }
         return Column(
           children: [
@@ -74,10 +90,11 @@ class _MemberManagementState extends State<MemberManagement> {
             ListView.builder(
               padding: EdgeInsets.only(top: 0),
               shrinkWrap: true,
-              itemCount: _members.length + 1,
+              itemCount: _members.length,
               itemBuilder: (context, index) {
                 return RemovableItem(
-                  title: index == 0 ? _heself.email : _members[index].email,
+                  key: UniqueKey(),
+                  title: _members[index].email,
                   removable: index != 0,
                   onRemove: () => _remove(index),
                 );
