@@ -128,6 +128,27 @@ class _EditChannelState extends State<EditChannel> {
     context.read<EditChannelCubit>().save();
   }
 
+  void _leave() {
+    context.read<MemberCubit>().deleteYourself(channelId: _channelId);
+  }
+
+  _onPanelSlide(double position) {
+    if (position < 0.4 && _panelController.isPanelAnimating) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
+  }
+
+  void _openManagement(BuildContext context) {
+    context.read<MemberCubit>().fetchMembers(channelId: _channelId);
+    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.manage);
+    _panelController.open();
+  }
+
+  void _openAdd(BuildContext context) {
+    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.add);
+    _panelController.open();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -239,7 +260,7 @@ class _EditChannelState extends State<EditChannel> {
                         RoundedBoxButton(
                           cover: Image.asset('assets/images/leave.png'),
                           title: 'leave',
-                          onTap: () => print('leave'),
+                          onTap: () => _leave(),
                         ),
                       ],
                     ),
@@ -310,22 +331,6 @@ class _EditChannelState extends State<EditChannel> {
         ),
       ),
     );
-  }
-
-  _onPanelSlide(double position) {
-    if (position < 0.4 && _panelController.isPanelAnimating) {
-      FocusScope.of(context).requestFocus(FocusNode());
-    }
-  }
-
-  void _openManagement(BuildContext context) {
-    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.manage);
-    _panelController.open();
-  }
-
-  void _openAdd(BuildContext context) {
-    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.add);
-    _panelController.open();
   }
 }
 

@@ -4,7 +4,6 @@ import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
-import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/edit_channel.dart';

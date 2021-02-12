@@ -5,8 +5,8 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
-import 'package:twake/widgets/sheets/channel_info_form.dart';
-import 'package:twake/widgets/sheets/participants_list.dart';
+import 'package:twake/widgets/sheets/add/channel_info_form.dart';
+import 'package:twake/widgets/sheets/add/participants_list.dart';
 
 class AddChannelFlow extends StatelessWidget {
   @override

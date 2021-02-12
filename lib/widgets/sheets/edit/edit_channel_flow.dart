@@ -5,14 +5,14 @@ import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
-import 'package:twake/widgets/sheets/collaborators_list.dart';
-import 'package:twake/widgets/sheets/participants_list.dart';
+import 'package:twake/widgets/sheets/add/participants_list.dart';
+import 'package:twake/widgets/sheets/edit/member_management.dart';
 
 class EditChannelFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final editChannelFlowWidgets = [
-      CollaboratorsList(),
+      MemberManagement(),
       BlocProvider<UserBloc>(
         create: (_) => UserBloc(ProfileBloc.userId),
         child: ParticipantsList(),
