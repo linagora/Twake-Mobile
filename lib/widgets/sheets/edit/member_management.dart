@@ -21,6 +21,9 @@ class _MemberManagementState extends State<MemberManagement> {
   List<Member> _toDelete = [];
 
   void _cancel() {
+    setState(() {
+      _toDelete.clear();
+    });
     context.read<SheetBloc>().add(CloseSheet());
   }
 
@@ -46,9 +49,6 @@ class _MemberManagementState extends State<MemberManagement> {
     return BlocConsumer<MemberCubit, MemberState>(
       listener: (_, current) {
         if (current is MembersDeleted) {
-          setState(() {
-            _toDelete.clear();
-          });
           _cancel();
         }
       },
