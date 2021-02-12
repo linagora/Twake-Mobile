@@ -46,6 +46,9 @@ class _MemberManagementState extends State<MemberManagement> {
     return BlocConsumer<MemberCubit, MemberState>(
       listener: (_, current) {
         if (current is MembersDeleted) {
+          setState(() {
+            _toDelete.clear();
+          });
           _cancel();
         }
       },
