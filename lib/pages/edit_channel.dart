@@ -128,6 +128,10 @@ class _EditChannelState extends State<EditChannel> {
     context.read<EditChannelCubit>().save();
   }
 
+  void _leave() {
+    context.read<MemberCubit>().deleteYourself(channelId: _channelId);
+  }
+
   _onPanelSlide(double position) {
     if (position < 0.4 && _panelController.isPanelAnimating) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -256,7 +260,7 @@ class _EditChannelState extends State<EditChannel> {
                         RoundedBoxButton(
                           cover: Image.asset('assets/images/leave.png'),
                           title: 'leave',
-                          onTap: () => print('leave'),
+                          onTap: () => _leave(),
                         ),
                       ],
                     ),

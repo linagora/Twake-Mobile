@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/member_cubit/member_state.dart';
@@ -7,6 +6,7 @@ import 'package:twake/models/member.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/removable_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
+import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MemberManagement extends StatefulWidget {
@@ -15,6 +15,7 @@ class MemberManagement extends StatefulWidget {
 }
 
 class _MemberManagementState extends State<MemberManagement> {
+  String _channelId;
   List<Member> _members = [];
 
   void _cancel() {
@@ -24,10 +25,18 @@ class _MemberManagementState extends State<MemberManagement> {
 
   void _save() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    // context.read<MemberCubit>().updateMembers(channelId: null, members: null)
-    //   ..update(members: _members)
-    //   ..setFlowStage(FlowStage.info);
+    final ids = _members.ids;
+    context.read<MemberCubit>().deleteMembers(
+          channelId: _channelId,
+          members: ids,
+        );
     print('SAVE');
+  }
+
+  void _remove(int index) {
+    setState(() {
+      _members.removeAt(index);
+    });
   }
 
   @override
@@ -35,6 +44,7 @@ class _MemberManagementState extends State<MemberManagement> {
     return BlocBuilder<MemberCubit, MemberState>(
       builder: (context, state) {
         if (state is MembersLoaded) {
+          _channelId = state.channelId;
           _members = state.members;
         }
         return Column(
@@ -63,6 +73,7 @@ class _MemberManagementState extends State<MemberManagement> {
                 return RemovableItem(
                   title: member.id,
                   removable: index != 0,
+                  onRemove: () => _remove(index),
                 );
               },
             ),

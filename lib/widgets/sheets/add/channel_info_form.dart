@@ -88,7 +88,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
       listeners: [
         BlocListener<MemberCubit, MemberState>(
           listener: (context, state) {
-            if (state is MembersUpdated) {
+            if (state is MembersAdded) {
               String channelId = state.channelId;
               openChannel(context, channelId);
             }
@@ -112,7 +112,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               _participants.length != 0) {
             context
                 .read<MemberCubit>()
-                .updateMembers(channelId: state.id, members: _participants);
+                .addMembers(channelId: state.id, members: _participants);
           }
           // Reload channels
           context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
