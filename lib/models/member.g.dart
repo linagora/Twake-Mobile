@@ -12,6 +12,7 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
     json['id'] as String,
     json['user_id'] as String,
     type: json['type'] as String ?? 'member',
+    email: json['email'] as String,
     notificationLevel: json['notification_level'] as String,
     companyId: json['company_id'] as String,
     workspaceId: json['workspace_id'] as String,
@@ -28,6 +29,7 @@ Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
       'workspace_id': instance.workspaceId,
       'channel_id': instance.channelId,
       'user_id': instance.userId,
+      'email': instance.email,
       'favorite': boolToInt(instance.favorite),
       'is_selected': instance.isSelected,
     };

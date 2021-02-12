@@ -329,17 +329,15 @@ class ParticipantsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => context
-          .read<AddChannelBloc>()
-          .add(SetFlowStage(FlowStage.participants)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
-        child: ButtonField(
-          title: 'Added participants',
-          trailingTitle: count > 0 ? '$count' : 'Add',
-          hasArrow: count > 0,
-        ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 21, 14, 8),
+      child: ButtonField(
+        title: 'Added participants',
+        trailingTitle: count > 0 ? '$count' : 'Add',
+        hasArrow: count > 0,
+        onTap: () => context
+            .read<AddChannelBloc>()
+            .add(SetFlowStage(FlowStage.participants)),
       ),
     );
   }

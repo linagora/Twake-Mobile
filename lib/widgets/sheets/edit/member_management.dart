@@ -71,7 +71,7 @@ class _MemberManagementState extends State<MemberManagement> {
               itemBuilder: (context, index) {
                 final member = _members[index];
                 return RemovableItem(
-                  title: member.id,
+                  title: member.email,
                   removable: index != 0,
                   onRemove: () => _remove(index),
                 );

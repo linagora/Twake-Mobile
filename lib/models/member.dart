@@ -20,6 +20,7 @@ class Member extends CollectionItem {
   String channelId;
   @JsonKey(name: 'user_id')
   String userId;
+  String email;
   @JsonKey(
     fromJson: boolToInt,
     toJson: boolToInt,
@@ -32,6 +33,7 @@ class Member extends CollectionItem {
     this.id,
     this.userId, {
     this.type,
+    this.email,
     this.notificationLevel,
     this.companyId,
     this.workspaceId,
