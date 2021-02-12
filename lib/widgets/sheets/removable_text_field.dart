@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class RemovableTextField extends StatefulWidget {
   final int index;
   final bool isLastOne;
-  final bool editable;
   final String initialText;
 
   const RemovableTextField({
@@ -15,7 +14,6 @@ class RemovableTextField extends StatefulWidget {
     @required this.index,
     this.isLastOne = false,
     this.initialText = '',
-    this.editable = true,
   }) : super(key: key);
 
   @override
@@ -34,7 +32,6 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     super.initState();
     _index = widget.index;
     _isLastOne = widget.isLastOne;
-    _editable = widget.editable;
     _controller.text = widget.initialText;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -62,9 +59,6 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     if (oldWidget.index != widget.index) {
       _index = widget.index;
     }
-    if (oldWidget.editable != widget.editable) {
-      _editable = widget.editable;
-    }
   }
 
   void _add() {
@@ -73,7 +67,6 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
         key: UniqueKey(),
         index: _index + 1,
         isLastOne: true,
-        editable: _editable,
       ),
       _index + 1,
     );
@@ -119,11 +112,10 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                       // validator: widget.validator,
                       controller: _controller,
                       autofocus: true,
-                      enabled: _editable,
                       keyboardType: TextInputType.emailAddress,
                       style: TextStyle(
                         fontSize: 15.0,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w400,
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
@@ -131,7 +123,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                         contentPadding: EdgeInsets.all(15.0),
                         hintStyle: TextStyle(
                           fontSize: 15.0,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w400,
                           color: Color(0xffc8c8c8),
                         ),
                         alignLabelWithHint: true,

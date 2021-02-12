@@ -128,6 +128,23 @@ class _EditChannelState extends State<EditChannel> {
     context.read<EditChannelCubit>().save();
   }
 
+  _onPanelSlide(double position) {
+    if (position < 0.4 && _panelController.isPanelAnimating) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
+  }
+
+  void _openManagement(BuildContext context) {
+    context.read<MemberCubit>().fetchMembers(channelId: _channelId);
+    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.manage);
+    _panelController.open();
+  }
+
+  void _openAdd(BuildContext context) {
+    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.add);
+    _panelController.open();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -310,22 +327,6 @@ class _EditChannelState extends State<EditChannel> {
         ),
       ),
     );
-  }
-
-  _onPanelSlide(double position) {
-    if (position < 0.4 && _panelController.isPanelAnimating) {
-      FocusScope.of(context).requestFocus(FocusNode());
-    }
-  }
-
-  void _openManagement(BuildContext context) {
-    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.manage);
-    _panelController.open();
-  }
-
-  void _openAdd(BuildContext context) {
-    context.read<EditChannelCubit>().setFlowStage(EditFlowStage.add);
-    _panelController.open();
   }
 }
 
