@@ -17,6 +17,13 @@ class WorkspacesLoaded extends WorkspaceState {
   List<Object> get props => [workspaces, selected];
 }
 
+class WorkspaceSelected extends WorkspacesLoaded {
+  const WorkspaceSelected({
+    workspaces,
+    selected,
+  }) : super(workspaces: workspaces, selected: selected);
+}
+
 class WorkspacesLoading extends WorkspaceState {
   const WorkspacesLoading();
   @override

@@ -62,7 +62,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     } else if (event is ChangeSelectedWorkspace) {
       repository.select(event.workspaceId);
       ProfileBloc.selectedWorkspace = event.workspaceId;
-      yield WorkspacesLoaded(
+      yield WorkspaceSelected(
         workspaces: repository.items,
         selected: repository.selected,
       );

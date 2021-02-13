@@ -64,3 +64,27 @@ Map<String, dynamic> _$SocketMessageUpdateNotificationToJson(
       'thread_id': instance.threadId,
       'message_id': instance.messageId,
     };
+
+SocketChannelUpdateNotification _$SocketChannelUpdateNotificationFromJson(
+    Map<String, dynamic> json) {
+  $checkKeys(json, requiredKeys: const ['id']);
+  return SocketChannelUpdateNotification(
+    channelId: json['id'] as String,
+    workspaceId: json['workspace_id'] as String,
+    companyId: json['company_id'] as String,
+    name: json['name'] as String,
+    description: json['description'] as String,
+    visibility: json['visibility'] as String,
+  );
+}
+
+Map<String, dynamic> _$SocketChannelUpdateNotificationToJson(
+        SocketChannelUpdateNotification instance) =>
+    <String, dynamic>{
+      'id': instance.channelId,
+      'workspace_id': instance.workspaceId,
+      'company_id': instance.companyId,
+      'name': instance.name,
+      'description': instance.description,
+      'visibility': instance.visibility,
+    };

@@ -104,10 +104,10 @@ class Api {
     );
     try {
       final response = await dio.getUri(uri);
-      logger.d('METHOD: ${uri.toString()}');
-      logger.d('GET HEADERS: ${dio.options.headers}');
-      logger.d('PARAMS: $params');
-      logger.d('GET RESPONSE: ${response.data}');
+      // logger.d('METHOD: ${uri.toString()}');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('PARAMS: $params');
+      // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);

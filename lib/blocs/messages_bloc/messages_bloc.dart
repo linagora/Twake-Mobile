@@ -163,8 +163,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
-      repository.logger.d(
-          'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+      // repository.logger.d(
+      // 'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,

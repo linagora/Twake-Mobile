@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_event.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/services/notifications.dart';
@@ -22,8 +23,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final _api = Api();
   List<String> subscriptions = [];
   Map<String, dynamic> subscriptionRooms = {};
+  StreamSubscription _subscription;
 
-  NotificationBloc(this.token) : super(NotificationsAbsent()) {
+  NotificationBloc({this.token, ConnectionBloc connectionBloc})
+      : super(NotificationsAbsent()) {
     service = Notifications(
       onMessageCallback: onMessageCallback,
       onResumeCallback: onResumeCallback,
@@ -37,12 +40,22 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           .disableAutoConnect()
           .setTransports(['websocket']).build(),
     );
+    _subscription = connectionBloc.listen((state) {
+      if (state is ConnectionLost) {
+        // socket = socket.close();
+      } else if (state is ConnectionActive) {
+        reinit();
+      }
+    });
     setupListeners();
     socket = socket.connect();
   }
 
   void setupListeners() {
-    socket.onReconnect((_) => setupListeners);
+    socket.onReconnect((_) {
+      logger.d('RECCONNECTED, RESETTING SUBSCRIPTIONS');
+      Future.delayed(Duration(seconds: 2), setSubscriptions);
+    });
     socket.onConnect((msg) {
       logger.d('CONNECTED ON SOCKET IO\n$token');
       socketConnectionState = SocketConnectionState.CONNECTED;
@@ -79,9 +92,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     for (String room in subscriptionRooms.keys) {
       unsubscribe(room);
     }
-    socket = socket.close();
-    setupListeners();
-    socket = socket.connect();
     setSubscriptions();
   }
 
@@ -100,7 +110,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void subscribe(String path, [String tag = 'twake']) {
     socket.emit(SocketIOEvent.JOIN, {'name': path, 'token': tag});
-    logger.d('SUBSCRIBED ON $path');
+    // logger.d('SUBSCRIBED ON $path');
   }
 
   void unsubscribe(String path, [String tag = 'twake']) {
@@ -124,6 +134,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelThreadMessageArrived(event.data);
     } else if (event is DirectThreadSocketEvent) {
       yield DirectThreadMessageArrived(event.data);
+    } else if (event is ReinitSubscriptions) {
+      reinit();
     }
   }
 
@@ -153,8 +165,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     throw 'Have to implement navagation to the right page';
   }
 
-  NotificationData handleSocketEvent(Map event) {
-    final type = getNotificationType(event);
+  void handleSocketRosource(Map resource) {
+    final id = getRoomSubscriberId(resource['room']);
+  }
+
+  void handleSocketEvent(Map event) {
+    final type = getSocketEventType(event);
     final id = getRoomSubscriberId(event['name']);
     NotificationData data;
     switch (type) {
@@ -185,10 +201,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         this.add(DirectThreadSocketEvent(data));
         break;
     }
-    return data;
   }
 
-  SocketEventType getNotificationType(Map event) {
+  SocketEventType getSocketEventType(Map event) {
     if (!subscriptionRooms.containsKey(event['name']))
       return SocketEventType.Unknown;
     final type = subscriptionRooms[event['name']]['type'];
@@ -211,6 +226,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   String getRoomSubscriberId(String name) {
     if (!subscriptionRooms.containsKey(name)) return null;
     return subscriptionRooms[name]['id'];
+  }
+
+  @override
+  Future<void> close() async {
+    await _subscription.cancel();
+    return super.close();
   }
 }
 

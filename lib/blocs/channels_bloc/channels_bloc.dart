@@ -30,10 +30,11 @@ class ChannelsBloc extends BaseChannelBloc {
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
-      if (state is WorkspacesLoaded) {
+      if (state is WorkspaceSelected) {
         selectedBeforeId = selectedParentId;
         selectedParentId = state.selected.id;
         this.add(ReloadChannels(workspaceId: selectedParentId));
+        notificationBloc.add(ReinitSubscriptions());
       }
     });
     _notificationSubscription =

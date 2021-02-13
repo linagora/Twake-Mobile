@@ -111,7 +111,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 BlocProvider<NotificationBloc>(
                     lazy: false,
                     create: (_) => NotificationBloc(
-                          BlocProvider.of<AuthBloc>(ctx).repository.accessToken,
+                          token: BlocProvider.of<AuthBloc>(ctx)
+                              .repository
+                              .accessToken,
+                          connectionBloc:
+                              BlocProvider.of<cb.ConnectionBloc>(ctx),
                         )..setSubscriptions()),
                 BlocProvider<ChannelsBloc>(create: (ctx) {
                   return ChannelsBloc(
