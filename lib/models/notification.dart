@@ -69,12 +69,6 @@ class SocketChannelUpdateNotification extends NotificationData {
       _$SocketChannelUpdateNotificationToJson(this);
 }
 
-class SocketMessageDeleteNotification extends NotificationData {
-  final String messageId;
-
-  SocketMessageDeleteNotification(this.messageId);
-}
-
 @JsonSerializable()
 class SocketMessageUpdateNotification extends NotificationData {
   @JsonKey(required: true, name: 'channel_id')

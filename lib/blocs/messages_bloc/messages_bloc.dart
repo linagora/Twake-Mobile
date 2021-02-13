@@ -16,6 +16,8 @@ import 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
+const _DUMMY_ID = 'message';
+
 const _MESSAGE_LIMIT = 50;
 
 class MessagesBloc<T extends BaseChannelBloc>
@@ -70,8 +72,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           channelId: state.data.channelId,
           companyId: ProfileBloc.selectedCompany,
         ));
-      }
-      if (state is ThreadMessageNotification) {
+      } else if (state is ThreadMessageNotification) {
         if (T == DirectsBloc && state.data.workspaceId == null)
           this.add(ModifyResponsesCount(
             threadId: state.data.threadId,
@@ -84,6 +85,12 @@ class MessagesBloc<T extends BaseChannelBloc>
             channelId: state.data.channelId,
             modifier: 1,
           ));
+      } else if (state is MessageDeleted) {
+        this.add(RemoveMessage(
+          channelId: state.data.channelId,
+          messageId: state.data.messageId,
+          onNotify: true,
+        ));
       }
     });
     selectedChannel = channelsBloc.repository.selected;
@@ -165,6 +172,9 @@ class MessagesBloc<T extends BaseChannelBloc>
     } else if (event is LoadSingleMessage) {
       // repository.logger.d(
       // 'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+      while (repository.items.any((m) => m.id == _DUMMY_ID))
+        await Future.delayed(Duration(milliseconds: 100));
+      if (repository.items.any((m) => m.id == event.messageId)) return;
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
@@ -225,7 +235,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         yield newState;
       }
     } else if (event is SendMessage) {
-      final String dummyId = DateTime.now().toString();
+      final String dummyId = _DUMMY_ID;
       final body = _makeQueryParams(event);
       var tempItem = Message(
         id: dummyId,

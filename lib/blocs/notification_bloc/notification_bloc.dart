@@ -134,6 +134,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelThreadMessageArrived(event.data);
     } else if (event is DirectThreadSocketEvent) {
       yield DirectThreadMessageArrived(event.data);
+    } else if (event is ThreadMessageDeletedEvent) {
+      yield ThreadMessageDeleted(event.data);
+    } else if (event is MessageDeletedEvent) {
+      yield MessageDeleted(event.data);
     } else if (event is ReinitSubscriptions) {
       reinit();
     }
@@ -173,32 +177,34 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final type = getSocketEventType(event);
     final id = getRoomSubscriberId(event['name']);
     NotificationData data;
+    event['data']['channel_id'] = id;
+    data = SocketMessageUpdateNotification.fromJson(event['data']);
     switch (type) {
       case SocketEventType.Unknown:
         throw Exception('Got unknown event:\n$event');
 
       case SocketEventType.ChannelMessage:
-        event['data']['channel_id'] = id;
-        data = SocketMessageUpdateNotification.fromJson(event['data']);
         this.add(ChannelMessageSocketEvent(data));
         break;
 
       case SocketEventType.DirectMessage:
-        event['data']['channel_id'] = id;
-        data = SocketMessageUpdateNotification.fromJson(event['data']);
         this.add(DirectMessageSocketEvent(data));
         break;
 
       case SocketEventType.ChannelThreadMessage:
-        event['data']['channel_id'] = id;
-        data = SocketMessageUpdateNotification.fromJson(event['data']);
         this.add(ChannelThreadSocketEvent(data));
         break;
 
       case SocketEventType.DirectThreadMessage:
-        event['data']['channel_id'] = id;
-        data = SocketMessageUpdateNotification.fromJson(event['data']);
         this.add(DirectThreadSocketEvent(data));
+        break;
+
+      case SocketEventType.ThreadMessageDeleted:
+        this.add(ThreadMessageDeletedEvent(data));
+        break;
+
+      case SocketEventType.MessageDeleted:
+        this.add(MessageDeletedEvent(data));
         break;
     }
   }
@@ -207,18 +213,27 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     if (!subscriptionRooms.containsKey(event['name']))
       return SocketEventType.Unknown;
     final type = subscriptionRooms[event['name']]['type'];
-    if (type == 'CHANNEL') {
+    if (event['data']['action'] == 'update') {
+      if (type == 'CHANNEL') {
+        if (event['data']['thread_id'] != null &&
+            event['data']['thread_id'] != '') {
+          return SocketEventType.ChannelThreadMessage;
+        } else
+          return SocketEventType.ChannelMessage;
+      } else if (type == 'DIRECT') {
+        if (event['data']['thread_id'] != null &&
+            event['data']['thread_id'] != '') {
+          return SocketEventType.DirectThreadMessage;
+        } else {
+          return SocketEventType.DirectMessage;
+        }
+      }
+    } else if (event['data']['action'] == 'remove') {
       if (event['data']['thread_id'] != null &&
           event['data']['thread_id'] != '') {
-        return SocketEventType.ChannelThreadMessage;
+        return SocketEventType.ThreadMessageDeleted;
       } else
-        return SocketEventType.ChannelMessage;
-    } else if (type == 'DIRECT') {
-      if (event['data']['thread_id'] != null &&
-          event['data']['thread_id'] != '') {
-        return SocketEventType.DirectThreadMessage;
-      } else
-        return SocketEventType.DirectMessage;
+        return SocketEventType.MessageDeleted;
     }
     return SocketEventType.Unknown;
   }
@@ -257,6 +272,8 @@ enum SocketEventType {
   ChannelThreadMessage,
   DirectMessage,
   DirectThreadMessage,
+  MessageDeleted,
+  ThreadMessageDeleted,
   Unknown,
 }
 

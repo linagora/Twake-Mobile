@@ -17,6 +17,7 @@ export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
 const _THREAD_MESSAGES_LIMIT = 1000;
+const _DUMMY_ID = 'message';
 
 class ThreadsBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
@@ -59,6 +60,13 @@ class ThreadsBloc<T extends BaseChannelBloc>
           messageId: state.data.messageId,
           threadId: state.data.threadId,
           channelId: state.data.channelId,
+        ));
+      } else if (state is ThreadMessageDeleted) {
+        this.add(RemoveMessage(
+          channelId: state.data.channelId,
+          threadId: state.data.threadId,
+          messageId: state.data.messageId,
+          onNotify: true,
         ));
       }
     });
@@ -103,6 +111,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
         yield messagesLoaded;
       }
     } else if (event is LoadSingleMessage) {
+      while (repository.items.any((m) => m.id == _DUMMY_ID))
+        await Future.delayed(Duration(milliseconds: 100));
+      if (repository.items.any((m) => m.id == event.messageId)) return;
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.threadId == event.threadId,
@@ -132,7 +143,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
       ));
       _updateParentChannel(totalModifier: -1);
     } else if (event is SendMessage) {
-      final String dummyId = DateTime.now().toString();
+      final String dummyId = _DUMMY_ID;
       final body = _makeQueryParams(event);
       var tempItem = Message(
         id: dummyId,

@@ -44,6 +44,15 @@ class DirectThreadSocketEvent extends BaseChannelMessageEvent {
       : super(data);
 }
 
+class ThreadMessageDeletedEvent extends BaseChannelMessageEvent {
+  const ThreadMessageDeletedEvent(SocketMessageUpdateNotification data)
+      : super(data);
+}
+
+class MessageDeletedEvent extends BaseChannelMessageEvent {
+  const MessageDeletedEvent(SocketMessageUpdateNotification data) : super(data);
+}
+
 class ChannelThreadSocketEvent extends BaseChannelMessageEvent {
   const ChannelThreadSocketEvent(SocketMessageUpdateNotification data)
       : super(data);
