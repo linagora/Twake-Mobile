@@ -81,7 +81,11 @@ class EditChannelRepository {
     this.companyId = ProfileBloc.selectedCompany;
     this.workspaceId = ProfileBloc.selectedWorkspace;
 
-    final body = this.toJson();
+    final body = <String, dynamic>{
+      'company_id': companyId,
+      'workspace_id': workspaceId,
+      'channel_id': channelId,
+    };
 
     _logger.d('Channel deletion request body: $body');
     Map<String, dynamic> resp;
