@@ -20,8 +20,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   StreamSubscription subscription;
 
   bool connectionLost = false;
-  final twakeConsole =
-      'https://web.qa.twake.app/ajax/users/console/openid?mobile=1';
+
+  var twakeConsole;
+  var authMode = 'CONSOLE';
+
   String _prevUrl = '';
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
@@ -80,6 +82,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
     if (event is AuthInitialize) {
       // print(repository.tokenIsValid());
+      final info = await repository.getAuthMode();
+      this.authMode = info['mode'];
+      this.twakeConsole = info['endpoint'];
       switch (repository.tokenIsValid()) {
         case TokenStatus.Valid:
           final InitData initData = await initMain();
@@ -98,15 +103,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               break;
             case AuthResult.WrongCredentials:
               yield Unauthenticated();
-              webView.run();
+              runWebView();
           }
           break;
         case TokenStatus.BothExpired:
           yield Unauthenticated(message: 'Session expired');
-          webView.run();
+          runWebView();
       }
     } else if (event is Authenticate) {
       if (connectionLost) return;
+      if (authMode == 'INTERNAL') {
+        final res = repository.authenticate(
+          username: event.username,
+          password: event.password,
+        );
+        switch (res) {
+        }
+      }
       yield Authenticating();
       print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
       final js =
@@ -140,6 +153,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> runWebView() async {
+    if (authMode == 'INTERNAL') {
+      return;
+    }
     await CookieManager.instance().deleteAllCookies();
     await CookieManager.instance().getCookies(url: 'auth.twake.app');
     _prevUrl = '';
@@ -158,3 +174,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     return super.close();
   }
 }
+
+/// EXAMPLE OF CONSOLE AUTH RESPONSE
+// {
+// "ready": true,
+// "auth_mode": [
+// "console"
+// ],
+// "auth": {
+// "console": {
+// "use": true,
+// "account_management_url": "https://console.qa.twake.app/profile",
+// "company_management_url": "https://console.qa.twake.app/company",
+// "collaborators_management_url": "https://console.qa.twake.app/company/users",
+// "mobile_endpoint_url": "https://beta.twake.app/ajax/users/console/openid?mobile=1"
+// }
+// },
+// "version": {
+// "current": "2020.Q4.135",
+// "minimal": {
+// "web": "2020.Q4.135",
+// "mobile": "2020.Q4.135"
+// }
+// },
+// "elastic_search_available": true,
+// "help_link": "https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161",
+// "branding": {
+// "name": "Twake",
+// "enable_newsletter": false
+// }
+// }

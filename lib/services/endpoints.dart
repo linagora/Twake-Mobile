@@ -1,4 +1,6 @@
 class Endpoint {
+  // API Endpoint for getting API version info + auth method
+  static const version = '/';
   // API Endpoint for authentication
   static const auth = '/authorize';
   // API Endpoint for initializing some server required data

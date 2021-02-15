@@ -101,6 +101,19 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
+  Future<Map<String, dynamic>> getAuthMode() async {
+    final data = await _api.get(Endpoint.version, useTokenDio: true);
+    var authMode = {};
+    if (data['auth_mode'] == 'console') {
+      authMode['mode'] = 'CONSOLE';
+      authMode['endpoint'] = data['auth']['console']['mobile_endpoint_url'];
+    } else {
+      // auth_mode == internal
+      authMode['mode'] = 'INTERNAL';
+    }
+    return authMode;
+  }
+
   Future<bool> setAuthData(Map<String, dynamic> authData) async {
     try {
       authData = await initSession(

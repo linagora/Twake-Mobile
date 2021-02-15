@@ -44,7 +44,10 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      BlocProvider.of<ConnectionBloc>(context).add(CheckConnectionState());
+      Future.delayed(
+          Duration(seconds: 2),
+          () => BlocProvider.of<ConnectionBloc>(context)
+              .add(CheckConnectionState()));
     }
   }
 

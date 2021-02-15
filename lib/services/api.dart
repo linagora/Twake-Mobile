@@ -94,6 +94,7 @@ class Api {
   Future<dynamic> get(
     String method, {
     Map<String, dynamic> params: const {},
+    bool useTokenDio: false,
   }) async {
     checkConnection();
     final uri = Uri(
