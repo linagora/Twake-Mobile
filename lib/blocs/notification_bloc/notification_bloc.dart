@@ -19,14 +19,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   IO.Socket socket;
   var socketConnectionState = SocketConnectionState.DISCONNECTED;
   String token;
+  String socketIOHost;
   final logger = Logger();
   final _api = Api();
   List<String> subscriptions = [];
   Map<String, dynamic> subscriptionRooms = {};
   StreamSubscription _subscription;
 
-  NotificationBloc({this.token, ConnectionBloc connectionBloc})
-      : super(NotificationsAbsent()) {
+  NotificationBloc({
+    this.token,
+    this.socketIOHost,
+    ConnectionBloc connectionBloc,
+  }) : super(NotificationsAbsent()) {
     service = Notifications(
       onMessageCallback: onMessageCallback,
       onResumeCallback: onResumeCallback,
@@ -48,6 +52,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       }
     });
     print('TOKEN: $token');
+    setupListeners();
     socket = socket.connect();
   }
 
@@ -65,10 +70,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       logger.e('DISCONNECTED FROM SOCKET\n$msg');
       socketConnectionState = SocketConnectionState.DISCONNECTED;
     });
-    socket.on(SocketIOEvent.AUTHENTICATED, (data) {
+    socket.on(SocketIOEvent.AUTHENTICATED, (data) async {
       logger.d('AUTHENTICATED ON SOCKET: $data');
-      Future.delayed(Duration(seconds: 2), setSubscriptions);
       socketConnectionState = SocketConnectionState.AUTHENTICATED;
+      await setSubscriptions();
     });
     // socket.onPing((ping) {
     // logger.d('PING $ping');
@@ -79,12 +84,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
       logger.d('GOT RESOURCE: $data');
+      handleSocketRosource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
       logger.d('FAILED TO JOIN: $data');
     });
     socket.on(SocketIOEvent.JOIN_SUCCESS, (data) {
-      logger.d('SUCCESSFUL JOIN: $data');
+      // logger.d('SUCCESSFUL JOIN: $data');
     });
   }
 
@@ -138,6 +144,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ThreadMessageDeleted(event.data);
     } else if (event is MessageDeletedEvent) {
       yield MessageDeleted(event.data);
+    } else if (event is ChannelUpdateEvent) {
+      yield ChannelUpdated(event.data);
+    } else if (event is ChannelDeleteEvent) {
+      yield ChannelDeleted(event.data);
     } else if (event is ReinitSubscriptions) {
       reinit();
     }
@@ -170,7 +180,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void handleSocketRosource(Map resource) {
-    final id = getRoomSubscriberId(resource['room']);
+    final type = getSocketResourceType(resource);
+    logger.w('RESOURCE ID: $type');
+    if (type == SocketResourceType.ChannelUpdate) {
+      final data =
+          SocketChannelUpdateNotification.fromJson(resource['resource']);
+      this.add(ChannelUpdateEvent(data));
+    } else if (type == SocketResourceType.ChannelDelete) {
+      final data =
+          SocketChannelUpdateNotification.fromJson(resource['resource']);
+      this.add(ChannelDeleteEvent(data));
+    }
   }
 
   void handleSocketEvent(Map event) {
@@ -238,6 +258,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     return SocketEventType.Unknown;
   }
 
+  SocketResourceType getSocketResourceType(Map resource) {
+    if (!subscriptionRooms.containsKey(resource['room']))
+      return SocketResourceType.Unknown;
+    final type = subscriptionRooms[resource['room']]['type'];
+    if (type == 'CHANNELS_LIST') {
+      if (resource['type'] == 'channel') {
+        if (resource['action'] == 'saved') {
+          return SocketResourceType.ChannelUpdate;
+        } else if (resource['action'] == 'deleted')
+          return SocketResourceType.ChannelDelete;
+      }
+    }
+    return SocketResourceType.Unknown;
+  }
+
   String getRoomSubscriberId(String name) {
     if (!subscriptionRooms.containsKey(name)) return null;
     return subscriptionRooms[name]['id'];
@@ -279,6 +314,7 @@ enum SocketEventType {
 
 enum SocketResourceType {
   ChannelUpdate,
+  ChannelDelete,
   DirectUpdate,
   Unknown,
 }

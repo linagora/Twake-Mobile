@@ -33,14 +33,6 @@ abstract class NotificationData {
   const NotificationData();
 }
 
-class SocketChannelDeletedNotification extends NotificationData {
-  final String channelId;
-
-  SocketChannelDeletedNotification(
-    this.channelId,
-  );
-}
-
 @JsonSerializable()
 class SocketChannelUpdateNotification extends NotificationData {
   @JsonKey(required: true, name: 'id')

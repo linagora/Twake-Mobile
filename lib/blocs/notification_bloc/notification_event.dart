@@ -14,6 +14,24 @@ class BaseChannelMessageEvent extends NotificationEvent {
   List<Object> get props => [data];
 }
 
+class ChannelUpdateEvent extends NotificationEvent {
+  final SocketChannelUpdateNotification data;
+
+  ChannelUpdateEvent(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class ChannelDeleteEvent extends NotificationEvent {
+  final SocketChannelUpdateNotification data;
+
+  ChannelDeleteEvent(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class ReinitSubscriptions extends NotificationEvent {
   const ReinitSubscriptions();
 

@@ -105,10 +105,10 @@ class Api {
     );
     try {
       final response = await dio.getUri(uri);
-      logger.d('METHOD: ${uri.toString()}');
-      logger.d('GET HEADERS: ${dio.options.headers}');
-      logger.d('PARAMS: $params');
-      logger.d('GET RESPONSE: ${response.data}');
+      // logger.d('METHOD: ${uri.toString()}');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('PARAMS: $params');
+      // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -151,11 +151,11 @@ class Api {
     checkConnection();
     final url = _SHOST + method;
     try {
-      logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
-      logger.d('BODY: $body');
+      // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
+      // logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
-      logger.d('POST RESPONSE ${response.data}');
+      // logger.d('POST RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
       logger.wtf(e);

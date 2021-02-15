@@ -46,6 +46,8 @@ class ChannelsBloc extends BaseChannelBloc {
           totalModifier: 1,
           unreadModifier: 1,
         ));
+      } else if (state is ChannelUpdated) {
+        this.add(UpdateSingleChannel(state.data));
       }
       // else if (state is ChannnelUpdateNotification) {
       // this.add(
@@ -108,6 +110,28 @@ class ChannelsBloc extends BaseChannelBloc {
           force: DateTime.now().toString(),
         );
       }
+    } else if (event is UpdateSingleChannel) {
+      repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
+      var item = await repository.getItemById(event.data.channelId) as Channel;
+      if (item != null) {
+        item.icon = event.data.icon;
+        item.name = event.data.name;
+        item.description = event.data.description;
+        item.visibility = event.data.visibility;
+        item.visibility = event.data.visibility;
+      } else {
+        item = Channel.fromJson(event.data.toJson());
+      }
+      await repository.saveOne(item);
+      if (event.data.workspaceId == selectedParentId) {
+        repository.items.removeWhere((c) => c.id == item.id);
+        repository.items.add(item);
+      }
+      repository.items.sort((c1, c2) => c1.name.compareTo(c2.name));
+      yield ChannelsLoaded(
+        channels: repository.items,
+        force: DateTime.now().toString(),
+      );
     } else if (event is LoadSingleChannel) {
       // TODO implement single company loading
       throw 'Not implemented yet';

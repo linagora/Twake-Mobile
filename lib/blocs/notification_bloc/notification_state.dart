@@ -21,6 +21,24 @@ abstract class BaseChannelMessageNotification extends NotificationState {
   List<Object> get props => [data];
 }
 
+class ChannelUpdated extends NotificationState {
+  final SocketChannelUpdateNotification data;
+
+  ChannelUpdated(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class ChannelDeleted extends NotificationState {
+  final SocketChannelUpdateNotification data;
+
+  ChannelDeleted(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class ThreadMessageDeleted extends NotificationState {
   final SocketMessageUpdateNotification data;
   ThreadMessageDeleted(this.data);

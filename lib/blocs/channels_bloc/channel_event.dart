@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 
 abstract class ChannelsEvent extends Equatable {
   const ChannelsEvent();
@@ -23,6 +24,15 @@ class ClearChannels extends ChannelsEvent {
   const ClearChannels();
   @override
   List<Object> get props => [];
+}
+
+class UpdateSingleChannel extends ChannelsEvent {
+  final SocketChannelUpdateNotification data;
+
+  UpdateSingleChannel(this.data);
+
+  @override
+  List<Object> get props => [data];
 }
 
 class LoadSingleChannel extends ChannelsEvent {
