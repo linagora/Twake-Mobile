@@ -30,6 +30,8 @@ class _MemberManagementState extends State<MemberManagement> {
   void _save() {
     FocusScope.of(context).requestFocus(new FocusNode());
     final ids = _toDelete.ids;
+    print('IDS to DELETE: $ids');
+    print('EMAILS to DELETE: ${_toDelete.map((e) => e.email)}');
     context.read<MemberCubit>().deleteMembers(
           channelId: _channelId,
           members: ids,

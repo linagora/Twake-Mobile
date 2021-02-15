@@ -81,10 +81,10 @@ class Api {
     final url = _SHOST + method;
     try {
       final response = await dio.delete(url, data: body);
-      logger.d('METHOD: $url');
-      logger.d('GET HEADERS: ${dio.options.headers}');
-      logger.d('DELETE REQUEST BODY: $body');
-      logger.d('DELETE RESPONSE: ${response.data}');
+      // logger.d('METHOD: $url');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('DELETE REQUEST BODY: $body');
+      // logger.d('DELETE RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -105,10 +105,10 @@ class Api {
     );
     try {
       final response = await dio.getUri(uri);
-      // logger.d('METHOD: ${uri.toString()}');
-      // logger.d('GET HEADERS: ${dio.options.headers}');
-      // logger.d('PARAMS: $params');
-      // logger.d('GET RESPONSE: ${response.data}');
+      logger.d('METHOD: ${uri.toString()}');
+      logger.d('GET HEADERS: ${dio.options.headers}');
+      logger.d('PARAMS: $params');
+      logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -155,7 +155,7 @@ class Api {
       logger.d('BODY: $body');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
-      // logger.d('RESPONSE ${response.data}');
+      logger.d('POST RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
       logger.wtf(e);

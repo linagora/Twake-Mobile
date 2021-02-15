@@ -76,4 +76,26 @@ class EditChannelRepository {
     _logger.d('RESPONSE AFTER CHANNEL EDITING: $resp');
     return true;
   }
+
+  Future<bool> delete() async {
+    this.companyId = ProfileBloc.selectedCompany;
+    this.workspaceId = ProfileBloc.selectedWorkspace;
+
+    final body = <String, dynamic>{
+      'company_id': companyId,
+      'workspace_id': workspaceId,
+      'channel_id': channelId,
+    };
+
+    _logger.d('Channel deletion request body: $body');
+    Map<String, dynamic> resp;
+    try {
+      resp = await _api.delete(Endpoint.channels, body: body);
+    } catch (error) {
+      _logger.e('Error while trying to delete a channel:\n${error.message}');
+      return false;
+    }
+    _logger.d('RESPONSE AFTER CHANNEL DELETION: $resp');
+    return true;
+  }
 }

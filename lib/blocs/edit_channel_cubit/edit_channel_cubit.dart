@@ -18,6 +18,15 @@ class EditChannelCubit extends Cubit<EditChannelState> {
     };
   }
 
+  Future<void> delete() async {
+    final isDeleted = await repository.delete();
+    if (isDeleted) {
+      emit(EditChannelDeleted());
+    } else {
+      emit(EditChannelError('Error on channel deletion.'));
+    };
+  }
+
   void update({
     String channelId,
     String name,
