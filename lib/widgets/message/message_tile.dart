@@ -104,7 +104,9 @@ class _MessageTileState<T extends BaseChannelBloc>
                         onReply: onReply,
                         onEdit: () {
                           Navigator.of(ctx).pop();
+                          // ignore: close_sinks
                           final smbloc = ctx.read<SingleMessageBloc>();
+                          // ignore: close_sinks
                           final mebloc = ctx.read<MessageEditBloc>();
                           mebloc.add(
                             EditMessage(

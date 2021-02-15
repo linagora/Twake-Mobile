@@ -37,14 +37,10 @@ class MainPageTitle extends StatelessWidget {
           // by preselecting desired type
           // according the title opposite the adding button
           trailingAction = () => context.read<SheetBloc>()
-            ..add(state is SheetClosed || state is SheetInitial
-                ? OpenSheet()
-                : CloseSheet())
-            ..add(
-              SetFlow(
-                flow: isDirect ? SheetFlow.direct : SheetFlow.addChannel,
-              ),
-            );
+            ..add(SetFlow(
+              flow: isDirect ? SheetFlow.direct : SheetFlow.addChannel,
+            ))
+            ..add(OpenSheet());
           return IconButton(
             icon: Icon(
               Icons.add,
