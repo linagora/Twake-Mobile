@@ -46,3 +46,8 @@ class EditChannelStageUpdated extends EditChannelState {
   @override
   List<Object> get props => [stage];
 }
+
+class EditChannelDeleted extends EditChannelState {
+  @override
+  List<Object> get props => [];
+}
