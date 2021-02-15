@@ -132,6 +132,11 @@ class _AuthFormState extends State<AuthForm> {
                         'Incorrect email or password',
                         style: TextStyle(color: Colors.red),
                       ),
+                    if (state is AuthenticationError)
+                      Text(
+                        'Network Error',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     Expanded(
                       child: Align(
                         alignment: Alignment.centerRight,

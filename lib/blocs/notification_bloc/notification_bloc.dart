@@ -47,14 +47,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         reinit();
       }
     });
-    setupListeners();
+    print('TOKEN: $token');
     socket = socket.connect();
   }
 
   void setupListeners() {
     socket.onReconnect((_) {
       logger.d('RECCONNECTED, RESETTING SUBSCRIPTIONS');
-      Future.delayed(Duration(seconds: 2), setSubscriptions);
     });
     socket.onConnect((msg) {
       logger.d('CONNECTED ON SOCKET IO\n$token');
@@ -68,6 +67,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
     socket.on(SocketIOEvent.AUTHENTICATED, (data) {
       logger.d('AUTHENTICATED ON SOCKET: $data');
+      Future.delayed(Duration(seconds: 2), setSubscriptions);
       socketConnectionState = SocketConnectionState.AUTHENTICATED;
     });
     // socket.onPing((ping) {

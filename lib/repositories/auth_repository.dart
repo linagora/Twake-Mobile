@@ -40,6 +40,10 @@ class AuthRepository extends JsonSerializable {
   String fcmToken;
   @JsonKey(ignore: true)
   String apiVersion;
+  @JsonKey(ignore: true)
+  String twakeConsole;
+  @JsonKey(ignore: true)
+  String authMode;
 
   AuthRepository({this.fcmToken, this.apiVersion}) {
     updateHeaders();
@@ -58,7 +62,7 @@ class AuthRepository extends JsonSerializable {
 
     final fcmToken = (await FirebaseMessaging().getToken());
     final apiVersion = (await PackageInfo.fromPlatform()).version;
-    Logger().e('DATA: $authMap');
+    Logger().w('DATA: $authMap');
 
     if (authMap != null) {
       Logger().d('INIT APIVERSION: $apiVersion');
@@ -101,15 +105,14 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
-  Future<Map<String, dynamic>> getAuthMode() async {
+  Future<String> getAuthMode() async {
     final data = await _api.get(Endpoint.version, useTokenDio: true);
-    var authMode = {};
-    if (data['auth_mode'] == 'console') {
-      authMode['mode'] = 'CONSOLE';
-      authMode['endpoint'] = data['auth']['console']['mobile_endpoint_url'];
+    if ((data['auth_mode'] as List).contains('console')) {
+      this.authMode = 'CONSOLE';
+      this.twakeConsole = data['auth']['console']['mobile_endpoint_url'];
     } else {
       // auth_mode == internal
-      authMode['mode'] = 'INTERNAL';
+      this.authMode = 'INTERNAL';
     }
     return authMode;
   }

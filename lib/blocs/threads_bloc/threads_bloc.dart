@@ -111,14 +111,17 @@ class ThreadsBloc<T extends BaseChannelBloc>
         yield messagesLoaded;
       }
     } else if (event is LoadSingleMessage) {
-      while (repository.items.any((m) => m.id == _DUMMY_ID))
+      var attempt = 3;
+      while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
         await Future.delayed(Duration(milliseconds: 100));
-      if (repository.items.any((m) => m.id == event.messageId)) return;
+        attempt -= 1;
+      }
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.threadId == event.threadId,
       );
       _sortItems();
+      _updateParentChannel();
       yield messagesLoaded;
     } else if (event is RemoveMessage) {
       await repository.delete(

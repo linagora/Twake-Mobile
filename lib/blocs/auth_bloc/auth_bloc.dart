@@ -21,9 +21,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   bool connectionLost = false;
 
-  var twakeConsole;
-  var authMode = 'CONSOLE';
-
   String _prevUrl = '';
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
@@ -36,7 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
     webView = HeadlessInAppWebView(
-      initialUrl: twakeConsole,
+      initialUrl: repository.twakeConsole,
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
           cacheEnabled: false,
@@ -57,7 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           // Logger().d('PARAMS: $qp');
           if (qp['token'] == null || qp['username'] == null) {
             print('NO TOKEN AND USERNAME');
-            ctrl.loadUrl(url: twakeConsole);
+            ctrl.loadUrl(url: repository.twakeConsole);
             this.add(WrongAuthCredentials());
             return;
           }
@@ -82,9 +79,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Stream<AuthState> mapEventToState(AuthEvent event) async* {
     if (event is AuthInitialize) {
       // print(repository.tokenIsValid());
-      final info = await repository.getAuthMode();
-      this.authMode = info['mode'];
-      this.twakeConsole = info['endpoint'];
       switch (repository.tokenIsValid()) {
         case TokenStatus.Valid:
           final InitData initData = await initMain();
@@ -112,12 +106,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } else if (event is Authenticate) {
       if (connectionLost) return;
-      if (authMode == 'INTERNAL') {
-        final res = repository.authenticate(
+      if (repository.authMode == 'INTERNAL') {
+        final res = await repository.authenticate(
           username: event.username,
           password: event.password,
         );
         switch (res) {
+          case AuthResult.WrongCredentials:
+            yield WrongCredentials();
+            break;
+          case AuthResult.NetworkError:
+            yield AuthenticationError();
+            break;
+          default:
+            final InitData initData = await initMain();
+            yield Authenticated(initData);
         }
       }
       yield Authenticating();
@@ -153,7 +156,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> runWebView() async {
-    if (authMode == 'INTERNAL') {
+    if (repository.authMode == 'INTERNAL') {
       return;
     }
     await CookieManager.instance().deleteAllCookies();

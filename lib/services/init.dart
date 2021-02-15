@@ -34,7 +34,9 @@ Future<AuthRepository> initAuth() async {
   else
     Logger.level = Level.error;
 
-  return await AuthRepository.load();
+  final repository = await AuthRepository.load();
+  await repository.getAuthMode();
+  return repository;
 }
 
 Future<InitData> initMain() async {

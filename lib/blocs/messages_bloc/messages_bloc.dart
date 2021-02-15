@@ -72,19 +72,31 @@ class MessagesBloc<T extends BaseChannelBloc>
           channelId: state.data.channelId,
           companyId: ProfileBloc.selectedCompany,
         ));
-      } else if (state is ThreadMessageNotification) {
-        if (T == DirectsBloc && state.data.workspaceId == null)
-          this.add(ModifyResponsesCount(
-            threadId: state.data.threadId,
-            channelId: state.data.channelId,
-            modifier: 1,
-          ));
-        else if (T == ChannelsBloc && state.data.workspaceId != null)
-          this.add(ModifyResponsesCount(
-            threadId: state.data.threadId,
-            channelId: state.data.channelId,
-            modifier: 1,
-          ));
+      } else if (state is DirectThreadMessageArrived && T == DirectsBloc) {
+        this.add(ModifyResponsesCount(
+          threadId: state.data.threadId,
+          channelId: state.data.channelId,
+          modifier: 1,
+        ));
+      } else if (state is ChannelThreadMessageArrived && T == ChannelsBloc) {
+        this.add(ModifyResponsesCount(
+          threadId: state.data.threadId,
+          channelId: state.data.channelId,
+          modifier: 1,
+        ));
+        // } else if (state is ThreadMessageNotification) {
+        // if (T == DirectsBloc && state.data.workspaceId == null)
+        // this.add(ModifyResponsesCount(
+        // threadId: state.data.threadId,
+        // channelId: state.data.channelId,
+        // modifier: 1,
+        // ));
+        // else if (T == ChannelsBloc && state.data.workspaceId != null)
+        // this.add(ModifyResponsesCount(
+        // threadId: state.data.threadId,
+        // channelId: state.data.channelId,
+        // modifier: 1,
+        // ));
       } else if (state is MessageDeleted) {
         this.add(RemoveMessage(
           channelId: state.data.channelId,
@@ -170,11 +182,13 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
-      // repository.logger.d(
-      // 'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
-      while (repository.items.any((m) => m.id == _DUMMY_ID))
+      repository.logger.d(
+          'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+      var attempt = 3;
+      while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
         await Future.delayed(Duration(milliseconds: 100));
-      if (repository.items.any((m) => m.id == event.messageId)) return;
+        attempt -= 1;
+      }
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
@@ -183,9 +197,10 @@ class MessagesBloc<T extends BaseChannelBloc>
       final newState = MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
+        force: DateTime.now().toString(),
         parentChannel: selectedChannel,
       );
-      // repository.logger.d('YIELDING STATE: ${newState != this.state}');
+      repository.logger.d('YIELDING STATE: ${newState != this.state}');
       yield newState;
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.getItemById(event.threadId);
@@ -205,8 +220,9 @@ class MessagesBloc<T extends BaseChannelBloc>
           messages: repository.items,
           messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
+          force: DateTime.now().toString(),
         );
-        // repository.logger.d('YIELDING STATE: ${newState != this.state}');
+        repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
       }
     } else if (event is RemoveMessage) {

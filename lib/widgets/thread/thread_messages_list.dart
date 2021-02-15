@@ -135,7 +135,9 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                     } else {
                       return MessageTile<T>(
                         message: _messages[i],
-                        key: ValueKey(_messages[i].id),
+                        key: ValueKey(
+                          _messages[i].id + _messages[i].reactions.keys.join(),
+                        ),
                       );
                     }
                   },

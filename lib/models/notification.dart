@@ -49,6 +49,7 @@ class SocketChannelUpdateNotification extends NotificationData {
   final String workspaceId;
   @JsonKey(name: 'company_id')
   final String companyId;
+  final String icon;
   final String name;
   final String description;
   final String visibility;
@@ -59,6 +60,7 @@ class SocketChannelUpdateNotification extends NotificationData {
     this.companyId,
     this.name,
     this.description,
+    this.icon,
     this.visibility,
   });
 
