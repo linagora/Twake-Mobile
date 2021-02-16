@@ -48,6 +48,11 @@ class ChannelsBloc extends BaseChannelBloc {
         ));
       } else if (state is ChannelUpdated) {
         this.add(UpdateSingleChannel(state.data));
+      } else if (state is ChannelDeleted) {
+        this.add(RemoveChannel(
+          channelId: state.data.channelId,
+          workspaceId: state.data.workspaceId,
+        ));
       }
       // else if (state is ChannnelUpdateNotification) {
       // this.add(
@@ -136,12 +141,13 @@ class ChannelsBloc extends BaseChannelBloc {
       // TODO implement single company loading
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
-      throw 'Not implemented yet';
-      // repository.items.removeWhere((i) => i.id == event.channelId);
-      // yield ChannelsLoaded(
-      // channels: repository.items,
-      // selected: selected,
-      // );
+      repository.items.removeWhere((i) => i.id == event.channelId);
+      if (event.workspaceId == selectedParentId) {
+        yield ChannelsLoaded(
+          channels: repository.items,
+          force: DateTime.now().toString(),
+        );
+      }
     } else if (event is ModifyChannelState) {
       await updateChannelState(event);
       yield ChannelsLoaded(

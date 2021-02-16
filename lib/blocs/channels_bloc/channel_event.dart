@@ -92,8 +92,10 @@ class ModifyChannelState extends ChannelsEvent {
 }
 
 class RemoveChannel extends ChannelsEvent {
+  final String workspaceId;
   final String channelId;
-  RemoveChannel(this.channelId);
+
+  RemoveChannel({this.channelId, this.workspaceId});
 
   @override
   List<Object> get props => [channelId];
