@@ -37,7 +37,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       onLaunchCallback: onLaunchCallback,
     );
     socket = IO.io(
-      'https://web.qa.twake.app',
+      this.socketIOHost,
       IO.OptionBuilder()
           .setPath('/socket')
           .setTimeout(10000)
@@ -51,7 +51,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         reinit();
       }
     });
-    print('TOKEN: $token');
+    print('TOKEN: $token\nHOST: ${socket.opts}');
     setupListeners();
     socket = socket.connect();
   }
@@ -90,7 +90,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       logger.d('FAILED TO JOIN: $data');
     });
     socket.on(SocketIOEvent.JOIN_SUCCESS, (data) {
-      // logger.d('SUCCESSFUL JOIN: $data');
+      logger.d('SUCCESSFUL JOIN: $data');
     });
   }
 

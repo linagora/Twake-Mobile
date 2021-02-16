@@ -44,6 +44,8 @@ class AuthRepository extends JsonSerializable {
   String twakeConsole;
   @JsonKey(ignore: true)
   String authMode;
+  @JsonKey(ignore: true)
+  String socketIOHost;
 
   AuthRepository({this.fcmToken, this.apiVersion}) {
     updateHeaders();
@@ -114,6 +116,7 @@ class AuthRepository extends JsonSerializable {
       // auth_mode == internal
       this.authMode = 'INTERNAL';
     }
+    this.socketIOHost = data['socket_endpoint']['host'];
     return authMode;
   }
 

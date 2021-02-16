@@ -97,7 +97,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         // channelId: state.data.channelId,
         // modifier: 1,
         // ));
-      } else if (state is MessageDeleted) {
+      } else if (state is MessageDeleted && selectedChannel != null) {
         this.add(RemoveMessage(
           channelId: state.data.channelId,
           messageId: state.data.messageId,

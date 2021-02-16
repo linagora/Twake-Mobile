@@ -117,6 +117,9 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                           token: BlocProvider.of<AuthBloc>(ctx)
                               .repository
                               .accessToken,
+                          socketIOHost: BlocProvider.of<AuthBloc>(ctx)
+                              .repository
+                              .socketIOHost,
                           connectionBloc:
                               BlocProvider.of<cb.ConnectionBloc>(ctx),
                         )..setSubscriptions()),

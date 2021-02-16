@@ -61,7 +61,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
           threadId: state.data.threadId,
           channelId: state.data.channelId,
         ));
-      } else if (state is ThreadMessageDeleted) {
+      } else if (state is ThreadMessageDeleted &&
+          messagesBloc.channelsBloc != null) {
         this.add(RemoveMessage(
           channelId: state.data.channelId,
           threadId: state.data.threadId,
