@@ -49,33 +49,29 @@ class SQLite with Storage {
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         var ddl = List<String>.from(DDL_V6);
-        logger.d('SQFlite onUpdate called with new version: $newVersion');
+        // logger.d('SQFlite onUpdate called with new version: $newVersion');
+        logger.d('Migration to twake db v.$newVersion from v.$oldVersion');
         if (oldVersion == 1) {
-          logger.d('Migration to twake db v.$newVersion');
           ddl.removeWhere((el) => DDL_V1.contains(el));
           for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 2) {
-          logger.d('Migration to twake db v.$newVersion');
           ddl.removeWhere((el) => DDL_V2.contains(el));
           for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 3) {
-          logger.d('Migration to twake db v.$newVersion');
           ddl.removeWhere((el) => DDL_V3.contains(el));
           for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 4) {
-          logger.d('Migration to twake db v.$newVersion');
           ddl.removeWhere((el) => DDL_V4.contains(el));
           for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 5) {
-          logger.d('Migration to twake db v.$newVersion');
           for (var migrationDdl in MIGRATION_6) {
             await db.execute(migrationDdl);
           }
