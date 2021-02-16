@@ -83,14 +83,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      logger.d('GOT RESOURCE: $data');
+      // logger.d('GOT RESOURCE: $data');
       handleSocketRosource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
       logger.d('FAILED TO JOIN: $data');
     });
     socket.on(SocketIOEvent.JOIN_SUCCESS, (data) {
-      logger.d('SUCCESSFUL JOIN: $data');
+      // logger.d('SUCCESSFUL JOIN: $data');
     });
   }
 
