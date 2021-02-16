@@ -48,29 +48,30 @@ class SQLite with Storage {
         logger.d('Opened twake db v.$v');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        var ddl = List<String>.from(DDL_V6);
         logger.d('SQFlite onUpdate called with new version: $newVersion');
         if (oldVersion == 1) {
           logger.d('Migration to twake db v.$newVersion');
-          DDL_V6.removeWhere((el) => DDL_V1.contains(el));
-          for (var migrationDdl in DDL_V6) {
+          ddl.removeWhere((el) => DDL_V1.contains(el));
+          for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 2) {
           logger.d('Migration to twake db v.$newVersion');
-          DDL_V6.removeWhere((el) => DDL_V2.contains(el));
-          for (var migrationDdl in DDL_V6) {
+          ddl.removeWhere((el) => DDL_V2.contains(el));
+          for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 3) {
           logger.d('Migration to twake db v.$newVersion');
-          DDL_V6.removeWhere((el) => DDL_V3.contains(el));
-          for (var migrationDdl in DDL_V6) {
+          ddl.removeWhere((el) => DDL_V3.contains(el));
+          for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 4) {
           logger.d('Migration to twake db v.$newVersion');
-          DDL_V6.removeWhere((el) => DDL_V4.contains(el));
-          for (var migrationDdl in DDL_V6) {
+          ddl.removeWhere((el) => DDL_V4.contains(el));
+          for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
         } else if (oldVersion == 5) {
