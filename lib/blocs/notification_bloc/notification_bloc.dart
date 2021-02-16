@@ -60,9 +60,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     socket.onReconnect((_) {
       logger.d('RECCONNECTED, RESETTING SUBSCRIPTIONS');
     });
-    socket.onConnect((msg) {
+    socket.onConnect((msg) async {
       logger.d('CONNECTED ON SOCKET IO\n$token');
       socketConnectionState = SocketConnectionState.CONNECTED;
+      await _api.autoProlongToken();
       socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
     });
     socket.onError((e) => logger.e('ERROR ON SOCKET \n$e'));

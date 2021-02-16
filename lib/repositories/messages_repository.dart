@@ -168,23 +168,20 @@ class MessagesRepository {
           'user.lastname, '
           'user.thumbnail '
           'FROM message INNER JOIN user ON user.id = message.user_id';
-      if (addToItems) {
-        final itemMap = (await _storage.customQuery(
-          query,
-          filters: [
-            ['message.id', '=', item.id]
-          ],
-          limit: 1,
-          offset: 0,
-        ))[0];
+      final itemMap = (await _storage.customQuery(
+        query,
+        filters: [
+          ['message.id', '=', item.id]
+        ],
+        limit: 1,
+        offset: 0,
+      ))[0];
 
-        final message = Message.fromJson(itemMap);
-        final old = this
-            .items
-            .firstWhere((m) => m.id == message.id, orElse: () => null);
-        if (old != null) this.items.remove(old);
-        this.items.add(message);
-      }
+      final message = Message.fromJson(itemMap);
+      final old =
+          this.items.firstWhere((m) => m.id == message.id, orElse: () => null);
+      if (old != null) this.items.remove(old);
+      this.items.add(message);
     }
 
     logger.d('Pulled item: ${item.toJson()}');

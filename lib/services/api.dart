@@ -163,6 +163,22 @@ class Api {
     }
   }
 
+  Future<bool> autoProlongToken() async {
+    if (_tokenIsValid != null) {
+      switch (_tokenIsValid()) {
+        case TokenStatus.Valid:
+          break;
+        case TokenStatus.AccessExpired:
+          await _prolongToken();
+          break;
+        case TokenStatus.BothExpired:
+          _resetAuthentication();
+          return false;
+      }
+    }
+    return true;
+  }
+
   // helper method to add on request and on error interceptors to Dio
   void _addDioInterceptors() {
     dio.interceptors.clear();
@@ -170,19 +186,10 @@ class Api {
       InterceptorsWrapper(
         // token validation causes infinite loop
         onRequest: (options) async {
-          if (_tokenIsValid != null) {
-            switch (_tokenIsValid()) {
-              case TokenStatus.Valid:
-                break;
-              case TokenStatus.AccessExpired:
-                await _prolongToken();
-                options.headers = dio.options.headers;
-                break;
-              case TokenStatus.BothExpired:
-                _resetAuthentication();
-                return dio.reject('Both tokens have expired');
-            }
+          if (!(await autoProlongToken())) {
+            return dio.reject('Both tokens have expired');
           }
+          options.headers = dio.options.headers;
         },
         onError: (DioError error) async {
           // Due to the bugs in JWT handling from twake api side,
