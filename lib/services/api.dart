@@ -106,8 +106,12 @@ class Api {
       queryParameters: params,
     );
     try {
+      final s = Stopwatch();
+      s.start();
       final response = await dio.getUri(uri);
-      // logger.d('METHOD: ${uri.toString()}');
+      s.stop();
+      // logger.d(
+      // 'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
       // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
       // logger.d('GET RESPONSE: ${response.data}');

@@ -19,6 +19,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   StreamSubscription subscription;
   String selectedCompanyId;
   final NotificationBloc notificationBloc;
+  StreamSubscription _notificationSubscription;
 
   WorkspacesBloc({
     this.repository,
@@ -34,6 +35,15 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         repository.logger.d(
             'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId));
+      }
+    });
+    _notificationSubscription =
+        notificationBloc.listen((NotificationState state) {
+      if (state is BaseChannelMessageNotification) {
+        Future.delayed(
+          Duration(milliseconds: 250),
+          () => this.add(ChangeSelectedWorkspace(state.data.workspaceId)),
+        );
       }
     });
     ProfileBloc.selectedWorkspace = repository.selected.id;
@@ -81,6 +91,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   @override
   Future<void> close() {
     subscription.cancel();
+    _notificationSubscription.cancel();
     return super.close();
   }
 }

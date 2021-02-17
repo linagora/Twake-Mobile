@@ -36,12 +36,13 @@ class DirectsBloc extends BaseChannelBloc {
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
       if (state is DirectMessageNotification) {
-        this.add(ModifyMessageCount(
-          channelId: state.data.channelId,
-          companyId: state.data.companyId,
-          totalModifier: 1,
-          unreadModifier: 1,
-        ));
+        this.add(ChangeSelectedChannel(state.data.channelId));
+        // this.add(ModifyMessageCount(
+        // channelId: state.data.channelId,
+        // companyId: state.data.companyId,
+        // totalModifier: 1,
+        // unreadModifier: 1,
+        // ));
       }
       // else if (state is DirectUpdateNotification) {
       // this.add(

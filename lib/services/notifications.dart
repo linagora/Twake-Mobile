@@ -9,9 +9,9 @@ import 'package:twake/services/service_bundle.dart';
 class Notifications {
   final logger = Logger();
   Target platform;
-  final Function(NotificationData) onMessageCallback;
-  final Function(NotificationData) onResumeCallback;
-  final Function(NotificationData) onLaunchCallback;
+  final Function(MessageNotification) onMessageCallback;
+  final Function(MessageNotification) onResumeCallback;
+  final Function(MessageNotification) onLaunchCallback;
   FirebaseMessaging _fcm = FirebaseMessaging();
   // final _api = Api();
 
@@ -51,8 +51,8 @@ class Notifications {
 
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     // logger.d('GOT MESSAGE FROM FIREBASE: $message');
-    final notification = messageParse(message);
-    onMessageCallback(notification);
+    // final notification = messageParse(message);
+    // onMessageCallback(notification);
   }
 
   NotificationData messageParse(Map<String, dynamic> message) {
@@ -79,8 +79,8 @@ class Notifications {
   Future<dynamic> onResume(Map<String, dynamic> message) async {
     logger.d('Resuming on message received\n$message');
     final notification = messageParse(message);
-    logger.d("ok, that's what we have:\n$notification");
-    onResumeCallback(notification);
+    // logger.d("ok, that's what we have:\n$notification");
+    await onResumeCallback(notification);
   }
 
   Future<dynamic> onLaunch(Map<String, dynamic> message) async {
