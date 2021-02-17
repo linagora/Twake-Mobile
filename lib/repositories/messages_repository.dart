@@ -42,53 +42,46 @@ class MessagesRepository {
     int limit,
   }) async {
     List<dynamic> itemsList = [];
+    final maxDateQuery =
+        // 'SELECT max(modification_date) as max_mod, '
+        'SELECT max(creation_date) as max_create '
+        'FROM message';
+    final List max = await _storage.customQuery(maxDateQuery, filters: filters);
+    logger.d('REQUESTING MESSAGES AFTER: $max');
+    if (max.isNotEmpty && max[0]['max_create'] != null) {
+      queryParams['after_date'] = max[0]['max_create'].toString();
+    }
+    try {
+      logger.d('Query params is: $queryParams');
+      itemsList = await _api.get(apiEndpoint, params: queryParams);
+    } on ApiError catch (error) {
+      logger.d('ERROR while reloading Messages from api\n${error.message}');
+    }
+    final Set<String> userIds =
+        itemsList.map((i) => (i['user_id'] as String)).toSet();
+    logger.d('USERIDS: $userIds');
+    await UserRepository().batchUsersLoad(userIds);
+    await _storage.batchStore(
+      items: itemsList.map((i) {
+        final m = Message.fromJson(i).toJson();
+        return m;
+      }),
+      type: StorageType.Message,
+    );
     final query = 'SELECT message.*, '
         'user.username, '
         'user.firstname, '
         'user.lastname, '
         'user.thumbnail '
         'FROM message JOIN user ON user.id = message.user_id';
-    if (!forceFromApi) {
-      itemsList = await _storage.customQuery(
-        query,
-        filters: filters,
-        orderings: sortFields,
-        limit: limit,
-        offset: 0,
-      );
-      // logger.d('Loaded ${itemsList.length} items');
-    }
-    if (itemsList.isEmpty) {
-      try {
-        itemsList = await _api.get(apiEndpoint, params: queryParams);
-      } on ApiError catch (error) {
-        logger.d('ERROR while reloading Messages from api\n${error.message}');
-        return false;
-      }
-      // logger.d('Loaded ${itemsList.length} items');
-      final Set<String> userIds =
-          itemsList.map((i) => (i['user_id'] as String)).toSet();
-      logger.d('USERIDS: $userIds');
-      await UserRepository().batchUsersLoad(userIds);
-      await _storage.batchStore(
-        items: itemsList.map((i) {
-          final m = Message.fromJson(i).toJson();
-          return m;
-        }),
-        type: StorageType.Message,
-      );
-      itemsList = await _storage.customQuery(
-        query,
-        filters: filters,
-        orderings: sortFields,
-        limit: limit,
-        offset: 0,
-      );
-      // logger.d('Loaded ${itemsList.length} items');
-    }
-    if (forceFromApi) {
-      await _storage.batchDelete(type: StorageType.Message, filters: filters);
-    }
+    itemsList = await _storage.customQuery(
+      query,
+      filters: filters,
+      orderings: sortFields,
+      limit: limit,
+      offset: 0,
+    );
+    // logger.d('Loaded ${itemsList.length} items');
     await _updateItems(itemsList, saveToStore: false);
     return true;
   }
