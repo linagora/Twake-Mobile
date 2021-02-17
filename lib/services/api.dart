@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
@@ -152,7 +154,7 @@ class Api {
     final url = _SHOST + method;
     try {
       // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
-      // logger.d('BODY: $body');
+      // logger.d('BODY: ${jsonEncode(body)}');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
       // logger.d('POST RESPONSE ${response.data}');
@@ -200,7 +202,7 @@ class Api {
               '\nPATH: ${error.request.path}' +
               '\nHeaders: ${error.request.headers}' +
               '\nResponse: ${error.response.data}' +
-              '\nBODY: ${error.request.data}' +
+              '\nBODY: ${jsonEncode(error.request.data)}' +
               '\nQUERY: ${error.request.queryParameters}');
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
