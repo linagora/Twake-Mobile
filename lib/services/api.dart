@@ -196,7 +196,8 @@ class Api {
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           logger.e('Error during network request!' +
-              '\nMethod: ${error.request.path}' +
+              '\nMethod: ${error.request.method}' +
+              '\nPATH: ${error.request.path}' +
               '\nHeaders: ${error.request.headers}' +
               '\nResponse: ${error.response.data}' +
               '\nBODY: ${error.request.data}' +

@@ -18,11 +18,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   Notifications service;
   IO.Socket socket;
   var socketConnectionState = SocketConnectionState.DISCONNECTED;
+
   String token;
   String socketIOHost;
+
   final logger = Logger();
   final _api = Api();
-  List<String> subscriptions = [];
+
   Map<String, dynamic> subscriptionRooms = {};
   StreamSubscription _subscription;
 
@@ -57,13 +59,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void setupListeners() {
-    socket.onReconnect((_) {
+    socket.onReconnect((_) async {
       logger.d('RECCONNECTED, RESETTING SUBSCRIPTIONS');
+      await _api.autoProlongToken();
     });
-    socket.onConnect((msg) async {
+    socket.onConnect((msg) {
       logger.d('CONNECTED ON SOCKET IO\n$token');
       socketConnectionState = SocketConnectionState.CONNECTED;
-      await _api.autoProlongToken();
       socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
     });
     socket.onError((e) => logger.e('ERROR ON SOCKET \n$e'));
@@ -173,7 +175,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void onResumeCallback(NotificationData data) {
-    throw 'Have to implement navagation to the right page';
+    logger.w('HERE IS the notification\n$data');
+    // throw 'Have to implement navagation to the right page';
   }
 
   void onLaunchCallback(NotificationData data) {

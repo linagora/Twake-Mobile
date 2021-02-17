@@ -89,13 +89,17 @@ class AuthRepository extends JsonSerializable {
     String password,
   }) async {
     try {
-      final response = await _api.post(Endpoint.auth, body: {
-        'username': username,
-        'password': password,
-        'device': platform,
-        'timezoneoffset': '$timeZoneOffset',
-        'fcm_token': fcmToken,
-      });
+      final response = await _api.post(
+        Endpoint.auth,
+        body: {
+          'username': username,
+          'password': password,
+          'device': platform,
+          'timezoneoffset': '$timeZoneOffset',
+          'fcm_token': fcmToken,
+        },
+        useTokenDio: true,
+      );
       _updateFromMap(response);
       logger.d('Successfully authenticated');
       return AuthResult.Ok;

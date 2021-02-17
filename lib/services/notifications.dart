@@ -79,6 +79,7 @@ class Notifications {
   Future<dynamic> onResume(Map<String, dynamic> message) async {
     logger.d('Resuming on message received\n$message');
     final notification = messageParse(message);
+    logger.d("ok, that's what we have:\n$notification");
     onResumeCallback(notification);
   }
 
