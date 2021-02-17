@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_event.dart';
@@ -21,6 +22,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   String token;
   String socketIOHost;
+  GlobalKey<NavigatorState> navigator;
 
   final logger = Logger();
   final _api = Api();
@@ -32,6 +34,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     this.token,
     this.socketIOHost,
     ConnectionBloc connectionBloc,
+    this.navigator,
   }) : super(NotificationsAbsent()) {
     service = Notifications(
       onMessageCallback: onMessageCallback,
@@ -175,11 +178,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void onResumeCallback(NotificationData data) {
-    logger.w('HERE IS the notification\n$data');
+    // navigator.currentState.popUntil();
+    logger.w('ON RESUME HERE IS the notification\n$data');
     // throw 'Have to implement navagation to the right page';
   }
 
   void onLaunchCallback(NotificationData data) {
+    logger.w('ON LAUNCH HERE IS the notification\n$data');
     throw 'Have to implement navagation to the right page';
   }
 
