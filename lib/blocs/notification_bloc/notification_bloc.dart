@@ -2,9 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_event.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/pages/main_page.dart';
+import 'package:twake/pages/messages_page.dart';
+import 'package:twake/pages/thread_page.dart';
 import 'package:twake/services/notifications.dart';
 import 'package:twake/blocs/notification_bloc/notification_state.dart';
 import 'package:twake/models/notification.dart';
@@ -67,7 +72,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       await _api.autoProlongToken();
     });
     socket.onConnect((msg) {
-      logger.d('CONNECTED ON SOCKET IO\n$token');
+      // logger.d('CONNECTED ON SOCKET IO\n$token');
       socketConnectionState = SocketConnectionState.CONNECTED;
       socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
     });
@@ -77,7 +82,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       socketConnectionState = SocketConnectionState.DISCONNECTED;
     });
     socket.on(SocketIOEvent.AUTHENTICATED, (data) async {
-      logger.d('AUTHENTICATED ON SOCKET: $data');
+      // logger.d('AUTHENTICATED ON SOCKET: $data');
       socketConnectionState = SocketConnectionState.AUTHENTICATED;
       await setSubscriptions();
     });
@@ -85,7 +90,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // logger.d('PING $ping');
     // });
     socket.on(SocketIOEvent.EVENT, (data) {
-      logger.d('GOT EVENT: $data');
+      // logger.d('GOT EVENT: $data');
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
@@ -160,14 +165,19 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void onMessageCallback(NotificationData data) {
-    // if (data is MessageNotification) {
-    // if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
-    // this.add(ThreadMessageEvent(data));
-    // } else if (data.workspaceId == null) {
-    // this.add(DirectMessageEvent(data));
-    // } else {
-    // this.add(ChannelMessageEvent(data));
-    // }
+    logger.d('ON message callback: ${data is MessageNotification}');
+    if (data is MessageNotification) {
+      if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
+        logger.d('adding ThreadMessageEvent');
+        this.add(ThreadMessageEvent(data));
+      } else if (data.workspaceId == 'direct') {
+        logger.d('adding DirectMessageEvent');
+        this.add(DirectMessageEvent(data));
+      } else {
+        logger.d('adding ChannelMessageEvent');
+        this.add(ChannelMessageEvent(data));
+      }
+    }
     // } else if (data is WhatsNewItem) {
     // if (data.workspaceId == null) {
     // this.add(UpdateDirectChannel(data));
@@ -177,10 +187,37 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // }
   }
 
-  void onResumeCallback(NotificationData data) {
-    // navigator.currentState.popUntil();
+  Future<void> onResumeCallback(MessageNotification data) async {
+    onMessageCallback(data);
+    navigator.currentState.popUntil(
+      ModalRoute.withName('/'),
+    ); // navigator.popAndPushNamed(
+    navigator.currentState.push(
+      MaterialPageRoute(
+        builder: (ctx) => MainPage(),
+      ),
+    );
+    void Function(BuildContext) messagePage;
+    if (data.workspaceId == 'direct')
+      messagePage = (ctx) => MessagesPage<DirectsBloc>();
+    else
+      messagePage = (ctx) => MessagesPage<ChannelsBloc>();
+
+    navigator.currentState.push(
+      MaterialPageRoute(builder: messagePage),
+    );
+    if (data.threadId != data.messageId) {
+      if (data.workspaceId == 'direct')
+        messagePage = (ctx) => ThreadPage<DirectsBloc>();
+      else
+        messagePage = (ctx) => ThreadPage<ChannelsBloc>();
+      navigator.currentState.push(
+        MaterialPageRoute(
+          builder: messagePage,
+        ),
+      );
+    }
     logger.w('ON RESUME HERE IS the notification\n$data');
-    // throw 'Have to implement navagation to the right page';
   }
 
   void onLaunchCallback(NotificationData data) {
@@ -210,7 +247,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     data = SocketMessageUpdateNotification.fromJson(event['data']);
     switch (type) {
       case SocketEventType.Unknown:
-        throw Exception('Got unknown event:\n$event');
+        // throw Exception('Got unknown event:\n$event');
+        break;
 
       case SocketEventType.ChannelMessage:
         this.add(ChannelMessageSocketEvent(data));

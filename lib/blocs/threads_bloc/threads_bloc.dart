@@ -54,8 +54,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
           threadId: state.data.threadId,
           channelId: state.data.channelId,
         ));
-      }
-      if (state is ChannelThreadMessageArrived && T == ChannelsBloc) {
+      } else if (state is ChannelThreadMessageArrived && T == ChannelsBloc) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           threadId: state.data.threadId,

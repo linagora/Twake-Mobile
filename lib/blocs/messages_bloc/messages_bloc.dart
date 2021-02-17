@@ -84,19 +84,17 @@ class MessagesBloc<T extends BaseChannelBloc>
           channelId: state.data.channelId,
           modifier: 1,
         ));
-        // } else if (state is ThreadMessageNotification) {
-        // if (T == DirectsBloc && state.data.workspaceId == null)
-        // this.add(ModifyResponsesCount(
-        // threadId: state.data.threadId,
-        // channelId: state.data.channelId,
-        // modifier: 1,
-        // ));
-        // else if (T == ChannelsBloc && state.data.workspaceId != null)
-        // this.add(ModifyResponsesCount(
-        // threadId: state.data.threadId,
-        // channelId: state.data.channelId,
-        // modifier: 1,
-        // ));
+      } else if (state is ThreadMessageNotification) {
+        if (T == DirectsBloc && state.data.workspaceId == 'direct')
+          Future.delayed(
+            Duration(seconds: 2),
+            () => this.add(SelectMessage(state.data.messageId)),
+          );
+        else if (T == ChannelsBloc && state.data.workspaceId != 'direct')
+          Future.delayed(
+            Duration(seconds: 2),
+            () => this.add(SelectMessage(state.data.messageId)),
+          );
       } else if (state is MessageDeleted && selectedChannel != null) {
         this.add(RemoveMessage(
           channelId: state.data.channelId,

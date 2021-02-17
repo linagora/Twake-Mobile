@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/companies_bloc/company_event.dart';
 import 'package:twake/models/company.dart';
@@ -12,13 +13,23 @@ export 'package:twake/blocs/companies_bloc/company_state.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   final CollectionRepository<Company> repository;
-  CompaniesBloc(this.repository)
+  final NotificationBloc notificationBloc;
+  StreamSubscription _notificationSubscription;
+
+  CompaniesBloc(this.repository, this.notificationBloc)
       : super(CompaniesLoaded(
           companies: repository.items,
           selected: repository.selected,
         )) {
     // repository.logger.w('SELECTED COMPANY: ${repository.selected.id}');
     ProfileBloc.selectedCompany = repository.selected.id;
+
+    _notificationSubscription =
+        notificationBloc.listen((NotificationState state) {
+      if (state is BaseChannelMessageNotification) {
+        this.add(ChangeSelectedCompany(state.data.companyId));
+      }
+    });
   }
 
   @override
@@ -51,5 +62,11 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       // selected: selected,
       // );
     }
+  }
+
+  @override
+  Future<void> close() {
+    _notificationSubscription.cancel();
+    return super.close();
   }
 }

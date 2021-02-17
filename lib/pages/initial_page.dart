@@ -99,9 +99,23 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   create: (_) => ProfileBloc(state.initData.profile),
                   lazy: false,
                 ),
+                BlocProvider<NotificationBloc>(
+                  lazy: false,
+                  create: (_) => NotificationBloc(
+                    token:
+                        BlocProvider.of<AuthBloc>(ctx).repository.accessToken,
+                    socketIOHost:
+                        BlocProvider.of<AuthBloc>(ctx).repository.socketIOHost,
+                    connectionBloc: BlocProvider.of<cb.ConnectionBloc>(ctx),
+                    navigator: _navigatorKey,
+                  )..setSubscriptions(),
+                ),
                 BlocProvider<CompaniesBloc>(
                   lazy: false,
-                  create: (ctx) => CompaniesBloc(state.initData.companies),
+                  create: (ctx) => CompaniesBloc(
+                    state.initData.companies,
+                    BlocProvider.of<NotificationBloc>(ctx),
+                  ),
                 ),
                 BlocProvider<WorkspacesBloc>(
                     lazy: false,
@@ -109,20 +123,10 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                       return WorkspacesBloc(
                         repository: state.initData.workspaces,
                         companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
+                        notificationBloc:
+                            BlocProvider.of<NotificationBloc>(ctx),
                       );
                     }),
-                BlocProvider<NotificationBloc>(
-                    lazy: false,
-                    create: (_) => NotificationBloc(
-                          token: BlocProvider.of<AuthBloc>(ctx)
-                              .repository
-                              .accessToken,
-                          socketIOHost: BlocProvider.of<AuthBloc>(ctx)
-                              .repository
-                              .socketIOHost,
-                          connectionBloc:
-                              BlocProvider.of<cb.ConnectionBloc>(ctx),
-                        )..setSubscriptions()),
                 BlocProvider<ChannelsBloc>(create: (ctx) {
                   return ChannelsBloc(
                     repository: state.initData.channels,

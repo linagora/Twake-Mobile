@@ -31,6 +31,7 @@ class ChannelsBloc extends BaseChannelBloc {
                 : ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
       if (state is WorkspaceSelected) {
+        repository.logger.d('WORKSPACE SELECTED ${state.selected.id}');
         selectedBeforeId = selectedParentId;
         selectedParentId = state.selected.id;
         this.add(ReloadChannels(workspaceId: selectedParentId));
@@ -39,13 +40,18 @@ class ChannelsBloc extends BaseChannelBloc {
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
-      if (state is ChannelMessageNotification) {
-        this.add(ModifyMessageCount(
-          channelId: state.data.channelId,
-          workspaceId: state.data.workspaceId,
-          totalModifier: 1,
-          unreadModifier: 1,
-        ));
+      if (state is BaseChannelMessageNotification &&
+          state.data.workspaceId != 'direct') {
+        // this.add(ModifyMessageCount(
+        // channelId: state.data.channelId,
+        // workspaceId: state.data.workspaceId,
+        // totalModifier: 1,
+        // unreadModifier: 1,
+        // ));
+        Future.delayed(
+          Duration(seconds: 1),
+          () => this.add(ChangeSelectedChannel(state.data.channelId)),
+        );
       } else if (state is ChannelUpdated) {
         this.add(UpdateSingleChannel(state.data));
       } else if (state is ChannelDeleted) {
@@ -85,17 +91,20 @@ class ChannelsBloc extends BaseChannelBloc {
         forceFromApi: event.forceFromApi,
       );
       if (!success) {
+        repository.logger.d('Failed to change workspace');
         workspacesBloc.add(ChangeSelectedWorkspace(selectedBeforeId));
         yield ErrorLoadingChannels(channels: repository.items);
       }
       if (repository.isEmpty) yield ChannelsEmpty();
       yield ChannelsLoaded(
         channels: repository.items,
+        force: DateTime.now().toString(),
       );
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
+      repository.logger.w('CHANNEL ${event.channelId} is selected');
       repository.select(event.channelId, saveToStore: false);
 
       repository.selected.messagesUnread = 0;
