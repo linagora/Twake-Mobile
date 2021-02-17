@@ -19,10 +19,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ParticipantsList extends StatefulWidget {
   final bool isDirect;
+  final String title;
 
   const ParticipantsList({
     Key key,
     this.isDirect = false,
+    this.title = 'Add participants',
   }) : super(key: key);
 
   @override
@@ -36,12 +38,15 @@ class _ParticipantsListState extends State<ParticipantsList> {
   String _searchRequest;
   bool _isDirect;
   bool _shouldFocus = true;
+  String _title;
 
   @override
   void initState() {
     super.initState();
 
     _isDirect = widget.isDirect;
+
+    _title = widget.title;
 
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
@@ -70,6 +75,9 @@ class _ParticipantsListState extends State<ParticipantsList> {
   void didUpdateWidget(covariant ParticipantsList oldWidget) {
     if (oldWidget.isDirect != widget.isDirect) {
       _isDirect = widget.isDirect;
+    }
+    if (oldWidget.title != widget.title) {
+      _title = widget.title;
     }
     super.didUpdateWidget(oldWidget);
   }

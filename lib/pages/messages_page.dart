@@ -102,7 +102,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 2.0),
                           child: Text(
-                            '${(state.parentChannel as Channel).membersCount != 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
+                            '${(state.parentChannel as Channel).membersCount != null && (state.parentChannel as Channel).membersCount > 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
                             style: TextStyle(
                               fontSize: 10.0,
                               fontWeight: FontWeight.w400,
