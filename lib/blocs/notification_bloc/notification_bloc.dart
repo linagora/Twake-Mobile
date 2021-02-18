@@ -212,6 +212,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         messagePage = (ctx) => ThreadPage<DirectsBloc>();
       else
         messagePage = (ctx) => ThreadPage<ChannelsBloc>();
+      // await Future.delayed(Duration(seconds: 4));
       navigator.currentState.push(
         MaterialPageRoute(
           builder: messagePage,

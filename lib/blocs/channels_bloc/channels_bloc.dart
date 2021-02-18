@@ -39,7 +39,7 @@ class ChannelsBloc extends BaseChannelBloc {
       }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) {
+        notificationBloc.listen((NotificationState state) async {
       if (state is BaseChannelMessageNotification &&
           state.data.workspaceId != 'direct') {
         // this.add(ModifyMessageCount(
@@ -48,10 +48,9 @@ class ChannelsBloc extends BaseChannelBloc {
         // totalModifier: 1,
         // unreadModifier: 1,
         // ));
-        Future.delayed(
-          Duration(seconds: 1),
-          () => this.add(ChangeSelectedChannel(state.data.channelId)),
-        );
+        while (workspacesBloc.state is! WorkspaceSelected)
+          await Future.delayed(Duration(milliseconds: 500));
+        this.add(ChangeSelectedChannel(state.data.channelId));
       } else if (state is ChannelUpdated) {
         this.add(UpdateSingleChannel(state.data));
       } else if (state is ChannelDeleted) {
@@ -128,7 +127,7 @@ class ChannelsBloc extends BaseChannelBloc {
       repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
       var item = await repository.getItemById(event.data.channelId) as Channel;
       if (item != null) {
-        item.icon = event.data.icon;
+        item.icon = event.data.icon ?? '👽';
         item.name = event.data.name;
         item.description = event.data.description;
         item.visibility = event.data.visibility;

@@ -46,6 +46,8 @@ class MessagesRepository {
         // 'SELECT max(modification_date) as max_mod, '
         'SELECT max(creation_date) as max_create '
         'FROM message';
+    final maxFilter = List.from(filters);
+    maxFilter.removeLast();
     final List max = await _storage.customQuery(maxDateQuery, filters: filters);
     logger.d('REQUESTING MESSAGES AFTER: $max');
     if (max.isNotEmpty && max[0]['max_create'] != null) {
@@ -81,8 +83,8 @@ class MessagesRepository {
       limit: limit,
       offset: 0,
     );
-    // logger.d('Loaded ${itemsList.length} items');
     await _updateItems(itemsList, saveToStore: false);
+    logger.d('Loaded ${itemsList.length} messages');
     return true;
   }
 
