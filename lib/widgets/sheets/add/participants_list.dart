@@ -16,6 +16,7 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_event.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/utils/extensions.dart';
 
 class ParticipantsList extends StatefulWidget {
   final bool isDirect;
@@ -218,7 +219,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                       }
                       if (!_isDirect) {
                         var selectedUsers = users.where((user) => selectedIds.contains(user.id)).toList();
-                        users = excludeUsers(users, selectedUsers);
+                        users.excludeUsers(selectedUsers);
                       }
 
                       return ListView.builder(
@@ -269,17 +270,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
       },
     );
   }
-
-  List<User> excludeUsers(
-      List<User> source,
-      List<User> selected,
-      ) {
-    for (User user in selected) {
-      source.removeWhere((element) => element.id == user.id);
-    }
-    return source;
-  }
-
 }
 
 class SearchTextField extends StatefulWidget {
