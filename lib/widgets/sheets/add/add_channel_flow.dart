@@ -16,7 +16,7 @@ class AddChannelFlow extends StatelessWidget {
       ChannelInfoForm(),
       BlocProvider<UserBloc>(
         create: (_) => UserBloc(ProfileBloc.userId),
-        child: ParticipantsList(),
+        child: ParticipantsList(title: 'Add participants'),
       ),
     ];
     return BlocBuilder<AddChannelBloc, AddChannelState>(

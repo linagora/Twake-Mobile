@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:meta/meta.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
@@ -19,12 +19,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ParticipantsList extends StatefulWidget {
   final bool isDirect;
+  final bool isModal;
   final String title;
 
   const ParticipantsList({
     Key key,
     this.isDirect = false,
-    this.title = 'Add participants',
+    this.isModal,
+    @required this.title,
   }) : super(key: key);
 
   @override
@@ -37,6 +39,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
   Timer _debounce;
   String _searchRequest;
   bool _isDirect;
+  bool _isModal;
   bool _shouldFocus = true;
   String _title;
 
@@ -45,8 +48,11 @@ class _ParticipantsListState extends State<ParticipantsList> {
     super.initState();
 
     _isDirect = widget.isDirect;
-
     _title = widget.title;
+    _isModal = widget.isModal;
+    if (widget.isModal == null) {
+      _isModal = _isDirect;
+    }
 
     _controller.addListener(() {
       if (_debounce?.isActive ?? false) _debounce.cancel();
@@ -78,6 +84,9 @@ class _ParticipantsListState extends State<ParticipantsList> {
     }
     if (oldWidget.title != widget.title) {
       _title = widget.title;
+    }
+    if (oldWidget.isModal != widget.isModal) {
+      _isModal = widget.isModal;
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -169,10 +178,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
             return Column(
               children: [
                 SheetTitleBar(
-                  title: _isDirect ? 'New direct chat' : 'Add participants',
-                  leadingTitle: _isDirect ? 'Close' : 'Back',
-                  leadingAction: _isDirect ? () => _close() : () => _return(),
-                  trailingTitle: _isDirect ? null : 'Add',
+                  title: _title,
+                  leadingTitle: _isModal ? 'Close' : 'Back',
+                  leadingAction: _isModal ? () => _close() : () => _return(),
+                  trailingTitle: _isDirect ? null : _isModal ? 'Add' : 'Save',
                   trailingAction: _isDirect ? null : () => _return(),
                 ),
                 Container(

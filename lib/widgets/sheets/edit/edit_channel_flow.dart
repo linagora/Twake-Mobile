@@ -15,7 +15,7 @@ class EditChannelFlow extends StatelessWidget {
       MemberManagement(),
       BlocProvider<UserBloc>(
         create: (_) => UserBloc(ProfileBloc.userId),
-        child: ParticipantsList(),
+        child: ParticipantsList(title: 'Add new member'),
       ),
     ];
     return BlocBuilder<EditChannelCubit, EditChannelState>(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class StylesConfig {
@@ -28,6 +29,7 @@ class StylesConfig {
       color: Colors.transparent,
     ),
     // fontFamily: 'PT',
+    primaryColorBrightness: SchedulerBinding.instance?.window?.platformBrightness ?? Brightness.light,
   );
 
   static final TextTheme lightTextTheme = TextTheme(
