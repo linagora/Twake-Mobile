@@ -138,7 +138,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                     ),
                                   ),
                                 ))
-                        : CircularProgressIndicator(),
+                        : Center(child: CircularProgressIndicator()),
                   ),
                 ),
               if (!_companiesHidden)
@@ -198,7 +198,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                 ),
                               ),
                             )
-                          : CircularProgressIndicator()),
+                          : Center(child: CircularProgressIndicator())),
                 ),
               Divider(
                 thickness: 2.0,
@@ -238,7 +238,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                           ],
                         ),
                       )
-                    : CircularProgressIndicator(),
+                    : Center(child: CircularProgressIndicator()),
               ),
             ],
           ),
