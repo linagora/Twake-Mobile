@@ -216,6 +216,11 @@ class _ParticipantsListState extends State<ParticipantsList> {
                         description = state.repository?.description;
                         selectedIds = state.repository?.members;
                       }
+                      if (!_isDirect) {
+                        var selectedUsers = users.where((user) => selectedIds.contains(user.id)).toList();
+                        users = excludeUsers(users, selectedUsers);
+                      }
+
                       return ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.only(top: 0),
@@ -264,6 +269,17 @@ class _ParticipantsListState extends State<ParticipantsList> {
       },
     );
   }
+
+  List<User> excludeUsers(
+      List<User> source,
+      List<User> selected,
+      ) {
+    for (User user in selected) {
+      source.removeWhere((element) => element.id == user.id);
+    }
+    return source;
+  }
+
 }
 
 class SearchTextField extends StatefulWidget {
