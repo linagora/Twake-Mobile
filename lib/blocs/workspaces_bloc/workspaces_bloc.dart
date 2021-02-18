@@ -39,7 +39,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) async {
-      if (state is BaseChannelMessageNotification) {
+      if (state is BaseChannelMessageNotification &&
+          state.data.workspaceId != 'direct') {
         while (companiesBloc.state is! CompaniesLoaded) {
           print('WAITING FOR COMPANY SELECTION');
           await Future.delayed(Duration(milliseconds: 500));
