@@ -210,24 +210,35 @@ class _ParticipantsListState extends State<ParticipantsList> {
                     buildWhen: (previous, current) => current is Updated,
                     builder: (context, state) {
                       var selectedIds = <String>[];
+                      var selectedUsers = <User>[];
                       var name = '';
                       var description = '';
                       if (state is Updated) {
                         name = state.repository?.name;
                         description = state.repository?.description;
                         selectedIds = state.repository?.members;
-                      }
-                      if (!_isDirect) {
-                        var selectedUsers = users.where((user) => selectedIds.contains(user.id)).toList();
-                        users.excludeUsers(selectedUsers);
+                        if (!_isDirect) {
+                          selectedUsers = users.where((user) => selectedIds.contains(user.id)).toList();
+                          users.excludeUsers(selectedUsers);
+                        }
                       }
 
+                      print('SeLECTED UsERS: ${selectedUsers.map((e) => e.username)}');
                       return ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.only(top: 0),
-                        itemCount: users.length,
+                        itemCount: users.length + selectedUsers.length,
                         itemBuilder: (context, index) {
-                          var user = users[index];
+                          User user;
+                          if (!_isDirect) {
+                            if (index < selectedUsers.length) {
+                              user = selectedUsers[index];
+                            } else {
+                              user = users[index - selectedUsers.length];
+                            }
+                          } else {
+                            user = users[index];
+                          }
                           return SearchItem(
                             title: user.firstName.isNotEmpty ||
                                     user.lastName.isNotEmpty
@@ -244,10 +255,12 @@ class _ParticipantsListState extends State<ParticipantsList> {
                                 if (selectedIds.contains(user.id)) {
                                   setState(() {
                                     selectedIds.remove(user.id);
+                                    // selectedUsers.removeWhere((selected) => selected.id == user.id);
                                   });
                                 } else {
                                   setState(() {
                                     selectedIds.add(user.id);
+                                    // selectedUsers.add(user);
                                   });
                                 }
                                 context.read<AddChannelBloc>().add(Update(
