@@ -203,3 +203,13 @@ class FinishLoadingMessages extends MessagesEvent {
     return {};
   }
 }
+
+class InfinitelyLoadMessages extends MessagesEvent {
+  @override
+  List<Object> get props => [];
+
+  @override
+  Map<String, dynamic> toMap() {
+    return {};
+  }
+}

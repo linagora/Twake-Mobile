@@ -42,14 +42,16 @@ class ChannelsBloc extends BaseChannelBloc {
         notificationBloc.listen((NotificationState state) async {
       if (state is BaseChannelMessageNotification &&
           state.data.workspaceId != 'direct') {
-        // this.add(ModifyMessageCount(
-        // channelId: state.data.channelId,
-        // workspaceId: state.data.workspaceId,
-        // totalModifier: 1,
-        // unreadModifier: 1,
-        // ));
-        while (workspacesBloc.state is! WorkspaceSelected)
+        while (!(workspacesBloc.state is WorkspacesLoaded)) {
+          print('WAITING FOR WORKSPACE SELECTION ${state.data.workspaceId}');
           await Future.delayed(Duration(milliseconds: 500));
+        }
+        while ((workspacesBloc.state as WorkspacesLoaded).selected.id !=
+            state.data.workspaceId) {
+          print(
+              'WAITING FOR CORRECT WORKSPACE SELECTION ${state.data.workspaceId}');
+          await Future.delayed(Duration(milliseconds: 500));
+        }
         this.add(ChangeSelectedChannel(state.data.channelId));
       } else if (state is ChannelUpdated) {
         this.add(UpdateSingleChannel(state.data));
@@ -96,6 +98,7 @@ class ChannelsBloc extends BaseChannelBloc {
       }
       if (repository.isEmpty) yield ChannelsEmpty();
       yield ChannelsLoaded(
+        selected: repository.selected,
         channels: repository.items,
         force: DateTime.now().toString(),
       );

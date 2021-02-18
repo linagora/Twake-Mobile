@@ -195,7 +195,10 @@ class Api {
           if (!(await autoProlongToken())) {
             return dio.reject('Both tokens have expired');
           }
-          options.headers = dio.options.headers;
+          print('REQUEST HEADERS: ${options.headers}\n'
+              'DIO HEADERS: ${dio.options.headers}');
+          options.headers['Authorization'] =
+              dio.options.headers['Authorization'];
         },
         onError: (DioError error) async {
           // Due to the bugs in JWT handling from twake api side,

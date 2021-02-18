@@ -38,12 +38,18 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) {
+        notificationBloc.listen((NotificationState state) async {
       if (state is BaseChannelMessageNotification) {
-        Future.delayed(
-          Duration(milliseconds: 250),
-          () => this.add(ChangeSelectedWorkspace(state.data.workspaceId)),
-        );
+        while (companiesBloc.state is! CompaniesLoaded) {
+          print('WAITING FOR COMPANY SELECTION');
+          await Future.delayed(Duration(milliseconds: 500));
+        }
+        while ((companiesBloc.state as CompaniesLoaded).selected.id !=
+            state.data.companyId) {
+          print('WAITING FOR CORRECT COMPANY SELECTION');
+          await Future.delayed(Duration(milliseconds: 500));
+        }
+        this.add(ChangeSelectedWorkspace(state.data.workspaceId));
       }
     });
     ProfileBloc.selectedWorkspace = repository.selected.id;

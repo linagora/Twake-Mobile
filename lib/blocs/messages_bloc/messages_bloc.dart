@@ -43,8 +43,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         // repository.logger.d('TRIGGERED MESSAGE FETCH');
         repository.logger.w(
             'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
-        selectedChannel = state.selected;
         this.add(LoadMessages());
+        selectedChannel = state.selected;
       }
       // if (state is ChannelsLoaded) {
       // final updatedChannel = state.channels
@@ -86,12 +86,16 @@ class MessagesBloc<T extends BaseChannelBloc>
         ));
       } else if (state is ThreadMessageNotification) {
         if (T == DirectsBloc && state.data.workspaceId == 'direct') {
-          while (channelsBloc.state is! ChannelPicked)
+          while (selectedChannel.id != state.data.channelId) {
+            print('Waiting for the correct channel loading');
             await Future.delayed(Duration(milliseconds: 500));
+          }
           this.add(SelectMessage(state.data.threadId));
         } else if (T == ChannelsBloc && state.data.workspaceId != 'direct') {
-          while (channelsBloc.state is! ChannelPicked)
+          while (selectedChannel.id != state.data.channelId) {
+            print('Waiting for the correct channel loading');
             await Future.delayed(Duration(milliseconds: 500));
+          }
           this.add(SelectMessage(state.data.threadId));
         }
       } else if (state is MessageDeleted && selectedChannel != null) {
