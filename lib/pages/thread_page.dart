@@ -39,48 +39,46 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
       return state is MessagesLoaded
           ? Scaffold(
               appBar: AppBar(
-                titleSpacing: 0.0,
-                shadowColor: Colors.grey[300],
-                toolbarHeight:
-                    Dim.heightPercent((kToolbarHeight * 0.15).round()),
-                leading: BlocConsumer<DraftBloc, DraftState>(
-                    listener: (context, state) {
-                      if (state is DraftSaved || state is DraftError)
-                        Navigator.of(context).pop();
-                    },
-                    buildWhen: (_, current) =>
-                        current is DraftUpdated || current is DraftReset,
-                    builder: (context, state) {
-                      if (state is DraftUpdated) {
-                        threadId = state.id;
-                        draft = state.draft;
-                      } else if (state is DraftReset) {
-                        draft = '';
-                      }
+                  titleSpacing: 0.0,
+                  shadowColor: Colors.grey[300],
+                  toolbarHeight:
+                      Dim.heightPercent((kToolbarHeight * 0.15).round()),
+                  leading: BlocConsumer<DraftBloc, DraftState>(
+                      listener: (context, state) {
+                        if (state is DraftSaved || state is DraftError)
+                          Navigator.of(context).pop();
+                      },
+                      buildWhen: (_, current) =>
+                          current is DraftUpdated || current is DraftReset,
+                      builder: (context, state) {
+                        if (state is DraftUpdated) {
+                          threadId = state.id;
+                          draft = state.draft;
+                        } else if (state is DraftReset) {
+                          draft = '';
+                        }
 
-                      return BackButton(
-                        onPressed: () {
-                          if (draft != null) {
-                            if (draft.isNotEmpty) {
-                              context.read<DraftBloc>().add(SaveDraft(
-                                    id: threadId,
-                                    type: DraftType.thread,
-                                    draft: draft,
-                                  ));
+                        return BackButton(
+                          onPressed: () {
+                            if (draft != null) {
+                              if (draft.isNotEmpty) {
+                                context.read<DraftBloc>().add(SaveDraft(
+                                      id: threadId,
+                                      type: DraftType.thread,
+                                      draft: draft,
+                                    ));
+                              } else {
+                                context.read<DraftBloc>().add(ResetDraft(
+                                    id: threadId, type: DraftType.thread));
+                                Navigator.of(context).pop();
+                              }
                             } else {
-                              context.read<DraftBloc>().add(ResetDraft(
-                                  id: threadId, type: DraftType.thread));
                               Navigator.of(context).pop();
                             }
-                          } else {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                      );
-                    }),
-                title: BlocBuilder<ThreadsBloc<T>, MessagesState>(
-                    builder: (ctx, state) {
-                  return Row(
+                          },
+                        );
+                      }),
+                  title: Row(
                     children: [
                       state.parentChannel is Direct
                           ? StackedUserAvatars(
@@ -115,9 +113,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                         ],
                       ),
                     ],
-                  );
-                }),
-              ),
+                  )),
               body: SafeArea(
                 child: BlocListener<ThreadsBloc<T>, MessagesState>(
                   listener: (ctx, state) {
