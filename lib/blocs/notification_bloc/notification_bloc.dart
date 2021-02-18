@@ -113,6 +113,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   Future<void> setSubscriptions() async {
+    await Future.delayed(Duration(seconds: 2));
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
       params: {
