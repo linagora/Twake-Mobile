@@ -195,8 +195,8 @@ class Api {
           if (!(await autoProlongToken())) {
             return dio.reject('Both tokens have expired');
           }
-          print('REQUEST HEADERS: ${options.headers}\n'
-              'DIO HEADERS: ${dio.options.headers}');
+          // print('REQUEST HEADERS: ${options.headers}\n'
+          // 'DIO HEADERS: ${dio.options.headers}');
           options.headers['Authorization'] =
               dio.options.headers['Authorization'];
         },

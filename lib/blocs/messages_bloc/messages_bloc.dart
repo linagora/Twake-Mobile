@@ -86,13 +86,17 @@ class MessagesBloc<T extends BaseChannelBloc>
         ));
       } else if (state is ThreadMessageNotification) {
         if (T == DirectsBloc && state.data.workspaceId == 'direct') {
-          while (selectedChannel.id != state.data.channelId) {
-            print('Waiting for the correct channel loading');
+          while (selectedChannel.id != state.data.channelId ||
+              this.state is! MessagesLoaded) {
+            print('Waiting for the correct channel loading\n'
+                'COND1: ${selectedChannel.id != state.data.channelId}\n'
+                'COND2: ${this.state is! MessagesLoaded}');
             await Future.delayed(Duration(milliseconds: 500));
           }
           this.add(SelectMessage(state.data.threadId));
         } else if (T == ChannelsBloc && state.data.workspaceId != 'direct') {
-          while (selectedChannel.id != state.data.channelId) {
+          while (selectedChannel.id != state.data.channelId ||
+              this.state is! MessagesLoaded) {
             print('Waiting for the correct channel loading');
             await Future.delayed(Duration(milliseconds: 500));
           }
