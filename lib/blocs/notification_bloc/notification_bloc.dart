@@ -72,7 +72,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       await _api.autoProlongToken();
     });
     socket.onConnect((msg) {
-      // logger.d('CONNECTED ON SOCKET IO\n$token');
+      logger.d('CONNECTED ON SOCKET IO\n$token');
       socketConnectionState = SocketConnectionState.CONNECTED;
       socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
     });
@@ -82,7 +82,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       socketConnectionState = SocketConnectionState.DISCONNECTED;
     });
     socket.on(SocketIOEvent.AUTHENTICATED, (data) async {
-      // logger.d('AUTHENTICATED ON SOCKET: $data');
+      logger.d('AUTHENTICATED ON SOCKET: $data');
       socketConnectionState = SocketConnectionState.AUTHENTICATED;
       await setSubscriptions();
     });
@@ -113,6 +113,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   Future<void> setSubscriptions() async {
+    await Future.delayed(Duration(seconds: 2));
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
       params: {
@@ -211,6 +212,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         messagePage = (ctx) => ThreadPage<DirectsBloc>();
       else
         messagePage = (ctx) => ThreadPage<ChannelsBloc>();
+      // await Future.delayed(Duration(seconds: 4));
       navigator.currentState.push(
         MaterialPageRoute(
           builder: messagePage,

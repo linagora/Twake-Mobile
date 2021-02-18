@@ -68,6 +68,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
           messageId: state.data.messageId,
           onNotify: true,
         ));
+      } else if (state is ThreadMessageNotification) {
+        this.add(InfinitelyLoadMessages());
       }
     });
   }
@@ -204,6 +206,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
         threadMessage: threadMessage,
         parentChannel: parentChannel,
       );
+    } else if (event is InfinitelyLoadMessages) {
+      yield MessagesLoading();
     }
   }
 

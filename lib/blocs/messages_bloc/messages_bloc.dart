@@ -41,10 +41,10 @@ class MessagesBloc<T extends BaseChannelBloc>
     _subscription = channelsBloc.listen((ChannelState state) {
       if (state is ChannelPicked) {
         // repository.logger.d('TRIGGERED MESSAGE FETCH');
-        // repository.logger.d(
-        // 'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
-        selectedChannel = state.selected;
+        repository.logger.w(
+            'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
         this.add(LoadMessages());
+        selectedChannel = state.selected;
       }
       // if (state is ChannelsLoaded) {
       // final updatedChannel = state.channels
@@ -56,7 +56,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       // }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) {
+        notificationBloc.listen((NotificationState state) async {
       if (T == ChannelsBloc && state is ChannelMessageArrived) {
         // repository.logger.d('GOT CHANNEL MESSAGE: $state');
         // repository.logger.w('SELECTED CHANNEL IS $selectedChannel');
@@ -85,16 +85,23 @@ class MessagesBloc<T extends BaseChannelBloc>
           modifier: 1,
         ));
       } else if (state is ThreadMessageNotification) {
-        if (T == DirectsBloc && state.data.workspaceId == 'direct')
-          Future.delayed(
-            Duration(seconds: 2),
-            () => this.add(SelectMessage(state.data.messageId)),
-          );
-        else if (T == ChannelsBloc && state.data.workspaceId != 'direct')
-          Future.delayed(
-            Duration(seconds: 2),
-            () => this.add(SelectMessage(state.data.messageId)),
-          );
+        if (T == DirectsBloc && state.data.workspaceId == 'direct') {
+          while (selectedChannel.id != state.data.channelId ||
+              this.state is! MessagesLoaded) {
+            print('Waiting for the correct channel loading\n'
+                'COND1: ${selectedChannel.id != state.data.channelId}\n'
+                'COND2: ${this.state is! MessagesLoaded}');
+            await Future.delayed(Duration(milliseconds: 500));
+          }
+          this.add(SelectMessage(state.data.threadId));
+        } else if (T == ChannelsBloc && state.data.workspaceId != 'direct') {
+          while (selectedChannel.id != state.data.channelId ||
+              this.state is! MessagesLoaded) {
+            print('Waiting for the correct channel loading');
+            await Future.delayed(Duration(milliseconds: 500));
+          }
+          this.add(SelectMessage(state.data.threadId));
+        }
       } else if (state is MessageDeleted && selectedChannel != null) {
         this.add(RemoveMessage(
           channelId: state.data.channelId,

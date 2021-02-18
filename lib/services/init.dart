@@ -87,15 +87,22 @@ Future<InitData> initMain() async {
   final messages =
       MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
   final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
-  final channelMembers = await MemberRepository.load(
-    Endpoint.channelMembers,
-    queryParams: {
-      'company_id': companies.selected.id,
-      'workspace_id': workspaces.selected.id,
-      'channel_id': channels.selected.id,
-    },
-    sortFields: {'channel_id': true},
-  );
+  var channelMembers;
+  if (!channels.isEmpty) {
+    channelMembers = await MemberRepository.load(
+      Endpoint.channelMembers,
+      queryParams: {
+        'company_id': companies.selected.id,
+        'workspace_id': workspaces.selected.id,
+        'channel_id': channels.selected.id,
+      },
+      sortFields: {'channel_id': true},
+    );
+  } else
+    channelMembers = MemberRepository(
+      items: [],
+      apiEndpoint: Endpoint.channelMembers,
+    );
 
   return InitData(
     profile: profile,
