@@ -64,6 +64,8 @@ class AuthRepository extends JsonSerializable {
     if (authMap != null) authMap = jsonDecode(authMap[_storage.settingsField]);
 
     final fcmToken = (await FirebaseMessaging().getToken());
+    print('FCM TOKEN: $fcmToken');
+
     final apiVersion = (await PackageInfo.fromPlatform()).version;
     Logger().w('DATA: $authMap');
 
