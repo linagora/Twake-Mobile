@@ -143,7 +143,7 @@ class MessagesRepository {
 
   Future<Message> updateResponsesCount(String messageId) async {
     var m = await getItemById(messageId);
-    print('BEFORE COUNT: ${m.responsesCount}\nID: $messageId');
+    // print('BEFORE COUNT: ${m.responsesCount}\nID: $messageId');
     final sqlT = 'SELECT count(id) as count FROM message';
     final res = (await _storage.customQuery(sqlT, filters: [
       ['thread_id', '=', messageId]
@@ -158,7 +158,7 @@ class MessagesRepository {
     // sql: sql,
     // args: args,
     // );
-    print('MESSAGE AFTER UPDATE: ${m.toJson()}');
+    // print('MESSAGE AFTER UPDATE: ${m.toJson()}');
     // items.firstWhere((i) => i.id == m.id, orElse: () => null)?.responsesCount =
     // m.responsesCount;
     return m;
@@ -239,9 +239,9 @@ class MessagesRepository {
     if (!forceFromDB)
       item = items.firstWhere((i) => i.id == id, orElse: () => null);
     if (item == null) {
-      print('GETTING MESSAGE BY ID: $id');
+      // print('GETTING MESSAGE BY ID: $id');
       var map = await _storage.load(type: StorageType.Message, key: id);
-      print('MESSAGE: $map');
+      // print('MESSAGE: $map');
       if (map == null) return null;
       item = Message.fromJson(map);
     }
