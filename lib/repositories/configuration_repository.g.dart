@@ -9,7 +9,9 @@ part of 'configuration_repository.dart';
 ConfigurationRepository _$ConfigurationRepositoryFromJson(
     Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['host']);
-  return ConfigurationRepository()..host = json['host'] as String;
+  return ConfigurationRepository(
+    host: json['host'] as String,
+  );
 }
 
 Map<String, dynamic> _$ConfigurationRepositoryToJson(
