@@ -39,17 +39,18 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) async {
-      if (state is BaseChannelMessageNotification) {
-        while (companiesBloc.state is! CompaniesLoaded) {
-          print('WAITING FOR COMPANY SELECTION');
-          await Future.delayed(Duration(milliseconds: 500));
+      if (state is BaseChannelMessageNotification &&
+          state.data.workspaceId != 'direct') {
+        while (true) {
+          if (companiesBloc.state is CompaniesLoaded &&
+              (companiesBloc.state as CompaniesLoaded).selected.id ==
+                  state.data.companyId) {
+            this.add(ChangeSelectedWorkspace(state.data.workspaceId));
+          } else {
+            print('WAITING FOR COMPANY SELECTION');
+            await Future.delayed(Duration(milliseconds: 500));
+          }
         }
-        while ((companiesBloc.state as CompaniesLoaded).selected.id !=
-            state.data.companyId) {
-          print('WAITING FOR CORRECT COMPANY SELECTION');
-          await Future.delayed(Duration(milliseconds: 500));
-        }
-        this.add(ChangeSelectedWorkspace(state.data.workspaceId));
       }
     });
     ProfileBloc.selectedWorkspace = repository.selected.id;

@@ -22,6 +22,7 @@ export 'package:twake/models/notification.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   Notifications service;
+  ConnectionBloc connectionBloc;
   IO.Socket socket;
   var socketConnectionState = SocketConnectionState.DISCONNECTED;
 
@@ -38,7 +39,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc({
     this.token,
     this.socketIOHost,
-    ConnectionBloc connectionBloc,
+    this.connectionBloc,
     this.navigator,
   }) : super(NotificationsAbsent()) {
     service = Notifications(
@@ -46,6 +47,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       onResumeCallback: onResumeCallback,
       onLaunchCallback: onLaunchCallback,
     );
+    print('TOKEN: $token\nHOST: $socketIOHost');
     socket = IO.io(
       this.socketIOHost,
       IO.OptionBuilder()
@@ -61,9 +63,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         reinit();
       }
     });
-    print('TOKEN: $token\nHOST: ${socket.opts}');
     setupListeners();
-    socket = socket.connect();
+    if (connectionBloc.state is ConnectionActive) {
+      socket = socket.connect();
+    }
   }
 
   void setupListeners() {
@@ -105,7 +108,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
   }
 
-  void reinit() {
+  void reinit() async {
+    if (connectionBloc.state is ConnectionLost) return;
     for (String room in subscriptionRooms.keys) {
       unsubscribe(room);
     }
@@ -113,7 +117,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   Future<void> setSubscriptions() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 3));
+    if (connectionBloc.state is ConnectionLost) return;
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
       params: {

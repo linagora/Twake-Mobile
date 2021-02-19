@@ -34,15 +34,20 @@ class DirectsBloc extends BaseChannelBloc {
       }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) {
+        notificationBloc.listen((NotificationState state) async {
       if (state is DirectMessageNotification) {
         this.add(ChangeSelectedChannel(state.data.channelId));
-        // this.add(ModifyMessageCount(
-        // channelId: state.data.channelId,
-        // companyId: state.data.companyId,
-        // totalModifier: 1,
-        // unreadModifier: 1,
-        // ));
+      } else if (state is BaseChannelMessageNotification &&
+          state.data.workspaceId == 'direct') {
+        while (true) {
+          if (selectedParentId == state.data.companyId &&
+              this.state is ChannelsLoaded) {
+            this.add(ChangeSelectedChannel(state.data.channelId));
+            break;
+          } else {
+            await Future.delayed(Duration(milliseconds: 500));
+          }
+        }
       }
       // else if (state is DirectUpdateNotification) {
       // this.add(

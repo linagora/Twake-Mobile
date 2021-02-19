@@ -91,7 +91,8 @@ class ChannelsBloc extends BaseChannelBloc {
       );
       if (!success) {
         repository.logger.d('Failed to change workspace');
-        workspacesBloc.add(ChangeSelectedWorkspace(selectedBeforeId));
+        if (selectedBeforeId != null)
+          workspacesBloc.add(ChangeSelectedWorkspace(selectedBeforeId));
         yield ErrorLoadingChannels(channels: repository.items);
       }
       if (repository.isEmpty) yield ChannelsEmpty();

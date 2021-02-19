@@ -16,7 +16,7 @@ class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
           Duration(seconds: 1), () => this.add(CheckConnectionState()));
     });
     Future.delayed(
-        Duration(seconds: 3), () => this.add(CheckConnectionState()));
+        Duration(milliseconds: 1500), () => this.add(CheckConnectionState()));
   }
 
   @override

@@ -40,11 +40,12 @@ class AuthRepository extends JsonSerializable {
   String fcmToken;
   @JsonKey(ignore: true)
   String apiVersion;
-  @JsonKey(ignore: true)
+
+  @JsonKey(name: 'twake_console')
   String twakeConsole;
-  @JsonKey(ignore: true)
+  @JsonKey(name: 'auth_mode')
   String authMode;
-  @JsonKey(ignore: true)
+  @JsonKey(name: 'socket_io_host')
   String socketIOHost;
 
   AuthRepository({this.fcmToken, this.apiVersion}) {
@@ -112,7 +113,13 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<String> getAuthMode() async {
-    final data = await _api.get(Endpoint.version, useTokenDio: true);
+    var data;
+    try {
+      data = await _api.get(Endpoint.version, useTokenDio: true);
+    } catch (e) {
+      logger.d('ERROR WHILE GETTING AUTH MODE');
+      return 'INTERNAL';
+    }
     if ((data['auth_mode'] as List).contains('console')) {
       this.authMode = 'CONSOLE';
       this.twakeConsole = data['auth']['console']['mobile_endpoint_url'];
@@ -121,6 +128,7 @@ class AuthRepository extends JsonSerializable {
       this.authMode = 'INTERNAL';
     }
     this.socketIOHost = data['socket_endpoint']['host'];
+    this.save();
     return authMode;
   }
 

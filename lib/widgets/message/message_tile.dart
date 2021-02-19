@@ -20,6 +20,8 @@ import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
+
 class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
   final bool hideShowAnswers;
   final Message message;
@@ -207,7 +209,10 @@ class _MessageTileState<T extends BaseChannelBloc>
                                 throw 'Could not launch $href';
                               }
                             },
-                            data: messageState.text.replaceAll('\n', '\\\n'),
+                            data: messageState.text.replaceAll(
+                              singleLineFeed,
+                              '\\\n',
+                            ),
                           ),
                           // Parser(messageState.content,
                           // messageState.charCount)
