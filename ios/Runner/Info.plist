@@ -38,7 +38,9 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Uploading pictures to the chat</string>
 	<key>UIBackgroundModes</key>
-	<array/>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
