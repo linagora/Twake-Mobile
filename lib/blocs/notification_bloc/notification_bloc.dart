@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:twake/blocs/notification_bloc/notification_state.dart';
 import 'package:twake/models/notification.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:twake/services/service_bundle.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 export 'package:twake/blocs/notification_bloc/notification_event.dart';
 export 'package:twake/blocs/notification_bloc/notification_state.dart';
@@ -32,6 +34,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   final logger = Logger();
   final _api = Api();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   Map<String, dynamic> subscriptionRooms = {};
   StreamSubscription _subscription;
@@ -42,6 +45,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     this.connectionBloc,
     this.navigator,
   }) : super(NotificationsAbsent()) {
+
+    // iOS permission for Firebase push-notifications.
+    if (Platform.isIOS) _iOSpermission();
+
     service = Notifications(
       onMessageCallback: onMessageCallback,
       onResumeCallback: onResumeCallback,
@@ -67,6 +74,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     if (connectionBloc.state is ConnectionActive) {
       socket = socket.connect();
     }
+  }
+
+  void _iOSpermission() {
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
   }
 
   void setupListeners() {
