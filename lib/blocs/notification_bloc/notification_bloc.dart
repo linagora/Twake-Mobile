@@ -71,7 +71,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void setupListeners() {
     socket.onReconnect((_) async {
-      logger.d('RECCONNECTED, RESETTING SUBSCRIPTIONS');
+      logger.d('RECONNECTED, RESETTING SUBSCRIPTIONS');
       await _api.autoProlongToken();
     });
     socket.onConnect((msg) {
@@ -98,7 +98,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
       // logger.d('GOT RESOURCE: $data');
-      handleSocketRosource(data);
+      handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
       logger.d('FAILED TO JOIN: $data');
@@ -229,10 +229,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void onLaunchCallback(NotificationData data) {
     logger.w('ON LAUNCH HERE IS the notification\n$data');
-    throw 'Have to implement navagation to the right page';
+    throw 'Have to implement navigation to the right page';
   }
 
-  void handleSocketRosource(Map resource) {
+  void handleSocketResource(Map resource) {
     final type = getSocketResourceType(resource);
     logger.w('RESOURCE ID: $type');
     if (type == SocketResourceType.ChannelUpdate) {
