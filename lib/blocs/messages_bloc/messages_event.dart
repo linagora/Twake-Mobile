@@ -86,12 +86,10 @@ class LoadSingleMessage extends MessagesEvent {
 class ModifyResponsesCount extends MessagesEvent {
   final String threadId;
   final String channelId;
-  final int modifier;
 
   const ModifyResponsesCount({
     this.channelId,
     this.threadId,
-    this.modifier,
   });
 
   @override

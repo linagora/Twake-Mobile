@@ -29,8 +29,8 @@ class MessagesRepository {
     var oldSelected = selected;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
-    assert(selected.id == item.id);
-    if (saveToStore) saveOne(item);
+    // assert(selected.id == item.id);
+    saveOne(item);
     saveOne(oldSelected);
   }
 
@@ -49,19 +49,19 @@ class MessagesRepository {
     final maxFilter = List.from(filters);
     maxFilter.removeLast();
     final List max = await _storage.customQuery(maxDateQuery, filters: filters);
-    logger.d('REQUESTING MESSAGES AFTER: $max');
+    // logger.d('REQUESTING MESSAGES AFTER: $max');
     if (max.isNotEmpty && max[0]['max_create'] != null) {
       queryParams['after_date'] = max[0]['max_create'].toString();
     }
     try {
-      logger.d('Query params is: $queryParams');
+      // logger.d('Query params is: $queryParams');
       itemsList = await _api.get(apiEndpoint, params: queryParams);
     } on ApiError catch (error) {
       logger.d('ERROR while reloading Messages from api\n${error.message}');
     }
     final Set<String> userIds =
         itemsList.map((i) => (i['user_id'] as String)).toSet();
-    logger.d('USERIDS: $userIds');
+    // logger.d('USERIDS: $userIds');
     await UserRepository().batchUsersLoad(userIds);
     await _storage.batchStore(
       items: itemsList.map((i) {
@@ -84,7 +84,7 @@ class MessagesRepository {
       offset: 0,
     );
     await _updateItems(itemsList, saveToStore: false);
-    logger.d('Loaded ${itemsList.length} messages');
+    // logger.d('Loaded ${itemsList.length} messages');
     return true;
   }
 
@@ -141,11 +141,34 @@ class MessagesRepository {
     return true;
   }
 
+  Future<Message> updateResponsesCount(String messageId) async {
+    var m = await getItemById(messageId);
+    print('BEFORE COUNT: ${m.responsesCount}\nID: $messageId');
+    final sqlT = 'SELECT count(id) as count FROM message';
+    final res = (await _storage.customQuery(sqlT, filters: [
+      ['thread_id', '=', messageId]
+    ]))[0]['count'];
+    m.responsesCount = res;
+    _storage.store(item: m.toJson(), type: StorageType.Message);
+    // print('RESPONSES COUNT: $res');
+    // final sql = 'UPDATE message SET responses_count = '
+    // '(SELECT count(id) FROM message WHERE thread_id = ?) WHERE id = ?';
+    // final args = [messageId, messageId];
+    // await _storage.customUpdate(
+    // sql: sql,
+    // args: args,
+    // );
+    print('MESSAGE AFTER UPDATE: ${m.toJson()}');
+    // items.firstWhere((i) => i.id == m.id, orElse: () => null)?.responsesCount =
+    // m.responsesCount;
+    return m;
+  }
+
   Future<bool> pullOne(
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
-    logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
+    // logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
     List resp = [];
     try {
       resp = (await _api.get(apiEndpoint, params: queryParams));
@@ -163,14 +186,19 @@ class MessagesRepository {
           'user.lastname, '
           'user.thumbnail '
           'FROM message INNER JOIN user ON user.id = message.user_id';
-      final itemMap = (await _storage.customQuery(
+      final List itemMapTemp = (await _storage.customQuery(
         query,
         filters: [
           ['message.id', '=', item.id]
         ],
         limit: 1,
         offset: 0,
-      ))[0];
+      ));
+      var itemMap;
+      if (itemMapTemp.isNotEmpty) {
+        itemMap = itemMapTemp[0];
+      }
+      if (itemMap == null) return false;
 
       final message = Message.fromJson(itemMap);
       final old =
@@ -179,7 +207,7 @@ class MessagesRepository {
       this.items.add(message);
     }
 
-    logger.d('Pulled item: ${item.toJson()}');
+    // logger.d('Pulled item: ${item.toJson()}');
     return true;
   }
 
@@ -200,16 +228,20 @@ class MessagesRepository {
     }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = Message.fromJson(resp);
-    saveOne(item);
+    await saveOne(item);
     if (addToItems) this.items.add(item);
     if (onSuccess != null) onSuccess(item);
     return true;
   }
 
-  Future<Message> getItemById(String id) async {
-    var item = items.firstWhere((i) => i.id == id, orElse: () => null);
+  Future<Message> getItemById(String id, [forceFromDB = false]) async {
+    Message item;
+    if (!forceFromDB)
+      item = items.firstWhere((i) => i.id == id, orElse: () => null);
     if (item == null) {
-      final map = await _storage.load(type: StorageType.Message, key: id);
+      print('GETTING MESSAGE BY ID: $id');
+      var map = await _storage.load(type: StorageType.Message, key: id);
+      print('MESSAGE: $map');
       if (map == null) return null;
       item = Message.fromJson(map);
     }

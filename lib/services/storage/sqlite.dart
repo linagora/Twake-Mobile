@@ -97,6 +97,15 @@ class SQLite with Storage {
   }
 
   @override
+  Future<dynamic> customUpdate({
+    String sql,
+    List args,
+  }) async {
+    final result = await _db.rawUpdate(sql, args);
+    return result;
+  }
+
+  @override
   Future<void> store({
     Map<String, dynamic> item,
     StorageType type,
