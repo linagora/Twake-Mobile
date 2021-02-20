@@ -14,6 +14,14 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
+  final _configurationFuture = ConfigurationRepository.load();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +59,11 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             Padding(
               padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
               child: FutureBuilder<ConfigurationRepository>(
-                future: ConfigurationRepository.load(),
+                future: _configurationFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     final repository = snapshot.data;
+                    _controller.text = repository.host;
 
                     return BlocProvider<ConfigurationCubit>(
                       create: (context) => ConfigurationCubit(repository),
