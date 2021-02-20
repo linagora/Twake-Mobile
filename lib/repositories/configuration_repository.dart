@@ -8,6 +8,7 @@ part 'configuration_repository.g.dart';
 // because it's a global object,
 // it always has only one record in store
 const CONFIG_KEY = 'configuration';
+const DEFAULT_HOST = 'https://mobile.api.twake.app';
 
 @JsonSerializable()
 class ConfigurationRepository extends JsonSerializable {
@@ -37,10 +38,11 @@ class ConfigurationRepository extends JsonSerializable {
           ConfigurationRepository.fromJson(configurationMap);
       return configurationRepository;
     }
-    return ConfigurationRepository();
+    return ConfigurationRepository(host: DEFAULT_HOST);
   }
 
-  Future<void> remove() async {
+  Future<void> clean() async {
+    host = '';
     await _storage.delete(
       type: StorageType.Configuration,
       key: CONFIG_KEY,

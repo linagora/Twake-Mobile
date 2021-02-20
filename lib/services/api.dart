@@ -13,6 +13,8 @@ const _CONNECT_TIMEOUT = 50000;
 class Api {
   // singleton Api class instance
   static Api _api;
+  // Server address
+  static String _host;
   // logging utility
   static final logger = Logger();
   // callback function to auto prolong token, if access token has expired
@@ -27,7 +29,7 @@ class Api {
   Dio dio;
   final Dio tokenDio = Dio();
 
-  factory Api({Map<String, String> headers}) {
+  factory Api({Map<String, String> headers, String host}) {
     // if the headers are present, e.g. token has changed,
     // reinitialize Dio
     if (_api == null) {
