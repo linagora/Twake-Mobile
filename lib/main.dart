@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
+import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/repositories/auth_repository.dart';
+import 'package:twake/repositories/configuration_repository.dart';
 import 'package:twake/services/init.dart';
 import 'package:twake/utils/sentry.dart';
 
@@ -17,6 +19,7 @@ void main() async {
     WidgetsFlutterBinding.ensureInitialized();
 
     final AuthRepository repository = await initAuth();
+    final ConfigurationRepository configurationRepository = await ConfigurationRepository.load();
     cb.ConnectionState connectionState;
     final res = await Connectivity().checkConnectivity();
     if (res == ConnectivityResult.none) {
@@ -38,7 +41,7 @@ void main() async {
         Zone.current.handleUncaughtError(details.exception, details.stack);
       }
     };
-    runApp(TwakeMobileApp(repository, connectionState));
+    runApp(TwakeMobileApp(repository, configurationRepository, connectionState,));
   }, (Object error, StackTrace stackTrace) {
     // Whenever an error occurs, call the `reportError` function. This sends
     // Dart errors to the dev console or Sentry depending on the environment.
@@ -48,8 +51,15 @@ void main() async {
 
 class TwakeMobileApp extends StatelessWidget {
   final AuthRepository repository;
+  final ConfigurationRepository configurationRepository;
   final cb.ConnectionState connectionState;
-  TwakeMobileApp(this.repository, this.connectionState);
+
+  TwakeMobileApp(
+    this.repository,
+    this.configurationRepository,
+    this.connectionState,
+  );
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -69,6 +79,10 @@ class TwakeMobileApp extends StatelessWidget {
                 BlocProvider<AuthBloc>(
                   create: (ctx) =>
                       AuthBloc(repository, ctx.read<cb.ConnectionBloc>()),
+                  lazy: false,
+                ),
+                BlocProvider<ConfigurationCubit>(
+                  create: (ctx) => ConfigurationCubit(configurationRepository),
                   lazy: false,
                 ),
               ],

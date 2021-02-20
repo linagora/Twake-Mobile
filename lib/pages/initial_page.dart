@@ -18,14 +18,12 @@ import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
-import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
 import 'package:twake/pages/web_auth_page.dart';
 import 'package:twake/widgets/common/network_status_bar.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
-// import 'package:twake/pages/web_auth_page.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -210,10 +208,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 ),
                 BlocProvider<MemberCubit>(
                   create: (_) => MemberCubit(state.initData.channelMembers),
-                  lazy: false,
-                ),
-                BlocProvider<ConfigurationCubit>(
-                  create: (_) => ConfigurationCubit(state.initData.configuration),
                   lazy: false,
                 ),
               ],
