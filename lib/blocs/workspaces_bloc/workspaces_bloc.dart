@@ -46,6 +46,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
               (companiesBloc.state as CompaniesLoaded).selected.id ==
                   state.data.companyId) {
             this.add(ChangeSelectedWorkspace(state.data.workspaceId));
+            break;
           } else {
             print('WAITING FOR COMPANY SELECTION');
             await Future.delayed(Duration(milliseconds: 500));
