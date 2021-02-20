@@ -36,6 +36,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
     String draft;
 
     return BlocBuilder<ThreadsBloc<T>, MessagesState>(builder: (ctx, state) {
+      // print('STATE IS ${state.runtimeType}');
       return state is MessagesLoaded || state is MessagesEmpty
           ? Scaffold(
               appBar: AppBar(

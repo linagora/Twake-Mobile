@@ -30,6 +30,10 @@ abstract class Storage {
     List<String> fields,
   });
 
+  Future<dynamic> customUpdate({
+    String sql,
+    List args,
+  });
   Future<dynamic> customQuery(
     String query, {
     List<List> filters,

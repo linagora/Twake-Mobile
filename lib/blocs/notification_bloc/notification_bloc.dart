@@ -90,8 +90,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       logger.d('RECONNECTED, RESETTING SUBSCRIPTIONS');
       await _api.autoProlongToken();
     });
-    socket.onConnect((msg) {
+    socket.onConnect((msg) async {
       logger.d('CONNECTED ON SOCKET IO\n$token');
+      await _api.autoProlongToken();
       socketConnectionState = SocketConnectionState.CONNECTED;
       socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
     });
@@ -126,6 +127,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void reinit() async {
     if (connectionBloc.state is ConnectionLost) return;
+    if (socket.disconnected) socket = socket.connect();
     for (String room in subscriptionRooms.keys) {
       unsubscribe(room);
     }

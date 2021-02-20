@@ -76,13 +76,11 @@ class MessagesBloc<T extends BaseChannelBloc>
         this.add(ModifyResponsesCount(
           threadId: state.data.threadId,
           channelId: state.data.channelId,
-          modifier: 1,
         ));
       } else if (state is ChannelThreadMessageArrived && T == ChannelsBloc) {
         this.add(ModifyResponsesCount(
           threadId: state.data.threadId,
           channelId: state.data.channelId,
-          modifier: 1,
         ));
       } else if (state is ThreadMessageNotification) {
         if (T == DirectsBloc && state.data.workspaceId == 'direct') {
@@ -208,18 +206,21 @@ class MessagesBloc<T extends BaseChannelBloc>
       repository.logger.d('YIELDING STATE: ${newState != this.state}');
       yield newState;
     } else if (event is ModifyResponsesCount) {
-      var thread = await repository.getItemById(event.threadId);
-      if (thread != null) {
-        thread.responsesCount += event.modifier;
-        repository.saveOne(thread);
-      } else
-        return;
+      var thread = await repository.updateResponsesCount(event.threadId);
+      if (thread == null) return;
+      // var thread = await repository.getItemById(event.threadId);
+      // if (thread != null) {
+      // thread.responsesCount += event.modifier;
+      // repository.saveOne(thread);
+      // } else
+      // return;
       if (event.channelId == selectedChannel.id) {
         repository.logger
             .d('In thread: ${event.threadId == repository.selected.id}');
         thread = event.threadId == repository.selected.id
             ? thread
             : repository.selected;
+        print('RESPONSES ARE ${thread.responsesCount}');
         final newState = MessagesLoaded(
           threadMessage: thread,
           messages: repository.items,
@@ -307,7 +308,16 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
     } else if (event is SelectMessage) {
+      print('$T MESSAGE SELECTED');
       repository.select(event.messageId);
+      yield MessageSelected(
+        threadMessage: repository.selected,
+        responsesCount: repository.selected.responsesCount,
+        messages: repository.items,
+        parentChannel: selectedChannel,
+      );
+      await repository.updateResponsesCount(event.messageId);
+      print('SELECTED THREAD IS ${repository.selected.id}');
       yield MessageSelected(
         threadMessage: repository.selected,
         responsesCount: repository.selected.responsesCount,

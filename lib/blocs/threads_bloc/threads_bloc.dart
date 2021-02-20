@@ -72,46 +72,44 @@ class ThreadsBloc<T extends BaseChannelBloc>
         this.add(InfinitelyLoadMessages());
       }
     });
+    parentChannel = messagesBloc.selectedChannel;
   }
 
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
-      if (threadMessage.responsesCount > 0) {
-        yield MessagesLoading(
-          threadMessage: threadMessage,
-          parentChannel: parentChannel,
-        );
-        List<List> filters = [
-          ['thread_id', '=', event.threadId],
-        ];
-        bool success = await repository.reload(
-          queryParams: _makeQueryParams(event),
-          filters: filters,
-          sortFields: {'creation_date': true},
-          limit: _THREAD_MESSAGES_LIMIT,
-        );
-        if (!success) {
-          repository.clean();
-          yield ErrorLoadingMessages(
-            threadMessage: threadMessage,
-            parentChannel: parentChannel,
-            force: DateTime.now().toString(),
-          );
-          return;
-        }
-      } else {
+      if (threadMessage.responsesCount == 0) {
         repository.clean();
-      }
-      if (repository.items.isEmpty)
         yield MessagesEmpty(
           threadMessage: threadMessage,
           parentChannel: parentChannel,
         );
-      else {
-        _sortItems();
-        yield messagesLoaded;
+        return;
       }
+      yield MessagesLoading(
+        threadMessage: threadMessage,
+        parentChannel: parentChannel,
+      );
+      List<List> filters = [
+        ['thread_id', '=', event.threadId],
+      ];
+      bool success = await repository.reload(
+        queryParams: _makeQueryParams(event),
+        filters: filters,
+        sortFields: {'creation_date': true},
+        limit: _THREAD_MESSAGES_LIMIT,
+      );
+      if (!success) {
+        repository.clean();
+        yield ErrorLoadingMessages(
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+          force: DateTime.now().toString(),
+        );
+        return;
+      }
+      _sortItems();
+      yield messagesLoaded;
     } else if (event is LoadSingleMessage) {
       var attempt = 3;
       while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
@@ -120,12 +118,20 @@ class ThreadsBloc<T extends BaseChannelBloc>
       }
       await repository.pullOne(
         _makeQueryParams(event),
-        addToItems: event.threadId == event.threadId,
+        addToItems: threadMessage.id == event.threadId,
       );
       _sortItems();
       _updateParentChannel();
+      messagesBloc.add(ModifyResponsesCount(
+        channelId: event.channelId,
+        threadId: event.threadId,
+      ));
       yield messagesLoaded;
     } else if (event is RemoveMessage) {
+      messagesBloc.add(ModifyResponsesCount(
+        channelId: event.channelId,
+        threadId: event.threadId,
+      ));
       await repository.delete(
         event.messageId,
         apiSync: !event.onNotify,
@@ -141,11 +147,6 @@ class ThreadsBloc<T extends BaseChannelBloc>
         _sortItems();
         yield messagesLoaded;
       }
-      messagesBloc.add(ModifyResponsesCount(
-        channelId: event.channelId,
-        threadId: event.threadId,
-        modifier: -1,
-      ));
       _updateParentChannel(totalModifier: -1);
     } else if (event is SendMessage) {
       final String dummyId = _DUMMY_ID;
@@ -181,8 +182,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
           this.add(FinishLoadingMessages());
           messagesBloc.add(ModifyResponsesCount(
             channelId: event.channelId,
-            threadId: event.threadId,
-            modifier: 1,
+            threadId: message.threadId,
           ));
           _updateParentChannel();
         },

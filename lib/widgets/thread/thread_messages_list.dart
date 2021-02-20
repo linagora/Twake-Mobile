@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
-import 'package:twake/config/dimensions_config.dart';
+// import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/models/message.dart';
 
@@ -30,7 +30,13 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
         Padding(
           padding: const EdgeInsets.only(top: 12.0),
           child: MessageTile<T>(
-              message: state.threadMessage, hideShowAnswers: true),
+            message: state.threadMessage,
+            hideShowAnswers: true,
+            key: ValueKey(
+              state.threadMessage.id +
+                  state.threadMessage.responsesCount.toString(),
+            ),
+          ),
         ),
         Divider(
           thickness: 1.0,
@@ -81,10 +87,10 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 
-  double _sizedBoxHeight;
-  Size _screenSize;
-  double _textHeight;
-  final GlobalKey _redKey = GlobalKey();
+  // double _sizedBoxHeight;
+  // Size _screenSize;
+  // double _textHeight;
+  // final GlobalKey _redKey = GlobalKey();
   double appBarHeight;
   List<Widget> widgets = [];
 
@@ -148,32 +154,32 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 
-  Size _getSizes(GlobalKey key) {
-    final RenderBox renderBoxRed = key.currentContext.findRenderObject();
-    final sizeRed = renderBoxRed.size;
-    return sizeRed;
-  }
+  // Size _getSizes(GlobalKey key) {
+  // final RenderBox renderBoxRed = key.currentContext.findRenderObject();
+  // final sizeRed = renderBoxRed.size;
+  // return sizeRed;
+  // }
 
-  _insertBlanks() async {
-    final Size _appBarSize = Size.fromHeight(Dim.heightPercent(
-      (kToolbarHeight * 0.15).round(),
-    )); //_getSizes(_appBarKey);
-    final Size _containerSize = _getSizes(_redKey);
-
-    final int _blankLinesTotal = ((_screenSize.height -
-            _appBarSize.height -
-            _containerSize.height -
-            60) ~/
-        _textHeight);
-
-    final double blankLinesHeight = _textHeight * _blankLinesTotal;
-    _sizedBoxHeight = blankLinesHeight +
-        (_screenSize.height -
-            _appBarSize.height -
-            _containerSize.height -
-            60 -
-            blankLinesHeight);
-    widgets.insert(0, SizedBox(height: _sizedBoxHeight));
-    setState(() {});
-  }
+  // _insertBlanks() async {
+  // final Size _appBarSize = Size.fromHeight(Dim.heightPercent(
+  // (kToolbarHeight * 0.15).round(),
+  // )); //_getSizes(_appBarKey);
+  // final Size _containerSize = _getSizes(_redKey);
+//
+  // final int _blankLinesTotal = ((_screenSize.height -
+  // _appBarSize.height -
+  // _containerSize.height -
+  // 60) ~/
+  // _textHeight);
+//
+  // final double blankLinesHeight = _textHeight * _blankLinesTotal;
+  // _sizedBoxHeight = blankLinesHeight +
+  // (_screenSize.height -
+  // _appBarSize.height -
+  // _containerSize.height -
+  // 60 -
+  // blankLinesHeight);
+  // widgets.insert(0, SizedBox(height: _sizedBoxHeight));
+  // setState(() {});
+  // }
 }

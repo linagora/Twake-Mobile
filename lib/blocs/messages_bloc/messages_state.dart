@@ -62,15 +62,17 @@ class MessageSelected extends MessagesLoaded {
     this.responsesCount,
     List<Message> messages,
     BaseChannel parentChannel,
+    String force,
   }) : super(
           messages: messages,
           messageCount: messages.length,
           threadMessage: threadMessage,
           parentChannel: parentChannel,
+          force: force,
         );
 
   @override
-  List<Object> get props => [threadMessage, responsesCount];
+  List<Object> get props => [threadMessage, responsesCount, force];
 }
 
 class ErrorLoadingMessages extends MessagesEmpty {

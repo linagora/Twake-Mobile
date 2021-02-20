@@ -86,6 +86,8 @@ Future<InitData> initMain() async {
   // CollectionRepository<Direct>(items: [], apiEndpoint: Endpoint.directs);
   final messages =
       MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
+  final messagesDirect =
+      MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
   final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
   var channelMembers;
   if (!channels.isEmpty) {
@@ -111,6 +113,7 @@ Future<InitData> initMain() async {
     channels: channels,
     directs: directs,
     messages: messages,
+    messagesDirect: messagesDirect,
     threads: threads,
     sheet: sheet,
     addChannel: addChannel,
@@ -130,6 +133,7 @@ class InitData {
   final CollectionRepository<Direct> directs;
   final MemberRepository channelMembers;
   final MessagesRepository messages;
+  final MessagesRepository messagesDirect;
   final MessagesRepository threads;
   final SheetRepository sheet;
   final AddChannelRepository addChannel;
@@ -146,6 +150,7 @@ class InitData {
     this.directs,
     this.channelMembers,
     this.messages,
+    this.messagesDirect,
     this.threads,
     this.sheet,
     this.addChannel,
