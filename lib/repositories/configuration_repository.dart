@@ -1,10 +1,10 @@
-import 'dart:convert' show jsonEncode, jsonDecode;
+import 'dart:convert' show jsonEncode;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'configuration_repository.g.dart';
 
-// Index of server ip record in store
+// Index of configuration record in store
 // because it's a global object,
 // it always has only one record in store
 const CONFIG_KEY = 'configuration';
