@@ -40,9 +40,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           javaScriptCanOpenWindowsAutomatically: true,
         ),
       ),
-      onConsoleMessage: (ctrl, msg) => print('CONSOLEJS: $msg'),
+      // onConsoleMessage: (ctrl, msg) => print('CONSOLEJS: $msg'),
       onLoadStop: (ctrl, url) async {
-        print('URL: $url');
+        // print('URL: $url');
         if (Uri.parse(_prevUrl).path == Uri.parse(url).path) {
           this.add(WrongAuthCredentials());
           _prevUrl = '';
@@ -69,7 +69,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print('WEBVIEW LOAD ERROR: $a, $b, $c');
       },
       onWebViewCreated: (ctrl) {
-        print('CREATED WEBVIEW');
+        // print('CREATED WEBVIEW');
       },
     );
     CookieManager.instance().deleteAllCookies();

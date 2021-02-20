@@ -26,9 +26,11 @@ class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
       yield ConnectionLost(DateTime.now().toString());
     } else if (event is NotifyConnectionWiFi) {
       _api.hasConnection = true;
+      await _api.autoProlongToken();
       yield ConnectionWifi();
     } else if (event is NotifyConnectionCellular) {
       _api.hasConnection = true;
+      await _api.autoProlongToken();
       yield ConnectionCellular();
     } else if (event is CheckConnectionState) {
       final state = await Connectivity().checkConnectivity();

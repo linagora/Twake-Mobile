@@ -93,7 +93,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       logger.d('CONNECTED ON SOCKET IO\n$token');
       await _api.autoProlongToken();
       socketConnectionState = SocketConnectionState.CONNECTED;
-      socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
+      while (socketConnectionState != SocketConnectionState.AUTHENTICATED) {
+        socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
+        print('WAITING FOR SOCKET AUTH');
+        await Future.delayed(Duration(seconds: 2));
+      }
     });
     socket.onError((e) => logger.e('ERROR ON SOCKET \n$e'));
     socket.onDisconnect((msg) {
