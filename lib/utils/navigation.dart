@@ -8,6 +8,7 @@ import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/edit_channel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/pages/server_configuration.dart';
 
 void openChannel(BuildContext context, String channelId) =>
     _open<ChannelsBloc>(context, channelId);
@@ -34,6 +35,14 @@ void openEditChannel(BuildContext context, Channel channel) {
       .push(MaterialPageRoute(
         builder: (context) => EditChannel(channel: channel),
       ))
+      .then((r) => handleError(r, context));
+}
+
+void openChooseServer(BuildContext context) {
+  Navigator.of(context)
+      .push(MaterialPageRoute(
+    builder: (context) => ServerConfiguration(),
+  ))
       .then((r) => handleError(r, context));
 }
 

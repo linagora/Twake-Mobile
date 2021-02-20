@@ -29,7 +29,6 @@ class _SheetTextFieldState extends State<SheetTextField> {
       padding: const EdgeInsets.only(left: 14.0, right: 7),
       color: Colors.white,
       child: TextFormField(
-        // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
         validator: widget.validator,
         controller: widget.controller,
         focusNode: widget.focusNode,

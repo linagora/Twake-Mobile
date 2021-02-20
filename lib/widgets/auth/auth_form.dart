@@ -4,6 +4,7 @@ import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/utils/navigation.dart';
 
 class AuthForm extends StatefulWidget {
   @override
@@ -194,29 +195,42 @@ class _AuthFormState extends State<AuthForm> {
               Align(
                 alignment: Alignment.center,
                 child: FittedBox(
-                  child: Row(
+                  child: Column(
                     children: [
-                      Text(
-                        'Don\'t have an account? ',
-                        style: StylesConfig.miniPurple
-                            .copyWith(color: Colors.black87),
-                      ),
-                      BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                        builder: (context, state) => FlatButton(
-                          onPressed: state is cb.ConnectionLost
-                              ? null
-                              : () {
-                                  context
-                                      .read<AuthBloc>()
-                                      .add(RegistrationInit());
-                                },
-                          child: Text(
-                            ' Sign up',
-                            style: state is cb.ConnectionLost
-                                ? StylesConfig.disabled
-                                : StylesConfig.miniPurple,
-                          ),
+                      GestureDetector(
+                        onTap: () => openChooseServer(context),
+                        behavior: HitTestBehavior.opaque,
+                        child: Text(
+                          'Choose the server',
+                          style: StylesConfig.miniPurple,
                         ),
+                      ),
+                      SizedBox(height: 30),
+                      Row(
+                        children: [
+                          Text(
+                            'Don\'t have an account? ',
+                            style: StylesConfig.miniPurple
+                                .copyWith(color: Colors.black87),
+                          ),
+                          BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                            builder: (context, state) => FlatButton(
+                              onPressed: state is cb.ConnectionLost
+                                  ? null
+                                  : () {
+                                      context
+                                          .read<AuthBloc>()
+                                          .add(RegistrationInit());
+                                    },
+                              child: Text(
+                                ' Sign up',
+                                style: state is cb.ConnectionLost
+                                    ? StylesConfig.disabled
+                                    : StylesConfig.miniPurple,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -236,6 +250,7 @@ class _AuthTextForm extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final String Function(String) validator;
+
   const _AuthTextForm({
     @required this.label,
     @required this.controller,
@@ -250,6 +265,7 @@ class _AuthTextForm extends StatefulWidget {
 
 class __AuthTextFormState extends State<_AuthTextForm> {
   bool _obscured = true;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
