@@ -214,6 +214,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       // repository.saveOne(thread);
       // } else
       // return;
+      if (repository.selected == null) return;
       if (event.channelId == selectedChannel.id) {
         repository.logger
             .d('In thread: ${event.threadId == repository.selected.id}');

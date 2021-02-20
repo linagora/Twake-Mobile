@@ -143,6 +143,7 @@ class MessagesRepository {
 
   Future<Message> updateResponsesCount(String messageId) async {
     var m = await getItemById(messageId);
+    if (m == null) return null;
     // print('BEFORE COUNT: ${m.responsesCount}\nID: $messageId');
     final sqlT = 'SELECT count(id) as count FROM message';
     final res = (await _storage.customQuery(sqlT, filters: [
