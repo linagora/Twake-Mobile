@@ -46,7 +46,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     this.navigator,
   }) : super(NotificationsAbsent()) {
     // iOS permission for Firebase push-notifications.
-    // if (Platform.isIOS) _iOSpermission();
+    if (Platform.isIOS) _iOSpermission();
 
     service = Notifications(
       onMessageCallback: onMessageCallback,
