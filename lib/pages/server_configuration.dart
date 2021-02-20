@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class ServerConfiguration extends StatelessWidget {
+class ServerConfiguration extends StatefulWidget {
+  @override
+  _ServerConfigurationState createState() => _ServerConfigurationState();
+}
+
+class _ServerConfigurationState extends State<ServerConfiguration> {
+  final _formKey = GlobalKey<FormState>();
+  final _controller = TextEditingController();
+  final _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 40.0),
+            SizedBox(height: 20.0),
             Image.asset('assets/images/server.png'),
             SizedBox(height: 20.0),
             Text(
@@ -36,8 +46,47 @@ class ServerConfiguration extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
-              child: CupertinoTextField(
-                placeholder: "Enter server address",
+              child: TextFormField(
+                key: _formKey,
+                validator: (value) =>
+                    value.isEmpty ? 'Address cannot be blank' : null,
+                controller: _controller,
+                focusNode: _focusNode,
+                keyboardType: TextInputType.emailAddress,
+                style: TextStyle(
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'https:// mobile.api.twake.app',
+                  hintStyle: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xffc8c8c8),
+                  ),
+                  alignLabelWithHint: true,
+                  fillColor: Color(0xfff4f4f4),
+                  filled: true,
+                  suffix: Container(
+                    width: 30,
+                    height: 25,
+                    padding: EdgeInsets.only(left: 10),
+                    child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      onPressed: () => _controller.clear(),
+                      iconSize: 15,
+                      icon: Icon(CupertinoIcons.clear),
+                    ),
+                  ),
+                  border: UnderlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(
+                      width: 0.0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                ),
               ),
             ),
             Spacer(),
