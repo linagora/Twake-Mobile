@@ -179,6 +179,8 @@ class SQLite with Storage {
       table = 'setting';
     else if (type == StorageType.Profile)
       table = 'setting';
+    else if (type == StorageType.Configuration)
+      table = 'setting';
     else if (type == StorageType.Company)
       table = 'company';
     else if (type == StorageType.Workspace)

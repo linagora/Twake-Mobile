@@ -8,6 +8,7 @@ import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/configuration_repository.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
 import 'package:twake/repositories/fields_repository.dart';
 import 'package:twake/repositories/member_repository.dart';
@@ -48,6 +49,7 @@ Future<InitData> initMain() async {
   final addWorkspace = AddWorkspaceRepository();
   final fields = FieldsRepository(fields: [], data: {});
   final draft = DraftRepository();
+  final configuration = await ConfigurationRepository.load();
   final _ = UserRepository(Endpoint.users);
   final companies = await CollectionRepository.load<Company>(
     Endpoint.companies,
@@ -122,6 +124,7 @@ Future<InitData> initMain() async {
     addWorkspace: addWorkspace,
     draft: draft,
     fields: fields,
+    configuration: configuration,
   );
 }
 
@@ -141,6 +144,7 @@ class InitData {
   final AddWorkspaceRepository addWorkspace;
   final DraftRepository draft;
   final FieldsRepository fields;
+  final ConfigurationRepository configuration;
 
   InitData({
     this.profile,
@@ -158,5 +162,6 @@ class InitData {
     this.addWorkspace,
     this.draft,
     this.fields,
+    this.configuration,
   });
 }
