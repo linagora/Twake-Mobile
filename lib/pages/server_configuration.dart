@@ -9,12 +9,13 @@ class ServerConfiguration extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 10.0),
+            SizedBox(height: 40.0),
             Image.asset('assets/images/server.png'),
-            SizedBox(height: 12.0),
+            SizedBox(height: 20.0),
             Text(
-              'Server connection preference',
+              'Server connection\npreference',
               textAlign: TextAlign.center,
+              maxLines: 2,
               style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.w900,
@@ -23,7 +24,7 @@ class ServerConfiguration extends StatelessWidget {
             ),
             SizedBox(height: 36.0),
             Padding(
-              padding: EdgeInsets.only(left: 16),
+              padding: EdgeInsets.only(left: 16, right: 36.0),
               child: Text(
                 'Before you can proceed, please, choose a default server connection',
                 style: TextStyle(
