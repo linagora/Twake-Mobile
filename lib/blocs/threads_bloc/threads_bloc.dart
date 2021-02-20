@@ -116,10 +116,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
         await Future.delayed(Duration(milliseconds: 100));
         attempt -= 1;
       }
-      await repository.pullOne(
-        _makeQueryParams(event),
-        addToItems: threadMessage.id == event.threadId,
-      );
+      await repository.pullOne(_makeQueryParams(event),
+          addToItems: threadMessage != null
+              ? threadMessage.id == event.threadId
+              : false);
       _sortItems();
       _updateParentChannel();
       messagesBloc.add(ModifyResponsesCount(

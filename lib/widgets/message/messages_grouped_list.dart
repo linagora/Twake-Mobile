@@ -59,8 +59,8 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                 reverse: true,
                 elements: messages,
                 groupBy: (Message m) {
-                  final DateTime dt = DateTime.fromMillisecondsSinceEpoch(
-                      m.creationDate * 1000);
+                  final DateTime dt =
+                      DateTime.fromMillisecondsSinceEpoch(m.creationDate);
                   return DateTime(dt.year, dt.month, dt.day);
                 },
                 groupComparator: (DateTime value1, DateTime value2) =>
