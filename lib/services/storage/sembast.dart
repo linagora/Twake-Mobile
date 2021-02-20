@@ -204,4 +204,10 @@ class Sembast with Storage {
     // TODO: implement customQuery
     throw UnimplementedError();
   }
+
+  @override
+  Future customUpdate({String sql, List args}) {
+    // TODO: implement customUpdate
+    throw UnimplementedError();
+  }
 }
