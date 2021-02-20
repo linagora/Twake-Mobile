@@ -35,6 +35,9 @@ class Api {
     if (_api == null) {
       _api = Api._();
     }
+    if (host != null) {
+      _host = host;
+    }
     return _api;
   }
 
@@ -82,7 +85,8 @@ class Api {
     Map<String, dynamic> body,
   }) async {
     checkConnection();
-    final url = _SHOST + method;
+    // final url = _SHOST + method;
+    final url = _host + method;
     try {
       final response = await dio.delete(url, data: body);
       // logger.d('METHOD: $url');
@@ -101,9 +105,14 @@ class Api {
     bool useTokenDio: false,
   }) async {
     checkConnection();
+
+    // Workaround. But why we need non-https host - I don't really know.
+    String host = _host.replaceAll('https://', '');
+
     final uri = Uri(
       scheme: _SCHEME,
-      host: _HOST,
+      // host: _HOST,
+      host: host,
       path: method,
       queryParameters: params,
     );
@@ -128,7 +137,9 @@ class Api {
     Map<String, dynamic> body,
   }) async {
     checkConnection();
-    final url = _SHOST + method;
+    // final url = _SHOST + method;
+    final url = _host + method;
+
     try {
       final response = await dio.patch(url, data: body);
       return response.data;
@@ -142,7 +153,9 @@ class Api {
     Map<String, dynamic> body,
   }) async {
     checkConnection();
-    final url = _SHOST + method;
+    // final url = _SHOST + method;
+    final url = _host + method;
+
     try {
       final response = await dio.put(url, data: body);
       return response.data;
@@ -157,7 +170,9 @@ class Api {
     bool useTokenDio = false,
   }) async {
     checkConnection();
-    final url = _SHOST + method;
+    // final url = _SHOST + method;
+    final url = _host + method;
+
     try {
       // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
       // logger.d('BODY: ${jsonEncode(body)}');

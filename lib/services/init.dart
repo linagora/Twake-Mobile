@@ -8,6 +8,7 @@ import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/repositories/configuration_repository.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
 import 'package:twake/repositories/fields_repository.dart';
 import 'package:twake/repositories/member_repository.dart';
@@ -25,7 +26,10 @@ Future<AuthRepository> initAuth() async {
   final store = Storage();
   await store.initDb();
 
-  final _api = Api();
+  final configurationRepository = await ConfigurationRepository.load();
+  print('Config rep host: ${configurationRepository.host}');
+  final _api = Api(host: configurationRepository.host);
+  // print('API host: ${API}');
   final _state = await Connectivity().checkConnectivity();
   _api.hasConnection = _state != ConnectivityResult.none;
 

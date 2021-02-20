@@ -19,7 +19,7 @@ class ConfigurationRepository extends JsonSerializable {
   static final _storage = Storage();
 
   @JsonKey(ignore: true)
-  ConfigurationRepository({String host});
+  ConfigurationRepository({this.host});
 
   factory ConfigurationRepository.fromJson(Map<String, dynamic> json) =>
       _$ConfigurationRepositoryFromJson(json);
