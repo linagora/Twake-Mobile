@@ -28,7 +28,7 @@ Future<AuthRepository> initAuth() async {
 
   final configurationRepository = await ConfigurationRepository.load();
   print('Config rep host: ${configurationRepository.host}');
-  final _api = Api(host: configurationRepository.host);
+  final _api = Api(ip: configurationRepository.host);
   // print('API host: ${API}');
   final _state = await Connectivity().checkConnectivity();
   _api.hasConnection = _state != ConnectivityResult.none;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:twake/repositories/configuration_repository.dart';
+import 'package:twake/services/api.dart';
 
 class ServerConfiguration extends StatefulWidget {
   @override
@@ -23,7 +24,10 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
 
   void _connect() {
     _repository.host = _controller.text;
+    // Save host address locally.
     _repository.save();
+    // Set host address to API handler.
+    Api.host = _repository.host;
     Navigator.of(context).pop();
   }
 

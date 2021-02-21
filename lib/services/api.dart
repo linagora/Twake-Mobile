@@ -14,7 +14,7 @@ class Api {
   // singleton Api class instance
   static Api _api;
   // Server address
-  static String _host;
+  static String host;
   // logging utility
   static final logger = Logger();
   // callback function to auto prolong token, if access token has expired
@@ -29,14 +29,14 @@ class Api {
   Dio dio;
   final Dio tokenDio = Dio();
 
-  factory Api({Map<String, String> headers, String host}) {
+  factory Api({Map<String, String> headers, String ip}) {
     // if the headers are present, e.g. token has changed,
     // reinitialize Dio
     if (_api == null) {
       _api = Api._();
     }
-    if (host != null) {
-      _host = host;
+    if (ip != null) {
+      host = ip;
     }
     return _api;
   }
@@ -86,7 +86,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
-    final url = _host + method;
+    final url = host + method;
     try {
       final response = await dio.delete(url, data: body);
       // logger.d('METHOD: $url');
@@ -107,12 +107,12 @@ class Api {
     checkConnection();
 
     // Workaround. But why we need non-https host - I don't really know.
-    String host = _host.replaceAll('https://', '');
+    String h = host.replaceAll('https://', '');
 
     final uri = Uri(
       scheme: _SCHEME,
       // host: _HOST,
-      host: host,
+      host: h,
       path: method,
       queryParameters: params,
     );
@@ -138,7 +138,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
-    final url = _host + method;
+    final url = host + method;
 
     try {
       final response = await dio.patch(url, data: body);
@@ -154,7 +154,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
-    final url = _host + method;
+    final url = host + method;
 
     try {
       final response = await dio.put(url, data: body);
@@ -171,7 +171,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
-    final url = _host + method;
+    final url = host + method;
 
     try {
       // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
