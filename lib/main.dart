@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
@@ -79,10 +78,6 @@ class TwakeMobileApp extends StatelessWidget {
                 BlocProvider<AuthBloc>(
                   create: (ctx) =>
                       AuthBloc(repository, ctx.read<cb.ConnectionBloc>()),
-                  lazy: false,
-                ),
-                BlocProvider<ConfigurationCubit>(
-                  create: (ctx) => ConfigurationCubit(configurationRepository),
                   lazy: false,
                 ),
               ],
