@@ -65,53 +65,46 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     final repository = snapshot.data;
                     _controller.text = repository.host;
 
-                    return BlocProvider<ConfigurationCubit>(
-                      create: (context) => ConfigurationCubit(repository),
-                      child: BlocBuilder<ConfigurationCubit, ConfigurationState>(
-                          builder: (context, state) {
-                            return TextFormField(
-                              key: _formKey,
-                              validator: (value) =>
-                              value.isEmpty ? 'Address cannot be blank' : null,
-                              controller: _controller,
-                              focusNode: _focusNode,
-                              keyboardType: TextInputType.emailAddress,
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'https://mobile.api.twake.app',
-                                hintStyle: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xffc8c8c8),
-                                ),
-                                alignLabelWithHint: true,
-                                fillColor: Color(0xfff4f4f4),
-                                filled: true,
-                                suffix: Container(
-                                  width: 30,
-                                  height: 25,
-                                  padding: EdgeInsets.only(left: 10),
-                                  child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    onPressed: () => _controller.clear(),
-                                    iconSize: 15,
-                                    icon: Icon(CupertinoIcons.clear),
-                                  ),
-                                ),
-                                border: UnderlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(
-                                    width: 0.0,
-                                    style: BorderStyle.none,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
+                    return TextFormField(
+                      key: _formKey,
+                      validator: (value) =>
+                      value.isEmpty ? 'Address cannot be blank' : null,
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      keyboardType: TextInputType.emailAddress,
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black,
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'https://mobile.api.twake.app',
+                        hintStyle: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xffc8c8c8),
+                        ),
+                        alignLabelWithHint: true,
+                        fillColor: Color(0xfff4f4f4),
+                        filled: true,
+                        suffix: Container(
+                          width: 30,
+                          height: 25,
+                          padding: EdgeInsets.only(left: 10),
+                          child: IconButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () => _controller.clear(),
+                            iconSize: 15,
+                            icon: Icon(CupertinoIcons.clear),
+                          ),
+                        ),
+                        border: UnderlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(
+                            width: 0.0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
                       ),
                     );
                   } else {
