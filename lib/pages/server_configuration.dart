@@ -12,12 +12,19 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
   final _configurationFuture = ConfigurationRepository.load();
+  ConfigurationRepository _repository;
 
   @override
   void dispose() {
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _connect() {
+    _repository.host = _controller.text;
+    _repository.save();
+    Navigator.of(context).pop();
   }
 
   @override
@@ -59,8 +66,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                 future: _configurationFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final repository = snapshot.data;
-                    _controller.text = repository.host;
+                    _repository = snapshot.data;
+                    _controller.text = _repository.host;
 
                     return TextFormField(
                       key: _formKey,
@@ -126,7 +133,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             Padding(
               padding: EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
               child: TextButton(
-                onPressed: () => print('Connect'),
+                onPressed: () => _connect(),
                 child: Container(
                   width: Size.infinite.width,
                   height: 50,

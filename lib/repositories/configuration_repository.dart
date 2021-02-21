@@ -1,4 +1,4 @@
-import 'dart:convert' show jsonEncode;
+import 'dart:convert' show jsonEncode, jsonDecode;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -24,6 +24,8 @@ class ConfigurationRepository extends JsonSerializable {
   factory ConfigurationRepository.fromJson(Map<String, dynamic> json) =>
       _$ConfigurationRepositoryFromJson(json);
 
+  Map<String, dynamic> toJson() => _$ConfigurationRepositoryToJson(this);
+
   static Future<ConfigurationRepository> load() async {
     var configurationMap = await _storage.load(
       type: StorageType.Configuration,
@@ -34,8 +36,8 @@ class ConfigurationRepository extends JsonSerializable {
     Logger().d('Configuration map: $configurationMap');
 
     if (configurationMap != null) {
-      final configurationRepository =
-          ConfigurationRepository.fromJson(configurationMap);
+      final configurationRepository = ConfigurationRepository.fromJson(
+          jsonDecode(configurationMap[_storage.settingsField]));
       return configurationRepository;
     }
     return ConfigurationRepository(host: DEFAULT_HOST);
