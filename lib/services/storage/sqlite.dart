@@ -232,10 +232,17 @@ class SQLite with Storage {
   }
 
   @override
-  Future<void> truncateAll() async {
+  Future<void> truncateAll({List<StorageType> except}) async {
+    List<String> storagesToKeep = [];
+    if (except != null && except.length > 0) {
+      storagesToKeep = except.map((e) => mapTypeToStore(e)).toList();
+    }
     await _db.transaction((txn) async {
       for (String s in getAllStorages()) {
-        await txn.delete(s);
+        if (!storagesToKeep.contains(s)) {
+          print('Storage to delete: $s');
+          await txn.delete(s);
+        }
       }
     });
   }

@@ -70,7 +70,7 @@ abstract class Storage {
 
   Future<void> truncate(StorageType type);
 
-  Future<void> truncateAll();
+  Future<void> truncateAll({List<StorageType> except});
 
   dynamic mapTypeToStore(StorageType type);
 

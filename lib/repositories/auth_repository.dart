@@ -171,7 +171,7 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<void> fullClean() async {
-    _storage.truncateAll();
+    _storage.truncateAll(except: [StorageType.Configuration]);
   }
 
   // Clears up entire database, be carefull!

@@ -118,7 +118,7 @@ class Sembast with Storage {
   }
 
   @override
-  Future<void> truncateAll() async {
+  Future<void> truncateAll({List<StorageType> except}) async {
     await _db.transaction((txn) async {
       for (StoreRef s in getAllStorages()) {
         await s.delete(txn);
