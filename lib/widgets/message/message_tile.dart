@@ -8,11 +8,13 @@ import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
+
 // import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
+
 // import 'package:twake/widgets/message/twacode.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
@@ -152,7 +154,6 @@ class _MessageTileState<T extends BaseChannelBloc>
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Column(
                       children: [
@@ -167,6 +168,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,26 +219,32 @@ class _MessageTileState<T extends BaseChannelBloc>
                           // Parser(messageState.content,
                           // messageState.charCount)
                           // .render(context),
-                          SizedBox(height: 5.0),
-                          Wrap(
-                            runSpacing: Dim.heightMultiplier,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            textDirection: TextDirection.ltr,
-                            children: [
-                              ...messageState.reactions.keys.map((r) {
-                                return Reaction(
-                                  r,
-                                  messageState.reactions[r]['count'],
-                                );
-                              }),
-                              if (messageState.responsesCount > 0 &&
-                                  messageState.threadId == null &&
-                                  !_hideShowAnswers)
-                                Text(
-                                  'See all answers (${messageState.responsesCount})',
-                                  style: StylesConfig.miniPurple,
-                                ),
-                            ],
+                          Container(
+                            color: Colors.white,
+                            height: 5.0,
+                          ),
+                          Container(
+                            color: Colors.red,
+                            child: Wrap(
+                              runSpacing: Dim.heightMultiplier,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              textDirection: TextDirection.ltr,
+                              children: [
+                                ...messageState.reactions.keys.map((r) {
+                                  return Reaction(
+                                    r,
+                                    messageState.reactions[r]['count'],
+                                  );
+                                }),
+                                if (messageState.responsesCount > 0 &&
+                                    messageState.threadId == null &&
+                                    !_hideShowAnswers)
+                                  Text(
+                                    'See all answers (${messageState.responsesCount})',
+                                    style: StylesConfig.miniPurple,
+                                  ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
