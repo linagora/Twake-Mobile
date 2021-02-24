@@ -106,13 +106,14 @@ class Api {
   }) async {
     checkConnection();
 
-    // Workaround. But why we need non-https host - I don't really know.
-    String h = host.replaceAll('https://', '');
+    // Extract scheme and host by splitting the url
+    var h = host.split('://');
+    assert(h.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
 
     final uri = Uri(
-      scheme: _SCHEME,
+      scheme: h[0],
       // host: _HOST,
-      host: h,
+      host: h[1],
       path: method,
       queryParameters: params,
     );
