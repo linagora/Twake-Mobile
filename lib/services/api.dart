@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
-const String _HOST = 'mobile.api.twake.app';
-const String _SHOST = 'https://mobile.api.twake.app';
-const String _SCHEME = 'https';
+// const String _HOST = 'mobile.api.twake.app';
+// const String _SHOST = 'https://mobile.api.twake.app';
+// const String _SCHEME = 'https';
 const _RECEIVE_TIMEOUT = 7000;
 const _SEND_TIMEOUT = 5000;
 const _CONNECT_TIMEOUT = 50000;
