@@ -107,12 +107,22 @@ class Api {
     checkConnection();
 
     // Extract scheme and host by splitting the url
-    var h = host.split('://');
-    assert(h.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
+    var split = Api.host.split('://');
+    assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
+    final scheme = split[0];
+    var host = split[1];
+    split = host.split(':');
+    var port;
+    if (split.length == 2) {
+      host = split[0];
+      port = int.parse(split[1]);
+    }
 
+    // logger.d('host: $host\nport: $port\n$scheme');
     final uri = Uri(
-      scheme: h[0],
-      host: h[1],
+      scheme: scheme,
+      host: host,
+      port: port,
       path: method,
       queryParameters: params,
     );
@@ -121,10 +131,10 @@ class Api {
       s.start();
       final response = await dio.getUri(uri);
       s.stop();
-      // logger.d(
-      // 'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
       // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
+      // logger.d(
+      // 'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
       // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {

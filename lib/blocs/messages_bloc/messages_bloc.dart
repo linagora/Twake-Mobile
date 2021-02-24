@@ -18,7 +18,7 @@ export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
 const _DUMMY_ID = 'message';
 
-const _MESSAGE_LIMIT = 50;
+const _MESSAGE_LIMIT = 150;
 
 class MessagesBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
