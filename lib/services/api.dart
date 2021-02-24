@@ -106,12 +106,10 @@ class Api {
   }) async {
     checkConnection();
 
-    // Workaround. But why we need non-https host - I don't really know.
     String h = host.replaceAll('https://', '');
 
     final uri = Uri(
       scheme: _SCHEME,
-      // host: _HOST,
       host: h,
       path: method,
       queryParameters: params,
