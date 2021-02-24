@@ -112,7 +112,6 @@ class Api {
 
     final uri = Uri(
       scheme: h[0],
-      // host: _HOST,
       host: h[1],
       path: method,
       queryParameters: params,
