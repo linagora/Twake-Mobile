@@ -38,6 +38,7 @@ class ChannelTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         channel.name,
@@ -52,7 +53,7 @@ class ChannelTile extends StatelessWidget {
                       SizedBox(width: 6),
                       if (channel.visibility != null &&
                           channel.visibility == 'private')
-                        Icon(Icons.lock_outline, size: 15.0, color: Color(0xff444444)),
+                        Icon(Icons.lock_outline, size: 17.0, color: Color(0xff444444)),
                     ],
                   ),
                   if (channel.description != null &&
