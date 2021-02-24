@@ -69,6 +69,13 @@ class _ParticipantsListState extends State<ParticipantsList> {
         }
       });
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_isDirect && _shouldFocus) {
+        if (_focusNode.canRequestFocus) _focusNode.requestFocus();
+        _shouldFocus = false;
+      }
+    });
   }
 
   @override
@@ -93,6 +100,9 @@ class _ParticipantsListState extends State<ParticipantsList> {
   }
 
   void _close() {
+    setState(() {
+      _shouldFocus = true; // reset value
+    });
     FocusScope.of(context).requestFocus(new FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
   }
@@ -154,7 +164,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
       builder: (context, state) {
         if (state is StageUpdated) {
           print('STAGE REBUILD: ${state.stage}');
-          if (state.stage == FlowStage.participants && _shouldFocus) {
+          if (state.stage == FlowStage.participants && !_isDirect && _shouldFocus) {
             if (_focusNode.canRequestFocus) _focusNode.requestFocus();
             _shouldFocus = false;
           }
@@ -169,13 +179,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
             return false;
           },
           builder: (context, state) {
-            if (state is FlowUpdated) {
-              if (state.flow == SheetFlow.direct && _shouldFocus) {
-                if (_focusNode.canRequestFocus) _focusNode.requestFocus();
-                _shouldFocus = false;
-              }
-            }
-
             return Column(
               children: [
                 SheetTitleBar(
@@ -223,7 +226,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                         }
                       }
 
-                      print('SeLECTED UsERS: ${selectedUsers.map((e) => e.username)}');
+                      // print('SeLECTED UsERS: ${selectedUsers.map((e) => e.username)}');
                       return ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.only(top: 0),
