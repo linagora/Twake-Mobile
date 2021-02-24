@@ -175,6 +175,7 @@ class AuthRepository extends JsonSerializable {
     _api.tokenIsValid = null;
     accessToken = null;
     refreshToken = null;
+    updateHeaders();
     _storage.truncateAll(except: [StorageType.Configuration]);
   }
 
