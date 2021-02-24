@@ -33,7 +33,7 @@ class ConfigurationRepository extends JsonSerializable {
       key: CONFIG_KEY,
     );
 
-    // Logger().d('Configuration map: $configurationMap');
+    Logger().d('Configuration map: $configurationMap');
 
     if (configurationMap != null) {
       final configurationRepository = ConfigurationRepository.fromJson(

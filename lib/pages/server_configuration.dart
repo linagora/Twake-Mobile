@@ -70,6 +70,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                 future: _configurationFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
+                    print('Server host: ${snapshot.data.host}');
+
                     _repository = snapshot.data;
                     _controller.text = _repository.host;
 
