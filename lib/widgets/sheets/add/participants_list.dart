@@ -69,13 +69,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
         }
       });
     });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_isDirect && _shouldFocus) {
-        if (_focusNode.canRequestFocus) _focusNode.requestFocus();
-        _shouldFocus = false;
-      }
-    });
   }
 
   @override
@@ -126,160 +119,167 @@ class _ParticipantsListState extends State<ParticipantsList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddChannelBloc, AddChannelState>(
+    return BlocListener<SheetBloc, SheetState>(
       listener: (context, state) {
-        if (state is Created) {
-          // Reload channels
-          context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
-          // Reload directs
-          context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
-          // Close sheet
-          context.read<SheetBloc>().add(CloseSheet());
-          // Reset selected participants
-          context.read<AddChannelBloc>().add(Update(participants: []));
-          _controller.clear();
-          // Redirect user to created direct
-          if (_isDirect) {
-            String channelId = state.id;
-            openDirect(context, channelId);
-          }
-        } else if (state is Error) {
-          // Show an error
-          Scaffold.of(context).showSnackBar(SnackBar(
-            content: Text(
-              state.message,
-              style: TextStyle(
-                color: Colors.red,
-              ),
-            ),
-            duration: Duration(seconds: 2),
-          ));
+        if (state is SheetOpened && _isDirect && _focusNode.canRequestFocus) {
+          _focusNode.requestFocus();
         }
       },
-      buildWhen: (_, current) {
-        return (current is Updated ||
-            current is Creation ||
-            current is StageUpdated);
-      },
-      builder: (context, state) {
-        if (state is StageUpdated) {
-          print('STAGE REBUILD: ${state.stage}');
-          if (state.stage == FlowStage.participants &&
-              !_isDirect &&
-              _shouldFocus) {
-            if (_focusNode.canRequestFocus) _focusNode.requestFocus();
-            _shouldFocus = false;
-          }
-        }
-        return Column(
-          children: [
-            SheetTitleBar(
-              title: _title,
-              leadingTitle: _isModal ? 'Close' : 'Back',
-              leadingAction: _isModal ? () => _close() : () => _return(),
-              trailingTitle: _isDirect
-                  ? null
-                  : _isModal
-                      ? 'Add'
-                      : 'Save',
-              trailingAction: _isDirect ? null : () => _return(),
-            ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
-              child: SearchTextField(
-                hint: 'Search members',
-                controller: _controller,
-                focusNode: _focusNode,
+      child: BlocConsumer<AddChannelBloc, AddChannelState>(
+        listener: (context, state) {
+          if (state is Created) {
+            // Reload channels
+            context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
+            // Reload directs
+            context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
+            // Close sheet
+            context.read<SheetBloc>().add(CloseSheet());
+            // Reset selected participants
+            context.read<AddChannelBloc>().add(Update(participants: []));
+            _controller.clear();
+            // Redirect user to created direct
+            if (_isDirect) {
+              String channelId = state.id;
+              openDirect(context, channelId);
+            }
+          } else if (state is Error) {
+            // Show an error
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text(
+                state.message,
+                style: TextStyle(
+                  color: Colors.red,
+                ),
               ),
-            ),
-            BlocBuilder<UserBloc, UserState>(builder: (context, state) {
-              var users = <User>[];
+              duration: Duration(seconds: 2),
+            ));
+          }
+        },
+        buildWhen: (_, current) {
+          return (current is Updated ||
+              current is Creation ||
+              current is StageUpdated);
+        },
+        builder: (context, state) {
+          if (state is StageUpdated) {
+            // print('STAGE REBUILD: ${state.stage}');
+            if (state.stage == FlowStage.participants &&
+                !_isDirect &&
+                _shouldFocus) {
+              if (_focusNode.canRequestFocus) _focusNode.requestFocus();
+              _shouldFocus = false;
+            }
+          }
+          return Column(
+            children: [
+              SheetTitleBar(
+                title: _title,
+                leadingTitle: _isModal ? 'Close' : 'Back',
+                leadingAction: _isModal ? () => _close() : () => _return(),
+                trailingTitle: _isDirect
+                    ? null
+                    : _isModal
+                        ? 'Add'
+                        : 'Save',
+                trailingAction: _isDirect ? null : () => _return(),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
+                child: SearchTextField(
+                  hint: 'Search members',
+                  controller: _controller,
+                  focusNode: _focusNode,
+                ),
+              ),
+              BlocBuilder<UserBloc, UserState>(builder: (context, state) {
+                var users = <User>[];
 
-              if (state is MultipleUsersLoading) {
-                return Center(child: CircularProgressIndicator());
-              } else if (state is MultipleUsersLoaded) {
-                users = state.users;
-                // print('-------------------------------');
-                // for (var u in users) {
-                //   print('${u.id} - ${u.username}');
-                // }
-                // print('-------------------------------');
-              }
-              return BlocBuilder<AddChannelBloc, AddChannelState>(
-                buildWhen: (previous, current) => current is Updated,
-                builder: (context, state) {
-                  var selectedIds = <String>[];
-                  var selectedUsers = <User>[];
-                  var name = '';
-                  var description = '';
-                  if (state is Updated) {
-                    name = state.repository?.name;
-                    description = state.repository?.description;
-                    selectedIds = state.repository?.members;
-                    if (!_isDirect) {
-                      selectedUsers = users
-                          .where((user) => selectedIds.contains(user.id))
-                          .toList();
-                      users.excludeUsers(selectedUsers);
-                    }
-                  }
-
-                  // print('Selected UsERS: ${selectedUsers.map((e) => e.username)}');
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    padding: EdgeInsets.only(top: 0),
-                    itemCount: users.length + selectedUsers.length,
-                    itemBuilder: (context, index) {
-                      User user;
+                if (state is MultipleUsersLoading) {
+                  return Center(child: CircularProgressIndicator());
+                } else if (state is MultipleUsersLoaded) {
+                  users = state.users;
+                  // print('-------------------------------');
+                  // for (var u in users) {
+                  //   print('${u.id} - ${u.username}');
+                  // }
+                  // print('-------------------------------');
+                }
+                return BlocBuilder<AddChannelBloc, AddChannelState>(
+                  buildWhen: (previous, current) => current is Updated,
+                  builder: (context, state) {
+                    var selectedIds = <String>[];
+                    var selectedUsers = <User>[];
+                    var name = '';
+                    var description = '';
+                    if (state is Updated) {
+                      name = state.repository?.name;
+                      description = state.repository?.description;
+                      selectedIds = state.repository?.members;
                       if (!_isDirect) {
-                        if (index < selectedUsers.length) {
-                          user = selectedUsers[index];
-                        } else {
-                          user = users[index - selectedUsers.length];
-                        }
-                      } else {
-                        user = users[index];
+                        selectedUsers = users
+                            .where((user) => selectedIds.contains(user.id))
+                            .toList();
+                        users.excludeUsers(selectedUsers);
                       }
-                      return SearchItem(
-                        title: user.firstName.isNotEmpty ||
-                                user.lastName.isNotEmpty
-                            ? '${user.firstName} ${user.lastName}'
-                            : '${user.username}',
-                        selected: selectedIds.contains(user.id),
-                        allowMultipleChoice: !_isDirect,
-                        onTap: () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          if (_isDirect) {
-                            selectedIds = [user.id];
-                            _createDirect(selectedIds);
+                    }
+
+                    // print('Selected UsERS: ${selectedUsers.map((e) => e.username)}');
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(top: 0),
+                      itemCount: users.length + selectedUsers.length,
+                      itemBuilder: (context, index) {
+                        User user;
+                        if (!_isDirect) {
+                          if (index < selectedUsers.length) {
+                            user = selectedUsers[index];
                           } else {
-                            if (selectedIds.contains(user.id)) {
-                              setState(() {
-                                selectedIds.remove(user.id);
-                                // selectedUsers.removeWhere((selected) => selected.id == user.id);
-                              });
-                            } else {
-                              setState(() {
-                                selectedIds.add(user.id);
-                                // selectedUsers.add(user);
-                              });
-                            }
-                            context.read<AddChannelBloc>().add(Update(
-                                  name: name,
-                                  description: description,
-                                  participants: selectedIds,
-                                ));
+                            user = users[index - selectedUsers.length];
                           }
-                        },
-                      );
-                    },
-                  );
-                },
-              );
-            }),
-          ],
-        );
-      },
+                        } else {
+                          user = users[index];
+                        }
+                        return SearchItem(
+                          title: user.firstName.isNotEmpty ||
+                                  user.lastName.isNotEmpty
+                              ? '${user.firstName} ${user.lastName}'
+                              : '${user.username}',
+                          selected: selectedIds.contains(user.id),
+                          allowMultipleChoice: !_isDirect,
+                          onTap: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            if (_isDirect) {
+                              selectedIds = [user.id];
+                              _createDirect(selectedIds);
+                            } else {
+                              if (selectedIds.contains(user.id)) {
+                                setState(() {
+                                  selectedIds.remove(user.id);
+                                  // selectedUsers.removeWhere((selected) => selected.id == user.id);
+                                });
+                              } else {
+                                setState(() {
+                                  selectedIds.add(user.id);
+                                  // selectedUsers.add(user);
+                                });
+                              }
+                              context.read<AddChannelBloc>().add(Update(
+                                    name: name,
+                                    description: description,
+                                    participants: selectedIds,
+                                  ));
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              }),
+            ],
+          );
+        },
+      ),
     );
   }
 }

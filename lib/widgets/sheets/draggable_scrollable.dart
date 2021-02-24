@@ -12,7 +12,7 @@ class DraggableScrollable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Current flow: $flow');
+    // print('Current flow: $flow');
     Widget content = AddChannelFlow();
     switch (flow) {
       case SheetFlow.addChannel:
