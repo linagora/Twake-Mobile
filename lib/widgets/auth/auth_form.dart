@@ -12,42 +12,42 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
-  String username = '';
-  String password = '';
-  var passwordController = TextEditingController();
-  var usernameController = TextEditingController();
-  final FocusNode _usernameFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
+  String _username = '';
+  String _password = '';
+  final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _usernameFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
 
   final GlobalKey<FormState> formKey = GlobalKey();
 
   /// Closure to store the username from form field
   void onUsernameSaved() {
-    username = usernameController.text;
+    _username = _usernameController.text;
     // triggering ui rebuild
     setState(() {});
   }
 
   /// Closure to store the password from form field
   void onPasswordSaved() {
-    password = passwordController.text;
+    _password = _passwordController.text;
     // triggering ui rebuild
     setState(() {});
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    passwordController.addListener(onPasswordSaved);
-    usernameController.addListener(onUsernameSaved);
+    _usernameController.addListener(onUsernameSaved);
+    _passwordController.addListener(onPasswordSaved);
   }
 
   @override
-  dispose() {
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
     _usernameFocusNode.dispose();
     _passwordFocusNode.dispose();
-    passwordController.dispose();
-    usernameController.dispose();
     super.dispose();
   }
 
@@ -68,8 +68,8 @@ class _AuthFormState extends State<AuthForm> {
   void onSubmit() {
     BlocProvider.of<AuthBloc>(context).add(
       Authenticate(
-        username,
-        password,
+        _username,
+        _password,
       ),
     );
   }
@@ -111,7 +111,7 @@ class _AuthFormState extends State<AuthForm> {
                 label: 'Email',
                 validator: validateUsername,
                 // onSaved: onUsernameSaved,
-                controller: usernameController,
+                controller: _usernameController,
                 focusNode: _usernameFocusNode,
               ),
               SizedBox(height: Dim.hm3),
@@ -120,49 +120,51 @@ class _AuthFormState extends State<AuthForm> {
                 obscured: true,
                 validator: validatePassword,
                 // onSaved: onPasswordSaved,
-                controller: passwordController,
+                controller: _passwordController,
                 focusNode: _passwordFocusNode,
               ),
               SizedBox(height: Dim.heightMultiplier),
               BlocBuilder<AuthBloc, AuthState>(
-                builder: (ctx, state) => Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (state is WrongCredentials)
-                      Text(
-                        'Incorrect email or password',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    if (state is AuthenticationError)
-                      Text(
-                        'Network Error',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child:
-                            BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                          builder: (context, state) => FlatButton(
-                            onPressed: state is cb.ConnectionLost
-                                ? null
-                                : () {
-                                    context
-                                        .read<AuthBloc>()
-                                        .add(ResetPassword());
-                                  },
-                            child: Text(
-                              'Forgot password?',
-                              style: state is cb.ConnectionLost
-                                  ? StylesConfig.disabled
-                                  : StylesConfig.miniPurple,
+                builder: (ctx, state) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (state is WrongCredentials)
+                        Text(
+                          'Incorrect email or password',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      if (state is AuthenticationError)
+                        Text(
+                          'Network Error',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: BlocBuilder<cb.ConnectionBloc,
+                              cb.ConnectionState>(
+                            builder: (context, state) => FlatButton(
+                              onPressed: state is cb.ConnectionLost
+                                  ? null
+                                  : () {
+                                      context
+                                          .read<AuthBloc>()
+                                          .add(ResetPassword());
+                                    },
+                              child: Text(
+                                'Forgot password?',
+                                style: state is cb.ConnectionLost
+                                    ? StylesConfig.disabled
+                                    : StylesConfig.miniPurple,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  );
+                },
               ),
               Spacer(),
               SizedBox(
@@ -183,8 +185,8 @@ class _AuthFormState extends State<AuthForm> {
                       'Login',
                       style: Theme.of(context).textTheme.button,
                     ),
-                    onPressed: username.isNotEmpty &&
-                            password.isNotEmpty &&
+                    onPressed: _username.isNotEmpty &&
+                            _password.isNotEmpty &&
                             !(state is cb.ConnectionLost)
                         ? () => onSubmit()
                         : null,
