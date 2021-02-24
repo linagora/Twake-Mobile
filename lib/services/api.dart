@@ -184,11 +184,11 @@ class Api {
     final url = host + method;
 
     try {
-      // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
-      // logger.d('BODY: ${jsonEncode(body)}');
+      logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
+      logger.d('BODY: ${jsonEncode(body)}');
       final response =
           await (useTokenDio ? tokenDio : dio).post(url, data: body);
-      // logger.d('POST RESPONSE ${response.data}');
+      logger.d('POST RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
       logger.wtf(e);

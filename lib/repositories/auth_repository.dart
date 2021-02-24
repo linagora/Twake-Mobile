@@ -171,6 +171,10 @@ class AuthRepository extends JsonSerializable {
   }
 
   Future<void> fullClean() async {
+    _api.prolongToken = null;
+    _api.tokenIsValid = null;
+    accessToken = null;
+    refreshToken = null;
     _storage.truncateAll(except: [StorageType.Configuration]);
   }
 
