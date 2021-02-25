@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/repositories/configuration_repository.dart';
+import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
+import 'package:twake/blocs/configuration_cubit/configuration_state.dart';
 import 'package:twake/services/api.dart';
-// import 'package:twake/services/init.dart';
+import 'package:twake/utils/extensions.dart';
 
 class ServerConfiguration extends StatefulWidget {
   final Function onCancel;
@@ -23,8 +24,6 @@ class ServerConfiguration extends StatefulWidget {
 class _ServerConfigurationState extends State<ServerConfiguration> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
-  final _configurationFuture = ConfigurationRepository.load();
-  ConfigurationRepository _repository;
 
   @override
   void dispose() {
@@ -33,13 +32,13 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   }
 
   void _connect() async {
-    _repository.host = _controller.text;
-    // Save host address locally.
-    await _repository.save();
-    // Set host address to API handler.
-    Api.host = _repository.host;
-    // Reinit auth flow to apply changes.
-    // await initAuth();
+    var host = _controller.text;
+    if (host.isNotReallyEmpty) {
+      // Save host address locally.
+      context.read<ConfigurationCubit>().save(_controller.text);
+    }
+    Api.host = host;
+    // Apply changes to AuthBloc flow.
     await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
   }
 
@@ -82,14 +81,30 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
-              child: FutureBuilder<ConfigurationRepository>(
-                  future: _configurationFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      print('Server host: ${snapshot.data.host}');
-
-                      _repository = snapshot.data;
-                      _controller.text = _repository.host;
+              child: BlocConsumer<ConfigurationCubit, ConfigurationState>(
+                  listenWhen: (_, current) =>
+                      current is ConfigurationSaved ||
+                      current is ConfigurationError,
+                  listener: (context, state) {
+                    if (state is ConfigurationSaved) {
+                      widget.onConfirm();
+                    } else if (state is ConfigurationError) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                          state.message,
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                        duration: Duration(seconds: 2),
+                      ));
+                    }
+                  },
+                  buildWhen: (_, current) => current is ConfigurationLoaded,
+                  builder: (context, state) {
+                    if (state is ConfigurationLoaded) {
+                      _controller.text = state.host;
+                      print('Server host: ${state.host}');
 
                       return TextFormField(
                         key: _formKey,
@@ -153,11 +168,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             Padding(
               padding: EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
               child: TextButton(
-                onPressed: () {
-                  FocusScope.of(context).requestFocus();
-                  _connect();
-                  widget.onConfirm();
-                }, //() => _connect(),
+                onPressed: () => _connect(),
                 child: Container(
                   width: Size.infinite.width,
                   height: 50,
