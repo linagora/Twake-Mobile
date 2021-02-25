@@ -6,8 +6,16 @@ import 'package:image_picker/image_picker.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
+  final String icon;
+  final Function onTap;
 
-  const SelectableAvatar({Key key, this.size = 48.0}) : super(key: key);
+  const SelectableAvatar({
+    Key key,
+    this.size = 48.0,
+    this.icon,
+    this.onTap,
+  }) : super(key: key);
+
   @override
   _SelectableAvatarState createState() => _SelectableAvatarState();
 }
@@ -16,6 +24,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   final picker = ImagePicker();
 
   File _image;
+
   // String _base64Image;
   Uint8List _bytes;
 
@@ -33,30 +42,34 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: widget.onTap, // ?? _getImage(),
+      behavior: HitTestBehavior.opaque,
       child: Container(
         width: widget.size,
         height: widget.size,
-        child: _bytes != null
-            ? SizedBox()
-            : (_image != null
-            ? Image.file(_image)
-            : Image.asset("assets/images/pic.png")),
+        child: (widget.icon != null && widget.icon.isNotEmpty)
+            ? Center(child: Text(widget.icon))
+            : Image.asset("assets/images/pic.png"),
+        // child: _bytes != null
+        //     ? SizedBox()
+        //     : (_image != null
+        //         ? Image.file(_image)
+        //         : Image.asset("assets/images/pic.png")),
         decoration: _bytes != null
             ? BoxDecoration(
-          shape: BoxShape.circle,
-          image: DecorationImage(
-            image: MemoryImage(
-              _bytes,
-            ),
-            fit: BoxFit.fill,
-          ),
-        )
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: MemoryImage(
+                    _bytes,
+                  ),
+                  fit: BoxFit.fill,
+                ),
+              )
             : BoxDecoration(
-          shape: BoxShape.circle,
-          color: Color(0xffe3e3e3),
-        ),
+                shape: BoxShape.circle,
+                color: Color(0xffe3e3e3),
+              ),
       ),
-      onTap: null, //_getImage,
     );
   }
 }
