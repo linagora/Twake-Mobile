@@ -23,14 +23,12 @@ class ServerConfiguration extends StatefulWidget {
 class _ServerConfigurationState extends State<ServerConfiguration> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
-  final _focusNode = FocusNode();
   final _configurationFuture = ConfigurationRepository.load();
   ConfigurationRepository _repository;
 
   @override
   void dispose() {
     _controller.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -98,7 +96,6 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                         validator: (value) =>
                             value.isEmpty ? 'Address cannot be blank' : null,
                         controller: _controller,
-                        focusNode: _focusNode,
                         keyboardType: TextInputType.emailAddress,
                         style: TextStyle(
                           fontSize: 17.0,
@@ -157,6 +154,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
               padding: EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
               child: TextButton(
                 onPressed: () {
+                  FocusScope.of(context).requestFocus();
                   _connect();
                   widget.onConfirm();
                 }, //() => _connect(),
