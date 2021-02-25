@@ -185,27 +185,29 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
-      repository.logger.d(
-          'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+      // repository.logger.d(
+      // 'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+
       var attempt = 3;
       while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
         await Future.delayed(Duration(milliseconds: 100));
         attempt -= 1;
       }
-      _updateParentChannel();
-      await repository.pullOne(
+      final updateParent = await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
       );
-      _sortItems();
-      final newState = MessagesLoaded(
-        messages: repository.items,
-        messageCount: repository.itemsCount,
-        force: DateTime.now().toString(),
-        parentChannel: selectedChannel,
-      );
-      repository.logger.d('YIELDING STATE: ${newState != this.state}');
-      yield newState;
+      if (updateParent) {
+        _sortItems();
+        final newState = MessagesLoaded(
+          messages: repository.items,
+          messageCount: repository.itemsCount,
+          force: DateTime.now().toString(),
+          parentChannel: selectedChannel,
+        );
+        yield newState;
+        _updateParentChannel();
+      }
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
       if (thread == null) return;

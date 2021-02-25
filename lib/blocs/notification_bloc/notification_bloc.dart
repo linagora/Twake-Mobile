@@ -114,7 +114,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // logger.d('PING $ping');
     // });
     socket.on(SocketIOEvent.EVENT, (data) {
-      // logger.d('GOT EVENT: $data');
+      logger.d('GOT EVENT: $data');
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
