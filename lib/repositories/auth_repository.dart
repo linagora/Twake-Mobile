@@ -95,7 +95,7 @@ class AuthRepository extends JsonSerializable {
     try {
       final configurationRepository = await ConfigurationRepository.load();
       print('Actual host for auth: ${configurationRepository.host}');
-      _api = Api(ip: configurationRepository.host);
+      Api.host = configurationRepository.host;
 
       final response = await _api.post(
         Endpoint.auth,
