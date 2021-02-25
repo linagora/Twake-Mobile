@@ -165,6 +165,7 @@ class _EditChannelState extends State<EditChannel> {
   Widget _buildEmojiBoard() {
     return EmojiKeyboard(
       onEmojiSelected: (emoji) {
+        _canSave = true;
         _icon = emoji.text;
         _batchUpdateState(icon: _icon);
         _toggleEmojiBoard();
