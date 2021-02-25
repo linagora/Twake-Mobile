@@ -16,10 +16,27 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   var _index = 0;
+  List<Widget> _widgets;
 
   @override
   void initState() {
     super.initState();
+
+    _widgets = [
+      AuthForm(
+        onConfigurationOpen: () => setState(() {
+          _index = 1;
+        }),
+      ),
+      ServerConfiguration(
+        onCancel: () => setState(() {
+          _index = 0;
+        }),
+        onConfirm: () => setState(() {
+          _index = 0;
+        }),
+      ),
+    ];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ConfigurationCubit>().load();
@@ -65,27 +82,7 @@ class _AuthPageState extends State<AuthPage> {
               alignment: Alignment.bottomCenter,
               sizing: StackFit.expand,
               index: _index,
-              children: [
-                AuthForm(
-                  onConfigurationOpen: () {
-                    setState(() {
-                      _index = 1;
-                    });
-                  },
-                ),
-                ServerConfiguration(
-                  onCancel: () {
-                    setState(() {
-                      _index = 0;
-                    });
-                  },
-                  onConfirm: () {
-                    setState(() {
-                      _index = 0;
-                    });
-                  },
-                ),
-              ],
+              children: _widgets,
             ),
           ),
         ],
