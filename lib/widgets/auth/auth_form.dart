@@ -7,6 +7,10 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/navigation.dart';
 
 class AuthForm extends StatefulWidget {
+  final Function onConfigurationOpen;
+
+  const AuthForm({Key key, this.onConfigurationOpen}) : super(key: key);
+
   @override
   _AuthFormState createState() => _AuthFormState();
 }
@@ -76,169 +80,171 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: Dim.widthPercent(87),
-      height: Dim.heightPercent(67),
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: Dim.wm4,
-          right: Dim.wm4,
-          top: Dim.hm3,
-          bottom: Dim.hm2,
-        ),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  'Let\'s get started!',
-                  style: Theme.of(context).textTheme.headline1,
-                ),
-              ),
-              SizedBox(height: Dim.heightMultiplier),
-              Center(
-                child: Text(
-                  'Sign in to continue',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              ),
-              Spacer(),
-              _AuthTextForm(
-                label: 'Email',
-                validator: validateUsername,
-                // onSaved: onUsernameSaved,
-                controller: _usernameController,
-                focusNode: _usernameFocusNode,
-              ),
-              SizedBox(height: Dim.hm3),
-              _AuthTextForm(
-                label: 'Password',
-                obscured: true,
-                validator: validatePassword,
-                // onSaved: onPasswordSaved,
-                controller: _passwordController,
-                focusNode: _passwordFocusNode,
-              ),
-              SizedBox(height: Dim.heightMultiplier),
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (ctx, state) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (state is WrongCredentials)
-                        Text(
-                          'Incorrect email or password',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      if (state is AuthenticationError)
-                        Text(
-                          'Network Error',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: BlocBuilder<cb.ConnectionBloc,
-                              cb.ConnectionState>(
-                            builder: (context, state) => FlatButton(
-                              onPressed: state is cb.ConnectionLost
-                                  ? null
-                                  : () {
-                                      context
-                                          .read<AuthBloc>()
-                                          .add(ResetPassword());
-                                    },
-                              child: Text(
-                                'Forgot password?',
-                                style: state is cb.ConnectionLost
-                                    ? StylesConfig.disabled
-                                    : StylesConfig.miniPurple,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                  builder: (context, state) => RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: Dim.wm4,
-                      vertical: Dim.tm2(decimal: -.2),
-                    ),
-                    color: Theme.of(context).accentColor,
-                    textColor: Colors.white,
-                    disabledColor: Color.fromRGBO(238, 238, 238, 1),
-                    child: Text(
-                      'Login',
-                      style: Theme.of(context).textTheme.button,
-                    ),
-                    onPressed: _username.isNotEmpty &&
-                            _password.isNotEmpty &&
-                            !(state is cb.ConnectionLost)
-                        ? () => onSubmit()
-                        : null,
+    return SafeArea(
+      child: Container(
+        width: Dim.widthPercent(87),
+        height: Dim.heightPercent(67),
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: Dim.wm4,
+            right: Dim.wm4,
+            top: Dim.hm3,
+            bottom: Dim.hm2,
+          ),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    'Let\'s get started!',
+                    style: Theme.of(context).textTheme.headline1,
                   ),
                 ),
-              ),
-              Spacer(),
-              Align(
-                alignment: Alignment.center,
-                child: FittedBox(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () => openChooseServer(context),
-                        behavior: HitTestBehavior.opaque,
-                        child: Text(
-                          'Choose the server',
-                          style: StylesConfig.miniPurple,
-                        ),
-                      ),
-                      SizedBox(height: 30),
-                      Row(
-                        children: [
+                SizedBox(height: Dim.heightMultiplier),
+                Center(
+                  child: Text(
+                    'Sign in to continue',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                ),
+                Spacer(),
+                _AuthTextForm(
+                  label: 'Email',
+                  validator: validateUsername,
+                  // onSaved: onUsernameSaved,
+                  controller: _usernameController,
+                  focusNode: _usernameFocusNode,
+                ),
+                SizedBox(height: Dim.hm3),
+                _AuthTextForm(
+                  label: 'Password',
+                  obscured: true,
+                  validator: validatePassword,
+                  // onSaved: onPasswordSaved,
+                  controller: _passwordController,
+                  focusNode: _passwordFocusNode,
+                ),
+                SizedBox(height: Dim.heightMultiplier),
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (ctx, state) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (state is WrongCredentials)
                           Text(
-                            'Don\'t have an account? ',
-                            style: StylesConfig.miniPurple
-                                .copyWith(color: Colors.black87),
+                            'Incorrect email or password',
+                            style: TextStyle(color: Colors.red),
                           ),
-                          BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                            builder: (context, state) => FlatButton(
-                              onPressed: state is cb.ConnectionLost
-                                  ? null
-                                  : () {
-                                      context
-                                          .read<AuthBloc>()
-                                          .add(RegistrationInit());
-                                    },
-                              child: Text(
-                                ' Sign up',
-                                style: state is cb.ConnectionLost
-                                    ? StylesConfig.disabled
-                                    : StylesConfig.miniPurple,
+                        if (state is AuthenticationError)
+                          Text(
+                            'Network Error',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: BlocBuilder<cb.ConnectionBloc,
+                                cb.ConnectionState>(
+                              builder: (context, state) => FlatButton(
+                                onPressed: state is cb.ConnectionLost
+                                    ? null
+                                    : () {
+                                        context
+                                            .read<AuthBloc>()
+                                            .add(ResetPassword());
+                                      },
+                                child: Text(
+                                  'Forgot password?',
+                                  style: state is cb.ConnectionLost
+                                      ? StylesConfig.disabled
+                                      : StylesConfig.miniPurple,
+                                ),
                               ),
                             ),
                           ),
-                        ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                Spacer(),
+                SizedBox(
+                  width: double.infinity,
+                  child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                    builder: (context, state) => RaisedButton(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    ],
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Dim.wm4,
+                        vertical: Dim.tm2(decimal: -.2),
+                      ),
+                      color: Theme.of(context).accentColor,
+                      textColor: Colors.white,
+                      disabledColor: Color.fromRGBO(238, 238, 238, 1),
+                      child: Text(
+                        'Login',
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                      onPressed: _username.isNotEmpty &&
+                              _password.isNotEmpty &&
+                              !(state is cb.ConnectionLost)
+                          ? () => onSubmit()
+                          : null,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                Spacer(),
+                Align(
+                  alignment: Alignment.center,
+                  child: FittedBox(
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: widget.onConfigurationOpen,//() => openChooseServer(context),
+                          behavior: HitTestBehavior.opaque,
+                          child: Text(
+                            'Choose the server',
+                            style: StylesConfig.miniPurple,
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                        Row(
+                          children: [
+                            Text(
+                              'Don\'t have an account? ',
+                              style: StylesConfig.miniPurple
+                                  .copyWith(color: Colors.black87),
+                            ),
+                            BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                              builder: (context, state) => FlatButton(
+                                onPressed: state is cb.ConnectionLost
+                                    ? null
+                                    : () {
+                                        context
+                                            .read<AuthBloc>()
+                                            .add(RegistrationInit());
+                                      },
+                                child: Text(
+                                  ' Sign up',
+                                  style: state is cb.ConnectionLost
+                                      ? StylesConfig.disabled
+                                      : StylesConfig.miniPurple,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -7,6 +7,15 @@ import 'package:twake/services/api.dart';
 // import 'package:twake/services/init.dart';
 
 class ServerConfiguration extends StatefulWidget {
+  final Function onCancel;
+  final Function onConfirm;
+
+  const ServerConfiguration({
+    Key key,
+    this.onCancel,
+    this.onConfirm,
+  }) : super(key: key);
+
   @override
   _ServerConfigurationState createState() => _ServerConfigurationState();
 }
@@ -34,13 +43,16 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     // Reinit auth flow to apply changes.
     // await initAuth();
     await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
-    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        leading: CloseButton(
+          onPressed: widget.onCancel,
+        ),
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -144,7 +156,10 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             Padding(
               padding: EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
               child: TextButton(
-                onPressed: () => _connect(),
+                onPressed: () {
+                  _connect();
+                  widget.onConfirm();
+                }, //() => _connect(),
                 child: Container(
                   width: Size.infinite.width,
                   height: 50,
