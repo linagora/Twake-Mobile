@@ -32,7 +32,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         runWebView();
       }
     });
-    webView = HeadlessInAppWebView(
+    setUpWebView();
+    CookieManager.instance().deleteAllCookies();
+  }
+
+  void setUpWebView() {
+    this.webView = HeadlessInAppWebView(
       initialUrl: repository.twakeConsole,
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
@@ -72,7 +77,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // print('CREATED WEBVIEW');
       },
     );
-    CookieManager.instance().deleteAllCookies();
   }
 
   @override

@@ -41,8 +41,8 @@ void openEditChannel(BuildContext context, Channel channel) {
 void openChooseServer(BuildContext context) {
   Navigator.of(context)
       .push(MaterialPageRoute(
-    builder: (context) => ServerConfiguration(),
-  ))
+        builder: (context) => ServerConfiguration(),
+      ))
       .then((r) => handleError(r, context));
 }
 

@@ -42,16 +42,27 @@ class MessagesRepository {
     int limit,
   }) async {
     List<dynamic> itemsList = [];
-    final maxDateQuery =
-        // 'SELECT max(modification_date) as max_mod, '
-        'SELECT max(creation_date) as max_create '
+
+    final messageCountQuery = 'SELECT count(id) as count '
         'FROM message';
-    final maxFilter = List.from(filters);
-    maxFilter.removeLast();
-    final List max = await _storage.customQuery(maxDateQuery, filters: filters);
-    // logger.d('REQUESTING MESSAGES AFTER: $max');
-    if (max.isNotEmpty && max[0]['max_create'] != null) {
-      queryParams['after_date'] = max[0]['max_create'].toString();
+    final List count =
+        await _storage.customQuery(messageCountQuery, filters: filters);
+    if (count[0]['count'] < 10) {
+      forceFromApi = true;
+    }
+    if (!forceFromApi) {
+      final maxDateQuery =
+          // 'SELECT max(modification_date) as max_mod, '
+          'SELECT max(creation_date) as max_create '
+          'FROM message';
+      final maxFilter = List.from(filters);
+      maxFilter.removeLast();
+      final List max =
+          await _storage.customQuery(maxDateQuery, filters: filters);
+      // logger.d('REQUESTING MESSAGES AFTER: $max');
+      if (max.isNotEmpty && max[0]['max_create'] != null) {
+        queryParams['after_date'] = max[0]['max_create'].toString();
+      }
     }
     try {
       // logger.d('Query params is: $queryParams');

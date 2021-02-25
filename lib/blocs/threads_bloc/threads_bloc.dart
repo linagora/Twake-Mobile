@@ -245,6 +245,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
     final channelId = messagesBloc.selectedChannel.id;
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
+      workspaceId: ProfileBloc.selectedWorkspace,
       companyId: ProfileBloc.selectedCompany,
       totalModifier: totalModifier,
     ));

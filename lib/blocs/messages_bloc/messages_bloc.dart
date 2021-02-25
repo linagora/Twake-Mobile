@@ -18,7 +18,7 @@ export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
 const _DUMMY_ID = 'message';
 
-const _MESSAGE_LIMIT = 150;
+const _MESSAGE_LIMIT = 30;
 
 class MessagesBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
@@ -192,6 +192,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         await Future.delayed(Duration(milliseconds: 100));
         attempt -= 1;
       }
+      _updateParentChannel();
       await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
@@ -208,20 +209,14 @@ class MessagesBloc<T extends BaseChannelBloc>
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
       if (thread == null) return;
-      // var thread = await repository.getItemById(event.threadId);
-      // if (thread != null) {
-      // thread.responsesCount += event.modifier;
-      // repository.saveOne(thread);
-      // } else
-      // return;
       if (repository.selected == null) return;
+
       if (event.channelId == selectedChannel.id) {
         repository.logger
             .d('In thread: ${event.threadId == repository.selected.id}');
         thread = event.threadId == repository.selected.id
             ? thread
             : repository.selected;
-        print('RESPONSES ARE ${thread.responsesCount}');
         final newState = MessagesLoaded(
           threadMessage: thread,
           messages: repository.items,
@@ -231,6 +226,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
         repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
+        _updateParentChannel();
       }
     } else if (event is RemoveMessage) {
       final channelId = event.channelId ?? selectedChannel.id;
@@ -346,6 +342,7 @@ class MessagesBloc<T extends BaseChannelBloc>
 
   void _updateParentChannel() {
     channelsBloc.add(ModifyMessageCount(
+      workspaceId: ProfileBloc.selectedWorkspace,
       channelId: selectedChannel.id,
       companyId: ProfileBloc.selectedCompany,
       totalModifier: 1,
