@@ -27,7 +27,7 @@ Future<AuthRepository> initAuth() async {
   await store.initDb();
 
   final configurationRepository = await ConfigurationRepository.load();
-  print('Config rep host: ${configurationRepository.host}');
+  print('Actual host for auth: ${configurationRepository.host}');
   final _api = Api(ip: configurationRepository.host);
   // print('API host: ${API}');
   final _state = await Connectivity().checkConnectivity();
