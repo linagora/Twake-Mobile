@@ -1,6 +1,6 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'package:json_annotation/json_annotation.dart';
-import 'package:twake/services/init.dart';
+// import 'package:twake/services/init.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'configuration_repository.g.dart';

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/repositories/configuration_repository.dart';
 import 'package:twake/services/api.dart';
-import 'package:twake/services/init.dart';
+// import 'package:twake/services/init.dart';
 
 class ServerConfiguration extends StatefulWidget {
   @override
@@ -30,7 +32,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     // Set host address to API handler.
     Api.host = _repository.host;
     // Reinit auth flow to apply changes.
-    await initAuth();
+    // await initAuth();
+    await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
     Navigator.of(context).pop();
   }
 
@@ -70,61 +73,60 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             Padding(
               padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
               child: FutureBuilder<ConfigurationRepository>(
-                future: _configurationFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    print('Server host: ${snapshot.data.host}');
+                  future: _configurationFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      print('Server host: ${snapshot.data.host}');
 
-                    _repository = snapshot.data;
-                    _controller.text = _repository.host;
+                      _repository = snapshot.data;
+                      _controller.text = _repository.host;
 
-                    return TextFormField(
-                      key: _formKey,
-                      validator: (value) =>
-                      value.isEmpty ? 'Address cannot be blank' : null,
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      keyboardType: TextInputType.emailAddress,
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'https://mobile.api.twake.app',
-                        hintStyle: TextStyle(
+                      return TextFormField(
+                        key: _formKey,
+                        validator: (value) =>
+                            value.isEmpty ? 'Address cannot be blank' : null,
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        keyboardType: TextInputType.emailAddress,
+                        style: TextStyle(
                           fontSize: 17.0,
                           fontWeight: FontWeight.w400,
-                          color: Color(0xffc8c8c8),
+                          color: Colors.black,
                         ),
-                        alignLabelWithHint: true,
-                        fillColor: Color(0xfff4f4f4),
-                        filled: true,
-                        suffix: Container(
-                          width: 30,
-                          height: 25,
-                          padding: EdgeInsets.only(left: 10),
-                          child: IconButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () => _controller.clear(),
-                            iconSize: 15,
-                            icon: Icon(CupertinoIcons.clear),
+                        decoration: InputDecoration(
+                          hintText: 'https://mobile.api.twake.app',
+                          hintStyle: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xffc8c8c8),
+                          ),
+                          alignLabelWithHint: true,
+                          fillColor: Color(0xfff4f4f4),
+                          filled: true,
+                          suffix: Container(
+                            width: 30,
+                            height: 25,
+                            padding: EdgeInsets.only(left: 10),
+                            child: IconButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () => _controller.clear(),
+                              iconSize: 15,
+                              icon: Icon(CupertinoIcons.clear),
+                            ),
+                          ),
+                          border: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide: BorderSide(
+                              width: 0.0,
+                              style: BorderStyle.none,
+                            ),
                           ),
                         ),
-                        border: UnderlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            width: 0.0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                      ),
-                    );
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                }
-              ),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  }),
             ),
             Spacer(),
             Padding(
