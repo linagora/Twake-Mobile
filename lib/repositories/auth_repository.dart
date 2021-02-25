@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:package_info/package_info.dart';
+import 'package:twake/repositories/configuration_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'auth_repository.g.dart';
@@ -92,6 +93,10 @@ class AuthRepository extends JsonSerializable {
     String password,
   }) async {
     try {
+      final configurationRepository = await ConfigurationRepository.load();
+      print('Actual host for auth: ${configurationRepository.host}');
+      _api = Api(ip: configurationRepository.host);
+
       final response = await _api.post(
         Endpoint.auth,
         body: {
