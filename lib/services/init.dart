@@ -25,11 +25,9 @@ import 'service_bundle.dart';
 Future<AuthRepository> initAuth() async {
   final store = Storage();
   await store.initDb();
-
-  final configurationRepository = await ConfigurationRepository.load();
-  print('Actual host for auth: ${configurationRepository.host}');
-  final _api = Api(ip: configurationRepository.host);
-  // print('API host: ${API}');
+  // final configurationRepository = await ConfigurationRepository.load();
+  // print('Actual host for auth: ${configurationRepository.host}');
+  final _api = Api();
   final _state = await Connectivity().checkConnectivity();
   _api.hasConnection = _state != ConnectivityResult.none;
 
