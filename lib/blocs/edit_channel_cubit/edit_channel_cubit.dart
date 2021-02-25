@@ -15,7 +15,7 @@ class EditChannelCubit extends Cubit<EditChannelState> {
       emit(EditChannelSaved());
     } else {
       emit(EditChannelError('Error on channel editing.'));
-    };
+    }
   }
 
   Future<void> delete() async {
@@ -24,25 +24,27 @@ class EditChannelCubit extends Cubit<EditChannelState> {
       emit(EditChannelDeleted());
     } else {
       emit(EditChannelError('Error on channel deletion.'));
-    };
+    }
   }
 
   void update({
     String channelId,
+    String icon,
     String name,
     String description,
     bool automaticallyAddNew,
   }) {
     repository.channelId = channelId;
+    repository.icon = icon;
     repository.name = name ?? repository.name;
     repository.description = description ?? repository.description;
     repository.def = automaticallyAddNew ?? repository.def ?? true;
 
     var newRepo = EditChannelRepository(
       channelId: repository.channelId,
+      icon: repository.icon,
       name: repository.name,
       description: repository.description,
-      icon: repository.icon,
       def: repository.def,
     );
     emit(EditChannelUpdated(newRepo));

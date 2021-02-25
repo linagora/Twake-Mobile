@@ -105,6 +105,7 @@ class _EditChannelState extends State<EditChannel> {
       setState(() {
         _channel = widget.channel;
         _channelId = widget.channel.id;
+        _icon = widget.channel.icon;
       });
     }
     if (oldWidget.members != widget.members) {
@@ -116,12 +117,14 @@ class _EditChannelState extends State<EditChannel> {
 
   void _batchUpdateState({
     String channelId,
+    String icon,
     String name,
     String description,
     bool showHistoryForNew,
   }) {
     context.read<EditChannelCubit>().update(
           channelId: channelId ?? _channelId,
+          icon: icon ?? _icon,
           name: name ?? _nameController.text,
           description: description ?? _descriptionController.text,
           automaticallyAddNew: showHistoryForNew ?? _showHistoryForNew,
@@ -135,7 +138,7 @@ class _EditChannelState extends State<EditChannel> {
 
   void _delete() => context.read<EditChannelCubit>().delete();
 
-  _onPanelSlide(double position) {
+  void _onPanelSlide(double position) {
     if (position < 0.4 && _panelController.isPanelAnimating) {
       FocusScope.of(context).requestFocus(FocusNode());
     }
@@ -163,6 +166,7 @@ class _EditChannelState extends State<EditChannel> {
     return EmojiKeyboard(
       onEmojiSelected: (emoji) {
         _icon = emoji.text;
+        _batchUpdateState(icon: _icon);
         _toggleEmojiBoard();
       },
       height: MediaQuery.of(context).size.height * 0.35,
@@ -215,6 +219,7 @@ class _EditChannelState extends State<EditChannel> {
             buildWhen: (_, current) =>
                 current is EditChannelSaved || current is EditChannelDeleted,
             builder: (context, state) {
+              print('EditChannel State: $state');
               if (state is EditChannelSaved || state is EditChannelDeleted) {
                 context
                     .read<ChannelsBloc>()
