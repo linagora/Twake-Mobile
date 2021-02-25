@@ -40,6 +40,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     Api.host = host;
     // Apply changes to AuthBloc flow.
     await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
+    BlocProvider.of<AuthBloc>(context).setUpWebView(true);
   }
 
   @override
