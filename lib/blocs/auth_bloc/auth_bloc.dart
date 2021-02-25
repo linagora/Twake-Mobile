@@ -32,7 +32,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         runWebView();
       }
     });
-    webView = HeadlessInAppWebView(
+    setUpWebView();
+    CookieManager.instance().deleteAllCookies();
+  }
+
+  void setUpWebView([run = false]) {
+    print('AUTH MODE: ${repository.authMode}');
+    print('CONSOLE LINK: ${repository.twakeConsole}');
+    if (repository.authMode == 'INTERNAL') return;
+    this.webView = HeadlessInAppWebView(
       initialUrl: repository.twakeConsole,
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
@@ -72,7 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // print('CREATED WEBVIEW');
       },
     );
-    CookieManager.instance().deleteAllCookies();
+    if (run) runWebView();
   }
 
   @override
@@ -164,6 +172,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await CookieManager.instance().getCookies(url: 'auth.twake.app');
     _prevUrl = '';
     await webView.dispose();
+    print('Running webview...');
     webView.run();
   }
 

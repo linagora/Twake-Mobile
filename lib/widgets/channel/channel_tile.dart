@@ -46,14 +46,17 @@ class ChannelTile extends StatelessWidget {
                         textAlign: TextAlign.start,
                         style: TextStyle(
                           fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: channel.hasUnread == 1
+                              ? FontWeight.w900
+                              : FontWeight.w400,
                           color: Color(0xff444444),
                         ),
                       ),
                       SizedBox(width: 6),
                       if (channel.visibility != null &&
                           channel.visibility == 'private')
-                        Icon(Icons.lock_outline, size: 17.0, color: Color(0xff444444)),
+                        Icon(Icons.lock_outline,
+                            size: 17.0, color: Color(0xff444444)),
                     ],
                   ),
                   if (channel.description != null &&
