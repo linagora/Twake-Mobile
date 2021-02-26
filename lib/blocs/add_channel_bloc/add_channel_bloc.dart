@@ -16,6 +16,7 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
     if (event is SetFlowStage) {
       yield StageUpdated(event.stage);
     } else if (event is Update) {
+      repository.icon = event.icon ?? repository.icon;
       repository.name = event.name ?? repository.name;
       repository.description = event.description ?? repository.description;
       repository.channelGroup = event.groupName ?? repository.channelGroup;
@@ -25,6 +26,7 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
 
       // print('Updated data: ${repository.toJson()}');
       var newRepo = AddChannelRepository(
+        icon: repository.icon,
         companyId: repository.companyId,
         workspaceId: repository.workspaceId,
         name: repository.name,

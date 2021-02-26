@@ -91,6 +91,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   }
 
   void _toggleEmojiBoard() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     await Future.delayed(Duration(milliseconds: 150));
     setState(() {
       _emojiVisible = !_emojiVisible;
@@ -184,6 +185,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               _emojiVisible = false;
             });
           },
+          behavior: HitTestBehavior.opaque,
           child: Column(
             children: [
               SheetTitleBar(
