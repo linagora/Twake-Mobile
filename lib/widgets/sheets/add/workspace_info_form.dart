@@ -73,7 +73,10 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
       listener: (context, state) {
         if (state is SheetShouldClear) {
           _workspaceNameController.clear();
-          FocusScope.of(context).requestFocus(new FocusNode());
+          _shouldRedirect = false;
+          _collaborators = <String>[];
+          _workspaceId = '';
+          FocusScope.of(context).requestFocus(FocusNode());
           context.read<AddWorkspaceCubit>().clear();
         }
       },
