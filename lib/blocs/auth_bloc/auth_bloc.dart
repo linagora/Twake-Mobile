@@ -22,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool connectionLost = false;
 
   String _prevUrl = '';
+
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
     subscription = connectionBloc.listen((cb.ConnectionState state) async {
@@ -177,7 +178,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> runWebView() async {
-    if (repository.authMode == 'INTERNAL') {
+    if (repository.authMode == 'INTERNAL' || repository.authMode == 'UNKNOWN') {
       return;
     }
     await CookieManager.instance().deleteAllCookies();
