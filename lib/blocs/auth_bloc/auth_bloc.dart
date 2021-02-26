@@ -177,7 +177,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> runWebView() async {
-    if (repository.authMode == 'INTERNAL') {
+    if (repository.authMode == 'INTERNAL' || repository.authMode == 'UNKNOWN') {
       return;
     }
     await CookieManager.instance().deleteAllCookies();
