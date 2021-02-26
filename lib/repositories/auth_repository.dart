@@ -125,6 +125,7 @@ class AuthRepository extends JsonSerializable {
       data = await _api.get(Endpoint.version, useTokenDio: true);
     } catch (e) {
       logger.e('ERROR WHILE GETTING AUTH MODE\n$e');
+      this.authMode = 'INTERNAL';
       return 'INTERNAL';
     }
     if ((data['auth_mode'] as List).contains('console')) {

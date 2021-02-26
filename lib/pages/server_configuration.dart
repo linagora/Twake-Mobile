@@ -37,10 +37,10 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       // Save host address locally.
       context.read<ConfigurationCubit>().save(_controller.text);
     }
-    Api.host = host;
+    // Api.host = host;
     // Apply changes to AuthBloc flow.
-    await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
-    BlocProvider.of<AuthBloc>(context).setUpWebView(true);
+    // await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
+    // BlocProvider.of<AuthBloc>(context).setUpWebView(true);
   }
 
   @override
@@ -82,76 +82,95 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             ),
             Padding(
               padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
-              child: BlocConsumer<ConfigurationCubit, ConfigurationState>(
-                  listenWhen: (_, current) =>
-                      current is ConfigurationSaved ||
-                      current is ConfigurationError,
-                  listener: (context, state) {
-                    if (state is ConfigurationSaved) {
-                      widget.onConfirm();
-                    } else if (state is ConfigurationError) {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          state.message,
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
-                        ),
-                        duration: Duration(seconds: 2),
-                      ));
-                    }
-                  },
-                  buildWhen: (_, current) => current is ConfigurationLoaded,
-                  builder: (context, state) {
-                    if (state is ConfigurationLoaded) {
-                      _controller.text = state.host;
-                      print('Server host: ${state.host}');
-
-                      return TextFormField(
-                        key: _formKey,
-                        validator: (value) =>
-                            value.isEmpty ? 'Address cannot be blank' : null,
-                        controller: _controller,
-                        keyboardType: TextInputType.emailAddress,
+              child: BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) {
+                  if (state is HostValidated) {
+                    widget.onConfirm();
+                  }
+                  if (state is HostInvalid) {
+                    print('HOST INVALID');
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        'Invalid host',
                         style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
+                          color: Colors.red,
                         ),
-                        decoration: InputDecoration(
-                          hintText: 'https://mobile.api.twake.app',
-                          hintStyle: TextStyle(
+                      ),
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
+                },
+                child: BlocConsumer<ConfigurationCubit, ConfigurationState>(
+                    listenWhen: (_, current) =>
+                        current is ConfigurationSaved ||
+                        current is ConfigurationError,
+                    listener: (context, state) {
+                      if (state is ConfigurationSaved) {
+                        context.read<AuthBloc>().add(ValidateHost(_controller.text));
+                      } else if (state is ConfigurationError) {
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                            state.message,
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                          duration: Duration(seconds: 2),
+                        ));
+                      }
+                    },
+                    buildWhen: (_, current) => current is ConfigurationLoaded,
+                    builder: (context, state) {
+                      if (state is ConfigurationLoaded) {
+                        _controller.text = state.host;
+                        print('Server host: ${state.host}');
+
+                        return TextFormField(
+                          key: _formKey,
+                          validator: (value) =>
+                              value.isEmpty ? 'Address cannot be blank' : null,
+                          controller: _controller,
+                          keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xffc8c8c8),
+                            color: Colors.black,
                           ),
-                          alignLabelWithHint: true,
-                          fillColor: Color(0xfff4f4f4),
-                          filled: true,
-                          suffix: Container(
-                            width: 30,
-                            height: 25,
-                            padding: EdgeInsets.only(left: 10),
-                            child: IconButton(
-                              padding: EdgeInsets.all(0),
-                              onPressed: () => _controller.clear(),
-                              iconSize: 15,
-                              icon: Icon(CupertinoIcons.clear),
+                          decoration: InputDecoration(
+                            hintText: 'https://mobile.api.twake.app',
+                            hintStyle: TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xffc8c8c8),
+                            ),
+                            alignLabelWithHint: true,
+                            fillColor: Color(0xfff4f4f4),
+                            filled: true,
+                            suffix: Container(
+                              width: 30,
+                              height: 25,
+                              padding: EdgeInsets.only(left: 10),
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                onPressed: () => _controller.clear(),
+                                iconSize: 15,
+                                icon: Icon(CupertinoIcons.clear),
+                              ),
+                            ),
+                            border: UnderlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                width: 0.0,
+                                style: BorderStyle.none,
+                              ),
                             ),
                           ),
-                          border: UnderlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
-                              width: 0.0,
-                              style: BorderStyle.none,
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  }),
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    }),
+              ),
             ),
             Spacer(),
             Padding(

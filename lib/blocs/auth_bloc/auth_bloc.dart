@@ -164,8 +164,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is ValidateHost) {
       Api.host = event.host;
       final result = await repository.getAuthMode();
-      setUpWebView(true);
+      print('RESULT OF GET AUTH MODE: $result');
       if (result != 'INTERNAL') {
+        setUpWebView(true);
         yield HostValidated(event.host);
       } else {
         yield HostInvalid(event.host);

@@ -130,6 +130,9 @@ class _AuthFormState extends State<AuthForm> {
                 ),
                 SizedBox(height: Dim.heightMultiplier),
                 BlocBuilder<AuthBloc, AuthState>(
+                  buildWhen: (_, current) =>
+                      current is WrongCredentials ||
+                      current is AuthenticationError,
                   builder: (ctx, state) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,7 +208,8 @@ class _AuthFormState extends State<AuthForm> {
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: widget.onConfigurationOpen,//() => openChooseServer(context),
+                          onTap: widget.onConfigurationOpen,
+                          //() => openChooseServer(context),
                           behavior: HitTestBehavior.opaque,
                           child: Text(
                             'Choose the server',
