@@ -6,12 +6,14 @@ import 'package:image_picker/image_picker.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
+  final Color backgroundColor;
   final String icon;
   final Function onTap;
 
   const SelectableAvatar({
     Key key,
     this.size = 48.0,
+    this.backgroundColor,
     this.icon,
     this.onTap,
   }) : super(key: key);
@@ -67,7 +69,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
               )
             : BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xffe3e3e3),
+                color: widget.backgroundColor ?? Color(0xffe3e3e3),
               ),
       ),
     );

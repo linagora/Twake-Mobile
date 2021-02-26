@@ -206,6 +206,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                   children: [
                     SelectableAvatar(
                       size: 56.0,
+                      backgroundColor: Color(0xfff2f1fa),
                       icon: _icon,
                       onTap: () => _toggleEmojiBoard(),
                     ),
