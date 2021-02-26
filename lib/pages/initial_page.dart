@@ -267,7 +267,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
               ),
             );
           } else {
-            print('UNHANDLED STATE: $state');
+            // Authenticating or some unhandled state
+            // print('UNHANDLED STATE: $state');
             return buildSplashScreen();
           }
         },

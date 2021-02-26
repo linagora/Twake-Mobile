@@ -38,8 +38,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void setUpWebView([run = false]) {
-    print('AUTH MODE: ${repository.authMode}');
-    print('CONSOLE LINK: ${repository.twakeConsole}');
+    // print('AUTH MODE: ${repository.authMode}');
+    // print('CONSOLE LINK: ${repository.twakeConsole}');
     if (repository.authMode == 'INTERNAL') return;
     this.webView = HeadlessInAppWebView(
       initialUrl: repository.twakeConsole,
