@@ -125,8 +125,12 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         BlocListener<SheetBloc, SheetState>(
           listener: (context, state) {
             if (state is SheetShouldClear) {
+              _icon = '';
               _channelNameController.clear();
               _descriptionController.clear();
+              _participants = [];
+              _automaticallyAddNew = true;
+              _channelType = ChannelType.public;
               FocusScope.of(context).requestFocus(new FocusNode());
               context.read<AddChannelBloc>().add(Clear());
             }
