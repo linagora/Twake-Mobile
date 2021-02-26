@@ -32,10 +32,11 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   }
 
   void _connect() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     var host = _controller.text;
     if (host.isNotReallyEmpty) {
       // Save host address locally.
-      context.read<ConfigurationCubit>().save(_controller.text);
+      context.read<ConfigurationCubit>().save(host);
     }
     // Api.host = host;
     // Apply changes to AuthBloc flow.

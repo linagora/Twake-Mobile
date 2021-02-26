@@ -165,7 +165,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is ValidateHost) {
       Api.host = event.host;
       final result = await repository.getAuthMode();
-      print('RESULT OF GET AUTH MODE: $result');
+      // final host = '${event.host}';
       if (result == 'UNKNOWN') {
         yield HostInvalid(event.host);
       } else {

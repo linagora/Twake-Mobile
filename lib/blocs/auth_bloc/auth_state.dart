@@ -75,7 +75,7 @@ class HostValidated extends AuthState {
   const HostValidated(this.host);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [host];
 }
 
 class HostInvalid extends AuthState {
@@ -84,5 +84,5 @@ class HostInvalid extends AuthState {
   const HostInvalid(this.host);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [host];
 }
