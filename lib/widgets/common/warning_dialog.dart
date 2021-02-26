@@ -28,24 +28,27 @@ class WarningDialog extends StatelessWidget {
       child: Container(
         width: 296.0,
         height: 142.0,
-        padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 16.0),
+        padding: const EdgeInsets.fromLTRB(24.0, 14.0, 24.0, 14.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
-              child: AutoSizeText(
-                title,
-                minFontSize: 12,
-                maxFontSize: 16,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff6d7885),
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: AutoSizeText(
+                  title,
+                  minFontSize: 12,
+                  maxFontSize: 16,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: Color(0xff6d7885),
+                  ),
                 ),
               ),
             ),
             SizedBox(
-              height: 22,
+              height: 10,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
