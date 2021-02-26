@@ -69,9 +69,6 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
           builder: (ctx, state) {
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
-                if (editState is EditChannelDeleted) {
-                  Navigator.of(context).pop();
-                }
                 if (editState is EditChannelSaved) {
                   context
                       .read<MemberCubit>()
@@ -221,7 +218,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
     );
   }
 
-  void _goEdit(BuildContext context, MessagesState state) {
-    openEditChannel(context, state.parentChannel);
+  void _goEdit(BuildContext context, MessagesState state) async {
+    final bools = await openEditChannel(context, state.parentChannel);
+    final shouldPop = bools.first;
+    if (shouldPop) {
+      Navigator.of(context).pop();
+    }
   }
 }

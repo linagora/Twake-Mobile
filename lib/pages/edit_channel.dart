@@ -242,7 +242,7 @@ class _EditChannelState extends State<EditChannel> {
                 context
                     .read<ChannelsBloc>()
                     .add(ReloadChannels(forceFromApi: true));
-                Navigator.of(context).pop();
+                Navigator.of(context).pop([state is EditChannelDeleted]);
               }
               return GestureDetector(
                 onTap: () {
