@@ -12,7 +12,7 @@ class EditChannelCubit extends Cubit<EditChannelState> {
   Future<void> save() async {
     final isSaved = await repository.edit();
     if (isSaved) {
-      emit(EditChannelSaved());
+      emit(EditChannelSaved(repository));
     } else {
       emit(EditChannelError('Error on channel editing.'));
     }

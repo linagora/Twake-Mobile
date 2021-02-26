@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
+import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
+import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -44,11 +47,13 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
               onPressed: () {
                 if (draftType != null) {
                   if (draft.isNotEmpty) {
-                    context.read<DraftBloc>().add(SaveDraft(
-                          id: channelId,
-                          type: draftType,
-                          draft: draft,
-                        ));
+                    context.read<DraftBloc>().add(
+                          SaveDraft(
+                            id: channelId,
+                            type: draftType,
+                            draft: draft,
+                          ),
+                        );
                   } else {
                     context
                         .read<DraftBloc>()
@@ -60,62 +65,74 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             );
           },
         ),
-        title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (ctx, state) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: state.parentChannel is Channel
-                  ? () => openEditChannel(context, state.parentChannel)
-                  : null,
-              child: Row(
-                children: [
-                  if (state.parentChannel is Direct)
-                    StackedUserAvatars((state.parentChannel as Direct).members),
-                  if (state.parentChannel is Channel)
-                    TextAvatar(state.parentChannel.icon),
-                  SizedBox(width: 12.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            state.parentChannel.name,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff444444),
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(width: 6),
-                          if ((state.parentChannel is Channel) &&
-                              (state.parentChannel as Channel).visibility !=
-                                  null &&
-                              (state.parentChannel as Channel).visibility ==
-                                  'private')
-                            Icon(Icons.lock_outline,
-                                size: 15.0, color: Color(0xff444444)),
-                        ],
-                      ),
-                      if (state.parentChannel is Channel)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 2.0),
-                          child: Text(
-                            '${(state.parentChannel as Channel).membersCount != null && (state.parentChannel as Channel).membersCount > 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
-                            style: TextStyle(
-                              fontSize: 10.0,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xff92929C),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            );
+        title: BlocListener<EditChannelCubit, EditChannelState>(
+          listener: (context, state) {
+            if (state is EditChannelSaved) {
+              context.read<T>().add(ChangeSelectedChannel(channelId));
+              context.read<MemberCubit>().fetchMembers(channelId: channelId);
+            }
+            if (state is EditChannelDeleted) {
+              Navigator.of(context).pop();
+            }
           },
+          child: BlocBuilder<MessagesBloc<T>, MessagesState>(
+            builder: (ctx, state) {
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: state.parentChannel is Channel
+                    ? () => _goEdit(context, state)
+                    : null,
+                child: Row(
+                  children: [
+                    if (state.parentChannel is Direct)
+                      StackedUserAvatars(
+                          (state.parentChannel as Direct).members),
+                    if (state.parentChannel is Channel)
+                      TextAvatar(state.parentChannel.icon),
+                    SizedBox(width: 12.0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              state.parentChannel.name,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff444444),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(width: 6),
+                            if ((state.parentChannel is Channel) &&
+                                (state.parentChannel as Channel).visibility !=
+                                    null &&
+                                (state.parentChannel as Channel).visibility ==
+                                    'private')
+                              Icon(Icons.lock_outline,
+                                  size: 15.0, color: Color(0xff444444)),
+                          ],
+                        ),
+                        if (state.parentChannel is Channel)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: Text(
+                              '${(state.parentChannel as Channel).membersCount != null && (state.parentChannel as Channel).membersCount > 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xff92929C),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
       body: SafeArea(
@@ -195,5 +212,9 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         }),
       ),
     );
+  }
+
+  void _goEdit(BuildContext context, MessagesState state) {
+    openEditChannel(context, state.parentChannel);
   }
 }
