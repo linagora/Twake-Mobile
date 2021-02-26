@@ -68,7 +68,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         ],
         queryParams: {'company_id': event.companyId},
         sortFields: {'name': true},
-        // forceFromApi: true,
+        forceFromApi: event.forceFromApi,
       );
       yield WorkspacesLoaded(
         workspaces: repository.items,
@@ -78,6 +78,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       await repository.clean();
       yield WorkspacesEmpty();
     } else if (event is ChangeSelectedWorkspace) {
+      // print('Workspace id to select: ${event.workspaceId}');
       repository.select(event.workspaceId);
       ProfileBloc.selectedWorkspace = event.workspaceId;
       yield WorkspaceSelected(

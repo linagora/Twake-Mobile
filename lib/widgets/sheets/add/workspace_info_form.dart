@@ -83,24 +83,27 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
         listener: (context, state) {
           if (state is Created) {
             _workspaceId = state.workspaceId;
-
-            // selectWorkspace(context, _workspaceId);
             // Reload workspaces
-            context
-                .read<WorkspacesBloc>()
-                .add(ReloadWorkspaces(ProfileBloc.selectedCompany));
+            context.read<WorkspacesBloc>().add(
+                  ReloadWorkspaces(
+                    ProfileBloc.selectedCompany,
+                    forceFromApi: true,
+                  ),
+                );
             _shouldRedirect = true;
           } else if (state is Error) {
             // Show an error
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text(
-                state.message,
-                style: TextStyle(
-                  color: Colors.red,
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
                 ),
+                duration: Duration(seconds: 2),
               ),
-              duration: Duration(seconds: 2),
-            ));
+            );
           }
         },
         buildWhen: (_, current) => current is Updated || current is Creation,
