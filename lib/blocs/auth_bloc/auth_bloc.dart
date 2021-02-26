@@ -22,6 +22,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   bool connectionLost = false;
 
   String _prevUrl = '';
+
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
     subscription = connectionBloc.listen((cb.ConnectionState state) async {
@@ -164,17 +165,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is ValidateHost) {
       Api.host = event.host;
       final result = await repository.getAuthMode();
-      setUpWebView(true);
-      if (result != 'INTERNAL') {
-        yield HostValidated(event.host);
-      } else {
+      // final host = '${event.host}';
+      if (result == 'UNKNOWN') {
         yield HostInvalid(event.host);
+      } else {
+        if (result != 'INTERNAL') {
+          setUpWebView(true);
+        }
+        yield HostValidated(event.host);
       }
     }
   }
 
   Future<void> runWebView() async {
-    if (repository.authMode == 'INTERNAL') {
+    if (repository.authMode == 'INTERNAL' || repository.authMode == 'UNKNOWN') {
       return;
     }
     await CookieManager.instance().deleteAllCookies();

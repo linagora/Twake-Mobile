@@ -63,5 +63,5 @@ class ValidateHost extends AuthEvent {
   ValidateHost(this.host);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [host];
 }
