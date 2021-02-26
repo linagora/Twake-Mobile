@@ -15,6 +15,7 @@ import 'package:twake/utils/extensions.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:twake/widgets/common/warning_dialog.dart';
 import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -133,10 +134,26 @@ class _EditChannelState extends State<EditChannel> {
 
   void _save() => context.read<EditChannelCubit>().save();
 
-  void _leave() =>
-      context.read<MemberCubit>().deleteYourself(channelId: _channelId);
+  // void _leave() =>
+  //     context.read<MemberCubit>().deleteYourself(channelId: _channelId);
 
-  void _delete() => context.read<EditChannelCubit>().delete();
+  void _delete(BuildContext channelContext) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return WarningDialog(
+          title: 'Are you sure you want to delete the channel?'
+              '\nThis action cannot be undone!',
+          leadingActionTitle: 'Cancel',
+          trailingActionTitle: 'Delete',
+          trailingAction: () async {
+            channelContext.read<EditChannelCubit>().delete();
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
+  }
 
   void _onPanelSlide(double position) {
     if (position < 0.4 && _panelController.isPanelAnimating) {
@@ -305,9 +322,10 @@ class _EditChannelState extends State<EditChannel> {
                         ),
                         SizedBox(width: 10.0),
                         RoundedBoxButton(
-                          cover: Image.asset('assets/images/leave.png'),
+                          cover: Image.asset('assets/images/delete.png'),
                           title: 'delete',
-                          onTap: () => _delete(),
+                          color: Color(0xfff04820),
+                          onTap: () => _delete(context),
                         ),
                       ],
                     ),
@@ -388,6 +406,7 @@ class _EditChannelState extends State<EditChannel> {
 class RoundedBoxButton extends StatelessWidget {
   final Widget cover;
   final String title;
+  final Color color;
   final Function onTap;
 
   const RoundedBoxButton({
@@ -395,6 +414,7 @@ class RoundedBoxButton extends StatelessWidget {
     @required this.cover,
     @required this.title,
     @required this.onTap,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -421,7 +441,7 @@ class RoundedBoxButton extends StatelessWidget {
                 maxFontSize: 13.0,
                 maxLines: 1,
                 style: TextStyle(
-                  color: Color(0xff3840f7),
+                  color: color ?? Color(0xff3840f7),
                   fontWeight: FontWeight.w400,
                 ),
               ),

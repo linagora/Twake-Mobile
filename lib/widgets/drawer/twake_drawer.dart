@@ -7,7 +7,7 @@ import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/repositories/sheet_repository.dart';
-import 'package:twake/widgets/auth/logout_dialog.dart';
+import 'package:twake/widgets/common/warning_dialog.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
 const double ICON_SIZE_MULTIPLIER = 4.5;
@@ -251,7 +251,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
     showDialog(
       context: parentContext,
       builder: (BuildContext context) {
-        return LogoutDialog(
+        return WarningDialog(
           title: 'Are you sure you want to log out of your account?',
           leadingActionTitle: 'Cancel',
           trailingActionTitle: 'Log out',

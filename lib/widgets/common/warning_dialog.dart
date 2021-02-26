@@ -1,13 +1,14 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
-class LogoutDialog extends StatelessWidget {
+class WarningDialog extends StatelessWidget {
   final String title;
   final String leadingActionTitle;
   final Function leadingAction;
   final String trailingActionTitle;
   final Function trailingAction;
 
-  const LogoutDialog({
+  const WarningDialog({
     Key key,
     this.title,
     this.leadingActionTitle,
@@ -31,12 +32,16 @@ class LogoutDialog extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0xff6d7885),
+            Expanded(
+              child: AutoSizeText(
+                title,
+                minFontSize: 12,
+                maxFontSize: 16,
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff6d7885),
+                ),
               ),
             ),
             SizedBox(
@@ -76,7 +81,7 @@ class LogoutDialog extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
-                        color: Color(0xffff3b30),
+                        color: Color(0xfff04820),
                       ),
                     ),
                   ),
