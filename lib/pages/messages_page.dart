@@ -73,7 +73,6 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   Navigator.of(context).pop();
                 }
                 if (editState is EditChannelSaved) {
-                  print('CHANNEL SAVED');
                   context
                       .read<MemberCubit>()
                       .fetchMembers(channelId: channelId);

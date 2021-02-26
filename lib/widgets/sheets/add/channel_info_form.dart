@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_event.dart';
@@ -10,6 +11,7 @@ import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/utils/navigation.dart';
+import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -34,6 +36,8 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   var _channelType = ChannelType.public;
   var _participants = <String>[];
   var _automaticallyAddNew = true;
+  var _icon = '';
+  var _emojiVisible = false;
 
   @override
   void initState() {
@@ -67,19 +71,42 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   }
 
   void _batchUpdateState({
+    String icon,
     String name,
     String description,
     ChannelType type,
     List<String> participants,
     bool automaticallyAddNew,
   }) {
-    context.read<AddChannelBloc>().add(Update(
-          name: name ?? _channelNameController.text,
-          description: description ?? _descriptionController.text,
-          type: type ?? _channelType,
-          participants: participants ?? _participants,
-          automaticallyAddNew: automaticallyAddNew ?? _automaticallyAddNew,
-        ));
+    context.read<AddChannelBloc>().add(
+          Update(
+            icon: icon ?? _icon,
+            name: name ?? _channelNameController.text,
+            description: description ?? _descriptionController.text,
+            type: type ?? _channelType,
+            participants: participants ?? _participants,
+            automaticallyAddNew: automaticallyAddNew ?? _automaticallyAddNew,
+          ),
+        );
+  }
+
+  void _toggleEmojiBoard() async {
+    await Future.delayed(Duration(milliseconds: 150));
+    setState(() {
+      _emojiVisible = !_emojiVisible;
+    });
+  }
+
+  Widget _buildEmojiBoard() {
+    return EmojiKeyboard(
+      onEmojiSelected: (emoji) {
+        _canGoNext = true;
+        _icon = emoji.text;
+        _batchUpdateState(icon: _icon);
+        _toggleEmojiBoard();
+      },
+      height: MediaQuery.of(context).size.height * 0.35,
+    );
   }
 
   @override
@@ -150,77 +177,101 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           _automaticallyAddNew = state.repository.def;
         }
 
-        return Column(
-          children: [
-            SheetTitleBar(
-              title: 'New Channel',
-              leadingTitle: 'Close',
-              leadingAction: () {
-                context.read<SheetBloc>().add(CloseSheet());
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              trailingTitle: 'Create',
-              trailingAction: createIsBlocked || !_canGoNext
-                  ? null
-                  : () => context.read<AddChannelBloc>().add(Create()),
-            ),
-            SizedBox(height: 16),
-            SheetTextField(
-              hint: 'Channel name',
-              controller: _channelNameController,
-              focusNode: _channelNameFocusNode,
-            ),
-            SizedBox(height: 8),
-            HintLine(
-              text: 'Please provide a channel name and optional channel icon',
-            ),
-            SizedBox(height: 20),
-            SheetTextField(
-              hint: 'Channel description',
-              controller: _descriptionController,
-              focusNode: _channelDescriptionFocusNode,
-            ),
-            SizedBox(height: 8),
-            HintLine(
-              text: 'Please provide an optional description for your channel',
-            ),
-            SizedBox(height: 30),
-            HintLine(
-              text: 'CHANNEL TYPE',
-              isLarge: true,
-            ),
-            SizedBox(height: 6),
-            ChannelTypesContainer(
-              type: _channelType,
-              onPublicTap: () => _batchUpdateState(type: ChannelType.public),
-              onPrivateTap: () => _batchUpdateState(type: ChannelType.private),
-            ),
-            SizedBox(height: 8),
-            HintLine(
-              text: _channelType != ChannelType.direct
-                  ? 'Public channels can be found by everyone, though private can only be joined by invitation'
-                  : 'Direct channels involve correspondence between selected members',
-            ),
-            if (_channelType == ChannelType.private) SizedBox(height: 8),
-            if (_channelType == ChannelType.private)
-              ParticipantsButton(count: _participants.length),
-            SizedBox(height: 8),
-            if (_channelType == ChannelType.public)
-              SwitchField(
-                title: 'Automatically add new users',
-                value: _automaticallyAddNew,
-                onChanged: (value) =>
-                    _batchUpdateState(automaticallyAddNew: value),
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+            setState(() {
+              _emojiVisible = false;
+            });
+          },
+          child: Column(
+            children: [
+              SheetTitleBar(
+                title: 'New Channel',
+                leadingTitle: 'Close',
+                leadingAction: () {
+                  context.read<SheetBloc>().add(CloseSheet());
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                trailingTitle: 'Create',
+                trailingAction: createIsBlocked || !_canGoNext
+                    ? null
+                    : () => context.read<AddChannelBloc>().add(Create()),
               ),
-            if (_channelType == ChannelType.private) SizedBox(),
-            HintLine(
-              text: _channelType != ChannelType.private
-                  ? (_channelType != ChannelType.direct
-                      ? 'Only available for public channels'
-                      : 'Only available for direct channels')
-                  : '',
-            ),
-          ],
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(14.0),
+                color: Colors.white,
+                child: Row(
+                  children: [
+                    SelectableAvatar(
+                      size: 56.0,
+                      icon: _icon,
+                      onTap: () => _toggleEmojiBoard(),
+                    ),
+                    Expanded(
+                      child: SheetTextField(
+                        hint: 'Channel name',
+                        controller: _channelNameController,
+                        focusNode: _channelNameFocusNode,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 8),
+              HintLine(
+                text: 'Please provide a channel name and optional channel icon',
+              ),
+              SizedBox(height: 20),
+              SheetTextField(
+                hint: 'Channel description',
+                controller: _descriptionController,
+                focusNode: _channelDescriptionFocusNode,
+              ),
+              SizedBox(height: 8),
+              HintLine(
+                text: 'Please provide an optional description for your channel',
+              ),
+              SizedBox(height: 30),
+              HintLine(
+                text: 'CHANNEL TYPE',
+                isLarge: true,
+              ),
+              SizedBox(height: 6),
+              ChannelTypesContainer(
+                type: _channelType,
+                onPublicTap: () => _batchUpdateState(type: ChannelType.public),
+                onPrivateTap: () => _batchUpdateState(type: ChannelType.private),
+              ),
+              SizedBox(height: 8),
+              HintLine(
+                text: _channelType != ChannelType.direct
+                    ? 'Public channels can be found by everyone, though private can only be joined by invitation'
+                    : 'Direct channels involve correspondence between selected members',
+              ),
+              if (_channelType == ChannelType.private) SizedBox(height: 8),
+              if (_channelType == ChannelType.private)
+                ParticipantsButton(count: _participants.length),
+              SizedBox(height: 8),
+              if (_channelType == ChannelType.public)
+                SwitchField(
+                  title: 'Automatically add new users',
+                  value: _automaticallyAddNew,
+                  onChanged: (value) =>
+                      _batchUpdateState(automaticallyAddNew: value),
+                ),
+              if (_channelType == ChannelType.private) SizedBox(),
+              HintLine(
+                text: _channelType != ChannelType.private
+                    ? (_channelType != ChannelType.direct
+                        ? 'Only available for public channels'
+                        : 'Only available for direct channels')
+                    : '',
+              ),
+              _emojiVisible ? _buildEmojiBoard() : Container(),
+            ],
+          ),
         );
       }),
     );

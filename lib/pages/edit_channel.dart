@@ -43,7 +43,7 @@ class _EditChannelState extends State<EditChannel> {
   var _members = <Member>[];
   var _showHistoryForNew = true;
   var _canSave = false;
-  bool _emojiVisible = false;
+  var _emojiVisible = false;
 
   Channel _channel;
   String _channelId;
@@ -220,7 +220,7 @@ class _EditChannelState extends State<EditChannel> {
             buildWhen: (_, current) =>
                 current is EditChannelSaved || current is EditChannelDeleted,
             builder: (context, state) {
-              print('EditChannel State: $state');
+              // print('EditChannel State: $state');
               if (state is EditChannelSaved || state is EditChannelDeleted) {
                 context
                     .read<ChannelsBloc>()
@@ -229,8 +229,7 @@ class _EditChannelState extends State<EditChannel> {
               }
               return GestureDetector(
                 onTap: () {
-                  _nameFocusNode.unfocus();
-                  _descriptionFocusNode.unfocus();
+                  FocusScope.of(context).requestFocus(FocusNode());
                   setState(() {
                     _emojiVisible = false;
                   });

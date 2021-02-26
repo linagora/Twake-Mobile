@@ -16,6 +16,7 @@ class Create extends AddChannelEvent {
 }
 
 class Update extends AddChannelEvent {
+  final String icon;
   final String name;
   final String description;
   final String groupName;
@@ -24,6 +25,7 @@ class Update extends AddChannelEvent {
   final List<String> participants;
 
   Update({
+    this.icon,
     this.name,
     this.description,
     this.groupName,
@@ -34,6 +36,7 @@ class Update extends AddChannelEvent {
 
   @override
   List<Object> get props => [
+        icon,
         name,
         description,
         groupName,
