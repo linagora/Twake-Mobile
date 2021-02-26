@@ -9,7 +9,7 @@ class ReloadWorkspaces extends WorkspacesEvent {
   final String companyId;
   const ReloadWorkspaces(this.companyId);
   @override
-  List<Object> get props => [];
+  List<Object> get props => [companyId];
 }
 
 class ClearWorkspaces extends WorkspacesEvent {

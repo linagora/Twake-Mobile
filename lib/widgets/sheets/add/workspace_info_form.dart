@@ -73,7 +73,6 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
       listener: (context, state) {
         if (state is SheetShouldClear) {
           _workspaceNameController.clear();
-          _shouldRedirect = false;
           _collaborators = <String>[];
           _workspaceId = '';
           FocusScope.of(context).requestFocus(FocusNode());
@@ -85,16 +84,12 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
           if (state is Created) {
             _workspaceId = state.workspaceId;
 
-            selectWorkspace(context, _workspaceId);
+            // selectWorkspace(context, _workspaceId);
             // Reload workspaces
             context
                 .read<WorkspacesBloc>()
                 .add(ReloadWorkspaces(ProfileBloc.selectedCompany));
             _shouldRedirect = true;
-            // Close sheet
-            context.read<SheetBloc>().add(CloseSheet());
-            // Clear sheet
-            context.read<SheetBloc>().add(ClearSheet());
           } else if (state is Error) {
             // Show an error
             Scaffold.of(context).showSnackBar(SnackBar(
@@ -121,8 +116,12 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
               if (state is WorkspacesLoaded) {
                 // Redirect user to created workspace.
                 if (_shouldRedirect) {
-                  selectWorkspace(context, _workspaceId);
                   _shouldRedirect = false;
+                  selectWorkspace(context, _workspaceId);
+                  // Close sheet
+                  context.read<SheetBloc>().add(CloseSheet());
+                  // Clear sheet
+                  context.read<SheetBloc>().add(ClearSheet());
                 }
               }
             },
