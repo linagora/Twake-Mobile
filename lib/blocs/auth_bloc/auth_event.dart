@@ -35,6 +35,7 @@ class SetAuthData extends AuthEvent {
 
 class ResetAuthentication extends AuthEvent {
   final String message;
+
   ResetAuthentication({this.message});
 
   @override
@@ -52,6 +53,15 @@ class RegistrationInit extends AuthEvent {
 }
 
 class AuthInitialize extends AuthEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class ValidateHost extends AuthEvent {
+  final String host;
+
+  ValidateHost(this.host);
+
   @override
   List<Object> get props => [];
 }

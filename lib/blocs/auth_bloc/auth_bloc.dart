@@ -161,6 +161,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       yield Registration('https://console.twake.app/signup');
     } else if (event is ResetPassword) {
       yield PasswordReset('https://console.twake.app/password-recovery');
+    } else if (event is ValidateHost) {
+      Api.host = event.host;
+      final result = await repository.getAuthMode();
+      setUpWebView(true);
+      if (result != 'INTERNAL') {
+        yield HostValidated(event.host);
+      } else {
+        yield HostInvalid(event.host);
+      }
     }
   }
 
