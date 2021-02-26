@@ -16,12 +16,34 @@ class EditChannelLoaded extends EditChannelState {
 }
 
 class EditChannelSaved extends EditChannelState {
-  final EditChannelRepository repository;
+  final String companyId;
+  final String workspaceId;
+  final String channelId;
+  final String icon;
+  final String name;
+  final String description;
+  final bool def;
 
-  EditChannelSaved(this.repository);
+  EditChannelSaved({
+    this.companyId,
+    this.workspaceId,
+    this.channelId,
+    this.icon,
+    this.name,
+    this.description,
+    this.def,
+  });
 
   @override
-  List<Object> get props => [repository];
+  List<Object> get props => [
+        this.companyId,
+        this.workspaceId,
+        this.channelId,
+        this.icon,
+        this.name,
+        this.description,
+        this.def,
+      ];
 }
 
 class EditChannelUpdated extends EditChannelState {
