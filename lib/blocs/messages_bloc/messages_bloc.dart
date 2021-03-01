@@ -206,7 +206,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           parentChannel: selectedChannel,
         );
         yield newState;
-        _updateParentChannel();
+        _updateParentChannel(event.channelId);
       }
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
@@ -287,7 +287,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
-          _updateParentChannel();
+          // _updateParentChannel();
         },
       );
       this.repository.items.add(tempItem);
@@ -342,10 +342,10 @@ class MessagesBloc<T extends BaseChannelBloc>
     return map;
   }
 
-  void _updateParentChannel() {
+  void _updateParentChannel([String channelId]) {
     channelsBloc.add(ModifyMessageCount(
       workspaceId: ProfileBloc.selectedWorkspace,
-      channelId: selectedChannel.id,
+      channelId: channelId ?? selectedChannel.id,
       companyId: ProfileBloc.selectedCompany,
       totalModifier: 1,
     ));

@@ -123,10 +123,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
         switch (res) {
           case AuthResult.WrongCredentials:
-            yield WrongCredentials();
+            yield WrongCredentials(
+              username: event.username,
+              password: event.password,
+            );
             break;
           case AuthResult.NetworkError:
-            yield AuthenticationError();
+            yield AuthenticationError(
+              username: event.username,
+              password: event.password,
+            );
             break;
           default:
             final InitData initData = await initMain();

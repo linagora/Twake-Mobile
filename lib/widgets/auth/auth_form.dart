@@ -4,7 +4,7 @@ import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/utils/navigation.dart';
+// import 'package:twake/utils/navigation.dart';
 
 class AuthForm extends StatefulWidget {
   final Function onConfigurationOpen;
@@ -44,6 +44,11 @@ class _AuthFormState extends State<AuthForm> {
     super.initState();
     _usernameController.addListener(onUsernameSaved);
     _passwordController.addListener(onPasswordSaved);
+    final state = BlocProvider.of<AuthBloc>(context).state;
+    if (state is Unauthenticated) {
+      _usernameController.text = state.username;
+      _passwordController.text = state.username;
+    }
   }
 
   @override
