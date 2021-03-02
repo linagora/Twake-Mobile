@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/blocs/configuration_cubit/configuration_state.dart';
-import 'package:twake/services/api.dart';
+// import 'package:twake/services/api.dart';
 import 'package:twake/utils/extensions.dart';
 
 class ServerConfiguration extends StatefulWidget {
@@ -107,7 +107,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                         current is ConfigurationError,
                     listener: (context, state) {
                       if (state is ConfigurationSaved) {
-                        context.read<AuthBloc>().add(ValidateHost(_controller.text));
+                        context
+                            .read<AuthBloc>()
+                            .add(ValidateHost(_controller.text));
                       } else if (state is ConfigurationError) {
                         Scaffold.of(context).showSnackBar(SnackBar(
                           content: Text(

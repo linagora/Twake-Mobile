@@ -95,8 +95,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       socketConnectionState = SocketConnectionState.CONNECTED;
       while (socketConnectionState != SocketConnectionState.AUTHENTICATED) {
         if (socket.disconnected) socket = socket.connect();
-        await Future.delayed(Duration(seconds: 2));
         socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
+        await Future.delayed(Duration(seconds: 5));
         print('WAITING FOR SOCKET AUTH');
       }
     });
