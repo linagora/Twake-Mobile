@@ -13,6 +13,7 @@ class Notifications {
   final Function(MessageNotification) onMessageCallback;
   final Function(MessageNotification) onResumeCallback;
   final Function(MessageNotification) onLaunchCallback;
+  final bool Function(MessageNotification) shouldNotify;
   FirebaseMessaging _fcm = FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -48,6 +49,7 @@ class Notifications {
     this.onMessageCallback,
     this.onResumeCallback,
     this.onLaunchCallback,
+    this.shouldNotify,
   }) {
     if (Platform.isAndroid)
       this.platform = Target.Android;
@@ -74,7 +76,18 @@ class Notifications {
       iOS: initializationSettingsIOS,
     );
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (paload) async {});
+        onSelectNotification: (payload) async {
+      print("PAYLOAD FROM NOTIFY: $payload");
+      final map = jsonDecode(payload);
+      print("NOTIFY CLICK: $map");
+      try {
+        final notification = MessageNotification.fromJson(map);
+        print("NOTIFICATION PARSED: $notification");
+        onMessageCallback(notification);
+      } catch (e) {
+        logger.wtf('ERROR PARSING NOTIFY: $e');
+      }
+    });
   }
 
   // Future<void> checkWhatsNew(String workspaceId) async {
@@ -93,20 +106,25 @@ class Notifications {
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
     logger.d('GOT MESSAGE FROM FIREBASE: $message');
     final notification = messageParse(message);
+    if (!shouldNotify(notification)) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-            'your channel id', 'your channel name', 'your channel description',
+            'some-random-text', 'Twake', 'Twake Mobile App',
             importance: Importance.max,
             priority: Priority.high,
             showWhen: false);
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', platformChannelSpecifics,
-        payload: 'item x');
+      0,
+      message['notification']['title'],
+      message['notification']['body'],
+      platformChannelSpecifics,
+      payload: message['data']['notification_data'],
+    );
   }
 
-  NotificationData messageParse(Map<String, dynamic> message) {
+  MessageNotification messageParse(Map<String, dynamic> message) {
     Map data;
     switch (platform) {
       case Target.Android:

@@ -307,7 +307,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
     } else if (event is SelectMessage) {
-      print('$T MESSAGE SELECTED');
+      // print('$T MESSAGE SELECTED');
+      ProfileBloc.selectedThread = event.messageId;
       repository.select(event.messageId);
       yield MessageSelected(
         threadMessage: repository.selected,

@@ -40,6 +40,10 @@ class ProfileRepository extends JsonSerializable {
   String selectedCompanyId;
   @JsonKey(name: 'selected_workspace_id')
   String selectedWorkspaceId;
+  @JsonKey(ignore: true)
+  String selectedChannelId;
+  @JsonKey(ignore: true)
+  String selectedThreadId;
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
