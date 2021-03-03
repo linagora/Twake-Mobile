@@ -67,7 +67,7 @@ class Notifications {
     );
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('logo');
+        AndroidInitializationSettings('logo_blue');
     final IOSInitializationSettings initializationSettingsIOS =
         IOSInitializationSettings();
     final InitializationSettings initializationSettings =

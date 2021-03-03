@@ -78,12 +78,14 @@ class ThreadsBloc<T extends BaseChannelBloc>
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
+      print("SELECTED THREAD: ${threadMessage.toJson()}");
       if (threadMessage.responsesCount == 0) {
         repository.clean();
         yield MessagesEmpty(
           threadMessage: threadMessage,
           parentChannel: parentChannel,
         );
+        repository.logger.d("RETURNING FROM LOADING RESPONSES");
         return;
       }
       yield MessagesLoading(

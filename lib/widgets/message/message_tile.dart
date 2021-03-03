@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
@@ -118,7 +119,10 @@ class _MessageTileState<T extends BaseChannelBloc>
                                 onMessageEditComplete: (text) {
                                   // smbloc get's closed if
                                   // listview disposes of message tile
-                                  smbloc.add(UpdateContent(text));
+                                  smbloc.add(UpdateContent(
+                                      content: text,
+                                      workspaceId:
+                                          T == DirectsBloc ? 'direct' : null));
                                   mebloc.add(CancelMessageEdit());
                                   FocusManager.instance.primaryFocus.unfocus();
                                 }),
@@ -236,6 +240,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                 return Reaction(
                                   r,
                                   messageState.reactions[r]['count'],
+                                  T == DirectsBloc ? 'direct' : null,
                                 );
                               }),
                               if (messageState.responsesCount > 0 &&

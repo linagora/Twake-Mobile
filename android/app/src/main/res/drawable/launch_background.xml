@@ -9,4 +9,9 @@
             android:gravity="center"
             android:src="@drawable/logo" />
     </item>
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/logo_blue" />
+    </item>
 </layer-list>

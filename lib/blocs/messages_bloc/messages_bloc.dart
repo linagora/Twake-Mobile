@@ -197,15 +197,15 @@ class MessagesBloc<T extends BaseChannelBloc>
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
       );
+      _sortItems();
+      final newState = MessagesLoaded(
+        messages: repository.items,
+        messageCount: repository.itemsCount,
+        force: DateTime.now().toString(),
+        parentChannel: selectedChannel,
+      );
+      yield newState;
       if (updateParent) {
-        _sortItems();
-        final newState = MessagesLoaded(
-          messages: repository.items,
-          messageCount: repository.itemsCount,
-          force: DateTime.now().toString(),
-          parentChannel: selectedChannel,
-        );
-        yield newState;
         _updateParentChannel(event.channelId);
       }
     } else if (event is ModifyResponsesCount) {
@@ -214,8 +214,8 @@ class MessagesBloc<T extends BaseChannelBloc>
       if (repository.selected == null) return;
 
       if (event.channelId == selectedChannel.id) {
-        repository.logger
-            .d('In thread: ${event.threadId == repository.selected.id}');
+        // repository.logger
+        // .d('In thread: ${event.threadId == repository.selected.id}');
         thread = event.threadId == repository.selected.id
             ? thread
             : repository.selected;
@@ -226,7 +226,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           parentChannel: selectedChannel,
           force: DateTime.now().toString(),
         );
-        repository.logger.d('YIELDING STATE: ${newState != this.state}');
+        // repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
         _updateParentChannel();
       }
@@ -317,7 +317,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
       await repository.updateResponsesCount(event.messageId);
-      print('SELECTED THREAD IS ${repository.selected.id}');
       yield MessageSelected(
         threadMessage: repository.selected,
         responsesCount: repository.selected.responsesCount,
