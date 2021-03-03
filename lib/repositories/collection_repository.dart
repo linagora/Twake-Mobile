@@ -84,7 +84,10 @@ class CollectionRepository<T extends CollectionItem> {
     return collection;
   }
 
-  void select(String itemId, {bool saveToStore: true}) {
+  void select(String itemId,
+      {bool saveToStore: true,
+      String apiEndpoint,
+      Map<String, dynamic> params}) {
     // logger.w('BEFORE SELECT $T ${selected.id}');
     final item = items.firstWhere((i) => i.id == itemId);
     var oldSelected = selected;
@@ -93,6 +96,11 @@ class CollectionRepository<T extends CollectionItem> {
     assert(selected.id == item.id);
     if (saveToStore) saveOne(item);
     saveOne(oldSelected);
+    if (apiEndpoint != null && params != null)
+      _api.post(
+        apiEndpoint,
+        body: params,
+      );
     // logger.w('AFTER SELECT $T ${selected.id}');
   }
 

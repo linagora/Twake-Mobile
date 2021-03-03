@@ -7,14 +7,18 @@ import 'package:twake/config/styles_config.dart';
 class Reaction extends StatelessWidget {
   final String reaction;
   final int count;
-  Reaction(this.reaction, this.count);
+  final String workspaceId;
+  Reaction(this.reaction, this.count, [this.workspaceId]);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         BlocProvider.of<SingleMessageBloc>(context).add(
-          UpdateReaction(emojiCode: reaction),
+          UpdateReaction(
+            emojiCode: reaction,
+            workspaceId: workspaceId,
+          ),
         );
       },
       child: FittedBox(

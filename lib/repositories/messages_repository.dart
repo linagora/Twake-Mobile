@@ -157,11 +157,14 @@ class MessagesRepository {
     if (m == null) return null;
     // print('BEFORE COUNT: ${m.responsesCount}\nID: $messageId');
     final sqlT = 'SELECT count(id) as count FROM message';
-    final res = (await _storage.customQuery(sqlT, filters: [
+    var res;
+    res = (await _storage.customQuery(sqlT, filters: [
       ['thread_id', '=', messageId]
     ]))[0]['count'];
-    m.responsesCount = res;
-    _storage.store(item: m.toJson(), type: StorageType.Message);
+    if (res != 0) {
+      m.responsesCount = res;
+      await _storage.store(item: m.toJson(), type: StorageType.Message);
+    }
     // print('RESPONSES COUNT: $res');
     // final sql = 'UPDATE message SET responses_count = '
     // '(SELECT count(id) FROM message WHERE thread_id = ?) WHERE id = ?';
@@ -180,7 +183,7 @@ class MessagesRepository {
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
-    // logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
+    logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
     List resp = [];
     try {
       resp = (await _api.get(apiEndpoint, params: queryParams));
@@ -190,6 +193,10 @@ class MessagesRepository {
     }
     if (resp.isEmpty) return false;
     var item = Message.fromJson(resp[0]);
+    var isNew = true;
+    if (getItemById(queryParams['message_id']) != null) {
+      isNew = false;
+    }
     saveOne(item);
     if (addToItems) {
       final query = 'SELECT message.*, '
@@ -219,8 +226,8 @@ class MessagesRepository {
       this.items.add(message);
     }
 
-    // logger.d('Pulled item: ${item.toJson()}');
-    return true;
+    logger.d('Pulled item: ${item.toJson()}');
+    return isNew;
   }
 
   Future<bool> pushOne(
@@ -251,9 +258,9 @@ class MessagesRepository {
     if (!forceFromDB)
       item = items.firstWhere((i) => i.id == id, orElse: () => null);
     if (item == null) {
-      // print('GETTING MESSAGE BY ID: $id');
+      print('GETTING MESSAGE BY ID: $id');
       var map = await _storage.load(type: StorageType.Message, key: id);
-      // print('MESSAGE: $map');
+      print('MESSAGE: $map');
       if (map == null) return null;
       item = Message.fromJson(map);
     }

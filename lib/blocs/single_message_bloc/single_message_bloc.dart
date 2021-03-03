@@ -42,7 +42,7 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
       message.updateContent({
         'company_id': ProfileBloc.selectedCompany,
         'channel_id': message.channelId,
-        'workspace_id': ProfileBloc.selectedWorkspace,
+        'workspace_id': event.workspaceId ?? ProfileBloc.selectedWorkspace,
         'message_id': message.id,
         'thread_id': message.threadId,
         'original_str': event.content,
