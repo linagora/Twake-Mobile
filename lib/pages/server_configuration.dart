@@ -125,7 +125,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     buildWhen: (_, current) => current is ConfigurationLoaded,
                     builder: (context, state) {
                       if (state is ConfigurationLoaded) {
-                        _controller.text = state.host;
+                        if (_controller.text.isReallyEmpty) {
+                          _controller.text = state.host;
+                        }
                         print('Server host: ${state.host}');
 
                         return TextFormField(
@@ -133,7 +135,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                           validator: (value) =>
                               value.isEmpty ? 'Address cannot be blank' : null,
                           controller: _controller,
-                          keyboardType: TextInputType.emailAddress,
+                          onFieldSubmitted: (_) => _connect(),
                           style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w400,
