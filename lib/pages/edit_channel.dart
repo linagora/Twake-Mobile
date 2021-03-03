@@ -43,7 +43,7 @@ class _EditChannelState extends State<EditChannel> {
 
   var _members = <Member>[];
   var _showHistoryForNew = true;
-  var _canSave = false;
+  var _canSave = true;
   var _emojiVisible = false;
 
   Channel _channel;

@@ -40,16 +40,18 @@ class ChannelTile extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        channel.name,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: channel.hasUnread == 1
-                              ? FontWeight.w900
-                              : FontWeight.w400,
-                          color: Color(0xff444444),
+                      Expanded(
+                        child: Text(
+                          channel.name,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: channel.hasUnread == 1
+                                ? FontWeight.w900
+                                : FontWeight.w400,
+                            color: Color(0xff444444),
+                          ),
                         ),
                       ),
                       SizedBox(width: 6),
@@ -77,6 +79,7 @@ class ChannelTile extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(width: 15),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
