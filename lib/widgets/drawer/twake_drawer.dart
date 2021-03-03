@@ -107,32 +107,36 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                           height: 30,
                                         ),
                                         SizedBox(width: 15),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(height: 12),
-                                            Text(
-                                              state.workspaces[i].name,
-                                              style: TextStyle(
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w600,
-                                                color: Color(0xff444444),
+                                        Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(height: 12),
+                                              Text(
+                                                state.workspaces[i].name,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xff444444),
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              '${state.workspaces[i].totalMembers} members',
-                                              style: TextStyle(
-                                                fontSize: 12.0,
-                                                fontWeight: FontWeight.w400,
-                                                color: Color(0xff444444),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                '${state.workspaces[i].totalMembers} members',
+                                                style: TextStyle(
+                                                  fontSize: 12.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Color(0xff444444),
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(height: 12),
-                                          ],
+                                              SizedBox(height: 12),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
