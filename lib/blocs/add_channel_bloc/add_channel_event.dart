@@ -15,6 +15,11 @@ class Create extends AddChannelEvent {
   List<Object> get props => [];
 }
 
+class CreateDirect extends AddChannelEvent {
+  @override
+  List<Object> get props => [];
+}
+
 class Update extends AddChannelEvent {
   final String icon;
   final String name;
@@ -44,6 +49,15 @@ class Update extends AddChannelEvent {
         automaticallyAddNew,
         participants,
       ];
+}
+
+class UpdateDirect extends AddChannelEvent {
+  final String member;
+
+  UpdateDirect({this.member});
+
+  @override
+  List<Object> get props => [member];
 }
 
 class SetFlowType extends AddChannelEvent {

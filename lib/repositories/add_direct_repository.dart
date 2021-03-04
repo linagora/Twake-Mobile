@@ -8,7 +8,6 @@ part 'add_direct_repository.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class AddDirectRepository {
-
   @JsonKey(required: true, name: 'company_id')
   String companyId;
   @JsonKey(required: true)
@@ -21,13 +20,16 @@ class AddDirectRepository {
   @JsonKey(ignore: true)
   static final _api = Api();
 
-  AddDirectRepository();
+  AddDirectRepository({
+    this.companyId,
+    this.workspaceId,
+    this.member,
+  });
 
   factory AddDirectRepository.fromJson(Map<String, dynamic> json) =>
       _$AddDirectRepositoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddDirectRepositoryToJson(this);
-
 
   Future<void> clear() async {
     companyId = '';

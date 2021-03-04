@@ -120,6 +120,7 @@ Future<InitData> initMain() async {
     threads: threads,
     sheet: sheet,
     addChannel: addChannel,
+    addDirect: addDirect,
     editChannel: editChannel,
     channelMembers: channelMembers,
     addWorkspace: addWorkspace,
@@ -140,6 +141,7 @@ class InitData {
   final MessagesRepository threads;
   final SheetRepository sheet;
   final AddChannelRepository addChannel;
+  final AddDirectRepository addDirect;
   final EditChannelRepository editChannel;
   final AddWorkspaceRepository addWorkspace;
   final DraftRepository draft;
@@ -157,6 +159,7 @@ class InitData {
     this.threads,
     this.sheet,
     this.addChannel,
+    this.addDirect,
     this.editChannel,
     this.addWorkspace,
     this.draft,
