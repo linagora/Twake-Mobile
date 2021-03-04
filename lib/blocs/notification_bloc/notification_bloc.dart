@@ -52,6 +52,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       onMessageCallback: onMessageCallback,
       onResumeCallback: onResumeCallback,
       onLaunchCallback: onLaunchCallback,
+      shouldNotify: shouldNotify,
     );
     print('TOKEN: $token\nHOST: $socketIOHost');
     socket = IO.io(
@@ -95,8 +96,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       socketConnectionState = SocketConnectionState.CONNECTED;
       while (socketConnectionState != SocketConnectionState.AUTHENTICATED) {
         if (socket.disconnected) socket = socket.connect();
-        await Future.delayed(Duration(seconds: 2));
         socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
+        await Future.delayed(Duration(seconds: 5));
         print('WAITING FOR SOCKET AUTH');
       }
     });
@@ -192,8 +193,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     }
   }
 
+  bool shouldNotify(MessageNotification data) {
+    if (data.channelId == ProfileBloc.selectedChannel &&
+        (ProfileBloc.selectedThread == data.threadId ||
+            ProfileBloc.selectedThread == null)) return false;
+    return true;
+  }
+
   void onMessageCallback(NotificationData data) {
-    logger.d('ON message callback: ${data is MessageNotification}');
     if (data is MessageNotification) {
       if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
         logger.d('adding ThreadMessageEvent');
@@ -206,6 +213,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         this.add(ChannelMessageEvent(data));
       }
     }
+    navigate(data);
     // } else if (data is WhatsNewItem) {
     // if (data.workspaceId == null) {
     // this.add(UpdateDirectChannel(data));
@@ -215,8 +223,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // }
   }
 
-  Future<void> onResumeCallback(MessageNotification data) async {
+  onResumeCallback(MessageNotification data) {
     onMessageCallback(data);
+  }
+
+  void navigate(MessageNotification data) {
     navigator.currentState.popUntil(
       ModalRoute.withName('/'),
     ); // navigator.popAndPushNamed(
@@ -246,7 +257,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         ),
       );
     }
-    // logger.w('ON RESUME HERE IS the notification\n$data');
   }
 
   void onLaunchCallback(NotificationData data) {

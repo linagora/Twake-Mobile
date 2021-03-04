@@ -4,7 +4,7 @@ class DateFormatter {
   /// Function to get a verbose representation of timestamp,
   /// like [just now] or [today]
   static String getVerboseDateTime(int timestamp) {
-    if (timestamp == null) return '';
+    if (timestamp == null || timestamp == 0) return '';
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final localDT = dateTime.toLocal();
     // if timestamp is less than a minute old return 'Now'

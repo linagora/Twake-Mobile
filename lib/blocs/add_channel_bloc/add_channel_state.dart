@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
+import 'package:twake/repositories/add_direct_repository.dart';
 
 abstract class AddChannelState extends Equatable {
   const AddChannelState();
@@ -19,6 +20,15 @@ class Updated extends AddChannelState {
   List<Object> get props => [repository];
 }
 
+class DirectUpdated extends AddChannelState {
+  final AddDirectRepository repository;
+
+  DirectUpdated(this.repository);
+
+  @override
+  List<Object> get props => [repository];
+}
+
 class Creation extends AddChannelState {
   @override
   List<Object> get props => [];
@@ -28,10 +38,19 @@ class Created extends AddChannelState {
   final String id;
   final ChannelType channelType;
 
-  Created(this.id, this.channelType);
+  Created(this.id, {this.channelType});
 
   @override
   List<Object> get props => [id, channelType];
+}
+
+class DirectCreated extends AddChannelState {
+  final String id;
+
+  DirectCreated(this.id);
+
+  @override
+  List<Object> get props => [id];
 }
 
 class Error extends AddChannelState {

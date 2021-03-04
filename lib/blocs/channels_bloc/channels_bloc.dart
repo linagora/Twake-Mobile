@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channel_event.dart';
 import 'package:twake/models/channel.dart';
@@ -9,6 +10,7 @@ import 'package:twake/models/channel.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/channels_bloc/channel_state.dart';
 import 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
+import 'package:twake/services/endpoints.dart';
 
 export 'package:twake/blocs/channels_bloc/channel_event.dart';
 export 'package:twake/blocs/channels_bloc/channel_state.dart';
@@ -106,7 +108,14 @@ class ChannelsBloc extends BaseChannelBloc {
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
       repository.logger.w('CHANNEL ${event.channelId} is selected');
-      repository.select(event.channelId, saveToStore: false);
+      repository.select(event.channelId,
+          saveToStore: false,
+          apiEndpoint: Endpoint.channelsRead,
+          params: {
+            "company_id": ProfileBloc.selectedCompany,
+            "workspace_id": ProfileBloc.selectedWorkspace,
+            "channel_id": event.channelId
+          });
 
       repository.selected.messagesUnread = 0;
       repository.selected.hasUnread = 0;
@@ -116,6 +125,8 @@ class ChannelsBloc extends BaseChannelBloc {
         selected: repository.selected,
         hasUnread: repository.selected.hasUnread,
       );
+      ProfileBloc.selectedChannel = event.channelId;
+      ProfileBloc.selectedThread = null;
       yield newState;
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);

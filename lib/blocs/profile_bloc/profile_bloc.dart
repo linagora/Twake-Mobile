@@ -32,6 +32,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static String get selectedCompany => repository.selectedCompanyId;
   static String get selectedWorkspace => repository.selectedWorkspaceId;
 
+  static String get selectedChannel => repository.selectedChannelId;
+  static String get selectedThread => repository.selectedThreadId;
+
   static set selectedCompany(String val) {
     repository.selectedCompanyId = val;
     repository.save();
@@ -40,6 +43,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static set selectedWorkspace(String val) {
     repository.selectedWorkspaceId = val;
     repository.save();
+  }
+
+  static set selectedChannel(String val) {
+    repository.selectedChannelId = val;
+  }
+
+  static set selectedThread(String val) {
+    repository.selectedThreadId = val;
   }
 
   @override

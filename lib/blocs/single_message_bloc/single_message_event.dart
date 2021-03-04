@@ -6,8 +6,9 @@ abstract class SingleMessageEvent extends Equatable {
 
 class UpdateContent extends SingleMessageEvent {
   final String content;
+  final String workspaceId;
 
-  const UpdateContent(this.content);
+  const UpdateContent({this.content, this.workspaceId});
 
   @override
   List<Object> get props => [content];

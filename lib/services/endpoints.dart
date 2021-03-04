@@ -19,6 +19,8 @@ class Endpoint {
   static const workspaceMembers = '/workspaces/members';
   // API Endpoint for working with user's channels in a workspace
   static const channels = '/channels';
+  // API Endpoint for marking the channel as read
+  static const channelsRead = '/channels/read';
   // API Endpoint for working with the members of user's channels
   static const channelMembers = '/channels/members';
   // API Endpoint for working with user's direct channels with other users

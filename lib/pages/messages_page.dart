@@ -93,44 +93,49 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       if (state.parentChannel is Channel)
                         TextAvatar(state.parentChannel.icon),
                       SizedBox(width: 12.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                state.parentChannel.name,
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff444444),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    state.parentChannel.name,
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff444444),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(width: 6),
-                              if ((state.parentChannel is Channel) &&
-                                  (state.parentChannel as Channel).visibility !=
-                                      null &&
-                                  (state.parentChannel as Channel).visibility ==
-                                      'private')
-                                Icon(Icons.lock_outline,
-                                    size: 15.0, color: Color(0xff444444)),
-                            ],
-                          ),
-                          if (state.parentChannel is Channel)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 2.0),
-                              child: Text(
-                                '${(state.parentChannel as Channel).membersCount != null && (state.parentChannel as Channel).membersCount > 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff92929C),
-                                ),
-                              ),
+                                SizedBox(width: 6),
+                                if ((state.parentChannel is Channel) &&
+                                    (state.parentChannel as Channel).visibility !=
+                                        null &&
+                                    (state.parentChannel as Channel).visibility ==
+                                        'private')
+                                  Icon(Icons.lock_outline,
+                                      size: 15.0, color: Color(0xff444444)),
+                              ],
                             ),
-                        ],
+                            if (state.parentChannel is Channel)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2.0),
+                                child: Text(
+                                  '${(state.parentChannel as Channel).membersCount != null && (state.parentChannel as Channel).membersCount > 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff92929C),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
+                      SizedBox(width: 15),
                     ],
                   ),
                 );

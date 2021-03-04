@@ -62,7 +62,7 @@ class _MemberManagementState extends State<MemberManagement> {
           _channelId = state.channelId;
           _members = state.members;
 
-          print(_members.map((e) => e.email));
+          // print(_members.map((e) => e.email));
 
           _himself ??= _members.firstWhere(
             (m) => m.id == ProfileBloc.userId,
@@ -71,9 +71,9 @@ class _MemberManagementState extends State<MemberManagement> {
           _members.removeWhere((m) => m.userId == _himself.userId);
           _members.insert(0, _himself);
 
-          print(_members.map((e) => e.email));
-          print(_members.map((e) => e.userId));
-          print(ProfileBloc.userId);
+          // print(_members.map((e) => e.email));
+          // print(_members.map((e) => e.userId));
+          // print(ProfileBloc.userId);
         }
         return Column(
           children: [

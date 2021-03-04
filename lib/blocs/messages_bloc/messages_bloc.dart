@@ -86,16 +86,16 @@ class MessagesBloc<T extends BaseChannelBloc>
         if (T == DirectsBloc && state.data.workspaceId == 'direct') {
           while (selectedChannel.id != state.data.channelId ||
               this.state is! MessagesLoaded) {
-            print('Waiting for the correct channel loading\n'
-                'COND1: ${selectedChannel.id != state.data.channelId}\n'
-                'COND2: ${this.state is! MessagesLoaded}');
+            // print('Waiting for the correct channel loading\n'
+            // 'COND1: ${selectedChannel.id != state.data.channelId}\n'
+            // 'COND2: ${this.state is! MessagesLoaded}');
             await Future.delayed(Duration(milliseconds: 500));
           }
           this.add(SelectMessage(state.data.threadId));
         } else if (T == ChannelsBloc && state.data.workspaceId != 'direct') {
           while (selectedChannel.id != state.data.channelId ||
               this.state is! MessagesLoaded) {
-            print('Waiting for the correct channel loading');
+            // print('Waiting for the correct channel loading');
             await Future.delayed(Duration(milliseconds: 500));
           }
           this.add(SelectMessage(state.data.threadId));
@@ -197,25 +197,25 @@ class MessagesBloc<T extends BaseChannelBloc>
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
       );
+      _sortItems();
       if (updateParent) {
-        _sortItems();
-        final newState = MessagesLoaded(
-          messages: repository.items,
-          messageCount: repository.itemsCount,
-          force: DateTime.now().toString(),
-          parentChannel: selectedChannel,
-        );
-        yield newState;
-        _updateParentChannel();
+        _updateParentChannel(event.channelId);
       }
+      final newState = MessagesLoaded(
+        messages: repository.items,
+        messageCount: repository.itemsCount,
+        force: DateTime.now().toString(),
+        parentChannel: selectedChannel,
+      );
+      yield newState;
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
       if (thread == null) return;
       if (repository.selected == null) return;
 
       if (event.channelId == selectedChannel.id) {
-        repository.logger
-            .d('In thread: ${event.threadId == repository.selected.id}');
+        // repository.logger
+        // .d('In thread: ${event.threadId == repository.selected.id}');
         thread = event.threadId == repository.selected.id
             ? thread
             : repository.selected;
@@ -226,9 +226,9 @@ class MessagesBloc<T extends BaseChannelBloc>
           parentChannel: selectedChannel,
           force: DateTime.now().toString(),
         );
-        repository.logger.d('YIELDING STATE: ${newState != this.state}');
+        // repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
-        _updateParentChannel();
+        // _updateParentChannel();
       }
     } else if (event is RemoveMessage) {
       final channelId = event.channelId ?? selectedChannel.id;
@@ -287,7 +287,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
-          _updateParentChannel();
+          // _updateParentChannel();
         },
       );
       this.repository.items.add(tempItem);
@@ -307,7 +307,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
     } else if (event is SelectMessage) {
-      print('$T MESSAGE SELECTED');
+      // print('$T MESSAGE SELECTED');
+      ProfileBloc.selectedThread = event.messageId;
       repository.select(event.messageId);
       yield MessageSelected(
         threadMessage: repository.selected,
@@ -316,7 +317,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
       await repository.updateResponsesCount(event.messageId);
-      print('SELECTED THREAD IS ${repository.selected.id}');
       yield MessageSelected(
         threadMessage: repository.selected,
         responsesCount: repository.selected.responsesCount,
@@ -342,10 +342,10 @@ class MessagesBloc<T extends BaseChannelBloc>
     return map;
   }
 
-  void _updateParentChannel() {
+  void _updateParentChannel([String channelId]) {
     channelsBloc.add(ModifyMessageCount(
       workspaceId: ProfileBloc.selectedWorkspace,
-      channelId: selectedChannel.id,
+      channelId: channelId ?? selectedChannel.id,
       companyId: ProfileBloc.selectedCompany,
       totalModifier: 1,
     ));

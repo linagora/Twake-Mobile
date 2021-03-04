@@ -152,6 +152,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
                       hint: 'Workspace name',
                       controller: _workspaceNameController,
                       focusNode: _workspaceNameFocusNode,
+                      maxLength: 30,
                     ),
                   ),
                 ),

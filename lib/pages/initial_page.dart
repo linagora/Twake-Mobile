@@ -189,7 +189,10 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   lazy: false,
                 ),
                 BlocProvider<AddChannelBloc>(
-                  create: (_) => AddChannelBloc(state.initData.addChannel),
+                  create: (_) => AddChannelBloc(
+                    state.initData.addChannel,
+                    state.initData.addDirect,
+                  ),
                   lazy: false,
                 ),
                 BlocProvider<DraftBloc>(
