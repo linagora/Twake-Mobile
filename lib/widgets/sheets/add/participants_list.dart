@@ -108,12 +108,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
 
   void _createDirect(List<String> participantsIds) {
     context.read<AddChannelBloc>()
-      ..add(Update(
-        name: '',
-        type: ChannelType.direct,
-        participants: participantsIds,
+      ..add(UpdateDirect(
+        member: participantsIds.first,
       ))
-      ..add(Create());
+      ..add(CreateDirect());
     FocusScope.of(context).requestFocus(FocusNode());
   }
 
@@ -127,9 +125,11 @@ class _ParticipantsListState extends State<ParticipantsList> {
       },
       child: BlocConsumer<AddChannelBloc, AddChannelState>(
         listener: (context, state) {
-          if (state is Created) {
+          if (state is Created || state is DirectCreated) {
             // Reload channels
-            context.read<ChannelsBloc>().add(ReloadChannels(forceFromApi: true));
+            context
+                .read<ChannelsBloc>()
+                .add(ReloadChannels(forceFromApi: true));
             // Reload directs
             context.read<DirectsBloc>().add(ReloadChannels(forceFromApi: true));
             // Close sheet
@@ -138,7 +138,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
             context.read<AddChannelBloc>().add(Update(participants: []));
             _controller.clear();
             // Redirect user to created direct
-            if (_isDirect) {
+            if (state is DirectCreated) {
               String channelId = state.id;
               openDirect(context, channelId);
             }
@@ -157,6 +157,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
         },
         buildWhen: (_, current) {
           return (current is Updated ||
+              current is DirectUpdated ||
               current is Creation ||
               current is StageUpdated);
         },
@@ -205,7 +206,8 @@ class _ParticipantsListState extends State<ParticipantsList> {
                   // print('-------------------------------');
                 }
                 return BlocBuilder<AddChannelBloc, AddChannelState>(
-                  buildWhen: (previous, current) => current is Updated,
+                  buildWhen: (previous, current) =>
+                      current is Updated,
                   builder: (context, state) {
                     var selectedIds = <String>[];
                     var selectedUsers = <User>[];
@@ -222,7 +224,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
                         users.excludeUsers(selectedUsers);
                       }
                     }
-
                     // print('Selected UsERS: ${selectedUsers.map((e) => e.username)}');
                     return ListView.builder(
                       shrinkWrap: true,

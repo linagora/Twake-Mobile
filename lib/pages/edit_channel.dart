@@ -341,6 +341,7 @@ class _EditChannelState extends State<EditChannel> {
                       hint: 'Channel name',
                       controller: _nameController,
                       focusNode: _nameFocusNode,
+                      maxLength: 30,
                     ),
                     Divider(
                       thickness: 0.5,

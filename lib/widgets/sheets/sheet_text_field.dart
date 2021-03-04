@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class SheetTextField extends StatefulWidget {
   final String hint;
@@ -7,6 +8,7 @@ class SheetTextField extends StatefulWidget {
   final Function trailingAction;
   final TextEditingController controller;
   final FocusNode focusNode;
+  final int maxLength;
   final String Function(String) validator;
 
   const SheetTextField({
@@ -16,6 +18,7 @@ class SheetTextField extends StatefulWidget {
     this.leadingAction,
     this.trailingAction,
     this.validator,
+    this.maxLength,
   });
 
   @override
@@ -29,6 +32,9 @@ class _SheetTextFieldState extends State<SheetTextField> {
       padding: const EdgeInsets.only(left: 14.0, right: 7),
       color: Colors.white,
       child: TextFormField(
+        inputFormatters:[
+          LengthLimitingTextInputFormatter(widget.maxLength),
+        ],
         validator: widget.validator,
         controller: widget.controller,
         focusNode: widget.focusNode,

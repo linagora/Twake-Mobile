@@ -221,6 +221,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                         hint: 'Channel name',
                         controller: _channelNameController,
                         focusNode: _channelNameFocusNode,
+                        maxLength: 30,
                       ),
                     ),
                   ],
