@@ -118,12 +118,14 @@ class ThreadsBloc<T extends BaseChannelBloc>
         await Future.delayed(Duration(milliseconds: 100));
         attempt -= 1;
       }
-      await repository.pullOne(_makeQueryParams(event),
+      final updateParent = await repository.pullOne(_makeQueryParams(event),
           addToItems: threadMessage != null
               ? threadMessage.id == event.threadId
               : false);
+      if (updateParent) {
+        _updateParentChannel();
+      }
       _sortItems();
-      _updateParentChannel();
       messagesBloc.add(ModifyResponsesCount(
         channelId: event.channelId,
         threadId: event.threadId,
@@ -149,7 +151,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
         _sortItems();
         yield messagesLoaded;
       }
-      _updateParentChannel(totalModifier: -1);
+      // _updateParentChannel(totalModifier: -1);
     } else if (event is SendMessage) {
       final String dummyId = _DUMMY_ID;
       final body = _makeQueryParams(event);
@@ -186,7 +188,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
             channelId: event.channelId,
             threadId: message.threadId,
           ));
-          _updateParentChannel();
+          // _updateParentChannel();
         },
       );
       this.repository.items.add(tempItem);
@@ -247,7 +249,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
     final channelId = messagesBloc.selectedChannel.id;
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
-      workspaceId: ProfileBloc.selectedWorkspace,
+      workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspace,
       companyId: ProfileBloc.selectedCompany,
       totalModifier: totalModifier,
     ));

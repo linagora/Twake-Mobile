@@ -4,9 +4,11 @@ import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channel_event.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/channels_bloc/channel_state.dart';
+import 'package:twake/services/service_bundle.dart';
 
 export 'package:twake/blocs/channels_bloc/channel_event.dart';
 export 'package:twake/blocs/channels_bloc/channel_state.dart';
@@ -101,7 +103,14 @@ class DirectsBloc extends BaseChannelBloc {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
-      repository.select(event.channelId);
+      repository.select(event.channelId,
+          saveToStore: false,
+          apiEndpoint: Endpoint.channelsRead,
+          params: {
+            "company_id": ProfileBloc.selectedCompany,
+            "workspace_id": "direct",
+            "channel_id": event.channelId
+          });
       repository.selected.messagesUnread = 0;
       repository.selected.hasUnread = 0;
       repository.saveOne(repository.selected);

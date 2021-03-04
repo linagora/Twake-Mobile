@@ -198,6 +198,9 @@ class MessagesBloc<T extends BaseChannelBloc>
         addToItems: event.channelId == selectedChannel.id,
       );
       _sortItems();
+      if (updateParent) {
+        _updateParentChannel(event.channelId);
+      }
       final newState = MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
@@ -205,9 +208,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         parentChannel: selectedChannel,
       );
       yield newState;
-      if (updateParent) {
-        _updateParentChannel(event.channelId);
-      }
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
       if (thread == null) return;
@@ -228,7 +228,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
         // repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
-        _updateParentChannel();
+        // _updateParentChannel();
       }
     } else if (event is RemoveMessage) {
       final channelId = event.channelId ?? selectedChannel.id;

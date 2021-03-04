@@ -188,13 +188,14 @@ class MessagesRepository {
     try {
       resp = (await _api.get(apiEndpoint, params: queryParams));
     } on ApiError catch (error) {
-      logger.d('ERROR while loading more Message from api\n${error.message}');
+      logger.e('ERROR while loading more Message from api\n${error.message}');
       return false;
     }
     if (resp.isEmpty) return false;
     var item = Message.fromJson(resp[0]);
     var isNew = true;
-    if (getItemById(queryParams['message_id']) != null) {
+    if (await getItemById(queryParams['message_id']) != null) {
+      logger.e("MESSAGE EXISTS");
       isNew = false;
     }
     saveOne(item);
