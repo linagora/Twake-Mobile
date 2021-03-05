@@ -129,7 +129,7 @@ class Api {
     try {
       final s = Stopwatch();
       s.start();
-      final response = await dio.getUri(uri);
+      final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       s.stop();
       // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
@@ -205,7 +205,7 @@ class Api {
           await _prolongToken();
           break;
         case TokenStatus.BothExpired:
-          _resetAuthentication();
+          if (_resetAuthentication != null) _resetAuthentication();
           return false;
       }
     }
@@ -231,13 +231,18 @@ class Api {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
-          logger.e('Error during network request!' +
-              '\nMethod: ${error.request.method}' +
-              '\nPATH: ${error.request.path}' +
-              '\nHeaders: ${error.request.headers}' +
-              '\nResponse: ${error.response.data}' +
-              '\nBODY: ${jsonEncode(error.request.data)}' +
-              '\nQUERY: ${error.request.queryParameters}');
+          if (error.response != null) {
+            logger.e('Error during network request!' +
+                '\nMethod: ${error.request.method}' +
+                '\nPATH: ${error.request.path}' +
+                '\nHeaders: ${error.request.headers}' +
+                '\nResponse: ${error.response.data}' +
+                '\nBODY: ${jsonEncode(error.request.data)}' +
+                '\nQUERY: ${error.request.queryParameters}');
+          } else {
+            logger.wtf("UNEXEPCTED NETWORK ERROR:\n$error");
+            return error;
+          }
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
@@ -268,7 +273,10 @@ class ApiError implements Exception {
 
   factory ApiError.fromDioError(DioError error) {
     var apiErrorType = ApiErrorType.Unknown;
-    if (error.response.statusCode == 500) {
+    if (error.response == null) {
+      Logger().wtf("UNEXEPCTED ERROR:\n$error");
+      apiErrorType = ApiErrorType.Unauthorized;
+    } else if (error.response.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;
     } else if (const [401, 403].contains(error.response.statusCode)) {
       apiErrorType = ApiErrorType.Unauthorized;
@@ -281,7 +289,7 @@ class ApiError implements Exception {
     }
 
     return ApiError(
-      message: '${error.response.data}',
+      message: '${error.response != null ? error.response.data : error}',
       type: apiErrorType,
     );
   }

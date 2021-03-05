@@ -123,8 +123,8 @@ class AuthRepository extends JsonSerializable {
     var data;
     try {
       data = await _api.get(Endpoint.version, useTokenDio: true);
-    } catch (e) {
-      logger.e('ERROR WHILE GETTING AUTH MODE\n$e');
+    } catch (e, stacktrace) {
+      logger.e('ERROR WHILE GETTING AUTH MODE\n$e \n$stacktrace');
       this.authMode = 'UNKNOWN';
       return 'UNKNOWN';
     }

@@ -47,7 +47,7 @@ class _AuthFormState extends State<AuthForm> {
     final state = BlocProvider.of<AuthBloc>(context).state;
     if (state is Unauthenticated) {
       _usernameController.text = state.username;
-      _passwordController.text = state.username;
+      _passwordController.text = state.password;
     }
   }
 
