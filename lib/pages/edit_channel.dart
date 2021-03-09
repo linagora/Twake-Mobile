@@ -88,6 +88,18 @@ class _EditChannelState extends State<EditChannel> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.editChannel));
     });
+
+    _nameFocusNode.addListener(() {
+      if (_nameFocusNode.hasFocus) {
+        _closeKeyboards(context, both: false);
+      }
+    });
+
+    _descriptionFocusNode.addListener(() {
+      if (_descriptionFocusNode.hasFocus) {
+        _closeKeyboards(context, both: false);
+      }
+    });
   }
 
   @override
@@ -173,6 +185,7 @@ class _EditChannelState extends State<EditChannel> {
   }
 
   void _toggleEmojiBoard() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     await Future.delayed(Duration(milliseconds: 150));
     setState(() {
       _emojiVisible = !_emojiVisible;
@@ -210,6 +223,8 @@ class _EditChannelState extends State<EditChannel> {
               current is SheetShouldOpen || current is SheetShouldClose,
           listener: (context, state) {
             // print('Strange state: $state');
+            _closeKeyboards(context);
+
             if (state is SheetShouldOpen) {
               if (_panelController.isPanelClosed) {
                 _panelController.open();
@@ -245,12 +260,7 @@ class _EditChannelState extends State<EditChannel> {
                 Navigator.of(context).pop([state is EditChannelDeleted]);
               }
               return GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  setState(() {
-                    _emojiVisible = false;
-                  });
-                },
+                onTap: () => _closeKeyboards(context),
                 behavior: HitTestBehavior.opaque,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -402,6 +412,15 @@ class _EditChannelState extends State<EditChannel> {
         ),
       ),
     );
+  }
+
+  void _closeKeyboards(BuildContext context, {bool both = true}) {
+    if (both) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
+    setState(() {
+      _emojiVisible = false;
+    });
   }
 }
 

@@ -59,6 +59,18 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
     _descriptionController.addListener(() {
       _batchUpdateState(description: _descriptionController.text);
     });
+    
+    _channelNameFocusNode.addListener(() {
+      if (_channelNameFocusNode.hasFocus) {
+        _closeKeyboards(context, both: false);
+      }
+    });
+    
+    _channelDescriptionFocusNode.addListener(() {
+      if (_channelDescriptionFocusNode.hasFocus) {
+        _closeKeyboards(context, both: false);
+      }
+    });
   }
 
   @override
@@ -162,7 +174,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           }
         } else if (state is Error) {
           // Show an error
-          Scaffold.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
               state.message,
               style: TextStyle(
@@ -183,12 +195,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         }
 
         return GestureDetector(
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-            setState(() {
-              _emojiVisible = false;
-            });
-          },
+          onTap: () => _closeKeyboards(context),
           behavior: HitTestBehavior.opaque,
           child: Column(
             children: [
@@ -197,7 +204,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                 leadingTitle: 'Close',
                 leadingAction: () {
                   context.read<SheetBloc>().add(CloseSheet());
-                  FocusScope.of(context).requestFocus(FocusNode());
+                  _closeKeyboards(context);
                 },
                 trailingTitle: 'Create',
                 trailingAction: createIsBlocked || !_canGoNext
@@ -283,6 +290,15 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         );
       }),
     );
+  }
+
+  void _closeKeyboards(BuildContext context, {bool both = true}) {
+    if (both) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
+    setState(() {
+      _emojiVisible = false;
+    });
   }
 }
 
