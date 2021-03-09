@@ -27,7 +27,6 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
   Future<void> updateMessageCount(ModifyMessageCount event) async {
     final ch = await repository.getItemById(event.channelId);
     if (ch != null) {
-      repository.logger.d("UPDATING CHANNEL UNREAD");
       // ch.messagesTotal += event.totalModifier ?? 0;
       ch.hasUnread = 1;
       ch.messagesUnread += event.unreadModifier ?? 0;
@@ -39,7 +38,6 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
 
   Future<void> updateChannelState(ModifyChannelState event) async {
     final ch = await repository.getItemById(event.channelId);
-    repository.logger.d("UPDATING CHANNEL STATE");
     if (ch != null) {
       ch.hasUnread = 1;
       if (event.threadId != null || event.messageId != null) {

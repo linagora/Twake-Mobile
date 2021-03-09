@@ -123,7 +123,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
               ? threadMessage.id == event.threadId
               : false);
       if (updateParent) {
-        _updateParentChannel();
+        _updateParentChannel(event.channelId);
       }
       _sortItems();
       messagesBloc.add(ModifyResponsesCount(
@@ -151,7 +151,6 @@ class ThreadsBloc<T extends BaseChannelBloc>
         _sortItems();
         yield messagesLoaded;
       }
-      // _updateParentChannel(totalModifier: -1);
     } else if (event is SendMessage) {
       final String dummyId = _DUMMY_ID;
       final body = _makeQueryParams(event);
@@ -188,7 +187,6 @@ class ThreadsBloc<T extends BaseChannelBloc>
             channelId: event.channelId,
             threadId: message.threadId,
           ));
-          // _updateParentChannel();
         },
       );
       this.repository.items.add(tempItem);
@@ -245,8 +243,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
         parentChannel: parentChannel,
       );
 
-  void _updateParentChannel({int totalModifier: 1}) {
-    final channelId = messagesBloc.selectedChannel.id;
+  void _updateParentChannel(String channelId, {int totalModifier: 1}) {
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
       workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspace,
