@@ -190,6 +190,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelDeleted(event.data);
     } else if (event is ReinitSubscriptions) {
       reinit();
+    } else if (event is CancelPendingSubscriptions) {
+      service.cancelNotificationForChannel(event.channelId);
     }
   }
 

@@ -17,6 +17,8 @@ class Notifications {
   FirebaseMessaging _fcm = FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+  Map<String, List<int>> pendingNotifications = {};
+  var counter = 0;
   // final _api = Api();
 // Future onDidReceiveLocalNotification(
   // int id, String title, String body, String payload) async {
@@ -115,13 +117,29 @@ class Notifications {
             showWhen: false);
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    final channelId = _getChannelId(message);
+
+    if (pendingNotifications[channelId] == null) {
+      pendingNotifications[channelId] = [];
+    }
+    pendingNotifications[channelId].add(counter);
+
     await flutterLocalNotificationsPlugin.show(
-      0,
+      counter,
       _getTitle(message),
       _getBody(message),
       platformChannelSpecifics,
       payload: _getPayload(message),
     );
+    counter++;
+  }
+
+  Future<void> cancelNotificationForChannel(String channelId) async {
+    final channelNotifications = pendingNotifications[channelId];
+    if (channelNotifications == null) return;
+    for (var n in channelNotifications)
+      await flutterLocalNotificationsPlugin.cancel(n);
   }
 
   MessageNotification messageParse(Map<String, dynamic> message) {
@@ -189,6 +207,28 @@ class Notifications {
       return jsonEncode(data);
     }
     return data;
+  }
+
+  String _getChannelId(Map<String, dynamic> message) {
+    var data;
+    switch (platform) {
+      case Target.Android:
+        // logger.d('Android notification received\n$message');
+        data = message['data']['notification_data'];
+        break;
+      case Target.IOS:
+        // logger.d('iOS notification received\n$message');
+        data = message['notification_data'];
+        break;
+      case Target.Linux:
+      case Target.MacOS:
+      case Target.Windows:
+        throw 'Desktop is not supported';
+    }
+    if (data.runtimeType == String) {
+      return jsonDecode(data)['channel_id'];
+    }
+    return data['channel_id'];
   }
 
   Future<dynamic> onResume(Map<String, dynamic> message) async {
