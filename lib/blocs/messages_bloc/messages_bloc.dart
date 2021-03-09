@@ -287,7 +287,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
-          // _updateParentChannel();
+          this.channelsBloc.add(ChangeSelectedChannel(selectedChannel.id));
         },
       );
       this.repository.items.add(tempItem);
