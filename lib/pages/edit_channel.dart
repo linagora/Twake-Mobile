@@ -301,7 +301,7 @@ class _EditChannelState extends State<EditChannel> {
                             child: Text(
                               'Save',
                               style: TextStyle(
-                                color: _canSave != null
+                                color: _canSave
                                     ? Color(0xff3840f7)
                                     : Color(0xffa2a2a2),
                                 fontSize: 17.0,
@@ -316,7 +316,8 @@ class _EditChannelState extends State<EditChannel> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         RoundedBoxButton(
-                          cover: Image.asset('assets/images/add_new_member.png'),
+                          cover:
+                              Image.asset('assets/images/add_new_member.png'),
                           title: 'add',
                           onTap: () => _openAdd(context),
                         ),
