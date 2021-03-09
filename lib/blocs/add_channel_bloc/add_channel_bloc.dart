@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/add_direct_repository.dart';
+import 'package:twake/utils/extensions.dart';
 import 'add_channel_event.dart';
 import 'add_channel_state.dart';
 
@@ -22,7 +23,8 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
       yield StageUpdated(event.stage);
     } else if (event is Update) {
       channelRepository.icon = event.icon ?? channelRepository.icon;
-      channelRepository.name = event.name ?? channelRepository.name;
+      channelRepository.name =
+          event.name.isNotReallyEmpty ? event.name : channelRepository.name;
       channelRepository.description =
           event.description ?? channelRepository.description;
       channelRepository.channelGroup =

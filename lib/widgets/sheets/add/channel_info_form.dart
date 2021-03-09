@@ -59,13 +59,13 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
     _descriptionController.addListener(() {
       _batchUpdateState(description: _descriptionController.text);
     });
-    
+
     _channelNameFocusNode.addListener(() {
       if (_channelNameFocusNode.hasFocus) {
         _closeKeyboards(context, both: false);
       }
     });
-    
+
     _channelDescriptionFocusNode.addListener(() {
       if (_channelDescriptionFocusNode.hasFocus) {
         _closeKeyboards(context, both: false);
@@ -257,7 +257,8 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               ChannelTypesContainer(
                 type: _channelType,
                 onPublicTap: () => _batchUpdateState(type: ChannelType.public),
-                onPrivateTap: () => _batchUpdateState(type: ChannelType.private),
+                onPrivateTap: () =>
+                    _batchUpdateState(type: ChannelType.private),
               ),
               SizedBox(height: 8),
               HintLine(
