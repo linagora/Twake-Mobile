@@ -9,10 +9,11 @@ part of 'add_direct_repository.dart';
 AddDirectRepository _$AddDirectRepositoryFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['company_id', 'member', 'workspace_id']);
-  return AddDirectRepository()
-    ..companyId = json['company_id'] as String
-    ..member = json['member'] as String
-    ..workspaceId = json['workspace_id'] as String;
+  return AddDirectRepository(
+    companyId: json['company_id'] as String,
+    workspaceId: json['workspace_id'] as String,
+    member: json['member'] as String,
+  );
 }
 
 Map<String, dynamic> _$AddDirectRepositoryToJson(
