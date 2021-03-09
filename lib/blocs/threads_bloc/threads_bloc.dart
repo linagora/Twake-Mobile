@@ -183,6 +183,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
+          this
+              .messagesBloc
+              .channelsBloc
+              .add(ChangeSelectedChannel(parentChannel.id));
           messagesBloc.add(ModifyResponsesCount(
             channelId: event.channelId,
             threadId: message.threadId,
