@@ -176,6 +176,11 @@ class AuthRepository extends JsonSerializable {
     await _storage.delete(type: StorageType.Auth, key: AUTH_STORE_KEY);
   }
 
+  Future<void> logout() async {
+    await _api.post(Endpoint.logout, body: {'fcm_token': this.fcmToken});
+    await this.fullClean();
+  }
+
   Future<void> fullClean() async {
     _api.prolongToken = null;
     _api.tokenIsValid = null;

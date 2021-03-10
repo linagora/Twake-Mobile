@@ -138,8 +138,18 @@ class Notifications {
   Future<void> cancelNotificationForChannel(String channelId) async {
     final channelNotifications = pendingNotifications[channelId];
     if (channelNotifications == null) return;
-    for (var n in channelNotifications)
+    for (var n in channelNotifications) {
       await flutterLocalNotificationsPlugin.cancel(n);
+    }
+    pendingNotifications.remove(channelId);
+    if (pendingNotifications.isEmpty) {
+      await flutterLocalNotificationsPlugin.cancelAll();
+    }
+  }
+
+  Future<void> cancelAll() async {
+    pendingNotifications = {};
+    await flutterLocalNotificationsPlugin.cancelAll();
   }
 
   MessageNotification messageParse(Map<String, dynamic> message) {
