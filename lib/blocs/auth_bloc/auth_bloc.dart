@@ -154,7 +154,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
       final js =
           '''!function(l,p){function f(){document.getElementById("userfield").value=l,document.getElementById("passwordfield").value=p,document.getElementById("lform").submit()}"complete"===document.readyState||"interactive"===document.readyState?setTimeout(f,1):document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
-      print('AUTHENTICATIG THROUGH WEBVIEW');
+      print('AUTHENTICATING THROUGH WEBVIEW');
       await webView.webViewController.evaluateJavascript(source: js);
     } else if (event is SetAuthData) {
       print('AUTH DATA ${event.authData}');

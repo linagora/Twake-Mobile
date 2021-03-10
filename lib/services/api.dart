@@ -24,6 +24,8 @@ class Api {
   TokenStatus Function() _tokenIsValid;
   // callback to reset authentication if for e.g. token has expired
   void Function() _resetAuthentication;
+  // callback to invalidate current backend configuration
+  void Function() _invalidateConfiguration;
 
   bool hasConnection = false;
 
@@ -60,17 +62,10 @@ class Api {
   }
 
   // if refresh has changed, then we reset dio interceptor to account for this
-  set prolongToken(value) {
-    _prolongToken = value;
-  }
-
-  set tokenIsValid(value) {
-    _tokenIsValid = value;
-  }
-
-  set resetAuthentication(value) {
-    _resetAuthentication = value;
-  }
+  set prolongToken(value) => _prolongToken = value;
+  set tokenIsValid(value) => _tokenIsValid = value;
+  set resetAuthentication(value) => _resetAuthentication = value;
+  set invalidateDomain(value) => _invalidateConfiguration = value;
 
   void checkConnection() {
     // logger.d('HAS CONNECTION: $hasConnection');
@@ -249,7 +244,7 @@ class Api {
                 '\nBODY: ${jsonEncode(error.request.data)}' +
                 '\nQUERY: ${error.request.queryParameters}');
           } else {
-            logger.wtf("UNEXEPCTED NETWORK ERROR:\n$error");
+            logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
             return error;
           }
           if (error.response.statusCode == 401 && _prolongToken != null) {
@@ -283,7 +278,7 @@ class ApiError implements Exception {
   factory ApiError.fromDioError(DioError error) {
     var apiErrorType = ApiErrorType.Unknown;
     if (error.response == null) {
-      Logger().wtf("UNEXEPCTED ERROR:\n$error");
+      Logger().wtf("UNEXPECTED ERROR:\n$error");
       apiErrorType = ApiErrorType.Unauthorized;
     } else if (error.response.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;
