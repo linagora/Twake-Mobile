@@ -149,8 +149,26 @@ class _EditChannelState extends State<EditChannel> {
   // void _leave() =>
   //     context.read<MemberCubit>().deleteYourself(channelId: _channelId);
 
+  // void _delete(BuildContext channelContext) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return WarningDialog(
+  //         title: 'Are you sure you want to delete the channel?'
+  //             '\nThis action cannot be undone!',
+  //         leadingActionTitle: 'Cancel',
+  //         trailingActionTitle: 'Delete',
+  //         trailingAction: () async {
+  //           channelContext.read<EditChannelCubit>().delete();
+  //           Navigator.of(context).pop();
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
   void _delete(BuildContext channelContext) {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return WarningDialog(
