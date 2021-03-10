@@ -58,9 +58,7 @@ class WarningDialog extends StatelessWidget {
                   height: 36.0,
                   alignment: Alignment.centerRight,
                   child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
+                    onTap: () => Navigator.of(context).pop(),
                     child: Text(
                       leadingActionTitle,
                       textAlign: TextAlign.end,

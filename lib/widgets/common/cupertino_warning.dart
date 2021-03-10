@@ -8,7 +8,6 @@ class CupertinoWarning extends StatelessWidget {
   final String confirmTitle;
   final Function confirmAction;
   final String cancelTitle;
-  final Function cancelAction;
 
   const CupertinoWarning({
     Key key,
@@ -17,19 +16,18 @@ class CupertinoWarning extends StatelessWidget {
     this.confirmTitle,
     this.confirmAction,
     this.cancelTitle,
-    this.cancelAction,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CupertinoActionSheet(
       title: SelectableAvatar(icon: icon, size: 56.0),
-      message: AutoSizeText(
+      message: Text(
         title,
-        minFontSize: 12,
-        maxFontSize: 16,
-        textAlign: TextAlign.start,
+        maxLines: 2,
+        textAlign: TextAlign.center,
         style: TextStyle(
+          fontSize: 14.0,
           fontWeight: FontWeight.w400,
           color: Color(0xff6d7885),
         ),
@@ -37,12 +35,12 @@ class CupertinoWarning extends StatelessWidget {
       actions: [
         CupertinoActionSheetAction(
           onPressed: confirmAction,
-          child: AutoSizeText(
+          child: Text(
             confirmTitle,
-            minFontSize: 12,
-            maxFontSize: 16,
+            maxLines: 1,
             textAlign: TextAlign.start,
             style: TextStyle(
+              fontSize: 20.0,
               fontWeight: FontWeight.w400,
               color: Color(0xfff04820),
             ),
@@ -50,14 +48,14 @@ class CupertinoWarning extends StatelessWidget {
         ),
       ],
       cancelButton: CupertinoActionSheetAction(
-        onPressed: cancelAction,
-        child: AutoSizeText(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text(
           cancelTitle,
-          minFontSize: 12,
-          maxFontSize: 16,
+          maxLines: 1,
           textAlign: TextAlign.start,
           style: TextStyle(
-            fontWeight: FontWeight.w400,
+            fontSize: 19.0,
+            fontWeight: FontWeight.w600,
             color: Color(0xff007aff),
           ),
         ),

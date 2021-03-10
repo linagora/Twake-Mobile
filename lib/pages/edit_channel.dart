@@ -13,6 +13,7 @@ import 'package:twake/models/member.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/repositories/sheet_repository.dart';
+import 'package:twake/widgets/common/cupertino_warning.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
@@ -171,12 +172,12 @@ class _EditChannelState extends State<EditChannel> {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
-        return WarningDialog(
-          title: 'Are you sure you want to delete the channel?'
-              '\nThis action cannot be undone!',
-          leadingActionTitle: 'Cancel',
-          trailingActionTitle: 'Delete',
-          trailingAction: () async {
+        return CupertinoWarning(
+          title: 'Are you sure you want to delete\n'
+              '${_channel.name} channel?',
+          cancelTitle: 'Cancel',
+          confirmTitle: 'Delete',
+          confirmAction: () async {
             channelContext.read<EditChannelCubit>().delete();
             Navigator.of(context).pop();
           },
