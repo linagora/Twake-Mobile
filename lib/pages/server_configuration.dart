@@ -58,8 +58,12 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
           behavior: HitTestBehavior.opaque,
           child: BlocConsumer<ConfigurationCubit, ConfigurationState>(
-            listenWhen: (_, current) => current is ConfigurationError,
+            listenWhen: (_, current) =>
+                current is ConfigurationError || current is ConfigurationSaved,
             listener: (context, state) {
+              if (state is ConfigurationSaved) {
+                context.read<AuthBloc>().add(ValidateHost(_controller.text));
+              }
               if (state is ConfigurationError) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -76,13 +80,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             },
             buildWhen: (_, current) =>
                 current is ConfigurationLoaded ||
-                current is ConfigurationSaving ||
-                current is ConfigurationSaved,
+                current is ConfigurationSaving,
             builder: (context, state) {
-
-              if (state is ConfigurationSaved) {
-                context.read<AuthBloc>().add(ValidateHost(_controller.text));
-              }
+              print('Current state: $state');
 
               if (_controller.text.isReallyEmpty) {
                 _controller.text = state.host;
@@ -186,8 +186,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     Expanded(
                       child: Center(child: CircularProgressIndicator()),
                     ),
-                  if (state is! ConfigurationSaving)
-                    Spacer(),
+                  if (state is! ConfigurationSaving) Spacer(),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40.0),
                     child: Text(

@@ -19,6 +19,7 @@ class ConfigurationCubit extends Cubit<ConfigurationState> {
       await repository.save();
       print('Before to emit');
       emit(ConfigurationSaved(host: host));
+      emit(ConfigurationLoaded(host: repository.host));
     } on Exception {
       emit(ConfigurationError(message: 'Error during the configuration saving'));
     }
