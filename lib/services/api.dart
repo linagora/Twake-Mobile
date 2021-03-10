@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 const _RECEIVE_TIMEOUT = 7000;
 const _SEND_TIMEOUT = 5000;
 const _CONNECT_TIMEOUT = 50000;
+const _PROXY_PREFIX = "/internal/mobile";
 
 class Api {
   // singleton Api class instance
@@ -23,6 +24,8 @@ class Api {
   TokenStatus Function() _tokenIsValid;
   // callback to reset authentication if for e.g. token has expired
   void Function() _resetAuthentication;
+  // callback to invalidate current backend configuration
+  void Function() _invalidateConfiguration;
 
   bool hasConnection = false;
 
@@ -59,17 +62,10 @@ class Api {
   }
 
   // if refresh has changed, then we reset dio interceptor to account for this
-  set prolongToken(value) {
-    _prolongToken = value;
-  }
-
-  set tokenIsValid(value) {
-    _tokenIsValid = value;
-  }
-
-  set resetAuthentication(value) {
-    _resetAuthentication = value;
-  }
+  set prolongToken(value) => _prolongToken = value;
+  set tokenIsValid(value) => _tokenIsValid = value;
+  set resetAuthentication(value) => _resetAuthentication = value;
+  set invalidateDomain(value) => _invalidateConfiguration = value;
 
   void checkConnection() {
     // logger.d('HAS CONNECTION: $hasConnection');
@@ -86,6 +82,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
+    method = _getMethodPath(method);
     final url = host + method;
     try {
       final response = await dio.delete(url, data: body);
@@ -105,7 +102,7 @@ class Api {
     bool useTokenDio: false,
   }) async {
     checkConnection();
-
+    method = _getMethodPath(method);
     // Extract scheme and host by splitting the url
     var split = Api.host.split('://');
     assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
@@ -129,7 +126,7 @@ class Api {
     try {
       final s = Stopwatch();
       s.start();
-      final response = await dio.getUri(uri);
+      final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       s.stop();
       // logger.d('GET HEADERS: ${dio.options.headers}');
       // logger.d('PARAMS: $params');
@@ -148,6 +145,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
+    method = _getMethodPath(method);
     final url = host + method;
 
     try {
@@ -164,6 +162,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
+    method = _getMethodPath(method);
     final url = host + method;
 
     try {
@@ -180,6 +179,7 @@ class Api {
     bool useTokenDio = false,
   }) async {
     checkConnection();
+    method = _getMethodPath(method);
     // final url = _SHOST + method;
     final url = host + method;
 
@@ -205,11 +205,15 @@ class Api {
           await _prolongToken();
           break;
         case TokenStatus.BothExpired:
-          _resetAuthentication();
+          if (_resetAuthentication != null) _resetAuthentication();
           return false;
       }
     }
     return true;
+  }
+
+  String _getMethodPath(String method) {
+    return _PROXY_PREFIX + method;
   }
 
   // helper method to add on request and on error interceptors to Dio
@@ -231,13 +235,18 @@ class Api {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
-          logger.e('Error during network request!' +
-              '\nMethod: ${error.request.method}' +
-              '\nPATH: ${error.request.path}' +
-              '\nHeaders: ${error.request.headers}' +
-              '\nResponse: ${error.response.data}' +
-              '\nBODY: ${jsonEncode(error.request.data)}' +
-              '\nQUERY: ${error.request.queryParameters}');
+          if (error.response != null) {
+            logger.e('Error during network request!' +
+                '\nMethod: ${error.request.method}' +
+                '\nPATH: ${error.request.path}' +
+                '\nHeaders: ${error.request.headers}' +
+                '\nResponse: ${error.response.data}' +
+                '\nBODY: ${jsonEncode(error.request.data)}' +
+                '\nQUERY: ${error.request.queryParameters}');
+          } else {
+            logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
+            return error;
+          }
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
@@ -268,7 +277,10 @@ class ApiError implements Exception {
 
   factory ApiError.fromDioError(DioError error) {
     var apiErrorType = ApiErrorType.Unknown;
-    if (error.response.statusCode == 500) {
+    if (error.response == null) {
+      Logger().wtf("UNEXPECTED ERROR:\n$error");
+      apiErrorType = ApiErrorType.Unauthorized;
+    } else if (error.response.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;
     } else if (const [401, 403].contains(error.response.statusCode)) {
       apiErrorType = ApiErrorType.Unauthorized;
@@ -281,7 +293,7 @@ class ApiError implements Exception {
     }
 
     return ApiError(
-      message: '${error.response.data}',
+      message: '${error.response != null ? error.response.data : error}',
       type: apiErrorType,
     );
   }

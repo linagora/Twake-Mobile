@@ -123,8 +123,8 @@ class AuthRepository extends JsonSerializable {
     var data;
     try {
       data = await _api.get(Endpoint.version, useTokenDio: true);
-    } catch (e) {
-      logger.e('ERROR WHILE GETTING AUTH MODE\n$e');
+    } catch (e, stacktrace) {
+      logger.e('ERROR WHILE GETTING AUTH MODE\n$e \n$stacktrace');
       this.authMode = 'UNKNOWN';
       return 'UNKNOWN';
     }
@@ -174,6 +174,11 @@ class AuthRepository extends JsonSerializable {
     accessToken = null;
     refreshToken = null;
     await _storage.delete(type: StorageType.Auth, key: AUTH_STORE_KEY);
+  }
+
+  Future<void> logout() async {
+    await _api.post(Endpoint.logout, body: {'fcm_token': this.fcmToken});
+    await this.fullClean();
   }
 
   Future<void> fullClean() async {
@@ -262,6 +267,8 @@ class AuthRepository extends JsonSerializable {
   AuthResult _handleError(ApiError error) {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
+    } else if (error.type == ApiErrorType.BadRequest) {
+
     } else {
       logger.e('Authentication error:\n${error.message}\n${error.type}');
       return AuthResult.NetworkError;

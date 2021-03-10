@@ -135,8 +135,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
 
                           return TextFormField(
                             key: _formKey,
-                            validator: (value) =>
-                                value.isEmpty ? 'Address cannot be blank' : null,
+                            validator: (value) => value.isEmpty
+                                ? 'Address cannot be blank'
+                                : null,
                             controller: _controller,
                             onFieldSubmitted: (_) => _connect(),
                             style: TextStyle(

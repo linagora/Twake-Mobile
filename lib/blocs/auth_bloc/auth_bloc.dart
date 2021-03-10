@@ -16,6 +16,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;
   HeadlessInAppWebView webView;
 
+  var tempCreds = {};
   cb.ConnectionBloc connectionBloc;
   StreamSubscription subscription;
 
@@ -62,7 +63,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final qp = Uri.parse(url).queryParameters;
           // Logger().d('PARAMS: $qp');
           if (qp['token'] == null || qp['username'] == null) {
-            print('NO TOKEN AND USERNAME');
+            repository.logger.e('NO TOKEN AND USERNAME');
             ctrl.loadUrl(url: repository.twakeConsole);
             this.add(WrongAuthCredentials());
             return;
@@ -140,10 +141,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
         return;
       }
+      if (repository.authMode == 'UNKNOWN') {
+        yield AuthenticationError(
+          username: event.username,
+          password: event.password,
+        );
+        return;
+      } else {
+        this.tempCreds['username'] = event.username;
+        this.tempCreds['password'] = event.password;
+      }
       // print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
       final js =
           '''!function(l,p){function f(){document.getElementById("userfield").value=l,document.getElementById("passwordfield").value=p,document.getElementById("lform").submit()}"complete"===document.readyState||"interactive"===document.readyState?setTimeout(f,1):document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
-      // print('JS: $js');
+      print('AUTHENTICATING THROUGH WEBVIEW');
       await webView.webViewController.evaluateJavascript(source: js);
     } else if (event is SetAuthData) {
       print('AUTH DATA ${event.authData}');
@@ -154,11 +165,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _prevUrl = '';
       webView.dispose();
     } else if (event is WrongAuthCredentials) {
-      yield WrongCredentials();
+      yield WrongCredentials(
+        username: tempCreds['username'],
+        password: tempCreds['password'],
+      );
+      tempCreds = {};
       runWebView();
     } else if (event is ResetAuthentication) {
       if (event.message == null) {
-        repository.fullClean();
+        repository.logout();
       } else {
         repository.clean();
       }
@@ -175,8 +190,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (result == 'UNKNOWN') {
         yield HostInvalid(event.host);
       } else {
-        if (result != 'INTERNAL') {
-          setUpWebView(true);
+        if (result == 'CONSOLE') {
+          setUpWebView();
+          await runWebView();
         }
         yield HostValidated(event.host);
       }
@@ -191,8 +207,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await CookieManager.instance().getCookies(url: 'auth.twake.app');
     _prevUrl = '';
     await webView.dispose();
-    print('Running webview...');
-    webView.run();
+    // print('Running webview...');
+    await webView.run();
   }
 
   void resetAuthentication() {

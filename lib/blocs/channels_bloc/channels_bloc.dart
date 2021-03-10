@@ -128,6 +128,7 @@ class ChannelsBloc extends BaseChannelBloc {
       ProfileBloc.selectedChannel = event.channelId;
       ProfileBloc.selectedThread = null;
       yield newState;
+      notificationBloc.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);
       if (event.workspaceId == selectedParentId) {

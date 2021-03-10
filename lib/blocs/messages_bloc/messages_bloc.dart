@@ -185,8 +185,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
-      // repository.logger.d(
-      // 'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+      repository.logger.d(
+          'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
 
       var attempt = 3;
       while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
@@ -228,7 +228,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         );
         // repository.logger.d('YIELDING STATE: ${newState != this.state}');
         yield newState;
-        // _updateParentChannel();
       }
     } else if (event is RemoveMessage) {
       final channelId = event.channelId ?? selectedChannel.id;
@@ -287,7 +286,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
-          // _updateParentChannel();
+          this.channelsBloc.add(ChangeSelectedChannel(selectedChannel.id));
         },
       );
       this.repository.items.add(tempItem);

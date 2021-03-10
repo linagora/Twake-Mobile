@@ -16,7 +16,7 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     ..name = json['name'] as String
     ..icon = json['icon'] as String ?? '👽'
     ..description = json['description'] as String
-    ..membersCount = json['members_count'] as int
+    ..membersCount = json['members_count'] as int ?? 0
     ..lastActivity = json['last_activity'] as int ?? 0
     ..lastAccess = json['user_last_access'] as int ?? 0
     ..hasUnread = boolToInt(json['has_unread'])

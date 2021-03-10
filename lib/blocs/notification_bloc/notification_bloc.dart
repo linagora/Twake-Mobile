@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
@@ -28,8 +29,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   IO.Socket socket;
   var socketConnectionState = SocketConnectionState.DISCONNECTED;
 
-  String token;
-  String socketIOHost;
+  AuthBloc authBloc;
   GlobalKey<NavigatorState> navigator;
 
   final logger = Logger();
@@ -38,10 +38,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   Map<String, dynamic> subscriptionRooms = {};
   StreamSubscription _subscription;
+  StreamSubscription _authSubscription;
 
   NotificationBloc({
-    this.token,
-    this.socketIOHost,
+    this.authBloc,
     this.connectionBloc,
     this.navigator,
   }) : super(NotificationsAbsent()) {
@@ -54,15 +54,22 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       onLaunchCallback: onLaunchCallback,
       shouldNotify: shouldNotify,
     );
-    print('TOKEN: $token\nHOST: $socketIOHost');
     socket = IO.io(
-      this.socketIOHost,
+      authBloc.repository.socketIOHost,
       IO.OptionBuilder()
           .setPath('/socket')
           .setTimeout(10000)
           .disableAutoConnect()
           .setTransports(['websocket']).build(),
     );
+    _authSubscription = authBloc.listen((state) {
+      if (state is Unauthenticated) {
+        for (String room in subscriptionRooms.keys) {
+          unsubscribe(room);
+        }
+        service.cancelAll();
+      }
+    });
     _subscription = connectionBloc.listen((state) {
       if (state is ConnectionLost) {
         // socket = socket.close();
@@ -91,12 +98,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       await _api.autoProlongToken();
     });
     socket.onConnect((msg) async {
-      logger.d('CONNECTED ON SOCKET IO\n$token');
+      logger.d('CONNECTED ON SOCKET IO');
       await _api.autoProlongToken();
       socketConnectionState = SocketConnectionState.CONNECTED;
-      while (socketConnectionState != SocketConnectionState.AUTHENTICATED) {
+      while (socketConnectionState != SocketConnectionState.AUTHENTICATED &&
+          authBloc.repository.accessToken != null) {
         if (socket.disconnected) socket = socket.connect();
-        socket.emit(SocketIOEvent.AUTHENTICATE, {'token': this.token});
+        socket.emit(SocketIOEvent.AUTHENTICATE, {
+          'token': authBloc.repository.accessToken,
+        });
         await Future.delayed(Duration(seconds: 5));
         print('WAITING FOR SOCKET AUTH');
       }
@@ -190,6 +200,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       yield ChannelDeleted(event.data);
     } else if (event is ReinitSubscriptions) {
       reinit();
+    } else if (event is CancelPendingSubscriptions) {
+      service.cancelNotificationForChannel(event.channelId);
     }
   }
 
@@ -367,6 +379,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   @override
   Future<void> close() async {
     await _subscription.cancel();
+    await _authSubscription.cancel();
     return super.close();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
+import 'package:twake/utils/extensions.dart';
 import 'edit_channel_state.dart';
 
 class EditChannelCubit extends Cubit<EditChannelState> {
@@ -43,9 +44,9 @@ class EditChannelCubit extends Cubit<EditChannelState> {
     bool automaticallyAddNew,
   }) {
     repository.channelId = channelId;
-    repository.icon = icon;
-    repository.name = name ?? repository.name;
-    repository.description = description ?? repository.description;
+    repository.icon = (icon != null && icon.isNotReallyEmpty) ? icon : repository.icon;
+    repository.name = (name != null && name.isNotReallyEmpty) ? name : repository.name;
+    repository.description = (description != null && description.isNotReallyEmpty) ? description : repository.description;
     repository.def = automaticallyAddNew ?? repository.def ?? true;
 
     var newRepo = EditChannelRepository(

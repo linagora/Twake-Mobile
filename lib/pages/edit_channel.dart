@@ -13,6 +13,8 @@ import 'package:twake/models/member.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/repositories/sheet_repository.dart';
+import 'package:twake/widgets/common/cupertino_warning.dart';
+import 'package:twake/widgets/common/rich_text_span.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
@@ -88,6 +90,18 @@ class _EditChannelState extends State<EditChannel> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.editChannel));
     });
+
+    _nameFocusNode.addListener(() {
+      if (_nameFocusNode.hasFocus) {
+        _closeKeyboards(context, both: false);
+      }
+    });
+
+    _descriptionFocusNode.addListener(() {
+      if (_descriptionFocusNode.hasFocus) {
+        _closeKeyboards(context, both: false);
+      }
+    });
   }
 
   @override
@@ -134,19 +148,29 @@ class _EditChannelState extends State<EditChannel> {
 
   void _save() => context.read<EditChannelCubit>().save();
 
-  // void _leave() =>
-  //     context.read<MemberCubit>().deleteYourself(channelId: _channelId);
-
   void _delete(BuildContext channelContext) {
-    showDialog(
+    showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
-        return WarningDialog(
-          title: 'Are you sure you want to delete the channel?'
-              '\nThis action cannot be undone!',
-          leadingActionTitle: 'Cancel',
-          trailingActionTitle: 'Delete',
-          trailingAction: () async {
+        return CupertinoWarning(
+          icon: _channel.icon,
+          title: <RichTextSpan>[
+            RichTextSpan(
+              text: 'Are you sure you want to delete\n',
+              isBold: false,
+            ),
+            RichTextSpan(
+              text: '${_channel.name}',
+              isBold: true,
+            ),
+            RichTextSpan(
+              text: ' channel?',
+              isBold: false,
+            ),
+          ],
+          cancelTitle: 'Cancel',
+          confirmTitle: 'Delete',
+          confirmAction: () async {
             channelContext.read<EditChannelCubit>().delete();
             Navigator.of(context).pop();
           },
@@ -173,6 +197,7 @@ class _EditChannelState extends State<EditChannel> {
   }
 
   void _toggleEmojiBoard() async {
+    FocusScope.of(context).requestFocus(FocusNode());
     await Future.delayed(Duration(milliseconds: 150));
     setState(() {
       _emojiVisible = !_emojiVisible;
@@ -210,6 +235,8 @@ class _EditChannelState extends State<EditChannel> {
               current is SheetShouldOpen || current is SheetShouldClose,
           listener: (context, state) {
             // print('Strange state: $state');
+            _closeKeyboards(context);
+
             if (state is SheetShouldOpen) {
               if (_panelController.isPanelClosed) {
                 _panelController.open();
@@ -242,15 +269,10 @@ class _EditChannelState extends State<EditChannel> {
                 context
                     .read<ChannelsBloc>()
                     .add(ReloadChannels(forceFromApi: true));
-                Navigator.of(context).pop([state is EditChannelDeleted]);
+                Navigator.of(context).pop([state]);
               }
               return GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  setState(() {
-                    _emojiVisible = false;
-                  });
-                },
+                onTap: () => _closeKeyboards(context),
                 behavior: HitTestBehavior.opaque,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -301,7 +323,7 @@ class _EditChannelState extends State<EditChannel> {
                             child: Text(
                               'Save',
                               style: TextStyle(
-                                color: _canSave != null
+                                color: _canSave
                                     ? Color(0xff3840f7)
                                     : Color(0xffa2a2a2),
                                 fontSize: 17.0,
@@ -316,7 +338,8 @@ class _EditChannelState extends State<EditChannel> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         RoundedBoxButton(
-                          cover: Image.asset('assets/images/add_new_member.png'),
+                          cover:
+                              Image.asset('assets/images/add_new_member.png'),
                           title: 'add',
                           onTap: () => _openAdd(context),
                         ),
@@ -401,6 +424,15 @@ class _EditChannelState extends State<EditChannel> {
         ),
       ),
     );
+  }
+
+  void _closeKeyboards(BuildContext context, {bool both = true}) {
+    if (both) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
+    setState(() {
+      _emojiVisible = false;
+    });
   }
 }
 

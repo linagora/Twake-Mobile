@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/channel.dart';
@@ -31,7 +32,7 @@ void selectWorkspace(BuildContext context, String workspaceId) {
   context.read<WorkspacesBloc>().add(ChangeSelectedWorkspace(workspaceId));
 }
 
-Future<List<bool>> openEditChannel(BuildContext context, Channel channel) {
+Future<List<EditChannelState>> openEditChannel(BuildContext context, Channel channel) {
   return Navigator.of(context)
       .push(MaterialPageRoute(
         builder: (context) => EditChannel(channel: channel),
