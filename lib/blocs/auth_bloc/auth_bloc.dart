@@ -26,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
+    Api().invalidateConfiguration = resetHost;
     subscription = connectionBloc.listen((cb.ConnectionState state) async {
       if (state is cb.ConnectionLost) {
         connectionLost = true;
@@ -196,6 +197,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
         yield HostValidated(event.host);
       }
+    } else if (event is ResetHost) {
+      await repository.clean();
+      yield HostReset();
     }
   }
 
@@ -213,6 +217,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void resetAuthentication() {
     this.add(ResetAuthentication(message: 'Session has expired'));
+  }
+
+  void resetHost() {
+    this.add(ResetHost());
   }
 
   @override

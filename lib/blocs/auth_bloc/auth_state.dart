@@ -90,3 +90,8 @@ class HostInvalid extends AuthState {
   @override
   List<Object> get props => [host];
 }
+
+class HostReset extends AuthState {
+  @override
+  List<Object> get props => [];
+}

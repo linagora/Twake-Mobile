@@ -267,8 +267,6 @@ class AuthRepository extends JsonSerializable {
   AuthResult _handleError(ApiError error) {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
-    } else if (error.type == ApiErrorType.BadRequest) {
-
     } else {
       logger.e('Authentication error:\n${error.message}\n${error.type}');
       return AuthResult.NetworkError;

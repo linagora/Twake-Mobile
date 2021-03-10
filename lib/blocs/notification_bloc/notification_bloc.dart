@@ -63,7 +63,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           .setTransports(['websocket']).build(),
     );
     _authSubscription = authBloc.listen((state) {
-      if (state is Unauthenticated) {
+      if (state is Unauthenticated || state is HostReset) {
         for (String room in subscriptionRooms.keys) {
           unsubscribe(room);
         }

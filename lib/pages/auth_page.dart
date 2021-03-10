@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -78,11 +79,19 @@ class _AuthPageState extends State<AuthPage> {
           ),
           BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
             listener: connectionListener,
-            child: IndexedStack(
-              alignment: Alignment.bottomCenter,
-              sizing: StackFit.expand,
-              index: _index,
-              children: _widgets,
+            child: BlocBuilder<AuthBloc, AuthState>(
+              buildWhen: (_, current) => current is HostReset,
+              builder: (context, state) {
+                if (state is HostReset) {
+                  _index = 1;
+                }
+                return IndexedStack(
+                  alignment: Alignment.bottomCenter,
+                  sizing: StackFit.expand,
+                  index: _index,
+                  children: _widgets,
+                );
+              }
             ),
           ),
         ],
