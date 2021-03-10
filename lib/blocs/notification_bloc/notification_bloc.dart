@@ -101,7 +101,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       logger.d('CONNECTED ON SOCKET IO');
       await _api.autoProlongToken();
       socketConnectionState = SocketConnectionState.CONNECTED;
-      while (socketConnectionState != SocketConnectionState.AUTHENTICATED) {
+      while (socketConnectionState != SocketConnectionState.AUTHENTICATED &&
+          authBloc.repository.accessToken != null) {
         if (socket.disconnected) socket = socket.connect();
         socket.emit(SocketIOEvent.AUTHENTICATE, {
           'token': authBloc.repository.accessToken,
