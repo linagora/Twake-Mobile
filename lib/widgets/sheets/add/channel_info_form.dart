@@ -36,7 +36,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   var _channelType = ChannelType.public;
   var _participants = <String>[];
   var _automaticallyAddNew = true;
-  var _icon = '';
+  var _icon = '📄';
   var _emojiVisible = false;
 
   @override

@@ -24,7 +24,9 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
     } else if (event is Update) {
       channelRepository.icon = event.icon ?? channelRepository.icon;
       channelRepository.name =
-          event.name.isNotReallyEmpty ? event.name : channelRepository.name;
+          (event.name != null && event.name.isNotReallyEmpty)
+              ? event.name
+              : channelRepository.name;
       channelRepository.description =
           event.description ?? channelRepository.description;
       channelRepository.channelGroup =
