@@ -9,6 +9,7 @@ import 'package:logger/logger.dart';
 const _RECEIVE_TIMEOUT = 7000;
 const _SEND_TIMEOUT = 5000;
 const _CONNECT_TIMEOUT = 50000;
+const _PROXY_PREFIX = "/internal/mobile";
 
 class Api {
   // singleton Api class instance
@@ -86,6 +87,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
+    method = _getMethodPath(method);
     final url = host + method;
     try {
       final response = await dio.delete(url, data: body);
@@ -105,7 +107,7 @@ class Api {
     bool useTokenDio: false,
   }) async {
     checkConnection();
-
+    method = _getMethodPath(method);
     // Extract scheme and host by splitting the url
     var split = Api.host.split('://');
     assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
@@ -148,6 +150,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
+    method = _getMethodPath(method);
     final url = host + method;
 
     try {
@@ -164,6 +167,7 @@ class Api {
   }) async {
     checkConnection();
     // final url = _SHOST + method;
+    method = _getMethodPath(method);
     final url = host + method;
 
     try {
@@ -180,6 +184,7 @@ class Api {
     bool useTokenDio = false,
   }) async {
     checkConnection();
+    method = _getMethodPath(method);
     // final url = _SHOST + method;
     final url = host + method;
 
@@ -210,6 +215,10 @@ class Api {
       }
     }
     return true;
+  }
+
+  String _getMethodPath(String method) {
+    return _PROXY_PREFIX + method;
   }
 
   // helper method to add on request and on error interceptors to Dio
