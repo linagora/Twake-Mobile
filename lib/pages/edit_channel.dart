@@ -14,6 +14,7 @@ import 'package:twake/repositories/edit_channel_repository.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/cupertino_warning.dart';
+import 'package:twake/widgets/common/rich_text_span.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
@@ -147,34 +148,26 @@ class _EditChannelState extends State<EditChannel> {
 
   void _save() => context.read<EditChannelCubit>().save();
 
-  // void _leave() =>
-  //     context.read<MemberCubit>().deleteYourself(channelId: _channelId);
-
-  // void _delete(BuildContext channelContext) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return WarningDialog(
-  //         title: 'Are you sure you want to delete the channel?'
-  //             '\nThis action cannot be undone!',
-  //         leadingActionTitle: 'Cancel',
-  //         trailingActionTitle: 'Delete',
-  //         trailingAction: () async {
-  //           channelContext.read<EditChannelCubit>().delete();
-  //           Navigator.of(context).pop();
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   void _delete(BuildContext channelContext) {
     showCupertinoModalPopup(
       context: context,
       builder: (BuildContext context) {
         return CupertinoWarning(
-          title: 'Are you sure you want to delete\n'
-              '${_channel.name} channel?',
+          icon: _channel.icon,
+          title: <RichTextSpan>[
+            RichTextSpan(
+              text: 'Are you sure you want to delete\n',
+              isBold: false,
+            ),
+            RichTextSpan(
+              text: '${_channel.name}',
+              isBold: true,
+            ),
+            RichTextSpan(
+              text: ' channel?',
+              isBold: false,
+            ),
+          ],
           cancelTitle: 'Cancel',
           confirmTitle: 'Delete',
           confirmAction: () async {

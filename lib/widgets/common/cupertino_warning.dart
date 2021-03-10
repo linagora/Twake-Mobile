@@ -1,10 +1,10 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
+import 'package:twake/widgets/common/rich_text_span.dart';
 
 class CupertinoWarning extends StatelessWidget {
   final String icon;
-  final String title;
+  final List<RichTextSpan> title;
   final String confirmTitle;
   final Function confirmAction;
   final String cancelTitle;
@@ -22,14 +22,17 @@ class CupertinoWarning extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoActionSheet(
       title: SelectableAvatar(icon: icon, size: 56.0),
-      message: Text(
-        title,
-        maxLines: 2,
+      message: RichText(
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 14.0,
-          fontWeight: FontWeight.w400,
-          color: Color(0xff6d7885),
+        text: TextSpan(
+          style: TextStyle(
+            fontSize: 14.0,
+            fontWeight: FontWeight.w400,
+            color: CupertinoColors.black,
+          ),
+          children: <TextSpan>[
+            ...title.map((e) => e.buildSpan()),
+          ],
         ),
       ),
       actions: [
