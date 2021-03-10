@@ -185,6 +185,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is ResetPassword) {
       yield PasswordReset('https://console.twake.app/password-recovery');
     } else if (event is ValidateHost) {
+      yield HostValidation(event.host);
       Api.host = event.host;
       final result = await repository.getAuthMode();
       // final host = '${event.host}';
@@ -195,7 +196,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           setUpWebView();
           await runWebView();
         }
+        print('Before yield');
         yield HostValidated(event.host);
+        print('After yield');
       }
     } else if (event is ResetHost) {
       await repository.clean();

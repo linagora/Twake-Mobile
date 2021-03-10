@@ -13,9 +13,11 @@ class ConfigurationCubit extends Cubit<ConfigurationState> {
   }
 
   Future<void> save(String host) async {
+    emit(ConfigurationSaving(host: host));
     try {
       repository.host = host;
       await repository.save();
+      print('Before to emit');
       emit(ConfigurationSaved(host: host));
     } on Exception {
       emit(ConfigurationError(message: 'Error during the configuration saving'));
