@@ -36,8 +36,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     FocusScope.of(context).requestFocus(FocusNode());
     var host = _controller.text;
     if (host.isNotReallyEmpty) {
-      // Save host address locally.
-      context.read<ConfigurationCubit>().save(host);
+      context.read<AuthBloc>().add(ValidateHost(_controller.text));
     }
     // Api.host = host;
     // Apply changes to AuthBloc flow.
@@ -62,7 +61,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                 current is ConfigurationError || current is ConfigurationSaved,
             listener: (context, state) {
               if (state is ConfigurationSaved) {
-                context.read<AuthBloc>().add(ValidateHost(_controller.text));
+                // context.read<AuthBloc>().add(ValidateHost(_controller.text));
+                widget.onConfirm();
               }
               if (state is ConfigurationError) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -121,8 +121,10 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
                     child: BlocListener<AuthBloc, AuthState>(
                       listener: (context, state) {
+                        print('AuthBloc state: $state');
                         if (state is HostValidated) {
-                          widget.onConfirm();
+                          // Save host address locally.
+                          context.read<ConfigurationCubit>().save(state.host);
                         }
                         if (state is HostInvalid) {
                           print('HOST INVALID');

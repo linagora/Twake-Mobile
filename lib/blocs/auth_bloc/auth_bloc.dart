@@ -191,6 +191,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // final host = '${event.host}';
       if (result == 'UNKNOWN') {
         yield HostInvalid(event.host);
+        yield HostValidation(event.host);
       } else {
         if (result == 'CONSOLE') {
           setUpWebView();
