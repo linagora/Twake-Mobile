@@ -50,8 +50,8 @@ void openChooseServer(BuildContext context) {
 
 void handleError(dynamic r, BuildContext context) {
   if (r is bool && r) {
-    Scaffold.of(context).hideCurrentSnackBar();
-    Scaffold.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('No connection to internet'),
       backgroundColor: Theme.of(context).errorColor,
     ));

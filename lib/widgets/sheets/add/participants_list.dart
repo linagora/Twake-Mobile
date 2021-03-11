@@ -144,7 +144,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
             }
           } else if (state is Error) {
             // Show an error
-            Scaffold.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
                 state.message,
                 style: TextStyle(

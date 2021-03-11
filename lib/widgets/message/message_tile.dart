@@ -68,7 +68,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   onCopy({context, text}) {
     FlutterClipboard.copy(text);
     Navigator.of(context).pop();
-    Scaffold.of(context).showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: Duration(milliseconds: 1300),
         content: Text('Message has been copied to clipboard'),
@@ -115,17 +115,21 @@ class _MessageTileState<T extends BaseChannelBloc>
                           final mebloc = ctx.read<MessageEditBloc>();
                           mebloc.add(
                             EditMessage(
-                                originalStr: _message.content.originalStr,
-                                onMessageEditComplete: (text) {
-                                  // smbloc get's closed if
-                                  // listview disposes of message tile
-                                  smbloc.add(UpdateContent(
-                                      content: text,
-                                      workspaceId:
-                                          T == DirectsBloc ? 'direct' : null));
-                                  mebloc.add(CancelMessageEdit());
-                                  FocusManager.instance.primaryFocus.unfocus();
-                                }),
+                              originalStr: _message.content.originalStr,
+                              onMessageEditComplete: (text) {
+                                // smbloc get's closed if
+                                // listview disposes of message tile
+                                smbloc.add(
+                                  UpdateContent(
+                                    content: text,
+                                    workspaceId:
+                                        T == DirectsBloc ? 'direct' : null,
+                                  ),
+                                );
+                                mebloc.add(CancelMessageEdit());
+                                FocusManager.instance.primaryFocus.unfocus();
+                              },
+                            ),
                           );
                         },
                         ctx: ctx,

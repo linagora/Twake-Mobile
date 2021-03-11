@@ -62,8 +62,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   }) {
     context.read<AddWorkspaceCubit>().update(
           name: name ?? _workspaceNameController.text,
-          members:
-              collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
+          members: collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
         );
   }
 
@@ -97,7 +96,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
             _shouldRedirect = true;
           } else if (state is Error) {
             // Show an error
-            Scaffold.of(context).showSnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
                   state.message,
