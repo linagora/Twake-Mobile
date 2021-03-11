@@ -28,7 +28,7 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
     final ch = await repository.getItemById(event.channelId);
     if (ch != null) {
       // ch.messagesTotal += event.totalModifier ?? 0;
-      ch.hasUnread = 1;
+      ch.hasUnread = event.hasUnread ?? 1;
       ch.messagesUnread += event.unreadModifier ?? 0;
       ch.lastActivity =
           event.timeStamp ?? DateTime.now().millisecondsSinceEpoch;
