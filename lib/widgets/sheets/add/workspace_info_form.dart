@@ -75,6 +75,10 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
           _workspaceNameController.clear();
           _collaborators = <String>[];
           _workspaceId = '';
+          _batchUpdateState(
+            name: '',
+            collaborators: _collaborators,
+          );
           FocusScope.of(context).requestFocus(FocusNode());
           context.read<AddWorkspaceCubit>().clear();
         }
