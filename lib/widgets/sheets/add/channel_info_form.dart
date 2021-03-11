@@ -143,7 +143,16 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               _participants = [];
               _automaticallyAddNew = true;
               _channelType = ChannelType.public;
-              FocusScope.of(context).requestFocus(new FocusNode());
+
+              _batchUpdateState(
+                icon: _icon,
+                name: '',
+                description: '',
+                participants: _participants,
+                automaticallyAddNew: _automaticallyAddNew,
+                type: _channelType,
+              );
+              FocusScope.of(context).requestFocus(FocusNode());
               context.read<AddChannelBloc>().add(Clear());
             }
           },
