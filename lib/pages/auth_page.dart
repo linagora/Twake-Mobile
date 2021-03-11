@@ -80,19 +80,19 @@ class _AuthPageState extends State<AuthPage> {
           BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
             listener: connectionListener,
             child: BlocBuilder<AuthBloc, AuthState>(
-              buildWhen: (_, current) => current is HostReset,
-              builder: (context, state) {
-                if (state is HostReset) {
-                  _index = 1;
-                }
-                return IndexedStack(
-                  alignment: Alignment.bottomCenter,
-                  sizing: StackFit.expand,
-                  index: _index,
-                  children: _widgets,
-                );
-              }
-            ),
+                buildWhen: (_, current) =>
+                    current is HostReset || current is HostValidated,
+                builder: (context, state) {
+                  if (state is HostReset) {
+                    _index = 1;
+                  }
+                  return IndexedStack(
+                    alignment: Alignment.bottomCenter,
+                    sizing: StackFit.expand,
+                    index: _index,
+                    children: _widgets,
+                  );
+                }),
           ),
         ],
       ),
