@@ -182,7 +182,10 @@ class _MessageTileState<T extends BaseChannelBloc>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '${messageState.firstName} ${messageState.lastName}',
+                                messageState.firstName.isNotEmpty
+                                    ? '${messageState.firstName} ${messageState.lastName}'
+                                    : messageState.username[0].toUpperCase() +
+                                        messageState.username.substring(1),
                                 style: TextStyle(
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500,
