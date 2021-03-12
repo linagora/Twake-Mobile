@@ -19,7 +19,9 @@ class DirectMessagesGroup extends StatelessWidget {
             ),
             SizedBox(height: 11),
             if (state is ChannelsLoaded)
-              ...state.channels.map((d) => DirectTile(d)).toList(),
+              ...state.channels
+                  .map((d) => DirectTile(d, ValueKey(d.id)))
+                  .toList(),
             if (state is ChannelsEmpty)
               Padding(
                 padding: EdgeInsets.all(7.0),

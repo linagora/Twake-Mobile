@@ -14,7 +14,7 @@ import 'package:twake/widgets/common/stacked_image_avatars.dart';
 class DirectTile extends StatelessWidget {
   final Direct direct;
 
-  DirectTile(this.direct);
+  DirectTile(this.direct, Key key) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
