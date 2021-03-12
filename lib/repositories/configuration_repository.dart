@@ -9,7 +9,7 @@ part 'configuration_repository.g.dart';
 // because it's a global object,
 // it always has only one record in store
 const CONFIG_KEY = 'configuration';
-const DEFAULT_HOST = 'https://mobile.api.twake.app';
+const DEFAULT_HOST = 'https://mobile.twake.app';
 
 @JsonSerializable()
 class ConfigurationRepository extends JsonSerializable {

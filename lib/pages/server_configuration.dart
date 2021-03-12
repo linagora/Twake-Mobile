@@ -153,7 +153,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                           color: Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'https://mobile.api.twake.app',
+                          hintText: 'https://mobile.twake.app',
                           hintStyle: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w400,
