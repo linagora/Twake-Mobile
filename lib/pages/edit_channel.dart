@@ -310,12 +310,15 @@ class _EditChannelState extends State<EditChannel> {
                                 onTap: () => _toggleEmojiBoard(),
                               ),
                               SizedBox(height: 4.0),
-                              Text('Change avatar',
-                                  style: TextStyle(
-                                    color: Color(0xff3840f7),
-                                    fontSize: 13.0,
-                                    fontWeight: FontWeight.w400,
-                                  )),
+                              GestureDetector(
+                                onTap: () => _toggleEmojiBoard(),
+                                child: Text('Change avatar',
+                                    style: TextStyle(
+                                      color: Color(0xff3840f7),
+                                      fontSize: 13.0,
+                                      fontWeight: FontWeight.w400,
+                                    )),
+                              ),
                             ],
                           ),
                           GestureDetector(
