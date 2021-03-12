@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:twake/config/dimensions_config.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
@@ -50,7 +51,12 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
         width: widget.size,
         height: widget.size,
         child: (widget.icon != null && widget.icon.isNotEmpty)
-            ? Center(child: Text(widget.icon))
+            ? Center(
+                child: Text(
+                  widget.icon,
+                  style: TextStyle(fontSize: Dim.tm3()),
+                ),
+              )
             : Image.asset("assets/images/pic.png"),
         // child: _bytes != null
         //     ? SizedBox()
