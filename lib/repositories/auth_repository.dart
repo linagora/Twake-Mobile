@@ -65,7 +65,7 @@ class AuthRepository extends JsonSerializable {
     if (authMap != null) authMap = jsonDecode(authMap[_storage.settingsField]);
 
     final configurationRepository = await ConfigurationRepository.load();
-    print('Actual host for auth: ${configurationRepository.host}');
+    // print('Actual host for auth: ${configurationRepository.host}');
     Api.host = configurationRepository.host;
 
     final fcmToken = (await FirebaseMessaging().getToken());

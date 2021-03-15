@@ -82,6 +82,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             current is! HostValidated &&
             current is! HostInvalid,
         builder: (ctx, state) {
+          print("BUILDING INITIAL PAGE");
           if (state is AuthInitializing) {
             return buildSplashScreen();
           }

@@ -80,7 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print('WEBVIEW LOAD ERROR: $a, $b, $c');
       },
       onWebViewCreated: (ctrl) {
-        // print('CREATED WEBVIEW');
+        print('CREATED WEBVIEW');
       },
     );
     if (run) runWebView();

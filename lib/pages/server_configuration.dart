@@ -82,12 +82,12 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                 current is ConfigurationLoaded ||
                 current is ConfigurationSaving,
             builder: (context, state) {
-              print('Current state: $state');
+              // print('Current state: $state');
 
               if (_controller.text.isReallyEmpty) {
                 _controller.text = state.host;
               }
-              print('Server host: ${state.host}');
+              // print('Server host: ${state.host}');
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
