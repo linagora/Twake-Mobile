@@ -34,7 +34,8 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
             hideShowAnswers: true,
             key: ValueKey(
               state.threadMessage.id +
-                  state.threadMessage.responsesCount.toString(),
+                  state.threadMessage.responsesCount.toString() +
+                  state.threadMessage.content.originalStr,
             ),
           ),
         ),
@@ -142,7 +143,9 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                       return MessageTile<T>(
                         message: _messages[i],
                         key: ValueKey(
-                          _messages[i].id + _messages[i].reactions.keys.join(),
+                          _messages[i].id +
+                              _messages[i].reactions.keys.join() +
+                              _messages[i].content.originalStr,
                         ),
                       );
                     }

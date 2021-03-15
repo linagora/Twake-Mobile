@@ -102,7 +102,7 @@ class Message extends CollectionItem {
         if (users.isEmpty) reactions.remove(r.key);
         if (emojiCode == r.key) {
           emojiCode = '';
-          body['reactions'] = '';
+          body['reaction'] = '';
         }
         break;
       }

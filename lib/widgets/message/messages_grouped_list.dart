@@ -117,7 +117,8 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatelessWidget {
                     key: ValueKey(
                       message.id +
                           message.responsesCount.toString() +
-                          message.reactions.keys.join(),
+                          message.reactions.keys.join() +
+                          message.content.originalStr,
                     ),
                   );
                 }),

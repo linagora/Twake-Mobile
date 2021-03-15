@@ -197,16 +197,17 @@ class MessagesBloc<T extends BaseChannelBloc>
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
       );
-      _sortItems();
       if (updateParent) {
         _updateParentChannel(event.channelId);
       }
+      _sortItems();
       final newState = MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
         force: DateTime.now().toString(),
         parentChannel: selectedChannel,
       );
+      // repository.logger.w("OLD STATE == NEW STATE: ${newState == this.state}");
       yield newState;
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
