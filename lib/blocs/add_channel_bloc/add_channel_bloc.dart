@@ -35,8 +35,6 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
           event.type ?? channelRepository.type ?? ChannelType.public;
       channelRepository.members =
           event.participants ?? channelRepository.members ?? [];
-      channelRepository.def =
-          event.automaticallyAddNew ?? channelRepository.def ?? true;
 
       // print('Updated data: ${repository.toJson()}');
       final newRepo = AddChannelRepository(
@@ -49,7 +47,6 @@ class AddChannelBloc extends Bloc<AddChannelEvent, AddChannelState> {
         channelGroup: channelRepository.channelGroup,
         type: channelRepository.type,
         members: channelRepository.members,
-        def: channelRepository.def,
       );
       yield Updated(newRepo);
     } else if (event is UpdateDirect) {

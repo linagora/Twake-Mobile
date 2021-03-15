@@ -35,7 +35,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   var _canGoNext = false;
   var _channelType = ChannelType.public;
   var _participants = <String>[];
-  var _automaticallyAddNew = true;
+  // var _automaticallyAddNew = true;
   var _icon = '📄';
   var _emojiVisible = false;
 
@@ -97,7 +97,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
             description: description ?? _descriptionController.text,
             type: type ?? _channelType,
             participants: participants ?? _participants,
-            automaticallyAddNew: automaticallyAddNew ?? _automaticallyAddNew,
           ),
         );
   }
@@ -141,7 +140,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               _channelNameController.clear();
               _descriptionController.clear();
               _participants = [];
-              _automaticallyAddNew = true;
               _channelType = ChannelType.public;
 
               _batchUpdateState(
@@ -149,7 +147,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                 name: '',
                 description: '',
                 participants: _participants,
-                automaticallyAddNew: _automaticallyAddNew,
                 type: _channelType,
               );
               FocusScope.of(context).requestFocus(FocusNode());
@@ -200,7 +197,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         if (state is Updated) {
           _channelType = state.repository?.type;
           _participants = state.repository?.members;
-          _automaticallyAddNew = state.repository.def;
         }
 
         return GestureDetector(
@@ -279,13 +275,13 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
               if (_channelType == ChannelType.private)
                 ParticipantsButton(count: _participants.length),
               SizedBox(height: 8),
-              if (_channelType == ChannelType.public)
-                SwitchField(
-                  title: 'Automatically add new users',
-                  value: _automaticallyAddNew,
-                  onChanged: (value) =>
-                      _batchUpdateState(automaticallyAddNew: value),
-                ),
+              // if (_channelType == ChannelType.public)
+              //   SwitchField(
+              //     title: 'Automatically add new users',
+              //     value: _automaticallyAddNew,
+              //     onChanged: (value) =>
+              //         _batchUpdateState(automaticallyAddNew: value),
+              //   ),
               if (_channelType == ChannelType.private) SizedBox(),
               HintLine(
                 text: _channelType != ChannelType.private
