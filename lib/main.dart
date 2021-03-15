@@ -3,7 +3,6 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
@@ -19,6 +18,18 @@ void main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
 
+    final AuthRepository authRepository = await initAuth();
+    final ConfigurationRepository configurationRepository =
+        await ConfigurationRepository.load();
+    cb.ConnectionState connectionState;
+    final res = await Connectivity().checkConnectivity();
+    if (res == ConnectivityResult.none) {
+      connectionState = cb.ConnectionLost('');
+    } else if (res == ConnectivityResult.wifi) {
+      connectionState = cb.ConnectionWifi();
+    } else if (res == ConnectivityResult.mobile) {
+      connectionState = cb.ConnectionCellular();
+    }
     await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     FlutterError.onError = (FlutterErrorDetails details) {
@@ -31,7 +42,11 @@ void main() async {
         Zone.current.handleUncaughtError(details.exception, details.stack);
       }
     };
-    runApp(TwakeMobileApp());
+    runApp(TwakeMobileApp(
+      authRepository,
+      configurationRepository,
+      connectionState,
+    ));
   }, (Object error, StackTrace stackTrace) {
     // Whenever an error occurs, call the `reportError` function. This sends
     // Dart errors to the dev console or Sentry depending on the environment.
@@ -40,23 +55,15 @@ void main() async {
 }
 
 class TwakeMobileApp extends StatelessWidget {
-  const TwakeMobileApp();
+  final AuthRepository authRepository;
+  final ConfigurationRepository configurationRepository;
+  final cb.ConnectionState connectionState;
 
-  Widget buildSplashScreen() {
-    return Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: Dim.heightPercent(13),
-          height: Dim.heightPercent(13),
-          child: Lottie.asset(
-            'assets/animations/splash.json',
-            animate: true,
-            repeat: true,
-          ),
-        ),
-      ),
-    );
-  }
+  TwakeMobileApp(
+    this.authRepository,
+    this.configurationRepository,
+    this.connectionState,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -65,49 +72,29 @@ class TwakeMobileApp extends StatelessWidget {
         builder: (context, orientation) {
           Dim.init(constraints, orientation);
           return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              theme: StylesConfig.lightTheme,
-              title: 'Twake',
-              home: FutureBuilder(future: () async {
-                final AuthRepository authRepository = await initAuth();
-                final ConfigurationRepository configurationRepository =
-                    await ConfigurationRepository.load();
-                cb.ConnectionState connectionState;
-                final res = await Connectivity().checkConnectivity();
-                if (res == ConnectivityResult.none) {
-                  connectionState = cb.ConnectionLost('');
-                } else if (res == ConnectivityResult.wifi) {
-                  connectionState = cb.ConnectionWifi();
-                } else if (res == ConnectivityResult.mobile) {
-                  connectionState = cb.ConnectionCellular();
-                }
-                final multiProvider = MultiBlocProvider(
-                  providers: [
-                    BlocProvider<cb.ConnectionBloc>(
-                      create: (_) => cb.ConnectionBloc(connectionState),
-                      lazy: false,
-                    ),
-                    BlocProvider<AuthBloc>(
-                      create: (context) => AuthBloc(
-                          authRepository, context.read<cb.ConnectionBloc>()),
-                      lazy: false,
-                    ),
-                    BlocProvider<ConfigurationCubit>(
-                      create: (context) =>
-                          ConfigurationCubit(configurationRepository),
-                      lazy: false,
-                    )
-                  ],
-                  child: InitialPage(),
-                );
-                return multiProvider;
-              }(), builder: (ctx, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return snapshot.data;
-                } else {
-                  return buildSplashScreen();
-                }
-              }));
+            debugShowCheckedModeBanner: false,
+            theme: StylesConfig.lightTheme,
+            title: 'Twake',
+            home: MultiBlocProvider(
+              providers: [
+                BlocProvider<cb.ConnectionBloc>(
+                  create: (_) => cb.ConnectionBloc(connectionState),
+                  lazy: false,
+                ),
+                BlocProvider<AuthBloc>(
+                  create: (context) => AuthBloc(
+                      authRepository, context.read<cb.ConnectionBloc>()),
+                  lazy: false,
+                ),
+                BlocProvider<ConfigurationCubit>(
+                  create: (context) =>
+                      ConfigurationCubit(configurationRepository),
+                  lazy: false,
+                )
+              ],
+              child: InitialPage(),
+            ),
+          );
         },
       ),
     );
