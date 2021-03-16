@@ -77,7 +77,6 @@ class AddChannelRepository {
     icon = '';
     description = '';
     channelGroup = '';
-    def = true;
     members = [];
     type = ChannelType.public;
   }

@@ -197,16 +197,17 @@ class MessagesBloc<T extends BaseChannelBloc>
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
       );
-      _sortItems();
       if (updateParent) {
         _updateParentChannel(event.channelId);
       }
+      _sortItems();
       final newState = MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
         force: DateTime.now().toString(),
         parentChannel: selectedChannel,
       );
+      // repository.logger.w("OLD STATE == NEW STATE: ${newState == this.state}");
       yield newState;
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
@@ -287,6 +288,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
           this.channelsBloc.add(ChangeSelectedChannel(selectedChannel.id));
+          _updateParentChannel(selectedChannel.id, 0);
         },
       );
       this.repository.items.add(tempItem);
@@ -341,12 +343,12 @@ class MessagesBloc<T extends BaseChannelBloc>
     return map;
   }
 
-  void _updateParentChannel([String channelId]) {
+  void _updateParentChannel(String channelId, [int hasUnread = 1]) {
     channelsBloc.add(ModifyMessageCount(
       workspaceId: ProfileBloc.selectedWorkspace,
       channelId: channelId ?? selectedChannel.id,
       companyId: ProfileBloc.selectedCompany,
-      totalModifier: 1,
+      hasUnread: hasUnread,
     ));
   }
 

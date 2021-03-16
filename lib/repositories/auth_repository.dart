@@ -65,7 +65,7 @@ class AuthRepository extends JsonSerializable {
     if (authMap != null) authMap = jsonDecode(authMap[_storage.settingsField]);
 
     final configurationRepository = await ConfigurationRepository.load();
-    print('Actual host for auth: ${configurationRepository.host}');
+    // print('Actual host for auth: ${configurationRepository.host}');
     Api.host = configurationRepository.host;
 
     final fcmToken = (await FirebaseMessaging().getToken());
@@ -267,8 +267,6 @@ class AuthRepository extends JsonSerializable {
   AuthResult _handleError(ApiError error) {
     if (error.type == ApiErrorType.Unauthorized) {
       return AuthResult.WrongCredentials;
-    } else if (error.type == ApiErrorType.BadRequest) {
-
     } else {
       logger.e('Authentication error:\n${error.message}\n${error.type}');
       return AuthResult.NetworkError;

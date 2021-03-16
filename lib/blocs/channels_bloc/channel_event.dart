@@ -55,16 +55,16 @@ class ModifyMessageCount extends ChannelsEvent {
   final String channelId;
   final String workspaceId;
   final String companyId;
-  final int totalModifier;
   final int unreadModifier;
+  final int hasUnread;
   final int timeStamp;
 
   ModifyMessageCount({
     this.channelId,
     this.workspaceId,
     this.companyId,
-    this.totalModifier,
     this.unreadModifier,
+    this.hasUnread,
     this.timeStamp,
   });
 

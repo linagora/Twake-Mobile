@@ -73,6 +73,15 @@ class AuthenticationError extends Unauthenticated {
   List<Object> get props => [];
 }
 
+class HostValidation extends AuthState {
+  final String host;
+
+  const HostValidation(this.host);
+
+  @override
+  List<Object> get props => [host];
+}
+
 class HostValidated extends AuthState {
   final String host;
 
@@ -89,4 +98,9 @@ class HostInvalid extends AuthState {
 
   @override
   List<Object> get props => [host];
+}
+
+class HostReset extends AuthState {
+  @override
+  List<Object> get props => [];
 }

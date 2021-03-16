@@ -29,7 +29,9 @@ class StylesConfig {
       color: Colors.transparent,
     ),
     // fontFamily: 'PT',
-    primaryColorBrightness: SchedulerBinding.instance?.window?.platformBrightness ?? Brightness.light,
+    primaryColorBrightness:
+        SchedulerBinding.instance?.window?.platformBrightness ??
+            Brightness.light,
   );
 
   static final TextTheme lightTextTheme = TextTheme(
@@ -75,6 +77,7 @@ class StylesConfig {
   static final TextStyle _subtitle2 = TextStyle(
     color: subTitleTextColor,
     fontSize: Dim.tm2(decimal: -.5),
+    fontWeight: FontWeight.w400,
   );
 
   static final TextStyle _button = TextStyle(

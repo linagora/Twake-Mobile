@@ -118,8 +118,8 @@ class DirectsBloc extends BaseChannelBloc {
         channels: repository.items,
         selected: repository.selected,
       );
+      notificationBloc.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is LoadSingleChannel) {
-      // TODO implement single channel loading
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
       throw 'Not implemented yet';

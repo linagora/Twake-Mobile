@@ -149,7 +149,7 @@ class _AuthFormState extends State<AuthForm> {
                           ),
                         if (state is AuthenticationError)
                           Text(
-                            'Network Error',
+                            'Server is unavailable',
                             style: TextStyle(color: Colors.red),
                           ),
                         Expanded(
@@ -157,7 +157,7 @@ class _AuthFormState extends State<AuthForm> {
                             alignment: Alignment.centerRight,
                             child: BlocBuilder<cb.ConnectionBloc,
                                 cb.ConnectionState>(
-                              builder: (context, state) => FlatButton(
+                              builder: (context, state) => TextButton(
                                 onPressed: state is cb.ConnectionLost
                                     ? null
                                     : () {

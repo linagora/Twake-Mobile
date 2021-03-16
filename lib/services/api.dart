@@ -3,9 +3,6 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
-// const String _HOST = 'mobile.api.twake.app';
-// const String _SHOST = 'https://mobile.api.twake.app';
-// const String _SCHEME = 'https';
 const _RECEIVE_TIMEOUT = 7000;
 const _SEND_TIMEOUT = 5000;
 const _CONNECT_TIMEOUT = 50000;
@@ -14,16 +11,22 @@ const _PROXY_PREFIX = "/internal/mobile";
 class Api {
   // singleton Api class instance
   static Api _api;
+
   // Server address
   static String host;
+
   // logging utility
   static final logger = Logger();
+
   // callback function to auto prolong token, if access token has expired
   Future<dynamic> Function() _prolongToken;
+
   // callback function to validate token
   TokenStatus Function() _tokenIsValid;
+
   // callback to reset authentication if for e.g. token has expired
   void Function() _resetAuthentication;
+
   // callback to invalidate current backend configuration
   void Function() _invalidateConfiguration;
 
@@ -63,9 +66,12 @@ class Api {
 
   // if refresh has changed, then we reset dio interceptor to account for this
   set prolongToken(value) => _prolongToken = value;
+
   set tokenIsValid(value) => _tokenIsValid = value;
+
   set resetAuthentication(value) => _resetAuthentication = value;
-  set invalidateDomain(value) => _invalidateConfiguration = value;
+
+  set invalidateConfiguration(value) => _invalidateConfiguration = value;
 
   void checkConnection() {
     // logger.d('HAS CONNECTION: $hasConnection');
@@ -250,6 +256,9 @@ class Api {
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
             await _prolongToken();
+          } else if (error.response.statusCode == 404 &&
+              _invalidateConfiguration != null) {
+            _invalidateConfiguration();
           } else {
             logger.e('status code: ${error.response.statusCode}');
             return error;
@@ -273,6 +282,7 @@ enum ApiErrorType {
 class ApiError implements Exception {
   final String message;
   final ApiErrorType type;
+
   const ApiError({this.message: '', this.type: ApiErrorType.Unknown});
 
   factory ApiError.fromDioError(DioError error) {

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_channel.dart';
 
@@ -16,10 +17,15 @@ class Channel extends BaseChannel {
   });
 
   factory Channel.fromJson(Map<String, dynamic> json) {
+    if (json['last_message'] is String) {
+      json['last_message'] = jsonDecode(json['last_message']);
+    }
     return _$ChannelFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
-    return _$ChannelToJson(this);
+    var map = _$ChannelToJson(this);
+    map['last_message'] = jsonEncode(map['last_message']);
+    return map;
   }
 }

@@ -198,7 +198,7 @@ class MessagesRepository {
       logger.e("MESSAGE EXISTS");
       isNew = false;
     }
-    saveOne(item);
+    await saveOne(item);
     if (addToItems) {
       final query = 'SELECT message.*, '
           'user.username, '
@@ -218,7 +218,10 @@ class MessagesRepository {
       if (itemMapTemp.isNotEmpty) {
         itemMap = itemMapTemp[0];
       }
-      if (itemMap == null) return false;
+      if (itemMap == null) {
+        logger.wtf("MESSAGE NOT FOUND");
+        return false;
+      }
 
       final message = Message.fromJson(itemMap);
       final old =

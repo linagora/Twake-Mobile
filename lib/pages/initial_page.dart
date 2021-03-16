@@ -78,12 +78,15 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (_, current) =>
-            current is! HostValidated && current is! HostInvalid,
+            current is! HostValidation &&
+            current is! HostValidated &&
+            current is! HostInvalid,
         builder: (ctx, state) {
+          // print("BUILDING INITIAL PAGE");
           if (state is AuthInitializing) {
             return buildSplashScreen();
           }
-          if (state is Unauthenticated) {
+          if (state is Unauthenticated || state is HostReset) {
             return AuthPage();
             // return WebAuthPage();
           }

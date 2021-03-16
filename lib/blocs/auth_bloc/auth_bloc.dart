@@ -26,6 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
+    Api().invalidateConfiguration = resetHost;
     subscription = connectionBloc.listen((cb.ConnectionState state) async {
       if (state is cb.ConnectionLost) {
         connectionLost = true;
@@ -79,7 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print('WEBVIEW LOAD ERROR: $a, $b, $c');
       },
       onWebViewCreated: (ctrl) {
-        // print('CREATED WEBVIEW');
+        print('CREATED WEBVIEW');
       },
     );
     if (run) runWebView();
@@ -184,18 +185,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is ResetPassword) {
       yield PasswordReset('https://console.twake.app/password-recovery');
     } else if (event is ValidateHost) {
+      yield HostValidation(event.host);
       Api.host = event.host;
       final result = await repository.getAuthMode();
       // final host = '${event.host}';
       if (result == 'UNKNOWN') {
         yield HostInvalid(event.host);
+        yield HostValidation(event.host);
       } else {
         if (result == 'CONSOLE') {
           setUpWebView();
           await runWebView();
         }
+        print('Before yield');
         yield HostValidated(event.host);
+        print('After yield');
       }
+    } else if (event is ResetHost) {
+      await repository.clean();
+      yield HostReset();
     }
   }
 
@@ -213,6 +221,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void resetAuthentication() {
     this.add(ResetAuthentication(message: 'Session has expired'));
+  }
+
+  void resetHost() {
+    this.add(ResetHost());
   }
 
   @override

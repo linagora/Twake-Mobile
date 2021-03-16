@@ -61,21 +61,19 @@ class ChannelTile extends StatelessWidget {
                             size: 17.0, color: Color(0xff444444)),
                     ],
                   ),
-                  if (channel.description != null &&
-                      channel.description.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(top: 4.0),
-                      child: Text(
-                        channel.description,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff444444),
-                        ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      channel.lastMessage['text'] ?? 'No messages yet',
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff444444),
                       ),
                     ),
+                  ),
                 ],
               ),
             ),

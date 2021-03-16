@@ -191,6 +191,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
             channelId: event.channelId,
             threadId: message.threadId,
           ));
+          _updateParentChannel(event.channelId, 0);
         },
       );
       this.repository.items.add(tempItem);
@@ -247,12 +248,13 @@ class ThreadsBloc<T extends BaseChannelBloc>
         parentChannel: parentChannel,
       );
 
-  void _updateParentChannel(String channelId, {int totalModifier: 1}) {
+  void _updateParentChannel(String channelId, [int hasUnread = 1]) {
+    print("HAS UNREAD: $hasUnread");
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
       workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspace,
       companyId: ProfileBloc.selectedCompany,
-      totalModifier: totalModifier,
+      hasUnread: hasUnread,
     ));
   }
 }
