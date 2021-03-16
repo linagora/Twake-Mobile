@@ -220,7 +220,7 @@ class _EditChannelState extends State<EditChannel> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffefeef3),
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: SlidingUpPanel(
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
