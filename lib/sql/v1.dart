@@ -38,8 +38,11 @@ CREATE TABLE channel (
     icon TEXT NOT NULL,
     description TEXT,
     last_activity INT,
+    user_last_access INT DEFAULT 0,
+    has_unread INT DEFAULT 0,
+    visibility TEXT DEFAULT "public",
     members_count INT DEFAULT 0,
-    messages_total INT DEFAULT 0,
+    last_message TEXT,
     messages_unread INT DEFAULT 0,
     is_selected INT DEFAULT 0,
     FOREIGN KEY(workspace_id) REFERENCES workspace(id)
@@ -56,10 +59,12 @@ CREATE TABLE direct (
     icon TEXT,
     description TEXT,
     last_activity INT,
+    user_last_access INT DEFAULT 0,
     members_count INT DEFAULT 0,
-    messages_total INT DEFAULT 0,
     messages_unread INT DEFAULT 0,
+    last_message TEXT,
     is_selected INT DEFAULT 0,
+    has_unread INT DEFAULT 0,
     FOREIGN KEY(company_id) REFERENCES company(id)
 );
 CREATE INDEX direct_company_idx ON direct(company_id);
@@ -92,6 +97,36 @@ CREATE TABLE user (
 )
 ''';
 
+const String CREATE_DRAFT_V1 = '''
+CREATE TABLE draft (
+    id TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+)
+''';
+
+const String CREATE_MEMBER_V1 = '''
+CREATE TABLE member (
+    id TEXT PRIMARY KEY,
+    type TEXT DEFAULT "member",
+    notification_level TEXT,
+    company_id TEXT NOT NULL,
+    workspace_id TEXT NOT NULL,
+    channel_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    favorite INT DEFAULT 0,
+    is_selected INT DEFAULT 0,
+    email TEXT
+);
+CREATE INDEX member_user_idx ON user(user_id);
+''';
+
+const String CREATE_CONFIGURATION_V1 = '''
+CREATE TABLE configuration (
+  id TEXT PRIMARY KEY,
+  value TEXT NOT NULL
+)
+''';
+
 const DDL_V1 = [
   CREATE_SETTINGS_V1,
   CREATE_COMPANY_V1,
@@ -100,4 +135,7 @@ const DDL_V1 = [
   CREATE_DIRECT_V1,
   CREATE_MESSAGE_V1,
   CREATE_USER_V1,
+  CREATE_DRAFT_V1,
+  CREATE_MEMBER_V1,
+  CREATE_CONFIGURATION_V1,
 ];

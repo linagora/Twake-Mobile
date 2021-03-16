@@ -19,12 +19,16 @@ class Direct extends BaseChannel {
     if (json['members'] is String) {
       json['members'] = jsonDecode(json['members']);
     }
+    if (json['last_message'] is String) {
+      json['last_message'] = jsonDecode(json['last_message']);
+    }
     return _$DirectFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
     var map = _$DirectToJson(this);
     map['members'] = jsonEncode(map['members']);
+    map['last_message'] = jsonEncode(map['last_message']);
     return map;
   }
 }
