@@ -45,6 +45,8 @@ class SocketChannelUpdateNotification extends NotificationData {
   final String name;
   final String description;
   final String visibility;
+  @JsonKey(name: 'last_message')
+  final Map<String, dynamic> lastMessage;
 
   SocketChannelUpdateNotification({
     this.channelId,
@@ -54,6 +56,7 @@ class SocketChannelUpdateNotification extends NotificationData {
     this.description,
     this.icon,
     this.visibility,
+    this.lastMessage,
   });
 
   factory SocketChannelUpdateNotification.fromJson(Map<String, dynamic> json) =>

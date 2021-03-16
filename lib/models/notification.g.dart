@@ -37,6 +37,7 @@ SocketChannelUpdateNotification _$SocketChannelUpdateNotificationFromJson(
     description: json['description'] as String,
     icon: json['icon'] as String,
     visibility: json['visibility'] as String,
+    lastMessage: json['last_message'] as Map<String, dynamic>,
   );
 }
 
@@ -50,6 +51,7 @@ Map<String, dynamic> _$SocketChannelUpdateNotificationToJson(
       'name': instance.name,
       'description': instance.description,
       'visibility': instance.visibility,
+      'last_message': instance.lastMessage,
     };
 
 SocketMessageUpdateNotification _$SocketMessageUpdateNotificationFromJson(

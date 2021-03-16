@@ -119,7 +119,6 @@ class DirectsBloc extends BaseChannelBloc {
         selected: repository.selected,
       );
     } else if (event is LoadSingleChannel) {
-      // TODO implement single channel loading
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
       throw 'Not implemented yet';

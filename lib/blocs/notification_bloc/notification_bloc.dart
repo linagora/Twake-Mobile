@@ -129,7 +129,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      // logger.d('GOT RESOURCE: $data');
+      logger.d('GOT RESOURCE: $data');
       handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
@@ -361,8 +361,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       return SocketResourceType.Unknown;
     final type = subscriptionRooms[resource['room']]['type'];
     if (type == 'CHANNELS_LIST') {
-      if (resource['type'] == 'channel') {
-        if (resource['action'] == 'saved') {
+      if (resource['type'] == 'channel' ||
+          resource['type'] == 'channel_activity') {
+        if (resource['action'] == 'saved' || resource['action'] == 'updated') {
           return SocketResourceType.ChannelUpdate;
         } else if (resource['action'] == 'deleted')
           return SocketResourceType.ChannelDelete;
