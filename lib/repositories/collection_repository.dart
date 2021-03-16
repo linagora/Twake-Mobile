@@ -16,7 +16,10 @@ class CollectionRepository<T extends CollectionItem> {
       _typeToConstructor = {
     Company: (Map<String, dynamic> json) => Company.fromJson(json),
     Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
-    Channel: (Map<String, dynamic> json) => Channel.fromJson(json),
+    Channel: (Map<String, dynamic> json) {
+      json = Map.from(json);
+      return Channel.fromJson(json);
+    },
     Message: (Map<String, dynamic> json) {
       json = Map.from(json);
       return Message.fromJson(json);
