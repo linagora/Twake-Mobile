@@ -16,6 +16,8 @@ class Direct extends BaseChannel {
   Direct({this.companyId, this.members});
 
   factory Direct.fromJson(Map<String, dynamic> json) {
+    json = Map.from(json);
+
     if (json['permissions'] is String) {
       json['permissions'] = jsonDecode(json['permissions']);
     }

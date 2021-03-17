@@ -37,6 +37,7 @@ class Company extends CollectionItem {
   /// Convenience methods to avoid serializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Company.fromJson(Map<String, dynamic> json) {
+    json = Map.from(json);
     if (json['permissions'] is String) {
       json['permissions'] = jsonDecode(json['permissions']);
     }

@@ -44,7 +44,7 @@ class Workspace extends CollectionItem {
   /// Convenience methods to avoid serializing this class to/from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory Workspace.fromJson(Map<String, dynamic> json) {
-    // json = Map.from(json);
+    json = Map.from(json);
     // if (json['notification_rooms'] is String) {
     // json['notification_rooms'] = jsonDecode(json['notification_rooms']);
     // }
