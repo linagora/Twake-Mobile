@@ -22,7 +22,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
           selected: repository.selected,
         )) {
     // repository.logger.w('SELECTED COMPANY: ${repository.selected.id}');
-    ProfileBloc.selectedCompany = repository.selected.id;
+    ProfileBloc.selectedCompanyId = repository.selected.id;
 
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
@@ -45,7 +45,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       yield CompaniesEmpty();
     } else if (event is ChangeSelectedCompany) {
       repository.select(event.companyId);
-      ProfileBloc.selectedCompany = event.companyId;
+      ProfileBloc.selectedCompanyId = event.companyId;
       yield CompaniesLoaded(
         companies: repository.items,
         selected: repository.selected,

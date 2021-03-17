@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_event.dart';
+import 'package:twake/models/company.dart';
+import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/blocs/profile_bloc/profile_state.dart';
 
@@ -35,21 +37,24 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static String get selectedChannelId => repository.selectedChannelId;
   static String get selectedThreadId => repository.selectedThreadId;
 
-  static set selectedCompany(String val) {
+  static Company get selectedCompany => repository.selectedCompany;
+  static Workspace get selectedWorkspace => repository.selectedWorkspace;
+
+  static set selectedCompanyId(String val) {
     repository.selectedCompanyId = val;
     repository.save();
   }
 
-  static set selectedWorkspace(String val) {
+  static set selectedWorkspaceId(String val) {
     repository.selectedWorkspaceId = val;
     repository.save();
   }
 
-  static set selectedChannel(String val) {
+  static set selectedChannelId(String val) {
     repository.selectedChannelId = val;
   }
 
-  static set selectedThread(String val) {
+  static set selectedThreadId(String val) {
     repository.selectedThreadId = val;
   }
 

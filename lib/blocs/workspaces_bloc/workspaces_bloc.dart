@@ -54,7 +54,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         }
       }
     });
-    ProfileBloc.selectedWorkspace = repository.selected.id;
+    ProfileBloc.selectedWorkspaceId = repository.selected.id;
     selectedCompanyId = companiesBloc.repository.selected.id;
   }
 
@@ -80,7 +80,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     } else if (event is ChangeSelectedWorkspace) {
       // print('Workspace id to select: ${event.workspaceId}');
       repository.select(event.workspaceId);
-      ProfileBloc.selectedWorkspace = event.workspaceId;
+      ProfileBloc.selectedWorkspaceId = event.workspaceId;
       yield WorkspaceSelected(
         workspaces: repository.items,
         selected: repository.selected,

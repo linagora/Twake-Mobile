@@ -1,6 +1,9 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_channel.dart';
+import 'package:twake/models/company.dart';
+import 'package:twake/models/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'profile_repository.g.dart';
@@ -44,6 +47,12 @@ class ProfileRepository extends JsonSerializable {
   String selectedChannelId;
   @JsonKey(ignore: true)
   String selectedThreadId;
+  @JsonKey(ignore: true)
+  Company selectedCompany;
+  @JsonKey(ignore: true)
+  Workspace selectedWorkspace;
+  @JsonKey(ignore: true)
+  BaseChannel selectedChannel;
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
