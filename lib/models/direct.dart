@@ -16,6 +16,9 @@ class Direct extends BaseChannel {
   Direct({this.companyId, this.members});
 
   factory Direct.fromJson(Map<String, dynamic> json) {
+    if (json['permissions'] is String) {
+      json['permissions'] = jsonDecode(json['permissions']);
+    }
     if (json['members'] is String) {
       json['members'] = jsonDecode(json['members']);
     }
@@ -29,6 +32,7 @@ class Direct extends BaseChannel {
     var map = _$DirectToJson(this);
     map['members'] = jsonEncode(map['members']);
     map['last_message'] = jsonEncode(map['last_message']);
+    map['permissions'] = jsonEncode(map['permissions']);
     return map;
   }
 }

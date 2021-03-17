@@ -1,4 +1,4 @@
-// import 'dart:convert';
+import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/collection_item.dart';
 
@@ -28,7 +28,7 @@ class Workspace extends CollectionItem {
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 
-  @JsonKey(defaultValue: [])
+  @JsonKey(defaultValue: <String>[])
   List<String> permissions;
 
   // @JsonKey(name: 'notification_rooms')
@@ -48,11 +48,15 @@ class Workspace extends CollectionItem {
     // if (json['notification_rooms'] is String) {
     // json['notification_rooms'] = jsonDecode(json['notification_rooms']);
     // }
+    if (json['permissions'] is String) {
+      json['permissions'] = jsonDecode(json['permissions']);
+    }
     return _$WorkspaceFromJson(json);
   }
 
   Map<String, dynamic> toJson() {
     var map = _$WorkspaceToJson(this);
+    map['permissions'] = jsonEncode(map['permissions']);
     // map['notification_rooms'] = jsonEncode(map['notification_rooms']);
     return map;
   }

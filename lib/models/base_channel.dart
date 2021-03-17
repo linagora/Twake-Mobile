@@ -44,7 +44,7 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 
-  @JsonKey(defaultValue: [])
+  @JsonKey(defaultValue: <String>[])
   List<String> permissions;
 
   BaseChannel({

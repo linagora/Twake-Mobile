@@ -1,0 +1,29 @@
+import 'package:twake/sql/v1.dart';
+
+const String ALTER_CHANNEL_ADD_PERMISSIONS = '''
+ALTER TABLE channel ADD COLUMN permissions TEXT; 
+''';
+
+const String ALTER_DIRECT_ADD_PERMISSIONS = '''
+ALTER TABLE direct ADD COLUMN permissions TEXT; 
+''';
+
+const String ALTER_WORKSPACE_ADD_PERMISSIONS = '''
+ALTER TABLE workspace ADD COLUMN permissions TEXT; 
+''';
+
+const String ALTER_COMPANY_ADD_PERMISSIONS = '''
+ALTER TABLE company ADD COLUMN permissions TEXT; 
+''';
+
+const DDL_V2 = [
+  ...DDL_V1,
+  ...MIGRATION_2,
+];
+
+const MIGRATION_2 = [
+  ALTER_CHANNEL_ADD_PERMISSIONS,
+  ALTER_DIRECT_ADD_PERMISSIONS,
+  ALTER_WORKSPACE_ADD_PERMISSIONS,
+  ALTER_COMPANY_ADD_PERMISSIONS,
+];
