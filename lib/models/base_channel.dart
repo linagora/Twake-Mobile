@@ -24,7 +24,7 @@ abstract class BaseChannel extends CollectionItem {
   @JsonKey(name: 'last_activity', defaultValue: 0)
   int lastActivity;
 
-  @JsonKey(name: 'last_message')
+  @JsonKey(name: 'last_message', defaultValue: {})
   Map<String, dynamic> lastMessage;
 
   @JsonKey(name: 'user_last_access', defaultValue: 0)

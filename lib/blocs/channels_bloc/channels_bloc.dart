@@ -141,13 +141,19 @@ class ChannelsBloc extends BaseChannelBloc {
       repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
       var item = await repository.getItemById(event.data.channelId) as Channel;
       if (item != null) {
-        item.icon = event.data.icon ?? '👽';
-        item.name = event.data.name;
-        item.description = event.data.description;
-        item.visibility = event.data.visibility;
-        item.visibility = event.data.visibility;
-      } else {
+        item.icon = event.data.icon ?? item.icon ?? '👽';
+        item.name = event.data.name ?? item.name;
+        item.description = event.data.description ?? item.description;
+        item.visibility = event.data.visibility ?? item.visibility;
+        item.lastMessage = event.data.lastMessage ?? item.lastMessage;
+      } else if (event.data.channelId != null &&
+          event.data.name != null &&
+          event.data.visibility != 'private') {
         item = Channel.fromJson(event.data.toJson());
+      } else {
+        this.add(
+            ReloadChannels(workspaceId: selectedParentId, forceFromApi: true));
+        return;
       }
       await repository.saveOne(item);
       if (event.data.workspaceId == selectedParentId) {
@@ -160,7 +166,6 @@ class ChannelsBloc extends BaseChannelBloc {
         force: DateTime.now().toString(),
       );
     } else if (event is LoadSingleChannel) {
-      // TODO implement single company loading
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
       repository.items.removeWhere((i) => i.id == event.channelId);
