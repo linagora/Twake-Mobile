@@ -362,7 +362,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final type = subscriptionRooms[resource['room']]['type'];
     if (type == 'CHANNELS_LIST') {
       if (resource['type'] == 'channel' ||
-          resource['type'] == 'channel_activity') {
+          resource['type'] == 'channel_activity' ||
+          resource['type'] == 'channel_member') {
         if (resource['action'] == 'saved' || resource['action'] == 'updated') {
           return SocketResourceType.ChannelUpdate;
         } else if (resource['action'] == 'deleted')

@@ -146,8 +146,14 @@ class ChannelsBloc extends BaseChannelBloc {
         item.description = event.data.description ?? item.description;
         item.visibility = event.data.visibility ?? item.visibility;
         item.lastMessage = event.data.lastMessage ?? item.lastMessage;
-      } else {
+      } else if (event.data.channelId != null &&
+          event.data.name != null &&
+          event.data.visibility != 'private') {
         item = Channel.fromJson(event.data.toJson());
+      } else {
+        this.add(
+            ReloadChannels(workspaceId: selectedParentId, forceFromApi: true));
+        return;
       }
       await repository.saveOne(item);
       if (event.data.workspaceId == selectedParentId) {
