@@ -155,8 +155,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
       params: {
-        'company_id': ProfileBloc.selectedCompany,
-        'workspace_id': ProfileBloc.selectedWorkspace,
+        'company_id': ProfileBloc.selectedCompanyId,
+        'workspace_id': ProfileBloc.selectedWorkspaceId,
       },
     );
     for (String room in subscriptionRooms.keys) {
@@ -206,9 +206,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   bool shouldNotify(MessageNotification data) {
-    if (data.channelId == ProfileBloc.selectedChannel &&
-        (ProfileBloc.selectedThread == data.threadId ||
-            ProfileBloc.selectedThread == null)) return false;
+    if (data.channelId == ProfileBloc.selectedChannelId &&
+        (ProfileBloc.selectedThreadId == data.threadId ||
+            ProfileBloc.selectedThreadId == null)) return false;
     return true;
   }
 

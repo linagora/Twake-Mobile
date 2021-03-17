@@ -43,7 +43,7 @@ class AddWorkspaceRepository {
   }
 
   Future<String> create() async {
-    this.companyId = ProfileBloc.selectedCompany;
+    this.companyId = ProfileBloc.selectedCompanyId;
     final body = this.toJson();
 
     Map<String, dynamic> resp;

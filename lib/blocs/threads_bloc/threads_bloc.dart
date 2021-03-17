@@ -227,9 +227,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
+    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompanyId;
     map['workspace_id'] = map['workspace_id'] ??
-        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspace);
+        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId);
     map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }
@@ -252,8 +252,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
     print("HAS UNREAD: $hasUnread");
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
-      workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspace,
-      companyId: ProfileBloc.selectedCompany,
+      workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspaceId,
+      companyId: ProfileBloc.selectedCompanyId,
       hasUnread: hasUnread,
     ));
   }

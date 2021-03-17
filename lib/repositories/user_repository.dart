@@ -95,7 +95,7 @@ class UserRepository {
 
   Future<List<User>> searchUsers(String request) async {
     if (request.isEmpty) return <User>[];
-    var companyId = ProfileBloc.selectedCompany;
+    var companyId = ProfileBloc.selectedCompanyId;
     List response = [];
     try {
       response = await _api.get(

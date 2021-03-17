@@ -19,6 +19,7 @@ class TwakeDrawer extends StatefulWidget {
 
 class _TwakeDrawerState extends State<TwakeDrawer> {
   bool _companiesHidden = true;
+  bool _canCreateWorkspace = true;
 
   @override
   Widget build(BuildContext context) {

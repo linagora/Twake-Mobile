@@ -112,8 +112,8 @@ class ChannelsBloc extends BaseChannelBloc {
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,
           params: {
-            "company_id": ProfileBloc.selectedCompany,
-            "workspace_id": ProfileBloc.selectedWorkspace,
+            "company_id": ProfileBloc.selectedCompanyId,
+            "workspace_id": ProfileBloc.selectedWorkspaceId,
             "channel_id": event.channelId
           });
 

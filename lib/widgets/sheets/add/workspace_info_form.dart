@@ -89,7 +89,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
             // Reload workspaces
             context.read<WorkspacesBloc>().add(
                   ReloadWorkspaces(
-                    ProfileBloc.selectedCompany,
+                    ProfileBloc.selectedCompanyId,
                     forceFromApi: true,
                   ),
                 );

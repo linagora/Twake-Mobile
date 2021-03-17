@@ -107,7 +107,7 @@ class DirectsBloc extends BaseChannelBloc {
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,
           params: {
-            "company_id": ProfileBloc.selectedCompany,
+            "company_id": ProfileBloc.selectedCompanyId,
             "workspace_id": "direct",
             "channel_id": event.channelId
           });

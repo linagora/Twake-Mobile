@@ -29,11 +29,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static String get thumbnail => repository.thumbnail;
   static String get username => repository.username;
 
-  static String get selectedCompany => repository.selectedCompanyId;
-  static String get selectedWorkspace => repository.selectedWorkspaceId;
+  static String get selectedCompanyId => repository.selectedCompanyId;
+  static String get selectedWorkspaceId => repository.selectedWorkspaceId;
 
-  static String get selectedChannel => repository.selectedChannelId;
-  static String get selectedThread => repository.selectedThreadId;
+  static String get selectedChannelId => repository.selectedChannelId;
+  static String get selectedThreadId => repository.selectedThreadId;
 
   static set selectedCompany(String val) {
     repository.selectedCompanyId = val;

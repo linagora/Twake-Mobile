@@ -40,9 +40,9 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
     // message.logger.d('GOT MESSAGE EVENT $event');
     if (event is UpdateContent) {
       message.updateContent({
-        'company_id': ProfileBloc.selectedCompany,
+        'company_id': ProfileBloc.selectedCompanyId,
         'channel_id': message.channelId,
-        'workspace_id': event.workspaceId ?? ProfileBloc.selectedWorkspace,
+        'workspace_id': event.workspaceId ?? ProfileBloc.selectedWorkspaceId,
         'message_id': message.id,
         'thread_id': message.threadId,
         'original_str': event.content,
@@ -52,9 +52,9 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
       message.updateReactions(
         userId: event.userId ?? ProfileBloc.userId,
         body: {
-          'company_id': event.companyId ?? ProfileBloc.selectedCompany,
+          'company_id': event.companyId ?? ProfileBloc.selectedCompanyId,
           'channel_id': message.channelId,
-          'workspace_id': event.workspaceId ?? ProfileBloc.selectedWorkspace,
+          'workspace_id': event.workspaceId ?? ProfileBloc.selectedWorkspaceId,
           'message_id': message.id,
           'thread_id': message.threadId,
           'reaction': event.emojiCode,
