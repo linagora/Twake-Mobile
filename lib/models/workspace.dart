@@ -28,6 +28,9 @@ class Workspace extends CollectionItem {
   @JsonKey(name: 'is_selected', defaultValue: 0)
   int isSelected;
 
+  @JsonKey(defaultValue: [])
+  List<String> permissions;
+
   // @JsonKey(name: 'notification_rooms')
   // List<String> notificationRooms;
 
