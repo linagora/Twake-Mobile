@@ -26,7 +26,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final PanelController _panelController = PanelController();
-  
+
   @override
   void initState() {
     super.initState();

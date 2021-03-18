@@ -147,6 +147,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       unsubscribe(room);
     }
     setSubscriptions();
+    this.add(BadgeUpdateEvent());
   }
 
   Future<void> setSubscriptions() async {

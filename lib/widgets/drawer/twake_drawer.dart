@@ -224,6 +224,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                             onTap: () {
                               BlocProvider.of<CompaniesBloc>(ctx)
                                   .add(ChangeSelectedCompany(_companies[i].id));
+                              BlocProvider.of<ProfileBloc>(ctx)
+                                  .add(UpdateBadges());
                               setState(() {
                                 _companiesHidden = true;
                               });
