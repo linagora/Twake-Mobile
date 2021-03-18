@@ -20,8 +20,8 @@ class TwakeDrawer extends StatefulWidget {
 
 class _TwakeDrawerState extends State<TwakeDrawer> {
   var _companiesHidden = true;
+  var _canCreateWorkspace = false;
   var _companies = <Company>[];
-  Company _selectedCompany;
 
   @override
   Widget build(BuildContext context) {
@@ -30,12 +30,19 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
       child: Drawer(
         child: SafeArea(
           child: BlocBuilder<CompaniesBloc, CompaniesState>(
-              buildWhen: (_, current) =>
-                  current is CompaniesLoaded,
+              buildWhen: (_, current) => current is CompaniesLoaded,
               builder: (context, state) {
                 if (state is CompaniesLoaded) {
                   _companies = state.companies;
-                  _selectedCompany = state.selected;
+
+                  final selectedCompany = state.selected;
+                  final permissions = selectedCompany.permissions;
+                  if (permissions.length > 0 &&
+                      permissions.contains('CREATE_WORKSPACES')) {
+                    _canCreateWorkspace = true;
+                  } else {
+                    _canCreateWorkspace = false;
+                  }
                 }
 
                 return Column(
@@ -53,23 +60,24 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                             ),
                           ),
                           Spacer(),
-                          IconButton(
-                            icon: Icon(
-                              Icons.add,
-                              size: Dim.tm3(decimal: .3),
-                              color: Colors.black,
+                          if (_canCreateWorkspace)
+                            IconButton(
+                              icon: Icon(
+                                Icons.add,
+                                size: Dim.tm3(decimal: .3),
+                                color: Colors.black,
+                              ),
+                              onPressed: () {
+                                final isDrawerOpen =
+                                    Scaffold.of(context).isDrawerOpen;
+                                if (isDrawerOpen) {
+                                  Navigator.pop(context); // close the drawer
+                                  context.read<SheetBloc>()
+                                    ..add(SetFlow(flow: SheetFlow.workspace))
+                                    ..add(OpenSheet());
+                                }
+                              },
                             ),
-                            onPressed: () {
-                              final isDrawerOpen =
-                                  Scaffold.of(context).isDrawerOpen;
-                              if (isDrawerOpen) {
-                                Navigator.pop(context); // close the drawer
-                                context.read<SheetBloc>()
-                                  ..add(SetFlow(flow: SheetFlow.workspace))
-                                  ..add(OpenSheet());
-                              }
-                            },
-                          ),
                           IconButton(
                             color: Color(0xff444444),
                             onPressed: () {
