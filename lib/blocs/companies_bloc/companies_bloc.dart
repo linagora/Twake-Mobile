@@ -51,9 +51,6 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
         companies: repository.items,
         selected: repository.selected,
       );
-    } else if (event is LoadSelectedCompany) {
-      await repository.reload();
-      yield CompanyLoaded(company: repository.selected);
     } else if (event is LoadSingleCompany) {
       // TODO implement single company loading
       throw 'Not implemented yet';

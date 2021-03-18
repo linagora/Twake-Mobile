@@ -24,11 +24,6 @@ class LoadSingleCompany extends CompaniesEvent {
   List<Object> get props => [companyId];
 }
 
-class LoadSelectedCompany extends CompaniesEvent {
-  @override
-  List<Object> get props => [];
-}
-
 class ChangeSelectedCompany extends CompaniesEvent {
   final String companyId;
   ChangeSelectedCompany(this.companyId);
