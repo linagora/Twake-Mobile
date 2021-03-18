@@ -80,9 +80,18 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                     state.parentChannel.description = editState.description;
                   }
                 }
+
+                var _canEdit = false;
+                if (state.parentChannel is Channel) {
+                  var permissions = state.parentChannel.permissions;
+                  if (permissions.contains('EDIT_CHANNEL')) {
+                    _canEdit = true;
+                  }
+                }
+
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: state.parentChannel is Channel
+                  onTap: _canEdit
                       ? () => _goEdit(context, state)
                       : null,
                   child: Row(

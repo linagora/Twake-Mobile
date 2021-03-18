@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_event.dart';
+import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/profile_repository.dart';
@@ -39,6 +40,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   static Company get selectedCompany => repository.selectedCompany;
   static Workspace get selectedWorkspace => repository.selectedWorkspace;
+  static BaseChannel get selectedChannel => repository.selectedChannel;
 
   static set selectedCompanyId(String val) {
     repository.selectedCompanyId = val;
@@ -57,6 +59,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static set selectedThreadId(String val) {
     repository.selectedThreadId = val;
   }
+
+  static set selectedCompany(Company val) {
+    repository.selectedCompany = val;
+    // repository.save();
+  }
+  static set selectedWorkspace(Workspace val) => val;
+  static set selectedChannel(BaseChannel val) => val;
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {

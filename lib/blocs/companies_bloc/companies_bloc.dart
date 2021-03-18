@@ -23,6 +23,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
         )) {
     // repository.logger.w('SELECTED COMPANY: ${repository.selected.id}');
     ProfileBloc.selectedCompanyId = repository.selected.id;
+    ProfileBloc.selectedCompany = repository.selected;
 
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) {
