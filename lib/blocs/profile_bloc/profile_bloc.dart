@@ -71,7 +71,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   static set selectedCompany(Company val) {
     repository.selectedCompany = val;
-    // repository.save();
   }
 
   static set selectedWorkspace(Workspace val) => val;

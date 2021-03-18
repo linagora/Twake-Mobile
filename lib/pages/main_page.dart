@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
+import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
@@ -25,6 +26,14 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final PanelController _panelController = PanelController();
+  
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CompaniesBloc>().add(ReloadCompanies());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
