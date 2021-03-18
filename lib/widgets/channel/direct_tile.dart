@@ -1,8 +1,10 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 // import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 // import 'package:twake/pages/messages_page.dart';
@@ -78,21 +80,31 @@ class DirectTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
                 if (direct.messagesUnread != 0) SizedBox(width: Dim.wm2),
-                if (direct.messagesUnread != 0)
-                  Chip(
-                    labelPadding:
-                        EdgeInsets.symmetric(horizontal: Dim.widthMultiplier),
-                    label: Text(
-                      '${direct.messagesUnread}',
-                      style:
-                          TextStyle(color: Colors.white, fontSize: Dim.tm2()),
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    backgroundColor: Color.fromRGBO(255, 81, 84, 1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
+                BlocBuilder<ProfileBloc, ProfileState>(
+                  buildWhen: (prev, curr) => curr is ProfileLoaded,
+                  builder: (ctx, state) {
+                    final count =
+                        (state as ProfileLoaded).getBadgeForChannel(direct.id);
+                    if (count > 0)
+                      return Badge(
+                        shape: BadgeShape.square,
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 2,
+                        ),
+                        badgeContent: Text(
+                          '$count',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Dim.tm2(),
+                          ),
+                        ),
+                      );
+                    else
+                      return Container();
+                  },
+                )
               ],
             ),
           ],

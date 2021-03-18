@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
@@ -19,7 +20,7 @@ class TwakeDrawer extends StatefulWidget {
 
 class _TwakeDrawerState extends State<TwakeDrawer> {
   bool _companiesHidden = true;
-  bool _canCreateWorkspace = true;
+  // bool _canCreateWorkspace = true;
 
   @override
   Widget build(BuildContext context) {
@@ -139,6 +140,35 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                             ],
                                           ),
                                         ),
+                                        BlocBuilder<ProfileBloc, ProfileState>(
+                                          buildWhen: (prev, curr) =>
+                                              curr is ProfileLoaded,
+                                          builder: (ctx, pstate) {
+                                            final count =
+                                                (pstate as ProfileLoaded)
+                                                    .getBadgeForWorkspace(
+                                                        state.workspaces[i].id);
+                                            if (count > 0)
+                                              return Badge(
+                                                shape: BadgeShape.square,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 5,
+                                                  vertical: 2,
+                                                ),
+                                                badgeContent: Text(
+                                                  '$count',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: Dim.tm2(),
+                                                  ),
+                                                ),
+                                              );
+                                            else
+                                              return Container();
+                                          },
+                                        )
                                       ],
                                     ),
                                   ),
@@ -261,8 +291,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
           leadingActionTitle: 'Cancel',
           trailingActionTitle: 'Log out',
           trailingAction: () async {
-            BlocProvider.of<AuthBloc>(parentContext)
-                .add(ResetAuthentication());
+            BlocProvider.of<AuthBloc>(parentContext).add(ResetAuthentication());
             Navigator.of(context).pop();
           },
         );

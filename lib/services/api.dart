@@ -134,11 +134,11 @@ class Api {
       s.start();
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       s.stop();
-      logger.d('GET HEADERS: ${dio.options.headers}');
-      logger.d('PARAMS: $params');
-      logger.d(
-      'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
-      logger.d('GET RESPONSE: ${response.data}');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('PARAMS: $params');
+      // logger.d(
+      // 'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
+      // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);

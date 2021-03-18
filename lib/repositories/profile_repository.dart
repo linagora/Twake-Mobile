@@ -53,6 +53,8 @@ class ProfileRepository extends JsonSerializable {
   Workspace selectedWorkspace;
   @JsonKey(ignore: true)
   BaseChannel selectedChannel;
+  @JsonKey(ignore: true)
+  Map<String, dynamic> badges = {};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
@@ -80,6 +82,14 @@ class ProfileRepository extends JsonSerializable {
   Future<void> reload() async {
     final profileMap = await _api.get(Endpoint.profile);
     _update(profileMap);
+  }
+
+  Future<void> syncBadges() async {
+    this.badges = await _api.get(
+      Endpoint.badges,
+      params: {'company_id': this.selectedCompanyId, 'all_companies': 'true'},
+    );
+    print("BADGES: $badges");
   }
 
   Future<void> clean() async {

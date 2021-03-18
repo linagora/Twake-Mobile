@@ -44,6 +44,7 @@ Future<AuthRepository> initAuth() async {
 Future<InitData> initMain() async {
   // await Emojis.load();
   final profile = await ProfileRepository.load();
+  await profile.syncBadges();
   final sheet = await SheetRepository.load();
   final addChannel = await AddChannelRepository.load();
   final addDirect = AddDirectRepository();

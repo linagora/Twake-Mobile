@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/notification.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -106,7 +105,7 @@ class Notifications {
   // }
 
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
-    logger.d('GOT MESSAGE FROM FIREBASE: $message');
+    // logger.d('GOT MESSAGE FROM FIREBASE: $message');
     final notification = messageParse(message);
     if (!shouldNotify(notification)) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
