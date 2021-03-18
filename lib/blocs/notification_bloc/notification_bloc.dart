@@ -125,11 +125,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // logger.d('PING $ping');
     // });
     socket.on(SocketIOEvent.EVENT, (data) {
-      logger.d('GOT EVENT: $data');
+      // logger.d('GOT EVENT: $data');
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      logger.d('GOT RESOURCE: $data');
+      // logger.d('GOT RESOURCE: $data');
       handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
@@ -171,7 +171,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void unsubscribe(String path, [String tag = 'twake']) {
     socket.emit(SocketIOEvent.LEAVE, {'name': path, 'token': tag});
-    logger.d('UNSUBSCRIBED FROM $path');
+    // logger.d('UNSUBSCRIBED FROM $path');
   }
 
   @override
@@ -202,6 +202,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       reinit();
     } else if (event is CancelPendingSubscriptions) {
       service.cancelNotificationForChannel(event.channelId);
+    } else if (event is BadgeUpdateEvent) {
+      yield BadgesUpdated();
     }
   }
 
@@ -215,13 +217,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   void onMessageCallback(NotificationData data) {
     if (data is MessageNotification) {
       if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
-        logger.d('adding ThreadMessageEvent');
+        // logger.d('adding ThreadMessageEvent');
         this.add(ThreadMessageEvent(data));
       } else if (data.workspaceId == 'direct') {
-        logger.d('adding DirectMessageEvent');
+        // logger.d('adding DirectMessageEvent');
         this.add(DirectMessageEvent(data));
       } else {
-        logger.d('adding ChannelMessageEvent');
+        // logger.d('adding ChannelMessageEvent');
         this.add(ChannelMessageEvent(data));
       }
     }
@@ -278,7 +280,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void handleSocketResource(Map resource) {
     final type = getSocketResourceType(resource);
-    logger.w('RESOURCE ID: $type');
+    // logger.w('RESOURCE ID: $type');
     if (type == SocketResourceType.ChannelUpdate) {
       final data =
           SocketChannelUpdateNotification.fromJson(resource['resource']);
@@ -287,6 +289,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       final data =
           SocketChannelUpdateNotification.fromJson(resource['resource']);
       this.add(ChannelDeleteEvent(data));
+    } else if (type == SocketResourceType.BadgeUpdate) {
+      this.add(BadgeUpdateEvent());
     }
   }
 
@@ -369,6 +373,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         } else if (resource['action'] == 'deleted')
           return SocketResourceType.ChannelDelete;
       }
+    } else if (type == 'NOTIFICATIONS') {
+      return SocketResourceType.BadgeUpdate;
     }
     return SocketResourceType.Unknown;
   }
@@ -417,5 +423,6 @@ enum SocketResourceType {
   ChannelUpdate,
   ChannelDelete,
   DirectUpdate,
+  BadgeUpdate,
   Unknown,
 }

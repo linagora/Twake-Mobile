@@ -89,7 +89,6 @@ class ProfileRepository extends JsonSerializable {
       Endpoint.badges,
       params: {'company_id': this.selectedCompanyId, 'all_companies': 'true'},
     );
-    print("BADGES: $badges");
   }
 
   Future<void> clean() async {

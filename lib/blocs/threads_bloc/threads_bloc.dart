@@ -249,10 +249,11 @@ class ThreadsBloc<T extends BaseChannelBloc>
       );
 
   void _updateParentChannel(String channelId, [int hasUnread = 1]) {
-    print("HAS UNREAD: $hasUnread");
+    // print("HAS UNREAD: $hasUnread");
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
-      workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspaceId,
+      workspaceId:
+          T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspaceId,
       companyId: ProfileBloc.selectedCompanyId,
       hasUnread: hasUnread,
     ));

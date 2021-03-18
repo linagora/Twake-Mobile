@@ -138,7 +138,7 @@ class ChannelsBloc extends BaseChannelBloc {
         );
       }
     } else if (event is UpdateSingleChannel) {
-      repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
+      // repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
       var item = await repository.getItemById(event.data.channelId) as Channel;
       if (item != null) {
         item.icon = event.data.icon ?? item.icon ?? '👽';

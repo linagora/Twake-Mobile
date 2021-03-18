@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
+// import 'package:logger/logger.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_event.dart';
 import 'package:twake/models/base_channel.dart';
@@ -28,8 +28,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         )) {
     repository = rpstr;
     _subscription = notificationBloc.listen((NotificationState state) {
-      Logger().w("GOT NOTIFICATION EVENT");
-      this.add(UpdateBadges());
+      if (state is BadgesUpdated || state is ChannelUpdated) {
+        // Logger().w("GOT NOTIFICATION EVENT $state");
+        this.add(UpdateBadges());
+      }
     });
   }
 
@@ -96,7 +98,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         thumbnail: repository.thumbnail,
         badges: repository.badges,
       );
-      Logger().w("SYNCING BADGES: ${this.state != state}");
+      // Logger().w("SYNCING BADGES: ${this.state != state}");
 
       yield state;
     } else if (event is ClearProfile) {

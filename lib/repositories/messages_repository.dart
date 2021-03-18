@@ -262,9 +262,9 @@ class MessagesRepository {
     if (!forceFromDB)
       item = items.firstWhere((i) => i.id == id, orElse: () => null);
     if (item == null) {
-      print('GETTING MESSAGE BY ID: $id');
+      // print('GETTING MESSAGE BY ID: $id');
       var map = await _storage.load(type: StorageType.Message, key: id);
-      print('MESSAGE: $map');
+      // print('MESSAGE: $map');
       if (map == null) return null;
       item = Message.fromJson(map);
     }

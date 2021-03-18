@@ -115,6 +115,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                             BlocProvider.of<WorkspacesBloc>(ctx)
                                                 .add(ChangeSelectedWorkspace(
                                                     state.workspaces[i].id));
+                                            BlocProvider.of<ProfileBloc>(ctx)
+                                                .add(UpdateBadges());
                                             Navigator.of(context).pop();
                                           },
                                           child: SizedBox(
@@ -261,6 +263,34 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                     SizedBox(height: 12),
                                   ],
                                 ),
+                                Spacer(),
+                                BlocBuilder<ProfileBloc, ProfileState>(
+                                  buildWhen: (prev, curr) =>
+                                      curr is ProfileLoaded,
+                                  builder: (ctx, pstate) {
+                                    final count = (pstate as ProfileLoaded)
+                                        .getBadgeForCompany(_companies[i].id);
+                                    if (count > 0)
+                                      return Badge(
+                                        shape: BadgeShape.square,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                          vertical: 2,
+                                        ),
+                                        badgeContent: Text(
+                                          '$count',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: Dim.tm2(),
+                                          ),
+                                        ),
+                                      );
+                                    else
+                                      return Container();
+                                  },
+                                )
                               ],
                             ),
                           ),

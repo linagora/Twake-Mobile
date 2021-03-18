@@ -32,8 +32,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
-        repository.logger.d(
-            'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
+        // repository.logger.d(
+        // 'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId));
       }
     });
@@ -86,7 +86,6 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         selected: repository.selected,
       );
     } else if (event is LoadSingleWorkspace) {
-      // TODO implement single company loading
       throw 'Not implemented yet';
     } else if (event is RemoveWorkspace) {
       throw 'Not implemented yet';
