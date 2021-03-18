@@ -16,13 +16,6 @@ class CompaniesLoaded extends CompaniesState {
   List<Object> get props => [companies, selected];
 }
 
-class CompanyLoaded extends CompaniesState {
-  final Company company;
-  const CompanyLoaded({this.company});
-  @override
-  List<Object> get props => [company];
-}
-
 class CompaniesLoading extends CompaniesState {
   const CompaniesLoading();
   @override
