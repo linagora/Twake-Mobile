@@ -209,6 +209,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   bool shouldNotify(MessageNotification data) {
+    print('Data channel id: ${data.channelId}');
+    print('ProfileBloc id: ${ProfileBloc.selectedChannelId}');
+    print('Data thread id: ${data.threadId}');
+    print('ProfileBloc selected thread id: ${ProfileBloc.selectedThreadId}');
+
     if (data.channelId == ProfileBloc.selectedChannelId &&
         (ProfileBloc.selectedThreadId == data.threadId ||
             ProfileBloc.selectedThreadId == null)) return false;

@@ -114,6 +114,10 @@ class DirectsBloc extends BaseChannelBloc {
       repository.selected.messagesUnread = 0;
       repository.selected.hasUnread = 0;
       repository.saveOne(repository.selected);
+
+      ProfileBloc.selectedChannelId = event.channelId;
+      ProfileBloc.selectedThreadId = null;
+
       yield ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
