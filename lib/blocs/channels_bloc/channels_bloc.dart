@@ -107,7 +107,7 @@ class ChannelsBloc extends BaseChannelBloc {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
-      repository.logger.w('CHANNEL ${event.channelId} is selected');
+      // repository.logger.w('CHANNEL ${event.channelId} is selected');
       repository.select(event.channelId,
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,

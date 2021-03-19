@@ -20,7 +20,7 @@ void openDirect(BuildContext context, String channelId) =>
 void _open<T extends BaseChannelBloc>(BuildContext context, String channelId) {
   context.read<T>().add(ChangeSelectedChannel(channelId));
   context.read<MemberCubit>().fetchMembers(channelId: channelId);
-  print('On open: $channelId');
+  // print('On open: $channelId');
   Navigator.of(context)
       .push(MaterialPageRoute(
         builder: (context) => MessagesPage<T>(),
@@ -32,12 +32,12 @@ void selectWorkspace(BuildContext context, String workspaceId) {
   context.read<WorkspacesBloc>().add(ChangeSelectedWorkspace(workspaceId));
 }
 
-Future<List<EditChannelState>> openEditChannel(BuildContext context, Channel channel) {
-  return Navigator.of(context)
-      .push(MaterialPageRoute(
-        builder: (context) => EditChannel(channel: channel),
-      ));
-      // .then((r) => handleError(r, context));
+Future<List<EditChannelState>> openEditChannel(
+    BuildContext context, Channel channel) {
+  return Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => EditChannel(channel: channel),
+  ));
+  // .then((r) => handleError(r, context));
 }
 
 void openChooseServer(BuildContext context) {

@@ -130,8 +130,9 @@ class ThreadMessageNotification extends BaseChannelMessageNotification {
 }
 
 class BadgesUpdated extends NotificationState {
-  const BadgesUpdated();
+  final String forceId;
+  const BadgesUpdated(this.forceId);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [forceId];
 }
