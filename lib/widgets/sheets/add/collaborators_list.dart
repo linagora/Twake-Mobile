@@ -83,4 +83,3 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
     );
   }
 }
-

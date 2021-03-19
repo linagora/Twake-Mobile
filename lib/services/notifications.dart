@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:twake/models/notification.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -46,6 +48,34 @@ class Notifications {
   // );
 // }
 
+  Future onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    print('SHOW IOS NOTIFICATION');
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) => CupertinoAlertDialog(
+    //     title: Text(title),
+    //     content: Text(body),
+    //     actions: [
+    //       CupertinoDialogAction(
+    //         isDefaultAction: true,
+    //         child: Text('Ok'),
+    //         onPressed: () async {
+    //           Navigator.of(context, rootNavigator: true).pop();
+    //           await Navigator.push(
+    //             context,
+    //             MaterialPageRoute(
+    //               builder: (context) => SecondScreen(payload),
+    //             ),
+    //           );
+    //         },
+    //       )
+    //     ],
+    //   ),
+    // );
+  }
+
   Notifications({
     this.onMessageCallback,
     this.onResumeCallback,
@@ -70,7 +100,7 @@ class Notifications {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('logo_blue');
     final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings();
+        IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
