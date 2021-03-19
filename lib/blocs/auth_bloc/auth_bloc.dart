@@ -174,7 +174,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       runWebView();
     } else if (event is ResetAuthentication) {
       if (event.message == null) {
-        repository.logout();
+        await repository.logout();
       } else {
         repository.clean();
       }

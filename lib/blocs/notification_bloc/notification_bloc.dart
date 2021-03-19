@@ -125,11 +125,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // logger.d('PING $ping');
     // });
     socket.on(SocketIOEvent.EVENT, (data) {
-      // logger.d('GOT EVENT: $data');
+      logger.d('GOT EVENT: $data');
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      // logger.d('GOT RESOURCE: $data');
+      logger.d('GOT RESOURCE: $data');
       handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
@@ -204,7 +204,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     } else if (event is CancelPendingSubscriptions) {
       service.cancelNotificationForChannel(event.channelId);
     } else if (event is BadgeUpdateEvent) {
-      yield BadgesUpdated();
+      yield BadgesUpdated(DateTime.now().toString());
     }
   }
 
@@ -281,7 +281,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void handleSocketResource(Map resource) {
     final type = getSocketResourceType(resource);
-    // logger.w('RESOURCE ID: $type');
+    logger.w('RESOURCE ID: $type');
     if (type == SocketResourceType.ChannelUpdate) {
       final data =
           SocketChannelUpdateNotification.fromJson(resource['resource']);
