@@ -254,14 +254,15 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                       ),
                                     ),
                                     SizedBox(height: 4),
-                                    Text(
-                                      '${_companies[i].totalMembers} members',
-                                      style: TextStyle(
-                                        fontSize: 12.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xff444444),
+                                    if (_companies[i].totalMembers != null)
+                                      Text(
+                                        '${_companies[i].totalMembers} members',
+                                        style: TextStyle(
+                                          fontSize: 12.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: Color(0xff444444),
+                                        ),
                                       ),
-                                    ),
                                     SizedBox(height: 12),
                                   ],
                                 ),
