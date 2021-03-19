@@ -99,13 +99,16 @@ class Notifications {
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('logo_blue');
+    // final IOSInitializationSettings initializationSettingsIOS =
+    //     IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    IOSInitializationSettings();
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
+
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (payload) async {
       print("PAYLOAD FROM NOTIFY: $payload");
@@ -148,6 +151,10 @@ class Notifications {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     final channelId = _getChannelId(message);
+    // logger.d('channelId: $channelId');
+    // logger.d('title: ${_getTitle(message)}');
+    // logger.d('body: ${_getBody(message)}');
+    // logger.d('payload: ${_getPayload(message)}');
 
     if (pendingNotifications[channelId] == null) {
       pendingNotifications[channelId] = [];
@@ -197,7 +204,7 @@ class Notifications {
         break;
       case Target.IOS:
         // logger.d('iOS notification received\n$message');
-        data = message['apps']['alert']['body'];
+        data = message['aps']['alert']['body'];
         break;
       case Target.Linux:
       case Target.MacOS:
@@ -216,7 +223,7 @@ class Notifications {
         break;
       case Target.IOS:
         // logger.d('iOS notification received\n$message');
-        data = message['apps']['alert']['title'];
+        data = message['aps']['alert']['title'];
         break;
       case Target.Linux:
       case Target.MacOS:
