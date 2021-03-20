@@ -106,8 +106,9 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       if (parentChannel is Direct)
                         ShimmerLoading(
                           key: ValueKey<String>('direct_icon'),
-                          isLoading: parentChannel.members == null ||
-                              parentChannel.members.isEmpty,
+                          isLoading: true,
+                          // isLoading: parentChannel.members == null ||
+                          //     parentChannel.members.isEmpty,
                           width: 32.0,
                           height: 32.0,
                           child:
@@ -116,8 +117,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       if (parentChannel is Channel)
                         ShimmerLoading(
                           key: ValueKey<String>('channel_icon'),
-                          isLoading: parentChannel.icon == null ||
-                              parentChannel.icon.isEmpty,
+                          isLoading: true,//parentChannel.icon == null ||
+                              //parentChannel.icon.isEmpty,
                           width: 32.0,
                           height: 32.0,
                           child: TextAvatar(parentChannel.icon ?? ''),
@@ -133,8 +134,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                   child: ShimmerLoading(
                                     key: ValueKey<String>('name'),
                                     isLoading: true,//parentChannel.name == null,
-                                    width: 80,
-                                    height: 10,
+                                    width: 60.0,
+                                    height: 10.0,
                                     child: Text(
                                       parentChannel.name ?? '',
                                       style: TextStyle(
@@ -154,23 +155,21 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                       size: 15.0, color: Color(0xff444444)),
                               ],
                             ),
+                            SizedBox(height: 4),
                             if (parentChannel is Channel)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2.0),
-                                child: ShimmerLoading(
-                                  key: ValueKey<String>('membersCount'),
-                                  isLoading: parentChannel.membersCount == null,
-                                  width: 50,
-                                  height: 10,
-                                  child: Text(
-                                    parentChannel.membersCount == null
-                                        ? ''
-                                        : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
-                                    style: TextStyle(
-                                      fontSize: 10.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff92929C),
-                                    ),
+                              ShimmerLoading(
+                                key: ValueKey<String>('membersCount'),
+                                isLoading: true,//parentChannel.membersCount == null,
+                                width: 50,
+                                height: 10,
+                                child: Text(
+                                  parentChannel.membersCount == null
+                                      ? ''
+                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff92929C),
                                   ),
                                 ),
                               ),

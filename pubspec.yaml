@@ -50,7 +50,6 @@ dependencies:
   socket_io_client: ^0.9.12
   auto_size_text: ^2.1.0
   badges: ^1.2.0
-  shimmer: ^1.1.2
   flutter_emoji_keyboard:
     # path: ../emoji_keyboard
     git: https://github.com/bobs4462/emoji_keyboard.git
