@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -44,15 +46,22 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
     if (!widget.isLoading) {
       return widget.child;
     }
-    return ShaderMask(
-      blendMode: BlendMode.srcATop,
-      shaderCallback: (bounds) {
-        return _shimmerGradient.createShader(bounds);
-      },
-      child: Container(
-        color: Colors.white,
-        width: widget.width,
-        height: widget.height,
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(
+        sigmaX: 1,
+        sigmaY: 1,
+        tileMode: TileMode.decal,
+      ),
+      child: ShaderMask(
+        blendMode: BlendMode.srcATop,
+        shaderCallback: (bounds) {
+          return _shimmerGradient.createShader(bounds);
+        },
+        child: Container(
+          color: Colors.white,
+          width: widget.width,
+          height: widget.height,
+        ),
       ),
     );
   }
