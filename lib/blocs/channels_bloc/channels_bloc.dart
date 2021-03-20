@@ -61,7 +61,7 @@ class ChannelsBloc extends BaseChannelBloc {
           workspaceId: state.data.workspaceId,
         ));
       }
-      // else if (state is ChannnelUpdateNotification) {
+      // else if (state is ChannelUpdateNotification) {
       // this.add(
       // ModifyChannelState(
       // channelId: state.data.channelId,

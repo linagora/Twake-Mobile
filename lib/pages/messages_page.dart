@@ -68,12 +68,14 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
             BaseChannel parentChannel;
-            if (state is MessagesLoaded ||
-                state is MessagesLoading ||
-                state is MessagesEmpty) {
+            if (state is MessagesLoading) {
+              parentChannel = T is Channel ? Channel() : Direct();
+            }
+            if (state is MessagesLoaded || state is MessagesEmpty) {
               parentChannel = state.parentChannel;
             }
             print('MessagesBloc state: $state');
+            print('Parent channel current value: $parentChannel');
 
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
@@ -104,15 +106,14 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                     children: [
                       if (parentChannel is Direct)
                         ShimmerLoading(
-                          isLoading: parentChannel == null ||
-                              parentChannel.members == null,
-                          child: StackedUserAvatars(parentChannel.members),
+                          isLoading: parentChannel.members == null,
+                          child:
+                              StackedUserAvatars(parentChannel.members ?? []),
                         ),
                       if (parentChannel is Channel)
                         ShimmerLoading(
-                          isLoading: parentChannel == null ||
-                              parentChannel.icon == null,
-                          child: TextAvatar(parentChannel.icon ?? ''),
+                          isLoading: parentChannel.icon == null,
+                          child: TextAvatar(parentChannel?.icon ?? ''),
                         ),
                       SizedBox(width: 12.0),
                       Expanded(
@@ -123,9 +124,10 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: ShimmerLoading(
-                                    isLoading: parentChannel == null,
+                                    isLoading: parentChannel.name == null,
                                     child: Text(
-                                      parentChannel?.name ?? '',
+                                      parentChannel.name ??
+                                          '                             ',
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,
@@ -146,12 +148,17 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                             if (parentChannel is Channel)
                               Padding(
                                 padding: const EdgeInsets.only(top: 2.0),
-                                child: Text(
-                                  '${parentChannel.membersCount != null && parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
-                                  style: TextStyle(
-                                    fontSize: 10.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xff92929C),
+                                child: ShimmerLoading(
+                                  isLoading: parentChannel.membersCount == null,
+                                  child: Text(
+                                    parentChannel.membersCount == null
+                                        ? '                     '
+                                        : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
+                                    style: TextStyle(
+                                      fontSize: 10.0,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff92929C),
+                                    ),
                                   ),
                                 ),
                               ),
