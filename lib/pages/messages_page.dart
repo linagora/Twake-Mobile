@@ -7,19 +7,20 @@ import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
+import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
 
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
-  const MessagesPage();
-
   @override
   Widget build(BuildContext context) {
     String draft = '';
@@ -67,23 +68,33 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
+            BaseChannel parentChannel = T is Channel ? Channel() : Direct();
+
+            if ((state is MessagesLoaded ||
+                state is MessagesEmpty) &&
+                state.parentChannel.id == ProfileBloc.selectedChannelId) {
+              parentChannel = state.parentChannel;
+            }
+            print('MessagesBloc state: $state');
+            print('Parent channel current value: $parentChannel');
+
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
                 if (editState is EditChannelSaved) {
                   context
                       .read<MemberCubit>()
                       .fetchMembers(channelId: channelId);
-                  if (state.parentChannel is Channel &&
-                      state.parentChannel.id == editState.channelId) {
-                    state.parentChannel.icon = editState.icon;
-                    state.parentChannel.name = editState.name;
-                    state.parentChannel.description = editState.description;
+                  if (parentChannel is Channel &&
+                      parentChannel.id == editState.channelId) {
+                    parentChannel.icon = editState.icon;
+                    parentChannel.name = editState.name;
+                    parentChannel.description = editState.description;
                   }
                 }
 
                 var _canEdit = false;
-                if (state.parentChannel is Channel) {
-                  var permissions = state.parentChannel.permissions;
+                if (parentChannel is Channel) {
+                  final permissions = parentChannel.permissions;
                   if (permissions.contains('EDIT_CHANNEL')) {
                     _canEdit = true;
                   }
@@ -91,16 +102,28 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
 
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: _canEdit
-                      ? () => _goEdit(context, state)
-                      : null,
+                  onTap: _canEdit ? () => _goEdit(context, state) : null,
                   child: Row(
                     children: [
-                      if (state.parentChannel is Direct)
-                        StackedUserAvatars(
-                            (state.parentChannel as Direct).members),
-                      if (state.parentChannel is Channel)
-                        TextAvatar(state.parentChannel.icon),
+                      if (parentChannel is Direct)
+                        ShimmerLoading(
+                          key: ValueKey<String>('direct_icon'),
+                          isLoading: parentChannel.members == null ||
+                              parentChannel.members.isEmpty,
+                          width: 32.0,
+                          height: 32.0,
+                          child:
+                              StackedUserAvatars(parentChannel.members ?? []),
+                        ),
+                      if (parentChannel is Channel)
+                        ShimmerLoading(
+                          key: ValueKey<String>('channel_icon'),
+                          isLoading: parentChannel.icon == null ||
+                              parentChannel.icon.isEmpty,
+                          width: 32.0,
+                          height: 32.0,
+                          child: TextAvatar(parentChannel.icon ?? ''),
+                        ),
                       SizedBox(width: 12.0),
                       Expanded(
                         child: Column(
@@ -109,31 +132,41 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    state.parentChannel.name,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff444444),
+                                  child: ShimmerLoading(
+                                    key: ValueKey<String>('name'),
+                                    isLoading: parentChannel.name == null,
+                                    width: 60.0,
+                                    height: 10.0,
+                                    child: Text(
+                                      parentChannel.name ?? '',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff444444),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 SizedBox(width: 6),
-                                if ((state.parentChannel is Channel) &&
-                                    (state.parentChannel as Channel).visibility !=
-                                        null &&
-                                    (state.parentChannel as Channel).visibility ==
-                                        'private')
+                                if ((parentChannel is Channel) &&
+                                    parentChannel.visibility != null &&
+                                    parentChannel.visibility == 'private')
                                   Icon(Icons.lock_outline,
                                       size: 15.0, color: Color(0xff444444)),
                               ],
                             ),
-                            if (state.parentChannel is Channel)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 2.0),
+                            SizedBox(height: 4),
+                            if (parentChannel is Channel)
+                              ShimmerLoading(
+                                key: ValueKey<String>('membersCount'),
+                                isLoading: parentChannel.membersCount == null,
+                                width: 50,
+                                height: 10,
                                 child: Text(
-                                  '${(state.parentChannel as Channel).membersCount != null && (state.parentChannel as Channel).membersCount > 0 ? (state.parentChannel as Channel).membersCount : 'No'} members',
+                                  parentChannel.membersCount == null
+                                      ? ''
+                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.w400,
@@ -209,16 +242,20 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                   SendMessage(content: content),
                                 );
                                 context.read<DraftBloc>().add(
-                                    ResetDraft(id: channelId, type: draftType));
+                                      ResetDraft(
+                                          id: channelId, type: draftType),
+                                    );
                               },
                         onTextUpdated: state is MessageEditing
                             ? (text) {}
                             : (text) {
-                                context.read<DraftBloc>().add(UpdateDraft(
-                                      id: channelId,
-                                      type: draftType,
-                                      draft: text,
-                                    ));
+                                context.read<DraftBloc>().add(
+                                      UpdateDraft(
+                                        id: channelId,
+                                        type: draftType,
+                                        draft: text,
+                                      ),
+                                    );
                               },
                       ),
                     );
