@@ -7,6 +7,7 @@ import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
@@ -67,10 +68,11 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
-            BaseChannel parentChannel;
-            if (state is MessagesLoading) {
-              parentChannel = T is Channel ? Channel() : Direct();
-            } else if (state is MessagesLoaded || state is MessagesEmpty) {
+            BaseChannel parentChannel = T is Channel ? Channel() : Direct();
+
+            if ((state is MessagesLoaded ||
+                state is MessagesEmpty) &&
+                state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
             print('MessagesBloc state: $state');
@@ -106,9 +108,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       if (parentChannel is Direct)
                         ShimmerLoading(
                           key: ValueKey<String>('direct_icon'),
-                          isLoading: true,
-                          // isLoading: parentChannel.members == null ||
-                          //     parentChannel.members.isEmpty,
+                          isLoading: parentChannel.members == null ||
+                              parentChannel.members.isEmpty,
                           width: 32.0,
                           height: 32.0,
                           child:
@@ -117,8 +118,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       if (parentChannel is Channel)
                         ShimmerLoading(
                           key: ValueKey<String>('channel_icon'),
-                          isLoading: true,//parentChannel.icon == null ||
-                              //parentChannel.icon.isEmpty,
+                          isLoading: parentChannel.icon == null ||
+                              parentChannel.icon.isEmpty,
                           width: 32.0,
                           height: 32.0,
                           child: TextAvatar(parentChannel.icon ?? ''),
@@ -133,7 +134,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                 Expanded(
                                   child: ShimmerLoading(
                                     key: ValueKey<String>('name'),
-                                    isLoading: true,//parentChannel.name == null,
+                                    isLoading: parentChannel.name == null,
                                     width: 60.0,
                                     height: 10.0,
                                     child: Text(
@@ -159,7 +160,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                             if (parentChannel is Channel)
                               ShimmerLoading(
                                 key: ValueKey<String>('membersCount'),
-                                isLoading: true,//parentChannel.membersCount == null,
+                                isLoading: parentChannel.membersCount == null,
                                 width: 50,
                                 height: 10,
                                 child: Text(
