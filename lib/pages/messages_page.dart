@@ -14,6 +14,7 @@ import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
+import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
@@ -67,9 +68,13 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
             BaseChannel parentChannel;
-            if (state is MessagesLoaded || state is MessagesLoading) {
+            if (state is MessagesLoaded ||
+                state is MessagesLoading ||
+                state is MessagesEmpty) {
               parentChannel = state.parentChannel;
             }
+            print('MessagesBloc state: $state');
+
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
                 if (editState is EditChannelSaved) {
@@ -98,9 +103,17 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   child: Row(
                     children: [
                       if (parentChannel is Direct)
-                        StackedUserAvatars(parentChannel.members),
+                        ShimmerLoading(
+                          isLoading: parentChannel == null ||
+                              parentChannel.members == null,
+                          child: StackedUserAvatars(parentChannel.members),
+                        ),
                       if (parentChannel is Channel)
-                        TextAvatar(parentChannel.icon),
+                        ShimmerLoading(
+                          isLoading: parentChannel == null ||
+                              parentChannel.icon == null,
+                          child: TextAvatar(parentChannel.icon ?? ''),
+                        ),
                       SizedBox(width: 12.0),
                       Expanded(
                         child: Column(
@@ -109,14 +122,17 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                             Row(
                               children: [
                                 Expanded(
-                                  child: Text(
-                                    parentChannel.name,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff444444),
+                                  child: ShimmerLoading(
+                                    isLoading: parentChannel == null,
+                                    child: Text(
+                                      parentChannel?.name ?? '',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff444444),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 SizedBox(width: 6),
