@@ -70,8 +70,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             BaseChannel parentChannel;
             if (state is MessagesLoading) {
               parentChannel = T is Channel ? Channel() : Direct();
-            }
-            if (state is MessagesLoaded || state is MessagesEmpty) {
+            } else if (state is MessagesLoaded || state is MessagesEmpty) {
               parentChannel = state.parentChannel;
             }
             print('MessagesBloc state: $state');
@@ -106,14 +105,22 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                     children: [
                       if (parentChannel is Direct)
                         ShimmerLoading(
-                          isLoading: parentChannel.members == null,
+                          key: ValueKey<String>('direct_icon'),
+                          isLoading: parentChannel.members == null ||
+                              parentChannel.members.isEmpty,
+                          width: 32.0,
+                          height: 32.0,
                           child:
                               StackedUserAvatars(parentChannel.members ?? []),
                         ),
                       if (parentChannel is Channel)
                         ShimmerLoading(
-                          isLoading: parentChannel.icon == null,
-                          child: TextAvatar(parentChannel?.icon ?? ''),
+                          key: ValueKey<String>('channel_icon'),
+                          isLoading: parentChannel.icon == null ||
+                              parentChannel.icon.isEmpty,
+                          width: 32.0,
+                          height: 32.0,
+                          child: TextAvatar(parentChannel.icon ?? ''),
                         ),
                       SizedBox(width: 12.0),
                       Expanded(
@@ -124,10 +131,12 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: ShimmerLoading(
-                                    isLoading: parentChannel.name == null,
+                                    key: ValueKey<String>('name'),
+                                    isLoading: true,//parentChannel.name == null,
+                                    width: 80,
+                                    height: 10,
                                     child: Text(
-                                      parentChannel.name ??
-                                          '                             ',
+                                      parentChannel.name ?? '',
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,
@@ -149,10 +158,13 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(top: 2.0),
                                 child: ShimmerLoading(
+                                  key: ValueKey<String>('membersCount'),
                                   isLoading: parentChannel.membersCount == null,
+                                  width: 50,
+                                  height: 10,
                                   child: Text(
                                     parentChannel.membersCount == null
-                                        ? '                     '
+                                        ? ''
                                         : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
                                     style: TextStyle(
                                       fontSize: 10.0,

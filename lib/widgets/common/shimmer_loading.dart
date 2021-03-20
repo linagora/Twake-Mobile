@@ -3,6 +3,9 @@ import 'package:meta/meta.dart';
 
 const _shimmerGradient = LinearGradient(
   colors: [
+    // Colors.red,
+    // Colors.redAccent,
+    // Colors.green,
     Color(0xFFEBEBF4),
     Color(0xFFF4F4F4),
     Color(0xFFEBEBF4),
@@ -22,10 +25,14 @@ class ShimmerLoading extends StatefulWidget {
     Key key,
     @required this.isLoading,
     @required this.child,
+    @required this.width,
+    @required this.height,
   }) : super(key: key);
 
   final bool isLoading;
   final Widget child;
+  final double width;
+  final double height;
 
   @override
   _ShimmerLoadingState createState() => _ShimmerLoadingState();
@@ -42,7 +49,11 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
       shaderCallback: (bounds) {
         return _shimmerGradient.createShader(bounds);
       },
-      child: widget.child,
+      child: Container(
+        color: Colors.white,
+        width: widget.width,
+        height: widget.height,
+      ),
     );
   }
 }
