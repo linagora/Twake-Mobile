@@ -78,7 +78,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
-      print("SELECTED THREAD: ${threadMessage.toJson()}");
+      // print("SELECTED THREAD: ${threadMessage.toJson()}");
       if (threadMessage.responsesCount == 0) {
         repository.clean();
         yield MessagesEmpty(
@@ -227,9 +227,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
 
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
-    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
+    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompanyId;
     map['workspace_id'] = map['workspace_id'] ??
-        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspace);
+        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId);
     map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }
@@ -249,11 +249,12 @@ class ThreadsBloc<T extends BaseChannelBloc>
       );
 
   void _updateParentChannel(String channelId, [int hasUnread = 1]) {
-    print("HAS UNREAD: $hasUnread");
+    // print("HAS UNREAD: $hasUnread");
     messagesBloc.channelsBloc.add(ModifyMessageCount(
       channelId: channelId,
-      workspaceId: T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspace,
-      companyId: ProfileBloc.selectedCompany,
+      workspaceId:
+          T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspaceId,
+      companyId: ProfileBloc.selectedCompanyId,
       hasUnread: hasUnread,
     ));
   }

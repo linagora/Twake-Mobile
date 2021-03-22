@@ -182,7 +182,9 @@ class _ParticipantsListState extends State<ParticipantsList> {
                     : _isModal
                         ? 'Add'
                         : 'Save',
-                trailingAction: _isDirect ? null : () => _return(),
+                trailingAction: _isDirect
+                    ? null
+                    : (_isModal ? () => _close() : () => _return()),
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
@@ -206,8 +208,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                   // print('-------------------------------');
                 }
                 return BlocBuilder<AddChannelBloc, AddChannelState>(
-                  buildWhen: (previous, current) =>
-                      current is Updated,
+                  buildWhen: (previous, current) => current is Updated,
                   builder: (context, state) {
                     var selectedIds = <String>[];
                     var selectedUsers = <User>[];

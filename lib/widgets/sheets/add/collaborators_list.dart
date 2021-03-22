@@ -65,7 +65,7 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
               title: 'Invite',
               leadingTitle: 'Back',
               leadingAction: () => _return(),
-              trailingTitle: 'Invite',
+              trailingTitle: 'Send',
               trailingAction: () => _canInvite ? _invite() : null,
             ),
             SizedBox(height: 32.0),
@@ -83,4 +83,3 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
     );
   }
 }
-

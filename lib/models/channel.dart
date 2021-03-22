@@ -17,6 +17,11 @@ class Channel extends BaseChannel {
   });
 
   factory Channel.fromJson(Map<String, dynamic> json) {
+    json = Map.from(json);
+
+    if (json['permissions'] is String) {
+      json['permissions'] = jsonDecode(json['permissions']);
+    }
     if (json['last_message'] is String) {
       json['last_message'] = jsonDecode(json['last_message']);
     }
@@ -26,6 +31,7 @@ class Channel extends BaseChannel {
   Map<String, dynamic> toJson() {
     var map = _$ChannelToJson(this);
     map['last_message'] = jsonEncode(map['last_message']);
+    map['permissions'] = jsonEncode(map['permissions']);
     return map;
   }
 }

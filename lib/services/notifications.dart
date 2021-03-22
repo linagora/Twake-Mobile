@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:twake/models/notification.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -47,6 +48,34 @@ class Notifications {
   // );
 // }
 
+  Future onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    print('SHOW IOS NOTIFICATION');
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) => CupertinoAlertDialog(
+    //     title: Text(title),
+    //     content: Text(body),
+    //     actions: [
+    //       CupertinoDialogAction(
+    //         isDefaultAction: true,
+    //         child: Text('Ok'),
+    //         onPressed: () async {
+    //           Navigator.of(context, rootNavigator: true).pop();
+    //           await Navigator.push(
+    //             context,
+    //             MaterialPageRoute(
+    //               builder: (context) => SecondScreen(payload),
+    //             ),
+    //           );
+    //         },
+    //       )
+    //     ],
+    //   ),
+    // );
+  }
+
   Notifications({
     this.onMessageCallback,
     this.onResumeCallback,
@@ -70,13 +99,16 @@ class Notifications {
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('logo_blue');
+    // final IOSInitializationSettings initializationSettingsIOS =
+    //     IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings();
+    IOSInitializationSettings();
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
     );
+
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (payload) async {
       print("PAYLOAD FROM NOTIFY: $payload");
@@ -106,7 +138,7 @@ class Notifications {
   // }
 
   Future<dynamic> onMessage(Map<String, dynamic> message) async {
-    logger.d('GOT MESSAGE FROM FIREBASE: $message');
+    // logger.d('GOT MESSAGE FROM FIREBASE: $message');
     final notification = messageParse(message);
     if (!shouldNotify(notification)) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
@@ -119,6 +151,10 @@ class Notifications {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     final channelId = _getChannelId(message);
+    // logger.d('channelId: $channelId');
+    // logger.d('title: ${_getTitle(message)}');
+    // logger.d('body: ${_getBody(message)}');
+    // logger.d('payload: ${_getPayload(message)}');
 
     if (pendingNotifications[channelId] == null) {
       pendingNotifications[channelId] = [];
@@ -168,7 +204,7 @@ class Notifications {
         break;
       case Target.IOS:
         // logger.d('iOS notification received\n$message');
-        data = message['apps']['alert']['body'];
+        data = message['aps']['alert']['body'];
         break;
       case Target.Linux:
       case Target.MacOS:
@@ -187,7 +223,7 @@ class Notifications {
         break;
       case Target.IOS:
         // logger.d('iOS notification received\n$message');
-        data = message['apps']['alert']['title'];
+        data = message['aps']['alert']['title'];
         break;
       case Target.Linux:
       case Target.MacOS:

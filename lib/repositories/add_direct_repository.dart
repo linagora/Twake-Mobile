@@ -37,7 +37,7 @@ class AddDirectRepository {
   }
 
   Future<String> create() async {
-    this.companyId = ProfileBloc.selectedCompany;
+    this.companyId = ProfileBloc.selectedCompanyId;
     this.workspaceId = 'direct';
 
     final body = this.toJson();

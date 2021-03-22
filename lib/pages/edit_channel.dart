@@ -17,7 +17,6 @@ import 'package:twake/widgets/common/cupertino_warning.dart';
 import 'package:twake/widgets/common/rich_text_span.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:twake/widgets/common/warning_dialog.dart';
 import 'package:twake/widgets/sheets/button_field.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -44,13 +43,14 @@ class _EditChannelState extends State<EditChannel> {
   final PanelController _panelController = PanelController();
 
   var _members = <Member>[];
-  var _showHistoryForNew = true;
-  var _canSave = true;
+  var _canSave = false;
   var _emojiVisible = false;
 
   Channel _channel;
   String _channelId;
   String _icon;
+  String _channelName;
+  String _channelDescription;
 
   @override
   void initState() {
@@ -60,7 +60,9 @@ class _EditChannelState extends State<EditChannel> {
       _channel = widget.channel;
       _channelId = widget.channel.id;
       _nameController.text = _channel.name;
+      _channelName = _channel.name;
       _descriptionController.text = _channel.description;
+      _channelDescription = _channel.description;
       _icon = _channel.icon ?? '';
       _batchUpdateState(channelId: _channelId);
     }
@@ -72,8 +74,9 @@ class _EditChannelState extends State<EditChannel> {
     _nameController.addListener(() {
       final channelName = _nameController.text;
       _batchUpdateState(name: channelName);
-      if (channelName.isNotReallyEmpty && !_canSave) {
+      if (channelName.isNotReallyEmpty && !_canSave && _channelName != channelName) {
         setState(() {
+          _channelName = channelName;
           _canSave = true;
         });
       } else if (channelName.isReallyEmpty && _canSave) {
@@ -84,7 +87,13 @@ class _EditChannelState extends State<EditChannel> {
     });
 
     _descriptionController.addListener(() {
+      final channelDescription = _descriptionController.text;
       _batchUpdateState(description: _descriptionController.text);
+      if (_channelDescription != channelDescription) {
+        setState(() {
+          _canSave = true;
+        });
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -135,14 +144,12 @@ class _EditChannelState extends State<EditChannel> {
     String icon,
     String name,
     String description,
-    bool showHistoryForNew,
   }) {
     context.read<EditChannelCubit>().update(
           channelId: channelId ?? _channelId,
           icon: icon ?? _icon,
           name: name ?? _nameController.text,
           description: description ?? _descriptionController.text,
-          automaticallyAddNew: showHistoryForNew ?? _showHistoryForNew,
         );
   }
 

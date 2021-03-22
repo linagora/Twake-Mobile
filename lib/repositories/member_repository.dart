@@ -49,8 +49,8 @@ class MemberRepository extends CollectionRepository<Member> {
   Future<bool> fetch({
     @required channelId,
   }) async {
-    String companyId = ProfileBloc.selectedCompany;
-    String workspaceId = ProfileBloc.selectedWorkspace;
+    String companyId = ProfileBloc.selectedCompanyId;
+    String workspaceId = ProfileBloc.selectedWorkspaceId;
     return super.reload(
       queryParams: {
         'company_id': companyId,
@@ -107,8 +107,8 @@ class MemberRepository extends CollectionRepository<Member> {
     @required bool shouldUpdate,
     @required bool shouldExcludeOwner,
   }) async {
-    String companyId = ProfileBloc.selectedCompany;
-    String workspaceId = ProfileBloc.selectedWorkspace;
+    String companyId = ProfileBloc.selectedCompanyId;
+    String workspaceId = ProfileBloc.selectedWorkspaceId;
 
     if (shouldExcludeOwner)
       members.remove(ProfileBloc.userId); // Remove author.

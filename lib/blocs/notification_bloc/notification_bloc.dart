@@ -147,6 +147,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       unsubscribe(room);
     }
     setSubscriptions();
+    this.add(BadgeUpdateEvent());
   }
 
   Future<void> setSubscriptions() async {
@@ -155,8 +156,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
       params: {
-        'company_id': ProfileBloc.selectedCompany,
-        'workspace_id': ProfileBloc.selectedWorkspace,
+        'company_id': ProfileBloc.selectedCompanyId,
+        'workspace_id': ProfileBloc.selectedWorkspaceId,
       },
     );
     for (String room in subscriptionRooms.keys) {
@@ -171,7 +172,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void unsubscribe(String path, [String tag = 'twake']) {
     socket.emit(SocketIOEvent.LEAVE, {'name': path, 'token': tag});
-    logger.d('UNSUBSCRIBED FROM $path');
+    // logger.d('UNSUBSCRIBED FROM $path');
   }
 
   @override
@@ -202,26 +203,33 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       reinit();
     } else if (event is CancelPendingSubscriptions) {
       service.cancelNotificationForChannel(event.channelId);
+    } else if (event is BadgeUpdateEvent) {
+      yield BadgesUpdated(DateTime.now().toString());
     }
   }
 
   bool shouldNotify(MessageNotification data) {
-    if (data.channelId == ProfileBloc.selectedChannel &&
-        (ProfileBloc.selectedThread == data.threadId ||
-            ProfileBloc.selectedThread == null)) return false;
+    print('Data channel id: ${data.channelId}');
+    print('ProfileBloc id: ${ProfileBloc.selectedChannelId}');
+    print('Data thread id: ${data.threadId}');
+    print('ProfileBloc selected thread id: ${ProfileBloc.selectedThreadId}');
+
+    if (data.channelId == ProfileBloc.selectedChannelId &&
+        (ProfileBloc.selectedThreadId == data.threadId ||
+            ProfileBloc.selectedThreadId == null)) return false;
     return true;
   }
 
   void onMessageCallback(NotificationData data) {
     if (data is MessageNotification) {
       if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
-        logger.d('adding ThreadMessageEvent');
+        // logger.d('adding ThreadMessageEvent');
         this.add(ThreadMessageEvent(data));
       } else if (data.workspaceId == 'direct') {
-        logger.d('adding DirectMessageEvent');
+        // logger.d('adding DirectMessageEvent');
         this.add(DirectMessageEvent(data));
       } else {
-        logger.d('adding ChannelMessageEvent');
+        // logger.d('adding ChannelMessageEvent');
         this.add(ChannelMessageEvent(data));
       }
     }
@@ -287,6 +295,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       final data =
           SocketChannelUpdateNotification.fromJson(resource['resource']);
       this.add(ChannelDeleteEvent(data));
+    } else if (type == SocketResourceType.BadgeUpdate) {
+      this.add(BadgeUpdateEvent());
     }
   }
 
@@ -362,12 +372,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final type = subscriptionRooms[resource['room']]['type'];
     if (type == 'CHANNELS_LIST') {
       if (resource['type'] == 'channel' ||
-          resource['type'] == 'channel_activity') {
+          resource['type'] == 'channel_activity' ||
+          resource['type'] == 'channel_member') {
         if (resource['action'] == 'saved' || resource['action'] == 'updated') {
           return SocketResourceType.ChannelUpdate;
         } else if (resource['action'] == 'deleted')
           return SocketResourceType.ChannelDelete;
       }
+    } else if (type == 'NOTIFICATIONS') {
+      return SocketResourceType.BadgeUpdate;
     }
     return SocketResourceType.Unknown;
   }
@@ -416,5 +429,6 @@ enum SocketResourceType {
   ChannelUpdate,
   ChannelDelete,
   DirectUpdate,
+  BadgeUpdate,
   Unknown,
 }

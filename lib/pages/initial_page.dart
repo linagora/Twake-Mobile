@@ -99,10 +99,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
           if (state is Authenticated) {
             return MultiBlocProvider(
               providers: [
-                BlocProvider<ProfileBloc>(
-                  create: (_) => ProfileBloc(state.initData.profile),
-                  lazy: false,
-                ),
                 BlocProvider<NotificationBloc>(
                   lazy: false,
                   create: (_) => NotificationBloc(
@@ -110,6 +106,13 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     connectionBloc: BlocProvider.of<cb.ConnectionBloc>(ctx),
                     navigator: _navigatorKey,
                   )..setSubscriptions(),
+                ),
+                BlocProvider<ProfileBloc>(
+                  create: (ctx) => ProfileBloc(
+                    state.initData.profile,
+                    notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
+                  ),
+                  lazy: false,
                 ),
                 BlocProvider<CompaniesBloc>(
                   lazy: false,

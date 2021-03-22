@@ -39,10 +39,10 @@ class MessagesBloc<T extends BaseChannelBloc>
     this.notificationBloc,
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     _subscription = channelsBloc.listen((ChannelState state) {
-      if (state is ChannelPicked) {
+      if (state is ChannelPicked && state.selected != selectedChannel) {
         // repository.logger.d('TRIGGERED MESSAGE FETCH');
-        repository.logger.w(
-            'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
+        // repository.logger.w(
+        // 'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
         this.add(LoadMessages());
         selectedChannel = state.selected;
       }
@@ -63,14 +63,14 @@ class MessagesBloc<T extends BaseChannelBloc>
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
-          workspaceId: ProfileBloc.selectedWorkspace,
-          companyId: ProfileBloc.selectedCompany,
+          workspaceId: ProfileBloc.selectedWorkspaceId,
+          companyId: ProfileBloc.selectedCompanyId,
         ));
       } else if (T == DirectsBloc && state is DirectMessageArrived) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
-          companyId: ProfileBloc.selectedCompany,
+          companyId: ProfileBloc.selectedCompanyId,
         ));
       } else if (state is DirectThreadMessageArrived && T == DirectsBloc) {
         this.add(ModifyResponsesCount(
@@ -309,7 +309,7 @@ class MessagesBloc<T extends BaseChannelBloc>
       );
     } else if (event is SelectMessage) {
       // print('$T MESSAGE SELECTED');
-      ProfileBloc.selectedThread = event.messageId;
+      ProfileBloc.selectedThreadId = event.messageId;
       repository.select(event.messageId);
       yield MessageSelected(
         threadMessage: repository.selected,
@@ -337,17 +337,17 @@ class MessagesBloc<T extends BaseChannelBloc>
   Map<String, dynamic> _makeQueryParams(MessagesEvent event) {
     Map<String, dynamic> map = event.toMap();
     map['channel_id'] = map['channel_id'] ?? selectedChannel.id;
-    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompany;
+    map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompanyId;
     map['workspace_id'] = map['workspace_id'] ??
-        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspace);
+        (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId);
     return map;
   }
 
   void _updateParentChannel(String channelId, [int hasUnread = 1]) {
     channelsBloc.add(ModifyMessageCount(
-      workspaceId: ProfileBloc.selectedWorkspace,
+      workspaceId: ProfileBloc.selectedWorkspaceId,
       channelId: channelId ?? selectedChannel.id,
-      companyId: ProfileBloc.selectedCompany,
+      companyId: ProfileBloc.selectedCompanyId,
       hasUnread: hasUnread,
     ));
   }

@@ -1,6 +1,9 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_channel.dart';
+import 'package:twake/models/company.dart';
+import 'package:twake/models/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'profile_repository.g.dart';
@@ -44,6 +47,14 @@ class ProfileRepository extends JsonSerializable {
   String selectedChannelId;
   @JsonKey(ignore: true)
   String selectedThreadId;
+  @JsonKey(ignore: true)
+  Company selectedCompany;
+  @JsonKey(ignore: true)
+  Workspace selectedWorkspace;
+  @JsonKey(ignore: true)
+  BaseChannel selectedChannel;
+  @JsonKey(ignore: true)
+  Map<String, dynamic> badges = {};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
@@ -53,9 +64,9 @@ class ProfileRepository extends JsonSerializable {
       key: _PROFILE_STORE_KEY,
     );
     if (profileMap == null) {
-      logger.d('No profile in storage, requesting from api...');
+      // logger.d('No profile in storage, requesting from api...');
       profileMap = await _api.get(Endpoint.profile);
-      logger.d('RECEIVED PROFILE: $profileMap');
+      // logger.d('RECEIVED PROFILE: $profileMap');
       loadedFromNetwork = true;
     } else {
       profileMap = jsonDecode(profileMap[_storage.settingsField]);
@@ -71,6 +82,13 @@ class ProfileRepository extends JsonSerializable {
   Future<void> reload() async {
     final profileMap = await _api.get(Endpoint.profile);
     _update(profileMap);
+  }
+
+  Future<void> syncBadges() async {
+    this.badges = await _api.get(
+      Endpoint.badges,
+      params: {'company_id': this.selectedCompanyId, 'all_companies': 'true'},
+    );
   }
 
   Future<void> clean() async {

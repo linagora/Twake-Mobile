@@ -17,6 +17,8 @@ class StackedUserAvatars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (userIds.length == 0) return Container(width: width, height: height);
+
     List<Container> paddedAvatars = [];
     for (int i = 0; i < userIds.length; i++) {
       paddedAvatars.add(

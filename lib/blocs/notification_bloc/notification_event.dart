@@ -32,6 +32,13 @@ class ChannelDeleteEvent extends NotificationEvent {
   List<Object> get props => [data];
 }
 
+class BadgeUpdateEvent extends NotificationEvent {
+  const BadgeUpdateEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ReinitSubscriptions extends NotificationEvent {
   const ReinitSubscriptions();
 

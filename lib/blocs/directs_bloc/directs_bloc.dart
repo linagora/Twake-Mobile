@@ -107,13 +107,17 @@ class DirectsBloc extends BaseChannelBloc {
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,
           params: {
-            "company_id": ProfileBloc.selectedCompany,
+            "company_id": ProfileBloc.selectedCompanyId,
             "workspace_id": "direct",
             "channel_id": event.channelId
           });
       repository.selected.messagesUnread = 0;
       repository.selected.hasUnread = 0;
       repository.saveOne(repository.selected);
+
+      ProfileBloc.selectedChannelId = event.channelId;
+      ProfileBloc.selectedThreadId = null;
+
       yield ChannelPicked(
         channels: repository.items,
         selected: repository.selected,

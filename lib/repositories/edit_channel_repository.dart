@@ -60,8 +60,8 @@ class EditChannelRepository {
   }
 
   Future<bool> edit() async {
-    this.companyId = ProfileBloc.selectedCompany;
-    this.workspaceId = ProfileBloc.selectedWorkspace;
+    this.companyId = ProfileBloc.selectedCompanyId;
+    this.workspaceId = ProfileBloc.selectedWorkspaceId;
 
     final body = this.toJson();
 
@@ -78,8 +78,8 @@ class EditChannelRepository {
   }
 
   Future<bool> delete() async {
-    this.companyId = ProfileBloc.selectedCompany;
-    this.workspaceId = ProfileBloc.selectedWorkspace;
+    this.companyId = ProfileBloc.selectedCompanyId;
+    this.workspaceId = ProfileBloc.selectedWorkspaceId;
 
     final body = <String, dynamic>{
       'company_id': companyId,

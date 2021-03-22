@@ -32,8 +32,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
-        repository.logger.d(
-            'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
+        // repository.logger.d(
+        // 'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId));
       }
     });
@@ -54,7 +54,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         }
       }
     });
-    ProfileBloc.selectedWorkspace = repository.selected.id;
+    ProfileBloc.selectedWorkspaceId = repository.selected.id;
     selectedCompanyId = companiesBloc.repository.selected.id;
   }
 
@@ -80,13 +80,12 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     } else if (event is ChangeSelectedWorkspace) {
       // print('Workspace id to select: ${event.workspaceId}');
       repository.select(event.workspaceId);
-      ProfileBloc.selectedWorkspace = event.workspaceId;
+      ProfileBloc.selectedWorkspaceId = event.workspaceId;
       yield WorkspaceSelected(
         workspaces: repository.items,
         selected: repository.selected,
       );
     } else if (event is LoadSingleWorkspace) {
-      // TODO implement single company loading
       throw 'Not implemented yet';
     } else if (event is RemoveWorkspace) {
       throw 'Not implemented yet';

@@ -15,6 +15,8 @@ class Endpoint {
   static const users = '/users';
   // API Endpoint for working with user's companies
   static const companies = '/companies';
+  // API Endpoint for working with user's companies
+  static const badges = '/badges';
   // API Endpoint for working with user's workspaces in all companies
   static const workspaces = '/workspaces';
   // API Endpoint for working with the members of workspace

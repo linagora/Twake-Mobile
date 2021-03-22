@@ -10,6 +10,12 @@ class ReloadProfile extends ProfileEvent {
   List<Object> get props => [];
 }
 
+class UpdateBadges extends ProfileEvent {
+  const UpdateBadges();
+  @override
+  List<Object> get props => [];
+}
+
 class ClearProfile extends ProfileEvent {
   const ClearProfile();
   @override

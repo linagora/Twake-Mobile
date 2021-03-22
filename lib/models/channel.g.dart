@@ -18,11 +18,13 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     ..description = json['description'] as String
     ..membersCount = json['members_count'] as int ?? 0
     ..lastActivity = json['last_activity'] as int ?? 0
-    ..lastMessage = json['last_message'] as Map<String, dynamic>
+    ..lastMessage = json['last_message'] as Map<String, dynamic> ?? {}
     ..lastAccess = json['user_last_access'] as int ?? 0
     ..hasUnread = boolToInt(json['has_unread'])
     ..messagesUnread = json['messages_unread'] as int ?? 0
-    ..isSelected = json['is_selected'] as int ?? 0;
+    ..isSelected = json['is_selected'] as int ?? 0
+    ..permissions =
+        (json['permissions'] as List)?.map((e) => e as String)?.toList() ?? [];
 }
 
 Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
@@ -37,6 +39,7 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'has_unread': boolToInt(instance.hasUnread),
       'messages_unread': instance.messagesUnread,
       'is_selected': instance.isSelected,
+      'permissions': instance.permissions,
       'workspace_id': instance.workspaceId,
       'visibility': instance.visibility,
     };

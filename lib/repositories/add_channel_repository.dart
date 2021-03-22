@@ -82,8 +82,8 @@ class AddChannelRepository {
   }
 
   Future<String> create() async {
-    this.companyId = ProfileBloc.selectedCompany;
-    this.workspaceId = ProfileBloc.selectedWorkspace;
+    this.companyId = ProfileBloc.selectedCompanyId;
+    this.workspaceId = ProfileBloc.selectedWorkspaceId;
 
     switch (type) {
       case ChannelType.public:

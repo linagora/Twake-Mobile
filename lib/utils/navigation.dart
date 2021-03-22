@@ -4,6 +4,7 @@ import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
@@ -17,27 +18,30 @@ void openChannel(BuildContext context, String channelId) =>
 void openDirect(BuildContext context, String channelId) =>
     _open<DirectsBloc>(context, channelId);
 
-void _open<T extends BaseChannelBloc>(BuildContext context, String channelId) {
+Future<void> _open<T extends BaseChannelBloc>(BuildContext context, String channelId) async {
   context.read<T>().add(ChangeSelectedChannel(channelId));
   context.read<MemberCubit>().fetchMembers(channelId: channelId);
-  print('On open: $channelId');
-  Navigator.of(context)
+  // print('On open: $channelId');
+  await Navigator.of(context)
       .push(MaterialPageRoute(
         builder: (context) => MessagesPage<T>(),
       ))
       .then((r) => handleError(r, context));
+
+  ProfileBloc.selectedChannelId = null;
+  ProfileBloc.selectedThreadId = null;
 }
 
 void selectWorkspace(BuildContext context, String workspaceId) {
   context.read<WorkspacesBloc>().add(ChangeSelectedWorkspace(workspaceId));
 }
 
-Future<List<EditChannelState>> openEditChannel(BuildContext context, Channel channel) {
-  return Navigator.of(context)
-      .push(MaterialPageRoute(
-        builder: (context) => EditChannel(channel: channel),
-      ));
-      // .then((r) => handleError(r, context));
+Future<List<EditChannelState>> openEditChannel(
+    BuildContext context, Channel channel) {
+  return Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => EditChannel(channel: channel),
+  ));
+  // .then((r) => handleError(r, context));
 }
 
 void openChooseServer(BuildContext context) {

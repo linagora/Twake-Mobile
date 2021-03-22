@@ -61,7 +61,7 @@ class ChannelsBloc extends BaseChannelBloc {
           workspaceId: state.data.workspaceId,
         ));
       }
-      // else if (state is ChannnelUpdateNotification) {
+      // else if (state is ChannelUpdateNotification) {
       // this.add(
       // ModifyChannelState(
       // channelId: state.data.channelId,
@@ -107,13 +107,13 @@ class ChannelsBloc extends BaseChannelBloc {
       await repository.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
-      repository.logger.w('CHANNEL ${event.channelId} is selected');
+      // repository.logger.w('CHANNEL ${event.channelId} is selected');
       repository.select(event.channelId,
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,
           params: {
-            "company_id": ProfileBloc.selectedCompany,
-            "workspace_id": ProfileBloc.selectedWorkspace,
+            "company_id": ProfileBloc.selectedCompanyId,
+            "workspace_id": ProfileBloc.selectedWorkspaceId,
             "channel_id": event.channelId
           });
 
@@ -125,8 +125,9 @@ class ChannelsBloc extends BaseChannelBloc {
         selected: repository.selected,
         hasUnread: repository.selected.hasUnread,
       );
-      ProfileBloc.selectedChannel = event.channelId;
-      ProfileBloc.selectedThread = null;
+      ProfileBloc.selectedChannelId = event.channelId;
+      ProfileBloc.selectedThreadId = null;
+
       yield newState;
       notificationBloc.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is ModifyMessageCount) {
@@ -138,7 +139,7 @@ class ChannelsBloc extends BaseChannelBloc {
         );
       }
     } else if (event is UpdateSingleChannel) {
-      repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
+      // repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
       var item = await repository.getItemById(event.data.channelId) as Channel;
       if (item != null) {
         item.icon = event.data.icon ?? item.icon ?? '👽';
@@ -147,7 +148,9 @@ class ChannelsBloc extends BaseChannelBloc {
         item.visibility = event.data.visibility ?? item.visibility;
         item.lastMessage = event.data.lastMessage ?? item.lastMessage;
       } else {
-        item = Channel.fromJson(event.data.toJson());
+        this.add(
+            ReloadChannels(workspaceId: selectedParentId, forceFromApi: true));
+        return;
       }
       await repository.saveOne(item);
       if (event.data.workspaceId == selectedParentId) {
