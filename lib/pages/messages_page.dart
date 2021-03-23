@@ -70,8 +70,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
           builder: (ctx, state) {
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
 
-            if ((state is MessagesLoaded ||
-                state is MessagesEmpty) &&
+            if ((state is MessagesLoaded || state is MessagesEmpty) &&
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
@@ -229,9 +228,9 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       draftType = DraftType.direct;
                     }
 
+                    print("REBUILDING MESSAGE EDIT FIELD!");
                     return BlocBuilder<MessageEditBloc, MessageEditState>(
                       builder: (ctx, state) => MessageEditField(
-                        key: UniqueKey(),
                         autofocus: state is MessageEditing,
                         initialText:
                             state is MessageEditing ? state.originalStr : draft,

@@ -10,7 +10,6 @@ class MessageEditField extends StatefulWidget {
   final String initialText;
 
   MessageEditField({
-    Key key,
     @required this.onMessageSend,
     @required this.onTextUpdated,
     this.autofocus = false,
@@ -113,18 +112,9 @@ class _MessageEditField extends State<MessageEditField> {
     return false;
   }
 
-  Widget buildEmojiBoard() {
-    return EmojiKeyboard(
-      onEmojiSelected: (emoji) {
-        _controller.text += emoji.text;
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      },
-      height: MediaQuery.of(context).size.height * 0.35,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    print("REBUILDING EMOJI BOARD!");
     return WillPopScope(
       onWillPop: onBackPress,
       child: Column(
@@ -139,7 +129,15 @@ class _MessageEditField extends State<MessageEditField> {
             onMessageSend: widget.onMessageSend,
             canSend: _canSend,
           ),
-          _emojiVisible ? buildEmojiBoard() : Container(),
+          if (_emojiVisible)
+            EmojiKeyboard(
+              onEmojiSelected: (emoji) {
+                _controller.text += emoji.text;
+                _scrollController
+                    .jumpTo(_scrollController.position.maxScrollExtent);
+              },
+              height: MediaQuery.of(context).size.height * 0.35,
+            ),
         ],
       ),
     );
