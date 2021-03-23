@@ -148,8 +148,23 @@ class ChannelsBloc extends BaseChannelBloc {
         item.visibility = event.data.visibility ?? item.visibility;
         item.lastMessage = event.data.lastMessage ?? item.lastMessage;
       } else {
-        this.add(
-            ReloadChannels(workspaceId: selectedParentId, forceFromApi: true));
+        await repository.reload(
+          queryParams: {
+            'workspace_id': selectedParentId,
+            'company_id': workspacesBloc.selectedCompanyId,
+          },
+          filters: [
+            ['workspace_id', '=', selectedParentId]
+          ],
+          sortFields: {'name': true},
+          forceFromApi: true,
+        );
+        yield ChannelsLoaded(
+          selected: repository.selected,
+          channels: repository.items,
+          force: DateTime.now().toString(),
+        );
+
         return;
       }
       await repository.saveOne(item);

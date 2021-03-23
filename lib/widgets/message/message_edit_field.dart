@@ -114,7 +114,6 @@ class _MessageEditField extends State<MessageEditField> {
 
   @override
   Widget build(BuildContext context) {
-    print("REBUILDING EMOJI BOARD!");
     return WillPopScope(
       onWillPop: onBackPress,
       child: Column(

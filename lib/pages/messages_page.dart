@@ -228,7 +228,6 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       draftType = DraftType.direct;
                     }
 
-                    print("REBUILDING MESSAGE EDIT FIELD!");
                     return BlocBuilder<MessageEditBloc, MessageEditState>(
                       builder: (ctx, state) => MessageEditField(
                         autofocus: state is MessageEditing,
