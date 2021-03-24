@@ -74,6 +74,23 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         workspaces: repository.items,
         selected: repository.selected,
       );
+    } else if (event is CheckForChange) {
+      // Sorry Pavel, but cannot block the stream here with await
+      repository.didChange(
+        filters: [
+          ['company_id', '=', event.companyId]
+        ],
+        queryParams: {'company_id': event.companyId},
+      ).then((changed) {
+        if (changed) this.add(ForceRefresh());
+      });
+    } else if (event is ForceRefresh) {
+      repository.items.sort((w1, w2) => w1.name.compareTo(w2.name));
+      yield WorkspacesLoaded(
+        workspaces: repository.items,
+        selected: repository.selected,
+        force: DateTime.now().toString(),
+      );
     } else if (event is ClearWorkspaces) {
       await repository.clean();
       yield WorkspacesEmpty();

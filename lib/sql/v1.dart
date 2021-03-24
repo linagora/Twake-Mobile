@@ -24,8 +24,7 @@ CREATE TABLE workspace (
     color TEXT,
     user_last_access INT,
     total_members INT DEFAULT 0,
-    is_selected INT DEFAULT 0,
-    FOREIGN KEY(company_id) REFERENCES company(id)
+    is_selected INT DEFAULT 0
 );
 CREATE INDEX workspace_company_idx ON workspace(company_id);
 ''';
@@ -44,8 +43,7 @@ CREATE TABLE channel (
     members_count INT DEFAULT 0,
     last_message TEXT,
     messages_unread INT DEFAULT 0,
-    is_selected INT DEFAULT 0,
-    FOREIGN KEY(workspace_id) REFERENCES workspace(id)
+    is_selected INT DEFAULT 0
 );
 CREATE INDEX channel_workspace_idx ON channel(workspace_id);
 ''';
@@ -64,8 +62,7 @@ CREATE TABLE direct (
     messages_unread INT DEFAULT 0,
     last_message TEXT,
     is_selected INT DEFAULT 0,
-    has_unread INT DEFAULT 0,
-    FOREIGN KEY(company_id) REFERENCES company(id)
+    has_unread INT DEFAULT 0
 );
 CREATE INDEX direct_company_idx ON direct(company_id);
 ''';
