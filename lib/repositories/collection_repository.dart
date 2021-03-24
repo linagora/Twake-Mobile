@@ -149,6 +149,34 @@ class CollectionRepository<T extends CollectionItem> {
     return true;
   }
 
+  Future<bool> didChange({
+    Map<String, dynamic> queryParams,
+    List<List> filters, // fields to filter by in store
+  }) async {
+    final itemsList = await _storage.batchLoad(
+      type: _typeToStorageType[T],
+      filters: filters,
+      limit: 100000,
+      offset: 0,
+    );
+    List remote;
+    if (itemsList.isEmpty) return false;
+    try {
+      remote = await _api.get(apiEndpoint, params: queryParams);
+      logger.w("GOT WORKSPACES: ${remote.map((w) => w['name']).toSet()}");
+    } on ApiError catch (error) {
+      logger.d('ERROR while reloading $T items from api\n${error.message}');
+      return false;
+    }
+    if (remote.length != itemsList.length) {
+      logger.w("LOCAL != REMOTE");
+      await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+      _updateItems(remote, saveToStore: true);
+      return true;
+    }
+    return false;
+  }
+
   Future<bool> pullOne(
     Map<String, dynamic> queryParams, {
     bool addToItems = true,

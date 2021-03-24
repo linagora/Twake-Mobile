@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart' show ProfileBloc;
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
@@ -14,7 +15,12 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       titleSpacing: 0.0,
       leading: InkWell(
-        onTap: () => scaffoldKey.currentState.openDrawer(),
+        onTap: () {
+          context
+              .read<WorkspacesBloc>()
+              .add(CheckForChange(ProfileBloc.selectedCompany.id));
+          scaffoldKey.currentState.openDrawer();
+        },
         child: Image.asset('assets/images/menu.png'),
       ),
       backgroundColor: Colors.white,

@@ -15,6 +15,24 @@ class ReloadWorkspaces extends WorkspacesEvent {
   List<Object> get props => [companyId];
 }
 
+class ForceRefresh extends WorkspacesEvent {
+  // parent company id
+  const ForceRefresh();
+
+  @override
+  List<Object> get props => [];
+}
+
+class CheckForChange extends WorkspacesEvent {
+  // parent company id
+  final String companyId;
+
+  const CheckForChange(this.companyId);
+
+  @override
+  List<Object> get props => [companyId];
+}
+
 class ClearWorkspaces extends WorkspacesEvent {
   const ClearWorkspaces();
 

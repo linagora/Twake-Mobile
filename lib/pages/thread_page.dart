@@ -170,7 +170,6 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                       MessageEditState>(
                                     builder: (ctx, state) {
                                       return MessageEditField(
-                                        key: UniqueKey(),
                                         initialText: state is MessageEditing
                                             ? state.originalStr
                                             : draft ?? '',
