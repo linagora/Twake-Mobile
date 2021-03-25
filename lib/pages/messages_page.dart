@@ -269,10 +269,10 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
 
   void _goEdit(BuildContext context, MessagesState state) async {
     final params = await openEditChannel(context, state.parentChannel);
-    if (params.length != 0) {
+    if (params != null && params.length > 0) {
       final editingState = params.first;
       if (editingState is EditChannelDeleted) {
-        Navigator.of(context).pop();
+        Navigator.of(context).maybePop();
       }
     }
   }
