@@ -9,6 +9,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
+import 'package:twake/widgets/common/channel_title.dart';
 
 class ChannelTile extends StatelessWidget {
   final Channel channel;
@@ -42,32 +43,11 @@ class ChannelTile extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              fontWeight: channel.hasUnread == 1
-                                  ? FontWeight.w900
-                                  : FontWeight.w400,
-                              color: Color(0xff444444),
-                            ),
-                            children: [
-                              TextSpan(text: channel.name),
-                              WidgetSpan(child: SizedBox(width: 6)),
-                              if (channel.visibility != null &&
-                                  channel.visibility == 'private')
-                                WidgetSpan(
-                                  alignment: PlaceholderAlignment.middle,
-                                  child: Icon(
-                                    Icons.lock_outline,
-                                    size: 16.0,
-                                    color: Color(0xff444444),
-                                  ),
-                                ),
-                            ],
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          // textAlign: TextAlign.start,
+                        child: ChannelTitle(
+                          name: channel.name,
+                          hasUnread: channel.hasUnread == 1,
+                          isPrivate: channel.visibility != null &&
+                              channel.visibility == 'private',
                         ),
                       ),
                       Text(
