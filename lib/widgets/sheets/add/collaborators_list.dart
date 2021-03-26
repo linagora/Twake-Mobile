@@ -7,7 +7,6 @@ import 'package:twake/repositories/add_workspace_repository.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/removable_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
-import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CollaboratorsList extends StatefulWidget {
@@ -25,12 +24,12 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
     super.initState();
     // First field init
     context.read<FieldsCubit>().add(
-        RemovableTextField(
+        field: RemovableTextField(
           key: UniqueKey(),
           index: 0,
           isLastOne: true,
         ),
-        0);
+        atIndex: 0);
   }
 
   void _return() {

@@ -38,7 +38,9 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
       _controller.addListener(() {
         String text = _controller.text;
         if (text.isNotReallyEmpty) {
-          context.read<FieldsCubit>().update(_index, text);
+          context
+              .read<FieldsCubit>()
+              .update(withContent: text, atIndex: _index);
         }
       });
     });
@@ -63,20 +65,20 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
 
   void _add() {
     context.read<FieldsCubit>().add(
-      RemovableTextField(
-        key: UniqueKey(),
-        index: _index + 1,
-        isLastOne: true,
-      ),
-      _index + 1,
-    );
+          field: RemovableTextField(
+            key: UniqueKey(),
+            index: _index + 1,
+            isLastOne: true,
+          ),
+          atIndex: _index + 1,
+        );
     setState(() {
       _isLastOne = false;
     });
   }
 
   void _remove() {
-    context.read<FieldsCubit>().remove(_index);
+    context.read<FieldsCubit>().remove(atIndex: _index);
   }
 
   @override
@@ -137,7 +139,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                             child: Icon(
                               CupertinoIcons.clear_thick_circled,
                               color:
-                              _inFocus ? Colors.grey : Colors.transparent,
+                                  _inFocus ? Colors.grey : Colors.transparent,
                               size: 20,
                             ),
                           ),

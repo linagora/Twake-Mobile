@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/repositories/fields_repository.dart';
@@ -8,25 +9,28 @@ class FieldsCubit extends Cubit<FieldsState> {
 
   FieldsCubit(this.repository) : super(FieldsInitial());
 
-  void add(Widget field, int index) async {
-    final result = await repository.add(field, index);
+  Future<void> add({@required Widget field, @required int atIndex}) async {
+    final result = await repository.add(field, atIndex);
     // print('Current map: ${repository.data}');
     emit(Added(fields: result));
   }
 
-  void remove(int index) async {
-    final result = await repository.remove(index);
+  Future<void> remove({@required int atIndex}) async {
+    final result = await repository.remove(atIndex);
     // print('Current map: ${repository.data}');
     emit(Removed(fields: result));
   }
 
-  void update(int index, String content) async {
-    final result = await repository.updateData(index, content);
+  Future<void> update({
+    @required String withContent,
+    @required int atIndex,
+  }) async {
+    final result = await repository.updateData(atIndex, withContent);
     // print('Current map: $result');
     emit(Updated(data: result));
   }
 
-  void clear() async {
+  Future<void> clear() async {
     final result = await repository.clear();
     emit(
       result.isEmpty
