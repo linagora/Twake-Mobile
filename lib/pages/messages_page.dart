@@ -229,33 +229,36 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                     }
 
                     return BlocBuilder<MessageEditBloc, MessageEditState>(
-                      builder: (ctx, state) => MessageEditField(
-                        autofocus: state is MessageEditing,
-                        initialText:
-                            state is MessageEditing ? state.originalStr : draft,
-                        onMessageSend: state is MessageEditing
-                            ? state.onMessageEditComplete
-                            : (content) {
-                                BlocProvider.of<MessagesBloc<T>>(context).add(
-                                  SendMessage(content: content),
-                                );
-                                context.read<DraftBloc>().add(
-                                      ResetDraft(
-                                          id: channelId, type: draftType),
-                                    );
-                              },
-                        onTextUpdated: state is MessageEditing
-                            ? (text) {}
-                            : (text) {
-                                context.read<DraftBloc>().add(
-                                      UpdateDraft(
-                                        id: channelId,
-                                        type: draftType,
-                                        draft: text,
-                                      ),
-                                    );
-                              },
-                      ),
+                      builder: (ctx, state) {
+                        return MessageEditField(
+                          autofocus: state is MessageEditing,
+                          initialText: state is MessageEditing
+                              ? state.originalStr
+                              : draft,
+                          onMessageSend: state is MessageEditing
+                              ? state.onMessageEditComplete
+                              : (content) {
+                                  BlocProvider.of<MessagesBloc<T>>(context).add(
+                                    SendMessage(content: content),
+                                  );
+                                  context.read<DraftBloc>().add(
+                                        ResetDraft(
+                                            id: channelId, type: draftType),
+                                      );
+                                },
+                          onTextUpdated: state is MessageEditing
+                              ? (text) {}
+                              : (text) {
+                                  context.read<DraftBloc>().add(
+                                        UpdateDraft(
+                                          id: channelId,
+                                          type: draftType,
+                                          draft: text,
+                                        ),
+                                      );
+                                },
+                        );
+                      },
                     );
                   },
                 ),

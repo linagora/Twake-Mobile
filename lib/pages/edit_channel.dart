@@ -275,9 +275,9 @@ class _EditChannelState extends State<EditChannel> {
             listener: (context, state) {
               print('EditChannel State: $state');
               if (state is EditChannelSaved || state is EditChannelDeleted) {
-                // context
-                //     .read<ChannelsBloc>()
-                //     .add(ReloadChannels(forceFromApi: true));
+                context
+                    .read<ChannelsBloc>()
+                    .add(ReloadChannels(forceFromApi: true));
                 Navigator.of(context).pop([state]);
               }
             },
