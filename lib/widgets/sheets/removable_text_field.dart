@@ -25,7 +25,6 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
   var _isLastOne = false;
   var _index = 0;
   var _inFocus = false;
-  var _editable = true;
 
   @override
   void initState() {
@@ -37,6 +36,8 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.addListener(() {
         String text = _controller.text;
+        print('Update text: $text');
+        print('Update at index: $_index');
         if (text.isNotReallyEmpty) {
           context
               .read<FieldsCubit>()

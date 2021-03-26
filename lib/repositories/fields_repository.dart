@@ -51,7 +51,12 @@ class FieldsRepository {
   }
 
   Future<Map<int, String>> updateData(int index, String content) async {
+    print('Content: $content');
+    print('Index: $index');
+
     data[index] = content;
+    print('Data: $data');
+
     return Map<int, String>.from(data);
   }
 }

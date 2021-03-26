@@ -114,7 +114,8 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
           bool createIsBlocked = state is Creation;
           if (state is Updated) {
             _collaborators = state.repository?.members;
-            // print('Collaborators: $_collaborators');
+
+            print('Collaborators: $_collaborators');
           }
           return BlocListener<WorkspacesBloc, WorkspaceState>(
             listener: (context, state) {
