@@ -40,29 +40,36 @@ class ChannelTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        channel.name,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: channel.hasUnread == 1
-                              ? FontWeight.w900
-                              : FontWeight.w400,
-                          color: Color(0xff444444),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: channel.hasUnread == 1
+                                  ? FontWeight.w900
+                                  : FontWeight.w400,
+                              color: Color(0xff444444),
+                            ),
+                            children: [
+                              TextSpan(text: channel.name),
+                              WidgetSpan(child: SizedBox(width: 6)),
+                              if (channel.visibility != null &&
+                                  channel.visibility == 'private')
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.middle,
+                                  child: Icon(
+                                    Icons.lock_outline,
+                                    size: 16.0,
+                                    color: Color(0xff444444),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          // textAlign: TextAlign.start,
                         ),
                       ),
-                      SizedBox(width: 6),
-                      if (channel.visibility != null &&
-                          channel.visibility == 'private')
-                        Icon(
-                          Icons.lock_outline,
-                          size: 16.0,
-                          color: Color(0xff444444),
-                        ),
-                      Spacer(),
                       Text(
                         DateFormatter.getVerboseDateTime(channel.lastActivity),
                         style: Theme.of(context).textTheme.subtitle2,
@@ -90,12 +97,13 @@ class ChannelTile extends StatelessWidget {
                       BlocBuilder<ProfileBloc, ProfileState>(
                         buildWhen: (_, curr) => curr is ProfileLoaded,
                         builder: (ctx, state) {
-                          final count =
-                          (state as ProfileLoaded).getBadgeForChannel(channel.id);
+                          final count = (state as ProfileLoaded)
+                              .getBadgeForChannel(channel.id);
                           if (count > 0) {
                             return Badge(
                               shape: BadgeShape.square,
-                              borderRadius: BorderRadius.all(Radius.circular(5)),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
                               padding: EdgeInsets.symmetric(
                                 horizontal: 5,
                                 vertical: 2,
