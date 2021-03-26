@@ -10,7 +10,7 @@ class ChannelTitle extends StatelessWidget {
     Key key,
     @required this.name,
     @required this.isPrivate,
-    @required this.hasUnread,
+    this.hasUnread = false,
   }) : super(key: key);
 
   @override

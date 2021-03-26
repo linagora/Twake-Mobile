@@ -16,6 +16,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
+import 'package:twake/widgets/common/channel_title.dart';
 import 'package:twake/widgets/message/message_edit_field.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
@@ -128,32 +129,17 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: ShimmerLoading(
-                                    key: ValueKey<String>('name'),
-                                    isLoading: parentChannel.name == null,
-                                    width: 60.0,
-                                    height: 10.0,
-                                    child: Text(
-                                      parentChannel.name ?? '',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xff444444),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 6),
-                                if ((parentChannel is Channel) &&
+                            ShimmerLoading(
+                              key: ValueKey<String>('name'),
+                              isLoading: parentChannel.name == null,
+                              width: 60.0,
+                              height: 10.0,
+                              child: ChannelTitle(
+                                name: parentChannel.name ?? '',
+                                isPrivate: (parentChannel is Channel) &&
                                     parentChannel.visibility != null &&
-                                    parentChannel.visibility == 'private')
-                                  Icon(Icons.lock_outline,
-                                      size: 15.0, color: Color(0xff444444)),
-                              ],
+                                    parentChannel.visibility == 'private',
+                              ),
                             ),
                             SizedBox(height: 4),
                             if (parentChannel is Channel)
