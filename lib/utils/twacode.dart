@@ -4,30 +4,18 @@ class TwacodeParser {
 
   TwacodeParser(this.original);
 
-  static final RegExp REGEX_EMOJI = RegExp(
+  static final RegExp regexEmoji = RegExp(
       r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+  // for (var e in REGEX_EMOJI.allMatches(text)) {}
 
-  List<dynamic> parse(String text) {
-    List<dynamic> twacode = [];
-    List<dynamic> open = [];
-    List<TwacodeType> stack = [];
+  ASTNode parse(String text, [TwacodeType parent = TwacodeType.Root]) {
+    ASTNode node = ASTNode();
+    String running = "";
 
-    // for (var e in REGEX_EMOJI.allMatches(text)) {}
-    List<int> running = [];
-    List<dynamic> currentParent = twacode;
-
-    for (var rune in text.runes) {
-      final last = stack.isEmpty ? TwacodeType.Text : stack.last;
+    for (int i = 0; i < text.length; i++) {
+      var rune = text[i];
       if (rune == Delimiter.star) {
-        if (last == TwacodeType.Italic) {
-          twacode.add({
-            "start": "*",
-            "content": String.fromCharCodes(running),
-            "end": "*"
-          });
-          stack.removeLast();
-          running.clear();
-        } else {}
+        if (parent == TwacodeType.Italic) {}
       } else if (rune == Delimiter.underline) {
         break;
       } else if (rune == Delimiter.tilde) {
@@ -39,9 +27,9 @@ class TwacodeParser {
       } else if (rune == Delimiter.at) {
         break;
       }
-      running.add(rune);
+      running += rune;
     }
-    return twacode;
+    return node;
   }
 }
 
@@ -53,6 +41,9 @@ class ASTNode {
   dynamic transform() {
     Map<String, dynamic> map = {};
     switch (this.type) {
+      case TwacodeType.Root:
+        return this.children.map((c) => c.transform()).toList();
+
       case TwacodeType.Text:
         return this.text;
 
@@ -123,11 +114,6 @@ class ASTNode {
         map['content'] = this.text;
         break;
 
-      case TwacodeType.Email:
-        map['type'] = 'email';
-        map['content'] = this.text;
-        break;
-
       default:
         throw Exception('Unsupported type');
     }
@@ -135,6 +121,7 @@ class ASTNode {
 }
 
 enum TwacodeType {
+  Root,
   Text,
   LineBreak,
   InlineCode,
@@ -151,10 +138,10 @@ enum TwacodeType {
 }
 
 class Delimiter {
-  static int star = '*'.codeUnitAt(0);
-  static int underline = '_'.codeUnitAt(0);
-  static int tilde = '~'.codeUnitAt(0);
-  static int gt = '>'.codeUnitAt(0);
-  static int tick = '`'.codeUnitAt(0);
-  static int at = '@'.codeUnitAt(0);
+  static String star = '*';
+  static String underline = '_';
+  static String tilde = '~';
+  static String gt = '>';
+  static String tick = '`';
+  static String at = '@';
 }
