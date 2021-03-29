@@ -141,8 +141,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void reinit() async {
-    if (connectionBloc.state is ConnectionLost) return;
-    if (socket.disconnected) socket = socket.connect();
+    while (true) {
+      if (connectionBloc.state is ConnectionLost) return;
+      if (socket.disconnected) socket = socket.connect();
+      // Wait for the socket to authenticate;
+      await Future.delayed(Duration(seconds: 3));
+      if (this.socketConnectionState == SocketConnectionState.AUTHENTICATED) {
+        break;
+      }
+    }
     for (String room in subscriptionRooms.keys) {
       unsubscribe(room);
     }
