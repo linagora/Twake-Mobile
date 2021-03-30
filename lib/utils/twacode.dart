@@ -342,17 +342,3 @@ class Delim {
   static String lf = '\n';
   static String ws = ' ';
 }
-
-int main() {
-  var parsed = TwacodeParser(
-    """Hello **Comrades**, I'm from __Russian__ forests
-I have `traveled` a _long_ distance to get here
-> here is the quote and it's terrible
-And also I **can code**
-```Like this```
-~~I don't like~~ this *
-    """,
-  );
-  print("NODES: ${parsed.nodes.map((el) => el.transform()).toList()}");
-  return 1;
-}

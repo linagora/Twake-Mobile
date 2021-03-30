@@ -1,7 +1,6 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
@@ -21,7 +20,7 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
@@ -209,24 +208,24 @@ class _MessageTileState<T extends BaseChannelBloc>
                             ],
                           ),
                           SizedBox(height: 5.0),
-                          MarkdownBody(
-                            onTapLink:
-                                (String text, String href, String title) async {
-                              if (await canLaunch(href)) {
-                                await launch(
-                                  href,
-                                  forceSafariVC: false,
-                                  forceWebView: false,
-                                );
-                              } else {
-                                throw 'Could not launch $href';
-                              }
-                            },
-                            data: messageState.text.replaceAll(
-                              singleLineFeed,
-                              '\\\n',
-                            ),
-                          ),
+                          // MarkdownBody(
+                          // onTapLink:
+                          // (String text, String href, String title) async {
+                          // if (await canLaunch(href)) {
+                          // await launch(
+                          // href,
+                          // forceSafariVC: false,
+                          // forceWebView: false,
+                          // );
+                          // } else {
+                          // throw 'Could not launch $href';
+                          // }
+                          // },
+                          // data: messageState.text.replaceAll(
+                          // singleLineFeed,
+                          // '\\\n',
+                          // ),
+                          // ),
                           // Parser(messageState.content,
                           // messageState.charCount)
                           // .render(context),
