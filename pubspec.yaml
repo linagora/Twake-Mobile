@@ -54,7 +54,7 @@ dependencies:
     # path: ../emoji_keyboard
     git: https://github.com/bobs4462/emoji_keyboard.git
 
-  flutter_markdown: 
+  flutter_markdown:
     git: https://github.com/bobs4462/flutter_markdown.git
 
   flutter_local_notifications: ^4.0.1+1
