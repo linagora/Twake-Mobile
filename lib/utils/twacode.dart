@@ -8,6 +8,8 @@ class TwacodeParser {
     parse();
   }
 
+  List<dynamic> get message => nodes.map((n) => n.transform()).toList();
+
   void parse() {
     int start = 0;
     for (int i = 0; i < original.length - 1; i++) {
@@ -89,7 +91,34 @@ class TwacodeParser {
                 type: TType.User,
                 text: original.substring(i + 1, index - 1),
               ));
-          start = i + 1;
+          i = start = index;
+        }
+      } else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
+        final index = this.doesCloseInlineCode(i + 1);
+        if (index != 0) {
+          this.nodes.add(
+                ASTNode(type: TType.Text, text: original.substring(start, i)),
+              );
+          this.nodes.add(ASTNode(
+                type: TType.InlineCode,
+                text: original.substring(i + 1, index - 1),
+              ));
+          i = start = index;
+        }
+      } else if (original[i] == Delim.tick &&
+          original[i + 1] == Delim.tick &&
+          i + 2 < original.length &&
+          original[i + 2] == Delim.tick) {
+        final index = this.doesCloseMultiCode(i + 3);
+        if (index != 0) {
+          this.nodes.add(
+                ASTNode(type: TType.Text, text: original.substring(start, i)),
+              );
+          this.nodes.add(ASTNode(
+                type: TType.MultiLineCode,
+                text: original.substring(i + 3, index - 3),
+              ));
+          i = start = index;
         }
       }
     }
@@ -158,6 +187,33 @@ class TwacodeParser {
     for (int j = i; j < len && original[j] != '\n'; j++) {
       if (original[j] == Delim.tilde && original[j + 1] == Delim.tilde) {
         return j + 2;
+      }
+    }
+    return 0;
+  }
+
+  int doesCloseInlineCode(int i) {
+    final len = original.length;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.tick) {
+        return j + 1;
+      }
+    }
+    return 0;
+  }
+
+  int doesCloseMultiCode(int i) {
+    final len = original.length;
+    int ticks = 0;
+    for (int j = i; j < len; j++) {
+      if (original[j] == Delim.tick) {
+        if (ticks == 2) {
+          return j + 1;
+        } else {
+          ticks += 1;
+        }
+      } else {
+        ticks = 0;
       }
     }
     return 0;
@@ -289,9 +345,14 @@ class Delim {
 
 int main() {
   var parsed = TwacodeParser(
-      "**HELLO * HELLO ** OUCH ** I *\nHELLLO _HI_ ~~HELLO~~ *BOD\n> EHLLO MY FRIENS\nYAHOUUU!");
+    """Hello **Comrades**, I'm from __Russian__ forests
+I have `traveled` a _long_ distance to get here
+> here is the quote and it's terrible
+And also I **can code**
+```Like this```
+~~I don't like~~ this *
+    """,
+  );
   print("NODES: ${parsed.nodes.map((el) => el.transform()).toList()}");
-  parsed = TwacodeParser("\nNEW ** HELLO **\n");
-  print("NODES: ${parsed.nodes.map((el) => el.transform())}");
   return 1;
 }
