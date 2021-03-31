@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
-const _RECEIVE_TIMEOUT = 7;
-const _SEND_TIMEOUT = 5;
-const _CONNECT_TIMEOUT = 50;
+const _RECEIVE_TIMEOUT = 7000;
+const _SEND_TIMEOUT = 5000;
+const _CONNECT_TIMEOUT = 50000;
 const _PROXY_PREFIX = "/internal/mobile";
 
 class Api {
@@ -235,6 +235,7 @@ class Api {
           options.headers['Authorization'] =
               dio.options.headers['Authorization'];
           print("SENDING OUT THE REQUEST");
+          handler.next(options);
         },
         onError: (DioError error, ErrorInterceptorHandler handler) async {
           // Due to the bugs in JWT handling from twake api side,
