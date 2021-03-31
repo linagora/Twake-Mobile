@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
-const _RECEIVE_TIMEOUT = 7000;
-const _SEND_TIMEOUT = 5000;
-const _CONNECT_TIMEOUT = 50000;
+const _RECEIVE_TIMEOUT = 7;
+const _SEND_TIMEOUT = 5;
+const _CONNECT_TIMEOUT = 50;
 const _PROXY_PREFIX = "/internal/mobile";
 
 class Api {
@@ -92,10 +92,10 @@ class Api {
     final url = host + method;
     try {
       final response = await dio.delete(url, data: body);
-      // logger.d('METHOD: $url');
-      // logger.d('GET HEADERS: ${dio.options.headers}');
-      // logger.d('DELETE REQUEST BODY: $body');
-      // logger.d('DELETE RESPONSE: ${response.data}');
+      logger.d('METHOD: $url');
+      logger.d('GET HEADERS: ${dio.options.headers}');
+      logger.d('DELETE REQUEST BODY: $body');
+      logger.d('DELETE RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -109,38 +109,37 @@ class Api {
   }) async {
     checkConnection();
     method = _getMethodPath(method);
+    final url = Api.host + method;
     // Extract scheme and host by splitting the url
-    var split = Api.host.split('://');
-    assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
-    final scheme = split[0];
-    var host = split[1];
-    split = host.split(':');
-    var port;
-    if (split.length == 2) {
-      host = split[0];
-      port = int.parse(split[1]);
-    }
-
+    // var split = Api.host.split('://');
+    // assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
+    // final scheme = split[0];
+    // var host = split[1];
+    // split = host.split(':');
+    // var port;
+    // if (split.length == 2) {
+    // host = split[0];
+    // port = int.parse(split[1]);
+    // }
+//
     // logger.d('host: $host\nport: $port\n$scheme');
-    final uri = Uri(
-      scheme: scheme,
-      host: host,
-      port: port,
-      path: method,
-      queryParameters: params,
-    );
+    // final uri = Uri(
+    // scheme: scheme,
+    // host: host,
+    // port: port,
+    // path: method,
+    // queryParameters: params,
+    // );
     try {
-      final s = Stopwatch();
-      s.start();
-      final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      s.stop();
-      // logger.d('GET HEADERS: ${dio.options.headers}');
-      // logger.d(
-      // 'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
-      // logger.d('PARAMS: $params');
+      LogPrint('GET HEADERS: ${dio.options.headers}');
+      logger.d('METHOD: $url');
+      logger.d('PARAMS: $params');
+      final response = await (useTokenDio ? tokenDio : dio)
+          .get(url, queryParameters: params);
       // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
+      logger.wtf('FAILED TO GET INFO: $e');
       throw ApiError.fromDioError(e);
     }
   }
@@ -228,27 +227,27 @@ class Api {
     dio.interceptors.add(
       InterceptorsWrapper(
         // token validation causes infinite loop
-        onRequest: (options) async {
+        onRequest: (options, handler) async {
           if (!(await autoProlongToken())) {
-            return dio.reject('Both tokens have expired');
+            return handler.reject(DioError(
+                error: 'Both tokens have expired', requestOptions: options));
           }
-          // print('REQUEST HEADERS: ${options.headers}\n'
-          // 'DIO HEADERS: ${dio.options.headers}');
           options.headers['Authorization'] =
               dio.options.headers['Authorization'];
+          print("SENDING OUT THE REQUEST");
         },
-        onError: (DioError error) async {
+        onError: (DioError error, ErrorInterceptorHandler handler) async {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
             logger.e('Error during network request!' +
-                '\nMethod: ${error.request.method}' +
-                '\nPATH: ${error.request.path}' +
-                '\nHeaders: ${error.request.headers}' +
+                '\nMethod: ${error.requestOptions.method}' +
+                '\nPATH: ${error.requestOptions.path}' +
+                '\nHeaders: ${error.requestOptions.headers}' +
                 '\nResponse: ${error.response.data}' +
-                '\nBODY: ${jsonEncode(error.request.data)}' +
-                '\nQUERY: ${error.request.queryParameters}');
+                '\nBODY: ${jsonEncode(error.requestOptions.data)}' +
+                '\nQUERY: ${error.requestOptions.queryParameters}');
           } else {
             logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
             return error;
@@ -288,7 +287,7 @@ class ApiError implements Exception {
   factory ApiError.fromDioError(DioError error) {
     var apiErrorType = ApiErrorType.Unknown;
     if (error.response == null) {
-      Logger().wtf("UNEXPECTED ERROR:\n$error");
+      Logger().wtf("UNEXPECTED ERROR:\n${error.error}");
       apiErrorType = ApiErrorType.Unauthorized;
     } else if (error.response.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;
@@ -313,4 +312,25 @@ enum TokenStatus {
   AccessExpired,
   BothExpired,
   Valid,
+}
+void LogPrint(Object object) async {
+  int defaultPrintLength = 1020;
+  if (object == null || object.toString().length <= defaultPrintLength) {
+    print(object);
+  } else {
+    String log = object.toString();
+    int start = 0;
+    int endIndex = defaultPrintLength;
+    int logLength = log.length;
+    int tmpLogLength = log.length;
+    while (endIndex < logLength) {
+      print(log.substring(start, endIndex));
+      endIndex += defaultPrintLength;
+      start += defaultPrintLength;
+      tmpLogLength -= defaultPrintLength;
+    }
+    if (tmpLogLength > 0) {
+      print(log.substring(start, logLength));
+    }
+  }
 }

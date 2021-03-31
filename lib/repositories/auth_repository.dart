@@ -68,7 +68,7 @@ class AuthRepository extends JsonSerializable {
     // print('Actual host for auth: ${configurationRepository.host}');
     Api.host = configurationRepository.host;
 
-    final fcmToken = (await FirebaseMessaging().getToken());
+    final fcmToken = (await FirebaseMessaging.instance.getToken());
     // print('FCM TOKEN: $fcmToken');
 
     final apiVersion = (await PackageInfo.fromPlatform()).version;

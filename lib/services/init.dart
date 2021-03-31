@@ -42,92 +42,96 @@ Future<AuthRepository> initAuth() async {
 }
 
 Future<InitData> initMain() async {
-  // await Emojis.load();
-  final profile = await ProfileRepository.load();
-  await profile.syncBadges();
-  final sheet = await SheetRepository.load();
-  final addChannel = await AddChannelRepository.load();
-  final addDirect = AddDirectRepository();
-  final editChannel = await EditChannelRepository.load();
-  final addWorkspace = AddWorkspaceRepository();
-  final fields = FieldsRepository(fields: [], data: {});
-  final draft = DraftRepository();
-  final _ = UserRepository(Endpoint.users);
-  final companies = await CollectionRepository.load<Company>(
-    Endpoint.companies,
-    sortFields: {'name': true},
-  );
-  final workspaces = await CollectionRepository.load<Workspace>(
-    Endpoint.workspaces,
-    filters: [
-      ['company_id', '=', companies.selected.id]
-    ],
-    queryParams: {'company_id': companies.selected.id},
-    sortFields: {'name': true},
-  );
-  final channels = await CollectionRepository.load<Channel>(
-    Endpoint.channels,
-    queryParams: {
-      'workspace_id': workspaces.selected.id,
-      'company_id': companies.selected.id,
-    },
-    filters: [
-      ['workspace_id', '=', workspaces.selected.id]
-    ],
-    sortFields: {'name': true},
-  );
-  final directs = await CollectionRepository.load<Direct>(
-    Endpoint.directs,
-    queryParams: {
-      'company_id': companies.selected.id,
-    },
-    sortFields: {'last_activity': false},
-    filters: [
-      ['company_id', '=', companies.selected.id]
-    ],
-  );
-  // final directs =
-  // CollectionRepository<Direct>(items: [], apiEndpoint: Endpoint.directs);
-  final messages =
-      MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
-  final messagesDirect =
-      MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
-  final threads = MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
-  var channelMembers;
-  if (!channels.isEmpty) {
-    channelMembers = await MemberRepository.load(
-      Endpoint.channelMembers,
+  print("INIT MAIN");
+  try {
+    final profile = await ProfileRepository.load();
+    await profile.syncBadges();
+    final sheet = await SheetRepository.load();
+    final addChannel = await AddChannelRepository.load();
+    final addDirect = AddDirectRepository();
+    final editChannel = await EditChannelRepository.load();
+    final addWorkspace = AddWorkspaceRepository();
+    final fields = FieldsRepository(fields: [], data: {});
+    final draft = DraftRepository();
+    final _ = UserRepository(Endpoint.users);
+    final companies = await CollectionRepository.load<Company>(
+      Endpoint.companies,
+      sortFields: {'name': true},
+    );
+    final workspaces = await CollectionRepository.load<Workspace>(
+      Endpoint.workspaces,
+      filters: [
+        ['company_id', '=', companies.selected.id]
+      ],
+      queryParams: {'company_id': companies.selected.id},
+      sortFields: {'name': true},
+    );
+    final channels = await CollectionRepository.load<Channel>(
+      Endpoint.channels,
+      queryParams: {
+        'workspace_id': workspaces.selected.id,
+        'company_id': companies.selected.id,
+      },
+      filters: [
+        ['workspace_id', '=', workspaces.selected.id]
+      ],
+      sortFields: {'name': true},
+    );
+    final directs = await CollectionRepository.load<Direct>(
+      Endpoint.directs,
       queryParams: {
         'company_id': companies.selected.id,
-        'workspace_id': workspaces.selected.id,
-        'channel_id': channels.selected.id,
       },
-      sortFields: {'channel_id': true},
+      sortFields: {'last_activity': false},
+      filters: [
+        ['company_id', '=', companies.selected.id]
+      ],
     );
-  } else
-    channelMembers = MemberRepository(
-      items: [],
-      apiEndpoint: Endpoint.channelMembers,
+    final messages =
+        MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
+    final messagesDirect =
+        MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
+    final threads =
+        MessagesRepository(items: [], apiEndpoint: Endpoint.messages);
+    var channelMembers;
+    if (!channels.isEmpty) {
+      channelMembers = await MemberRepository.load(
+        Endpoint.channelMembers,
+        queryParams: {
+          'company_id': companies.selected.id,
+          'workspace_id': workspaces.selected.id,
+          'channel_id': channels.selected.id,
+        },
+        sortFields: {'channel_id': true},
+      );
+    } else
+      channelMembers = MemberRepository(
+        items: [],
+        apiEndpoint: Endpoint.channelMembers,
+      );
+    return InitData(
+      profile: profile,
+      companies: companies,
+      workspaces: workspaces,
+      channels: channels,
+      directs: directs,
+      messages: messages,
+      messagesDirect: messagesDirect,
+      threads: threads,
+      sheet: sheet,
+      addChannel: addChannel,
+      addDirect: addDirect,
+      editChannel: editChannel,
+      channelMembers: channelMembers,
+      addWorkspace: addWorkspace,
+      draft: draft,
+      fields: fields,
     );
-
-  return InitData(
-    profile: profile,
-    companies: companies,
-    workspaces: workspaces,
-    channels: channels,
-    directs: directs,
-    messages: messages,
-    messagesDirect: messagesDirect,
-    threads: threads,
-    sheet: sheet,
-    addChannel: addChannel,
-    addDirect: addDirect,
-    editChannel: editChannel,
-    channelMembers: channelMembers,
-    addWorkspace: addWorkspace,
-    draft: draft,
-    fields: fields,
-  );
+  } catch (e) {
+    Logger().wtf("WHOA, ERROR: {}", e);
+  }
+  print("FINISHED INITIALIZING MAIN");
+  return InitData();
 }
 
 class InitData {

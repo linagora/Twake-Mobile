@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:twake/models/notification.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -15,65 +13,15 @@ class Notifications {
   final Function(MessageNotification) onResumeCallback;
   final Function(MessageNotification) onLaunchCallback;
   final bool Function(MessageNotification) shouldNotify;
-  FirebaseMessaging _fcm = FirebaseMessaging();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   Map<String, List<int>> pendingNotifications = {};
   var counter = 0;
-  // final _api = Api();
-// Future onDidReceiveLocalNotification(
-  // int id, String title, String body, String payload) async {
-  // // display a dialog with the notification details, tap ok to go to another page
-  // showDialog(
-  // context: context,
-  // builder: (BuildContext context) => CupertinoAlertDialog(
-  // title: Text(title),
-  // content: Text(body),
-  // actions: [
-  // CupertinoDialogAction(
-  // isDefaultAction: true,
-  // child: Text('Ok'),
-  // onPressed: () async {
-  // Navigator.of(context, rootNavigator: true).pop();
-  // await Navigator.push(
-  // context,
-  // MaterialPageRoute(
-  // builder: (context) => SecondScreen(payload),
-  // ),
-  // );
-  // },
-  // )
-  // ],
-  // ),
-  // );
-// }
 
   Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
     print('SHOW IOS NOTIFICATION');
-    // showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) => CupertinoAlertDialog(
-    //     title: Text(title),
-    //     content: Text(body),
-    //     actions: [
-    //       CupertinoDialogAction(
-    //         isDefaultAction: true,
-    //         child: Text('Ok'),
-    //         onPressed: () async {
-    //           Navigator.of(context, rootNavigator: true).pop();
-    //           await Navigator.push(
-    //             context,
-    //             MaterialPageRoute(
-    //               builder: (context) => SecondScreen(payload),
-    //             ),
-    //           );
-    //         },
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 
   Notifications({
@@ -91,18 +39,12 @@ class Notifications {
     else if (Platform.isMacOS)
       this.platform = Target.MacOS;
     else if (Platform.isWindows) this.platform = Target.Windows;
-    _fcm.configure(
-      onMessage: onMessage,
-      onResume: onResume,
-      onLaunch: onLaunch,
-    );
+    FirebaseMessaging.onMessage.listen(onMessage);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('logo_blue');
-    // final IOSInitializationSettings initializationSettingsIOS =
-    //     IOSInitializationSettings(onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     final IOSInitializationSettings initializationSettingsIOS =
-    IOSInitializationSettings();
+        IOSInitializationSettings();
     final InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
@@ -124,20 +66,8 @@ class Notifications {
     });
   }
 
-  // Future<void> checkWhatsNew(String workspaceId) async {
-  // final List<dynamic> news = await _api.get(
-  // Endpoint.whatsNew,
-  // params: {
-  // 'company_id': ProfileBloc.selectedCompany,
-  // 'workspace_id': workspaceId
-  // },
-  // );
-  // for (Map item in news) {
-  // final update = WhatsNewItem.fromJson(item);
-  // }
-  // }
-
-  Future<dynamic> onMessage(Map<String, dynamic> message) async {
+  Future<dynamic> onMessage(RemoteMessage rmessage) async {
+    Map<String, dynamic> message = rmessage.data;
     // logger.d('GOT MESSAGE FROM FIREBASE: $message');
     final notification = messageParse(message);
     if (!shouldNotify(notification)) return;
@@ -151,10 +81,6 @@ class Notifications {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     final channelId = _getChannelId(message);
-    // logger.d('channelId: $channelId');
-    // logger.d('title: ${_getTitle(message)}');
-    // logger.d('body: ${_getBody(message)}');
-    // logger.d('payload: ${_getPayload(message)}');
 
     if (pendingNotifications[channelId] == null) {
       pendingNotifications[channelId] = [];
@@ -277,16 +203,16 @@ class Notifications {
     return data['channel_id'];
   }
 
-  Future<dynamic> onResume(Map<String, dynamic> message) async {
-    logger.d('Resuming on message received\n$message');
-    final notification = messageParse(message);
-    // logger.d("ok, that's what we have:\n$notification");
-    await onResumeCallback(notification);
-  }
+  // Future<dynamic> onResume(RemoteMessage rmessage) async {
+  // Map<String, dynamic> message = rmessage.data;
+  // logger.d('Resuming on message received\n$message');
+  // final notification = messageParse(message);
+  // await onResumeCallback(notification);
+  // }
 
-  Future<dynamic> onLaunch(Map<String, dynamic> message) async {
-    onResume(message);
-  }
+  // Future<dynamic> onLaunch(RemoteMessage message) async {
+  // onResume(message);
+  // }
 }
 
 enum Target {

@@ -34,7 +34,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   final logger = Logger();
   final _api = Api();
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Map<String, dynamic> subscriptionRooms = {};
   StreamSubscription _subscription;
@@ -83,13 +83,16 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     }
   }
 
-  void _iOSpermission() {
-    _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, badge: true, alert: true));
-    _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
-    });
+  void _iOSpermission() async {
+    await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
   }
 
   void setupListeners() {
