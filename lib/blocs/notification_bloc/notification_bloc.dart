@@ -57,11 +57,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     socket = IO.io(
       authBloc.repository.socketIOHost,
       IO.OptionBuilder()
-          .setReconnectionAttempts(100)
-          .enableReconnection()
           .setPath('/socket')
-          .setTimeout(10000)
+          .enableAutoConnect()
           .disableAutoConnect()
+          .enableReconnection()
           .setTransports(['websocket']).build(),
     );
     _authSubscription = authBloc.listen((state) {
@@ -81,7 +80,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     });
     setupListeners();
     if (connectionBloc.state is ConnectionActive) {
-      socket = socket.connect();
+      if (socket.disconnected) socket.connect();
     }
   }
 
@@ -108,12 +107,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       socketConnectionState = SocketConnectionState.CONNECTED;
       while (socketConnectionState != SocketConnectionState.AUTHENTICATED &&
           authBloc.repository.accessToken != null) {
+        print('AUTHENTICATING SOCKEIO');
         if (socket.disconnected) socket = socket.connect();
         socket.emit(SocketIOEvent.AUTHENTICATE, {
           'token': authBloc.repository.accessToken,
         });
         await Future.delayed(Duration(seconds: 5));
-        print('WAITING FOR SOCKET AUTH');
       }
     });
     socket.onError((e) => logger.e('ERROR ON SOCKET \n$e'));
@@ -130,15 +129,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // logger.d('PING $ping');
     // });
     socket.on(SocketIOEvent.EVENT, (data) {
-      logger.d('GOT EVENT: $data');
+      // logger.d('GOT EVENT: $data');
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      logger.d('GOT RESOURCE: $data');
+      // logger.d('GOT RESOURCE: $data');
       handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
-      logger.d('FAILED TO JOIN: $data');
+      logger.d('FAILED TO JOIN TO SOCKEIO ROOM: $data');
     });
     socket.on(SocketIOEvent.JOIN_SUCCESS, (data) {
       // logger.d('SUCCESSFUL JOIN: $data');

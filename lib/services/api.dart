@@ -92,10 +92,10 @@ class Api {
     final url = host + method;
     try {
       final response = await dio.delete(url, data: body);
-      logger.d('METHOD: $url');
-      logger.d('GET HEADERS: ${dio.options.headers}');
-      logger.d('DELETE REQUEST BODY: $body');
-      logger.d('DELETE RESPONSE: ${response.data}');
+      // logger.d('METHOD: $url');
+      // logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('DELETE REQUEST BODY: $body');
+      // logger.d('DELETE RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
       throw ApiError.fromDioError(e);
@@ -109,33 +109,30 @@ class Api {
   }) async {
     checkConnection();
     method = _getMethodPath(method);
-    final url = Api.host + method;
     // Extract scheme and host by splitting the url
-    // var split = Api.host.split('://');
-    // assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
-    // final scheme = split[0];
-    // var host = split[1];
-    // split = host.split(':');
-    // var port;
-    // if (split.length == 2) {
-    // host = split[0];
-    // port = int.parse(split[1]);
-    // }
-//
+    var split = Api.host.split('://');
+    assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
+    final scheme = split[0];
+    var host = split[1];
+    split = host.split(':');
+    var port;
+    if (split.length == 2) {
+      host = split[0];
+      port = int.parse(split[1]);
+    }
+
     // logger.d('host: $host\nport: $port\n$scheme');
-    // final uri = Uri(
-    // scheme: scheme,
-    // host: host,
-    // port: port,
-    // path: method,
-    // queryParameters: params,
-    // );
+    final uri = Uri(
+      scheme: scheme,
+      host: host,
+      port: port,
+      path: method,
+      queryParameters: params,
+    );
     try {
-      LogPrint('GET HEADERS: ${dio.options.headers}');
-      logger.d('METHOD: $url');
-      logger.d('PARAMS: $params');
-      final response = await (useTokenDio ? tokenDio : dio)
-          .get(url, queryParameters: params);
+      // logger.d('METHOD: $url');
+      // logger.d('PARAMS: $params');
+      final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
@@ -234,7 +231,6 @@ class Api {
           }
           options.headers['Authorization'] =
               dio.options.headers['Authorization'];
-          print("SENDING OUT THE REQUEST");
           handler.next(options);
         },
         onError: (DioError error, ErrorInterceptorHandler handler) async {
@@ -312,25 +308,4 @@ enum TokenStatus {
   AccessExpired,
   BothExpired,
   Valid,
-}
-void LogPrint(Object object) async {
-  int defaultPrintLength = 1020;
-  if (object == null || object.toString().length <= defaultPrintLength) {
-    print(object);
-  } else {
-    String log = object.toString();
-    int start = 0;
-    int endIndex = defaultPrintLength;
-    int logLength = log.length;
-    int tmpLogLength = log.length;
-    while (endIndex < logLength) {
-      print(log.substring(start, endIndex));
-      endIndex += defaultPrintLength;
-      start += defaultPrintLength;
-      tmpLogLength -= defaultPrintLength;
-    }
-    if (tmpLogLength > 0) {
-      print(log.substring(start, logLength));
-    }
-  }
 }
