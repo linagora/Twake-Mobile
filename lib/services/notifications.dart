@@ -68,7 +68,7 @@ class Notifications {
 
   Future<dynamic> onMessage(RemoteMessage rmessage) async {
     Map<String, dynamic> message = rmessage.data;
-    // logger.d('GOT MESSAGE FROM FIREBASE: $message');
+    logger.d('GOT MESSAGE FROM FIREBASE: $message, ${rmessage.toString()}');
     final notification = messageParse(message);
     if (!shouldNotify(notification)) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =

@@ -251,7 +251,6 @@ class Api {
                 '\nQUERY: ${error.requestOptions.queryParameters}');
           } else {
             logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
-            return error;
           }
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
@@ -261,8 +260,8 @@ class Api {
             _invalidateConfiguration();
           } else {
             logger.e('status code: ${error.response.statusCode}');
-            return error;
           }
+          handler.next(error);
         },
       ),
     );

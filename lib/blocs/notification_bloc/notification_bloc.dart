@@ -57,6 +57,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     socket = IO.io(
       authBloc.repository.socketIOHost,
       IO.OptionBuilder()
+          .setReconnectionAttempts(100)
+          .enableReconnection()
           .setPath('/socket')
           .setTimeout(10000)
           .disableAutoConnect()
