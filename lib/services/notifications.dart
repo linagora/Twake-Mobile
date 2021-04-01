@@ -89,8 +89,8 @@ class Notifications {
 
     await flutterLocalNotificationsPlugin.show(
       counter,
-      _getTitle(message),
-      _getBody(message),
+      rmessage.notification.title,
+      rmessage.notification.body,
       platformChannelSpecifics,
       payload: _getPayload(message),
     );
@@ -121,50 +121,50 @@ class Notifications {
     return notification;
   }
 
-  String _getBody(Map<String, dynamic> message) {
-    var data;
-    switch (platform) {
-      case Target.Android:
-        // logger.d('Android notification received\n$message');
-        data = message['notification']['body'];
-        break;
-      case Target.IOS:
-        // logger.d('iOS notification received\n$message');
-        data = message['aps']['alert']['body'];
-        break;
-      case Target.Linux:
-      case Target.MacOS:
-      case Target.Windows:
-        throw 'Desktop is not supported';
-    }
-    return data;
-  }
-
-  String _getTitle(Map<String, dynamic> message) {
-    var data;
-    switch (platform) {
-      case Target.Android:
-        // logger.d('Android notification received\n$message');
-        data = message['notification']['title'];
-        break;
-      case Target.IOS:
-        // logger.d('iOS notification received\n$message');
-        data = message['aps']['alert']['title'];
-        break;
-      case Target.Linux:
-      case Target.MacOS:
-      case Target.Windows:
-        throw 'Desktop is not supported';
-    }
-    return data;
-  }
+  // String _getBody(Map<String, dynamic> message) {
+  // var data;
+  // switch (platform) {
+  // case Target.Android:
+  // logger.d('Android notification received\n$message');
+  // data = message['body'];
+  // break;
+  // case Target.IOS:
+  // logger.d('iOS notification received\n$message');
+  // data = message['aps']['alert']['body'];
+  // break;
+  // case Target.Linux:
+  // case Target.MacOS:
+  // case Target.Windows:
+  // throw 'Desktop is not supported';
+  // }
+  // return data;
+  // }
+//
+  // String _getTitle(Map<String, dynamic> message) {
+  // var data;
+  // switch (platform) {
+  // case Target.Android:
+  // logger.d('Android notification received\n$message');
+  // data = message['title'];
+  // break;
+  // case Target.IOS:
+  // logger.d('iOS notification received\n$message');
+  // data = message['aps']['alert']['title'];
+  // break;
+  // case Target.Linux:
+  // case Target.MacOS:
+  // case Target.Windows:
+  // throw 'Desktop is not supported';
+  // }
+  // return data;
+  // }
 
   String _getPayload(Map<String, dynamic> message) {
     var data;
     switch (platform) {
       case Target.Android:
         // logger.d('Android notification received\n$message');
-        data = message['data']['notification_data'];
+        data = message['notification_data'];
         break;
       case Target.IOS:
         // logger.d('iOS notification received\n$message');
@@ -186,7 +186,7 @@ class Notifications {
     switch (platform) {
       case Target.Android:
         // logger.d('Android notification received\n$message');
-        data = message['data']['notification_data'];
+        data = message['notification_data'];
         break;
       case Target.IOS:
         // logger.d('iOS notification received\n$message');
