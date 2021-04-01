@@ -44,7 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // print('CONSOLE LINK: ${repository.twakeConsole}');
     if (repository.authMode == 'INTERNAL') return;
     this.webView = HeadlessInAppWebView(
-      initialUrl: repository.twakeConsole,
+      initialUrlRequest: URLRequest(url: Uri.parse(repository.twakeConsole)),
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
           cacheEnabled: false,
@@ -54,18 +54,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // onConsoleMessage: (ctrl, msg) => print('CONSOLEJS: $msg'),
       onLoadStop: (ctrl, url) async {
         // print('URL: $url');
-        if (Uri.parse(_prevUrl).path == Uri.parse(url).path) {
+        if (Uri.parse(_prevUrl).path == url.path) {
           this.add(WrongAuthCredentials());
           _prevUrl = '';
           return;
         }
-        _prevUrl = url;
-        if (url.contains('redirect_to_app')) {
-          final qp = Uri.parse(url).queryParameters;
+        _prevUrl = url.path;
+        if (url.path.contains('redirect_to_app')) {
+          final qp = url.queryParameters;
           // Logger().d('PARAMS: $qp');
           if (qp['token'] == null || qp['username'] == null) {
             repository.logger.e('NO TOKEN AND USERNAME');
-            ctrl.loadUrl(url: repository.twakeConsole);
+            ctrl.loadUrl(
+              urlRequest: URLRequest(
+                url: Uri.parse(repository.twakeConsole),
+              ),
+            );
             this.add(WrongAuthCredentials());
             return;
           }
@@ -102,7 +106,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               yield Authenticated(initData);
               break;
             case AuthResult.NetworkError:
-              // TODO Work out the case with absent network connection
               final InitData initData = await initMain();
               yield Authenticated(initData);
               break;
@@ -212,7 +215,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return;
     }
     await CookieManager.instance().deleteAllCookies();
-    await CookieManager.instance().getCookies(url: 'auth.twake.app');
     _prevUrl = '';
     await webView.dispose();
     // print('Running webview...');

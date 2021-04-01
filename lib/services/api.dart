@@ -130,17 +130,13 @@ class Api {
       queryParameters: params,
     );
     try {
-      final s = Stopwatch();
-      s.start();
-      final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      s.stop();
-      // logger.d('GET HEADERS: ${dio.options.headers}');
+      // logger.d('METHOD: $url');
       // logger.d('PARAMS: $params');
-      // logger.d(
-      // 'METHOD: ${uri.toString()}\nTOOK: ${s.elapsedMilliseconds / 1000} seconds');
+      final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       // logger.d('GET RESPONSE: ${response.data}');
       return response.data;
     } catch (e) {
+      logger.wtf('FAILED TO GET INFO: $e');
       throw ApiError.fromDioError(e);
     }
   }
@@ -228,30 +224,29 @@ class Api {
     dio.interceptors.add(
       InterceptorsWrapper(
         // token validation causes infinite loop
-        onRequest: (options) async {
+        onRequest: (options, handler) async {
           if (!(await autoProlongToken())) {
-            return dio.reject('Both tokens have expired');
+            return handler.reject(DioError(
+                error: 'Both tokens have expired', requestOptions: options));
           }
-          // print('REQUEST HEADERS: ${options.headers}\n'
-          // 'DIO HEADERS: ${dio.options.headers}');
           options.headers['Authorization'] =
               dio.options.headers['Authorization'];
+          handler.next(options);
         },
-        onError: (DioError error) async {
+        onError: (DioError error, ErrorInterceptorHandler handler) async {
           // Due to the bugs in JWT handling from twake api side,
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
             logger.e('Error during network request!' +
-                '\nMethod: ${error.request.method}' +
-                '\nPATH: ${error.request.path}' +
-                '\nHeaders: ${error.request.headers}' +
+                '\nMethod: ${error.requestOptions.method}' +
+                '\nPATH: ${error.requestOptions.path}' +
+                '\nHeaders: ${error.requestOptions.headers}' +
                 '\nResponse: ${error.response.data}' +
-                '\nBODY: ${jsonEncode(error.request.data)}' +
-                '\nQUERY: ${error.request.queryParameters}');
+                '\nBODY: ${jsonEncode(error.requestOptions.data)}' +
+                '\nQUERY: ${error.requestOptions.queryParameters}');
           } else {
             logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
-            return error;
           }
           if (error.response.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
@@ -261,8 +256,8 @@ class Api {
             _invalidateConfiguration();
           } else {
             logger.e('status code: ${error.response.statusCode}');
-            return error;
           }
+          handler.next(error);
         },
       ),
     );
@@ -288,7 +283,7 @@ class ApiError implements Exception {
   factory ApiError.fromDioError(DioError error) {
     var apiErrorType = ApiErrorType.Unknown;
     if (error.response == null) {
-      Logger().wtf("UNEXPECTED ERROR:\n$error");
+      Logger().wtf("UNEXPECTED ERROR:\n${error.error}");
       apiErrorType = ApiErrorType.Unauthorized;
     } else if (error.response.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;

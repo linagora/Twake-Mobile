@@ -47,7 +47,7 @@ class Updated extends FieldsState {
   Updated({@required this.data});
 
   @override
-  List<Object> get props => [fields];
+  List<Object> get props => [data];
 
   @override
   List<Widget> get fields => [];
@@ -59,7 +59,7 @@ class Error extends FieldsState {
   Error(this.message);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message];
 
   @override
   List<Widget> get fields => [];

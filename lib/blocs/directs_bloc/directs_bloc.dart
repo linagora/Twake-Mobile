@@ -67,6 +67,8 @@ class DirectsBloc extends BaseChannelBloc {
 
   @override
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
+    print('Event in DirectsBloc: $event');
+
     if (event is ReloadChannels) {
       yield ChannelsLoading();
       final filter = {

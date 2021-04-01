@@ -58,15 +58,16 @@ class ProfileRepository extends JsonSerializable {
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
+    logger.w("Loading profile");
     bool loadedFromNetwork = false;
     var profileMap = await _storage.load(
       type: StorageType.Profile,
       key: _PROFILE_STORE_KEY,
     );
     if (profileMap == null) {
-      // logger.d('No profile in storage, requesting from api...');
+      logger.d('No profile in storage, requesting from api...');
       profileMap = await _api.get(Endpoint.profile);
-      // logger.d('RECEIVED PROFILE: $profileMap');
+      logger.d('RECEIVED PROFILE: $profileMap');
       loadedFromNetwork = true;
     } else {
       profileMap = jsonDecode(profileMap[_storage.settingsField]);

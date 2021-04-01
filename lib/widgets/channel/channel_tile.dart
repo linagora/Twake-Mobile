@@ -9,6 +9,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
+import 'package:twake/widgets/common/channel_title.dart';
 
 class ChannelTile extends StatelessWidget {
   final Channel channel;
@@ -40,82 +41,70 @@ class ChannelTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
+                        child: ChannelTitle(
+                          name: channel.name,
+                          hasUnread: channel.hasUnread == 1,
+                          isPrivate: channel.visibility != null &&
+                              channel.visibility == 'private',
+                        ),
+                      ),
+                      Text(
+                        DateFormatter.getVerboseDateTime(channel.lastActivity),
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 4.0),
                         child: Text(
-                          channel.name,
+                          channel.lastMessage['text'] ?? 'No messages yet',
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: channel.hasUnread == 1
-                                ? FontWeight.w900
-                                : FontWeight.w400,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.w400,
                             color: Color(0xff444444),
                           ),
                         ),
                       ),
-                      SizedBox(width: 6),
-                      if (channel.visibility != null &&
-                          channel.visibility == 'private')
-                        Icon(Icons.lock_outline,
-                            size: 17.0, color: Color(0xff444444)),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4.0),
-                    child: Text(
-                      channel.lastMessage['text'] ?? 'No messages yet',
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff444444),
+                      Spacer(),
+                      if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
+                      // if (channel.messagesUnread != 0)
+                      BlocBuilder<ProfileBloc, ProfileState>(
+                        buildWhen: (_, curr) => curr is ProfileLoaded,
+                        builder: (ctx, state) {
+                          final count = (state as ProfileLoaded)
+                              .getBadgeForChannel(channel.id);
+                          if (count > 0) {
+                            return Badge(
+                              shape: BadgeShape.square,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5)),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 5,
+                                vertical: 2,
+                              ),
+                              badgeContent: Text(
+                                '$count',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: Dim.tm2(),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+                        },
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            SizedBox(width: 15),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  DateFormatter.getVerboseDateTime(channel.lastActivity),
-                  style: Theme.of(context).textTheme.subtitle2,
-                ),
-                if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
-                // if (channel.messagesUnread != 0)
-                BlocBuilder<ProfileBloc, ProfileState>(
-                  buildWhen: (prev, curr) => curr is ProfileLoaded,
-                  builder: (ctx, state) {
-                    final count =
-                        (state as ProfileLoaded).getBadgeForChannel(channel.id);
-                    if (count > 0)
-                      return Badge(
-                        shape: BadgeShape.square,
-                        borderRadius: BorderRadius.all(Radius.circular(5)),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 5,
-                          vertical: 2,
-                        ),
-                        badgeContent: Text(
-                          '$count',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Dim.tm2(),
-                          ),
-                        ),
-                      );
-                    else
-                      return Container();
-                  },
-                )
-              ],
             ),
           ],
         ),

@@ -25,7 +25,6 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
   var _isLastOne = false;
   var _index = 0;
   var _inFocus = false;
-  var _editable = true;
 
   @override
   void initState() {
@@ -37,8 +36,12 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.addListener(() {
         String text = _controller.text;
+        print('Update text: $text');
+        print('Update at index: $_index');
         if (text.isNotReallyEmpty) {
-          context.read<FieldsCubit>().update(_index, text);
+          context
+              .read<FieldsCubit>()
+              .update(withContent: text, atIndex: _index);
         }
       });
     });
@@ -63,20 +66,20 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
 
   void _add() {
     context.read<FieldsCubit>().add(
-      RemovableTextField(
-        key: UniqueKey(),
-        index: _index + 1,
-        isLastOne: true,
-      ),
-      _index + 1,
-    );
+          field: RemovableTextField(
+            key: UniqueKey(),
+            index: _index + 1,
+            isLastOne: true,
+          ),
+          atIndex: _index + 1,
+        );
     setState(() {
       _isLastOne = false;
     });
   }
 
   void _remove() {
-    context.read<FieldsCubit>().remove(_index);
+    context.read<FieldsCubit>().remove(atIndex: _index);
   }
 
   @override
@@ -137,7 +140,7 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
                             child: Icon(
                               CupertinoIcons.clear_thick_circled,
                               color:
-                              _inFocus ? Colors.grey : Colors.transparent,
+                                  _inFocus ? Colors.grey : Colors.transparent,
                               size: 20,
                             ),
                           ),
