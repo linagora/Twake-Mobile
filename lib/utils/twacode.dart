@@ -1,3 +1,5 @@
+import 'package:tuple/tuple.dart';
+
 class TwacodeParser {
   final String original;
   static final RegExp userMatch = RegExp('@([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
@@ -112,7 +114,10 @@ class TwacodeParser {
         final index = this.doesCloseMultiCode(i + 3);
         if (index != 0) {
           this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
+                ASTNode(
+                  type: TType.Text,
+                  text: original.substring(start, i),
+                ),
               );
           this.nodes.add(ASTNode(
                 type: TType.MultiLineCode,
@@ -152,6 +157,40 @@ class TwacodeParser {
       }
     }
     return 0;
+  }
+
+  Tuple2 isEmail(int i) {
+    var start = i;
+    var end = i;
+    while (start > 0) {
+      final cur = original[start - 1];
+      if (cur == Delim.ws || cur == Delim.lf) {
+        break;
+      }
+      start -= 1;
+    }
+    while (end < original.length - 1) {
+      final cur = original[end + 1];
+      if (cur == Delim.ws || cur == Delim.lf) {
+        end += 1;
+        break;
+      }
+      end += 1;
+    }
+    final parts = original.substring(start, end).split('@');
+    if (parts[0].isEmpty || parts[1].isEmpty) {
+      return Tuple2(0, 0);
+    }
+    final subparts = parts[1].split('.');
+    final p1 = parts[0].codeUnits.every((c) => c > 32 && c < 127) &&
+        parts[0].codeUnits.every((c) => c > 32 && c < 127);
+    final p2 =
+        subparts.length > 1 && subparts[0].isNotEmpty && subparts[1].isNotEmpty;
+    if (p1 && p2) {
+      return Tuple2(start, end);
+    }
+
+    return Tuple2(0, 0);
   }
 
   int doesCloseUnderline(int i) {
