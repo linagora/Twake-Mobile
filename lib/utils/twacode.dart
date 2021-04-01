@@ -2,7 +2,7 @@ import 'package:tuple/tuple.dart';
 
 class TwacodeParser {
   final String original;
-  static final RegExp userMatch = RegExp('@([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
+  static final RegExp userMatch = RegExp('([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
 
   List<ASTNode> nodes = [];
 
@@ -15,6 +15,7 @@ class TwacodeParser {
   void parse() {
     int start = 0;
     for (int i = 0; i < original.length - 1; i++) {
+      // Bold text
       if (original[i] == Delim.star && original[i + 1] == Delim.star) {
         final index = this.doesCloseBold(i + 2);
         if (index != 0) {
@@ -25,7 +26,9 @@ class TwacodeParser {
               type: TType.Bold, text: original.substring(i + 2, index - 2)));
           i = start = index;
         }
-      } else if (original[i] == Delim.underline &&
+      }
+      // Underline text
+      else if (original[i] == Delim.underline &&
           original[i + 1] == Delim.underline) {
         final index = doesCloseUnderline(i + 2);
         if (index != 0) {
@@ -38,7 +41,9 @@ class TwacodeParser {
               ));
           i = start = index;
         }
-      } else if (original[i] == Delim.underline &&
+      }
+      // Italic text
+      else if (original[i] == Delim.underline &&
           original[i + 1] != Delim.underline) {
         final index = doesCloseItalic(i + 1);
         if (index != 0) {
@@ -51,7 +56,9 @@ class TwacodeParser {
               ));
           i = start = index;
         }
-      } else if (original[i] == Delim.tilde && original[i + 1] == Delim.tilde) {
+      }
+      // StrikeThrough text
+      else if (original[i] == Delim.tilde && original[i + 1] == Delim.tilde) {
         final index = doesCloseStrikeThrough(i + 2);
         if (index != 0) {
           this.nodes.add(
@@ -63,7 +70,9 @@ class TwacodeParser {
               ));
           i = start = index;
         }
-      } else if (original[i] == Delim.lf) {
+      }
+      // Newline text
+      else if (original[i] == Delim.lf) {
         this.nodes.add(
               ASTNode(type: TType.Text, text: original.substring(start, i)),
             );
@@ -72,7 +81,9 @@ class TwacodeParser {
               text: "",
             ));
         start = i + 1;
-      } else if (original[i] == Delim.gt) {
+      }
+      // Newline detection
+      else if (original[i] == Delim.gt) {
         if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
           int index = this.hasLineFeed(i + 1);
           index = index != 0 ? index : original.length + 1;
@@ -82,7 +93,9 @@ class TwacodeParser {
               ));
           i = start = index;
         }
-      } else if (original[i] == Delim.at &&
+      }
+      // Username
+      else if (original[i] == Delim.at &&
           (i == 0 ||
               original[i - 1] == Delim.ws ||
               original[i - 1] == Delim.lf)) {
@@ -93,11 +106,13 @@ class TwacodeParser {
               );
           this.nodes.add(ASTNode(
                 type: TType.User,
-                text: original.substring(i + 1, index - 1),
+                text: original.substring(i + 1, index),
               ));
           i = start = index;
         }
-      } else if (original[i] == Delim.at &&
+      }
+      // Email
+      else if (original[i] == Delim.at &&
           (i != 0 &&
               original[i - 1] != Delim.ws &&
               original[i - 1] != Delim.lf)) {
@@ -115,7 +130,9 @@ class TwacodeParser {
               ));
           i = start = range.item2;
         }
-      } else if (original[i] == Delim.slash && original[i + 1] == Delim.slash) {
+      }
+      // URL with full protocol description like https://hello.world
+      else if (original[i] == Delim.slash && original[i + 1] == Delim.slash) {
         final range = this.isUrl(i + 1);
         if (range.item1 != 0 || range.item2 != 0) {
           this.nodes.add(
@@ -130,7 +147,9 @@ class TwacodeParser {
               ));
           i = start = range.item2;
         }
-      } else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
+      }
+      // InlineCode text
+      else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
         final index = this.doesCloseInlineCode(i + 1);
         if (index != 0) {
           this.nodes.add(
@@ -142,7 +161,9 @@ class TwacodeParser {
               ));
           i = start = index;
         }
-      } else if (original[i] == Delim.tick &&
+      }
+      // MultiLineCode text
+      else if (original[i] == Delim.tick &&
           original[i + 1] == Delim.tick &&
           i + 2 < original.length &&
           original[i + 2] == Delim.tick) {
@@ -163,6 +184,26 @@ class TwacodeParser {
               ));
           i = start = index;
         }
+      }
+      // #Channel
+      else if (original[i] == Delim.pound &&
+          original[i + 1] != Delim.ws &&
+          original[i + 1] != Delim.lf) {
+        final index = this.isChannel(i + 1);
+        final acc = original.substring(start, i);
+        if (acc.isNotEmpty) {
+          this.nodes.add(
+                ASTNode(
+                  type: TType.Text,
+                  text: original.substring(start, i),
+                ),
+              );
+        }
+        this.nodes.add(ASTNode(
+              type: TType.Channel,
+              text: original.substring(i + 1, index),
+            ));
+        i = start = index;
       }
     }
     if (start < original.length) {
@@ -294,18 +335,10 @@ class TwacodeParser {
   int isChannel(int i) {
     for (int j = i; j < original.length; j++) {
       if (original[j] == Delim.ws || original[j] == Delim.lf) {
-        if (userMatch.hasMatch(original.substring(i, j))) {
-          return j;
-        } else {
-          return 0;
-        }
+        return j;
       }
     }
-    if (userMatch.hasMatch(original.substring(i))) {
-      return original.length;
-    } else {
-      return 0;
-    }
+    return original.length;
   }
 
   int doesCloseStrikeThrough(int i) {

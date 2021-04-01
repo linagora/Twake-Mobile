@@ -132,7 +132,7 @@ exit(0)
     final parsed = TwacodeParser(data);
     expect(parsed.message, [
       "My email: ",
-      {"type": "email", "content": "hello@worl.com"}
+      {"type": "email", "content": "hello@world.com"}
     ]);
   });
 }
