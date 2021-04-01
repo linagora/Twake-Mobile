@@ -83,7 +83,9 @@ class TwacodeParser {
           i = start = index;
         }
       } else if (original[i] == Delim.at &&
-          (i == 0 || original[i - 1] == Delim.ws)) {
+          (i == 0 ||
+              original[i - 1] == Delim.ws ||
+              original[i - 1] == Delim.lf)) {
         final index = this.isUser(i + 1);
         if (index != 0) {
           this.nodes.add(
@@ -94,6 +96,39 @@ class TwacodeParser {
                 text: original.substring(i + 1, index - 1),
               ));
           i = start = index;
+        }
+      } else if (original[i] == Delim.at &&
+          (i != 0 &&
+              original[i - 1] != Delim.ws &&
+              original[i - 1] != Delim.lf)) {
+        final range = isEmail(i);
+        if (range.item1 != 0 || range.item2 != 0) {
+          this.nodes.add(
+                ASTNode(
+                  type: TType.Text,
+                  text: original.substring(start, range.item1),
+                ),
+              );
+          this.nodes.add(ASTNode(
+                type: TType.Email,
+                text: original.substring(range.item1, range.item2),
+              ));
+          i = start = range.item2;
+        }
+      } else if (original[i] == Delim.slash && original[i + 1] == Delim.slash) {
+        final range = this.isUrl(i + 1);
+        if (range.item1 != 0 || range.item2 != 0) {
+          this.nodes.add(
+                ASTNode(
+                  type: TType.Text,
+                  text: original.substring(start, range.item1),
+                ),
+              );
+          this.nodes.add(ASTNode(
+                type: TType.Url,
+                text: original.substring(range.item1, range.item2),
+              ));
+          i = start = range.item2;
         }
       } else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
         final index = this.doesCloseInlineCode(i + 1);
@@ -113,12 +148,15 @@ class TwacodeParser {
           original[i + 2] == Delim.tick) {
         final index = this.doesCloseMultiCode(i + 3);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(
-                  type: TType.Text,
-                  text: original.substring(start, i),
-                ),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(
+                  ASTNode(
+                    type: TType.Text,
+                    text: original.substring(start, i),
+                  ),
+                );
+          }
           this.nodes.add(ASTNode(
                 type: TType.MultiLineCode,
                 text: original.substring(i + 3, index - 3),
@@ -127,10 +165,12 @@ class TwacodeParser {
         }
       }
     }
-    this.nodes.add(ASTNode(
-          type: TType.Text,
-          text: original.substring(start),
-        ));
+    if (start < original.length) {
+      this.nodes.add(ASTNode(
+            type: TType.Text,
+            text: original.substring(start),
+          ));
+    }
     if (this.nodes.first.text.isEmpty) {
       this.nodes.removeAt(0);
     }
@@ -169,10 +209,9 @@ class TwacodeParser {
       }
       start -= 1;
     }
-    while (end < original.length - 1) {
-      final cur = original[end + 1];
+    while (end < original.length) {
+      final cur = original[end];
       if (cur == Delim.ws || cur == Delim.lf) {
-        end += 1;
         break;
       }
       end += 1;
@@ -193,6 +232,37 @@ class TwacodeParser {
     return Tuple2(0, 0);
   }
 
+  Tuple2 isUrl(int i) {
+    var start = i;
+    var end = i;
+    while (start > 0) {
+      final cur = original[start - 1];
+      if (cur == Delim.ws || cur == Delim.lf) {
+        break;
+      }
+      start -= 1;
+    }
+    while (end < original.length) {
+      final cur = original[end];
+      if (cur == Delim.ws || cur == Delim.lf) {
+        break;
+      }
+      end += 1;
+    }
+    final parts = original.substring(start, end).split('://');
+    if (parts[0].isEmpty || parts[1].isEmpty) {
+      return Tuple2(0, 0);
+    }
+    final p1 = parts[0] == 'http' || parts[0] == 'https';
+    // pretty dumb check, buut, for now it will do
+    final p2 = parts[1].contains('.');
+    if (p1 && p2) {
+      return Tuple2(start, end);
+    }
+
+    return Tuple2(0, 0);
+  }
+
   int doesCloseUnderline(int i) {
     final len = original.length - 1;
     for (int j = i; j < len && original[j] != '\n'; j++) {
@@ -205,6 +275,23 @@ class TwacodeParser {
   }
 
   int isUser(int i) {
+    for (int j = i; j < original.length; j++) {
+      if (original[j] == Delim.ws || original[j] == Delim.lf) {
+        if (userMatch.hasMatch(original.substring(i, j))) {
+          return j;
+        } else {
+          return 0;
+        }
+      }
+    }
+    if (userMatch.hasMatch(original.substring(i))) {
+      return original.length;
+    } else {
+      return 0;
+    }
+  }
+
+  int isChannel(int i) {
     for (int j = i; j < original.length; j++) {
       if (original[j] == Delim.ws || original[j] == Delim.lf) {
         if (userMatch.hasMatch(original.substring(i, j))) {
@@ -355,7 +442,6 @@ class ASTNode {
 }
 
 enum TType {
-  Root,
   Text,
   LineBreak,
   InlineCode,
@@ -377,7 +463,9 @@ class Delim {
   static String tilde = '~';
   static String gt = '>';
   static String tick = '`';
+  static String slash = '/';
   static String at = '@';
+  static String pound = '#';
   static String lf = '\n';
   static String ws = ' ';
 }
