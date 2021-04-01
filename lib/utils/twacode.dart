@@ -24,7 +24,8 @@ class TwacodeParser {
               );
           this.nodes.add(ASTNode(
               type: TType.Bold, text: original.substring(i + 2, index - 2)));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // Underline text
@@ -39,7 +40,8 @@ class TwacodeParser {
                 type: TType.Underline,
                 text: original.substring(i + 2, index - 2),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // Italic text
@@ -54,7 +56,8 @@ class TwacodeParser {
                 type: TType.Italic,
                 text: original.substring(i + 1, index - 1),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // StrikeThrough text
@@ -68,14 +71,16 @@ class TwacodeParser {
                 type: TType.StrikeThrough,
                 text: original.substring(i + 2, index - 2),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // Newline text
       else if (original[i] == Delim.lf) {
-        this.nodes.add(
-              ASTNode(type: TType.Text, text: original.substring(start, i)),
-            );
+        final acc = original.substring(start, i);
+        if (acc.isNotEmpty) {
+          this.nodes.add(ASTNode(type: TType.Text, text: acc));
+        }
         this.nodes.add(ASTNode(
               type: TType.LineBreak,
               text: "",
@@ -91,7 +96,8 @@ class TwacodeParser {
                 type: TType.Quote,
                 text: original.substring(i + 1, index - 1),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // Username
@@ -108,7 +114,8 @@ class TwacodeParser {
                 type: TType.User,
                 text: original.substring(i + 1, index),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // Email
@@ -128,7 +135,8 @@ class TwacodeParser {
                 type: TType.Email,
                 text: original.substring(range.item1, range.item2),
               ));
-          i = start = range.item2;
+          start = range.item2;
+          i = range.item2 - 1;
         }
       }
       // URL with full protocol description like https://hello.world
@@ -145,7 +153,8 @@ class TwacodeParser {
                 type: TType.Url,
                 text: original.substring(range.item1, range.item2),
               ));
-          i = start = range.item2;
+          start = range.item2;
+          i = range.item2 - 1;
         }
       }
       // InlineCode text
@@ -159,7 +168,8 @@ class TwacodeParser {
                 type: TType.InlineCode,
                 text: original.substring(i + 1, index - 1),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // MultiLineCode text
@@ -182,7 +192,8 @@ class TwacodeParser {
                 type: TType.MultiLineCode,
                 text: original.substring(i + 3, index - 3),
               ));
-          i = start = index;
+          start = index;
+          i = index - 1;
         }
       }
       // #Channel
@@ -203,7 +214,8 @@ class TwacodeParser {
               type: TType.Channel,
               text: original.substring(i + 1, index),
             ));
-        i = start = index;
+        start = index;
+        i = index - 1;
       }
     }
     if (start < original.length) {
@@ -212,10 +224,10 @@ class TwacodeParser {
             text: original.substring(start),
           ));
     }
-    if (this.nodes.first.text.isEmpty) {
+    if (this.nodes.first.text.trimLeft().isEmpty) {
       this.nodes.removeAt(0);
     }
-    if (this.nodes.last.text.isEmpty) {
+    while (this.nodes.last.text.trim().isEmpty) {
       this.nodes.removeLast();
     }
   }
