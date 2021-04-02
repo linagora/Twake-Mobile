@@ -19,9 +19,10 @@ class TwacodeParser {
       if (original[i] == Delim.star && original[i + 1] == Delim.star) {
         final index = this.doesCloseBold(i + 2);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
               type: TType.Bold, text: original.substring(i + 2, index - 2)));
           start = index;
@@ -33,9 +34,10 @@ class TwacodeParser {
           original[i + 1] == Delim.underline) {
         final index = doesCloseUnderline(i + 2);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.Underline,
                 text: original.substring(i + 2, index - 2),
@@ -49,9 +51,10 @@ class TwacodeParser {
           original[i + 1] != Delim.underline) {
         final index = doesCloseItalic(i + 1);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.Italic,
                 text: original.substring(i + 1, index - 1),
@@ -64,9 +67,10 @@ class TwacodeParser {
       else if (original[i] == Delim.tilde && original[i + 1] == Delim.tilde) {
         final index = doesCloseStrikeThrough(i + 2);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.StrikeThrough,
                 text: original.substring(i + 2, index - 2),
@@ -78,7 +82,7 @@ class TwacodeParser {
       // Newline text
       else if (original[i] == Delim.lf) {
         final acc = original.substring(start, i);
-        if (acc.isNotEmpty) {
+        if (acc.trimRight().isNotEmpty) {
           this.nodes.add(ASTNode(type: TType.Text, text: acc));
         }
         this.nodes.add(ASTNode(
@@ -87,7 +91,7 @@ class TwacodeParser {
             ));
         start = i + 1;
       }
-      // Newline detection
+      // Quote detection
       else if (original[i] == Delim.gt) {
         if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
           int index = this.hasLineFeed(i + 1);
@@ -107,9 +111,10 @@ class TwacodeParser {
               original[i - 1] == Delim.lf)) {
         final index = this.isUser(i + 1);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.User,
                 text: original.substring(i + 1, index),
@@ -161,9 +166,10 @@ class TwacodeParser {
       else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
         final index = this.doesCloseInlineCode(i + 1);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.trimRight().isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.InlineCode,
                 text: original.substring(i + 1, index - 1),
@@ -180,11 +186,11 @@ class TwacodeParser {
         final index = this.doesCloseMultiCode(i + 3);
         if (index != 0) {
           final acc = original.substring(start, i);
-          if (acc.isNotEmpty) {
+          if (acc.trimRight().isNotEmpty) {
             this.nodes.add(
                   ASTNode(
                     type: TType.Text,
-                    text: original.substring(start, i),
+                    text: acc,
                   ),
                 );
           }
@@ -206,7 +212,7 @@ class TwacodeParser {
           this.nodes.add(
                 ASTNode(
                   type: TType.Text,
-                  text: original.substring(start, i),
+                  text: acc,
                 ),
               );
         }
@@ -221,7 +227,7 @@ class TwacodeParser {
     if (start < original.length) {
       this.nodes.add(ASTNode(
             type: TType.Text,
-            text: original.substring(start),
+            text: original.substring(start).trimRight(),
           ));
     }
     if (this.nodes.first.text.trimLeft().isEmpty) {
@@ -413,8 +419,8 @@ class ASTNode {
         return this.text;
 
       case TType.LineBreak:
-        map['start'] = '';
-        map['end'] = '\n';
+        map['start'] = '\n';
+        map['end'] = '';
         map['content'] = [];
         break;
 

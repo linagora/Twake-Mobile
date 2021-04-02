@@ -13,7 +13,7 @@ void main() {
     final parsed = TwacodeParser(data);
     expect(parsed.message, [
       "This is a text",
-      {"start": "", "end": "\n", "content": const []},
+      {"start": "\n", "end": "", "content": const []},
       "And a new line"
     ]);
   });
@@ -83,17 +83,24 @@ inp = input("> ")
 print(f"Input {inp}")
 
 exit(0)
-```""";
+```
+~~HELLO~~
+hi
+""";
     final parsed = TwacodeParser(data);
     expect(parsed.message, [
       "Multiline code:",
-      {"start": "", "end": "\n", "content": const []},
+      {"start": "\n", "end": "", "content": const []},
       {
         "start": "```",
         "end": "```",
         "content":
             "\nprint(\"Hello world\")\ninp = input(\"> \")\nprint(f\"Input {inp}\")\n\nexit(0)\n"
-      }
+      },
+      {"start": "\n", "end": "", "content": const []},
+      {"start": "~~", "end": "~~", "content": "HELLO"},
+      {"start": "\n", "end": "", "content": const []},
+      "hi",
     ]);
   });
 
@@ -139,43 +146,44 @@ exit(0)
     final data = """
 Lorem Ipsum is **simply** dummy text of the printing and __typesetting__ industry.
 Lorem Ipsum has been `the` ~~industry's~~ standard dummy text ever since the **1500s,**
-when an unknown printer took a _galley_ of type and scrambled it to make a type specimen * book.
+when an unknown printer took a _galley_ of type and scrambled it to make a type specimen * ~~book.~~
 It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.
 ```It was popularised in the 1960s with the release``` of Letraset sheets containing Lorem Ipsum passages,
 and more recently with desktop publishing software like @aldus:5268fa80-19d2-11eb-b774-0242ac120004 #PageMaker including versions of Lorem@Ipsum.com
 """;
     final parsed = TwacodeParser(data);
     final message = parsed.message;
-    for (var i = 0; i < message.length; i++) {
-      print("#$i. ${message[i]}");
-    }
+    // for (var i = 0; i < message.length; i++) {
+    // print("#$i. ${message[i]}");
+    // }
     expect(message, [
       "Lorem Ipsum is ",
       {"start": "**", "end": "**", "content": "simply"},
       " dummy text of the printing and ",
       {"start": "__", "end": "__", "content": "typesetting"},
       " industry.",
-      {"start": "", "end": "\n", "content": const []},
+      {"start": "\n", "end": "", "content": const []},
       "Lorem Ipsum has been ",
       {"start": "`", "end": "`", "content": "the"},
       " ",
       {"start": "~~", "end": "~~", "content": "industry's"},
       " standard dummy text ever since the ",
       {"start": "**", "end": "**", "content": "1500s,"},
-      {"start": "", "end": "\n", "content": const []},
+      {"start": "\n", "end": "", "content": const []},
       "when an unknown printer took a ",
       {"start": "_", "end": "_", "content": "galley"},
-      " of type and scrambled it to make a type specimen * book.",
-      {"start": "", "end": "\n", "content": const []},
+      " of type and scrambled it to make a type specimen * ",
+      {"start": "~~", "end": "~~", "content": "book."},
+      {"start": "\n", "end": "", "content": const []},
       "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
-      {"start": "", "end": "\n", "content": const []},
+      {"start": "\n", "end": "", "content": const []},
       {
         "start": "```",
         "end": "```",
         "content": "It was popularised in the 1960s with the release"
       },
       " of Letraset sheets containing Lorem Ipsum passages,",
-      {"start": "", "end": "\n", "content": const []},
+      {"start": "\n", "end": "", "content": const []},
       "and more recently with desktop publishing software like ",
       {"start": "@", "content": "aldus:5268fa80-19d2-11eb-b774-0242ac120004"},
       " ",
