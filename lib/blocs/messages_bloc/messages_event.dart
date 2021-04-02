@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twake/utils/twacode.dart';
 
 abstract class MessagesEvent extends Equatable {
   const MessagesEvent();
@@ -144,6 +145,7 @@ class SendMessage extends MessagesEvent {
       'original_str': content,
       'thread_id': threadId,
       'channel_id': channelId,
+      'prepared': TwacodeParser(content).message,
     };
   }
 }
