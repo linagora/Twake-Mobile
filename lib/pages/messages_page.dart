@@ -75,8 +75,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
-            print('MessagesBloc state: $state');
-            print('Parent channel current value: $parentChannel');
+            // print('MessagesBloc state: $state');
+            // print('Parent channel current value: $parentChannel');
 
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {

@@ -16,8 +16,6 @@ import 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
-const _DUMMY_ID = 'message';
-
 const _MESSAGE_LIMIT = 30;
 
 class MessagesBloc<T extends BaseChannelBloc>
@@ -188,11 +186,6 @@ class MessagesBloc<T extends BaseChannelBloc>
       repository.logger.d(
           'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
 
-      var attempt = 3;
-      while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
-        await Future.delayed(Duration(milliseconds: 100));
-        attempt -= 1;
-      }
       final updateParent = await repository.pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
@@ -256,7 +249,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         yield newState;
       }
     } else if (event is SendMessage) {
-      final String dummyId = _DUMMY_ID;
+      final String dummyId = DUMMY_ID;
       final body = _makeQueryParams(event);
       var tempItem = Message(
         id: dummyId,
