@@ -45,6 +45,7 @@ class _EditChannelState extends State<EditChannel> {
   var _members = <Member>[];
   var _canSave = false;
   var _emojiVisible = false;
+  var _canDelete = false;
 
   Channel _channel;
   String _channelId;
@@ -113,6 +114,9 @@ class _EditChannelState extends State<EditChannel> {
         _closeKeyboards(context, both: false);
       }
     });
+
+    final permissions = _channel.permissions;
+    _canDelete = permissions.contains('DELETE_CHANNEL');
   }
 
   @override
@@ -355,13 +359,14 @@ class _EditChannelState extends State<EditChannel> {
                         title: 'add',
                         onTap: () => _openAdd(context),
                       ),
-                      SizedBox(width: 10.0),
-                      RoundedBoxButton(
-                        cover: Image.asset('assets/images/delete.png'),
-                        title: 'delete',
-                        color: Color(0xfff04820),
-                        onTap: () => _delete(context),
-                      ),
+                      SizedBox(width: _canDelete ? 10.0 : 0.0),
+                      if (_canDelete)
+                        RoundedBoxButton(
+                          cover: Image.asset('assets/images/delete.png'),
+                          title: 'delete',
+                          color: Color(0xfff04820),
+                          onTap: () => _delete(context),
+                        ),
                     ],
                   ),
                   SizedBox(height: 24.0),
