@@ -4,19 +4,29 @@ import 'package:flutter/material.dart';
 class ButtonField extends StatelessWidget {
   final String title;
   final String trailingTitle;
+  final String image;
   final bool hasArrow;
   final bool isExtended;
   final Widget trailingWidget;
   final Function onTap;
+  final double height;
+  final TextStyle titleStyle;
+  final Color arrowColor;
+  final TextStyle trailingTitleStyle;
 
   const ButtonField({
     Key key,
     @required this.title,
+    this.image,
     this.trailingTitle,
     this.hasArrow = false,
     this.isExtended = false,
     this.trailingWidget,
     this.onTap,
+    this.height = 44,
+    this.titleStyle,
+    this.arrowColor,
+    this.trailingTitleStyle,
   }) : super(key: key);
 
   @override
@@ -30,14 +40,20 @@ class ButtonField extends StatelessWidget {
           borderRadius:
               isExtended ? BorderRadius.zero : BorderRadius.circular(10.0),
         ),
-        height: 44,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(width: 14),
+            if (image != null && image.isNotEmpty)
+              SizedBox(
+                width: 29.0,
+                height: 29.0,
+                child: Image.asset(image),
+              ),
             Text(
               title,
-              style: TextStyle(
+              style: titleStyle ?? TextStyle(
                 fontSize: 17.0,
                 fontWeight: FontWeight.w400,
                 color: Colors.black,
@@ -50,7 +66,7 @@ class ButtonField extends StatelessWidget {
                       children: [
                         Text(
                           trailingTitle,
-                          style: TextStyle(
+                          style: trailingTitleStyle ?? TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w400,
                             color: Color(0xff3840F7),
@@ -58,7 +74,7 @@ class ButtonField extends StatelessWidget {
                         ),
                         Icon(
                           CupertinoIcons.forward,
-                          color: Color(0xff3840F7),
+                          color: arrowColor ?? Color(0xff3840F7),
                         ),
                       ],
                     )

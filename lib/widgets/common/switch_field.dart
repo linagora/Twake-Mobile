@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:twake/widgets/sheets/button_field.dart';
+import 'package:twake/widgets/common/button_field.dart';
 
 class SwitchField extends StatelessWidget {
   final String title;

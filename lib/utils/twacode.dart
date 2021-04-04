@@ -524,7 +524,7 @@ class Delim {
 }
 
 // Rewrite the renderer once twake chooses
-// one and only format for data represantation
+// one and only format for data representation
 class TwacodeRenderer {
   final List<dynamic> twacode;
   List<InlineSpan> spans;
@@ -534,8 +534,8 @@ class TwacodeRenderer {
   }
 
   void applyStyle(InlineSpan span) {
-    span.style.copyWith(decoration: TextDecoration.combine([span.style.decoration, TextDecoration.underline])); 
-
+    span.style.copyWith(decoration: TextDecoration.combine(
+        [span.style.decoration, TextDecoration.underline]));
   }
 
   List<InlineSpan> render(List<dynamic> twacode) {
@@ -594,12 +594,13 @@ class TwacodeRenderer {
               break;
             default:
               type = TType.Unknown;
+          }
         }
-      }
-      if (type == TType.LineBreak) {
-          spans.add(TextSpan(text: '\n')); 
-      } else if (t['content'] is List){
-        final items = render(t['content']);
+        if (type == TType.LineBreak) {
+          spans.add(TextSpan(text: '\n'));
+        } else if (t['content'] is List) {
+          final items = render(t['content']);
+        }
       }
     }
     return spans;

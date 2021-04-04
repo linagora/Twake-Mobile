@@ -4,6 +4,7 @@ import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/pages/edit_channel.dart';
+import 'package:twake/pages/profile/settings.dart';
 
 class Routes {
   static const root = '/';
@@ -11,6 +12,7 @@ class Routes {
   static const thread = '/thread';
   static const editChannel = '/edit_channel';
   static const serverConfiguration = '/server_configuration';
+  static const settings = '/settings';
 
   static MaterialPageRoute onGenerateRoute(String routeName) {
     Widget page;
@@ -29,6 +31,9 @@ class Routes {
         break;
       case Routes.serverConfiguration:
         page = ServerConfiguration();
+        break;
+      case Routes.settings:
+        page = Settings();
         break;
       default:
         throw 'Unknown route';
