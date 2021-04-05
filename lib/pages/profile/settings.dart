@@ -78,6 +78,14 @@ class Settings extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                   color: Colors.black.withOpacity(0.6),
                 ),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  topRight: Radius.circular(10.0),
+                ),
+              ),
+              Divider(
+                height: 1.0,
+                color: Colors.black.withOpacity(0.1),
               ),
               ButtonField(
                 image: 'assets/images/location.png',
@@ -94,6 +102,10 @@ class Settings extends StatelessWidget {
                   fontSize: 15.0,
                   fontWeight: FontWeight.w400,
                   color: Colors.black.withOpacity(0.6),
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0),
                 ),
               ),
               SizedBox(height: 24.0),
