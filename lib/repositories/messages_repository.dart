@@ -1,6 +1,9 @@
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/services/service_bundle.dart';
+
+const DUMMY_ID = 'message';
 
 class MessagesRepository {
   List<Message> items;
@@ -183,7 +186,7 @@ class MessagesRepository {
     Map<String, dynamic> queryParams, {
     bool addToItems = true,
   }) async {
-    logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
+    // logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
     List resp = [];
     try {
       resp = (await _api.get(apiEndpoint, params: queryParams));
@@ -193,8 +196,11 @@ class MessagesRepository {
     }
     if (resp.isEmpty) return false;
     var item = Message.fromJson(resp[0]);
+    if (items.any((m) => m.id == DUMMY_ID) && item.userId == ProfileBloc.userId)
+      return false;
     var isNew = true;
-    if (await getItemById(queryParams['message_id']) != null) {
+    final m = await getItemById(queryParams['message_id']);
+    if (m != null) {
       logger.e("MESSAGE EXISTS");
       isNew = false;
     }
@@ -230,7 +236,7 @@ class MessagesRepository {
       this.items.add(message);
     }
 
-    logger.d('Pulled item: ${item.toJson()}');
+    // logger.d('Pulled item: ${item.toJson()}');
     return isNew;
   }
 
@@ -240,7 +246,7 @@ class MessagesRepository {
     Function(Message) onSuccess,
     addToItems = true,
   }) async {
-    logger.d('Sending item Message to api...');
+    // logger.d('Sending item Message to api...');
     var resp;
     try {
       resp = (await _api.post(apiEndpoint, body: body));
@@ -249,7 +255,7 @@ class MessagesRepository {
       if (onError != null) onError();
       return false;
     }
-    logger.d('RESPONSE AFTER SENDING ITEM: $resp');
+    // logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = Message.fromJson(resp);
     await saveOne(item);
     if (addToItems) this.items.add(item);

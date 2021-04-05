@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 
 class TwacodeParser {
@@ -19,9 +20,10 @@ class TwacodeParser {
       if (original[i] == Delim.star && original[i + 1] == Delim.star) {
         final index = this.doesCloseBold(i + 2);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
               type: TType.Bold, text: original.substring(i + 2, index - 2)));
           start = index;
@@ -33,9 +35,10 @@ class TwacodeParser {
           original[i + 1] == Delim.underline) {
         final index = doesCloseUnderline(i + 2);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.Underline,
                 text: original.substring(i + 2, index - 2),
@@ -49,9 +52,10 @@ class TwacodeParser {
           original[i + 1] != Delim.underline) {
         final index = doesCloseItalic(i + 1);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.Italic,
                 text: original.substring(i + 1, index - 1),
@@ -64,9 +68,10 @@ class TwacodeParser {
       else if (original[i] == Delim.tilde && original[i + 1] == Delim.tilde) {
         final index = doesCloseStrikeThrough(i + 2);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.StrikeThrough,
                 text: original.substring(i + 2, index - 2),
@@ -78,7 +83,7 @@ class TwacodeParser {
       // Newline text
       else if (original[i] == Delim.lf) {
         final acc = original.substring(start, i);
-        if (acc.isNotEmpty) {
+        if (acc.trimRight().isNotEmpty) {
           this.nodes.add(ASTNode(type: TType.Text, text: acc));
         }
         this.nodes.add(ASTNode(
@@ -87,7 +92,7 @@ class TwacodeParser {
             ));
         start = i + 1;
       }
-      // Newline detection
+      // Quote detection
       else if (original[i] == Delim.gt) {
         if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
           int index = this.hasLineFeed(i + 1);
@@ -107,9 +112,10 @@ class TwacodeParser {
               original[i - 1] == Delim.lf)) {
         final index = this.isUser(i + 1);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.User,
                 text: original.substring(i + 1, index),
@@ -161,9 +167,10 @@ class TwacodeParser {
       else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
         final index = this.doesCloseInlineCode(i + 1);
         if (index != 0) {
-          this.nodes.add(
-                ASTNode(type: TType.Text, text: original.substring(start, i)),
-              );
+          final acc = original.substring(start, i);
+          if (acc.trimRight().isNotEmpty) {
+            this.nodes.add(ASTNode(type: TType.Text, text: acc));
+          }
           this.nodes.add(ASTNode(
                 type: TType.InlineCode,
                 text: original.substring(i + 1, index - 1),
@@ -180,11 +187,11 @@ class TwacodeParser {
         final index = this.doesCloseMultiCode(i + 3);
         if (index != 0) {
           final acc = original.substring(start, i);
-          if (acc.isNotEmpty) {
+          if (acc.trimRight().isNotEmpty) {
             this.nodes.add(
                   ASTNode(
                     type: TType.Text,
-                    text: original.substring(start, i),
+                    text: acc,
                   ),
                 );
           }
@@ -206,7 +213,7 @@ class TwacodeParser {
           this.nodes.add(
                 ASTNode(
                   type: TType.Text,
-                  text: original.substring(start, i),
+                  text: acc,
                 ),
               );
         }
@@ -221,7 +228,7 @@ class TwacodeParser {
     if (start < original.length) {
       this.nodes.add(ASTNode(
             type: TType.Text,
-            text: original.substring(start),
+            text: original.substring(start).trimRight(),
           ));
     }
     if (this.nodes.first.text.trimLeft().isEmpty) {
@@ -413,8 +420,8 @@ class ASTNode {
         return this.text;
 
       case TType.LineBreak:
-        map['start'] = '';
-        map['end'] = '\n';
+        map['start'] = '\n';
+        map['end'] = '';
         map['content'] = [];
         break;
 
@@ -499,7 +506,8 @@ enum TType {
   User,
   Channel,
   Url,
-  Email
+  Email,
+  Unknown
 }
 
 class Delim {
@@ -513,4 +521,87 @@ class Delim {
   static String pound = '#';
   static String lf = '\n';
   static String ws = ' ';
+}
+
+// Rewrite the renderer once twake chooses
+// one and only format for data represantation
+class TwacodeRenderer {
+  final List<dynamic> twacode;
+  List<InlineSpan> spans;
+
+  TwacodeRenderer(this.twacode) {
+    spans = render(this.twacode);
+  }
+
+  void applyStyle(InlineSpan span) {
+    span.style.copyWith(decoration: TextDecoration.combine([span.style.decoration, TextDecoration.underline])); 
+
+  }
+
+  List<InlineSpan> render(List<dynamic> twacode) {
+    List<InlineSpan> spans = [];
+    for (int i = 0; i < twacode.length; i++) {
+      if (twacode[i] is String) {
+        spans.add(TextSpan(text: twacode[i]));
+      } else if (twacode[i] == List) {
+        spans.addAll(render(twacode[i]));
+      } else if (twacode[i] is Map) {
+        final t = twacode[i];
+        TType type;
+        if (t['type'] != null) {
+          switch (t['type']) {
+            case 'url':
+              type = TType.Url;
+              break;
+            case 'email':
+              type = TType.Email;
+              break;
+            default:
+              type = TType.Unknown;
+          }
+        } else if (t['start'] != null) {
+          switch (t['start']) {
+            case '\n':
+              type = TType.LineBreak;
+              break;
+            case '**':
+              type = TType.Bold;
+              break;
+            case '*':
+            case '_':
+              type = TType.Italic;
+              break;
+            case '__':
+              type = TType.Underline;
+              break;
+            case '~~':
+              type = TType.StrikeThrough;
+              break;
+            case '@':
+              type = TType.User;
+              break;
+            case '>':
+              type = TType.Quote;
+              break;
+            case '`':
+              type = TType.InlineCode;
+              break;
+            case '```':
+              type = TType.MultiLineCode;
+              break;
+            case '#':
+              type = TType.Channel;
+              break;
+            default:
+              type = TType.Unknown;
+        }
+      }
+      if (type == TType.LineBreak) {
+          spans.add(TextSpan(text: '\n')); 
+      } else if (t['content'] is List){
+        final items = render(t['content']);
+      }
+    }
+    return spans;
+  }
 }

@@ -75,8 +75,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
-            print('MessagesBloc state: $state');
-            print('Parent channel current value: $parentChannel');
+            // print('MessagesBloc state: $state');
+            // print('Parent channel current value: $parentChannel');
 
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
@@ -94,8 +94,17 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
 
                 var _canEdit = false;
                 if (parentChannel is Channel) {
+                  // Possible permissions:
+                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
+                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
                   final permissions = parentChannel.permissions;
-                  if (permissions.contains('EDIT_CHANNEL')) {
+                  if (permissions.contains('UPDATE_NAME') ||
+                      permissions.contains('UPDATE_DESCRIPTION') ||
+                      permissions.contains('ADD_MEMBER') ||
+                      permissions.contains('REMOVE_MEMBER') ||
+                      permissions.contains('UPDATE_PRIVACY') ||
+                      permissions.contains('DELETE_CHANNEL')) {
                     _canEdit = true;
                   }
                 }
