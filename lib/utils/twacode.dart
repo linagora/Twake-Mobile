@@ -606,13 +606,16 @@ class TwacodeRenderer {
         break;
 
       default:
-        style = TextStyle();
+        style = TextStyle(fontFamily: DEFAULT);
     }
     return style;
   }
 
+  RichText get message => RichText(text: TextSpan(children: this.spans));
+
   List<InlineSpan> render(List<dynamic> twacode) {
     List<InlineSpan> spans = [];
+
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {
         spans.add(TextSpan(text: twacode[i]));
@@ -669,18 +672,47 @@ class TwacodeRenderer {
               type = TType.Unknown;
           }
         }
-        if (type == TType.LineBreak) {
+        if (type == TType.MultiLineCode && spans.isNotEmpty) {
+          spans.add(TextSpan(text: '\n'));
+        } else if (type == TType.Quote) {
+          InlineSpan text;
+
+          if (t['content'] is List) {
+            final items = render(t['content']);
+            text = TextSpan(children: items, style: getStyle(type));
+          } else {
+            // t['content'] is String
+            text = TextSpan(text: t['content'], style: getStyle(type));
+          }
+
+          spans.add(
+            WidgetSpan(
+              child: Container(
+                child: RichText(text: text),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(
+                      width: 2.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+                padding: EdgeInsets.only(right: 8),
+              ),
+            ),
+          );
+        } else if (type == TType.LineBreak) {
           spans.add(TextSpan(text: '\n'));
         } else if (t['content'] is List) {
           final items = render(t['content']);
-          spans.add(TextSpan(children: items));
+          spans.add(TextSpan(children: items, style: getStyle(type)));
         } else {
           // t['content'] is String
-          spans.add(TextSpan(text: t['content']));
+          spans.add(TextSpan(text: t['content'], style: getStyle(type)));
         }
       }
-      return spans;
     }
+    return spans;
   }
 }
 
