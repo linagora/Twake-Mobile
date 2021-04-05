@@ -98,6 +98,13 @@ class _SettingsState extends State<Settings> {
                     color: Colors.black,
                   ),
                   hasArrow: true,
+                  onTap: () {
+                    if (_panelController.isPanelOpen) {
+                      _panelController.close();
+                    } else {
+                      _panelController.open();
+                    }
+                  },
                 ),
                 SizedBox(height: 10.0),
                 Text(
