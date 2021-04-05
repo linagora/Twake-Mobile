@@ -23,6 +23,8 @@ class Settings extends StatelessWidget {
               ),
               SizedBox(height: 12.0),
               ButtonField(
+                image: 'assets/images/gear_blue.png',
+                imageSize: 44.0,
                 title: 'Twake Connect',
                 height: 88.0,
                 titleStyle: TextStyle(
@@ -43,6 +45,7 @@ class Settings extends StatelessWidget {
               ),
               SizedBox(height: 72.0),
               SwitchField(
+                image: 'assets/images/notifications.png',
                 title: 'Notifications',
                 value: false,
                 isExtended: true,
@@ -60,6 +63,7 @@ class Settings extends StatelessWidget {
               ),
               SizedBox(height: 24.0),
               ButtonField(
+                image: 'assets/images/language.png',
                 title: 'Language',
                 titleStyle: TextStyle(
                   fontSize: 17.0,
@@ -76,6 +80,7 @@ class Settings extends StatelessWidget {
                 ),
               ),
               ButtonField(
+                image: 'assets/images/location.png',
                 title: 'Location',
                 titleStyle: TextStyle(
                   fontSize: 17.0,
@@ -93,6 +98,7 @@ class Settings extends StatelessWidget {
               ),
               SizedBox(height: 24.0),
               ButtonField(
+                image: 'assets/images/support.png',
                 title: 'Customer support',
                 titleStyle: TextStyle(
                   fontSize: 17.0,

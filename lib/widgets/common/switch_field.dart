@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/widgets/common/button_field.dart';
 
 class SwitchField extends StatelessWidget {
+  final String image;
   final String title;
   final bool value;
   final Function(bool) onChanged;
@@ -16,6 +17,7 @@ class SwitchField extends StatelessWidget {
     @required this.onChanged,
     this.isExtended = false,
     this.isRounded = true,
+    this.image,
   }) : super(key: key);
 
   @override
@@ -37,6 +39,7 @@ class SwitchField extends StatelessWidget {
           activeColor: Color(0xff3840F7),
         ),
         isRounded: isRounded,
+        image: image,
       ),
     );
   }

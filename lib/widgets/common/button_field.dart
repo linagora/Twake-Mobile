@@ -5,6 +5,7 @@ class ButtonField extends StatelessWidget {
   final String title;
   final String trailingTitle;
   final String image;
+  final double imageSize;
   final bool hasArrow;
   final bool isRounded;
   final Widget trailingWidget;
@@ -18,12 +19,13 @@ class ButtonField extends StatelessWidget {
     Key key,
     @required this.title,
     this.image,
+    this.imageSize = 29.0,
     this.trailingTitle,
     this.hasArrow = false,
     this.isRounded = true,
     this.trailingWidget,
     this.onTap,
-    this.height = 44,
+    this.height = 44.0,
     this.titleStyle,
     this.arrowColor,
     this.trailingTitleStyle,
@@ -44,13 +46,14 @@ class ButtonField extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(width: 14),
+            SizedBox(width: 14.0),
             if (image != null && image.isNotEmpty)
               SizedBox(
-                width: 29.0,
-                height: 29.0,
+                width: imageSize,
+                height: imageSize,
                 child: Image.asset(image),
               ),
+            if (image != null && image.isNotEmpty) SizedBox(width: 12),
             Text(
               title,
               style: titleStyle ??
