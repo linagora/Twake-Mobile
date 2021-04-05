@@ -11,6 +11,7 @@ class Settings extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.fromLTRB(16.0, 42.0, 16.0, 36.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Manage all your data in one place',
@@ -33,12 +34,10 @@ class Settings extends StatelessWidget {
               ),
               SizedBox(height: 10.0),
               Text(
-                '''Twake Connect allows you to edit personal data, manage 
-                workspaces as well as manage active participants and 
-                their permissions.''',
+                'Twake Connect allows you to edit personal data, manage\nworkspaces as well as manage active participants and\ntheir permissions.',
                 style: TextStyle(
                   fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                   color: Color(0xff939297),
                 ),
               ),
@@ -46,15 +45,16 @@ class Settings extends StatelessWidget {
               SwitchField(
                 title: 'Notifications',
                 value: false,
+                isExtended: true,
+                isRounded: true,
                 onChanged: (value) {},
               ),
               SizedBox(height: 8.0),
               Text(
-                '''Allow notifications to stay up-to-date on new messages, 
-                meetings and other alerts''',
+                'Allow notifications to stay up-to-date on new messages,\nmeetings and other alerts',
                 style: TextStyle(
                   fontSize: 12.0,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w400,
                   color: Color(0xff939297),
                 ),
               ),

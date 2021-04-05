@@ -6,7 +6,7 @@ class ButtonField extends StatelessWidget {
   final String trailingTitle;
   final String image;
   final bool hasArrow;
-  final bool isExtended;
+  final bool isRounded;
   final Widget trailingWidget;
   final Function onTap;
   final double height;
@@ -20,7 +20,7 @@ class ButtonField extends StatelessWidget {
     this.image,
     this.trailingTitle,
     this.hasArrow = false,
-    this.isExtended = false,
+    this.isRounded = true,
     this.trailingWidget,
     this.onTap,
     this.height = 44,
@@ -38,7 +38,7 @@ class ButtonField extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius:
-              isExtended ? BorderRadius.zero : BorderRadius.circular(10.0),
+              isRounded ? BorderRadius.circular(10.0) : BorderRadius.zero,
         ),
         height: height,
         child: Row(
@@ -53,25 +53,28 @@ class ButtonField extends StatelessWidget {
               ),
             Text(
               title,
-              style: titleStyle ?? TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
+              style: titleStyle ??
+                  TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
             ),
             Spacer(),
             if (trailingWidget == null)
               hasArrow
                   ? Row(
                       children: [
-                        Text(
-                          trailingTitle,
-                          style: trailingTitleStyle ?? TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff3840F7),
+                        if (trailingTitle != null)
+                          Text(
+                            trailingTitle,
+                            style: trailingTitleStyle ??
+                                TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff3840F7),
+                                ),
                           ),
-                        ),
                         Icon(
                           CupertinoIcons.forward,
                           color: arrowColor ?? Color(0xff3840F7),

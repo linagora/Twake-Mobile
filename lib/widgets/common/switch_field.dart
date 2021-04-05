@@ -7,6 +7,7 @@ class SwitchField extends StatelessWidget {
   final bool value;
   final Function(bool) onChanged;
   final bool isExtended;
+  final bool isRounded;
 
   const SwitchField({
     Key key,
@@ -14,15 +15,20 @@ class SwitchField extends StatelessWidget {
     @required this.value,
     @required this.onChanged,
     this.isExtended = false,
+    this.isRounded = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isExtended ? Colors.white : Colors.transparent,
       padding: isExtended
           ? EdgeInsets.zero
           : const EdgeInsets.fromLTRB(14, 21, 14, 8),
+      decoration: BoxDecoration(
+        color: isExtended ? Colors.white : Colors.transparent,
+        borderRadius:
+            isRounded ? BorderRadius.circular(10.0) : BorderRadius.zero,
+      ),
       child: ButtonField(
         title: title,
         trailingWidget: CupertinoSwitch(
@@ -30,7 +36,7 @@ class SwitchField extends StatelessWidget {
           onChanged: onChanged,
           activeColor: Color(0xff3840F7),
         ),
-        isExtended: isExtended,
+        isRounded: isRounded,
       ),
     );
   }

@@ -9,6 +9,7 @@ import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/company.dart';
 import 'package:twake/repositories/sheet_repository.dart';
+import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
@@ -306,35 +307,39 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                     ),
                     BlocBuilder<ProfileBloc, ProfileState>(
                       builder: (ctx, state) => state is ProfileLoaded
-                          ? Container(
-                              height: 52,
-                              padding: EdgeInsets.symmetric(horizontal: 15.0),
-                              child: Row(
-                                children: [
-                                  ImageAvatar(
-                                    state.thumbnail,
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                  SizedBox(width: 15),
-                                  Text(
-                                    '${state.firstName} ${state.lastName}',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff444444),
+                          ? GestureDetector(
+                              onTap: () => openSettings(context),
+                              behavior: HitTestBehavior.opaque,
+                              child: Container(
+                                height: 52,
+                                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                                child: Row(
+                                  children: [
+                                    ImageAvatar(
+                                      state.thumbnail,
+                                      width: 30,
+                                      height: 30,
                                     ),
-                                  ),
-                                  Spacer(),
-                                  InkWell(
-                                    onTap: () => _handleLogout(context),
-                                    child: Icon(
-                                      Icons.logout,
-                                      color: Color(0xff444444),
-                                      size: 30,
+                                    SizedBox(width: 15),
+                                    Text(
+                                      '${state.firstName} ${state.lastName}',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff444444),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    Spacer(),
+                                    InkWell(
+                                      onTap: () => _handleLogout(context),
+                                      child: Icon(
+                                        Icons.logout,
+                                        color: Color(0xff444444),
+                                        size: 30,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             )
                           : Center(child: CircularProgressIndicator()),
