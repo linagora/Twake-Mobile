@@ -3,6 +3,7 @@ enum SheetFlow {
   editChannel,
   direct,
   workspace,
+  profile,
 }
 
 class SheetRepository {
