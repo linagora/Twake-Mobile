@@ -4,19 +4,31 @@ import 'package:flutter/material.dart';
 class ButtonField extends StatelessWidget {
   final String title;
   final String trailingTitle;
+  final String image;
+  final double imageSize;
   final bool hasArrow;
-  final bool isExtended;
+  final bool isRounded;
   final Widget trailingWidget;
   final Function onTap;
+  final double height;
+  final TextStyle titleStyle;
+  final Color arrowColor;
+  final TextStyle trailingTitleStyle;
 
   const ButtonField({
     Key key,
     @required this.title,
+    this.image,
+    this.imageSize = 29.0,
     this.trailingTitle,
     this.hasArrow = false,
-    this.isExtended = false,
+    this.isRounded = true,
     this.trailingWidget,
     this.onTap,
+    this.height = 44.0,
+    this.titleStyle,
+    this.arrowColor,
+    this.trailingTitleStyle,
   }) : super(key: key);
 
   @override
@@ -28,37 +40,47 @@ class ButtonField extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius:
-              isExtended ? BorderRadius.zero : BorderRadius.circular(10.0),
+              isRounded ? BorderRadius.circular(10.0) : BorderRadius.zero,
         ),
-        height: 44,
+        height: height,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(width: 14),
+            SizedBox(width: 14.0),
+            if (image != null && image.isNotEmpty)
+              SizedBox(
+                width: imageSize,
+                height: imageSize,
+                child: Image.asset(image),
+              ),
+            if (image != null && image.isNotEmpty) SizedBox(width: 12),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
+              style: titleStyle ??
+                  TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
             ),
             Spacer(),
             if (trailingWidget == null)
               hasArrow
                   ? Row(
                       children: [
-                        Text(
-                          trailingTitle,
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff3840F7),
+                        if (trailingTitle != null)
+                          Text(
+                            trailingTitle,
+                            style: trailingTitleStyle ??
+                                TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xff3840F7),
+                                ),
                           ),
-                        ),
                         Icon(
                           CupertinoIcons.forward,
-                          color: Color(0xff3840F7),
+                          color: arrowColor ?? Color(0xff3840F7),
                         ),
                       ],
                     )

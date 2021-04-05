@@ -525,7 +525,7 @@ class Delim {
 }
 
 // Rewrite the renderer once twake chooses
-// one and only format for data represantation
+// one and only format for data representation
 class TwacodeRenderer {
   final List<dynamic> twacode;
   List<InlineSpan> spans;

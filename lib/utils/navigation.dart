@@ -10,7 +10,16 @@ import 'package:twake/models/channel.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/edit_channel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/pages/profile/settings.dart';
 import 'package:twake/pages/server_configuration.dart';
+
+void openSettings(BuildContext context) async {
+  await Navigator.of(context)
+      .push(MaterialPageRoute(
+        builder: (context) => Settings(),
+      ))
+      .then((r) => handleError(r, context));
+}
 
 void openChannel(BuildContext context, String channelId) =>
     _open<ChannelsBloc>(context, channelId);
@@ -18,7 +27,8 @@ void openChannel(BuildContext context, String channelId) =>
 void openDirect(BuildContext context, String channelId) =>
     _open<DirectsBloc>(context, channelId);
 
-Future<void> _open<T extends BaseChannelBloc>(BuildContext context, String channelId) async {
+Future<void> _open<T extends BaseChannelBloc>(
+    BuildContext context, String channelId) async {
   context.read<T>().add(ChangeSelectedChannel(channelId));
   context.read<MemberCubit>().fetchMembers(channelId: channelId);
   // print('On open: $channelId');
