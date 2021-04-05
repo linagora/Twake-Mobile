@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 
@@ -533,9 +534,81 @@ class TwacodeRenderer {
     spans = render(this.twacode);
   }
 
-  void applyStyle(InlineSpan span) {
-    span.style.copyWith(decoration: TextDecoration.combine(
-        [span.style.decoration, TextDecoration.underline]));
+  TextStyle getStyle(TType type) {
+    TextStyle style;
+    switch (type) {
+      case TType.InlineCode:
+        style = const TextStyle(
+          fontFamily: MONOSPACE,
+          backgroundColor: Colors.lightBlue,
+        );
+        break;
+
+      case TType.MultiLineCode:
+        style = TextStyle(
+          fontFamily: MONOSPACE,
+          backgroundColor: Colors.black38,
+          color: Colors.grey,
+        );
+        break;
+
+      case TType.Underline:
+        style = TextStyle(
+          decoration: TextDecoration.underline,
+        );
+        break;
+
+      case TType.StrikeThrough:
+        style = TextStyle(
+          decoration: TextDecoration.lineThrough,
+        );
+        break;
+
+      case TType.Bold:
+        style = TextStyle(
+          fontWeight: FontWeight.bold,
+        );
+        break;
+
+      case TType.Italic:
+        style = TextStyle(
+          fontStyle: FontStyle.italic,
+        );
+        break;
+
+      case TType.Quote:
+        style = TextStyle(
+          fontStyle: FontStyle.italic,
+          color: Colors.black87,
+        );
+        break;
+
+      case TType.User:
+        style = TextStyle(
+          color: Colors.lightBlue,
+        );
+        break;
+
+      case TType.Channel:
+        style = TextStyle(
+          fontStyle: FontStyle.italic,
+          fontWeight: FontWeight.bold,
+          color: Colors.black54,
+        );
+        break;
+
+      case TType.Url:
+        style = TextStyle(color: Colors.blue);
+        break;
+
+      case TType.Email:
+        style = TextStyle(color: Colors.purple);
+        break;
+
+      default:
+        style = TextStyle();
+    }
+    return style;
   }
 
   List<InlineSpan> render(List<dynamic> twacode) {
@@ -600,9 +673,16 @@ class TwacodeRenderer {
           spans.add(TextSpan(text: '\n'));
         } else if (t['content'] is List) {
           final items = render(t['content']);
+          spans.add(TextSpan(children: items));
+        } else {
+          // t['content'] is String
+          spans.add(TextSpan(text: t['content']));
         }
       }
+      return spans;
     }
-    return spans;
   }
 }
+
+const MONOSPACE = 'PTMono';
+const DEFAULT = 'PT';
