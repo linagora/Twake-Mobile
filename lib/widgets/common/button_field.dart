@@ -14,6 +14,7 @@ class ButtonField extends StatelessWidget {
   final TextStyle titleStyle;
   final Color arrowColor;
   final TextStyle trailingTitleStyle;
+  final BorderRadius borderRadius;
 
   const ButtonField({
     Key key,
@@ -29,6 +30,7 @@ class ButtonField extends StatelessWidget {
     this.titleStyle,
     this.arrowColor,
     this.trailingTitleStyle,
+    this.borderRadius = BorderRadius.zero,
   }) : super(key: key);
 
   @override
@@ -39,8 +41,9 @@ class ButtonField extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius:
-              isRounded ? BorderRadius.circular(10.0) : BorderRadius.zero,
+          borderRadius: borderRadius != BorderRadius.zero
+              ? borderRadius
+              : (isRounded ? BorderRadius.circular(10.0) : BorderRadius.zero),
         ),
         height: height,
         child: Row(
