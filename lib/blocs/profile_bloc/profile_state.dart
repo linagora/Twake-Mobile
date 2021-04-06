@@ -19,6 +19,7 @@ class ProfileLoaded extends ProfileState {
     this.thumbnail,
     this.badges = const {},
   });
+
   @override
   List<Object> get props => [userId, badges];
 
@@ -43,20 +44,22 @@ class ProfileLoaded extends ProfileState {
 
 class ProfileLoading extends ProfileState {
   const ProfileLoading();
+
   @override
   List<Object> get props => [];
 }
 
 class ProfileEmpty extends ProfileState {
   const ProfileEmpty();
+
   @override
   List<Object> get props => [];
 }
 
-class ProfileStageUpdated extends ProfileState {
+class ProfileFlowStageUpdated extends ProfileState {
   final ProfileFlowStage stage;
 
-  ProfileStageUpdated(this.stage);
+  const ProfileFlowStageUpdated(this.stage);
 
   @override
   List<Object> get props => [stage];

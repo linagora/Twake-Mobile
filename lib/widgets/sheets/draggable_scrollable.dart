@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake/pages/profile/profile.dart';
+import 'package:twake/pages/profile/profile_flow.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/add/add_channel_flow.dart';
 import 'package:twake/widgets/sheets/add/add_direct_flow.dart';
@@ -29,7 +29,7 @@ class DraggableScrollable extends StatelessWidget {
         content = AddWorkspaceFlow();
         break;
       case SheetFlow.profile:
-        content = Profile();
+        content = ProfileFlow();
         break;
     }
     return ClipRRect(
