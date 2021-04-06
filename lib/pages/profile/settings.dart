@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/button_field.dart';
@@ -13,7 +14,6 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-
   final PanelController _panelController = PanelController();
 
   @override
@@ -22,6 +22,9 @@ class _SettingsState extends State<Settings> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
+      context
+          .read<ProfileBloc>()
+          .add(SetProfileFlowStage(ProfileFlowStage.info));
     });
   }
 
@@ -46,7 +49,7 @@ class _SettingsState extends State<Settings> {
         renderPanelSheet: false,
         panel: BlocConsumer<SheetBloc, SheetState>(
           listenWhen: (_, current) =>
-          current is SheetShouldOpen || current is SheetShouldClose,
+              current is SheetShouldOpen || current is SheetShouldClose,
           listener: (context, state) {
             // print('Strange state: $state');
             // _closeKeyboards(context);

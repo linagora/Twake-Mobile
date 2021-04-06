@@ -109,6 +109,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     } else if (event is ClearProfile) {
       await repository.clean();
       yield ProfileEmpty();
+    } else if (event is SetProfileFlowStage) {
+      final stage = event.stage;
+      yield ProfileFlowStageUpdated(stage);
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
@@ -42,7 +43,9 @@ class _EditProfileState extends State<EditProfile> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      context.read<SheetBloc>().add(CloseSheet());
+                      context
+                          .read<ProfileBloc>()
+                          .add(SetProfileFlowStage(ProfileFlowStage.info));
                       FocusScope.of(context).requestFocus(new FocusNode());
                     },
                     child: Padding(

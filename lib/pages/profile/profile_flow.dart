@@ -4,7 +4,7 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/pages/profile/edit_profile.dart';
 import 'package:twake/pages/profile/profile.dart';
 
-class AddWorkspaceFlow extends StatelessWidget {
+class ProfileFlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileFlowWidgets = [
@@ -12,10 +12,10 @@ class AddWorkspaceFlow extends StatelessWidget {
       EditProfile(),
     ];
     return BlocBuilder<ProfileBloc, ProfileState>(
-      buildWhen: (_, current) => current is ProfileStageUpdated,
+      buildWhen: (_, current) => current is ProfileFlowStageUpdated,
       builder: (context, state) {
         var i = 0;
-        if (state is ProfileStageUpdated) {
+        if (state is ProfileFlowStageUpdated) {
           // print('Current stage: ${state.stage}');
           switch (state.stage) {
             case ProfileFlowStage.info:

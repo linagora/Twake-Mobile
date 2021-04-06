@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
@@ -75,6 +76,12 @@ class Profile extends StatelessWidget {
               topLeft: Radius.circular(10.0),
               topRight: Radius.circular(10.0),
             ),
+            onTap: () {
+              print('Tap tap');
+              context
+                  .read<ProfileBloc>()
+                  .add(SetProfileFlowStage(ProfileFlowStage.edit));
+            },
           ),
           Divider(
             height: 1.0,
