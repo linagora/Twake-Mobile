@@ -38,10 +38,10 @@ class MessagesBloc<T extends BaseChannelBloc>
     this.notificationBloc,
   }) : super(MessagesEmpty(parentChannel: channelsBloc.repository.selected)) {
     _subscription = channelsBloc.listen((ChannelState state) {
-      if (state is ChannelPicked && state.selected != selectedChannel) {
-        // repository.logger.d('TRIGGERED MESSAGE FETCH');
-        // repository.logger.w(
-        // 'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
+      if (state is ChannelPicked) {
+        repository.logger.d('TRIGGERED MESSAGE FETCH');
+        repository.logger.w(
+            'FETCHING CHANNEL MESSAGES: ${state.selected.name}(${state.selected.id})');
         this.add(LoadMessages());
         selectedChannel = state.selected;
       }
@@ -124,6 +124,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         limit: _MESSAGE_LIMIT,
       );
       if (!success) {
+        repository.logger.w('FAILED TO FETCH CHANNEL MESSAGES');
         repository.clear();
         yield ErrorLoadingMessages(
           parentChannel: selectedChannel,
