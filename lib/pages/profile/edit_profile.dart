@@ -42,49 +42,59 @@ class _EditProfileState extends State<EditProfile> {
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      context
-                          .read<ProfileBloc>()
-                          .add(SetProfileFlowStage(ProfileFlowStage.info));
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: Color(0xff3840f7),
-                      ),
-                    ),
-                  ),
-                  // SizedBox(width: 24.0),
-                  GestureDetector(
-                    onTap: _canSave ? () => _save() : null,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: _canSave ? Color(0xff3840f7) : Color(0xffa2a2a2),
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w600,
+            Container(
+              height: 56.0,
+              child: OverflowBox(
+                maxWidth: MediaQuery.of(context).size.width,
+                maxHeight: 56,
+                child: Container(
+                  height: 56,
+                  padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 8.0),
+                  color: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .read<ProfileBloc>()
+                              .add(SetProfileFlowStage(ProfileFlowStage.info));
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: Color(0xff3840f7),
+                          ),
                         ),
                       ),
-                    ),
+                      // SizedBox(width: 24.0),
+                      GestureDetector(
+                        onTap: _canSave ? () => _save() : null,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            'Save',
+                            style: TextStyle(
+                              color: _canSave ? Color(0xff3840f7) : Color(0xffa2a2a2),
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
+            SizedBox(height: 25.0),
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Column(

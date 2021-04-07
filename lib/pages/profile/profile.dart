@@ -23,12 +23,9 @@ class Profile extends StatelessWidget {
                   onTap: () {
                     context.read<SheetBloc>().add(CloseSheet());
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xff3840f7),
-                    ),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Color(0xff3840f7),
                   ),
                 ),
                 Column(
