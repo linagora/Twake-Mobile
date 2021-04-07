@@ -38,6 +38,7 @@ class _SettingsState extends State<Settings> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xffefeef3),
+      resizeToAvoidBottomInset: false,
       body: SlidingUpPanel(
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
