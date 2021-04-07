@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/pages/profile/profile.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/add/add_channel_flow.dart';
 import 'package:twake/widgets/sheets/add/add_direct_flow.dart';
@@ -26,6 +27,10 @@ class DraggableScrollable extends StatelessWidget {
         break;
       case SheetFlow.workspace:
         content = AddWorkspaceFlow();
+        break;
+      case SheetFlow.profile:
+        content = Profile();
+        break;
     }
     return ClipRRect(
       borderRadius: new BorderRadius.only(

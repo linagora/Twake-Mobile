@@ -13,6 +13,11 @@ import 'package:twake/blocs/profile_bloc/profile_state.dart';
 export 'package:twake/blocs/profile_bloc/profile_event.dart';
 export 'package:twake/blocs/profile_bloc/profile_state.dart';
 
+enum ProfileFlowStage {
+  info,
+  edit,
+}
+
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static ProfileRepository repository;
   final NotificationBloc notificationBloc;
