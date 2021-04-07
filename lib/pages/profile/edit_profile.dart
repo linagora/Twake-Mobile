@@ -64,13 +64,14 @@ class _EditProfileState extends State<EditProfile> {
                         onTap: () {},
                       ),
                       SizedBox(height: 12.0),
-                      Text(
-                        'Diana Potokina',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
+                      GestureDetector(
+                        onTap: () => print('Change avatar!'),
+                        child: Text('Tap to upload',
+                            style: TextStyle(
+                              color: Color(0xff3840f7),
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.w400,
+                            )),
                       ),
                     ],
                   ),
