@@ -47,7 +47,7 @@ class _EditProfileState extends State<EditProfile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,12 +70,15 @@ class _EditProfileState extends State<EditProfile> {
                   // SizedBox(width: 24.0),
                   GestureDetector(
                     onTap: _canSave ? () => _save() : null,
-                    child: Text(
-                      'Save',
-                      style: TextStyle(
-                        color: _canSave ? Color(0xff3840f7) : Color(0xffa2a2a2),
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.w500,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: _canSave ? Color(0xff3840f7) : Color(0xffa2a2a2),
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
