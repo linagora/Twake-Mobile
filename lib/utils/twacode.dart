@@ -402,7 +402,7 @@ class TwacodeParser {
     final len = original.length;
     for (int j = i; j < len; j++) {
       if (original[j] == Delim.lf) {
-        return j + 1;
+        return j;
       }
     }
     return 0;
@@ -507,6 +507,7 @@ enum TType {
   User,
   Channel,
   Url,
+  Emoji,
   Email,
   Unknown
 }
@@ -540,15 +541,16 @@ class TwacodeRenderer {
       case TType.InlineCode:
         style = const TextStyle(
           fontFamily: MONOSPACE,
-          backgroundColor: Colors.lightBlue,
+          backgroundColor: Colors.black87,
+          color: Colors.white70,
         );
         break;
 
       case TType.MultiLineCode:
         style = TextStyle(
           fontFamily: MONOSPACE,
-          backgroundColor: Colors.black38,
-          color: Colors.grey,
+          backgroundColor: Colors.black87,
+          color: Colors.white70,
         );
         break;
 
@@ -579,7 +581,7 @@ class TwacodeRenderer {
       case TType.Quote:
         style = TextStyle(
           fontStyle: FontStyle.italic,
-          color: Colors.black87,
+          color: Colors.black,
         );
         break;
 
@@ -593,7 +595,6 @@ class TwacodeRenderer {
         style = TextStyle(
           fontStyle: FontStyle.italic,
           fontWeight: FontWeight.bold,
-          color: Colors.black54,
         );
         break;
 
@@ -606,28 +607,39 @@ class TwacodeRenderer {
         break;
 
       default:
-        style = TextStyle(fontFamily: DEFAULT);
+        style = TextStyle(color: Colors.black, fontFamily: DEFAULT);
     }
     return style;
   }
 
-  RichText get message => RichText(text: TextSpan(children: this.spans));
+  RichText get message => RichText(
+        text: TextSpan(
+          children: this.spans,
+          style: getStyle(TType.Text),
+        ),
+      );
 
-  List<InlineSpan> render(List<dynamic> twacode) {
+  List<InlineSpan> render(List<dynamic> twacode, [parent = false]) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {
-        spans.add(TextSpan(text: twacode[i]));
-      } else if (twacode[i] == List) {
-        spans.addAll(render(twacode[i]));
+        spans.add(TextSpan(text: twacode[i], style: getStyle(TType.Text)));
+      } else if (twacode[i] is List) {
+        spans.addAll(render(twacode[i], true));
       } else if (twacode[i] is Map) {
         final t = twacode[i];
         TType type;
         if (t['type'] != null) {
           switch (t['type']) {
+            case 'text':
+              type = TType.Text;
+              break;
             case 'url':
               type = TType.Url;
+              break;
+            case 'user':
+              type = TType.User;
               break;
             case 'email':
               type = TType.Email;
@@ -637,6 +649,9 @@ class TwacodeRenderer {
           }
         } else if (t['start'] != null) {
           switch (t['start']) {
+            case ':':
+              type = TType.Emoji;
+              break;
             case '\n':
               type = TType.LineBreak;
               break;
@@ -672,13 +687,25 @@ class TwacodeRenderer {
               type = TType.Unknown;
           }
         }
-        if (type == TType.MultiLineCode && spans.isNotEmpty) {
-          spans.add(TextSpan(text: '\n'));
+        if (type == TType.MultiLineCode) {
+          if (spans.isNotEmpty)
+            spans.add(
+              TextSpan(
+                text: '\n',
+                style: getStyle(TType.LineBreak),
+              ),
+            );
+          spans.add(
+            TextSpan(
+              text: t['content'],
+              style: getStyle(type),
+            ),
+          );
         } else if (type == TType.Quote) {
           InlineSpan text;
 
           if (t['content'] is List) {
-            final items = render(t['content']);
+            final items = render(t['content'], true);
             text = TextSpan(children: items, style: getStyle(type));
           } else {
             // t['content'] is String
@@ -691,23 +718,31 @@ class TwacodeRenderer {
                 child: RichText(text: text),
                 decoration: BoxDecoration(
                   border: Border(
-                    right: BorderSide(
+                    left: BorderSide(
                       width: 2.0,
                       color: Colors.grey,
                     ),
                   ),
                 ),
-                padding: EdgeInsets.only(right: 8),
+                padding: EdgeInsets.only(
+                  left: 8,
+                  bottom: 3,
+                  top: 3,
+                ),
               ),
             ),
           );
         } else if (type == TType.LineBreak) {
-          spans.add(TextSpan(text: '\n'));
+          spans.add(TextSpan(text: '\n', style: getStyle(TType.LineBreak)));
         } else if (t['content'] is List) {
-          final items = render(t['content']);
+          final items = render(t['content'], true);
           spans.add(TextSpan(children: items, style: getStyle(type)));
         } else {
-          // t['content'] is String
+          if (type == TType.Channel) {
+            t['content'] = '#' + t['content'];
+          } else if (type == TType.User) {
+            t['content'] = '@' + t['content'];
+          }
           spans.add(TextSpan(text: t['content'], style: getStyle(type)));
         }
       }

@@ -128,6 +128,8 @@ class ChannelsBloc extends BaseChannelBloc {
       ProfileBloc.selectedChannelId = event.channelId;
       ProfileBloc.selectedThreadId = null;
 
+      repository.logger
+          .e("CURRENT CHANNEL STATE: ${this.state}\nWILL YIELD: $newState");
       yield newState;
       notificationBloc.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is ModifyMessageCount) {

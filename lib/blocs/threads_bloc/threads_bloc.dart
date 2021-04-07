@@ -12,6 +12,7 @@ import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/blocs/messages_bloc/messages_state.dart';
 import 'package:twake/repositories/messages_repository.dart';
+import 'package:twake/utils/twacode.dart';
 
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
@@ -159,7 +160,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
         threadId: body['thread_id'],
         userId: ProfileBloc.userId,
         creationDate: DateTime.now().millisecondsSinceEpoch,
-        content: MessageTwacode(originalStr: body['original_str']),
+        content: MessageTwacode(
+          originalStr: body['original_str'],
+          prepared: TwacodeParser(body['original_str']).message,
+        ),
         reactions: {},
         responsesCount: 0,
         channelId: body['channel_id'],
