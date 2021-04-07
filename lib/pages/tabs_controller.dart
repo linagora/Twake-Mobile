@@ -3,17 +3,24 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
+import 'package:twake/pages/feed/channels.dart';
+import 'package:twake/pages/profile/settings.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
-class TabBarController extends StatefulWidget {
+class TabsController extends StatefulWidget {
   @override
-  _TabBarControllerState createState() => _TabBarControllerState();
+  _TabsControllerState createState() => _TabsControllerState();
 }
 
-class _TabBarControllerState extends State<TabBarController> {
+class _TabsControllerState extends State<TabsController> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final PanelController _panelController = PanelController();
+  final List<Widget> _widgets = [
+    Channels(),
+    Settings(),
+  ];
+  var _selectedIndex = 0;
 
   @override
   void initState() {
@@ -21,6 +28,12 @@ class _TabBarControllerState extends State<TabBarController> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CompaniesBloc>().add(ReloadCompanies());
     });
+  }
+
+  _onPanelSlide(double position) {
+    if (position < 0.4 && _panelController.isPanelAnimating) {
+      FocusScope.of(context).requestFocus(FocusNode());
+    }
   }
 
   @override
@@ -65,33 +78,12 @@ class _TabBarControllerState extends State<TabBarController> {
             }
           },
         ),
-        body: Container(
-          child: DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              appBar: AppBar(
-                bottom: TabBar(
-                  tabs: [
-                    Tab(
-                      text: 'Channels',
-                    ),
-                    Tab(
-                      text: 'Direct chats',
-                    ),
-                  ],
-                ),
-                title: Text('Tabs Demo'),
-              ),
-              body: TabBarView(
-                children: [
-                  Container(color: Colors.red),
-                  Container(color: Colors.blue),
-                ],
-              ),
-            ),
-          ),
+        body: Center(
+          child: _widgets.elementAt(_selectedIndex),
         ),
+
       ),
     );
   }
 }
+
