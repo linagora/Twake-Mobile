@@ -41,20 +41,31 @@ class RoundedTextField extends StatelessWidget {
         keyboardType: TextInputType.emailAddress,
         textAlign: TextAlign.end,
         style: TextStyle(
-          fontSize: 17.0,
+          fontSize: 15.0,
           fontWeight: FontWeight.w400,
           color: Colors.black,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          prefixText: prefix,
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(left: 15.0),
+            child: Text(
+              '$prefix',
+              style: TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.w400,
+                color: Colors.black.withOpacity(0.4),
+              ),
+            ),
+          ),
+          prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
           hintStyle: TextStyle(
-            fontSize: 17.0,
+            fontSize: 15.0,
             fontWeight: FontWeight.w400,
-            color: Color(0xffc8c8c8),
+            color: Colors.black.withOpacity(0.24),
           ),
           alignLabelWithHint: true,
-          contentPadding: EdgeInsets.only(left: 0, right: 16.0),
+          contentPadding: EdgeInsets.only(right: 16.0),
           fillColor: Colors.transparent,
           filled: true,
           border: UnderlineInputBorder(
