@@ -14,7 +14,7 @@ class Profile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,12 +23,9 @@ class Profile extends StatelessWidget {
                   onTap: () {
                     context.read<SheetBloc>().add(CloseSheet());
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Icon(
-                      Icons.arrow_back_ios,
-                      color: Color(0xff3840f7),
-                    ),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Color(0xff3840f7),
                   ),
                 ),
                 Column(
