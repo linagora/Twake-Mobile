@@ -75,7 +75,7 @@ class MessagesRepository {
     }
     final Set<String> userIds =
         itemsList.map((i) => (i['user_id'] as String)).toSet();
-    // logger.d('USERIDS: $userIds');
+    logger.d('USERIDS: $userIds');
     await UserRepository().batchUsersLoad(userIds);
     await _storage.batchStore(
       items: itemsList.map((i) {

@@ -76,7 +76,7 @@ class UserRepository {
       final users =
           response.map((u) => User.fromJson(u)).map((u) => MapEntry(u.id, u));
       items.addEntries(users);
-      _storage.batchStore(
+      await _storage.batchStore(
         items: items.values.map((u) => u.toJson()),
         type: StorageType.User,
       );
