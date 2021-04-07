@@ -50,9 +50,7 @@ class _EditProfileState extends State<EditProfile> {
               height: 56.0,
               child: OverflowBox(
                 maxWidth: MediaQuery.of(context).size.width,
-                maxHeight: 56,
                 child: Container(
-                  height: 56,
                   padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 8.0),
                   color: Colors.white,
                   child: Row(
@@ -151,15 +149,12 @@ class _EditProfileState extends State<EditProfile> {
               ),
             ),
             SizedBox(height: 8.0),
-            Center(
-              child: Text(
-                '«Displayed name» is how people see your name in Twake\nin @mentions and by other users in channels and private chats',
-                textAlign: TextAlign.justify,
-                style: TextStyle(
-                  fontSize: 11.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black.withOpacity(0.35),
-                ),
+            Text(
+              '«Displayed name» is how people see your name in Twake\nin @mentions and by other users in channels and private chats',
+              style: TextStyle(
+                fontSize: 11.0,
+                fontWeight: FontWeight.w400,
+                color: Colors.black.withOpacity(0.35),
               ),
             ),
             SizedBox(height: 43.0),
