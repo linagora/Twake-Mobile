@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/pages/main_page.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/server_configuration.dart';
+import 'package:twake/pages/tabs_controller.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/pages/edit_channel.dart';
 import 'package:twake/pages/profile/settings.dart';
@@ -19,6 +20,7 @@ class Routes {
     switch (routeName) {
       case Routes.root:
         page = MainPage();
+        // page = TabsController();
         break;
       case Routes.messages:
         page = MessagesPage();
