@@ -33,7 +33,25 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
     return Scaffold(
       primary: false,
       appBar: AppBar(
-        toolbarHeight: 150.0,
+        toolbarHeight: 160.0,
+        title: Column(
+          children: [
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 60,
+              color: Colors.blue.withOpacity(0.3),
+              child: Row(
+                children: [
+                  Text(
+                    'WorkspaceName',
+                    style: TextStyle(fontSize: 17.0, color: Colors.black),
+                  ),
+                ],
+              ),
+            ),
+            // Search bar will be here.
+          ],
+        ),
         bottom: DecoratedTabBar(
           decoration: BoxDecoration(
             border: Border(
@@ -73,11 +91,6 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-        ),
-        title: Container(
-          width: MediaQuery.of(context).size.width,
-          // height: 40,
-          child: Text('Channels'),
         ),
       ),
       body: SafeArea(
