@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/workspace.dart';
+import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 
 class Workspaces extends StatelessWidget {
@@ -90,51 +91,54 @@ class WorkspaceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       height: 76.0,
       color: Colors.white,
       child: Column(
         children: [
-          Expanded(
-            child: Row(
-              children: [
-                SizedBox(width: 16.0),
-                SelectableAvatar(
-                  size: 60.0,
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+          Row(
+            children: [
+              SizedBox(width: 16.0),
+              ImageAvatar(
+                image,
+                width: 60.0,
+                height: 60.0,
+              ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                    ),
+                    if (subtitle != null && subtitle.isNotEmpty)
                       Text(
-                        title,
+                        subtitle,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 15.0,
+                          fontSize: 10.0,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                          color: Color(0xff949494),
                         ),
                       ),
-                      if (subtitle != null && subtitle.isNotEmpty)
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff949494),
-                          ),
-                        ),
-                    ],
-                  ),
+                  ],
                 ),
-                Spacer(),
-                if (selected)
-                  Icon(
-                    CupertinoIcons.check_mark_circled_solid,
-                    color: Color(0xff3840F7),
-                  ),
-                SizedBox(width: 19.0),
-              ],
-            ),
+              ),
+              if (selected)
+                Icon(
+                  CupertinoIcons.check_mark_circled_solid,
+                  color: Color(0xff3840F7),
+                ),
+              SizedBox(width: 19.0),
+            ],
           ),
           Divider(
             thickness: 1.0,
