@@ -82,10 +82,12 @@ class _TabsControllerState extends State<TabsController> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        elevation: 0.0,
+        elevation: 0,
         selectedFontSize: 12.0,
         unselectedFontSize: 12.0,
         backgroundColor: Color(0xfff7f7f7),
+        selectedItemColor: Color(0xff004dff),
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {

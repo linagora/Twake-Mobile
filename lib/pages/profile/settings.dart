@@ -38,7 +38,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Color(0xffefeef3),
+      color: Color(0xffefeef3),
       child: SlidingUpPanel(
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
