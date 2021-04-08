@@ -77,9 +77,7 @@ class _TabsControllerState extends State<TabsController> {
             }
           },
         ),
-        body: Center(
-          child: _widgets.elementAt(_selectedIndex),
-        ),
+        body: IndexedStack(index: _selectedIndex, children: _widgets),
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
