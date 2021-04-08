@@ -73,7 +73,9 @@ class _TabsControllerState extends State<TabsController> {
             var sheetFlow = SheetFlow.addChannel;
             if (state is FlowUpdated) {
               sheetFlow = state.flow;
-              return DraggableScrollable(flow: sheetFlow);
+              return SafeArea(
+                child: DraggableScrollable(flow: sheetFlow),
+              );
             } else {
               return SizedBox();
             }
@@ -87,9 +89,15 @@ class _TabsControllerState extends State<TabsController> {
         unselectedFontSize: 12.0,
         backgroundColor: Color(0xfff7f7f7),
         selectedItemColor: Color(0xff004dff),
-        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: (index) {
+          FocusScope.of(context).requestFocus(FocusNode());
+          context.read<SheetBloc>()
+            ..add(CloseSheet())
+            ..add(SetFlow(
+              flow: index != 0 ? SheetFlow.profile : SheetFlow.addChannel,
+            ));
+
           setState(() {
             _selectedIndex = index;
           });

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
+import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/pages/feed/channels.dart';
 import 'package:twake/pages/feed/directs.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/decorated_tab_bar.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
@@ -27,6 +29,20 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _create() {
+    context.read<SheetBloc>()
+      ..add(SetFlow(
+        flow: _controller.index != 0 ? SheetFlow.direct : SheetFlow.addChannel,
+      ))
+      ..add(OpenSheet());
   }
 
   @override
@@ -108,7 +124,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                             ),
                             Spacer(),
                             GestureDetector(
-                              onTap: () => print('Create channel!'),
+                              onTap: () => _create(),
                               child: Image.asset('assets/images/create.png'),
                             ),
                             SizedBox(width: 16),
