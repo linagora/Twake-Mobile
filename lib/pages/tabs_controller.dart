@@ -81,9 +81,25 @@ class _TabsControllerState extends State<TabsController> {
         body: Center(
           child: _widgets.elementAt(_selectedIndex),
         ),
-
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Image.asset('assets/images/channels.png'),
+            label: 'Channels',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset('assets/images/profile.png'),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }
 }
-
