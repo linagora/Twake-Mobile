@@ -65,42 +65,55 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                         selectedWorkspace = state.selected;
                         workspaces = state.workspaces;
                       }
-                      return Row(
-                        children: [
-                          SizedBox(width: 16),
-                          ShimmerLoading(
-                            key: ValueKey<String>('workspace_image'),
-                            isLoading: selectedWorkspace == null ||
-                                selectedWorkspace.logo.isEmpty,
-                            width: 40.0,
-                            height: 40.0,
-                            child: ImageAvatar(
-                              selectedWorkspace.logo,
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                          SizedBox(width: 15),
-                          ShimmerLoading(
-                            key: ValueKey<String>('name'),
-                            isLoading: selectedWorkspace.name == null,
-                            width: 60.0,
-                            height: 10.0,
-                            child: Text(
-                              selectedWorkspace.name,
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                color: Colors.black,
+                      return GestureDetector(
+                        onTap: () {
+                          print('Open workspaces!');
+                        },
+                        child: Row(
+                          children: [
+                            SizedBox(width: 16),
+                            ShimmerLoading(
+                              key: ValueKey<String>('workspace_image'),
+                              isLoading: selectedWorkspace == null ||
+                                  selectedWorkspace.logo.isEmpty,
+                              width: 40.0,
+                              height: 40.0,
+                              child: ImageAvatar(
+                                selectedWorkspace.logo,
+                                width: 40,
+                                height: 40,
                               ),
                             ),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: () => print('Create channel!'),
-                            child: Image.asset('assets/images/create.png'),
-                          ),
-                          SizedBox(width: 16),
-                        ],
+                            SizedBox(width: 15),
+                            ShimmerLoading(
+                              key: ValueKey<String>('name'),
+                              isLoading: selectedWorkspace.name == null,
+                              width: 60.0,
+                              height: 10.0,
+                              child: Text(
+                                selectedWorkspace.name,
+                                style: TextStyle(
+                                  fontSize: 17.0,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 2.0),
+                              child: Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: Colors.black,
+                                size: 25,
+                              ),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () => print('Create channel!'),
+                              child: Image.asset('assets/images/create.png'),
+                            ),
+                            SizedBox(width: 16),
+                          ],
+                        ),
                       );
                     },
                   );
