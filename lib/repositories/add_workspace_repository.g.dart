@@ -12,7 +12,8 @@ AddWorkspaceRepository _$AddWorkspaceRepositoryFromJson(
   return AddWorkspaceRepository(
     name: json['name'] as String,
     companyId: json['company_id'] as String,
-    members: (json['members'] as List)?.map((e) => e as String)?.toList(),
+    members:
+        (json['members'] as List<dynamic>).map((e) => e as String).toList(),
   );
 }
 

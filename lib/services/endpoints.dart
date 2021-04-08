@@ -13,6 +13,8 @@ class Endpoint {
   static const profile = '/user';
   // API Endpoint for working with other users
   static const users = '/users';
+  // API Endpoint for working with bots (applications)
+  static const applications = '/applications';
   // API Endpoint for working with user's companies
   static const companies = '/companies';
   // API Endpoint for working with user's companies
@@ -34,7 +36,7 @@ class Endpoint {
   // API Endpoint for working with message reactions
   static const reactions = '/reactions';
   // API Endpoint for getting current supported emojis
-  static const emojis = '/settings/emoji';
+  static const emojis = '/info/emoji';
   // API Endpoint for searching users by name
   static const usersSearch = '/users/search';
   // API Endpoint for getting latest updates about messages

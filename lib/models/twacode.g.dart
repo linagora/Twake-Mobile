@@ -9,7 +9,7 @@ part of 'twacode.dart';
 MessageTwacode _$MessageTwacodeFromJson(Map<String, dynamic> json) {
   return MessageTwacode(
     originalStr: json['original_str'] as String,
-    prepared: json['prepared'] as List,
+    prepared: json['prepared'] as List<dynamic>,
   );
 }
 

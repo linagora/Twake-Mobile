@@ -52,6 +52,8 @@ class Message extends CollectionItem {
   @JsonKey(name: 'lastname')
   String lastName;
   String thumbnail;
+  @JsonKey(name: 'name')
+  String appName;
 
   @JsonKey(ignore: true)
   final _api = Api();

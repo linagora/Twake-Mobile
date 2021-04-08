@@ -89,7 +89,8 @@ class MessagesRepository {
         'user.firstname, '
         'user.lastname, '
         'user.thumbnail '
-        'FROM message JOIN user ON user.id = message.user_id';
+        'application.name '
+        'FROM message LEFT JOIN user ON user.id = message.user_id LEFT JOIN application ON application.id = message.app_id';
     itemsList = await _storage.customQuery(
       query,
       filters: filters,

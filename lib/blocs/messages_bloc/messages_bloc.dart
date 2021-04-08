@@ -45,14 +45,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         this.add(LoadMessages());
         selectedChannel = state.selected;
       }
-      // if (state is ChannelsLoaded) {
-      // final updatedChannel = state.channels
-      // .firstWhere((channel) => channel.id == selectedChannel.id);
-      // if (updatedChannel != null) {
-      // selectedChannel = updatedChannel;
-      // }
-      // this.add(LoadMessages(forceFromApi: true));
-      // }
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) async {
