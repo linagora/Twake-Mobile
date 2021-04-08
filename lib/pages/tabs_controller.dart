@@ -3,7 +3,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
-import 'package:twake/pages/feed/channels.dart';
+import 'package:twake/pages/feed/feed.dart';
 import 'package:twake/pages/profile/settings.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
@@ -17,7 +17,7 @@ class _TabsControllerState extends State<TabsController> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final PanelController _panelController = PanelController();
   final List<Widget> _widgets = [
-    Channels(),
+    Feed(),
     Settings(),
   ];
   var _selectedIndex = 0;
@@ -77,14 +77,15 @@ class _TabsControllerState extends State<TabsController> {
             }
           },
         ),
-        body: Center(
-          child: _widgets.elementAt(_selectedIndex),
-        ),
+        body: IndexedStack(index: _selectedIndex, children: _widgets),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 0,
         selectedFontSize: 12.0,
         unselectedFontSize: 12.0,
         backgroundColor: Color(0xfff7f7f7),
+        selectedItemColor: Color(0xff004dff),
+        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
