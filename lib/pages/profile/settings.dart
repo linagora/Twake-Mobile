@@ -13,8 +13,7 @@ class Settings extends StatefulWidget {
   _SettingsState createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings>
-    with AutomaticKeepAliveClientMixin<Settings> {
+class _SettingsState extends State<Settings> {
   final PanelController _panelController = PanelController();
 
   @override
@@ -38,9 +37,8 @@ class _SettingsState extends State<Settings>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Container(
-      color: Color(0xffefeef3),
+      // color: Color(0xffefeef3),
       child: SlidingUpPanel(
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
@@ -228,7 +226,4 @@ class _SettingsState extends State<Settings>
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

@@ -7,10 +7,7 @@ class Feed extends StatefulWidget {
   _FeedState createState() => _FeedState();
 }
 
-class _FeedState extends State<Feed>
-    with
-        SingleTickerProviderStateMixin,
-        AutomaticKeepAliveClientMixin<Feed> {
+class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
   TabController _controller;
   final _tabs = [Channels(), Directs()];
   var _selectedTab = 0;
@@ -32,7 +29,6 @@ class _FeedState extends State<Feed>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       primary: false,
       appBar: AppBar(
@@ -81,7 +77,4 @@ class _FeedState extends State<Feed>
       ),
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

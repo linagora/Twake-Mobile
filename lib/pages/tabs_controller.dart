@@ -82,6 +82,7 @@ class _TabsControllerState extends State<TabsController> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 0.0,
         selectedFontSize: 12.0,
         unselectedFontSize: 12.0,
         backgroundColor: Color(0xfff7f7f7),
