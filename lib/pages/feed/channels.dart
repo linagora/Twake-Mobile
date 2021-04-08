@@ -5,7 +5,8 @@ class Channels extends StatefulWidget {
   _ChannelsState createState() => _ChannelsState();
 }
 
-class _ChannelsState extends State<Channels> with SingleTickerProviderStateMixin {
+class _ChannelsState extends State<Channels>
+    with SingleTickerProviderStateMixin {
   TabController _controller;
   var _selectedTab = 0;
 
@@ -57,7 +58,11 @@ class _ChannelsState extends State<Channels> with SingleTickerProviderStateMixin
             ),
           ],
         ),
-        title: Text('Channels'),
+        title: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 40,
+          child: Text('Channels'),
+        ),
       ),
       body: TabBarView(
         controller: _controller,

@@ -36,10 +36,9 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xffefeef3),
-      resizeToAvoidBottomInset: false,
-      body: SlidingUpPanel(
+    return Container(
+      color: Color(0xffefeef3),
+      child: SlidingUpPanel(
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
         onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
@@ -80,6 +79,7 @@ class _SettingsState extends State<Settings> {
           child: SingleChildScrollView(
             child: Container(
               padding: EdgeInsets.fromLTRB(16.0, 42.0, 16.0, 36.0),
+              color: Color(0xffefeef3),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

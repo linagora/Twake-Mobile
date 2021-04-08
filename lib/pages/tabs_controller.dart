@@ -40,7 +40,7 @@ class _TabsControllerState extends State<TabsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.white,
+      // backgroundColor: Color(0xffefeef3),
       resizeToAvoidBottomInset: false,
 
       body: SlidingUpPanel(
@@ -78,10 +78,8 @@ class _TabsControllerState extends State<TabsController> {
             }
           },
         ),
-        body: SafeArea(
-          child: Center(
-            child: _widgets.elementAt(_selectedIndex),
-          ),
+        body: Center(
+          child: _widgets.elementAt(_selectedIndex),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
