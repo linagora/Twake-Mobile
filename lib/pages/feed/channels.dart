@@ -28,6 +28,7 @@ class _ChannelsState extends State<Channels>
     return Scaffold(
       primary: false,
       appBar: AppBar(
+        toolbarHeight: 150.0,
         bottom: TabBar(
           controller: _controller,
           indicatorPadding: EdgeInsets.symmetric(horizontal: 15.0),
@@ -60,16 +61,18 @@ class _ChannelsState extends State<Channels>
         ),
         title: Container(
           width: MediaQuery.of(context).size.width,
-          height: 40,
+          // height: 40,
           child: Text('Channels'),
         ),
       ),
-      body: TabBarView(
-        controller: _controller,
-        children: [
-          Container(color: Colors.white60),
-          Container(color: Colors.white54),
-        ],
+      body: SafeArea(
+        child: TabBarView(
+          controller: _controller,
+          children: [
+            Container(color: Colors.white60),
+            Container(color: Colors.white54),
+          ],
+        ),
       ),
     );
   }

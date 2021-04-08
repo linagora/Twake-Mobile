@@ -42,7 +42,6 @@ class _TabsControllerState extends State<TabsController> {
       key: _scaffoldKey,
       // backgroundColor: Color(0xffefeef3),
       resizeToAvoidBottomInset: false,
-
       body: SlidingUpPanel(
         controller: _panelController,
         onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
