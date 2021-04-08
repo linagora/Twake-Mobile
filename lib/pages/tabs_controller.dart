@@ -78,11 +78,16 @@ class _TabsControllerState extends State<TabsController> {
             }
           },
         ),
-        body: Center(
-          child: _widgets.elementAt(_selectedIndex),
+        body: SafeArea(
+          child: Center(
+            child: _widgets.elementAt(_selectedIndex),
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        selectedFontSize: 12.0,
+        unselectedFontSize: 12.0,
+        backgroundColor: Color(0xfff7f7f7),
         currentIndex: _selectedIndex,
         onTap: (index) {
           setState(() {
@@ -91,11 +96,25 @@ class _TabsControllerState extends State<TabsController> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Image.asset('assets/images/channels.png'),
+            activeIcon: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Image.asset('assets/images/channels_active.png'),
+            ),
+            icon: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Image.asset('assets/images/channels_inactive.png'),
+            ),
             label: 'Channels',
           ),
           BottomNavigationBarItem(
-            icon: Image.asset('assets/images/profile.png'),
+            activeIcon: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Image.asset('assets/images/profile_active.png'),
+            ),
+            icon: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Image.asset('assets/images/profile_inactive.png'),
+            ),
             label: 'Profile',
           ),
         ],

@@ -22,8 +22,8 @@ class Channels extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              Container(color: Colors.red),
-              Container(color: Colors.blue),
+              Container(color: Colors.white60),
+              Container(color: Colors.white54),
             ],
           ),
         ),
