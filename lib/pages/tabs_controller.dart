@@ -73,6 +73,7 @@ class _TabsControllerState extends State<TabsController> {
             var sheetFlow = SheetFlow.addChannel;
             if (state is FlowUpdated) {
               sheetFlow = state.flow;
+              _isSelectWorkspaceFlow = sheetFlow == SheetFlow.selectWorkspace;
               return SafeArea(
                 child: DraggableScrollable(flow: sheetFlow),
               );

@@ -45,6 +45,14 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
       ..add(OpenSheet());
   }
 
+  void _showWorkspaces() {
+    context.read<SheetBloc>()
+      ..add(SetFlow(
+        flow: SheetFlow.selectWorkspace,
+      ))
+      ..add(OpenSheet());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,9 +90,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                         workspaces = state.workspaces;
                       }
                       return GestureDetector(
-                        onTap: () {
-                          print('Open workspaces!');
-                        },
+                        onTap: () => _showWorkspaces(),
                         child: Row(
                           children: [
                             SizedBox(width: 16),
