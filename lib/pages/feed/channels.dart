@@ -6,13 +6,17 @@ class Channels extends StatefulWidget {
 }
 
 class _ChannelsState extends State<Channels>
-    with SingleTickerProviderStateMixin {
+    with
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin<Channels> {
   TabController _controller;
   var _selectedTab = 0;
 
   @override
   void initState() {
     super.initState();
+    print('Channels tab init');
+
     _controller = TabController(length: 2, vsync: this);
 
     _controller.addListener(() {
@@ -25,6 +29,7 @@ class _ChannelsState extends State<Channels>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       primary: false,
       appBar: AppBar(
@@ -76,4 +81,7 @@ class _ChannelsState extends State<Channels>
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

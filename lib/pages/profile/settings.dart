@@ -13,12 +13,14 @@ class Settings extends StatefulWidget {
   _SettingsState createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsState extends State<Settings>
+    with AutomaticKeepAliveClientMixin<Settings> {
   final PanelController _panelController = PanelController();
 
   @override
   void initState() {
     super.initState();
+    print('Settings tab init');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
@@ -36,6 +38,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       color: Color(0xffefeef3),
       child: SlidingUpPanel(
@@ -225,4 +228,7 @@ class _SettingsState extends State<Settings> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
