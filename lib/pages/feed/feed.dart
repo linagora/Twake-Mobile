@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/company.dart';
+import 'package:twake/models/workspace.dart';
 import 'package:twake/pages/feed/channels.dart';
 import 'package:twake/pages/feed/directs.dart';
 import 'package:twake/widgets/common/decorated_tab_bar.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:twake/widgets/common/shimmer_loading.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -38,7 +40,6 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
             Container(
               width: MediaQuery.of(context).size.width,
               height: 60,
-              color: Colors.blue.withOpacity(0.3),
               child: BlocBuilder<CompaniesBloc, CompaniesState>(
                 buildWhen: (_, current) => current is CompaniesLoaded,
                 builder: (context, state) {
@@ -57,33 +58,48 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                   return BlocBuilder<WorkspacesBloc, WorkspaceState>(
                     buildWhen: (_, current) => current is WorkspacesLoaded,
                     builder: (context, state) {
+                      Workspace selectedWorkspace;
+                      List<Workspace> workspaces;
+
                       if (state is WorkspacesLoaded) {
-                        final selectedWorkspace = state.selected;
-                        final workspaces = state.workspaces;
-                        if (selectedWorkspace != null) {
-                          // TODO!
-                        }
+                        selectedWorkspace = state.selected;
+                        workspaces = state.workspaces;
                       }
                       return Row(
                         children: [
-                          // ImageAvatar(
-                          //   state.workspaces[i].logo,
-                          //   width: 40,
-                          //   height: 40,
-                          // ),
+                          SizedBox(width: 16),
+                          ShimmerLoading(
+                            key: ValueKey<String>('workspace_image'),
+                            isLoading: selectedWorkspace == null ||
+                                selectedWorkspace.logo.isEmpty,
+                            width: 40.0,
+                            height: 40.0,
+                            child: ImageAvatar(
+                              selectedWorkspace.logo,
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
                           SizedBox(width: 15),
-                          Text(
-                            'WorkspaceName',
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              color: Colors.black,
+                          ShimmerLoading(
+                            key: ValueKey<String>('name'),
+                            isLoading: selectedWorkspace.name == null,
+                            width: 60.0,
+                            height: 10.0,
+                            child: Text(
+                              selectedWorkspace.name,
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                           Spacer(),
                           GestureDetector(
                             onTap: () => print('Create channel!'),
                             child: Image.asset('assets/images/create.png'),
-                          )
+                          ),
+                          SizedBox(width: 16),
                         ],
                       );
                     },
