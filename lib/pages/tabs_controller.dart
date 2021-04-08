@@ -21,6 +21,7 @@ class _TabsControllerState extends State<TabsController> {
     Settings(),
   ];
   var _selectedIndex = 0;
+  var _isSelectWorkspaceFlow = false;
 
   @override
   void initState() {
@@ -48,12 +49,13 @@ class _TabsControllerState extends State<TabsController> {
         onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
         onPanelSlide: _onPanelSlide,
         minHeight: 0,
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
+        maxHeight: MediaQuery.of(context).size.height *
+            (_isSelectWorkspaceFlow ? 0.5 : 0.9),
         backdropEnabled: true,
         renderPanelSheet: false,
         panel: BlocConsumer<SheetBloc, SheetState>(
           listenWhen: (_, current) =>
-          current is SheetShouldOpen || current is SheetShouldClose,
+              current is SheetShouldOpen || current is SheetShouldClose,
           listener: (context, state) {
             // print('Strange state: $state');
             if (state is SheetShouldOpen) {

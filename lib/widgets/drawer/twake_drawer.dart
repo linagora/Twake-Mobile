@@ -75,7 +75,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                 if (isDrawerOpen) {
                                   Navigator.pop(context); // close the drawer
                                   context.read<SheetBloc>()
-                                    ..add(SetFlow(flow: SheetFlow.workspace))
+                                    ..add(SetFlow(flow: SheetFlow.addWorkspace))
                                     ..add(OpenSheet());
                                 }
                               },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/pages/profile/profile_flow.dart';
+import 'package:twake/pages/workspaces/workspaces.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/add/add_channel_flow.dart';
 import 'package:twake/widgets/sheets/add/add_direct_flow.dart';
@@ -25,8 +26,11 @@ class DraggableScrollable extends StatelessWidget {
       case SheetFlow.direct:
         content = AddDirectFlow();
         break;
-      case SheetFlow.workspace:
+      case SheetFlow.addWorkspace:
         content = AddWorkspaceFlow();
+        break;
+      case SheetFlow.selectWorkspace:
+        content = Workspaces();
         break;
       case SheetFlow.profile:
         content = ProfileFlow();
