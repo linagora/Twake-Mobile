@@ -63,7 +63,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
           children: [
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 60,
+              height: 60.0,
               child: BlocBuilder<CompaniesBloc, CompaniesState>(
                 buildWhen: (_, current) => current is CompaniesLoaded,
                 builder: (context, state) {
@@ -94,7 +94,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                         behavior: HitTestBehavior.opaque,
                         child: Row(
                           children: [
-                            SizedBox(width: 8.0),
+                            SizedBox(width: 9.0),
                             ShimmerLoading(
                               key: ValueKey<String>('workspace_image'),
                               isLoading: selectedWorkspace == null ||
@@ -103,11 +103,11 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                               height: 40.0,
                               child: ImageAvatar(
                                 selectedWorkspace.logo,
-                                width: 40,
-                                height: 40,
+                                width: 40.0,
+                                height: 40.0,
                               ),
                             ),
-                            SizedBox(width: 15),
+                            SizedBox(width: 15.0),
                             Expanded(
                               child: ShimmerLoading(
                                 key: ValueKey<String>('name'),
@@ -131,7 +131,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                                       child: Icon(
                                         Icons.keyboard_arrow_down_rounded,
                                         color: Colors.black,
-                                        size: 25,
+                                        size: 25.0,
                                       ),
                                     ),
                                   ],
