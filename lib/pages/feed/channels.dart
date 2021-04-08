@@ -29,29 +29,35 @@ class _ChannelsState extends State<Channels> with SingleTickerProviderStateMixin
       appBar: AppBar(
         bottom: TabBar(
           controller: _controller,
-          indicatorPadding: _selectedTab == 0
-              ? EdgeInsets.only(left: 30.0)
-              : EdgeInsets.only(right: 30.0),
+          indicatorPadding: EdgeInsets.symmetric(horizontal: 15.0),
           indicatorColor: Color(0xff004dff),
           indicatorSize: TabBarIndicatorSize.label,
+          labelStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500,
+          ),
+          unselectedLabelStyle: TextStyle(
+            color: Color(0xff8e8e93),
+            fontSize: 16.0,
+            fontWeight: FontWeight.w500,
+          ),
           tabs: [
-            Container(
-              width: 130.0,
-              padding: const EdgeInsets.only(left: 30.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Tab(
                 text: 'Channels',
               ),
             ),
-            Container(
-              width: 130.0,
-              padding: const EdgeInsets.only(right: 30.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Tab(
                 text: 'Direct chats',
               ),
             ),
           ],
         ),
-        title: Text('Tabs Demo'),
+        title: Text('Channels'),
       ),
       body: TabBarView(
         controller: _controller,
