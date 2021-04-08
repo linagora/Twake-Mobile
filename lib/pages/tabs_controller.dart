@@ -21,6 +21,7 @@ class _TabsControllerState extends State<TabsController> {
     Settings(),
   ];
   var _selectedIndex = 0;
+  var _isSelectWorkspaceFlow = false;
 
   @override
   void initState() {
@@ -42,42 +43,50 @@ class _TabsControllerState extends State<TabsController> {
       key: _scaffoldKey,
       // backgroundColor: Color(0xffefeef3),
       resizeToAvoidBottomInset: false,
-      body: SlidingUpPanel(
-        controller: _panelController,
-        onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
-        onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
-        onPanelSlide: _onPanelSlide,
-        minHeight: 0,
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-        backdropEnabled: true,
-        renderPanelSheet: false,
-        panel: BlocConsumer<SheetBloc, SheetState>(
-          listenWhen: (_, current) =>
-          current is SheetShouldOpen || current is SheetShouldClose,
-          listener: (context, state) {
-            // print('Strange state: $state');
-            if (state is SheetShouldOpen) {
-              if (_panelController.isPanelClosed) {
-                _panelController.open();
-              }
-            } else if (state is SheetShouldClose) {
-              if (_panelController.isPanelOpen) {
-                _panelController.close();
-              }
+      body: BlocConsumer<SheetBloc, SheetState>(
+        listenWhen: (_, current) =>
+            current is SheetShouldOpen || current is SheetShouldClose,
+        listener: (context, state) {
+          // print('Strange state: $state');
+          if (state is SheetShouldOpen) {
+            if (_panelController.isPanelClosed) {
+              _panelController.open();
             }
-          },
-          buildWhen: (_, current) => current is FlowUpdated,
-          builder: (context, state) {
-            var sheetFlow = SheetFlow.addChannel;
-            if (state is FlowUpdated) {
-              sheetFlow = state.flow;
-              return DraggableScrollable(flow: sheetFlow);
-            } else {
-              return SizedBox();
+          } else if (state is SheetShouldClose) {
+            if (_panelController.isPanelOpen) {
+              _panelController.close();
             }
-          },
-        ),
-        body: IndexedStack(index: _selectedIndex, children: _widgets),
+          }
+        },
+        buildWhen: (_, current) {
+          print('Current state: $current');
+          return current is FlowUpdated;
+        },
+        builder: (context, state) {
+          var sheetFlow = SheetFlow.addChannel;
+          if (state is FlowUpdated) {
+            sheetFlow = state.flow;
+            _isSelectWorkspaceFlow = sheetFlow == SheetFlow.selectWorkspace;
+          }
+
+          return SlidingUpPanel(
+            controller: _panelController,
+            onPanelOpened: () => context.read<SheetBloc>().add(SetOpened()),
+            onPanelClosed: () => context.read<SheetBloc>().add(SetClosed()),
+            onPanelSlide: _onPanelSlide,
+            minHeight: 0,
+            maxHeight: MediaQuery.of(context).size.height *
+                (_isSelectWorkspaceFlow ? 0.5 : 0.9),
+            backdropEnabled: true,
+            renderPanelSheet: false,
+            panel: state is FlowUpdated
+                ? SafeArea(
+                    child: DraggableScrollable(flow: sheetFlow),
+                  )
+                : SizedBox(),
+            body: IndexedStack(index: _selectedIndex, children: _widgets),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
@@ -85,9 +94,15 @@ class _TabsControllerState extends State<TabsController> {
         unselectedFontSize: 12.0,
         backgroundColor: Color(0xfff7f7f7),
         selectedItemColor: Color(0xff004dff),
-        type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
         onTap: (index) {
+          FocusScope.of(context).requestFocus(FocusNode());
+          context.read<SheetBloc>()
+            ..add(CloseSheet())
+            ..add(SetFlow(
+              flow: index != 0 ? SheetFlow.profile : SheetFlow.addChannel,
+            ));
+
           setState(() {
             _selectedIndex = index;
           });

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/switch_field.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:twake/widgets/common/warning_dialog.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 
 class Settings extends StatefulWidget {
@@ -19,8 +21,6 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    print('Settings tab init');
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
       context
@@ -33,6 +33,23 @@ class _SettingsState extends State<Settings> {
     if (position < 0.4 && _panelController.isPanelAnimating) {
       FocusScope.of(context).requestFocus(FocusNode());
     }
+  }
+
+  void _handleLogout(BuildContext parentContext) async {
+    showDialog(
+      context: parentContext,
+      builder: (BuildContext context) {
+        return WarningDialog(
+          title: 'Are you sure you want to log out of your account?',
+          leadingActionTitle: 'Cancel',
+          trailingActionTitle: 'Log out',
+          trailingAction: () async {
+            BlocProvider.of<AuthBloc>(parentContext).add(ResetAuthentication());
+            Navigator.of(context).pop();
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -200,7 +217,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   SizedBox(height: 21.0),
                   GestureDetector(
-                    onTap: () => print('Logout'),
+                    onTap: () => _handleLogout(context),
                     child: Container(
                       height: 44.0,
                       decoration: BoxDecoration(

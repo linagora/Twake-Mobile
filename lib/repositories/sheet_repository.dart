@@ -2,7 +2,8 @@ enum SheetFlow {
   addChannel,
   editChannel,
   direct,
-  workspace,
+  addWorkspace,
+  selectWorkspace,
   profile,
 }
 
