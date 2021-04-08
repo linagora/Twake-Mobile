@@ -21,8 +21,6 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
-    print('Settings tab init');
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
       context

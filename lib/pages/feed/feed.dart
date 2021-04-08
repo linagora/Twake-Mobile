@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
+import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
+import 'package:twake/models/company.dart';
 import 'package:twake/pages/feed/channels.dart';
 import 'package:twake/pages/feed/directs.dart';
 import 'package:twake/widgets/common/decorated_tab_bar.dart';
@@ -11,21 +15,15 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
   TabController _controller;
   final _tabs = [Channels(), Directs()];
-  var _selectedTab = 0;
+
+  var _companiesHidden = true;
+  var _canCreateWorkspace = false;
+  var _companies = <Company>[];
 
   @override
   void initState() {
     super.initState();
-    print('Channels tab init');
-
     _controller = TabController(length: 2, vsync: this);
-
-    _controller.addListener(() {
-      setState(() {
-        _selectedTab = _controller.index;
-      });
-      print("Selected tab: " + _controller.index.toString());
-    });
   }
 
   @override
@@ -40,13 +38,46 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
               width: MediaQuery.of(context).size.width,
               height: 60,
               color: Colors.blue.withOpacity(0.3),
-              child: Row(
-                children: [
-                  Text(
-                    'WorkspaceName',
-                    style: TextStyle(fontSize: 17.0, color: Colors.black),
-                  ),
-                ],
+              child: BlocBuilder<CompaniesBloc, CompaniesState>(
+                buildWhen: (_, current) => current is CompaniesLoaded,
+                builder: (context, state) {
+                  if (state is CompaniesLoaded) {
+                    _companies = state.companies;
+
+                    final selectedCompany = state.selected;
+                    final permissions = selectedCompany.permissions;
+                    if (permissions.length > 0 &&
+                        permissions.contains('CREATE_WORKSPACES')) {
+                      _canCreateWorkspace = true;
+                    } else {
+                      _canCreateWorkspace = false;
+                    }
+                  }
+                  return BlocBuilder<WorkspacesBloc, WorkspaceState>(
+                    buildWhen: (_, current) => current is WorkspacesLoaded,
+                    builder: (context, state) {
+                      if (state is WorkspacesLoaded) {
+                        final selectedWorkspace = state.selected;
+                        final workspaces = state.workspaces;
+                        if (selectedWorkspace != null) {
+
+                          print(selectedWorkspace.name);
+                        }
+                      }
+                      return Row(
+                        children: [
+                          Text(
+                            'WorkspaceName',
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
             ),
             // Search bar will be here.
