@@ -6,6 +6,7 @@ import 'package:twake/models/company.dart';
 import 'package:twake/pages/feed/channels.dart';
 import 'package:twake/pages/feed/directs.dart';
 import 'package:twake/widgets/common/decorated_tab_bar.dart';
+import 'package:twake/widgets/common/image_avatar.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -60,12 +61,17 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                         final selectedWorkspace = state.selected;
                         final workspaces = state.workspaces;
                         if (selectedWorkspace != null) {
-
-                          print(selectedWorkspace.name);
+                          // TODO!
                         }
                       }
                       return Row(
                         children: [
+                          // ImageAvatar(
+                          //   state.workspaces[i].logo,
+                          //   width: 40,
+                          //   height: 40,
+                          // ),
+                          SizedBox(width: 15),
                           Text(
                             'WorkspaceName',
                             style: TextStyle(
@@ -73,6 +79,11 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                               color: Colors.black,
                             ),
                           ),
+                          Spacer(),
+                          GestureDetector(
+                            onTap: () => print('Create channel!'),
+                            child: Image.asset('assets/images/create.png'),
+                          )
                         ],
                       );
                     },
