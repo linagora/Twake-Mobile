@@ -3,7 +3,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
-import 'package:twake/pages/feed/channels.dart';
+import 'package:twake/pages/feed/feed.dart';
 import 'package:twake/pages/profile/settings.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
@@ -17,7 +17,7 @@ class _TabsControllerState extends State<TabsController> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final PanelController _panelController = PanelController();
   final List<Widget> _widgets = [
-    Channels(),
+    Feed(),
     Settings(),
   ];
   var _selectedIndex = 0;
