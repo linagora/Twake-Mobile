@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake/pages/feed/channels.dart';
 import 'package:twake/pages/feed/directs.dart';
+import 'package:twake/widgets/common/decorated_tab_bar.dart';
 
 class Feed extends StatefulWidget {
   @override
@@ -33,35 +34,45 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
       primary: false,
       appBar: AppBar(
         toolbarHeight: 150.0,
-        bottom: TabBar(
-          controller: _controller,
-          indicatorPadding: EdgeInsets.symmetric(horizontal: 15.0),
-          indicatorColor: Color(0xff004dff),
-          indicatorSize: TabBarIndicatorSize.label,
-          labelStyle: TextStyle(
-            color: Colors.black,
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-          ),
-          unselectedLabelStyle: TextStyle(
-            color: Color(0xff8e8e93),
-            fontSize: 16.0,
-            fontWeight: FontWeight.w500,
-          ),
-          tabs: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: Tab(
-                text: 'Channels',
+        bottom: DecoratedTabBar(
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: Color(0xffd8d8d8).withOpacity(0.22),
+                width: 2.0,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              child: Tab(
-                text: 'Direct chats',
-              ),
+          ),
+          tabBar: TabBar(
+            controller: _controller,
+            indicatorPadding: EdgeInsets.symmetric(horizontal: 15.0),
+            indicatorColor: Color(0xff004dff),
+            indicatorSize: TabBarIndicatorSize.label,
+            labelStyle: TextStyle(
+              color: Colors.black,
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
             ),
-          ],
+            unselectedLabelStyle: TextStyle(
+              color: Color(0xff8e8e93),
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+            ),
+            tabs: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Tab(
+                  text: 'Channels',
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Tab(
+                  text: 'Direct chats',
+                ),
+              ),
+            ],
+          ),
         ),
         title: Container(
           width: MediaQuery.of(context).size.width,
