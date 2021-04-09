@@ -46,14 +46,9 @@ class ChannelTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Container(
-              width: 60.0,
-              height: 60.0,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xffe3e3e3),
-              ),
-              child: TextAvatar(icon),
+            ChannelThumbnail(
+              icon: icon,
+              isPrivate: isPrivate,
             ),
             SizedBox(width: 11.0),
             Expanded(
@@ -95,7 +90,7 @@ class ChannelTile extends StatelessWidget {
                       // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
                         buildWhen: (_, current) => current is ProfileLoaded,
-                        builder: (ctx, state) {
+                        builder: (_, state) {
                           if (state is ProfileLoaded) {
                             final count = state.getBadgeForChannel(id);
                             if (count > 0) {
@@ -131,6 +126,30 @@ class ChannelTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ChannelThumbnail extends StatelessWidget {
+  final String icon;
+  final bool isPrivate;
+
+  const ChannelThumbnail({
+    Key key,
+    this.icon,
+    this.isPrivate,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60.0,
+      height: 60.0,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Color(0xffe3e3e3),
+      ),
+      child: TextAvatar(icon),
     );
   }
 }
