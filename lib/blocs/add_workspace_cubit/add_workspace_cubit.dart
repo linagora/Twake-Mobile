@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
 import 'add_workspace_state.dart';
 
@@ -9,6 +8,7 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
   AddWorkspaceCubit(this.repository) : super(AddWorkspaceInitial());
 
   Future<void> create() async {
+    emit(Creation());
     final result = await repository.create();
     if (result.isNotEmpty) {
       emit(Created(result));
