@@ -145,12 +145,12 @@ class _AuthFormState extends State<AuthForm> {
                         if (state is WrongCredentials)
                           Text(
                             'Incorrect email or password',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red, fontSize: 13.0),
                           ),
                         if (state is AuthenticationError)
                           Text(
                             'Server is unavailable',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red, fontSize: 13.0),
                           ),
                         Expanded(
                           child: Align(
