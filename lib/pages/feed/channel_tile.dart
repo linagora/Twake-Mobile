@@ -41,18 +41,19 @@ class ChannelTile extends StatelessWidget {
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
         openChannel(context, id);
       },
-      child: SizedBox(
-        height: 62.0,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(16.0, 8.0, 12.0, 8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // SizedBox(width: 12),
-            TextAvatar(icon),
-            SizedBox(width: 12),
+            ChannelThumbnail(
+              icon: icon,
+              isPrivate: isPrivate,
+            ),
+            SizedBox(width: 11.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     children: [
@@ -60,7 +61,7 @@ class ChannelTile extends StatelessWidget {
                         child: ChannelTitle(
                           name: name,
                           hasUnread: hasUnread,
-                          isPrivate: isPrivate,
+                          isPrivate: false,
                         ),
                       ),
                       Text(
@@ -78,9 +79,9 @@ class ChannelTile extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 12.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xff444444),
+                            color: Colors.black.withOpacity(0.5),
                           ),
                         ),
                       ),
@@ -88,29 +89,32 @@ class ChannelTile extends StatelessWidget {
                       if (messagesUnread != 0) SizedBox(width: Dim.wm2),
                       // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
-                        buildWhen: (_, curr) => curr is ProfileLoaded,
-                        builder: (ctx, state) {
-                          final count = (state as ProfileLoaded)
-                              .getBadgeForChannel(id);
-                          if (count > 0) {
-                            return Badge(
-                              shape: BadgeShape.square,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 2,
-                              ),
-                              badgeContent: Text(
-                                '$count',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: Dim.tm2(),
+                        buildWhen: (_, current) => current is ProfileLoaded,
+                        builder: (_, state) {
+                          if (state is ProfileLoaded) {
+                            final count = state.getBadgeForChannel(id);
+                            if (count > 0) {
+                              return Badge(
+                                shape: BadgeShape.square,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5)),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 2,
                                 ),
-                              ),
-                            );
+                                badgeContent: Text(
+                                  '$count',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: Dim.tm2(),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
                           } else {
-                            return Container();
+                            return SizedBox();
                           }
                         },
                       ),
@@ -122,6 +126,36 @@ class ChannelTile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class ChannelThumbnail extends StatelessWidget {
+  final String icon;
+  final bool isPrivate;
+
+  const ChannelThumbnail({
+    Key key,
+    this.icon,
+    this.isPrivate,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Container(
+          width: 60.0,
+          height: 60.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xfff5f5f5),
+          ),
+          child: TextAvatar(icon),
+        ),
+        if (isPrivate) Image.asset('assets/images/private.png'),
+      ],
     );
   }
 }

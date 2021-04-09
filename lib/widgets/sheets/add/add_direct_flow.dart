@@ -9,7 +9,7 @@ class AddDirectFlow extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<UserBloc>(
       create: (_) => UserBloc(ProfileBloc.userId),
-      child: ParticipantsList(title: 'New direct chat', isDirect: true),
+      child: SingleChildScrollView(child: ParticipantsList(title: 'New direct chat', isDirect: true)),
     );
   }
 }

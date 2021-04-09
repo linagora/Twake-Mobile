@@ -28,9 +28,11 @@ class AddWorkspaceFlow extends StatelessWidget {
               break;
           }
         }
-        return IndexedStack(
-          index: i,
-          children: workspaceFlowWidgets,
+        return SingleChildScrollView(
+          child: IndexedStack(
+            index: i,
+            children: workspaceFlowWidgets,
+          ),
         );
       },
     );
