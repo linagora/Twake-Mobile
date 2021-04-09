@@ -286,6 +286,8 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autocorrect: widget.obscured ? false : true,
+      enableSuggestions: widget.obscured ? false : true,
       // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
