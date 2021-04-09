@@ -50,6 +50,7 @@ class UserRepository {
   Future<bool> batchUsersLoad(Set<String> userIds) async {
     items.removeWhere((id, _) => !userIds.contains(id));
     userIds.removeAll(items.keys);
+    userIds.removeWhere((i) => i == null);
     List<String> toBeFetched = [];
     for (String id in userIds) {
       final item = await _storage.load(type: StorageType.User, key: id);

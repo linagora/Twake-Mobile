@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
+import 'package:twake/utils/emojis.dart';
 
 final RegExp userMatch = RegExp('([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
 
@@ -510,7 +511,8 @@ enum TType {
   Url,
   Emoji,
   Email,
-  Unknown
+  Unknown,
+  Icon,
 }
 
 class Delim {
@@ -638,6 +640,9 @@ class TwacodeRenderer {
         TType type;
         if (t['type'] != null) {
           switch (t['type']) {
+            case 'br':
+              type = TType.LineBreak;
+              break;
             case 'text':
               type = TType.Text;
               break;
@@ -693,6 +698,7 @@ class TwacodeRenderer {
               type = TType.Unknown;
           }
         }
+
         if (type == TType.MultiLineCode) {
           if (spans.isNotEmpty)
             spans.add(
@@ -748,6 +754,13 @@ class TwacodeRenderer {
                   top: 3,
                 ),
               ),
+            ),
+          );
+        } else if (type == TType.Emoji) {
+          spans.add(
+            TextSpan(
+              text: Emojis.getByName(t['content']),
+              style: getStyle(TType.LineBreak),
             ),
           );
         } else if (type == TType.LineBreak) {
