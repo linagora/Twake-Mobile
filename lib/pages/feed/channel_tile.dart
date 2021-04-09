@@ -61,7 +61,7 @@ class ChannelTile extends StatelessWidget {
                         child: ChannelTitle(
                           name: name,
                           hasUnread: hasUnread,
-                          isPrivate: isPrivate,
+                          isPrivate: false,
                         ),
                       ),
                       Text(
@@ -142,14 +142,20 @@ class ChannelThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 60.0,
-      height: 60.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Color(0xffe3e3e3),
-      ),
-      child: TextAvatar(icon),
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        Container(
+          width: 60.0,
+          height: 60.0,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xffe3e3e3),
+          ),
+          child: TextAvatar(icon),
+        ),
+        if (isPrivate) Image.asset('assets/images/private.png'),
+      ],
     );
   }
 }
