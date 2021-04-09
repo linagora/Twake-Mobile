@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
@@ -11,87 +12,100 @@ import 'package:twake/widgets/common/image_avatar.dart';
 class Workspaces extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WorkspacesBloc, WorkspaceState>(
-      builder: (context, state) {
-        Workspace selectedWorkspace;
-        var workspaces = <Workspace>[];
-        if (state is WorkspacesLoaded) {
-          selectedWorkspace = state.selected;
-          workspaces = state.workspaces;
-        }
-        return Container(
-          color: Colors.white,
-          child: Column(
-            children: [
-              SizedBox(
-                height: 60.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<CompaniesBloc, CompaniesState>(
+        buildWhen: (_, current) => current is CompaniesLoaded,
+        builder: (context, state) {
+          if (state is CompaniesLoaded) {
+            // final companies = state.companies;
+            final selectedCompany = state.selected;
+            final permissions = selectedCompany.permissions;
+            final canCreateWorkspace = permissions.length > 0 &&
+                permissions.contains('CREATE_WORKSPACES');
+          }
+          return BlocBuilder<WorkspacesBloc, WorkspaceState>(
+            builder: (context, state) {
+              Workspace selectedWorkspace;
+              var workspaces = <Workspace>[];
+              if (state is WorkspacesLoaded) {
+                selectedWorkspace = state.selected;
+                workspaces = state.workspaces;
+              }
+              return Container(
+                color: Colors.white,
+                child: Column(
                   children: [
-                    Container(
-                      width: 48.0,
-                      padding: EdgeInsets.only(right: 19.0),
-                    ),
-                    Text(
-                      'Workspaces',
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                    SizedBox(
+                      height: 60.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 48.0,
+                            padding: EdgeInsets.only(right: 19.0),
+                          ),
+                          Text(
+                            'Workspaces',
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              BlocProvider.of<SheetBloc>(context)
+                                  .add(CloseSheet());
+                            },
+                            child: Container(
+                              width: 48.0,
+                              height: 48.0,
+                              padding: EdgeInsets.only(right: 19.0),
+                              child: Image.asset('assets/images/cancel.png'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        BlocProvider.of<SheetBloc>(context).add(CloseSheet());
-                      },
-                      child: Container(
-                        width: 48.0,
-                        height: 48.0,
-                        padding: EdgeInsets.only(right: 19.0),
-                        child: Image.asset('assets/images/cancel.png'),
+                    Divider(
+                        height: 1.0, thickness: 1.0, color: Color(0xfff4f4f4)),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom,
+                        ),
+                        itemCount: workspaces.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 0) {
+                            return AddWorkspaceTile();
+                          } else {
+                            final workspace = workspaces[index - 1];
+                            return WorkspaceTile(
+                              title: workspace.name,
+                              image: workspace.logo,
+                              selected: workspace.id == selectedWorkspace.id,
+                              onTap: () {
+                                BlocProvider.of<WorkspacesBloc>(context).add(
+                                  ChangeSelectedWorkspace(workspace.id),
+                                );
+                                BlocProvider.of<ProfileBloc>(context).add(
+                                  UpdateBadges(),
+                                );
+                                BlocProvider.of<SheetBloc>(context).add(
+                                  CloseSheet(),
+                                );
+                              },
+                            );
+                          }
+                        },
                       ),
                     ),
                   ],
                 ),
-              ),
-              Divider(height: 1.0, thickness: 1.0, color: Color(0xfff4f4f4)),
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).padding.bottom,
-                  ),
-                  itemCount: workspaces.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return AddWorkspaceTile();
-                    } else {
-                      final workspace = workspaces[index - 1];
-                      return WorkspaceTile(
-                        title: workspace.name,
-                        image: workspace.logo,
-                        selected: workspace.id == selectedWorkspace.id,
-                        onTap: () {
-                          BlocProvider.of<WorkspacesBloc>(context).add(
-                            ChangeSelectedWorkspace(workspace.id),
-                          );
-                          BlocProvider.of<ProfileBloc>(context).add(
-                            UpdateBadges(),
-                          );
-                          BlocProvider.of<SheetBloc>(context).add(
-                            CloseSheet(),
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+              );
+            },
+          );
+        });
   }
 }
 
