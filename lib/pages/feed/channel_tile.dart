@@ -10,7 +10,7 @@ import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/channel_title.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 
-class FeedTile extends StatelessWidget {
+class ChannelTile extends StatelessWidget {
   final String id;
   final String name;
   final String icon;
@@ -20,7 +20,7 @@ class FeedTile extends StatelessWidget {
   final int messagesUnread;
   final Map<String, dynamic> lastMessage;
 
-  const FeedTile({
+  const ChannelTile({
     Key key,
     this.id,
     this.name,

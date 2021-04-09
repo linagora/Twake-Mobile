@@ -213,7 +213,10 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                 trailingTitle: 'Create',
                 trailingAction: createIsBlocked || !_canGoNext
                     ? null
-                    : () => context.read<AddChannelBloc>().add(Create()),
+                    : () {
+                        _closeKeyboards(context);
+                        context.read<AddChannelBloc>().add(Create());
+                      },
               ),
               SizedBox(height: 16),
               Container(
