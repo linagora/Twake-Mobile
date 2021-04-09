@@ -64,88 +64,68 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
             Container(
               width: MediaQuery.of(context).size.width,
               height: 60.0,
-              child: BlocBuilder<CompaniesBloc, CompaniesState>(
-                buildWhen: (_, current) => current is CompaniesLoaded,
+              child: BlocBuilder<WorkspacesBloc, WorkspaceState>(
+                buildWhen: (_, current) => current is WorkspacesLoaded,
                 builder: (context, state) {
-                  if (state is CompaniesLoaded) {
-                    _companies = state.companies;
-
-                    final selectedCompany = state.selected;
-                    final permissions = selectedCompany.permissions;
-                    if (permissions.length > 0 &&
-                        permissions.contains('CREATE_WORKSPACES')) {
-                      _canCreateWorkspace = true;
-                    } else {
-                      _canCreateWorkspace = false;
-                    }
+                  Workspace selectedWorkspace;
+                  if (state is WorkspacesLoaded) {
+                    selectedWorkspace = state.selected;
                   }
-                  return BlocBuilder<WorkspacesBloc, WorkspaceState>(
-                    buildWhen: (_, current) => current is WorkspacesLoaded,
-                    builder: (context, state) {
-                      Workspace selectedWorkspace;
-                      List<Workspace> workspaces;
-
-                      if (state is WorkspacesLoaded) {
-                        selectedWorkspace = state.selected;
-                        workspaces = state.workspaces;
-                      }
-                      return GestureDetector(
-                        onTap: () => _showWorkspaces(),
-                        behavior: HitTestBehavior.opaque,
-                        child: Row(
-                          children: [
-                            SizedBox(width: 9.0),
-                            ShimmerLoading(
-                              key: ValueKey<String>('workspace_image'),
-                              isLoading: selectedWorkspace == null ||
-                                  selectedWorkspace.logo.isEmpty,
-                              width: 40.0,
-                              height: 40.0,
-                              child: ImageAvatar(
-                                selectedWorkspace.logo,
-                                width: 40.0,
-                                height: 40.0,
-                              ),
-                            ),
-                            SizedBox(width: 15.0),
-                            Expanded(
-                              child: ShimmerLoading(
-                                key: ValueKey<String>('name'),
-                                isLoading: selectedWorkspace.name == null,
-                                width: MediaQuery.of(context).size.width,
-                                height: 10.0,
-                                child: Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        selectedWorkspace.name,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 17.0,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2.0),
-                                      child: Icon(
-                                        Icons.keyboard_arrow_down_rounded,
-                                        color: Colors.black,
-                                        size: 25.0,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => _create(),
-                              child: Image.asset('assets/images/create.png'),
-                            ),
-                          ],
+                  return GestureDetector(
+                    onTap: () => _showWorkspaces(),
+                    behavior: HitTestBehavior.opaque,
+                    child: Row(
+                      children: [
+                        SizedBox(width: 9.0),
+                        ShimmerLoading(
+                          key: ValueKey<String>('workspace_image'),
+                          isLoading: selectedWorkspace == null ||
+                              selectedWorkspace.logo.isEmpty,
+                          width: 40.0,
+                          height: 40.0,
+                          child: ImageAvatar(
+                            selectedWorkspace.logo,
+                            width: 40.0,
+                            height: 40.0,
+                          ),
                         ),
-                      );
-                    },
+                        SizedBox(width: 15.0),
+                        Expanded(
+                          child: ShimmerLoading(
+                            key: ValueKey<String>('name'),
+                            isLoading: selectedWorkspace.name == null,
+                            width: MediaQuery.of(context).size.width,
+                            height: 10.0,
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    selectedWorkspace.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 17.0,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: Colors.black,
+                                    size: 25.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => _create(),
+                          child: Image.asset('assets/images/create.png'),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
