@@ -10,7 +10,7 @@ Application _$ApplicationFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['id']);
   return Application(
     id: json['id'] as String,
-    name: json['name'] as String? ?? 'Unknown Bot',
+    name: json['name'] as String ?? 'Unknown Bot',
   )
     ..iconUrl = json['icon_url'] as String
     ..description = json['description'] as String

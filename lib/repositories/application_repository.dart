@@ -25,7 +25,7 @@ class ApplicationRepository {
   }
 
   Future<void> fetchForCompany(String companyId) async {
-    final List<Map> applications = await this._api.get(
+    final List<dynamic> applications = await this._api.get(
       Endpoint.applications,
       params: {
         'company_id': companyId,

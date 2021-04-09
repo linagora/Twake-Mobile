@@ -120,6 +120,7 @@ class ChannelsBloc extends BaseChannelBloc {
       repository.selected.messagesUnread = 0;
       repository.selected.hasUnread = 0;
       repository.saveOne(repository.selected);
+      if (!event.shouldYield) return;
       final newState = ChannelPicked(
         channels: repository.items,
         selected: repository.selected,

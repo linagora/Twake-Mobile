@@ -64,6 +64,15 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
+  String get sender {
+    if (userId != null) {
+      return firstName.isNotEmpty
+          ? '$firstName $lastName'
+          : username[0].toUpperCase() + username.substring(1);
+    } else // message is sent by bot
+      return appName;
+  }
+
   Message({
     this.id,
     this.userId,
@@ -152,6 +161,7 @@ class Message extends CollectionItem {
     map.remove('thumbnail');
     map.remove('lastname');
     map.remove('firstname');
+    map.remove('name');
     return map;
   }
 }

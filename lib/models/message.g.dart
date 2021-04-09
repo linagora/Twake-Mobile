@@ -15,16 +15,18 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     appId: json['app_id'] as String,
     creationDate: json['creation_date'] as int,
     threadId: json['thread_id'] as String,
-    content: MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
+    content: json['content'] == null
+        ? null
+        : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
     channelId: json['channel_id'] as String,
-    responsesCount: json['responses_count'] as int? ?? 0,
-    reactions: json['reactions'] as Map<String, dynamic>? ?? {},
+    responsesCount: json['responses_count'] as int ?? 0,
+    reactions: json['reactions'] as Map<String, dynamic> ?? {},
     username: json['username'] as String,
     lastName: json['lastname'] as String,
     firstName: json['firstname'] as String,
     thumbnail: json['thumbnail'] as String,
   )
-    ..isSelected = json['is_selected'] as int? ?? 0
+    ..isSelected = json['is_selected'] as int ?? 0
     ..appName = json['name'] as String;
 }
 
@@ -35,7 +37,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'user_id': instance.userId,
       'app_id': instance.appId,
       'creation_date': instance.creationDate,
-      'content': instance.content.toJson(),
+      'content': instance.content?.toJson(),
       'reactions': instance.reactions,
       'channel_id': instance.channelId,
       'is_selected': instance.isSelected,

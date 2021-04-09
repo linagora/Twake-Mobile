@@ -11,14 +11,14 @@ Member _$MemberFromJson(Map<String, dynamic> json) {
   return Member(
     json['id'] as String,
     json['user_id'] as String,
-    type: json['type'] as String? ?? 'member',
+    type: json['type'] as String ?? 'member',
     email: json['email'] as String,
     notificationLevel: json['notification_level'] as String,
     companyId: json['company_id'] as String,
     workspaceId: json['workspace_id'] as String,
     channelId: json['channel_id'] as String,
     favorite: boolToInt(json['favorite']),
-  )..isSelected = json['is_selected'] as int? ?? 0;
+  )..isSelected = json['is_selected'] as int ?? 0;
 }
 
 Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{

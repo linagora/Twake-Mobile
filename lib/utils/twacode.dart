@@ -541,9 +541,10 @@ class TwacodeRenderer {
     switch (type) {
       case TType.InlineCode:
         style = const TextStyle(
+          height: 1.1,
           fontFamily: MONOSPACE,
-          backgroundColor: Colors.black87,
-          color: Colors.white70,
+          backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
+          color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
         );
         break;
 

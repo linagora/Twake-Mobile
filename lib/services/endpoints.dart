@@ -14,7 +14,7 @@ class Endpoint {
   // API Endpoint for working with other users
   static const users = '/users';
   // API Endpoint for working with bots (applications)
-  static const applications = '/applications';
+  static const applications = '/companies/applications';
   // API Endpoint for working with user's companies
   static const companies = '/companies';
   // API Endpoint for working with user's companies

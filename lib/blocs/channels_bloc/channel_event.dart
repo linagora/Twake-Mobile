@@ -45,7 +45,8 @@ class LoadSingleChannel extends ChannelsEvent {
 
 class ChangeSelectedChannel extends ChannelsEvent {
   final String channelId;
-  ChangeSelectedChannel(this.channelId);
+  final bool shouldYield;
+  ChangeSelectedChannel(this.channelId, [this.shouldYield = true]);
 
   @override
   List<Object> get props => [channelId];

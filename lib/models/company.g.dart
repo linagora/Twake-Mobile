@@ -12,13 +12,11 @@ Company _$CompanyFromJson(Map<String, dynamic> json) {
     id: json['id'] as String,
     name: json['name'] as String,
     logo: json['logo'] as String,
-    totalMembers: json['total_members'] as int? ?? 0,
+    totalMembers: json['total_members'] as int ?? 0,
   )
-    ..isSelected = json['is_selected'] as int? ?? 0
-    ..permissions = (json['permissions'] as List<dynamic>?)
-            ?.map((e) => e as String)
-            .toList() ??
-        [];
+    ..isSelected = json['is_selected'] as int ?? 0
+    ..permissions =
+        (json['permissions'] as List)?.map((e) => e as String)?.toList() ?? [];
 }
 
 Map<String, dynamic> _$CompanyToJson(Company instance) => <String, dynamic>{
