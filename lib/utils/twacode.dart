@@ -551,8 +551,8 @@ class TwacodeRenderer {
       case TType.MultiLineCode:
         style = TextStyle(
           fontFamily: MONOSPACE,
-          backgroundColor: Colors.black87,
-          color: Colors.white70,
+          backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
+          color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
         );
         break;
 
@@ -701,10 +701,22 @@ class TwacodeRenderer {
                 style: getStyle(TType.LineBreak),
               ),
             );
+          final style = getStyle(type);
           spans.add(
-            TextSpan(
-              text: t['content'],
-              style: getStyle(type),
+            WidgetSpan(
+              child: Container(
+                constraints: BoxConstraints(maxHeight: 250),
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: style.backgroundColor,
+                  border: Border.all(color: Colors.grey, width: 0.9),
+                ),
+                child: SingleChildScrollView(
+                  child: Text(t['content'], style: style),
+                ),
+              ),
             ),
           );
         } else if (type == TType.Quote) {
