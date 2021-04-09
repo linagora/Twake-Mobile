@@ -90,6 +90,39 @@ class Workspaces extends StatelessWidget {
   }
 }
 
+class AddWorkspaceTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 76.0,
+      color: Colors.white,
+      child: Row(
+        children: [
+          Container(
+            width: 60.0,
+            height: 60.0,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Color(0xfff5f5f5),
+            ),
+            child: Image.asset('assets/images/add.png'),
+          ),
+          Text(
+            'Create a new workspace',
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 15.0,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class WorkspaceTile extends StatelessWidget {
   final String title;
   final String subtitle;
@@ -113,10 +146,10 @@ class WorkspaceTile extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: 76.0,
-        color: Colors.white,
+        // height: 76.0,
         child: Column(
           children: [
+            SizedBox(height: 8.0),
             Row(
               children: [
                 SizedBox(width: 16.0),
@@ -161,6 +194,7 @@ class WorkspaceTile extends StatelessWidget {
                 SizedBox(width: 19.0),
               ],
             ),
+            SizedBox(height: 8.0),
             Divider(
               thickness: 1.0,
               height: 1.0,

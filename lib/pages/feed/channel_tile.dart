@@ -150,7 +150,7 @@ class ChannelThumbnail extends StatelessWidget {
           height: 60.0,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Color(0xffe3e3e3),
+            color: Color(0xfff5f5f5),
           ),
           child: TextAvatar(icon),
         ),
