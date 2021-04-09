@@ -90,27 +90,30 @@ class ChannelTile extends StatelessWidget {
                       BlocBuilder<ProfileBloc, ProfileState>(
                         buildWhen: (_, curr) => curr is ProfileLoaded,
                         builder: (ctx, state) {
-                          final count = (state as ProfileLoaded)
-                              .getBadgeForChannel(id);
-                          if (count > 0) {
-                            return Badge(
-                              shape: BadgeShape.square,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5)),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 5,
-                                vertical: 2,
-                              ),
-                              badgeContent: Text(
-                                '$count',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: Dim.tm2(),
+                          if (state is ProfileLoaded) {
+                            final count = state.getBadgeForChannel(id);
+                            if (count > 0) {
+                              return Badge(
+                                shape: BadgeShape.square,
+                                borderRadius:
+                                BorderRadius.all(Radius.circular(5)),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 2,
                                 ),
-                              ),
-                            );
+                                badgeContent: Text(
+                                  '$count',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: Dim.tm2(),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
                           } else {
-                            return Container();
+                            return SizedBox();
                           }
                         },
                       ),
