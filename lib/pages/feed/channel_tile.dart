@@ -41,18 +41,24 @@ class ChannelTile extends StatelessWidget {
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
         openChannel(context, id);
       },
-      child: SizedBox(
-        height: 76.0,
+      child: Container(
+        padding: EdgeInsets.fromLTRB(16.0, 8.0, 12.0, 8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: 16),
-            TextAvatar(icon),
-            SizedBox(width: 12),
+            Container(
+              width: 60.0,
+              height: 60.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xffe3e3e3),
+              ),
+              child: TextAvatar(icon),
+            ),
+            SizedBox(width: 11.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     children: [
@@ -88,7 +94,7 @@ class ChannelTile extends StatelessWidget {
                       if (messagesUnread != 0) SizedBox(width: Dim.wm2),
                       // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
-                        buildWhen: (_, curr) => curr is ProfileLoaded,
+                        buildWhen: (_, current) => current is ProfileLoaded,
                         builder: (ctx, state) {
                           if (state is ProfileLoaded) {
                             final count = state.getBadgeForChannel(id);
@@ -96,7 +102,7 @@ class ChannelTile extends StatelessWidget {
                               return Badge(
                                 shape: BadgeShape.square,
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(5)),
+                                    BorderRadius.all(Radius.circular(5)),
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 5,
                                   vertical: 2,
@@ -122,7 +128,6 @@ class ChannelTile extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(width: 12),
           ],
         ),
       ),

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/feed/channel_tile.dart';
-import 'package:twake/widgets/common/main_page_title.dart';
 
 class Channels extends StatelessWidget {
   @override
@@ -21,6 +20,7 @@ class Channels extends StatelessWidget {
         return Container(
           child: ListView.builder(
             shrinkWrap: true,
+            padding: EdgeInsets.only(top: 12.0),
             itemCount: channels.length,
             itemBuilder: (context, index) {
               final channel = channels[index];
