@@ -19,8 +19,8 @@ class Routes {
     Widget page;
     switch (routeName) {
       case Routes.root:
-        // page = MainPage();
-        page = TabsController();
+        page = MainPage();
+        // page = TabsController();
         break;
       case Routes.messages:
         page = MessagesPage();
