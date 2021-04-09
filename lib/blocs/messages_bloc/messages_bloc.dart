@@ -45,14 +45,6 @@ class MessagesBloc<T extends BaseChannelBloc>
         this.add(LoadMessages());
         selectedChannel = state.selected;
       }
-      // if (state is ChannelsLoaded) {
-      // final updatedChannel = state.channels
-      // .firstWhere((channel) => channel.id == selectedChannel.id);
-      // if (updatedChannel != null) {
-      // selectedChannel = updatedChannel;
-      // }
-      // this.add(LoadMessages(forceFromApi: true));
-      // }
     });
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) async {
@@ -285,7 +277,12 @@ class MessagesBloc<T extends BaseChannelBloc>
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
-          this.channelsBloc.add(ChangeSelectedChannel(selectedChannel.id));
+          this.channelsBloc.add(
+                ChangeSelectedChannel(
+                  selectedChannel.id,
+                  false,
+                ),
+              );
           _updateParentChannel(selectedChannel.id, 0);
         },
       );

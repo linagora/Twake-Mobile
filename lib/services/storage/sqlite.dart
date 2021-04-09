@@ -9,7 +9,7 @@ import 'package:twake/services/storage/storage.dart';
 import 'package:twake/sql/migrations.dart';
 
 const String _DATABASE_FILE = 'twakesql.db';
-const int _CURRENT_MIGRATION = 2;
+const int _CURRENT_MIGRATION = 3;
 
 class SQLite with Storage {
   static Database _db;
@@ -39,7 +39,7 @@ class SQLite with Storage {
         await db.execute("PRAGMA foreign_keys = ON");
       },
       onCreate: (Database db, int version) async {
-        for (var ddl in DDL_V2) {
+        for (var ddl in DDL_V3) {
           await db.execute(ddl);
         }
       },
@@ -48,7 +48,7 @@ class SQLite with Storage {
         logger.d('Opened twake db v.$v');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        var ddl = List<String>.from(DDL_V2);
+        var ddl = List<String>.from(DDL_V3);
         logger.d('SQFlite onUpdate called with new version: $newVersion');
         logger.d('Migration to twake db v.$newVersion from v.$oldVersion');
         if (oldVersion == 1) {
@@ -56,13 +56,12 @@ class SQLite with Storage {
           for (var migrationDdl in ddl) {
             await db.execute(migrationDdl);
           }
+        } else if (oldVersion == 2) {
+          ddl.removeWhere((el) => DDL_V2.contains(el));
+          for (var migrationDdl in ddl) {
+            await db.execute(migrationDdl);
+          }
         }
-        // } else if (oldVersion == 2) {
-        // ddl.removeWhere((el) => DDL_V2.contains(el));
-        // for (var migrationDdl in ddl) {
-        // await db.execute(migrationDdl);
-        // }
-        // }
       },
     );
   }
@@ -178,6 +177,8 @@ class SQLite with Storage {
       table = 'message';
     else if (type == StorageType.User)
       table = 'user';
+    else if (type == StorageType.Application)
+      table = 'application';
     else if (type == StorageType.Emojis)
       table = 'setting';
     else if (type == StorageType.Drafts)

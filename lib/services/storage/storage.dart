@@ -92,6 +92,7 @@ enum StorageType {
   Workspace,
   Company,
   User,
+  Application,
   Emojis,
   Drafts,
   Member,

@@ -7,6 +7,7 @@ import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
 import 'package:twake/repositories/add_direct_repository.dart';
 import 'package:twake/repositories/add_workspace_repository.dart';
+import 'package:twake/repositories/application_repository.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/repositories/edit_channel_repository.dart';
@@ -17,7 +18,7 @@ import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
 
-// import 'package:twake/utils/emojis.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/repositories/draft_repository.dart';
 
 import 'service_bundle.dart';
@@ -44,7 +45,9 @@ Future<AuthRepository> initAuth() async {
 Future<InitData> initMain() async {
   print("INIT MAIN");
   try {
+    Emojis.load();
     final profile = await ProfileRepository.load();
+    ProfileRepository.load();
     await profile.syncBadges();
     final sheet = await SheetRepository.load();
     final addChannel = await AddChannelRepository.load();
@@ -58,6 +61,7 @@ Future<InitData> initMain() async {
       Endpoint.companies,
       sortFields: {'name': true},
     );
+    ApplicationRepository(companies.items.map((i) => i.id).toList());
     final workspaces = await CollectionRepository.load<Workspace>(
       Endpoint.workspaces,
       filters: [

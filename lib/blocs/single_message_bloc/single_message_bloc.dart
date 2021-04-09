@@ -29,9 +29,7 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
           charCount: (message.content.originalStr ?? ' ').length,
           reactions: message.reactions,
           userId: message.userId,
-          username: message.username,
-          firstName: message.firstName,
-          lastName: message.lastName,
+          sender: message.sender,
           thumbnail: message.thumbnail,
         ));
 
@@ -77,15 +75,17 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
       responsesCount: message.responsesCount,
       creationDate: message.creationDate,
       content: message.content.prepared,
-      text: message.content.originalStr.replaceFirst(_userId, ''),
+      text: (message.content.originalStr ?? '').replaceAllMapped(_userId,
+          (match) {
+        final end = message.content.originalStr.indexOf(':', match.start);
+        return message.content.originalStr.substring(match.start, end);
+      }),
       charCount: (message.content.originalStr ?? '').length,
       reactions: message.reactions,
       hash: hash,
       userId: message.userId,
       threadId: message.threadId,
-      username: message.username,
-      firstName: message.firstName,
-      lastName: message.lastName,
+      sender: message.sender,
       thumbnail: message.thumbnail,
     );
   }

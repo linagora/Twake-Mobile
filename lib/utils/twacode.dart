@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 
+final RegExp userMatch = RegExp('([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
+
 class TwacodeParser {
   final String original;
-  static final RegExp userMatch = RegExp('([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
 
   List<ASTNode> nodes = [];
 
@@ -540,9 +541,10 @@ class TwacodeRenderer {
     switch (type) {
       case TType.InlineCode:
         style = const TextStyle(
+          height: 1.1,
           fontFamily: MONOSPACE,
-          backgroundColor: Colors.black87,
-          color: Colors.white70,
+          backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
+          color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
         );
         break;
 
@@ -607,7 +609,11 @@ class TwacodeRenderer {
         break;
 
       default:
-        style = TextStyle(color: Colors.black, fontFamily: DEFAULT);
+        style = TextStyle(
+          color: Colors.black,
+          fontFamily: DEFAULT,
+          fontSize: 17,
+        );
     }
     return style;
   }
@@ -738,12 +744,19 @@ class TwacodeRenderer {
           final items = render(t['content'], true);
           spans.add(TextSpan(children: items, style: getStyle(type)));
         } else {
+          var content;
           if (type == TType.Channel) {
-            t['content'] = '#' + t['content'];
+            content = '#' + t['content'];
           } else if (type == TType.User) {
-            t['content'] = '@' + t['content'];
+            content = '@' +
+                (t['content'] as String).replaceAllMapped(userMatch, (match) {
+                  final end = t['content'].indexOf(':', match.start);
+                  return t['content'].substring(match.start, end);
+                });
+          } else {
+            content = t['content'];
           }
-          spans.add(TextSpan(text: t['content'], style: getStyle(type)));
+          spans.add(TextSpan(text: content, style: getStyle(type)));
         }
       }
     }

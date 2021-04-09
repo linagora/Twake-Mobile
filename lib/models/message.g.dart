@@ -25,7 +25,9 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     lastName: json['lastname'] as String,
     firstName: json['firstname'] as String,
     thumbnail: json['thumbnail'] as String,
-  )..isSelected = json['is_selected'] as int ?? 0;
+  )
+    ..isSelected = json['is_selected'] as int ?? 0
+    ..appName = json['name'] as String;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -43,4 +45,5 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'firstname': instance.firstName,
       'lastname': instance.lastName,
       'thumbnail': instance.thumbnail,
+      'name': instance.appName,
     };
