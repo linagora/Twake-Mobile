@@ -20,7 +20,6 @@ class ChannelTitle extends StatelessWidget {
         style: TextStyle(
           fontSize: 15.0,
           fontWeight: FontWeight.w600,
-          // fontWeight: hasUnread ? FontWeight.w900 : FontWeight.w400,
           color: Colors.black,
         ),
         children: [
@@ -38,7 +37,6 @@ class ChannelTitle extends StatelessWidget {
         ],
       ),
       overflow: TextOverflow.ellipsis,
-      // textAlign: TextAlign.start,
     );
   }
 }
