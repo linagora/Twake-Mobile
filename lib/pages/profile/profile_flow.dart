@@ -26,9 +26,11 @@ class ProfileFlow extends StatelessWidget {
               break;
           }
         }
-        return IndexedStack(
-          index: i,
-          children: profileFlowWidgets,
+        return SingleChildScrollView(
+          child: IndexedStack(
+            index: i,
+            children: profileFlowWidgets,
+          ),
         );
       },
     );

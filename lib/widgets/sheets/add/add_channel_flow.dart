@@ -34,9 +34,11 @@ class AddChannelFlow extends StatelessWidget {
               break;
           }
         }
-        return IndexedStack(
-          index: i,
-          children: channelFlowWidgets,
+        return SingleChildScrollView(
+          child: IndexedStack(
+            index: i,
+            children: channelFlowWidgets,
+          ),
         );
       },
     );

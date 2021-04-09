@@ -92,18 +92,19 @@ class _MemberManagementState extends State<MemberManagement> {
               height: 0.5,
               color: Colors.black.withOpacity(0.2),
             ),
-            ListView.builder(
-              padding: EdgeInsets.only(top: 0),
-              shrinkWrap: true,
-              itemCount: _members.length,
-              itemBuilder: (context, index) {
-                return RemovableItem(
-                  key: UniqueKey(),
-                  title: _members[index].email,
-                  removable: index != 0,
-                  onRemove: () => _remove(index),
-                );
-              },
+            Expanded(
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 0),
+                itemCount: _members.length,
+                itemBuilder: (context, index) {
+                  return RemovableItem(
+                    key: UniqueKey(),
+                    title: _members[index].email,
+                    removable: index != 0,
+                    onRemove: () => _remove(index),
+                  );
+                },
+              ),
             ),
           ],
         );

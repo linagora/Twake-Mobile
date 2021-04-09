@@ -45,9 +45,7 @@ class DraggableScrollable extends StatelessWidget {
         decoration: BoxDecoration(
           color: Color(0xffefeef3),
         ),
-        child: SingleChildScrollView(
-          child: content,
-        ),
+        child: content,
       ),
     );
   }
