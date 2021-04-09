@@ -145,12 +145,12 @@ class _AuthFormState extends State<AuthForm> {
                         if (state is WrongCredentials)
                           Text(
                             'Incorrect email or password',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red, fontSize: 13.0),
                           ),
                         if (state is AuthenticationError)
                           Text(
                             'Server is unavailable',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: Colors.red, fontSize: 13.0),
                           ),
                         Expanded(
                           child: Align(
@@ -286,6 +286,8 @@ class __AuthTextFormState extends State<_AuthTextForm> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autocorrect: widget.obscured ? false : true,
+      enableSuggestions: widget.obscured ? false : true,
       // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
