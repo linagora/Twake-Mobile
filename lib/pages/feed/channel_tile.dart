@@ -42,11 +42,11 @@ class ChannelTile extends StatelessWidget {
         openChannel(context, id);
       },
       child: SizedBox(
-        height: 62.0,
+        height: 76.0,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // SizedBox(width: 12),
+            SizedBox(width: 12),
             TextAvatar(icon),
             SizedBox(width: 12),
             Expanded(
@@ -78,9 +78,9 @@ class ChannelTile extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 12.0,
+                            fontSize: 14.0,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xff444444),
+                            color: Colors.black.withOpacity(0.5),
                           ),
                         ),
                       ),
@@ -119,6 +119,7 @@ class ChannelTile extends StatelessWidget {
                 ],
               ),
             ),
+            SizedBox(width: 12),
           ],
         ),
       ),
