@@ -5,6 +5,7 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/workspace.dart';
+import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
 class Workspaces extends StatelessWidget {
@@ -60,25 +61,29 @@ class Workspaces extends StatelessWidget {
                   padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).padding.bottom,
                   ),
-                  itemCount: workspaces.length,
+                  itemCount: workspaces.length + 1,
                   itemBuilder: (context, index) {
-                    final workspace = workspaces[index];
-                    return WorkspaceTile(
-                      title: workspace.name,
-                      image: workspace.logo,
-                      selected: workspace.id == selectedWorkspace.id,
-                      onTap: () {
-                        BlocProvider.of<WorkspacesBloc>(context).add(
-                          ChangeSelectedWorkspace(workspace.id),
-                        );
-                        BlocProvider.of<ProfileBloc>(context).add(
-                          UpdateBadges(),
-                        );
-                        BlocProvider.of<SheetBloc>(context).add(
-                          CloseSheet(),
-                        );
-                      },
-                    );
+                    if (index == 0) {
+                      return AddWorkspaceTile();
+                    } else {
+                      final workspace = workspaces[index - 1];
+                      return WorkspaceTile(
+                        title: workspace.name,
+                        image: workspace.logo,
+                        selected: workspace.id == selectedWorkspace.id,
+                        onTap: () {
+                          BlocProvider.of<WorkspacesBloc>(context).add(
+                            ChangeSelectedWorkspace(workspace.id),
+                          );
+                          BlocProvider.of<ProfileBloc>(context).add(
+                            UpdateBadges(),
+                          );
+                          BlocProvider.of<SheetBloc>(context).add(
+                            CloseSheet(),
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
               ),
@@ -93,31 +98,50 @@ class Workspaces extends StatelessWidget {
 class AddWorkspaceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: 76.0,
-      color: Colors.white,
-      child: Row(
-        children: [
-          Container(
-            width: 60.0,
-            height: 60.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Color(0xfff5f5f5),
+    return GestureDetector(
+      onTap: () {
+        context.read<SheetBloc>()
+          ..add(SetFlow(flow: SheetFlow.addWorkspace))
+          ..add(OpenSheet());
+      },
+      behavior: HitTestBehavior.opaque,
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: [
+            SizedBox(height: 8.0),
+            Row(
+              children: [
+                SizedBox(width: 16.0),
+                Container(
+                  width: 60.0,
+                  height: 60.0,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xfff5f5f5),
+                  ),
+                  child: Image.asset('assets/images/add.png'),
+                ),
+                SizedBox(width: 16.0),
+                Text(
+                  'Create a new workspace',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
             ),
-            child: Image.asset('assets/images/add.png'),
-          ),
-          Text(
-            'Create a new workspace',
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 15.0,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
+            SizedBox(height: 8.0),
+            Divider(
+              thickness: 1.0,
+              height: 1.0,
+              color: Color(0xfff4f4f4),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -144,9 +168,8 @@ class WorkspaceTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Container(
+      child: SizedBox(
         width: MediaQuery.of(context).size.width,
-        // height: 76.0,
         child: Column(
           children: [
             SizedBox(height: 8.0),
