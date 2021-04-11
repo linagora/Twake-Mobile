@@ -277,7 +277,6 @@ class _EditChannelState extends State<EditChannel> {
             listenWhen: (_, current) =>
                 current is EditChannelSaved || current is EditChannelDeleted,
             listener: (context, state) {
-              print('EditChannel State: $state');
               if (state is EditChannelSaved || state is EditChannelDeleted) {
                 context
                     .read<ChannelsBloc>()

@@ -121,13 +121,11 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
                     child: BlocListener<AuthBloc, AuthState>(
                       listener: (context, state) {
-                        print('AuthBloc state: $state');
                         if (state is HostValidated) {
                           // Save host address locally.
                           context.read<ConfigurationCubit>().save(state.host);
                         }
                         if (state is HostInvalid) {
-                          print('HOST INVALID');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
