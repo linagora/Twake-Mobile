@@ -101,12 +101,16 @@ class _WorkspacesState extends State<Workspaces> {
                         padding: EdgeInsets.only(
                           bottom: MediaQuery.of(context).padding.bottom,
                         ),
-                        itemCount: workspaces.length + 1,
+                        itemCount: canCreateWorkspace
+                            ? workspaces.length + 1
+                            : workspaces.length,
                         itemBuilder: (context, index) {
-                          if (index == 0) {
+                          if (index == 0 && canCreateWorkspace) {
                             return AddWorkspaceTile();
                           } else {
-                            final workspace = workspaces[index - 1];
+                            final workspace = canCreateWorkspace
+                                ? workspaces[index - 1]
+                                : workspaces[index];
                             return WorkspaceTile(
                               title: workspace.name,
                               image: workspace.logo,
