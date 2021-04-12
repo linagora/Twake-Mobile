@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/feed/channel_tile.dart';
 
@@ -17,9 +18,17 @@ class Directs extends StatelessWidget {
         if (state is ChannelsLoaded) {
           channels = state.channels;
         }
-        return Container(
+        return RefreshIndicator(
+          onRefresh: () {
+            BlocProvider.of<DirectsBloc>(context)
+                .add(ReloadChannels(forceFromApi: true));
+            BlocProvider.of<NotificationBloc>(context)
+                .add(ReinitSubscriptions());
+            return Future.delayed(Duration(seconds: 1));
+          },
           child: ListView.builder(
             shrinkWrap: true,
+            physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.only(top: 12.0),
             itemCount: channels.length,
             itemBuilder: (context, index) {
