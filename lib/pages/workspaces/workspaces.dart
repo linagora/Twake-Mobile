@@ -90,7 +90,10 @@ class _WorkspacesState extends State<Workspaces> {
                     ),
                   ),
                   Divider(
-                      height: 1.0, thickness: 1.0, color: Color(0xfff4f4f4)),
+                    height: 1.0,
+                    thickness: 1.0,
+                    color: Color(0xfff4f4f4),
+                  ),
                   if (_companiesHidden)
                     Expanded(
                       child: ListView.builder(
@@ -124,7 +127,6 @@ class _WorkspacesState extends State<Workspaces> {
                         },
                       ),
                     ),
-
                   if (!_companiesHidden)
                     Expanded(
                       child: ListView.builder(
@@ -179,10 +181,11 @@ class _WorkspacesState extends State<Workspaces> {
                               Spacer(),
                               BlocBuilder<ProfileBloc, ProfileState>(
                                 buildWhen: (_, current) =>
-                                current is ProfileLoaded,
+                                    current is ProfileLoaded,
                                 builder: (context, state) {
                                   if (state is ProfileLoaded) {
-                                    final count = state.getBadgeForCompany(companies[i].id);
+                                    final count = state
+                                        .getBadgeForCompany(companies[i].id);
                                     if (count > 0) {
                                       return Badge(
                                         shape: BadgeShape.square,

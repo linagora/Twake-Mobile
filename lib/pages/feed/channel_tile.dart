@@ -72,20 +72,21 @@ class ChannelTile extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          lastMessage['text'] ?? 'No messages yet',
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black.withOpacity(0.5),
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            lastMessage['text'] ?? 'No messages yet',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black.withOpacity(0.5),
+                            ),
                           ),
                         ),
                       ),
-                      Spacer(),
+                      // Spacer(),
                       if (messagesUnread != 0) SizedBox(width: Dim.wm2),
                       // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
