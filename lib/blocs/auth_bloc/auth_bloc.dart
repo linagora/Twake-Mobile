@@ -200,9 +200,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           setUpWebView();
           await runWebView();
         }
-        print('Before yield');
         yield HostValidated(event.host);
-        print('After yield');
       }
     } else if (event is ResetHost) {
       await repository.clean();

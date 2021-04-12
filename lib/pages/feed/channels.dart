@@ -24,7 +24,6 @@ class Channels extends StatelessWidget {
             itemCount: channels.length,
             itemBuilder: (context, index) {
               final channel = channels[index];
-              print('Last message: ${channel.lastMessage}');
               return ChannelTile(
                 id: channel.id,
                 name: channel.name,

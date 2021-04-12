@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
+import 'package:twake/utils/emojis.dart';
 
 final RegExp userMatch = RegExp('([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
 
@@ -510,7 +511,8 @@ enum TType {
   Url,
   Emoji,
   Email,
-  Unknown
+  Unknown,
+  Icon,
 }
 
 class Delim {
@@ -551,8 +553,8 @@ class TwacodeRenderer {
       case TType.MultiLineCode:
         style = TextStyle(
           fontFamily: MONOSPACE,
-          backgroundColor: Colors.black87,
-          color: Colors.white70,
+          backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
+          color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
         );
         break;
 
@@ -638,6 +640,9 @@ class TwacodeRenderer {
         TType type;
         if (t['type'] != null) {
           switch (t['type']) {
+            case 'br':
+              type = TType.LineBreak;
+              break;
             case 'text':
               type = TType.Text;
               break;
@@ -693,6 +698,7 @@ class TwacodeRenderer {
               type = TType.Unknown;
           }
         }
+
         if (type == TType.MultiLineCode) {
           if (spans.isNotEmpty)
             spans.add(
@@ -701,10 +707,22 @@ class TwacodeRenderer {
                 style: getStyle(TType.LineBreak),
               ),
             );
+          final style = getStyle(type);
           spans.add(
-            TextSpan(
-              text: t['content'],
-              style: getStyle(type),
+            WidgetSpan(
+              child: Container(
+                constraints: BoxConstraints(maxHeight: 250),
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: style.backgroundColor,
+                  border: Border.all(color: Colors.grey, width: 0.9),
+                ),
+                child: SingleChildScrollView(
+                  child: Text(t['content'], style: style),
+                ),
+              ),
             ),
           );
         } else if (type == TType.Quote) {
@@ -736,6 +754,13 @@ class TwacodeRenderer {
                   top: 3,
                 ),
               ),
+            ),
+          );
+        } else if (type == TType.Emoji) {
+          spans.add(
+            TextSpan(
+              text: Emojis.getByName(t['content']),
+              style: getStyle(TType.LineBreak),
             ),
           );
         } else if (type == TType.LineBreak) {

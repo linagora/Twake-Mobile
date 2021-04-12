@@ -110,7 +110,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                           final mebloc = ctx.read<MessageEditBloc>();
                           mebloc.add(
                             EditMessage(
-                              originalStr: _message.content.originalStr,
+                              originalStr: _message.content.originalStr ?? '',
                               onMessageEditComplete: (text) {
                                 // smbloc get's closed if
                                 // listview disposes of message tile
@@ -177,7 +177,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                messageState.sender,
+                                messageState.sender ?? '',
                                 style: TextStyle(
                                   fontSize: 18.0,
                                   fontWeight: FontWeight.w500,
