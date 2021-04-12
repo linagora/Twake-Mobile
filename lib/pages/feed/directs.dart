@@ -4,6 +4,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/feed/channel_tile.dart';
+import 'package:twake/pages/feed/direct_tile.dart';
 
 class Directs extends StatelessWidget {
   @override
@@ -14,9 +15,9 @@ class Directs extends StatelessWidget {
           current is ChannelsLoaded ||
           current is ChannelsEmpty,
       builder: (context, state) {
-        var channels = <Direct>[];
+        var directs = <Direct>[];
         if (state is ChannelsLoaded) {
-          channels = state.channels;
+          directs = state.channels;
         }
         return RefreshIndicator(
           onRefresh: () {
@@ -30,18 +31,17 @@ class Directs extends StatelessWidget {
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.only(top: 12.0),
-            itemCount: channels.length,
+            itemCount: directs.length,
             itemBuilder: (context, index) {
-              final channel = channels[index];
-              return ChannelTile(
-                id: channel.id,
-                name: channel.name,
-                icon: channel.icon,
-                hasUnread: channel.hasUnread == 1,
-                isPrivate: false,
-                lastActivity: channel.lastActivity,
-                lastMessage: channel.lastMessage,
-                messagesUnread: channel.messagesUnread,
+              final direct = directs[index];
+              return DirectTile(
+                id: direct.id,
+                name: direct.name,
+                members: direct.members,
+                hasUnread: direct.hasUnread == 1,
+                lastActivity: direct.lastActivity,
+                lastMessage: direct.lastMessage,
+                messagesUnread: direct.messagesUnread,
               );
             },
           ),

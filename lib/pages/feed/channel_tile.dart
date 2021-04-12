@@ -152,6 +152,7 @@ class ChannelThumbnail extends StatelessWidget {
         Container(
           width: 60.0,
           height: 60.0,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xfff5f5f5),
