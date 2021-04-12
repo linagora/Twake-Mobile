@@ -97,8 +97,11 @@ class ChannelTile extends StatelessWidget {
                             if (count > 0) {
                               return Badge(
                                 shape: BadgeShape.square,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5)),
+                                badgeColor: Color(0xff004dff),
+                                elevation: 0,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.5),
+                                ),
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 5,
                                   vertical: 2,
@@ -107,7 +110,7 @@ class ChannelTile extends StatelessWidget {
                                   '$count',
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: Dim.tm2(),
+                                    fontSize: 11.0,
                                   ),
                                 ),
                               );
