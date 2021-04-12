@@ -30,11 +30,12 @@ class Channels extends StatelessWidget {
           child: ListView.builder(
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.only(top: 12.0),
+            padding: EdgeInsets.only(top: 12.0, bottom: 80.0),
             itemCount: channels.length,
             itemBuilder: (context, index) {
               final channel = channels[index];
               return ChannelTile(
+                key: ValueKey(channel.id),
                 id: channel.id,
                 name: channel.name,
                 icon: channel.icon,

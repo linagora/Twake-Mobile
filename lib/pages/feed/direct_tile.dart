@@ -2,19 +2,19 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/channel_title.dart';
-import 'package:twake/widgets/common/stacked_image_avatars.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
+import 'package:twake/widgets/common/image_avatar.dart';
 
 class DirectTile extends StatelessWidget {
   final String id;
   final String name;
-  final List<String> members;
+  final String memberId;
   final bool hasUnread;
   final int lastActivity;
   final int messagesUnread;
@@ -24,7 +24,7 @@ class DirectTile extends StatelessWidget {
     Key key,
     this.id,
     this.name,
-    this.members,
+    this.memberId,
     this.hasUnread,
     this.lastActivity,
     this.messagesUnread,
@@ -45,7 +45,7 @@ class DirectTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            DirectThumbnail(members: members),
+            DirectThumbnail(userId: memberId),
             SizedBox(width: 11.0),
             Expanded(
               child: Column(
@@ -131,29 +131,26 @@ class DirectTile extends StatelessWidget {
 }
 
 class DirectThumbnail extends StatelessWidget {
-  final List<String> members;
+  final String userId;
 
   const DirectThumbnail({
     Key key,
-    this.members,
+    this.userId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: [
-        Container(
-          width: 60.0,
-          height: 60.0,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color(0xfff5f5f5),
-          ),
-          child: StackedUserAvatars(members),
-        ),
-      ],
+    return BlocProvider<UserBloc>(
+      create: (_) => UserBloc(userId),
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (_, state) {
+          return ImageAvatar(
+            state is UserReady ? state.thumbnail : null,
+            width: 60.0,
+            height: 60.0,
+          );
+        },
+      ),
     );
   }
 }

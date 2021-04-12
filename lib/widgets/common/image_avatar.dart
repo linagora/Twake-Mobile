@@ -22,31 +22,19 @@ class ImageAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final mime = lookupMimeType(imageUrl.split('/').last);
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(
-        Dim.widthMultiplier * 1.5,
-      ),
+    return ClipOval(
       child: imageUrl == null || imageUrl.isEmpty
-          ? onErrorFallbackImg(width ?? Dim.tm5(), height ?? Dim.tm5())
-          : Container(
+          ? onErrorFallbackImg(width, height)
+          : FadeInImage.assetNetwork(
+              placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
+                width,
+                height,
+              ),
+              fit: BoxFit.cover,
+              image: imageUrl,
               width: width,
               height: height,
-              child: FadeInImage.assetNetwork(
-                placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
-                  width ?? Dim.tm5(),
-                  height ?? Dim.tm5(),
-                ),
-                fit: BoxFit.cover,
-                image: imageUrl,
-                width: width ?? Dim.tm5(),
-                height: height ?? Dim.tm5(),
-                placeholder: _FALLBACK_IMG,
-                // headers: {
-                // 'CONTENT-TYPE': mime,
-                // 'ACCEPT':
-                // 'image/png, image/jpeg, image/jpg, application/octet-stream'
-                // },
-              ),
+              placeholder: _FALLBACK_IMG,
             ),
     );
   }
