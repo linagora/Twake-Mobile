@@ -10,6 +10,7 @@ import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
 
 class Workspaces extends StatefulWidget {
   @override
@@ -311,7 +312,7 @@ class WorkspaceTile extends StatelessWidget {
             Row(
               children: [
                 SizedBox(width: 16.0),
-                ImageAvatar(
+                RoundedImage(
                   image,
                   width: 60.0,
                   height: 60.0,

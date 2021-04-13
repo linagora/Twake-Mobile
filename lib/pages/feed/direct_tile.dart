@@ -9,8 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/channel_title.dart';
-import 'package:twake/widgets/common/image_avatar.dart';
-import 'package:twake/widgets/common/shimmer_loading.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
 
 class DirectTile extends StatelessWidget {
   final String id;
@@ -145,8 +144,7 @@ class DirectThumbnail extends StatelessWidget {
       create: (_) => UserBloc(userId),
       child: BlocBuilder<UserBloc, UserState>(
         builder: (_, state) {
-          print('User state: $state');
-          return ImageAvatar(
+          return RoundedImage(
             state is UserReady ? state.thumbnail : null,
             width: 60.0,
             height: 60.0,

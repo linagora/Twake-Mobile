@@ -9,6 +9,7 @@ import 'package:twake/pages/feed/directs.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/decorated_tab_bar.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
 class Feed extends StatefulWidget {
@@ -76,17 +77,10 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                     child: Row(
                       children: [
                         SizedBox(width: 9.0),
-                        ShimmerLoading(
-                          key: ValueKey<String>('workspace_image'),
-                          isLoading: selectedWorkspace == null ||
-                              selectedWorkspace.logo.isEmpty,
+                        RoundedImage(
+                          selectedWorkspace.logo,
                           width: 40.0,
                           height: 40.0,
-                          child: ImageAvatar(
-                            selectedWorkspace.logo,
-                            width: 40.0,
-                            height: 40.0,
-                          ),
                         ),
                         SizedBox(width: 15.0),
                         Expanded(
