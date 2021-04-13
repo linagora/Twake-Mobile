@@ -1,3 +1,5 @@
+import 'dart:ui';
+import 'dart:math';
 import 'package:twake/models/member.dart';
 import 'package:twake/models/user.dart';
 
@@ -16,5 +18,20 @@ extension UsersListExtension on List<User> {
     for (User user in toExclude) {
       this.removeWhere((element) => element.id == user.id);
     }
+  }
+}
+
+// Colors to use in CircleAvatar with the user's initials.
+
+const Color one = Color(0xff6E44FF);
+const Color two = Color(0xff00B283);
+const Color three = Color(0xffF45B69);
+const Color four = Color(0xffFFD166);
+const List<Color> hexColor = [one, two, three, four];
+
+extension RandomColor on Color {
+  Color randomColor() {
+    final random = Random();
+    return hexColor[random.nextInt(hexColor.length)];
   }
 }
