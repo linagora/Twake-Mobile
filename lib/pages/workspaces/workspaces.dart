@@ -10,6 +10,7 @@ import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
 
 class Workspaces extends StatefulWidget {
   @override
@@ -90,7 +91,10 @@ class _WorkspacesState extends State<Workspaces> {
                     ),
                   ),
                   Divider(
-                      height: 1.0, thickness: 1.0, color: Color(0xfff4f4f4)),
+                    height: 1.0,
+                    thickness: 1.0,
+                    color: Color(0xfff4f4f4),
+                  ),
                   if (_companiesHidden)
                     Expanded(
                       child: ListView.builder(
@@ -98,12 +102,16 @@ class _WorkspacesState extends State<Workspaces> {
                         padding: EdgeInsets.only(
                           bottom: MediaQuery.of(context).padding.bottom,
                         ),
-                        itemCount: workspaces.length + 1,
+                        itemCount: canCreateWorkspace
+                            ? workspaces.length + 1
+                            : workspaces.length,
                         itemBuilder: (context, index) {
-                          if (index == 0) {
+                          if (index == 0 && canCreateWorkspace) {
                             return AddWorkspaceTile();
                           } else {
-                            final workspace = workspaces[index - 1];
+                            final workspace = canCreateWorkspace
+                                ? workspaces[index - 1]
+                                : workspaces[index];
                             return WorkspaceTile(
                               title: workspace.name,
                               image: workspace.logo,
@@ -124,7 +132,6 @@ class _WorkspacesState extends State<Workspaces> {
                         },
                       ),
                     ),
-
                   if (!_companiesHidden)
                     Expanded(
                       child: ListView.builder(
@@ -179,10 +186,11 @@ class _WorkspacesState extends State<Workspaces> {
                               Spacer(),
                               BlocBuilder<ProfileBloc, ProfileState>(
                                 buildWhen: (_, current) =>
-                                current is ProfileLoaded,
+                                    current is ProfileLoaded,
                                 builder: (context, state) {
                                   if (state is ProfileLoaded) {
-                                    final count = state.getBadgeForCompany(companies[i].id);
+                                    final count = state
+                                        .getBadgeForCompany(companies[i].id);
                                     if (count > 0) {
                                       return Badge(
                                         shape: BadgeShape.square,
@@ -304,7 +312,7 @@ class WorkspaceTile extends StatelessWidget {
             Row(
               children: [
                 SizedBox(width: 16.0),
-                ImageAvatar(
+                RoundedImage(
                   image,
                   width: 60.0,
                   height: 60.0,

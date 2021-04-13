@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
+import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/feed/channel_tile.dart';
 
@@ -17,14 +19,23 @@ class Channels extends StatelessWidget {
         if (state is ChannelsLoaded) {
           channels = state.channels;
         }
-        return Container(
+        return RefreshIndicator(
+          onRefresh: () {
+            BlocProvider.of<ChannelsBloc>(context)
+                .add(ReloadChannels(forceFromApi: true));
+            BlocProvider.of<NotificationBloc>(context)
+                .add(ReinitSubscriptions());
+            return Future.delayed(Duration(seconds: 1));
+          },
           child: ListView.builder(
             shrinkWrap: true,
-            padding: EdgeInsets.only(top: 12.0),
+            physics: AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.only(top: 12.0, bottom: 80.0),
             itemCount: channels.length,
             itemBuilder: (context, index) {
               final channel = channels[index];
               return ChannelTile(
+                key: ValueKey(channel.id),
                 id: channel.id,
                 name: channel.name,
                 icon: channel.icon,
