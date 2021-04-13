@@ -34,7 +34,7 @@ class ChannelTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(lastMessage);
+    // print(lastMessage);
     var senderName = lastMessage['sender_name'] ?? '';
 
     return InkWell(
@@ -87,7 +87,7 @@ class ChannelTile extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 14.0,
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w500,
                                     color: Colors.black.withOpacity(0.7),
                                   ),
                                 ),
