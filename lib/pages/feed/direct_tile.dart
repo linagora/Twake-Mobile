@@ -8,8 +8,10 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
+import 'package:twake/utils/random_hex_color.dart';
 import 'package:twake/widgets/common/channel_title.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/utils/extensions.dart';
 
 class DirectTile extends StatelessWidget {
   final String id;
@@ -144,11 +146,47 @@ class DirectThumbnail extends StatelessWidget {
       create: (_) => UserBloc(userId),
       child: BlocBuilder<UserBloc, UserState>(
         builder: (_, state) {
-          return RoundedImage(
-            state is UserReady ? state.thumbnail : null,
-            width: 60.0,
-            height: 60.0,
-          );
+          String thumbnailUrl;
+          if (state is UserReady) {
+            thumbnailUrl = state.thumbnail;
+            if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
+              return RoundedImage(
+                thumbnailUrl,
+                width: 60.0,
+                height: 60.0,
+              );
+            } else {
+              String firstName = state.firstName;
+              String firstNameLetter = '';
+              if (firstName != null && firstName.isNotReallyEmpty) {
+                firstNameLetter = firstName[0];
+              }
+              return SizedBox(
+                width: 60.0,
+                height: 60.0,
+                child: CircleAvatar(
+                  backgroundColor: randomColor(),
+                  child: Text(
+                    '$firstNameLetter',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            }
+          } else {
+            return RoundedImage(
+              null,
+              width: 60.0,
+              height: 60.0,
+            );
+          }
+          print('Thumbnail: $thumbnailUrl');
+          if (thumbnailUrl != null) {}
         },
       ),
     );
