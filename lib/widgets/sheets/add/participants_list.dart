@@ -213,7 +213,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                   // print('-------------------------------');
                 }
                 return BlocBuilder<AddChannelBloc, AddChannelState>(
-                  buildWhen: (previous, current) => current is Updated,
+                  buildWhen: (previous, current) => current is Updated || current is Creation,
                   builder: (context, state) {
                     var deselectedUsers = users;
                     var name = '';
@@ -266,7 +266,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                           allowMultipleChoice: !_isDirect,
                           onTap: () {
                             FocusScope.of(context).requestFocus(FocusNode());
-                            if (_isDirect) {
+                            if (_isDirect && !(state is Creation)) {
                               _selectedIds = [user.id];
                               _createDirect(_selectedIds);
                             } else {

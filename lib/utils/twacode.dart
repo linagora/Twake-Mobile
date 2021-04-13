@@ -102,7 +102,7 @@ class TwacodeParser {
           index = index != 0 ? index : original.length + 1;
           this.nodes.add(ASTNode(
                 type: TType.Quote,
-                text: original.substring(i + 1, index - 1),
+                text: original.substring(i + 1, index),
               ));
           start = index;
           i = index - 1;
@@ -775,6 +775,10 @@ class TwacodeRenderer {
           } else if (type == TType.User) {
             content = '@' +
                 (t['content'] as String).replaceAllMapped(userMatch, (match) {
+                  final end = t['content'].indexOf(':', match.start);
+                  return t['content'].substring(match.start, end);
+                }).replaceAllMapped(userMatch, (match) {
+                  // we do it twice because twake is inconsistent and might generate gibberish
                   final end = t['content'].indexOf(':', match.start);
                   return t['content'].substring(match.start, end);
                 });

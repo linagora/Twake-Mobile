@@ -12,6 +12,7 @@ import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/blocs/messages_bloc/messages_state.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/twacode.dart';
 
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
@@ -57,22 +58,26 @@ class MessagesBloc<T extends BaseChannelBloc>
           workspaceId: ProfileBloc.selectedWorkspaceId,
           companyId: ProfileBloc.selectedCompanyId,
         ));
+        markChannelRead();
       } else if (T == DirectsBloc && state is DirectMessageArrived) {
         this.add(LoadSingleMessage(
           messageId: state.data.messageId,
           channelId: state.data.channelId,
           companyId: ProfileBloc.selectedCompanyId,
         ));
+        markChannelRead();
       } else if (state is DirectThreadMessageArrived && T == DirectsBloc) {
         this.add(ModifyResponsesCount(
           threadId: state.data.threadId,
           channelId: state.data.channelId,
         ));
+        markChannelRead();
       } else if (state is ChannelThreadMessageArrived && T == ChannelsBloc) {
         this.add(ModifyResponsesCount(
           threadId: state.data.threadId,
           channelId: state.data.channelId,
         ));
+        markChannelRead();
       } else if (state is ThreadMessageNotification) {
         if (T == DirectsBloc && state.data.workspaceId == 'direct') {
           while (selectedChannel.id != state.data.channelId ||
@@ -91,6 +96,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           }
           this.add(SelectMessage(state.data.threadId));
         }
+        markChannelRead();
       } else if (state is MessageDeleted && selectedChannel != null) {
         this.add(RemoveMessage(
           channelId: state.data.channelId,
@@ -191,10 +197,12 @@ class MessagesBloc<T extends BaseChannelBloc>
       final newState = MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
+        threadMessage: repository.selected,
         force: DateTime.now().toString(),
         parentChannel: selectedChannel,
       );
-      // repository.logger.w("OLD STATE == NEW STATE: ${newState == this.state}");
+      repository.logger
+          .w("MESSAGES OLD STATE == NEW STATE: ${newState == this.state}");
       yield newState;
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
@@ -344,6 +352,20 @@ class MessagesBloc<T extends BaseChannelBloc>
       companyId: ProfileBloc.selectedCompanyId,
       hasUnread: hasUnread,
     ));
+  }
+
+  void markChannelRead() {
+    if (ProfileBloc.selectedChannelId == selectedChannel.id) {
+      // just send a request to api, to notify that channel is read
+      channelsBloc.repository.select(ProfileBloc.selectedChannelId,
+          saveToStore: false,
+          apiEndpoint: Endpoint.channelsRead,
+          params: {
+            "company_id": ProfileBloc.selectedCompanyId,
+            "workspace_id": ProfileBloc.selectedWorkspaceId,
+            "channel_id": ProfileBloc.selectedChannelId
+          });
+    }
   }
 
   void _sortItems() {
