@@ -205,6 +205,7 @@ class MessagesRepository {
     if (m != null) {
       logger.e("MESSAGE EXISTS");
       isNew = false;
+      item.isSelected = m.isSelected;
     }
     await saveOne(item);
     if (addToItems) {

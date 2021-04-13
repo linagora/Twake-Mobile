@@ -197,10 +197,12 @@ class MessagesBloc<T extends BaseChannelBloc>
       final newState = MessagesLoaded(
         messages: repository.items,
         messageCount: repository.itemsCount,
+        threadMessage: repository.selected,
         force: DateTime.now().toString(),
         parentChannel: selectedChannel,
       );
-      // repository.logger.w("OLD STATE == NEW STATE: ${newState == this.state}");
+      repository.logger
+          .w("MESSAGES OLD STATE == NEW STATE: ${newState == this.state}");
       yield newState;
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);

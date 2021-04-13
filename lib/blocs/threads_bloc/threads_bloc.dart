@@ -45,6 +45,13 @@ class ThreadsBloc<T extends BaseChannelBloc>
           threadId: state.threadMessage.id,
           channelId: state.parentChannel.id,
         ));
+      } else if (state is MessagesLoaded && state.threadMessage != null) {
+        // repository.logger.w(
+        // "${state.threadMessage.content.originalStr} == ${threadMessage.content.originalStr}");
+        if (threadMessage.id == state.threadMessage.id &&
+            threadMessage.content.originalStr !=
+                state.threadMessage.content.originalStr)
+          this.add(UpdateThreadMessage(state.threadMessage));
       }
     });
     notificationSubscription =
@@ -131,6 +138,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
         channelId: event.channelId,
         threadId: event.threadId,
       ));
+      yield messagesLoaded;
+    } else if (event is UpdateThreadMessage) {
+      this.threadMessage = event.threadMessage;
       yield messagesLoaded;
     } else if (event is RemoveMessage) {
       messagesBloc.add(ModifyResponsesCount(
