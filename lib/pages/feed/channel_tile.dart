@@ -34,6 +34,9 @@ class ChannelTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print(lastMessage);
+    var senderName = lastMessage['sender_name'] ?? '';
+
     return InkWell(
       onTap: () {
         var draftType = DraftType.channel;
@@ -75,14 +78,29 @@ class ChannelTile extends StatelessWidget {
                       Expanded(
                         child: Padding(
                           padding: EdgeInsets.only(top: 4.0),
-                          child: Text(
-                            lastMessage['text'] ?? 'No messages yet',
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black.withOpacity(0.5),
-                            ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (senderName.isNotEmpty)
+                                Text(
+                                  senderName,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black.withOpacity(0.7),
+                                  ),
+                                ),
+                              Text(
+                                lastMessage['text'] ?? 'No messages yet',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black.withOpacity(0.5),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
