@@ -102,7 +102,7 @@ class TwacodeParser {
           index = index != 0 ? index : original.length + 1;
           this.nodes.add(ASTNode(
                 type: TType.Quote,
-                text: original.substring(i + 1, index - 1),
+                text: original.substring(i + 1, index),
               ));
           start = index;
           i = index - 1;

@@ -59,10 +59,12 @@ void main() {
   });
 
   test("Should parse quote", () {
-    final data = "> This is a famous quote";
+    final data = "> This is a famous quote\nThis is normal text";
     final parsed = TwacodeParser(data);
     expect(parsed.message, [
-      {"start": ">", "content": " This is a famous quote"}
+      {"start": ">", "content": " This is a famous quote"},
+      {"start": "\n", "end": "", "content": const []},
+      "This is normal text"
     ]);
   });
 
