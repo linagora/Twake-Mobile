@@ -161,11 +161,14 @@ class DirectThumbnail extends StatelessWidget {
               if (firstName != null && firstName.isNotReallyEmpty) {
                 firstNameLetter = firstName[0];
               }
-              return SizedBox(
-                width: 60.0,
-                height: 60.0,
-                child: CircleAvatar(
-                  backgroundColor: randomColor(),
+              return CircleAvatar(
+                radius: 30.0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: randomGradient(),
+                  ),
+                  alignment: Alignment.center,
                   child: Text(
                     '$firstNameLetter',
                     textAlign: TextAlign.center,
