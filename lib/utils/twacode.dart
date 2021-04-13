@@ -777,6 +777,10 @@ class TwacodeRenderer {
                 (t['content'] as String).replaceAllMapped(userMatch, (match) {
                   final end = t['content'].indexOf(':', match.start);
                   return t['content'].substring(match.start, end);
+                }).replaceAllMapped(userMatch, (match) {
+                  // we do it twice because twake is inconsistent and might generate gibberish
+                  final end = t['content'].indexOf(':', match.start);
+                  return t['content'].substring(match.start, end);
                 });
           } else {
             content = t['content'];
