@@ -1,9 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 // import 'package:mime/mime.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/widgets/common/shimmer_loading.dart';
 
 // TODO image loading failes spantaneously, have to figure out solution
 // But it definitely has to do with S3 storage
@@ -16,51 +14,45 @@ class ImageAvatar extends StatelessWidget {
   final double height;
 
   ImageAvatar(
-    this.imageUrl, {
-    this.width = 30,
-    this.height = 30,
-  });
+      this.imageUrl, {
+        this.width = 30,
+        this.height = 30,
+      });
 
   @override
   Widget build(BuildContext context) {
     // final mime = lookupMimeType(imageUrl.split('/').last);
-    return ClipOval(
-      child: Container(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(
+        Dim.widthMultiplier * 1.5,
+      ),
+      child: imageUrl == null || imageUrl.isEmpty
+          ? onErrorFallbackImg(width ?? Dim.tm5(), height ?? Dim.tm5())
+          : Container(
         width: width,
         height: height,
-        child: CachedNetworkImage(
-          imageUrl: imageUrl == null ? '' : imageUrl,
-          progressIndicatorBuilder: (context, url, downloadProgress) =>
-              ShimmerLoading(
-            isLoading: imageUrl != null,
-            width: width,
-            height: height,
-            child: Container(),
+        child: FadeInImage.assetNetwork(
+          placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
+            width ?? Dim.tm5(),
+            height ?? Dim.tm5(),
           ),
-          errorWidget: (context, url, error) => _onErrorFallbackImg(width, height),
+          fit: BoxFit.cover,
+          image: imageUrl,
+          width: width ?? Dim.tm5(),
+          height: height ?? Dim.tm5(),
+          placeholder: _FALLBACK_IMG,
+          // headers: {
+          // 'CONTENT-TYPE': mime,
+          // 'ACCEPT':
+          // 'image/png, image/jpeg, image/jpg, application/octet-stream'
+          // },
         ),
       ),
     );
-
-  //   return ClipOval(
-  //     child: imageUrl == null || imageUrl.isEmpty
-  //         ? onErrorFallbackImg(width, height)
-  //         : FadeInImage.assetNetwork(
-  //             placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
-  //               width,
-  //               height,
-  //             ),
-  //             fit: BoxFit.cover,
-  //             image: imageUrl,
-  //             width: width,
-  //             height: height,
-  //             placeholder: _FALLBACK_IMG,
-  //           ),
-  //   );
   }
 }
 
-Widget _onErrorFallbackImg(double width, double height) {
+Widget onErrorFallbackImg(double width, double height) {
   return Image.asset(
     _FALLBACK_IMG,
     // isAntiAlias: true,
