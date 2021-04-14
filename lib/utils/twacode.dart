@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final RegExp userMatch = RegExp(':([a-zA-z0-9-]+)');
 
@@ -511,8 +513,10 @@ enum TType {
   Url,
   Emoji,
   Email,
-  Unknown,
   Icon,
+  File,
+  Nop,
+  Unknown,
 }
 
 class Delim {
@@ -627,19 +631,22 @@ class TwacodeRenderer {
         ),
       );
 
-  List<InlineSpan> render(List<dynamic> twacode, [parent = false]) {
+  List<InlineSpan> render(List<dynamic> twacode) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {
         spans.add(TextSpan(text: twacode[i], style: getStyle(TType.Text)));
       } else if (twacode[i] is List) {
-        spans.addAll(render(twacode[i], true));
+        spans.addAll(render(twacode[i]));
       } else if (twacode[i] is Map) {
         final t = twacode[i];
         TType type;
         if (t['type'] != null) {
           switch (t['type']) {
+            case 'nop':
+              type = TType.Nop;
+              break;
             case 'br':
               type = TType.LineBreak;
               break;
@@ -654,6 +661,12 @@ class TwacodeRenderer {
               break;
             case 'email':
               type = TType.Email;
+              break;
+            case 'icon':
+              type = TType.Icon;
+              break;
+            case 'file':
+              type = TType.File;
               break;
             default:
               type = TType.Unknown;
@@ -729,7 +742,7 @@ class TwacodeRenderer {
           InlineSpan text;
 
           if (t['content'] is List) {
-            final items = render(t['content'], true);
+            final items = render(t['content']);
             text = TextSpan(children: items, style: getStyle(type));
           } else {
             // t['content'] is String
@@ -763,13 +776,31 @@ class TwacodeRenderer {
               style: getStyle(TType.LineBreak),
             ),
           );
+        } else if (type == TType.Nop) {
+          spans.addAll(render(t['content']));
+        } else if (type == TType.File) {
+        } else if (type == TType.Url) {
+          spans.add(TextSpan(
+              style: getStyle(type),
+              text: t['content'],
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  if (await canLaunch(t['content'])) {
+                    await launch(
+                      t['content'],
+                      forceSafariVC: false,
+                      forceWebView: false,
+                    );
+                  }
+                }));
         } else if (type == TType.LineBreak) {
           spans.add(TextSpan(text: '\n', style: getStyle(TType.LineBreak)));
         } else if (t['content'] is List) {
-          final items = render(t['content'], true);
+          final items = render(t['content']);
           spans.add(TextSpan(children: items, style: getStyle(type)));
         } else {
           var content;
+
           if (type == TType.Channel) {
             content = '#' + t['content'];
           } else if (type == TType.User) {
