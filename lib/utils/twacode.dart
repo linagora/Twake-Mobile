@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 
-final RegExp userMatch = RegExp('([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
+final RegExp userMatch = RegExp(':([a-zA-z0-9-]+)');
 
 class TwacodeParser {
   final String original;
@@ -773,15 +773,7 @@ class TwacodeRenderer {
           if (type == TType.Channel) {
             content = '#' + t['content'];
           } else if (type == TType.User) {
-            content = '@' +
-                (t['content'] as String).replaceAllMapped(userMatch, (match) {
-                  final end = t['content'].indexOf(':', match.start);
-                  return t['content'].substring(match.start, end);
-                }).replaceAllMapped(userMatch, (match) {
-                  // we do it twice because twake is inconsistent and might generate gibberish
-                  final end = t['content'].indexOf(':', match.start);
-                  return t['content'].substring(match.start, end);
-                });
+            content = '@' + (t['content'] as String).replaceAll(userMatch, '');
           } else {
             content = t['content'];
           }
