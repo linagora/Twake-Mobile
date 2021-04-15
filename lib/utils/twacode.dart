@@ -779,6 +779,39 @@ class TwacodeRenderer {
         } else if (type == TType.Nop) {
           spans.addAll(render(t['content']));
         } else if (type == TType.File) {
+          final s = int.parse(t['metadata']['size'] as String);
+          const MB = 1024 * 1024;
+          const KB = 1024;
+          final size = s > MB
+              ? '${(s / MB).toStringAsFixed(2)} MB'
+              : s > KB
+                  ? '${(s / KB).toStringAsFixed(2)} KB'
+                  : '$s B';
+          final widget = Container(
+            margin: EdgeInsets.all(4),
+            padding: EdgeInsets.all(3),
+            child: Row(children: [
+              SizedBox(
+                child: t['metadata']['preview'] != null
+                    ? ClipRRect(
+                        child: Image.network(t['metadata']['preview']),
+                        borderRadius: BorderRadius.all(Radius.circular(8)))
+                    : Icon(Icons.cloud_download),
+                width: 40,
+                height: 40,
+              ),
+              SizedBox(width: 10),
+              Column(
+                children: [Text(t['metadata']['name']), Text(size)],
+                crossAxisAlignment: CrossAxisAlignment.start,
+              )
+            ]),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueGrey),
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+          );
+          spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
           spans.add(TextSpan(
               style: getStyle(type),
