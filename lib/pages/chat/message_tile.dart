@@ -7,6 +7,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -88,6 +89,8 @@ class _MessageTileState<T extends BaseChannelBloc>
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
         builder: (context, messageState) {
           if (messageState is MessageReady) {
+            bool _isMyMessage = messageState.userId == ProfileBloc.userId;
+
             return InkWell(
               onLongPress: () {
                 BlocProvider.of<MessageEditBloc>(context)
@@ -159,22 +162,28 @@ class _MessageTileState<T extends BaseChannelBloc>
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: _isMyMessage
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5.0),
-                      child: UserThumbnail(
-                        thumbnailUrl: messageState.thumbnail,
-                        userName: (messageState.thumbnail != null ||
-                            messageState.thumbnail.isEmpty)
-                            ? ''
-                            : messageState.sender,
-                        size: 24.0,
+                    if (!_isMyMessage)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: UserThumbnail(
+                          thumbnailUrl: messageState.thumbnail,
+                          userName: (messageState.thumbnail != null ||
+                                  messageState.thumbnail.isEmpty)
+                              ? ''
+                              : messageState.sender,
+                          size: 24.0,
+                        ),
                       ),
-                    ),
                     SizedBox(width: 6.0),
                     Flexible(
                       child: Bubble(
-                        color: Color(0xfff6f6f6),
+                        color: _isMyMessage
+                            ? Color(0xff004dff)
+                            : Color(0xfff6f6f6),
                         elevation: 0,
                         padding: BubbleEdges.fromLTRB(13.0, 10.0, 15.0, 8.0),
                         child: Row(
@@ -186,15 +195,16 @@ class _MessageTileState<T extends BaseChannelBloc>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    messageState.sender ?? '',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff444444),
+                                  if (!_isMyMessage)
+                                    Text(
+                                      messageState.sender ?? '',
+                                      style: TextStyle(
+                                        fontSize: 12.0,
+                                        fontWeight: FontWeight.w600,
+                                        color: Color(0xff444444),
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
                                   SizedBox(height: 4.0),
                                   TwacodeRenderer(messageState.content).message,
                                   // Normally we use SizedBox here,
@@ -208,7 +218,8 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   Container(
                                     child: Wrap(
                                       runSpacing: Dim.heightMultiplier,
-                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
                                       textDirection: TextDirection.ltr,
                                       children: [
                                         ...messageState.reactions.keys.map((r) {
@@ -233,12 +244,11 @@ class _MessageTileState<T extends BaseChannelBloc>
                             ),
                             SizedBox(width: 10.0),
                             Text(
-                              messageState.threadId != null ||
-                                  _hideShowAnswers
+                              messageState.threadId != null || _hideShowAnswers
                                   ? DateFormatter.getVerboseDateTime(
-                                  messageState.creationDate)
+                                      messageState.creationDate)
                                   : DateFormatter.getVerboseTime(
-                                  messageState.creationDate),
+                                      messageState.creationDate),
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                 fontSize: 11.0,
