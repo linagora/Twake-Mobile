@@ -101,7 +101,7 @@ class TwacodeParser {
       else if (original[i] == Delim.gt) {
         if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
           int index = this.hasLineFeed(i + 1);
-          index = index != 0 ? index : original.length + 1;
+          index = index != 0 ? index : original.length;
           this.nodes.add(ASTNode(
                 type: TType.Quote,
                 text: original.substring(i + 1, index),
