@@ -157,7 +157,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                   bottom: 12.0,
                 ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Column(
                       children: [
@@ -169,9 +169,10 @@ class _MessageTileState<T extends BaseChannelBloc>
                               : messageState.sender,
                           size: 24.0,
                         ),
+                        SizedBox(height: 5.0),
                       ],
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(width: 6.0),
                     Expanded(
                       child: Bubble(
                         color: Color(0xfff6f6f6),
