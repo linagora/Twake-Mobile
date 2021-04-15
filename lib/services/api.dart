@@ -130,7 +130,7 @@ class Api {
       queryParameters: params,
     );
     try {
-      // logger.d('METHOD: $url');
+      // logger.d('METHOD: $method');
       // logger.d('PARAMS: $params');
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       // logger.d('GET RESPONSE: ${response.data}');
