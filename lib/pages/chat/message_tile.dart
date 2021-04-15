@@ -160,18 +160,16 @@ class _MessageTileState<T extends BaseChannelBloc>
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Column(
-                      children: [
-                        UserThumbnail(
-                          thumbnailUrl: messageState.thumbnail,
-                          userName: (messageState.thumbnail != null ||
-                                  messageState.thumbnail.isEmpty)
-                              ? ''
-                              : messageState.sender,
-                          size: 24.0,
-                        ),
-                        SizedBox(height: 5.0),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5.0),
+                      child: UserThumbnail(
+                        thumbnailUrl: messageState.thumbnail,
+                        userName: (messageState.thumbnail != null ||
+                            messageState.thumbnail.isEmpty)
+                            ? ''
+                            : messageState.sender,
+                        size: 24.0,
+                      ),
                     ),
                     SizedBox(width: 6.0),
                     Flexible(
@@ -182,40 +180,20 @@ class _MessageTileState<T extends BaseChannelBloc>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              messageState.sender ?? '',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xff444444),
+                            Container(
+                              color: Colors.yellow,
+                              child: Text(
+                                messageState.sender ?? '',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xff444444),
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 5.0),
-                            Container(
-                              // color: Colors.blue,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Expanded(child: TwacodeRenderer(messageState.content).message),
-                                  Text(
-                                    messageState.threadId != null ||
-                                        _hideShowAnswers
-                                        ? DateFormatter.getVerboseDateTime(
-                                        messageState.creationDate)
-                                        : DateFormatter.getVerboseTime(
-                                        messageState.creationDate),
-                                    style: TextStyle(
-                                      fontSize: 11.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff92929C),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            Container(color: Colors.green, child: TwacodeRenderer(messageState.content).message),
                             // Normally we use SizedBox here,
                             // but it will cut the bottom of emojis
                             // in last line of the messsage.
@@ -245,6 +223,22 @@ class _MessageTileState<T extends BaseChannelBloc>
                               ],
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      color: Colors.deepPurpleAccent,
+                      child: Text(
+                        messageState.threadId != null ||
+                            _hideShowAnswers
+                            ? DateFormatter.getVerboseDateTime(
+                            messageState.creationDate)
+                            : DateFormatter.getVerboseTime(
+                            messageState.creationDate),
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff92929C),
                         ),
                       ),
                     ),
