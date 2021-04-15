@@ -36,6 +36,9 @@ class Directs extends StatelessWidget {
             itemCount: directs.length,
             itemBuilder: (context, index) {
               final direct = directs[index];
+              print('User id: $userId');
+              print('Direct id: ${direct.id}');
+              print('Members: ${direct.members}');
               final memberId = direct.members.firstWhere((id) => id != userId);
               return DirectTile(
                 key: ValueKey(direct.id),

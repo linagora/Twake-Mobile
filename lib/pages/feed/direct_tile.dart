@@ -37,10 +37,10 @@ class DirectTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        var draftType = DraftType.channel;
+        var draftType = DraftType.direct;
         // Load draft from local storage
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
-        openChannel(context, id);
+        openDirect(context, id);
       },
       child: Container(
         padding: EdgeInsets.fromLTRB(16.0, 8.0, 12.0, 8.0),

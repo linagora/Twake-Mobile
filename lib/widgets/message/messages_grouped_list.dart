@@ -6,6 +6,7 @@ import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/direct.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
@@ -23,14 +24,14 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
       var messages = <Message>[];
-
       if (state is MessagesLoaded) {
         messages = state.messages;
       } else if (state is MessagesEmpty) {
+        final isDirect = state.parentChannel is Direct;
         return Flexible(
           child: Column(
             children: [
-              EmptyChatContainer(),
+              EmptyChatContainer(isDirect: isDirect),
               Spacer(),
             ],
           ),
