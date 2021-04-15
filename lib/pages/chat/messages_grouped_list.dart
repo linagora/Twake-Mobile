@@ -8,8 +8,8 @@ import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
+import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/dateformatter.dart';
-import 'package:twake/widgets/message/message_tile.dart';
 
 class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
   @override

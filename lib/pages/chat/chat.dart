@@ -13,7 +13,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
-import 'package:twake/pages/feed/direct_thumbnail.dart';
+import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
@@ -124,7 +124,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   child: Row(
                     children: [
                       if (parentChannel is Direct)
-                        DirectThumbnail(
+                        UserThumbnail(
                           userId: memberId,
                           size: 36.0,
                         ),

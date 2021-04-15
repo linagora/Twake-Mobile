@@ -10,11 +10,11 @@ import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
-import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
@@ -85,7 +85,7 @@ class _MessageTileState<T extends BaseChannelBloc>
       create: (_) => SingleMessageBloc(_message),
       lazy: false,
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
-        builder: (ctx, messageState) {
+        builder: (context, messageState) {
           if (messageState is MessageReady)
             return InkWell(
               onLongPress: () {
@@ -100,14 +100,14 @@ class _MessageTileState<T extends BaseChannelBloc>
                         messageId: messageState.id,
                         responsesCount: messageState.responsesCount,
                         isThread:
-                        messageState.threadId != null || _hideShowAnswers,
+                            messageState.threadId != null || _hideShowAnswers,
                         onReply: onReply,
                         onEdit: () {
-                          Navigator.of(ctx).pop();
+                          Navigator.of(context).pop();
                           // ignore: close_sinks
-                          final smbloc = ctx.read<SingleMessageBloc>();
+                          final smbloc = context.read<SingleMessageBloc>();
                           // ignore: close_sinks
-                          final mebloc = ctx.read<MessageEditBloc>();
+                          final mebloc = context.read<MessageEditBloc>();
                           mebloc.add(
                             EditMessage(
                               originalStr: _message.content.originalStr ?? '',
@@ -118,7 +118,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   UpdateContent(
                                     content: text,
                                     workspaceId:
-                                    T == DirectsBloc ? 'direct' : null,
+                                        T == DirectsBloc ? 'direct' : null,
                                   ),
                                 );
                                 mebloc.add(CancelMessageEdit());
@@ -127,16 +127,16 @@ class _MessageTileState<T extends BaseChannelBloc>
                             ),
                           );
                         },
-                        ctx: ctx,
-                        onDelete: (ctx) => onDelete(
-                            ctx,
+                        ctx: context,
+                        onDelete: (context) => onDelete(
+                            context,
                             RemoveMessage(
                               channelId: _message.channelId,
                               messageId: messageState.id,
                               threadId: messageState.threadId,
                             )),
                         onCopy: () {
-                          onCopy(context: ctx, text: messageState.text);
+                          onCopy(context: context, text: messageState.text);
                         },
                       );
                     });
@@ -160,10 +160,13 @@ class _MessageTileState<T extends BaseChannelBloc>
                   children: [
                     Column(
                       children: [
-                        ImageAvatar(
-                          messageState.thumbnail,
-                          width: 30,
-                          height: 30,
+                        UserThumbnail(
+                          thumbnailUrl: messageState.thumbnail,
+                          userName: (messageState.thumbnail != null ||
+                                  messageState.thumbnail.isEmpty)
+                              ? ''
+                              : messageState.sender,
+                          size: 24.0,
                         ),
                       ],
                     ),
@@ -187,11 +190,11 @@ class _MessageTileState<T extends BaseChannelBloc>
                               ),
                               Text(
                                 messageState.threadId != null ||
-                                    _hideShowAnswers
+                                        _hideShowAnswers
                                     ? DateFormatter.getVerboseDateTime(
-                                    messageState.creationDate)
+                                        messageState.creationDate)
                                     : DateFormatter.getVerboseTime(
-                                    messageState.creationDate),
+                                        messageState.creationDate),
                                 style: TextStyle(
                                   fontSize: 11.0,
                                   fontWeight: FontWeight.w400,

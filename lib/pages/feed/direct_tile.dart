@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/pages/feed/direct_thumbnail.dart';
+import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/dateformatter.dart';
@@ -44,7 +44,7 @@ class DirectTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            DirectThumbnail(userId: memberId),
+            UserThumbnail(userId: memberId),
             SizedBox(width: 11.0),
             Expanded(
               child: Column(

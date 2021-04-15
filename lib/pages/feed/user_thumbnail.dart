@@ -6,13 +6,17 @@ import 'package:twake/utils/random_hex_color.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
-class DirectThumbnail extends StatelessWidget {
+class UserThumbnail extends StatelessWidget {
   final String userId;
+  final String thumbnailUrl;
+  final String userName;
   final double size;
 
-  const DirectThumbnail({
+  const UserThumbnail({
     Key key,
     this.userId,
+    this.thumbnailUrl,
+    this.userName,
     this.size = 60.0,
   }) : super(key: key);
 
@@ -33,30 +37,7 @@ class DirectThumbnail extends StatelessWidget {
                   height: size,
                 );
               } else {
-                String firstName = state.firstName;
-                String firstNameLetter = '';
-                if (firstName != null && firstName.isNotReallyEmpty) {
-                  firstNameLetter = firstName[0];
-                }
-                return CircleAvatar(
-                  radius: size / 2,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: randomGradient(),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '$firstNameLetter',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                );
+                return NamedAvatar(size: size, name: state.firstName);
               }
             } else {
               return RoundedShimmer(size: size);
@@ -64,9 +45,56 @@ class DirectThumbnail extends StatelessWidget {
           },
         ),
       );
+    } else if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
+      return RoundedImage(
+        thumbnailUrl,
+        width: size,
+        height: size,
+      );
+    } else if (userName != null && userName.isNotReallyEmpty) {
+      return NamedAvatar(size: size, name: userName);
     } else {
       return RoundedShimmer(size: size);
     }
+  }
+}
+
+class NamedAvatar extends StatelessWidget {
+  const NamedAvatar({
+    Key key,
+    this.size = 60.0,
+    this.name = '',
+  }) : super(key: key);
+
+  final double size;
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    String firstNameCharacter = '';
+    if (name.isNotReallyEmpty) {
+      firstNameCharacter = name[0];
+    }
+
+    return CircleAvatar(
+      radius: size / 2,
+      child: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: randomGradient(),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          firstNameCharacter,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
   }
 }
 
