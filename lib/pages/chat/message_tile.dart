@@ -186,6 +186,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                             : Color(0xfff6f6f6),
                         elevation: 0,
                         padding: BubbleEdges.fromLTRB(13.0, 10.0, 15.0, 8.0),
+                        radius: Radius.circular(18.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
