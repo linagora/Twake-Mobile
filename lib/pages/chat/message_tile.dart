@@ -198,29 +198,34 @@ class _MessageTileState<T extends BaseChannelBloc>
                             // but it will cut the bottom of emojis
                             // in last line of the messsage.
                             Container(
-                              color: Colors.transparent,
+                              color: Colors.greenAccent,
+                              // color: Colors.transparent,
+                              width: 10.0,
                               height: 5.0,
                             ),
-                            Wrap(
-                              runSpacing: Dim.heightMultiplier,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              textDirection: TextDirection.ltr,
-                              children: [
-                                ...messageState.reactions.keys.map((r) {
-                                  return Reaction(
-                                    r,
-                                    messageState.reactions[r]['count'],
-                                    T == DirectsBloc ? 'direct' : null,
-                                  );
-                                }),
-                                if (messageState.responsesCount > 0 &&
-                                    messageState.threadId == null &&
-                                    !_hideShowAnswers)
-                                  Text(
-                                    'See all answers (${messageState.responsesCount})',
-                                    style: StylesConfig.miniPurple,
-                                  ),
-                              ],
+                            Container(
+                              color: Colors.blueAccent,
+                              child: Wrap(
+                                runSpacing: Dim.heightMultiplier,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                textDirection: TextDirection.ltr,
+                                children: [
+                                  ...messageState.reactions.keys.map((r) {
+                                    return Reaction(
+                                      r,
+                                      messageState.reactions[r]['count'],
+                                      T == DirectsBloc ? 'direct' : null,
+                                    );
+                                  }),
+                                  if (messageState.responsesCount > 0 &&
+                                      messageState.threadId == null &&
+                                      !_hideShowAnswers)
+                                    Text(
+                                      'See all answers (${messageState.responsesCount})',
+                                      style: StylesConfig.miniPurple,
+                                    ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
