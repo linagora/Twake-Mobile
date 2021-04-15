@@ -33,7 +33,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
-        toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
+        // toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
+        toolbarHeight: 60.0,
         leadingWidth: 53.0,
         leading: BlocBuilder<DraftBloc, DraftState>(
           buildWhen: (_, current) =>
