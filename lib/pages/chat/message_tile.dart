@@ -151,8 +151,8 @@ class _MessageTileState<T extends BaseChannelBloc>
                 }
               },
               child: Padding(
-                padding: EdgeInsets.only(
-                  left: 12.0,
+                padding: const EdgeInsets.only(
+                  left: 6.0,
                   right: 12.0,
                   bottom: 12.0,
                 ),
@@ -176,17 +176,16 @@ class _MessageTileState<T extends BaseChannelBloc>
                       child: Bubble(
                         color: Color(0xfff6f6f6),
                         elevation: 0,
+                        padding: BubbleEdges.fromLTRB(13.0, 8.0, 15.0, 8.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            SizedBox(width: 13.0),
                             Flexible(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  SizedBox(height: 8.0),
                                   Text(
                                     messageState.sender ?? '',
                                     style: TextStyle(
@@ -196,7 +195,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  SizedBox(height: 5.0),
+                                  SizedBox(height: 4.0),
                                   TwacodeRenderer(messageState.content).message,
                                   // Normally we use SizedBox here,
                                   // but it will cut the bottom of emojis
@@ -229,7 +228,6 @@ class _MessageTileState<T extends BaseChannelBloc>
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 8.0),
                                 ],
                               ),
                             ),
