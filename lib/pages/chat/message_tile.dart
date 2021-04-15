@@ -206,7 +206,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                  SizedBox(height: 4.0),
+                                  SizedBox(height: !_isMyMessage ? 4.0 : 0.0),
                                   TwacodeRenderer(messageState.content).message,
                                   // Normally we use SizedBox here,
                                   // but it will cut the bottom of emojis
