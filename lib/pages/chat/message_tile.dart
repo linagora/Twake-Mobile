@@ -27,7 +27,7 @@ class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
 
   MessageTile({
     this.message,
-    this.hideShowAnswers: false,
+    this.hideShowAnswers = false,
     Key key,
   }) : super(key: key);
 
@@ -176,7 +176,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                       child: Bubble(
                         color: Color(0xfff6f6f6),
                         elevation: 0,
-                        padding: BubbleEdges.fromLTRB(13.0, 8.0, 15.0, 8.0),
+                        padding: BubbleEdges.fromLTRB(13.0, 10.0, 15.0, 8.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,

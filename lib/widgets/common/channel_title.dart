@@ -18,8 +18,8 @@ class ChannelTitle extends StatelessWidget {
     return Text.rich(
       TextSpan(
         style: TextStyle(
-          fontSize: 15.0,
-          fontWeight: FontWeight.w600,
+          fontSize: 17.0,
+          fontWeight: FontWeight.w700,
           color: Colors.black,
         ),
         children: [
