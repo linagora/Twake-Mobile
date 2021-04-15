@@ -35,7 +35,8 @@ Future<void> _open<T extends BaseChannelBloc>(
   // print('On open: $channelId');
   await Navigator.of(context)
       .push(MaterialPageRoute(
-        builder: (context) => MessagesPage<T>(),
+        // builder: (context) => MessagesPage<T>(),
+      builder: (context) => Chat<T>(),
       ))
       .then((r) => handleError(r, context));
 
