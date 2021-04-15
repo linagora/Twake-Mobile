@@ -15,7 +15,8 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
   State<StatefulWidget> createState() => _MessagesGroupedListState<T>();
 }
 
-class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<MessagesGroupedList<T>> {
+class _MessagesGroupedListState<T extends BaseChannelBloc>
+    extends State<MessagesGroupedList<T>> {
   final _itemPositionListener = ItemPositionsListener.create();
 
   @override
@@ -66,7 +67,8 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
     });
   }
 
-  Widget _buildStickyGroupedListView(BuildContext context, MessagesState state, List<Message> messages) {
+  Widget _buildStickyGroupedListView(
+      BuildContext context, MessagesState state, List<Message> messages) {
     var lastScrollPosition;
     try {
       lastScrollPosition = _itemPositionListener.itemPositions.value.last.index;
@@ -75,77 +77,75 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
     }
 
     return StickyGroupedListView<Message, DateTime>(
-        initialScrollIndex: lastScrollPosition,
-        itemPositionsListener: _itemPositionListener,
-        key: ValueKey(state is MessagesLoaded ? state.messageCount : 0),
-        order: StickyGroupedListOrder.DESC,
-        stickyHeaderBackgroundColor:
-        Theme.of(context).scaffoldBackgroundColor,
-        reverse: true,
-        elements: messages,
-        groupBy: (Message m) {
-          final DateTime dt =
-          DateTime.fromMillisecondsSinceEpoch(m.creationDate);
-          return DateTime(dt.year, dt.month, dt.day);
-        },
-        groupComparator: (DateTime value1, DateTime value2) =>
-            value1.compareTo(value2),
-        itemComparator: (Message m1, Message m2) {
-          return m1.creationDate.compareTo(m2.creationDate);
-        },
-        separator: SizedBox(height: Dim.hm2),
-        groupSeparatorBuilder: (Message message) {
-          return GestureDetector(
-            onTap: () {
-              FocusManager.instance.primaryFocus.unfocus();
-            },
-            child: Container(
-              height: Dim.hm3,
-              margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Divider(
-                      thickness: 0.0,
-                    ),
+      initialScrollIndex: lastScrollPosition,
+      itemPositionsListener: _itemPositionListener,
+      key: ValueKey(state is MessagesLoaded ? state.messageCount : 0),
+      order: StickyGroupedListOrder.DESC,
+      stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      reverse: true,
+      elements: messages,
+      groupBy: (Message m) {
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.creationDate);
+        return DateTime(dt.year, dt.month, dt.day);
+      },
+      groupComparator: (DateTime value1, DateTime value2) =>
+          value1.compareTo(value2),
+      itemComparator: (Message m1, Message m2) {
+        return m1.creationDate.compareTo(m2.creationDate);
+      },
+      separator: SizedBox(height: Dim.hm2),
+      groupSeparatorBuilder: (Message message) {
+        return GestureDetector(
+          onTap: () {
+            FocusManager.instance.primaryFocus.unfocus();
+          },
+          child: Container(
+            height: Dim.hm3,
+            margin: EdgeInsets.symmetric(vertical: Dim.hm2),
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.center,
+                  child: Divider(
+                    thickness: 0.0,
                   ),
-                  Align(
-                    // alignment: Alignment.center,
-                    child: Container(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      width: Dim.widthPercent(30),
-                      child: Padding(
-                        padding: const EdgeInsets.all(1.0),
-                        child: Text(
-                          DateFormatter.getVerboseDate(
-                              message.creationDate),
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff92929C),
-                          ),
-                          textAlign: TextAlign.center,
+                ),
+                Align(
+                  // alignment: Alignment.center,
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    width: Dim.widthPercent(30),
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Text(
+                        DateFormatter.getVerboseDate(message.creationDate),
+                        style: TextStyle(
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xff92929C),
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-        itemBuilder: (_, Message message) {
-          return MessageTile<T>(
-            message: message,
-            key: ValueKey(
-              message.id +
-                  message.responsesCount.toString() +
-                  message.reactions.keys.join() +
-                  (message.content.originalStr ?? ''),
-            ),
-          );
-        });
+          ),
+        );
+      },
+      itemBuilder: (_, Message message) {
+        return MessageTile<T>(
+          message: message,
+          key: ValueKey(
+            message.id +
+                message.responsesCount.toString() +
+                message.reactions.keys.join() +
+                (message.content.originalStr ?? ''),
+          ),
+        );
+      },
+    );
   }
 }

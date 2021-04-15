@@ -11,6 +11,7 @@ class EmptyChatContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(top: 16.0),
       padding: EdgeInsets.fromLTRB(36.0, 16.0, 36.0, 16.0),
       decoration: BoxDecoration(
         color: Color(0xfff6f6f6),
@@ -38,7 +39,7 @@ class EmptyChatContainer extends StatelessWidget {
           ),
           SizedBox(height: 12.0),
           Text(
-            'There are no messages in\nthis channel! Start conversation by\nsending some text, image or document',
+            'There are no messages in\nthis ${isDirect ? 'conversation' : 'channel'}! Start conversation by\nsending some text, image or document',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
