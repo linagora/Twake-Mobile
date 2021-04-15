@@ -71,10 +71,34 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
+            var _canEdit = false;
+            var memberId = '';
 
             if ((state is MessagesLoaded || state is MessagesEmpty) &&
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
+
+              if (parentChannel is Channel) {
+                // Possible permissions:
+                // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+                // 'ADD_MEMBER', 'REMOVE_MEMBER',
+                // 'UPDATE_PRIVACY','DELETE_CHANNEL']
+                final permissions = parentChannel.permissions;
+
+                if (permissions.contains('UPDATE_NAME') ||
+                    permissions.contains('UPDATE_DESCRIPTION') ||
+                    permissions.contains('ADD_MEMBER') ||
+                    permissions.contains('REMOVE_MEMBER') ||
+                    permissions.contains('UPDATE_PRIVACY') ||
+                    permissions.contains('DELETE_CHANNEL')) {
+                  _canEdit = true;
+                } else {
+                  _canEdit = false;
+                }
+              } else if (parentChannel is Direct && parentChannel.members != null) {
+                final userId = ProfileBloc.userId;
+                memberId = parentChannel.members.firstWhere((id) => id != userId);
+              }
             }
 
             // print('MessagesBloc state: $state');
@@ -92,28 +116,6 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                     parentChannel.name = editState.name;
                     parentChannel.description = editState.description;
                   }
-                }
-
-                var _canEdit = false;
-                var memberId = '';
-
-                if (parentChannel is Channel) {
-                  // Possible permissions:
-                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
-                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                  final permissions = parentChannel.permissions;
-                  if (permissions.contains('UPDATE_NAME') ||
-                      permissions.contains('UPDATE_DESCRIPTION') ||
-                      permissions.contains('ADD_MEMBER') ||
-                      permissions.contains('REMOVE_MEMBER') ||
-                      permissions.contains('UPDATE_PRIVACY') ||
-                      permissions.contains('DELETE_CHANNEL')) {
-                    _canEdit = true;
-                  }
-                } else if (parentChannel is Direct && parentChannel.members != null) {
-                  final userId = ProfileBloc.userId;
-                  memberId = parentChannel.members.firstWhere((id) => id != userId);
                 }
 
                 return GestureDetector(
