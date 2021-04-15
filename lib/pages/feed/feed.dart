@@ -88,6 +88,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 17.0,
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.black,
                                   ),
                                 ),
