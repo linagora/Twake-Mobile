@@ -4,6 +4,7 @@ import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/random_hex_color.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/shimmer_loading.dart';
 
 class DirectThumbnail extends StatelessWidget {
   final String userId;
@@ -58,21 +59,34 @@ class DirectThumbnail extends StatelessWidget {
                 );
               }
             } else {
-              return RoundedImage(
-                null,
-                width: size,
-                height: size,
-              );
+              return RoundedShimmer(size: size);
             }
           },
         ),
       );
     } else {
-      return RoundedImage(
-        null,
+      return RoundedShimmer(size: size);
+    }
+  }
+}
+
+class RoundedShimmer extends StatelessWidget {
+  const RoundedShimmer({
+    Key key,
+    @required this.size,
+  }) : super(key: key);
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipOval(
+      child: ShimmerLoading(
+        isLoading: true,
         width: size,
         height: size,
-      );
-    }
+        child: SizedBox(),
+      ),
+    );
   }
 }

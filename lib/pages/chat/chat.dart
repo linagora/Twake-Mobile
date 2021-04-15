@@ -95,6 +95,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 }
 
                 var _canEdit = false;
+                var memberId = '';
 
                 if (parentChannel is Channel) {
                   // Possible permissions:
@@ -110,6 +111,9 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                       permissions.contains('DELETE_CHANNEL')) {
                     _canEdit = true;
                   }
+                } else if (parentChannel is Direct && parentChannel.members != null) {
+                  final userId = ProfileBloc.userId;
+                  memberId = parentChannel.members.firstWhere((id) => id != userId);
                 }
 
                 return GestureDetector(
@@ -119,9 +123,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                     children: [
                       if (parentChannel is Direct)
                         DirectThumbnail(
-                          userId: parentChannel.members != null
-                              ? parentChannel.members.first
-                              : null,
+                          userId: memberId,
                           size: 36.0,
                         ),
                       if (parentChannel is Channel)
