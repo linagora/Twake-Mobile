@@ -6,6 +6,7 @@ import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 
@@ -25,13 +26,12 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
       if (state is MessagesLoaded) {
         messages = state.messages;
       } else if (state is MessagesEmpty) {
-        return Expanded(
-          child: Center(
-            child: Text(
-              state is ErrorLoadingMessages
-                  ? 'Couldn\'t load messages'
-                  : 'No messages yet',
-            ),
+        return Flexible(
+          child: Column(
+            children: [
+              EmptyChatContainer(),
+              Spacer(),
+            ],
           ),
         );
       } else {

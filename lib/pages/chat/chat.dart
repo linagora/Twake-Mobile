@@ -35,7 +35,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         leading: BlocBuilder<DraftBloc, DraftState>(
           buildWhen: (_, current) =>
-          current is DraftUpdated || current is DraftReset,
+              current is DraftUpdated || current is DraftReset,
           builder: (context, state) {
             if (state is DraftUpdated && state.type != DraftType.thread) {
               channelId = state.id;
@@ -50,12 +50,12 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 if (draftType != null) {
                   if (draft.isNotEmpty) {
                     context.read<DraftBloc>().add(
-                      SaveDraft(
-                        id: channelId,
-                        type: draftType,
-                        draft: draft,
-                      ),
-                    );
+                          SaveDraft(
+                            id: channelId,
+                            type: draftType,
+                            draft: draft,
+                          ),
+                        );
                   } else {
                     context
                         .read<DraftBloc>()
@@ -122,7 +122,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                           width: 32.0,
                           height: 32.0,
                           child:
-                          StackedUserAvatars(parentChannel.members ?? []),
+                              StackedUserAvatars(parentChannel.members ?? []),
                         ),
                       if (parentChannel is Channel)
                         ShimmerLoading(
@@ -182,85 +182,87 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
       ),
       body: SafeArea(
         child: BlocBuilder<MessagesBloc<T>, MessagesState>(
-            builder: (ctx, messagesState) {
-              return BlocProvider<MessageEditBloc>(
-                create: (ctx) => MessageEditBloc(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Divider(
-                      thickness: 1.0,
-                      height: 1.0,
-                      color: Color(0xffEEEEEE),
-                    ),
-                    if (messagesState is MoreMessagesLoading &&
-                        !(messagesState is ErrorLoadingMoreMessages))
-                      SizedBox(
-                        height: Dim.hm4,
-                        width: Dim.hm4,
-                        child: Padding(
-                          padding: EdgeInsets.all(Dim.widthMultiplier),
-                          child: CircularProgressIndicator(),
-                        ),
+          builder: (_, messagesState) {
+            return BlocProvider<MessageEditBloc>(
+              create: (_) => MessageEditBloc(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Divider(
+                    thickness: 1.0,
+                    height: 1.0,
+                    color: Color(0xffEEEEEE),
+                  ),
+                  if (messagesState is MoreMessagesLoading &&
+                      !(messagesState is ErrorLoadingMoreMessages))
+                    SizedBox(
+                      height: Dim.hm4,
+                      width: Dim.hm4,
+                      child: Padding(
+                        padding: EdgeInsets.all(Dim.widthMultiplier),
+                        child: CircularProgressIndicator(),
                       ),
-                    MessagesGroupedList<T>(),
-                    BlocBuilder<DraftBloc, DraftState>(
-                      buildWhen: (_, current) =>
-                      current is DraftLoaded || current is DraftReset,
-                      builder: (context, state) {
-                        if (state is DraftLoaded &&
-                            state.type != DraftType.thread) {
-                          draft = state.draft;
-                          // print('DRAFT IS LOADED: $draft');
-                        } else if (state is DraftReset) {
-                          draft = '';
-                        }
-
-                        final channelId = messagesState.parentChannel.id;
-                        if (messagesState.parentChannel is Channel) {
-                          draftType = DraftType.channel;
-                        } else if (messagesState.parentChannel is Direct) {
-                          draftType = DraftType.direct;
-                        }
-
-                        return BlocBuilder<MessageEditBloc, MessageEditState>(
-                          builder: (ctx, state) {
-                            return MessageEditField(
-                              autofocus: state is MessageEditing,
-                              initialText: state is MessageEditing
-                                  ? state.originalStr
-                                  : draft,
-                              onMessageSend: state is MessageEditing
-                                  ? state.onMessageEditComplete
-                                  : (content) {
-                                BlocProvider.of<MessagesBloc<T>>(context).add(
-                                  SendMessage(content: content),
-                                );
-                                context.read<DraftBloc>().add(
-                                  ResetDraft(
-                                      id: channelId, type: draftType),
-                                );
-                              },
-                              onTextUpdated: state is MessageEditing
-                                  ? (text) {}
-                                  : (text) {
-                                context.read<DraftBloc>().add(
-                                  UpdateDraft(
-                                    id: channelId,
-                                    type: draftType,
-                                    draft: text,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
                     ),
-                  ],
-                ),
-              );
-            }),
+                  MessagesGroupedList<T>(),
+                  BlocBuilder<DraftBloc, DraftState>(
+                    buildWhen: (_, current) =>
+                        current is DraftLoaded || current is DraftReset,
+                    builder: (context, state) {
+                      if (state is DraftLoaded &&
+                          state.type != DraftType.thread) {
+                        draft = state.draft;
+                        // print('DRAFT IS LOADED: $draft');
+                      } else if (state is DraftReset) {
+                        draft = '';
+                      }
+
+                      final channelId = messagesState.parentChannel.id;
+                      if (messagesState.parentChannel is Channel) {
+                        draftType = DraftType.channel;
+                      } else if (messagesState.parentChannel is Direct) {
+                        draftType = DraftType.direct;
+                      }
+
+                      return BlocBuilder<MessageEditBloc, MessageEditState>(
+                        builder: (ctx, state) {
+                          return MessageEditField(
+                            autofocus: state is MessageEditing,
+                            initialText: state is MessageEditing
+                                ? state.originalStr
+                                : draft,
+                            onMessageSend: state is MessageEditing
+                                ? state.onMessageEditComplete
+                                : (content) {
+                                    BlocProvider.of<MessagesBloc<T>>(context)
+                                        .add(
+                                      SendMessage(content: content),
+                                    );
+                                    context.read<DraftBloc>().add(
+                                          ResetDraft(
+                                              id: channelId, type: draftType),
+                                        );
+                                  },
+                            onTextUpdated: state is MessageEditing
+                                ? (text) {}
+                                : (text) {
+                                    context.read<DraftBloc>().add(
+                                          UpdateDraft(
+                                            id: channelId,
+                                            type: draftType,
+                                            draft: text,
+                                          ),
+                                        );
+                                  },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
