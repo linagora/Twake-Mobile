@@ -53,10 +53,13 @@ class DirectTile extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: ChannelTitle(
-                          name: name,
-                          hasUnread: hasUnread,
-                          isPrivate: false,
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       Text(
