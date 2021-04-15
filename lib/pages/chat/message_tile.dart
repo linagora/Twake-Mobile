@@ -216,29 +216,27 @@ class _MessageTileState<T extends BaseChannelBloc>
                                     width: 10.0,
                                     height: 5.0,
                                   ),
-                                  Container(
-                                    child: Wrap(
-                                      runSpacing: Dim.heightMultiplier,
-                                      crossAxisAlignment:
-                                          WrapCrossAlignment.center,
-                                      textDirection: TextDirection.ltr,
-                                      children: [
-                                        ...messageState.reactions.keys.map((r) {
-                                          return Reaction(
-                                            r,
-                                            messageState.reactions[r]['count'],
-                                            T == DirectsBloc ? 'direct' : null,
-                                          );
-                                        }),
-                                        if (messageState.responsesCount > 0 &&
-                                            messageState.threadId == null &&
-                                            !_hideShowAnswers)
-                                          Text(
-                                            'See all answers (${messageState.responsesCount})',
-                                            style: StylesConfig.miniPurple,
-                                          ),
-                                      ],
-                                    ),
+                                  Wrap(
+                                    runSpacing: Dim.heightMultiplier,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
+                                    textDirection: TextDirection.ltr,
+                                    children: [
+                                      ...messageState.reactions.keys.map((r) {
+                                        return Reaction(
+                                          r,
+                                          messageState.reactions[r]['count'],
+                                          T == DirectsBloc ? 'direct' : null,
+                                        );
+                                      }),
+                                      if (messageState.responsesCount > 0 &&
+                                          messageState.threadId == null &&
+                                          !_hideShowAnswers)
+                                        Text(
+                                          'See all answers (${messageState.responsesCount})',
+                                          style: StylesConfig.miniPurple,
+                                        ),
+                                    ],
                                   ),
                                 ],
                               ),
