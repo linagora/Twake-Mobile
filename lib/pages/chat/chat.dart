@@ -36,7 +36,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
         toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         leading: BlocBuilder<DraftBloc, DraftState>(
           buildWhen: (_, current) =>
-          current is DraftUpdated || current is DraftReset,
+              current is DraftUpdated || current is DraftReset,
           builder: (context, state) {
             if (state is DraftUpdated && state.type != DraftType.thread) {
               channelId = state.id;
@@ -51,12 +51,12 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 if (draftType != null) {
                   if (draft.isNotEmpty) {
                     context.read<DraftBloc>().add(
-                      SaveDraft(
-                        id: channelId,
-                        type: draftType,
-                        draft: draft,
-                      ),
-                    );
+                          SaveDraft(
+                            id: channelId,
+                            type: draftType,
+                            draft: draft,
+                          ),
+                        );
                   } else {
                     context
                         .read<DraftBloc>()
@@ -118,18 +118,11 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   child: Row(
                     children: [
                       if (parentChannel is Direct)
-                        BlocBuilder<MemberCubit, MemberState>(
-                          builder: (_, state) {
-                            var memberId = '';
-                            if (state is MembersLoaded && parentChannel is Direct) {
-                              // final userId = ProfileBloc.userId;
-                              print('Members: ${state.members.map((e) => e.id)}');
-                              memberId = parentChannel.members.first;
-                              // memberId = parentChannel.members?.firstWhere((id) => id != userId);
-                            }
-                            return DirectThumbnail(
-                                userId: memberId, size: 36.0);
-                          },
+                        DirectThumbnail(
+                          userId: parentChannel.members != null
+                              ? parentChannel.members.first
+                              : null,
+                          size: 36.0,
                         ),
                       if (parentChannel is Channel)
                         ShimmerLoading(
@@ -167,9 +160,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                 child: Text(
                                   parentChannel.membersCount == null
                                       ? ''
-                                      : '${parentChannel.membersCount > 0
-                                      ? parentChannel.membersCount
-                                      : 'No'} members',
+                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.w400,
@@ -215,7 +206,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   MessagesGroupedList<T>(),
                   BlocBuilder<DraftBloc, DraftState>(
                     buildWhen: (_, current) =>
-                    current is DraftLoaded || current is DraftReset,
+                        current is DraftLoaded || current is DraftReset,
                     builder: (context, state) {
                       if (state is DraftLoaded &&
                           state.type != DraftType.thread) {
@@ -242,26 +233,26 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                             onMessageSend: state is MessageEditing
                                 ? state.onMessageEditComplete
                                 : (content) {
-                              BlocProvider.of<MessagesBloc<T>>(context)
-                                  .add(
-                                SendMessage(content: content),
-                              );
-                              context.read<DraftBloc>().add(
-                                ResetDraft(
-                                    id: channelId, type: draftType),
-                              );
-                            },
+                                    BlocProvider.of<MessagesBloc<T>>(context)
+                                        .add(
+                                      SendMessage(content: content),
+                                    );
+                                    context.read<DraftBloc>().add(
+                                          ResetDraft(
+                                              id: channelId, type: draftType),
+                                        );
+                                  },
                             onTextUpdated: state is MessageEditing
                                 ? (text) {}
                                 : (text) {
-                              context.read<DraftBloc>().add(
-                                UpdateDraft(
-                                  id: channelId,
-                                  type: draftType,
-                                  draft: text,
-                                ),
-                              );
-                            },
+                                    context.read<DraftBloc>().add(
+                                          UpdateDraft(
+                                            id: channelId,
+                                            type: draftType,
+                                            draft: text,
+                                          ),
+                                        );
+                                  },
                           );
                         },
                       );

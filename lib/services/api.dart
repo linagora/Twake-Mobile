@@ -130,10 +130,10 @@ class Api {
       queryParameters: params,
     );
     try {
-      // logger.d('METHOD: $method');
-      // logger.d('PARAMS: $params');
+      logger.d('METHOD: ${jsonEncode(method)}');
+      logger.d('PARAMS: ${jsonEncode(params)}');
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      // logger.d('GET RESPONSE: ${response.data}');
+      logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
       return response.data;
     } catch (e) {
       logger.wtf('FAILED TO GET INFO: $e');
@@ -241,10 +241,10 @@ class Api {
             logger.e('Error during network request!' +
                 '\nMethod: ${error.requestOptions.method}' +
                 '\nPATH: ${error.requestOptions.path}' +
-                '\nHeaders: ${error.requestOptions.headers}' +
-                '\nResponse: ${error.response.data}' +
+                '\nHeaders: ${jsonEncode(error.requestOptions.headers)}' +
+                '\nResponse: ${jsonEncode(error.response.data)}' +
                 '\nBODY: ${jsonEncode(error.requestOptions.data)}' +
-                '\nQUERY: ${error.requestOptions.queryParameters}');
+                '\nQUERY: ${jsonEncode(error.requestOptions.queryParameters)}');
           } else {
             logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
           }
