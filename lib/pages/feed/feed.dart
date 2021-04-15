@@ -137,7 +137,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
           ),
           tabBar: TabBar(
             controller: _controller,
-            indicatorPadding: EdgeInsets.symmetric(horizontal: 15.0),
+            indicatorPadding: const EdgeInsets.symmetric(horizontal: 15.0),
             indicatorColor: Color(0xff004dff),
             indicatorSize: TabBarIndicatorSize.label,
             labelStyle: TextStyle(
