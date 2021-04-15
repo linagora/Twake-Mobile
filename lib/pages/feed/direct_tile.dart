@@ -74,10 +74,13 @@ class DirectTile extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: Text(
-                            lastMessage['text'] ?? 'No messages yet',
+                            lastMessage['text'] ?? 'This conversation is empty',
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 14.0,
+                              fontStyle: lastMessage['text'] != null
+                                  ? FontStyle.normal
+                                  : FontStyle.italic,
                               fontWeight: FontWeight.w400,
                               color: Colors.black.withOpacity(0.5),
                             ),

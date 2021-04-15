@@ -12,6 +12,7 @@ import 'package:twake/pages/edit_channel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/pages/profile/settings.dart';
 import 'package:twake/pages/server_configuration.dart';
+import 'package:twake/pages/chat/chat.dart';
 
 void openSettings(BuildContext context) async {
   await Navigator.of(context)

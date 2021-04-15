@@ -41,7 +41,6 @@ class _TabsControllerState extends State<TabsController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      // backgroundColor: Color(0xffefeef3),
       resizeToAvoidBottomInset: false,
       body: BlocConsumer<SheetBloc, SheetState>(
         listenWhen: (_, current) =>
