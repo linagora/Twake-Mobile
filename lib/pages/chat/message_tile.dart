@@ -180,53 +180,58 @@ class _MessageTileState<T extends BaseChannelBloc>
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  messageState.sender ?? '',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xff444444),
+                            SizedBox(width: 13.0),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(height: 8.0),
+                                  Text(
+                                    messageState.sender ?? '',
+                                    style: TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff444444),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: 5.0),
-                                TwacodeRenderer(messageState.content).message,
-                                // Normally we use SizedBox here,
-                                // but it will cut the bottom of emojis
-                                // in last line of the messsage.
-                                Container(
-                                  color: Colors.transparent,
-                                  width: 10.0,
-                                  height: 5.0,
-                                ),
-                                Container(
-                                  child: Wrap(
-                                    runSpacing: Dim.heightMultiplier,
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    textDirection: TextDirection.ltr,
-                                    children: [
-                                      ...messageState.reactions.keys.map((r) {
-                                        return Reaction(
-                                          r,
-                                          messageState.reactions[r]['count'],
-                                          T == DirectsBloc ? 'direct' : null,
-                                        );
-                                      }),
-                                      if (messageState.responsesCount > 0 &&
-                                          messageState.threadId == null &&
-                                          !_hideShowAnswers)
-                                        Text(
-                                          'See all answers (${messageState.responsesCount})',
-                                          style: StylesConfig.miniPurple,
-                                        ),
-                                    ],
+                                  SizedBox(height: 5.0),
+                                  TwacodeRenderer(messageState.content).message,
+                                  // Normally we use SizedBox here,
+                                  // but it will cut the bottom of emojis
+                                  // in last line of the messsage.
+                                  Container(
+                                    color: Colors.transparent,
+                                    width: 10.0,
+                                    height: 5.0,
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    child: Wrap(
+                                      runSpacing: Dim.heightMultiplier,
+                                      crossAxisAlignment: WrapCrossAlignment.center,
+                                      textDirection: TextDirection.ltr,
+                                      children: [
+                                        ...messageState.reactions.keys.map((r) {
+                                          return Reaction(
+                                            r,
+                                            messageState.reactions[r]['count'],
+                                            T == DirectsBloc ? 'direct' : null,
+                                          );
+                                        }),
+                                        if (messageState.responsesCount > 0 &&
+                                            messageState.threadId == null &&
+                                            !_hideShowAnswers)
+                                          Text(
+                                            'See all answers (${messageState.responsesCount})',
+                                            style: StylesConfig.miniPurple,
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.0),
+                                ],
+                              ),
                             ),
                             SizedBox(width: 10.0),
                             Text(
@@ -236,6 +241,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   messageState.creationDate)
                                   : DateFormatter.getVerboseTime(
                                   messageState.creationDate),
+                              textAlign: TextAlign.end,
                               style: TextStyle(
                                 fontSize: 11.0,
                                 fontWeight: FontWeight.w400,
