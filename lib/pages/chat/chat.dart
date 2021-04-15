@@ -49,6 +49,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
               draft = '';
             }
             return GestureDetector(
+              behavior: HitTestBehavior.opaque,
               onTap: () {
                 if (draftType != null) {
                   if (draft.isNotEmpty) {
@@ -132,64 +133,62 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: _canEdit ? () => _goEdit(context, state) : null,
-                  child: Container(
-                    child: Row(
-                      children: [
-                        if (parentChannel is Direct)
-                          UserThumbnail(
-                            userId: memberId,
-                            size: 36.0,
-                          ),
-                        if (parentChannel is Channel)
-                          ShimmerLoading(
-                            key: ValueKey<String>('channel_icon'),
-                            isLoading: parentChannel.icon == null ||
-                                parentChannel.icon.isEmpty,
-                            width: 32.0,
-                            height: 32.0,
-                            child: TextAvatar(parentChannel.icon ?? ''),
-                          ),
-                        SizedBox(width: 12.0),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ShimmerLoading(
-                                key: ValueKey<String>('name'),
-                                isLoading: parentChannel.name == null,
-                                width: 60.0,
-                                height: 10.0,
-                                child: ChannelTitle(
-                                  name: parentChannel.name ?? '',
-                                  isPrivate: (parentChannel is Channel) &&
-                                      parentChannel.visibility != null &&
-                                      parentChannel.visibility == 'private',
-                                ),
+                  child: Row(
+                    children: [
+                      if (parentChannel is Direct)
+                        UserThumbnail(
+                          userId: memberId,
+                          size: 36.0,
+                        ),
+                      if (parentChannel is Channel)
+                        ShimmerLoading(
+                          key: ValueKey<String>('channel_icon'),
+                          isLoading: parentChannel.icon == null ||
+                              parentChannel.icon.isEmpty,
+                          width: 32.0,
+                          height: 32.0,
+                          child: TextAvatar(parentChannel.icon ?? ''),
+                        ),
+                      SizedBox(width: 12.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ShimmerLoading(
+                              key: ValueKey<String>('name'),
+                              isLoading: parentChannel.name == null,
+                              width: 60.0,
+                              height: 10.0,
+                              child: ChannelTitle(
+                                name: parentChannel.name ?? '',
+                                isPrivate: (parentChannel is Channel) &&
+                                    parentChannel.visibility != null &&
+                                    parentChannel.visibility == 'private',
                               ),
-                              SizedBox(height: 4),
-                              if (parentChannel is Channel)
-                                ShimmerLoading(
-                                  key: ValueKey<String>('membersCount'),
-                                  isLoading: parentChannel.membersCount == null,
-                                  width: 50,
-                                  height: 10,
-                                  child: Text(
-                                    parentChannel.membersCount == null
-                                        ? ''
-                                        : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
-                                    style: TextStyle(
-                                      fontSize: 10.0,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xff92929C),
-                                    ),
+                            ),
+                            SizedBox(height: 4),
+                            if (parentChannel is Channel)
+                              ShimmerLoading(
+                                key: ValueKey<String>('membersCount'),
+                                isLoading: parentChannel.membersCount == null,
+                                width: 50,
+                                height: 10,
+                                child: Text(
+                                  parentChannel.membersCount == null
+                                      ? ''
+                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
+                                  style: TextStyle(
+                                    fontSize: 10.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff92929C),
                                   ),
                                 ),
-                            ],
-                          ),
+                              ),
+                          ],
                         ),
-                        SizedBox(width: 15),
-                      ],
-                    ),
+                      ),
+                      SizedBox(width: 15),
+                    ],
                   ),
                 );
               },
@@ -256,7 +255,9 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                     );
                                     context.read<DraftBloc>().add(
                                           ResetDraft(
-                                              id: channelId, type: draftType),
+                                            id: channelId,
+                                            type: draftType,
+                                          ),
                                         );
                                   },
                             onTextUpdated: state is MessageEditing
