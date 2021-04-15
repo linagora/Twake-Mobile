@@ -45,7 +45,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
           threadId: state.threadMessage.id,
           channelId: state.parentChannel.id,
         ));
-      } else if (state is MessagesLoaded && state.threadMessage != null) {
+      } else if (state is MessagesLoaded &&
+          state.threadMessage != null &&
+          this.threadMessage != null) {
         // repository.logger.w(
         // "${state.threadMessage.content.originalStr} == ${threadMessage.content.originalStr}");
         if (threadMessage.id == state.threadMessage.id &&

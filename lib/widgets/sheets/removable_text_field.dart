@@ -65,6 +65,9 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
   }
 
   void _add() {
+    if (_controller.text.isReallyEmpty) {
+      return;
+    }
     context.read<FieldsCubit>().add(
           field: RemovableTextField(
             key: UniqueKey(),

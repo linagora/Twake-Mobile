@@ -23,6 +23,7 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
   void initState() {
     super.initState();
     // First field init
+    context.read<FieldsCubit>().clear();
     context.read<FieldsCubit>().add(
         field: RemovableTextField(
           key: UniqueKey(),
