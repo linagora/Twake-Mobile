@@ -12,8 +12,8 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
+import 'package:twake/pages/feed/direct_thumbnail.dart';
 import 'package:twake/repositories/draft_repository.dart';
-import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/widgets/common/channel_title.dart';
@@ -75,6 +75,14 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
+
+            final userId = ProfileBloc.userId;
+            var memberId = '';
+
+            if (parentChannel is Direct) {
+              memberId =
+                  parentChannel.members?.firstWhere((id) => id != userId);
+            }
             // print('MessagesBloc state: $state');
             // print('Parent channel current value: $parentChannel');
 
@@ -93,6 +101,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 }
 
                 var _canEdit = false;
+
                 if (parentChannel is Channel) {
                   // Possible permissions:
                   // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
@@ -115,15 +124,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   child: Row(
                     children: [
                       if (parentChannel is Direct)
-                        ShimmerLoading(
-                          key: ValueKey<String>('direct_icon'),
-                          isLoading: parentChannel.members == null ||
-                              parentChannel.members.isEmpty,
-                          width: 32.0,
-                          height: 32.0,
-                          child:
-                              StackedUserAvatars(parentChannel.members ?? []),
-                        ),
+                        DirectThumbnail(userId: memberId, size: 36.0),
                       if (parentChannel is Channel)
                         ShimmerLoading(
                           key: ValueKey<String>('channel_icon'),
