@@ -96,54 +96,58 @@ class _MessageTileState<T extends BaseChannelBloc>
                 BlocProvider.of<MessageEditBloc>(context)
                     .add(CancelMessageEdit());
                 showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (_) {
-                      return MessageModalSheet(
-                        userId: messageState.userId,
-                        messageId: messageState.id,
-                        responsesCount: messageState.responsesCount,
-                        isThread:
-                            messageState.threadId != null || _hideShowAnswers,
-                        onReply: onReply,
-                        onEdit: () {
-                          Navigator.of(context).pop();
-                          // ignore: close_sinks
-                          final smbloc = context.read<SingleMessageBloc>();
-                          // ignore: close_sinks
-                          final mebloc = context.read<MessageEditBloc>();
-                          mebloc.add(
-                            EditMessage(
-                              originalStr: _message.content.originalStr ?? '',
-                              onMessageEditComplete: (text) {
-                                // smbloc get's closed if
-                                // listview disposes of message tile
-                                smbloc.add(
-                                  UpdateContent(
-                                    content: text,
-                                    workspaceId:
-                                        T == DirectsBloc ? 'direct' : null,
-                                  ),
-                                );
-                                mebloc.add(CancelMessageEdit());
-                                FocusManager.instance.primaryFocus.unfocus();
-                              },
-                            ),
-                          );
-                        },
-                        ctx: context,
-                        onDelete: (context) => onDelete(
-                            context,
-                            RemoveMessage(
-                              channelId: _message.channelId,
-                              messageId: messageState.id,
-                              threadId: messageState.threadId,
-                            )),
-                        onCopy: () {
-                          onCopy(context: context, text: messageState.text);
-                        },
-                      );
-                    });
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) {
+                    return MessageModalSheet(
+                      userId: messageState.userId,
+                      messageId: messageState.id,
+                      responsesCount: messageState.responsesCount,
+                      isThread:
+                          messageState.threadId != null || _hideShowAnswers,
+                      onReply: onReply,
+                      onEdit: () {
+                        Navigator.of(context).pop();
+                        // ignore: close_sinks
+                        final smbloc = context.read<SingleMessageBloc>();
+                        // ignore: close_sinks
+                        final mebloc = context.read<MessageEditBloc>();
+                        mebloc.add(
+                          EditMessage(
+                            originalStr: _message.content.originalStr ?? '',
+                            onMessageEditComplete: (text) {
+                              // smbloc get's closed if
+                              // listview disposes of message tile
+                              smbloc.add(
+                                UpdateContent(
+                                  content: text,
+                                  workspaceId:
+                                      T == DirectsBloc ? 'direct' : null,
+                                ),
+                              );
+                              mebloc.add(CancelMessageEdit());
+                              FocusManager.instance.primaryFocus.unfocus();
+                            },
+                          ),
+                        );
+                      },
+                      ctx: context,
+                      onDelete: (context) {
+                        onDelete(
+                          context,
+                          RemoveMessage(
+                            channelId: _message.channelId,
+                            messageId: messageState.id,
+                            threadId: messageState.threadId,
+                          ),
+                        );
+                      },
+                      onCopy: () {
+                        onCopy(context: context, text: messageState.text);
+                      },
+                    );
+                  },
+                );
               },
               onTap: () {
                 FocusManager.instance.primaryFocus.unfocus();
