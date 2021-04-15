@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebAuthPage extends StatefulWidget {
@@ -47,6 +48,11 @@ class _WebAuthPageState extends State<WebAuthPage> {
                 // SetAuthData(qp),
                 // );
                 // await CookieManager().clearCookies();
+                return NavigationDecision.prevent;
+              } else if (r.url.startsWith('mailto:')) {
+                if (await canLaunch(r.url)) {
+                  await launch(r.url);
+                }
                 return NavigationDecision.prevent;
               } else {
                 return NavigationDecision.navigate;
