@@ -158,6 +158,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Column(
                       children: [
@@ -173,7 +174,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                       ],
                     ),
                     SizedBox(width: 6.0),
-                    Expanded(
+                    Flexible(
                       child: Bubble(
                         color: Color(0xfff6f6f6),
                         elevation: 0,
@@ -181,35 +182,40 @@ class _MessageTileState<T extends BaseChannelBloc>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  messageState.sender ?? '',
-                                  style: TextStyle(
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Color(0xff444444),
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  messageState.threadId != null ||
-                                          _hideShowAnswers
-                                      ? DateFormatter.getVerboseDateTime(
-                                          messageState.creationDate)
-                                      : DateFormatter.getVerboseTime(
-                                          messageState.creationDate),
-                                  style: TextStyle(
-                                    fontSize: 11.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xff92929C),
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              messageState.sender ?? '',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff444444),
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 5.0),
-                            TwacodeRenderer(messageState.content).message,
+                            Container(
+                              // color: Colors.blue,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(child: TwacodeRenderer(messageState.content).message),
+                                  Text(
+                                    messageState.threadId != null ||
+                                        _hideShowAnswers
+                                        ? DateFormatter.getVerboseDateTime(
+                                        messageState.creationDate)
+                                        : DateFormatter.getVerboseTime(
+                                        messageState.creationDate),
+                                    style: TextStyle(
+                                      fontSize: 11.0,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xff92929C),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             // Normally we use SizedBox here,
                             // but it will cut the bottom of emojis
                             // in last line of the messsage.
