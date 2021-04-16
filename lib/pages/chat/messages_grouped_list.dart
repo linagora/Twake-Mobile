@@ -5,7 +5,6 @@ import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
-import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
@@ -24,18 +23,17 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
       var messages = <Message>[];
+      final isDirect = state.parentChannel is Direct;
+
       if (state is MessagesLoaded) {
+        if (state.messages.isEmpty) {
+          return EmptyChatContainer(isDirect: isDirect);
+        }
         messages = state.messages;
       } else if (state is MessagesEmpty) {
-        final isDirect = state.parentChannel is Direct;
-        return Flexible(
-          child: Column(
-            children: [
-              EmptyChatContainer(isDirect: isDirect),
-              Spacer(),
-            ],
-          ),
-        );
+        return EmptyChatContainer(isDirect: isDirect);
+      } else if (state is ErrorLoadingMessages) {
+        return EmptyChatContainer(isError: true);
       } else {
         return Expanded(
           child: Center(
