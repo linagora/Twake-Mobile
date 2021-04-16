@@ -210,7 +210,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                  SizedBox(height: _isMyMessage ? 0.0 : 4.0),
+                                  SizedBox(height: _isMyMessage ? 2.0 : 4.0),
                                   Container(
                                     child: TwacodeRenderer(messageState.content).message(
                                       TextStyle(
