@@ -293,7 +293,9 @@ class __AuthTextFormState extends State<_AuthTextForm> {
       validator: widget.validator,
       controller: widget.controller,
       focusNode: widget.focusNode,
-      keyboardType: TextInputType.emailAddress,
+      keyboardType: widget.obscured
+          ? TextInputType.visiblePassword
+          : TextInputType.emailAddress,
       autofillHints: [
         AutofillHints.email,
         AutofillHints.password,
