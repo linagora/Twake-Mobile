@@ -83,6 +83,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
       key: ValueKey(state is MessagesLoaded ? state.messageCount : 0),
       order: StickyGroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      padding: EdgeInsets.only(bottom: 12.0),
       reverse: true,
       elements: messages,
       groupBy: (Message m) {
@@ -94,44 +95,23 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
       itemComparator: (Message m1, Message m2) {
         return m1.creationDate.compareTo(m2.creationDate);
       },
-      separator: SizedBox(height: Dim.hm2),
+      separator: SizedBox(height: 12.0),
       groupSeparatorBuilder: (Message message) {
         return GestureDetector(
           onTap: () {
             FocusManager.instance.primaryFocus.unfocus();
           },
           child: Container(
-            height: Dim.hm3,
-            margin: EdgeInsets.symmetric(vertical: Dim.hm2),
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.center,
-                  child: Divider(
-                    thickness: 0.0,
-                  ),
-                ),
-                Align(
-                  // alignment: Alignment.center,
-                  child: Container(
-                    color: Theme.of(context).scaffoldBackgroundColor,
-                    width: Dim.widthPercent(30),
-                    child: Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Text(
-                        DateFormatter.getVerboseDate(message.creationDate),
-                        style: TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff92929C),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+            height: 53.0,
+            alignment: Alignment.center,
+            child: Text(
+              DateFormatter.getVerboseDate(message.creationDate),
+              style: TextStyle(
+                fontSize: 11.0,
+                fontWeight: FontWeight.w500,
+                color: Color(0xff8f9498),
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         );
