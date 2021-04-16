@@ -21,49 +21,52 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
-      var messages = <Message>[];
-      final isDirect = state.parentChannel is Direct;
+    return BlocBuilder<MessagesBloc<T>, MessagesState>(
+      builder: (context, state) {
+        var messages = <Message>[];
+        final isDirect = state.parentChannel is Direct;
 
-      if (state is MessagesLoaded) {
-        if (state.messages.isEmpty) {
+        if (state is MessagesLoaded) {
+          if (state.messages.isEmpty) {
+            return EmptyChatContainer(isDirect: isDirect);
+          }
+          messages = state.messages;
+        } else if (state is MessagesEmpty) {
           return EmptyChatContainer(isDirect: isDirect);
+        } else if (state is ErrorLoadingMessages) {
+          return EmptyChatContainer(isError: true);
+        } else {
+          return Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
-        messages = state.messages;
-      } else if (state is MessagesEmpty) {
-        return EmptyChatContainer(isDirect: isDirect);
-      } else if (state is ErrorLoadingMessages) {
-        return EmptyChatContainer(isError: true);
-      } else {
-        return Expanded(
-          child: Center(
-            child: CircularProgressIndicator(),
+
+        return NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels ==
+                scrollInfo.metrics.maxScrollExtent) {
+              if (state is MessagesLoaded) {
+                BlocProvider.of<MessagesBloc<T>>(context).add(
+                  LoadMoreMessages(
+                    beforeId: state.messages.first.id,
+                    beforeTimeStamp: state.messages.first.creationDate,
+                  ),
+                );
+              }
+            }
+            return true;
+          },
+          child: Expanded(
+            child: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: _buildStickyGroupedListView(context, state, messages),
+            ),
           ),
         );
-      }
-
-      return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-            if (state is MessagesLoaded) {
-              BlocProvider.of<MessagesBloc<T>>(context).add(
-                LoadMoreMessages(
-                  beforeId: state.messages.first.id,
-                  beforeTimeStamp: state.messages.first.creationDate,
-                ),
-              );
-            }
-          }
-          return true;
-        },
-        child: Expanded(
-          child: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: _buildStickyGroupedListView(context, state, messages),
-          ),
-        ),
-      );
-    });
+      },
+    );
   }
 
   Widget _buildStickyGroupedListView(
@@ -115,20 +118,13 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         );
       },
       indexedItemBuilder: (_, message, index) {
-        var previousMessage = Message();
         var nextMessage = Message();
         if (index > 0) {
-          previousMessage = messages[index - 1];
-          // print('Previous message: ${previousMessage.content.originalStr ?? ''}');
+          nextMessage = messages.reversed.toList()[index - 1];
+          // print('Current message: ${message.sender} ${message.content.originalStr}');
+          // print('Next message: ${nextMessage.sender} - ${nextMessage.content.originalStr}');
         }
-        if (index < messages.length - 1) {
-          nextMessage = messages[index + 1];
-          // print('Next message: ${nextMessage.sender ?? ''}');
-        }
-        // print('Current message: ${message.content.originalStr ?? ''}');
-        final shouldShowSender = nextMessage.userId != null
-            ? nextMessage.userId != message.userId
-            : true;
+        final shouldShowSender = nextMessage.userId != message.userId;
 
         return MessageTile<T>(
           message: message,

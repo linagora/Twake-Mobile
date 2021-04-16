@@ -41,13 +41,29 @@ class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
 class _MessageTileState<T extends BaseChannelBloc>
     extends State<MessageTile<T>> {
   bool _hideShowAnswers;
+  bool _shouldShowSender;
   Message _message;
 
   @override
   void initState() {
     super.initState();
     _hideShowAnswers = widget.hideShowAnswers;
+    _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
+  }
+
+  @override
+  void didUpdateWidget(covariant MessageTile<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.shouldShowSender != widget.shouldShowSender) {
+      _shouldShowSender = widget.shouldShowSender;
+    }
+    if (oldWidget.hideShowAnswers != widget.hideShowAnswers) {
+      _hideShowAnswers = widget.hideShowAnswers;
+    }
+    if (oldWidget.message != widget.message) {
+      _message = widget.message;
+    }
   }
 
   void onReply(context, String messageId, {bool autofocus: false}) {
@@ -171,18 +187,19 @@ class _MessageTileState<T extends BaseChannelBloc>
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
-                    if (!_isMyMessage && widget.shouldShowSender)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 5.0),
-                        child: UserThumbnail(
-                          thumbnailUrl: messageState.thumbnail,
-                          userName: (messageState.thumbnail != null ||
-                                  messageState.thumbnail.isEmpty)
-                              ? ''
-                              : messageState.sender,
-                          size: 24.0,
-                        ),
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5.0),
+                      child: (!_isMyMessage && _shouldShowSender)
+                          ? UserThumbnail(
+                              thumbnailUrl: messageState.thumbnail,
+                              userName: (messageState.thumbnail != null ||
+                                      messageState.thumbnail.isEmpty)
+                                  ? ''
+                                  : messageState.sender,
+                              size: 24.0,
+                            )
+                          : SizedBox(width: 24.0, height: 24.0),
+                    ),
                     SizedBox(width: 6.0),
                     Flexible(
                       child: Bubble(
