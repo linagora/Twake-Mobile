@@ -549,16 +549,16 @@ class TwacodeRenderer {
         style = const TextStyle(
           height: 1.1,
           fontFamily: MONOSPACE,
-          backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
-          color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
+          // backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
+          // color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
         );
         break;
 
       case TType.MultiLineCode:
         style = TextStyle(
           fontFamily: MONOSPACE,
-          backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
-          color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
+          // backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
+          // color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
         );
         break;
 
@@ -639,7 +639,7 @@ class TwacodeRenderer {
 
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {
-        spans.add(TextSpan(text: twacode[i], style: getStyle(TType.Text)));
+        spans.add(TextSpan(text: twacode[i]));
       } else if (twacode[i] is List) {
         spans.addAll(render(twacode[i]));
       } else if (twacode[i] is Map) {
