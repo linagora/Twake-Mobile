@@ -5,7 +5,7 @@ import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final RegExp userMatch = RegExp(':([a-zA-z0-9-]+)');
+final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
 class TwacodeParser {
   final String original;
@@ -342,14 +342,14 @@ class TwacodeParser {
   int isUser(int i) {
     for (int j = i; j < original.length; j++) {
       if (original[j] == Delim.ws || original[j] == Delim.lf) {
-        if (userMatch.hasMatch(original.substring(i, j))) {
+        if (idMatch.hasMatch(original.substring(i, j))) {
           return j;
         } else {
           return 0;
         }
       }
     }
-    if (userMatch.hasMatch(original.substring(i))) {
+    if (idMatch.hasMatch(original.substring(i))) {
       return original.length;
     } else {
       return 0;
@@ -516,6 +516,8 @@ enum TType {
   Icon,
   File,
   Nop,
+  System,
+  Attachment,
   Unknown,
 }
 
@@ -612,6 +614,10 @@ class TwacodeRenderer {
         style = TextStyle(color: Colors.blue);
         break;
 
+      case TType.Attachment:
+        style = TextStyle(fontStyle: FontStyle.italic);
+        break;
+
       case TType.Email:
         style = TextStyle(color: Colors.purple);
         break;
@@ -659,6 +665,15 @@ class TwacodeRenderer {
               break;
             case 'br':
               type = TType.LineBreak;
+              break;
+            case 'bold':
+              type = TType.Bold;
+              break;
+            case 'system':
+              type = TType.System;
+              break;
+            case 'attachment':
+              type = TType.Attachment;
               break;
             case 'text':
               type = TType.Text;
@@ -744,6 +759,39 @@ class TwacodeRenderer {
                 ),
                 child: SingleChildScrollView(
                   child: Text(t['content'], style: parentStyle.merge(style)),
+                ),
+              ),
+            ),
+          );
+        } else if (type == TType.Attachment &&
+            (t['content'] as List).isNotEmpty) {
+          final items = render(
+            twacode: t['content'],
+            parentStyle: parentStyle,
+          );
+          final text = TextSpan(
+            children: items,
+            style: parentStyle.merge(
+              getStyle(type),
+            ),
+          );
+          spans.add(TextSpan(text: '\n', style: getStyle(TType.LineBreak)));
+          spans.add(
+            WidgetSpan(
+              child: Container(
+                child: RichText(text: text),
+                decoration: BoxDecoration(
+                  border: Border(
+                    left: BorderSide(
+                      width: 2.0,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                padding: EdgeInsets.only(
+                  left: 8,
+                  bottom: 3,
+                  top: 3,
                 ),
               ),
             ),
@@ -842,15 +890,28 @@ class TwacodeRenderer {
             ),
           );
           spans.add(WidgetSpan(child: widget));
+        } else if (type == TType.Icon) {
+          if (t['src'] == null) continue;
+          final widget = Container(
+            padding: EdgeInsets.zero,
+            child: SizedBox(
+              child: ClipRRect(
+                  child: Image.network(t['src']),
+                  borderRadius: BorderRadius.all(Radius.circular(2))),
+              width: 15,
+              height: 15,
+            ),
+          );
+          spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
           spans.add(TextSpan(
               style: getStyle(type),
               text: t['content'],
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
-                  if (await canLaunch(t['content'])) {
+                  if (await canLaunch(t['url'] ?? t['content'])) {
                     await launch(
-                      t['content'],
+                      t['url'] ?? t['content'],
                       forceSafariVC: false,
                       forceWebView: false,
                     );
@@ -872,9 +933,9 @@ class TwacodeRenderer {
           var content;
 
           if (type == TType.Channel) {
-            content = '#' + t['content'];
+            content = '#' + (t['content'] as String).replaceAll(idMatch, '');
           } else if (type == TType.User) {
-            content = '@' + (t['content'] as String).replaceAll(userMatch, '');
+            content = '@' + (t['content'] as String).replaceAll(idMatch, '');
           } else {
             content = t['content'];
           }

@@ -176,10 +176,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                         padding: const EdgeInsets.only(bottom: 5.0),
                         child: UserThumbnail(
                           thumbnailUrl: messageState.thumbnail,
-                          userName: (messageState.thumbnail != null ||
-                                  messageState.thumbnail.isEmpty)
-                              ? ''
-                              : messageState.sender,
+                          userName: messageState.sender,
                           size: 24.0,
                         ),
                       ),
