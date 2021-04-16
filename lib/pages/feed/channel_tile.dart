@@ -61,10 +61,13 @@ class ChannelTile extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: ChannelTitle(
-                          name: name,
-                          hasUnread: hasUnread,
-                          isPrivate: false,
+                        child: Text(
+                          name,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       Text(
@@ -92,10 +95,13 @@ class ChannelTile extends StatelessWidget {
                                   ),
                                 ),
                               Text(
-                                lastMessage['text'] ?? 'No messages yet',
+                                lastMessage['text'] ?? 'This channel is empty',
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 14.0,
+                                  fontStyle: lastMessage['text'] != null
+                                      ? FontStyle.normal
+                                      : FontStyle.italic,
                                   fontWeight: FontWeight.w400,
                                   color: Colors.black.withOpacity(0.5),
                                 ),

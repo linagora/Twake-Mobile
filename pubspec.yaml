@@ -54,6 +54,7 @@ dependencies:
   auto_size_text: ^2.1.0
   badges: ^1.2.0
   cached_network_image: ^3.0.0
+  bubble: ^1.2.1
   flutter_emoji_keyboard:
     # path: ../emoji_keyboard
     git: https://github.com/bobs4462/emoji_keyboard.git

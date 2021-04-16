@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/main_page.dart';
 import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/server_configuration.dart';
@@ -19,11 +20,12 @@ class Routes {
     Widget page;
     switch (routeName) {
       case Routes.root:
-        page = MainPage();
-        // page = TabsController();
+        // page = MainPage();
+        page = TabsController();
         break;
       case Routes.messages:
-        page = MessagesPage();
+        // page = MessagesPage();
+        page = Chat();
         break;
       case Routes.thread:
         page = ThreadPage();

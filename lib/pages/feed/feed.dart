@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
-import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/pages/feed/channels.dart';
 import 'package:twake/pages/feed/directs.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/decorated_tab_bar.dart';
-import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
@@ -20,10 +18,6 @@ class Feed extends StatefulWidget {
 class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
   TabController _controller;
   final _tabs = [Channels(), Directs()];
-
-  var _companiesHidden = true;
-  var _canCreateWorkspace = false;
-  var _companies = <Company>[];
 
   @override
   void initState() {
@@ -61,67 +55,64 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
         toolbarHeight: 160.0,
         title: Column(
           children: [
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 60.0,
-              child: BlocBuilder<WorkspacesBloc, WorkspaceState>(
-                buildWhen: (_, current) => current is WorkspacesLoaded,
-                builder: (context, state) {
-                  Workspace selectedWorkspace;
-                  if (state is WorkspacesLoaded) {
-                    selectedWorkspace = state.selected;
-                  }
-                  return GestureDetector(
-                    onTap: () => _showWorkspaces(),
-                    behavior: HitTestBehavior.opaque,
-                    child: Row(
-                      children: [
-                        SizedBox(width: 9.0),
-                        RoundedImage(
-                          selectedWorkspace.logo,
-                          width: 40.0,
-                          height: 40.0,
-                        ),
-                        SizedBox(width: 15.0),
-                        Expanded(
-                          child: ShimmerLoading(
-                            key: ValueKey<String>('name'),
-                            isLoading: selectedWorkspace.name == null,
-                            width: MediaQuery.of(context).size.width,
-                            height: 10.0,
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    selectedWorkspace.name,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 17.0,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: Icon(
-                                    Icons.keyboard_arrow_down_rounded,
+            BlocBuilder<WorkspacesBloc, WorkspaceState>(
+              buildWhen: (_, current) => current is WorkspacesLoaded,
+              builder: (context, state) {
+                Workspace selectedWorkspace;
+                if (state is WorkspacesLoaded) {
+                  selectedWorkspace = state.selected;
+                }
+                return GestureDetector(
+                  onTap: () => _showWorkspaces(),
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    children: [
+                      SizedBox(width: 9.0),
+                      RoundedImage(
+                        selectedWorkspace.logo,
+                        width: 40.0,
+                        height: 40.0,
+                      ),
+                      SizedBox(width: 15.0),
+                      Expanded(
+                        child: ShimmerLoading(
+                          key: ValueKey<String>('name'),
+                          isLoading: selectedWorkspace.name == null,
+                          width: MediaQuery.of(context).size.width,
+                          height: 10.0,
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  selectedWorkspace.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.w600,
                                     color: Colors.black,
-                                    size: 25.0,
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2.0),
+                                child: Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: Colors.black,
+                                  size: 25.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () => _create(),
-                          child: Image.asset('assets/images/create.png'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                      GestureDetector(
+                        onTap: () => _create(),
+                        child: Image.asset('assets/images/create.png'),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
             // Search bar will be here.
           ],
@@ -137,7 +128,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
           ),
           tabBar: TabBar(
             controller: _controller,
-            indicatorPadding: EdgeInsets.symmetric(horizontal: 15.0),
+            indicatorPadding: const EdgeInsets.symmetric(horizontal: 15.0),
             indicatorColor: Color(0xff004dff),
             indicatorSize: TabBarIndicatorSize.label,
             labelStyle: TextStyle(
