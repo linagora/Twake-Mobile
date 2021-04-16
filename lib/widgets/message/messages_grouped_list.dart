@@ -23,17 +23,12 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
       var messages = <Message>[];
 
       if (state is MessagesLoaded) {
+        if (state.messages.isEmpty) {
+          return _buildEmptyMessage(state);
+        }
         messages = state.messages;
       } else if (state is MessagesEmpty) {
-        return Expanded(
-          child: Center(
-            child: Text(
-              state is ErrorLoadingMessages
-                  ? 'Couldn\'t load messages'
-                  : 'No messages yet',
-            ),
-          ),
-        );
+        return _buildEmptyMessage(state);
       } else {
         return Expanded(
           child: Center(
@@ -64,6 +59,18 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
         ),
       );
     });
+  }
+
+  Widget _buildEmptyMessage(MessagesState state) {
+    return Expanded(
+      child: Center(
+        child: Text(
+          state is ErrorLoadingMessages
+              ? 'Couldn\'t load messages'
+              : 'No messages yet',
+        ),
+      ),
+    );
   }
 
   Widget _buildStickyGroupedListView(BuildContext context, MessagesState state, List<Message> messages) {
