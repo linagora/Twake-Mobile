@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
 
@@ -16,7 +15,7 @@ class Api {
   static String host;
 
   // logging utility
-  static final logger = Logger();
+  static final logger = Logger(printer: PrettyPrinter());
 
   // callback function to auto prolong token, if access token has expired
   Future<dynamic> Function() _prolongToken;
@@ -238,9 +237,28 @@ class Api {
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
+
+            // final ultralongstring = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
+            //
+            // int step = 1024;
+            // for (int i = 0; i < ultralongstring.length; i+=step) {
+            //   if( i+step>ultralongstring.length){
+            //     i = ultralongstring.length - i;
+            //   }
+            //   print(ultralongstring.substring(i,i+step));
+            // }
+
+            // debugPrint('\nMethod: ${jsonEncode(error.requestOptions.method)}', wrapWidth: 1024);
+            // debugPrint('\nPATH: ${jsonEncode(error.requestOptions.path)}', wrapWidth: 1024);
+            // debugPrint('\nHeaders: ${jsonEncode(error.requestOptions.headers)}', wrapWidth: 2000);
+            // debugPrint('\nResponse: ${jsonEncode(error.response.data)}', wrapWidth: 1024);
+            // debugPrint('\nBODY: ${jsonEncode(error.requestOptions.data)}', wrapWidth: 1024);
+            // debugPrint('\nHeaders: ${jsonEncode(error.requestOptions.headers)}', wrapWidth: 1024);
+            // debugPrint('\nQUERY: ${jsonEncode(error.requestOptions.queryParameters)}', wrapWidth: 1024);
+
             logger.e('Error during network request!' +
-                '\nMethod: ${error.requestOptions.method}' +
-                '\nPATH: ${error.requestOptions.path}' +
+                '\nMethod: ${jsonEncode(error.requestOptions.method)}' +
+                '\nPATH: ${jsonEncode(error.requestOptions.path)}' +
                 '\nHeaders: ${jsonEncode(error.requestOptions.headers)}' +
                 '\nResponse: ${jsonEncode(error.response.data)}' +
                 '\nBODY: ${jsonEncode(error.requestOptions.data)}' +
