@@ -116,9 +116,25 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
           ),
         );
       },
-      itemBuilder: (_, Message message) {
+      indexedItemBuilder: (_, message, index) {
+        var previousMessage = Message();
+        var nextMessage = Message();
+        if (index > 0) {
+          previousMessage = messages[index - 1];
+          // print('Previous message: ${previousMessage.content.originalStr ?? ''}');
+        }
+        if (index < messages.length - 1) {
+          nextMessage = messages[index + 1];
+          // print('Next message: ${nextMessage.sender ?? ''}');
+        }
+        // print('Current message: ${message.content.originalStr ?? ''}');
+        final shouldShowSender = nextMessage.userId != null
+            ? nextMessage.userId != message.userId
+            : true;
+
         return MessageTile<T>(
           message: message,
+          shouldShowSender: shouldShowSender,
           key: ValueKey(
             message.id +
                 message.responsesCount.toString() +

@@ -24,11 +24,13 @@ final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
 class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
   final bool hideShowAnswers;
+  final bool shouldShowSender;
   final Message message;
 
   MessageTile({
     this.message,
     this.hideShowAnswers = false,
+    this.shouldShowSender = true,
     Key key,
   }) : super(key: key);
 
@@ -169,7 +171,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                       ? MainAxisAlignment.end
                       : MainAxisAlignment.start,
                   children: [
-                    if (!_isMyMessage)
+                    if (!_isMyMessage && widget.shouldShowSender)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 5.0),
                         child: UserThumbnail(
