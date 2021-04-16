@@ -538,8 +538,10 @@ class TwacodeRenderer {
   final List<dynamic> twacode;
   List<InlineSpan> spans;
 
-  TwacodeRenderer(this.twacode) {
-    spans = render(this.twacode);
+  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
+    if (parentStyle == null)
+      parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
+    spans = render(twacode: this.twacode, parentStyle: parentStyle);
   }
 
   TextStyle getStyle(TType type) {
@@ -589,7 +591,7 @@ class TwacodeRenderer {
       case TType.Quote:
         style = TextStyle(
           fontStyle: FontStyle.italic,
-          color: Colors.black,
+          // color: Colors.black,
         );
         break;
 
@@ -616,32 +618,37 @@ class TwacodeRenderer {
 
       default:
         style = TextStyle(
-          color: Colors.black,
+          // color: Colors.black,
           fontFamily: DEFAULT,
-          fontSize: 17,
+          // fontSize: 17,
         );
     }
     return style;
   }
 
-  RichText message([TextStyle style]) {
-    if (style == null) style = getStyle(TType.Text);
+  RichText get message {
     return RichText(
       text: TextSpan(
         children: this.spans,
-        style: style,
       ),
     );
   }
 
-  List<InlineSpan> render(List<dynamic> twacode) {
+  List<InlineSpan> render({List<dynamic> twacode, TextStyle parentStyle}) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {
-        spans.add(TextSpan(text: twacode[i]));
+        spans.add(
+          TextSpan(
+            text: twacode[i],
+            style: parentStyle.merge(
+              getStyle(TType.Text),
+            ),
+          ),
+        );
       } else if (twacode[i] is List) {
-        spans.addAll(render(twacode[i]));
+        spans.addAll(render(twacode: twacode[i], parentStyle: parentStyle));
       } else if (twacode[i] is Map) {
         final t = twacode[i];
         TType type;
@@ -732,11 +739,11 @@ class TwacodeRenderer {
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: style.backgroundColor,
+                  color: parentStyle.backgroundColor,
                   border: Border.all(color: Colors.grey, width: 0.9),
                 ),
                 child: SingleChildScrollView(
-                  child: Text(t['content'], style: style),
+                  child: Text(t['content'], style: parentStyle.merge(style)),
                 ),
               ),
             ),
@@ -745,11 +752,24 @@ class TwacodeRenderer {
           InlineSpan text;
 
           if (t['content'] is List) {
-            final items = render(t['content']);
-            text = TextSpan(children: items, style: getStyle(type));
+            final items = render(
+              twacode: t['content'],
+              parentStyle: parentStyle,
+            );
+            text = TextSpan(
+              children: items,
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            );
           } else {
             // t['content'] is String
-            text = TextSpan(text: t['content'], style: getStyle(type));
+            text = TextSpan(
+              text: t['content'],
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            );
           }
 
           spans.add(
@@ -781,7 +801,7 @@ class TwacodeRenderer {
           );
         } else if (type == TType.Nop) {
           if (t['content'] is! List) t['content'] = [t['content']];
-          spans.addAll(render(t['content']));
+          spans.addAll(render(twacode: t['content'], parentStyle: parentStyle));
         } else if (type == TType.File) {
           final s = int.parse(t['metadata']['size'] as String);
           const MB = 1024 * 1024;
@@ -839,8 +859,15 @@ class TwacodeRenderer {
         } else if (type == TType.LineBreak) {
           spans.add(TextSpan(text: '\n', style: getStyle(TType.LineBreak)));
         } else if (t['content'] is List) {
-          final items = render(t['content']);
-          spans.add(TextSpan(children: items, style: getStyle(type)));
+          final items = render(twacode: t['content'], parentStyle: parentStyle);
+          spans.add(
+            TextSpan(
+              children: items,
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            ),
+          );
         } else {
           var content;
 
@@ -851,7 +878,14 @@ class TwacodeRenderer {
           } else {
             content = t['content'];
           }
-          spans.add(TextSpan(text: content, style: getStyle(type)));
+          spans.add(
+            TextSpan(
+              text: content,
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            ),
+          );
         }
       }
     }

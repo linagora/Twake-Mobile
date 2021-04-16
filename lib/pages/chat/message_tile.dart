@@ -211,15 +211,16 @@ class _MessageTileState<T extends BaseChannelBloc>
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   SizedBox(height: _isMyMessage ? 0.0 : 4.0),
-                                  TwacodeRenderer(messageState.content).message(
-                                    TextStyle(
+                                  TwacodeRenderer(
+                                    twacode: messageState.content,
+                                    parentStyle: TextStyle(
                                       fontSize: 15.0,
                                       fontWeight: FontWeight.w400,
                                       color: _isMyMessage
                                           ? Colors.white
                                           : Colors.black,
                                     ),
-                                  ),
+                                  ).message,
                                   // Normally we use SizedBox here,
                                   // but it will cut the bottom of emojis
                                   // in last line of the messsage.
@@ -265,7 +266,9 @@ class _MessageTileState<T extends BaseChannelBloc>
                                 fontSize: 11.0,
                                 fontWeight: FontWeight.w400,
                                 fontStyle: FontStyle.italic,
-                                color: _isMyMessage ? Color(0xffffffff).withOpacity(0.58) : Color(0xff8e8e93),
+                                color: _isMyMessage
+                                    ? Color(0xffffffff).withOpacity(0.58)
+                                    : Color(0xff8e8e93),
                               ),
                             ),
                           ],
