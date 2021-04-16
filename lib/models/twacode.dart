@@ -8,7 +8,7 @@ class MessageTwacode {
   String originalStr;
 
   // @JsonKey(required: true)
-  final List<dynamic> prepared;
+  List<dynamic> prepared;
 
   MessageTwacode({
     this.originalStr,

@@ -93,6 +93,7 @@ class Message extends CollectionItem {
     logger.d('UPDATING MESSAGE CONTENT');
     String prevStr = '' + content.originalStr;
     content.originalStr = body['original_str'];
+    content.prepared = body['prepared'];
     _api.put(Endpoint.messages, body: body).then((_) => save()).catchError((e) {
       logger.e('ERROR updating message content\n$e');
       content.originalStr = prevStr;

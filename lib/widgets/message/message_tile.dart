@@ -206,6 +206,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                             parentStyle: TextStyle(
                               fontSize: 15.0,
                               fontWeight: FontWeight.w400,
+                              color: Colors.black,
                             ),
                           ).message,
                           // Normally we use SizedBox here,

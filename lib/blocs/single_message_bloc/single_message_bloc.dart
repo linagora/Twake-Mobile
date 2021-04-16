@@ -5,6 +5,7 @@ import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_event.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_state.dart';
+import 'package:twake/utils/twacode.dart';
 
 export 'package:twake/blocs/single_message_bloc/single_message_event.dart';
 export 'package:twake/models/message.dart';
@@ -44,6 +45,7 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
         'message_id': message.id,
         'thread_id': message.threadId,
         'original_str': event.content,
+        'prepared': TwacodeParser(event.content).message,
       });
       yield messageReady;
     } else if (event is UpdateReaction) {
