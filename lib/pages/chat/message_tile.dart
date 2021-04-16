@@ -189,7 +189,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                             ? Color(0xff004dff)
                             : Color(0xfff6f6f6),
                         elevation: 0,
-                        padding: BubbleEdges.fromLTRB(13.0, 10.0, 15.0, 8.0),
+                        padding: BubbleEdges.fromLTRB(13.0, 10.0, 12.0, 8.0),
                         radius: Radius.circular(18.0),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -210,8 +210,18 @@ class _MessageTileState<T extends BaseChannelBloc>
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                  SizedBox(height: !_isMyMessage ? 4.0 : 0.0),
-                                  TwacodeRenderer(messageState.content).message,
+                                  SizedBox(height: _isMyMessage ? 0.0 : 4.0),
+                                  Container(
+                                    child: TwacodeRenderer(messageState.content).message(
+                                      TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: _isMyMessage
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
                                   // Normally we use SizedBox here,
                                   // but it will cut the bottom of emojis
                                   // in last line of the messsage.
@@ -256,7 +266,8 @@ class _MessageTileState<T extends BaseChannelBloc>
                               style: TextStyle(
                                 fontSize: 11.0,
                                 fontWeight: FontWeight.w400,
-                                color: Color(0xff92929C),
+                                fontStyle: FontStyle.italic,
+                                color: _isMyMessage ? Color(0xffffffff).withOpacity(0.58) : Color(0xff8e8e93),
                               ),
                             ),
                           ],
