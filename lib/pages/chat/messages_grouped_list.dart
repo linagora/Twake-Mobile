@@ -122,9 +122,9 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
                       child: Text(
                         DateFormatter.getVerboseDate(message.creationDate),
                         style: TextStyle(
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff92929C),
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xff8f9498),
                         ),
                         textAlign: TextAlign.center,
                       ),
