@@ -624,226 +624,236 @@ class TwacodeRenderer {
     return style;
   }
 
-  RichText get message => RichText(
-        text: TextSpan(
-          children: this.spans,
-          style: getStyle(TType.Text),
-        ),
-      );
+  RichText message([TextStyle style]) {
+    if (style == null) style = getStyle(TType.Text);
+    return RichText(
+      text: TextSpan(
+        children: this.spans,
+        style: style,
+      ),
+    );
+  }
 
   List<InlineSpan> render(List<dynamic> twacode) {
     List<InlineSpan> spans = [];
 
-    for (int i = 0; i < twacode.length; i++) {
-      if (twacode[i] is String) {
-        spans.add(TextSpan(text: twacode[i], style: getStyle(TType.Text)));
-      } else if (twacode[i] is List) {
-        spans.addAll(render(twacode[i]));
-      } else if (twacode[i] is Map) {
-        final t = twacode[i];
-        TType type;
-        if (t['type'] != null) {
-          switch (t['type']) {
-            case 'nop':
-              type = TType.Nop;
-              break;
-            case 'br':
-              type = TType.LineBreak;
-              break;
-            case 'text':
-              type = TType.Text;
-              break;
-            case 'url':
-              type = TType.Url;
-              break;
-            case 'user':
-              type = TType.User;
-              break;
-            case 'email':
-              type = TType.Email;
-              break;
-            case 'icon':
-              type = TType.Icon;
-              break;
-            case 'file':
-              type = TType.File;
-              break;
-            default:
-              type = TType.Unknown;
+    try {
+      for (int i = 0; i < twacode.length; i++) {
+        if (twacode[i] is String) {
+          spans.add(TextSpan(text: twacode[i], style: getStyle(TType.Text)));
+        } else if (twacode[i] is List) {
+          spans.addAll(render(twacode[i]));
+        } else if (twacode[i] is Map) {
+          final t = twacode[i];
+          TType type;
+          if (t['type'] != null) {
+            switch (t['type']) {
+              case 'nop':
+                type = TType.Nop;
+                break;
+              case 'br':
+                type = TType.LineBreak;
+                break;
+              case 'text':
+                type = TType.Text;
+                break;
+              case 'url':
+                type = TType.Url;
+                break;
+              case 'user':
+                type = TType.User;
+                break;
+              case 'email':
+                type = TType.Email;
+                break;
+              case 'icon':
+                type = TType.Icon;
+                break;
+              case 'file':
+                type = TType.File;
+                break;
+              default:
+                type = TType.Unknown;
+            }
+          } else if (t['start'] != null) {
+            switch (t['start']) {
+              case ':':
+                type = TType.Emoji;
+                break;
+              case '\n':
+                type = TType.LineBreak;
+                break;
+              case '**':
+                type = TType.Bold;
+                break;
+              case '*':
+              case '_':
+                type = TType.Italic;
+                break;
+              case '__':
+                type = TType.Underline;
+                break;
+              case '~~':
+                type = TType.StrikeThrough;
+                break;
+              case '@':
+                type = TType.User;
+                break;
+              case '>':
+                type = TType.Quote;
+                break;
+              case '`':
+                type = TType.InlineCode;
+                break;
+              case '```':
+                type = TType.MultiLineCode;
+                break;
+              case '#':
+                type = TType.Channel;
+                break;
+              default:
+                type = TType.Unknown;
+            }
           }
-        } else if (t['start'] != null) {
-          switch (t['start']) {
-            case ':':
-              type = TType.Emoji;
-              break;
-            case '\n':
-              type = TType.LineBreak;
-              break;
-            case '**':
-              type = TType.Bold;
-              break;
-            case '*':
-            case '_':
-              type = TType.Italic;
-              break;
-            case '__':
-              type = TType.Underline;
-              break;
-            case '~~':
-              type = TType.StrikeThrough;
-              break;
-            case '@':
-              type = TType.User;
-              break;
-            case '>':
-              type = TType.Quote;
-              break;
-            case '`':
-              type = TType.InlineCode;
-              break;
-            case '```':
-              type = TType.MultiLineCode;
-              break;
-            case '#':
-              type = TType.Channel;
-              break;
-            default:
-              type = TType.Unknown;
-          }
-        }
 
-        if (type == TType.MultiLineCode) {
-          if (spans.isNotEmpty)
+          if (type == TType.MultiLineCode) {
+            if (spans.isNotEmpty)
+              spans.add(
+                TextSpan(
+                  text: '\n',
+                  style: getStyle(TType.LineBreak),
+                ),
+              );
+            final style = getStyle(type);
+            spans.add(
+              WidgetSpan(
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: 250),
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: style.backgroundColor,
+                    border: Border.all(color: Colors.grey, width: 0.9),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Text(t['content'], style: style),
+                  ),
+                ),
+              ),
+            );
+          } else if (type == TType.Quote) {
+            InlineSpan text;
+
+            if (t['content'] is List) {
+              final items = render(t['content']);
+              text = TextSpan(children: items, style: getStyle(type));
+            } else {
+              // t['content'] is String
+              text = TextSpan(text: t['content'], style: getStyle(type));
+            }
+
+            spans.add(
+              WidgetSpan(
+                child: Container(
+                  child: RichText(text: text),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        width: 2.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                  padding: EdgeInsets.only(
+                    left: 8,
+                    bottom: 3,
+                    top: 3,
+                  ),
+                ),
+              ),
+            );
+          } else if (type == TType.Emoji) {
             spans.add(
               TextSpan(
-                text: '\n',
+                text: Emojis.getByName(t['content']),
                 style: getStyle(TType.LineBreak),
               ),
             );
-          final style = getStyle(type);
-          spans.add(
-            WidgetSpan(
-              child: Container(
-                constraints: BoxConstraints(maxHeight: 250),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: style.backgroundColor,
-                  border: Border.all(color: Colors.grey, width: 0.9),
+          } else if (type == TType.Nop) {
+            if (t['content'] is! List) t['content'] = [t['content']];
+            spans.addAll(render(t['content']));
+          } else if (type == TType.File) {
+            final s = int.parse(t['metadata']['size'] as String);
+            const MB = 1024 * 1024;
+            const KB = 1024;
+            final size = s > MB
+                ? '${(s / MB).toStringAsFixed(2)} MB'
+                : s > KB
+                    ? '${(s / KB).toStringAsFixed(2)} KB'
+                    : '$s B';
+            final widget = Container(
+              margin: EdgeInsets.all(4),
+              padding: EdgeInsets.all(3),
+              child: Row(children: [
+                SizedBox(
+                  child: t['metadata']['preview'] != null
+                      ? ClipRRect(
+                          child: Image.network(t['metadata']['preview']),
+                          borderRadius: BorderRadius.all(Radius.circular(8)))
+                      : Icon(Icons.cloud_download),
+                  width: 40,
+                  height: 40,
                 ),
-                child: SingleChildScrollView(
-                  child: Text(t['content'], style: style),
-                ),
+                SizedBox(width: 10),
+                Column(
+                  children: [Text(t['metadata']['name']), Text(size)],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                )
+              ]),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.blueGrey),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-            ),
-          );
-        } else if (type == TType.Quote) {
-          InlineSpan text;
-
-          if (t['content'] is List) {
+            );
+            spans.add(WidgetSpan(child: widget));
+          } else if (type == TType.Url) {
+            spans.add(TextSpan(
+                style: getStyle(type),
+                text: t['content'],
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () async {
+                    if (await canLaunch(t['content'])) {
+                      await launch(
+                        t['content'],
+                        forceSafariVC: false,
+                        forceWebView: false,
+                      );
+                    }
+                  }));
+          } else if (type == TType.LineBreak) {
+            spans.add(TextSpan(text: '\n', style: getStyle(TType.LineBreak)));
+          } else if (t['content'] is List) {
             final items = render(t['content']);
-            text = TextSpan(children: items, style: getStyle(type));
+            spans.add(TextSpan(children: items, style: getStyle(type)));
           } else {
-            // t['content'] is String
-            text = TextSpan(text: t['content'], style: getStyle(type));
-          }
+            var content;
 
-          spans.add(
-            WidgetSpan(
-              child: Container(
-                child: RichText(text: text),
-                decoration: BoxDecoration(
-                  border: Border(
-                    left: BorderSide(
-                      width: 2.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                padding: EdgeInsets.only(
-                  left: 8,
-                  bottom: 3,
-                  top: 3,
-                ),
-              ),
-            ),
-          );
-        } else if (type == TType.Emoji) {
-          spans.add(
-            TextSpan(
-              text: Emojis.getByName(t['content']),
-              style: getStyle(TType.LineBreak),
-            ),
-          );
-        } else if (type == TType.Nop) {
-          spans.addAll(render(t['content']));
-        } else if (type == TType.File) {
-          final s = int.parse(t['metadata']['size'] as String);
-          const MB = 1024 * 1024;
-          const KB = 1024;
-          final size = s > MB
-              ? '${(s / MB).toStringAsFixed(2)} MB'
-              : s > KB
-                  ? '${(s / KB).toStringAsFixed(2)} KB'
-                  : '$s B';
-          final widget = Container(
-            margin: EdgeInsets.all(4),
-            padding: EdgeInsets.all(3),
-            child: Row(children: [
-              SizedBox(
-                child: t['metadata']['preview'] != null
-                    ? ClipRRect(
-                        child: Image.network(t['metadata']['preview']),
-                        borderRadius: BorderRadius.all(Radius.circular(8)))
-                    : Icon(Icons.cloud_download),
-                width: 40,
-                height: 40,
-              ),
-              SizedBox(width: 10),
-              Column(
-                children: [Text(t['metadata']['name']), Text(size)],
-                crossAxisAlignment: CrossAxisAlignment.start,
-              )
-            ]),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.blueGrey),
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-          );
-          spans.add(WidgetSpan(child: widget));
-        } else if (type == TType.Url) {
-          spans.add(TextSpan(
-              style: getStyle(type),
-              text: t['content'],
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  if (await canLaunch(t['content'])) {
-                    await launch(
-                      t['content'],
-                      forceSafariVC: false,
-                      forceWebView: false,
-                    );
-                  }
-                }));
-        } else if (type == TType.LineBreak) {
-          spans.add(TextSpan(text: '\n', style: getStyle(TType.LineBreak)));
-        } else if (t['content'] is List) {
-          final items = render(t['content']);
-          spans.add(TextSpan(children: items, style: getStyle(type)));
-        } else {
-          var content;
-
-          if (type == TType.Channel) {
-            content = '#' + t['content'];
-          } else if (type == TType.User) {
-            content = '@' + (t['content'] as String).replaceAll(userMatch, '');
-          } else {
-            content = t['content'];
+            if (type == TType.Channel) {
+              content = '#' + t['content'];
+            } else if (type == TType.User) {
+              content =
+                  '@' + (t['content'] as String).replaceAll(userMatch, '');
+            } else {
+              content = t['content'];
+            }
+            spans.add(TextSpan(text: content, style: getStyle(type)));
           }
-          spans.add(TextSpan(text: content, style: getStyle(type)));
         }
       }
+    } catch (e, trace) {
+      print(e);
+      print(trace);
     }
     return spans;
   }
