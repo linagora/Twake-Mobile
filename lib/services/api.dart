@@ -237,7 +237,6 @@ class Api {
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
-
             // final ultralongstring = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
             //
             // int step = 1024;
