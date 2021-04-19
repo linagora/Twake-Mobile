@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+// import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/feed/direct_tile.dart';
 
@@ -11,7 +11,7 @@ class Directs extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<DirectsBloc, ChannelState>(
       buildWhen: (_, current) =>
-      current is ChannelsLoading ||
+          current is ChannelsLoading ||
           current is ChannelsLoaded ||
           current is ChannelsEmpty,
       builder: (context, state) {
@@ -19,7 +19,7 @@ class Directs extends StatelessWidget {
         if (state is ChannelsLoaded) {
           directs = state.channels;
         }
-        final userId = ProfileBloc.userId;
+        // final userId = ProfileBloc.userId;
 
         return RefreshIndicator(
           onRefresh: () {
@@ -36,7 +36,7 @@ class Directs extends StatelessWidget {
             itemCount: directs.length,
             itemBuilder: (context, index) {
               final direct = directs[index];
-              final memberId = direct.members.firstWhere((id) => id != userId);
+              final memberId = direct.members.first;
               return DirectTile(
                 key: ValueKey(direct.id),
                 id: direct.id,
