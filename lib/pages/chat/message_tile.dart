@@ -192,8 +192,8 @@ class _MessageTileState<T extends BaseChannelBloc>
                       child: (!_isMyMessage && _shouldShowSender)
                           ? UserThumbnail(
                               thumbnailUrl: messageState.thumbnail,
-                              userName: (messageState.thumbnail != null ||
-                                      messageState.thumbnail.isEmpty)
+                              userName: (messageState.sender != null ||
+                                      messageState.sender.isEmpty)
                                   ? ''
                                   : messageState.sender,
                               size: 24.0,
