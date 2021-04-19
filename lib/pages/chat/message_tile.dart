@@ -108,7 +108,6 @@ class _MessageTileState<T extends BaseChannelBloc>
         builder: (context, messageState) {
           if (messageState is MessageReady) {
             bool _isMyMessage = messageState.userId == ProfileBloc.userId;
-
             return InkWell(
               onLongPress: () {
                 BlocProvider.of<MessageEditBloc>(context)
