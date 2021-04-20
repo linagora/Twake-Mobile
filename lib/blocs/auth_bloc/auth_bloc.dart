@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/blocs/auth_bloc/auth_event.dart';
 import 'package:twake/repositories/auth_repository.dart';
@@ -40,20 +41,38 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void setUpWebView([run = false]) {
-    // print('AUTH MODE: ${repository.authMode}');
-    // print('CONSOLE LINK: ${repository.twakeConsole}');
+    print('AUTH MODE: ${repository.authMode}');
+    print('CONSOLE LINK: ${repository.twakeConsole}');
     if (repository.authMode == 'INTERNAL') return;
     this.webView = HeadlessInAppWebView(
+      iosShouldAllowDeprecatedTLS: (controller, challenge) async {
+        print('Challenge: ${challenge.toJson()}');
+        return IOSShouldAllowDeprecatedTLSAction.ALLOW;
+      },
       initialUrlRequest: URLRequest(url: Uri.parse(repository.twakeConsole)),
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
+          disableHorizontalScroll: true,
+          disableVerticalScroll: true,
+          horizontalScrollBarEnabled: false,
+          verticalScrollBarEnabled: false,
           cacheEnabled: false,
           javaScriptCanOpenWindowsAutomatically: true,
         ),
       ),
-      // onConsoleMessage: (ctrl, msg) => print('CONSOLEJS: $msg'),
+      onConsoleMessage: (ctrl, msg) => print('CONSOLEJS: $msg'),
+      onLoadHttpError: (ctrl, uri, status, description) {
+        print('ON LOAD HTTP ERROR: $uri - $state - $description');
+      },
+      iosOnWebContentProcessDidTerminate: (ctrl) {
+        print('iOS ON WEB CONTENT PROCESS DID TERMINATE');
+      },
+      onLoadStart: (ctrl, uri) {
+        print('ON LOAD START: $uri');
+      },
       onLoadStop: (ctrl, url) async {
-        // print('URL: $url');
+        print('WEBVIEW URL: $url');
+        print('PREV URL: $_prevUrl');
         if (Uri.parse(_prevUrl).path == url.path) {
           this.add(WrongAuthCredentials());
           _prevUrl = '';
@@ -62,7 +81,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _prevUrl = url.path;
         if (url.path.contains('redirect_to_app')) {
           final qp = url.queryParameters;
-          // Logger().d('PARAMS: $qp');
+          Logger().d('WEBVIEW PARAMS: $qp');
           if (qp['token'] == null || qp['username'] == null) {
             repository.logger.e('NO TOKEN AND USERNAME');
             ctrl.loadUrl(
@@ -85,6 +104,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
       onWebViewCreated: (ctrl) {
         print('CREATED WEBVIEW');
+      },
+      onCreateWindow: (controller, onCreateWindowRequest) async {
+        print("onCreateWindow called with URL ${onCreateWindowRequest.request.url}");
+        return true;
       },
     );
     if (run) runWebView();
@@ -155,11 +178,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         this.tempCreds['username'] = event.username;
         this.tempCreds['password'] = event.password;
       }
-      // print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
+      print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
       final js =
           '''!function(l,p){function f(){document.getElementById("userfield").value=l,document.getElementById("passwordfield").value=p,document.getElementById("lform").submit()}"complete"===document.readyState||"interactive"===document.readyState?setTimeout(f,1):document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
       print('AUTHENTICATING THROUGH WEBVIEW');
       await webView.webViewController.evaluateJavascript(source: js);
+      // final js =
+      // '''!function(l,p){function f(){window.top.document.getElementById("userfield").value=l,window.top.document.getElementById("passwordfield").value=p,window.top.document.getElementById("lform").submit()}"complete"===window.top.document.readyState||"interactive"===window.top.document.readyState?setTimeout(f,1):window.top.document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
+      // print('AUTHENTICATING THROUGH WEBVIEW');
+      // await webView.webViewController.callAsyncJavaScript(functionBody: js, contentWorld: ContentWorld.PAGE);
     } else if (event is SetAuthData) {
       print('AUTH DATA ${event.authData}');
       yield Authenticating();
