@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 
 abstract class ChannelsEvent extends Equatable {
   const ChannelsEvent();
@@ -29,7 +28,7 @@ class ClearChannels extends ChannelsEvent {
 }
 
 class UpdateSingleChannel extends ChannelsEvent {
-  final SocketChannelUpdateNotification data;
+  final data;
 
   UpdateSingleChannel(this.data);
 

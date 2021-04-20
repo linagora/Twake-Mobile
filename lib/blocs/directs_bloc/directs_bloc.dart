@@ -50,7 +50,15 @@ class DirectsBloc extends BaseChannelBloc {
             await Future.delayed(Duration(milliseconds: 500));
           }
         }
-      } else if (state is DirectUpdated) {}
+      } else if (state is DirectUpdated) {
+        if (repository.items.any((d) => d.id == state.data.directId)) {
+          this.add(UpdateSingleChannel(state.data));
+        } else {
+          this.add(ReloadChannels(forceFromApi: true, silent: true));
+        }
+      } else if (state is DirectDeleted) {
+        this.add(RemoveChannel(channelId: state.data.directId));
+      }
     });
     selectedParentId = companiesBloc.repository.selected.id;
   }
@@ -115,15 +123,25 @@ class DirectsBloc extends BaseChannelBloc {
         selected: repository.selected,
       );
       notificationBloc.add(CancelPendingSubscriptions(event.channelId));
+    } else if (event is UpdateSingleChannel) {
+      // repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
+      var item = await repository.getItemById(event.data.directId) as Direct;
+      item.lastMessage = event.data.lastMessage ?? item.lastMessage;
+      item.lastActivity = event.data.lastActivity ?? item.lastActivity;
+      yield ChannelsLoaded(
+        selected: repository.selected,
+        channels: repository.items,
+        force: DateTime.now().toString(),
+      );
     } else if (event is LoadSingleChannel) {
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
-      throw 'Not implemented yet';
-      // repository.items.removeWhere((i) => i.id == event.channelId);
-      // yield ChannelsLoaded(
-      // channels: repository.items,
-      // selected: selected,
-      // );
+      repository.items.removeWhere((i) => i.id == event.channelId);
+      yield ChannelsLoaded(
+        channels: repository.items,
+        selected: repository.selected,
+        force: DateTime.now().toString(),
+      );
     } else if (event is ModifyChannelState) {
       await updateChannelState(event);
       yield ChannelsLoaded(

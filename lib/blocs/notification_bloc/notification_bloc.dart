@@ -133,7 +133,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      logger.d('GOT RESOURCE: $data');
+      // logger.d('GOT RESOURCE: $data');
       handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
@@ -217,9 +217,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     } else if (event is BadgeUpdateEvent) {
       yield BadgesUpdated(DateTime.now().toString());
     } else if (event is DirectUpdateEvent) {
-      DirectUpdated(event.data);
+      yield DirectUpdated(event.data);
     } else if (event is DirectDeleteEvent) {
-      DirectDeleted(event.data);
+      yield DirectDeleted(event.data);
     }
   }
 
