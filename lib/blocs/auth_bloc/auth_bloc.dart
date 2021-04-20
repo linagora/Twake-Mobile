@@ -1,29 +1,24 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/blocs/auth_bloc/auth_event.dart';
 import 'package:twake/repositories/auth_repository.dart';
 import 'package:twake/services/api.dart';
 import 'package:twake/services/init.dart';
 import 'package:twake/blocs/auth_bloc/auth_state.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 export 'package:twake/blocs/auth_bloc/auth_event.dart';
 export 'package:twake/blocs/auth_bloc/auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository repository;
-  HeadlessInAppWebView webView;
 
   var tempCreds = {};
   cb.ConnectionBloc connectionBloc;
   StreamSubscription subscription;
 
   bool connectionLost = false;
-
-  String _prevUrl = '';
 
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
@@ -33,84 +28,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         connectionLost = true;
       } else if (connectionLost && !(state is cb.ConnectionLost)) {
         connectionLost = false;
-        runWebView();
       }
     });
-    setUpWebView();
-    CookieManager.instance().deleteAllCookies();
-  }
-
-  void setUpWebView([run = false]) {
-    print('AUTH MODE: ${repository.authMode}');
-    print('CONSOLE LINK: ${repository.twakeConsole}');
-    if (repository.authMode == 'INTERNAL') return;
-    this.webView = HeadlessInAppWebView(
-      iosShouldAllowDeprecatedTLS: (controller, challenge) async {
-        print('Challenge: ${challenge.toJson()}');
-        return IOSShouldAllowDeprecatedTLSAction.ALLOW;
-      },
-      initialUrlRequest: URLRequest(url: Uri.parse(repository.twakeConsole)),
-      initialOptions: InAppWebViewGroupOptions(
-        crossPlatform: InAppWebViewOptions(
-          disableHorizontalScroll: true,
-          disableVerticalScroll: true,
-          horizontalScrollBarEnabled: false,
-          verticalScrollBarEnabled: false,
-          cacheEnabled: false,
-          javaScriptCanOpenWindowsAutomatically: true,
-        ),
-      ),
-      onConsoleMessage: (ctrl, msg) => print('CONSOLEJS: $msg'),
-      onLoadHttpError: (ctrl, uri, status, description) {
-        print('ON LOAD HTTP ERROR: $uri - $state - $description');
-      },
-      iosOnWebContentProcessDidTerminate: (ctrl) {
-        print('iOS ON WEB CONTENT PROCESS DID TERMINATE');
-      },
-      onLoadStart: (ctrl, uri) {
-        print('ON LOAD START: $uri');
-      },
-      onLoadStop: (ctrl, url) async {
-        print('WEBVIEW URL: $url');
-        print('PREV URL: $_prevUrl');
-        if (Uri.parse(_prevUrl).path == url.path) {
-          this.add(WrongAuthCredentials());
-          _prevUrl = '';
-          return;
-        }
-        _prevUrl = url.path;
-        if (url.path.contains('redirect_to_app')) {
-          final qp = url.queryParameters;
-          Logger().d('WEBVIEW PARAMS: $qp');
-          if (qp['token'] == null || qp['username'] == null) {
-            repository.logger.e('NO TOKEN AND USERNAME');
-            ctrl.loadUrl(
-              urlRequest: URLRequest(
-                url: Uri.parse(repository.twakeConsole),
-              ),
-            );
-            this.add(WrongAuthCredentials());
-            return;
-          }
-          this.add(
-            SetAuthData(qp),
-          );
-          await ctrl.clearCache();
-          await CookieManager().deleteAllCookies();
-        }
-      },
-      onLoadError: (ctr, a, b, c) {
-        print('WEBVIEW LOAD ERROR: $a, $b, $c');
-      },
-      onWebViewCreated: (ctrl) {
-        print('CREATED WEBVIEW');
-      },
-      onCreateWindow: (controller, onCreateWindowRequest) async {
-        print("onCreateWindow called with URL ${onCreateWindowRequest.request.url}");
-        return true;
-      },
-    );
-    if (run) runWebView();
   }
 
   @override
@@ -134,74 +53,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               break;
             case AuthResult.WrongCredentials:
               yield Unauthenticated();
-              runWebView();
           }
           break;
         case TokenStatus.BothExpired:
           yield Unauthenticated(message: 'Session expired');
-          runWebView();
       }
     } else if (event is Authenticate) {
       if (connectionLost) return;
       yield Authenticating();
-      if (repository.authMode == 'INTERNAL') {
-        final res = await repository.authenticate(
-          username: event.username,
-          password: event.password,
-        );
-        switch (res) {
-          case AuthResult.WrongCredentials:
-            yield WrongCredentials(
-              username: event.username,
-              password: event.password,
-            );
-            break;
-          case AuthResult.NetworkError:
-            yield AuthenticationError(
-              username: event.username,
-              password: event.password,
-            );
-            break;
-          default:
-            final InitData initData = await initMain();
-            yield Authenticated(initData);
-        }
-        return;
+      final res = await repository.authenticate(
+        username: event.username,
+        password: event.password,
+      );
+      switch (res) {
+        case AuthResult.WrongCredentials:
+          yield WrongCredentials(
+            username: event.username,
+            password: event.password,
+          );
+          break;
+        case AuthResult.NetworkError:
+          yield AuthenticationError(
+            username: event.username,
+            password: event.password,
+          );
+          break;
+        default:
+          final InitData initData = await initMain();
+          yield Authenticated(initData);
       }
-      if (repository.authMode == 'UNKNOWN') {
-        yield AuthenticationError(
-          username: event.username,
-          password: event.password,
-        );
-        return;
-      } else {
-        this.tempCreds['username'] = event.username;
-        this.tempCreds['password'] = event.password;
-      }
-      print('CURRENT PAGE ${await webView.webViewController.getUrl()}');
-      final js =
-          '''!function(l,p){function f(){document.getElementById("userfield").value=l,document.getElementById("passwordfield").value=p,document.getElementById("lform").submit()}"complete"===document.readyState||"interactive"===document.readyState?setTimeout(f,1):document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
-      print('AUTHENTICATING THROUGH WEBVIEW');
-      await webView.webViewController.evaluateJavascript(source: js);
-      // final js =
-      // '''!function(l,p){function f(){window.top.document.getElementById("userfield").value=l,window.top.document.getElementById("passwordfield").value=p,window.top.document.getElementById("lform").submit()}"complete"===window.top.document.readyState||"interactive"===window.top.document.readyState?setTimeout(f,1):window.top.document.addEventListener("DOMContentLoaded",f)}("${event.username}","${event.password.replaceAll('"', '\\"')}");''';
-      // print('AUTHENTICATING THROUGH WEBVIEW');
-      // await webView.webViewController.callAsyncJavaScript(functionBody: js, contentWorld: ContentWorld.PAGE);
-    } else if (event is SetAuthData) {
-      print('AUTH DATA ${event.authData}');
-      yield Authenticating();
-      await repository.setAuthData(event.authData);
-      final InitData initData = await initMain();
-      yield Authenticated(initData);
-      _prevUrl = '';
-      webView.dispose();
     } else if (event is WrongAuthCredentials) {
       yield WrongCredentials(
         username: tempCreds['username'],
         password: tempCreds['password'],
       );
       tempCreds = {};
-      runWebView();
     } else if (event is ResetAuthentication) {
       if (event.message == null) {
         await repository.logout();
@@ -209,7 +95,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         repository.clean();
       }
       yield Unauthenticated(message: event.message);
-      runWebView();
     } else if (event is RegistrationInit) {
       yield Registration('https://console.twake.app/signup');
     } else if (event is ResetPassword) {
@@ -217,33 +102,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (event is ValidateHost) {
       yield HostValidation(event.host);
       Api.host = event.host;
-      final result = await repository.getAuthMode();
+      final valid = await repository.getAuthMode();
       // final host = '${event.host}';
-      if (result == 'UNKNOWN') {
+      if (!valid) {
         yield HostInvalid(event.host);
         yield HostValidation(event.host);
       } else {
-        if (result == 'CONSOLE') {
-          setUpWebView();
-          await runWebView();
-        }
         yield HostValidated(event.host);
       }
     } else if (event is ResetHost) {
       await repository.clean();
       yield HostReset();
     }
-  }
-
-  Future<void> runWebView() async {
-    if (repository.authMode == 'INTERNAL' || repository.authMode == 'UNKNOWN') {
-      return;
-    }
-    await CookieManager.instance().deleteAllCookies();
-    _prevUrl = '';
-    await webView.dispose();
-    // print('Running webview...');
-    await webView.run();
   }
 
   void resetAuthentication() {
@@ -256,7 +126,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   @override
   Future<void> close() {
-    webView.dispose();
     subscription.cancel();
     return super.close();
   }

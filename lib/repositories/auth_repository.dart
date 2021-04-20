@@ -42,10 +42,6 @@ class AuthRepository extends JsonSerializable {
   @JsonKey(ignore: true)
   String apiVersion;
 
-  @JsonKey(name: 'twake_console')
-  String twakeConsole;
-  @JsonKey(name: 'auth_mode')
-  String authMode;
   @JsonKey(name: 'socket_io_host')
   String socketIOHost;
 
@@ -119,25 +115,17 @@ class AuthRepository extends JsonSerializable {
     }
   }
 
-  Future<String> getAuthMode() async {
+  Future<bool> getAuthMode() async {
     var data;
     try {
       data = await _api.get(Endpoint.version, useTokenDio: true);
     } catch (e, stacktrace) {
       logger.e('ERROR WHILE GETTING AUTH MODE\n$e \n$stacktrace');
-      this.authMode = 'UNKNOWN';
-      return 'UNKNOWN';
-    }
-    if ((data['auth_mode'] as List).contains('console')) {
-      this.authMode = 'CONSOLE';
-      this.twakeConsole = data['auth']['console']['mobile_endpoint_url'];
-    } else {
-      // auth_mode == internal
-      this.authMode = 'INTERNAL';
+      return false;
     }
     this.socketIOHost = data['socket_endpoint']['host'];
     this.save();
-    return authMode;
+    return true;
   }
 
   Future<bool> setAuthData(Map<String, dynamic> authData) async {
