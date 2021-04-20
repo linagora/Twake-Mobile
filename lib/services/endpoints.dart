@@ -43,4 +43,6 @@ class Endpoint {
   static const whatsNew = '/messages/whatsnew';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const notificationRooms = '/workspace/notifications';
+  // API Endpoint for getting all the rooms to which it's possible to subscribe
+  static const fileUpload = '/media/upload';
 }

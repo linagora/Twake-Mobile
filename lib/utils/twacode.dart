@@ -109,6 +109,16 @@ class TwacodeParser {
           start = index;
           i = index - 1;
         }
+      } else if (original[i] == Delim.gt && original[i + 1] == Delim.gt) {
+        if (i + 2 < original.length && original[i + 2] == Delim.gt) {
+          if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
+            this.nodes.add(ASTNode(
+                  type: TType.Quote,
+                  text: original.substring(i + 1),
+                ));
+            i = original.length;
+          }
+        }
       }
       // Username
       else if (original[i] == Delim.at &&
@@ -471,6 +481,11 @@ class ASTNode {
         map['content'] = this.text;
         break;
 
+      case TType.MultQuote:
+        map['start'] = '>';
+        map['content'] = this.text;
+        break;
+
       case TType.User:
         map['start'] = '@';
         map['content'] = this.text;
@@ -508,6 +523,7 @@ enum TType {
   Bold,
   Italic,
   Quote,
+  MultQuote,
   User,
   Channel,
   Url,

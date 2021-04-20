@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class FileUploadState extends Equatable {
@@ -15,8 +16,13 @@ class NothingToUpload extends FileUploadState {
 }
 
 class FileUploading extends FileUploadState {
-  const FileUploading({String fileName, int size})
-      : super(fileName: fileName, size: size);
+  final CancelToken cancelToken;
+
+  const FileUploading({
+    this.cancelToken,
+    String fileName,
+    int size,
+  }) : super(fileName: fileName, size: size);
 
   @override
   List<Object> get props => [fileName];
@@ -30,6 +36,13 @@ class FileUploadFailed extends FileUploadState {
 
   @override
   List<Object> get props => [reason];
+}
+
+class FileUploadCancelled extends FileUploadState {
+  const FileUploadCancelled();
+
+  @override
+  List<Object> get props => [];
 }
 
 class FileUploaded extends FileUploadState {

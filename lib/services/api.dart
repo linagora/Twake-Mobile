@@ -176,8 +176,9 @@ class Api {
 
   Future<dynamic> post(
     String method, {
-    Map<String, dynamic> body,
+    dynamic body,
     bool useTokenDio = false,
+    CancelToken cancelToken,
   }) async {
     checkConnection();
     method = _getMethodPath(method);
@@ -187,8 +188,11 @@ class Api {
     try {
       // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
       // logger.d('BODY: ${jsonEncode(body)}');
-      final response =
-          await (useTokenDio ? tokenDio : dio).post(url, data: body);
+      final response = await (useTokenDio ? tokenDio : dio).post(
+        url,
+        data: body,
+        cancelToken: cancelToken,
+      );
       // logger.d('POST RESPONSE ${response.data}');
       return response.data;
     } catch (e) {
