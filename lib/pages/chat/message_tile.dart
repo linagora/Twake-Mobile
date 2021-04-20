@@ -108,7 +108,6 @@ class _MessageTileState<T extends BaseChannelBloc>
         builder: (context, messageState) {
           if (messageState is MessageReady) {
             bool _isMyMessage = messageState.userId == ProfileBloc.userId;
-
             return InkWell(
               onLongPress: () {
                 BlocProvider.of<MessageEditBloc>(context)
@@ -192,8 +191,8 @@ class _MessageTileState<T extends BaseChannelBloc>
                       child: (!_isMyMessage && _shouldShowSender)
                           ? UserThumbnail(
                               thumbnailUrl: messageState.thumbnail,
-                              userName: (messageState.thumbnail != null ||
-                                      messageState.thumbnail.isEmpty)
+                              userName: (messageState.sender != null ||
+                                      messageState.sender.isEmpty)
                                   ? ''
                                   : messageState.sender,
                               size: 24.0,

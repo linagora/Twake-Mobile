@@ -35,7 +35,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
             key: ValueKey(
               state.threadMessage.id +
                   state.threadMessage.responsesCount.toString() +
-                  state.threadMessage.content.originalStr,
+                  (state.threadMessage.content.originalStr ?? ''),
             ),
           ),
         ),
@@ -145,7 +145,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                         key: ValueKey(
                           _messages[i].id +
                               _messages[i].reactions.keys.join() +
-                              _messages[i].content.originalStr,
+                              (_messages[i].content.originalStr ?? ''),
                         ),
                       );
                     }
