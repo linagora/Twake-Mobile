@@ -100,6 +100,19 @@ class TwacodeParser {
       // Quote detection
       else if (original[i] == Delim.gt) {
         if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
+          // Multline Quote detection
+          if (original[i + 1] == Delim.gt &&
+              i + 2 < original.length &&
+              original[i + 2] == Delim.gt) {
+            this.nodes.add(ASTNode(
+                  type: TType.MultiQuote,
+                  text: TwacodeParser(original.substring(i + 3).trimLeft())
+                      .message,
+                ));
+            start = i = original.length;
+            break;
+          }
+
           int index = this.hasLineFeed(i + 1);
           index = index != 0 ? index : original.length;
           this.nodes.add(ASTNode(
@@ -108,16 +121,6 @@ class TwacodeParser {
               ));
           start = index;
           i = index - 1;
-        }
-      } else if (original[i] == Delim.gt && original[i + 1] == Delim.gt) {
-        if (i + 2 < original.length && original[i + 2] == Delim.gt) {
-          if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
-            this.nodes.add(ASTNode(
-                  type: TType.Quote,
-                  text: original.substring(i + 1),
-                ));
-            i = original.length;
-          }
         }
       }
       // Username
@@ -246,10 +249,12 @@ class TwacodeParser {
             text: original.substring(start).trimRight(),
           ));
     }
-    if (this.nodes.first.text.trimLeft().isEmpty) {
+    if (this.nodes.first.text is String &&
+        this.nodes.first.text.trimLeft().isEmpty) {
       this.nodes.removeAt(0);
     }
-    while (this.nodes.last.text.trim().isEmpty) {
+    while (
+        this.nodes.last.text is String && this.nodes.last.text.trim().isEmpty) {
       this.nodes.removeLast();
     }
   }
@@ -425,7 +430,7 @@ class TwacodeParser {
 
 class ASTNode {
   TType type;
-  String text;
+  dynamic text;
   ASTNode({this.type, this.text});
 
   dynamic transform() {
@@ -481,8 +486,8 @@ class ASTNode {
         map['content'] = this.text;
         break;
 
-      case TType.MultQuote:
-        map['start'] = '>';
+      case TType.MultiQuote:
+        map['start'] = '>>>';
         map['content'] = this.text;
         break;
 
@@ -523,7 +528,7 @@ enum TType {
   Bold,
   Italic,
   Quote,
-  MultQuote,
+  MultiQuote,
   User,
   Channel,
   Url,
@@ -663,7 +668,8 @@ class TwacodeRenderer {
       if (twacode[i] is String) {
         spans.add(
           TextSpan(
-            text: twacode[i],
+            text:
+                spans.isEmpty ? (twacode[i] as String).trimLeft() : twacode[i],
             style: parentStyle.merge(
               getStyle(TType.Text),
             ),
@@ -739,6 +745,9 @@ class TwacodeRenderer {
             case '>':
               type = TType.Quote;
               break;
+            case '>>>':
+              type = TType.MultiQuote;
+              break;
             case '`':
               type = TType.InlineCode;
               break;
@@ -812,7 +821,7 @@ class TwacodeRenderer {
               ),
             ),
           );
-        } else if (type == TType.Quote) {
+        } else if (type == TType.Quote || type == TType.MultiQuote) {
           InlineSpan text;
 
           if (t['content'] is List) {

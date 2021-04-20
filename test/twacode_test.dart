@@ -68,6 +68,24 @@ void main() {
     ]);
   });
 
+  test("Should parse multiline quote", () {
+    final data =
+        ">>> This is a famous quote\nThis is not a normal text\nit's still a quote";
+    final parsed = TwacodeParser(data);
+    expect(parsed.message, [
+      {
+        "start": ">>>",
+        "content": [
+          "This is a famous quote",
+          {"start": "\n", "end": "", "content": const []},
+          "This is not a normal text",
+          {"start": "\n", "end": "", "content": const []},
+          "it's still a quote"
+        ],
+      },
+    ]);
+  });
+
   test("Should parse inline code", () {
     final data = "Inline follows `int main (void) {};`";
     final parsed = TwacodeParser(data);
