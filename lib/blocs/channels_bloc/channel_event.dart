@@ -11,10 +11,12 @@ class ReloadChannels extends ChannelsEvent {
   // parent company id for directs
   final String companyId;
   final bool forceFromApi;
+  final bool silent;
   const ReloadChannels({
     this.workspaceId,
     this.companyId,
     this.forceFromApi: false,
+    this.silent: false,
   });
   @override
   List<Object> get props => [];

@@ -30,10 +30,28 @@ class ChannelUpdated extends NotificationState {
   List<Object> get props => [data];
 }
 
+class DirectUpdated extends NotificationState {
+  final SocketDirectUpdateNotification data;
+
+  DirectUpdated(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class ChannelDeleted extends NotificationState {
   final SocketChannelUpdateNotification data;
 
   ChannelDeleted(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class DirectDeleted extends NotificationState {
+  final SocketDirectRemovedNotification data;
+
+  DirectDeleted(this.data);
 
   @override
   List<Object> get props => [data];
@@ -94,24 +112,6 @@ class WorkspaceUpdated extends NotificationState {
   List<Object> get props => [];
 }
 
-// class DirectUpdateNotification extends NotificationState {
-// final WhatsNewItem data;
-//
-// const DirectUpdateNotification(this.data);
-//
-// @override
-// List<Object> get props => [data];
-// }
-//
-// class ChannnelUpdateNotification extends NotificationState {
-// final WhatsNewItem data;
-//
-// const ChannnelUpdateNotification(this.data);
-//
-// @override
-// List<Object> get props => [data];
-// }
-//
 class ChannelMessageNotification extends BaseChannelMessageNotification {
   const ChannelMessageNotification(MessageNotification data) : super(data);
 }

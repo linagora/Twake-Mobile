@@ -133,7 +133,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       handleSocketEvent(data);
     });
     socket.on(SocketIOEvent.RESOURCE, (data) {
-      // logger.d('GOT RESOURCE: $data');
+      logger.d('GOT RESOURCE: $data');
       handleSocketResource(data);
     });
     socket.on(SocketIOEvent.JOIN_ERROR, (data) {
@@ -216,6 +216,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       service.cancelNotificationForChannel(event.channelId);
     } else if (event is BadgeUpdateEvent) {
       yield BadgesUpdated(DateTime.now().toString());
+    } else if (event is DirectUpdateEvent) {
+      DirectUpdated(event.data);
+    } else if (event is DirectDeleteEvent) {
+      DirectDeleted(event.data);
     }
   }
 
@@ -308,6 +312,20 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       this.add(ChannelDeleteEvent(data));
     } else if (type == SocketResourceType.BadgeUpdate) {
       this.add(BadgeUpdateEvent());
+    } else if (type == SocketResourceType.DirectUpdate) {
+      this.add(
+        DirectUpdateEvent(
+          SocketDirectUpdateNotification.fromJson(resource['resource']),
+        ),
+      );
+    } else if (type == SocketResourceType.DirectDelete) {
+      this.add(
+        DirectDeleteEvent(
+          SocketDirectRemovedNotification(
+            directId: resource['resource']['id'],
+          ),
+        ),
+      );
     }
   }
 
@@ -392,6 +410,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       }
     } else if (type == 'NOTIFICATIONS') {
       return SocketResourceType.BadgeUpdate;
+    } else if (type == 'DIRECTS_LIST') {
+      if (resource['type'] == 'channel' ||
+          resource['type'] == 'channel_activity') {
+        return SocketResourceType.DirectUpdate;
+      } else if (resource['type'] == 'channel_member') {
+        if (resource['action'] == 'deleted')
+          return SocketResourceType.DirectDelete;
+      }
     }
     return SocketResourceType.Unknown;
   }
@@ -440,6 +466,7 @@ enum SocketResourceType {
   ChannelUpdate,
   ChannelDelete,
   DirectUpdate,
+  DirectDelete,
   BadgeUpdate,
   Unknown,
 }

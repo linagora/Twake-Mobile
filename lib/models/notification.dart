@@ -67,6 +67,30 @@ class SocketChannelUpdateNotification extends NotificationData {
 }
 
 @JsonSerializable()
+class SocketDirectUpdateNotification extends NotificationData {
+  final String directId;
+  final int lastActivity;
+  final Map<String, dynamic> lastMessage;
+
+  const SocketDirectUpdateNotification({
+    this.directId,
+    this.lastActivity,
+    this.lastMessage,
+  });
+
+  factory SocketDirectUpdateNotification.fromJson(Map<String, dynamic> json) =>
+      _$SocketDirectUpdateNotificationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SocketDirectUpdateNotificationToJson(this);
+}
+
+class SocketDirectRemovedNotification extends NotificationData {
+  final String directId;
+
+  const SocketDirectRemovedNotification({this.directId});
+}
+
+@JsonSerializable()
 class SocketMessageUpdateNotification extends NotificationData {
   @JsonKey(required: true, name: 'channel_id')
   final String channelId;

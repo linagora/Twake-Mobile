@@ -50,17 +50,7 @@ class DirectsBloc extends BaseChannelBloc {
             await Future.delayed(Duration(milliseconds: 500));
           }
         }
-      }
-      // else if (state is DirectUpdateNotification) {
-      // this.add(
-      // ModifyChannelState(
-      // channelId: state.data.channelId,
-      // companyId: state.data.companyId,
-      // threadId: state.data.threadId,
-      // messageId: state.data.messageId,
-      // ),
-      // );
-      // }
+      } else if (state is DirectUpdated) {}
     });
     selectedParentId = companiesBloc.repository.selected.id;
   }
@@ -70,7 +60,7 @@ class DirectsBloc extends BaseChannelBloc {
     print('Event in DirectsBloc: $event');
 
     if (event is ReloadChannels) {
-      yield ChannelsLoading();
+      if (!event.silent) yield ChannelsLoading();
       final filter = {
         'company_id': event.companyId ?? selectedParentId,
       };

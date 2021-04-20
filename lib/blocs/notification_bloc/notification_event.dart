@@ -32,6 +32,24 @@ class ChannelDeleteEvent extends NotificationEvent {
   List<Object> get props => [data];
 }
 
+class DirectUpdateEvent extends NotificationEvent {
+  final SocketDirectUpdateNotification data;
+
+  DirectUpdateEvent(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
+class DirectDeleteEvent extends NotificationEvent {
+  final SocketDirectRemovedNotification data;
+
+  DirectDeleteEvent(this.data);
+
+  @override
+  List<Object> get props => [data];
+}
+
 class BadgeUpdateEvent extends NotificationEvent {
   const BadgeUpdateEvent();
 

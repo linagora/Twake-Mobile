@@ -54,6 +54,23 @@ Map<String, dynamic> _$SocketChannelUpdateNotificationToJson(
       'last_message': instance.lastMessage,
     };
 
+SocketDirectUpdateNotification _$SocketDirectUpdateNotificationFromJson(
+    Map<String, dynamic> json) {
+  return SocketDirectUpdateNotification(
+    directId: json['directId'] as String,
+    lastActivity: json['lastActivity'] as int,
+    lastMessage: json['lastMessage'] as Map<String, dynamic>,
+  );
+}
+
+Map<String, dynamic> _$SocketDirectUpdateNotificationToJson(
+        SocketDirectUpdateNotification instance) =>
+    <String, dynamic>{
+      'directId': instance.directId,
+      'lastActivity': instance.lastActivity,
+      'lastMessage': instance.lastMessage,
+    };
+
 SocketMessageUpdateNotification _$SocketMessageUpdateNotificationFromJson(
     Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['channel_id']);
