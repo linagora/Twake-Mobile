@@ -267,32 +267,43 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                 onPrivateTap: () =>
                     _batchUpdateState(type: ChannelType.private),
               ),
-              SizedBox(height: 8),
-              HintLine(
-                text: _channelType != ChannelType.direct
-                    ? 'Public channels can be found by everyone, though private can only be joined by invitation'
-                    : 'Direct channels involve correspondence between selected members',
+              Stack(
+                children: <Widget>[
+                  Column(
+                    children: [
+                      SizedBox(height: 8),
+                      HintLine(
+                        text: _channelType != ChannelType.direct
+                            ? 'Public channels can be found by everyone, though private can only be joined by invitation'
+                            : 'Direct channels involve correspondence between selected members',
+                      ),
+                      if (_channelType == ChannelType.private)
+                        SizedBox(height: 8),
+                      if (_channelType == ChannelType.private)
+                        ParticipantsButton(count: _participants.length),
+                      SizedBox(height: 8),
+                      // if (_channelType == ChannelType.public)
+                      //   SwitchField(
+                      //     title: 'Automatically add new users',
+                      //     value: _automaticallyAddNew,
+                      //     onChanged: (value) =>
+                      //         _batchUpdateState(automaticallyAddNew: value),
+                      //   ),
+                      if (_channelType == ChannelType.private) SizedBox(),
+                      HintLine(
+                        text: _channelType != ChannelType.private
+                            ? (_channelType != ChannelType.direct
+                                ? 'Only available for public channels'
+                                : 'Only available for direct channels')
+                            : '',
+                      ),
+                    ],
+                  ),
+                  _emojiVisible
+                      ? Expanded(child: _buildEmojiBoard())
+                      : Container(),
+                ],
               ),
-              if (_channelType == ChannelType.private) SizedBox(height: 8),
-              if (_channelType == ChannelType.private)
-                ParticipantsButton(count: _participants.length),
-              SizedBox(height: 8),
-              // if (_channelType == ChannelType.public)
-              //   SwitchField(
-              //     title: 'Automatically add new users',
-              //     value: _automaticallyAddNew,
-              //     onChanged: (value) =>
-              //         _batchUpdateState(automaticallyAddNew: value),
-              //   ),
-              if (_channelType == ChannelType.private) SizedBox(),
-              HintLine(
-                text: _channelType != ChannelType.private
-                    ? (_channelType != ChannelType.direct
-                        ? 'Only available for public channels'
-                        : 'Only available for direct channels')
-                    : '',
-              ),
-              _emojiVisible ? _buildEmojiBoard() : Container(),
             ],
           ),
         );
