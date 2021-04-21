@@ -299,9 +299,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                       ),
                     ],
                   ),
-                  _emojiVisible
-                      ? Expanded(child: _buildEmojiBoard())
-                      : Container(),
+                  _emojiVisible ? _buildEmojiBoard() : Container(),
                 ],
               ),
             ],

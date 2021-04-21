@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_event.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_state.dart';
@@ -35,9 +36,16 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
 
   void _return() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    context.read<AddWorkspaceCubit>()
-      ..update(members: _members)
-      ..setFlowStage(FlowStage.info);
+    context.read<AddWorkspaceCubit>()..setFlowStage(FlowStage.info);
+    context.read<FieldsCubit>()
+      ..clear()
+      ..add(
+          field: RemovableTextField(
+            key: UniqueKey(),
+            index: 0,
+            isLastOne: true,
+          ),
+          atIndex: 0);
   }
 
   void _invite() {
