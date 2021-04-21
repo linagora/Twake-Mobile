@@ -5,11 +5,12 @@ class FileUploadRepository {
   Api _api = Api();
   Logger _logger = Logger();
 
-  void upload(
-      {FormData payload,
-      Function(Map<String, dynamic> response) onSuccess,
-      Function(String reason) onError,
-      CancelToken cancelToken}) {
+  void upload({
+    FormData payload,
+    Function(Map<String, dynamic> response) onSuccess,
+    Function(String reason) onError,
+    CancelToken cancelToken,
+  }) {
     _api
         .post(Endpoint.fileUpload, body: payload, cancelToken: cancelToken)
         .then((r) => onSuccess(r))
