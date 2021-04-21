@@ -163,7 +163,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
                 SizedBox(height: 8),
                 HintLine(text: 'Please provide a name for your new workspace'),
                 SizedBox(height: 8),
-                CollaboratorsButton(count: _collaborators.length),
+                CollaboratorsButton(count: _collaborators.where((element) => element.isNotReallyEmpty).length),
                 SizedBox(height: 8),
                 HintLine(text: 'Invite collaborators via email'),
               ],
