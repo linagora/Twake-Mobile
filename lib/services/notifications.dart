@@ -42,7 +42,7 @@ class Notifications {
     FirebaseMessaging.onMessage.listen(onMessage);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('logo_blue');
+        AndroidInitializationSettings('ic_launcher_foreground');
     final IOSInitializationSettings initializationSettingsIOS =
         IOSInitializationSettings();
     final InitializationSettings initializationSettings =
