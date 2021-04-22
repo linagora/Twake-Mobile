@@ -5,6 +5,7 @@ import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messsage_loaded_type.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/utils/dateformatter.dart';
@@ -82,6 +83,12 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
           lastScrollPosition = _itemPositionListener.itemPositions.value.last.index;
         } else if (state.messageLoadedType == MessageLoadedType.afterDelete) {
           lastScrollPosition = _itemPositionListener.itemPositions.value.first.index;
+        } else {
+          final profileState = context.read<ProfileBloc>().state;
+          if (profileState is ProfileLoaded) {
+            final badge = profileState.getBadgeForChannel(state.parentChannel.id);
+            lastScrollPosition = badge > 1 ? badge : 0;
+          }
         }
       }
     } catch (exception) {
