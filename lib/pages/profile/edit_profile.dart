@@ -20,6 +20,7 @@ class _EditProfileState extends State<EditProfile> {
   final _cellularController = TextEditingController();
 
   var _canSave = true;
+  var _thumbnail = ProfileBloc.thumbnail;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _EditProfileState extends State<EditProfile> {
         if (state is ProfileLoaded) {
           setState(() {
             _nameController.text = state.firstName;
+            _thumbnail = state.thumbnail;
           });
         }
       },
@@ -116,7 +118,7 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         SelectableAvatar(
                           size: 100.0,
-                          icon: '',
+                          userpic: _thumbnail,
                           onTap: () {},
                         ),
                         SizedBox(height: 12.0),
