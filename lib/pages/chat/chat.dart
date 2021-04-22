@@ -13,6 +13,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
+import 'package:twake/pages/chat/chat_header.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
@@ -81,36 +82,10 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
-            var _canEdit = false;
-            var memberId = '';
 
             if ((state is MessagesLoaded || state is MessagesEmpty) &&
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
-
-              if (parentChannel is Channel) {
-                // Possible permissions:
-                // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-                // 'ADD_MEMBER', 'REMOVE_MEMBER',
-                // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                final permissions = parentChannel.permissions;
-
-                if (permissions.contains('UPDATE_NAME') ||
-                    permissions.contains('UPDATE_DESCRIPTION') ||
-                    permissions.contains('ADD_MEMBER') ||
-                    permissions.contains('REMOVE_MEMBER') ||
-                    permissions.contains('UPDATE_PRIVACY') ||
-                    permissions.contains('DELETE_CHANNEL')) {
-                  _canEdit = true;
-                } else {
-                  _canEdit = false;
-                }
-              } else if (parentChannel is Direct &&
-                  parentChannel.members != null) {
-                final userId = ProfileBloc.userId;
-                memberId =
-                    parentChannel.members.firstWhere((id) => id != userId);
-              }
             }
 
             // print('MessagesBloc state: $state');
@@ -118,79 +93,116 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
 
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
+                var canEdit = false;
+                var memberId = '';
+                var icon = '';
+                var isPrivate = false;
+                var membersCount = 0;
+
+                if (parentChannel is Channel) {
+                  isPrivate = parentChannel.visibility == 'private';
+                  icon = parentChannel.icon;
+                  membersCount = parentChannel.membersCount;
+
+                  // Possible permissions:
+                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
+                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
+                  final permissions = parentChannel.permissions;
+
+                  if (permissions.contains('UPDATE_NAME') ||
+                      permissions.contains('UPDATE_DESCRIPTION') ||
+                      permissions.contains('ADD_MEMBER') ||
+                      permissions.contains('REMOVE_MEMBER') ||
+                      permissions.contains('UPDATE_PRIVACY') ||
+                      permissions.contains('DELETE_CHANNEL')) {
+                    canEdit = true;
+                  } else {
+                    canEdit = false;
+                  }
+                } else if (parentChannel is Direct &&
+                    parentChannel.members != null) {
+                  final userId = ProfileBloc.userId;
+                  memberId =
+                      parentChannel.members.firstWhere((id) => id != userId);
+                }
+
                 if (editState is EditChannelSaved) {
                   context
                       .read<MemberCubit>()
                       .fetchMembers(channelId: channelId);
-                  if (parentChannel is Channel &&
-                      parentChannel.id == editState.channelId) {
-                    parentChannel.icon = editState.icon;
-                    parentChannel.name = editState.name;
-                    parentChannel.description = editState.description;
-                  }
                 }
 
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: _canEdit ? () => _goEdit(context, state) : null,
-                  child: Row(
-                    children: [
-                      if (parentChannel is Direct)
-                        UserThumbnail(
-                          userId: memberId,
-                          size: 36.0,
-                        ),
-                      if (parentChannel is Channel)
-                        ShimmerLoading(
-                          key: ValueKey<String>('channel_icon'),
-                          isLoading: parentChannel.icon == null ||
-                              parentChannel.icon.isEmpty,
-                          width: 32.0,
-                          height: 32.0,
-                          child: TextAvatar(parentChannel.icon ?? ''),
-                        ),
-                      SizedBox(width: 12.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ShimmerLoading(
-                              key: ValueKey<String>('name'),
-                              isLoading: parentChannel.name == null,
-                              width: 60.0,
-                              height: 10.0,
-                              child: ChannelTitle(
-                                name: parentChannel.name ?? '',
-                                isPrivate: (parentChannel is Channel) &&
-                                    parentChannel.visibility != null &&
-                                    parentChannel.visibility == 'private',
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            if (parentChannel is Channel)
-                              ShimmerLoading(
-                                key: ValueKey<String>('membersCount'),
-                                isLoading: parentChannel.membersCount == null,
-                                width: 50,
-                                height: 10,
-                                child: Text(
-                                  parentChannel.membersCount == null
-                                      ? ''
-                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
-                                  style: TextStyle(
-                                    fontSize: 10.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xff92929C),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                    ],
-                  ),
+                return ChatHeader(
+                  isDirect: parentChannel is Direct,
+                  isPrivate: isPrivate,
+                  userId: memberId,
+                  name: parentChannel.name,
+                  icon: icon,
+                  membersCount: membersCount,
                 );
+
+                //   GestureDetector(
+                //   behavior: HitTestBehavior.opaque,
+                //   onTap: _canEdit ? () => _goEdit(context, state) : null,
+                //   child: Row(
+                //     children: [
+                //       if (parentChannel is Direct)
+                //         UserThumbnail(
+                //           userId: memberId,
+                //           size: 36.0,
+                //         ),
+                //       if (parentChannel is Channel)
+                //         ShimmerLoading(
+                //           key: ValueKey<String>('channel_icon'),
+                //           isLoading: parentChannel.icon == null ||
+                //               parentChannel.icon.isEmpty,
+                //           width: 32.0,
+                //           height: 32.0,
+                //           child: TextAvatar(parentChannel.icon ?? ''),
+                //         ),
+                //       SizedBox(width: 12.0),
+                //       Expanded(
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             ShimmerLoading(
+                //               key: ValueKey<String>('name'),
+                //               isLoading: parentChannel.name == null,
+                //               width: 60.0,
+                //               height: 10.0,
+                //               child: ChannelTitle(
+                //                 name: parentChannel.name ?? '',
+                //                 isPrivate: (parentChannel is Channel) &&
+                //                     parentChannel.visibility != null &&
+                //                     parentChannel.visibility == 'private',
+                //               ),
+                //             ),
+                //             SizedBox(height: 4),
+                //             if (parentChannel is Channel)
+                //               ShimmerLoading(
+                //                 key: ValueKey<String>('membersCount'),
+                //                 isLoading: parentChannel.membersCount == null,
+                //                 width: 50,
+                //                 height: 10,
+                //                 child: Text(
+                //                   parentChannel.membersCount == null
+                //                       ? ''
+                //                       : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
+                //                   style: TextStyle(
+                //                     fontSize: 10.0,
+                //                     fontWeight: FontWeight.w400,
+                //                     color: Color(0xff92929C),
+                //                   ),
+                //                 ),
+                //               ),
+                //           ],
+                //         ),
+                //       ),
+                //       SizedBox(width: 15),
+                //     ],
+                //   ),
+                // );
               },
             );
           },
