@@ -64,3 +64,19 @@ class ProfileFlowStageUpdated extends ProfileState {
   @override
   List<Object> get props => [stage];
 }
+
+class ProfileUpdated extends ProfileState {
+  const ProfileUpdated();
+
+  @override
+  List<Object> get props => [];
+}
+
+class ProfileError extends ProfileState {
+  final String message;
+
+  const ProfileError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

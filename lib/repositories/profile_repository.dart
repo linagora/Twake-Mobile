@@ -143,7 +143,7 @@ class ProfileRepository extends JsonSerializable {
       print('Profile updated: $profileMap');
       save();
     }
-    return result;
+    return this;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON
