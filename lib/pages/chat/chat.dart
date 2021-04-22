@@ -87,10 +87,6 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
-
-            // print('MessagesBloc state: $state');
-            // print('Parent channel current value: $parentChannel');
-
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
                 var canEdit = false;
@@ -140,69 +136,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   name: parentChannel.name,
                   icon: icon,
                   membersCount: membersCount,
+                  onTap: canEdit ? () => _goEdit(context, state) : null,
                 );
-
-                //   GestureDetector(
-                //   behavior: HitTestBehavior.opaque,
-                //   onTap: _canEdit ? () => _goEdit(context, state) : null,
-                //   child: Row(
-                //     children: [
-                //       if (parentChannel is Direct)
-                //         UserThumbnail(
-                //           userId: memberId,
-                //           size: 36.0,
-                //         ),
-                //       if (parentChannel is Channel)
-                //         ShimmerLoading(
-                //           key: ValueKey<String>('channel_icon'),
-                //           isLoading: parentChannel.icon == null ||
-                //               parentChannel.icon.isEmpty,
-                //           width: 32.0,
-                //           height: 32.0,
-                //           child: TextAvatar(parentChannel.icon ?? ''),
-                //         ),
-                //       SizedBox(width: 12.0),
-                //       Expanded(
-                //         child: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             ShimmerLoading(
-                //               key: ValueKey<String>('name'),
-                //               isLoading: parentChannel.name == null,
-                //               width: 60.0,
-                //               height: 10.0,
-                //               child: ChannelTitle(
-                //                 name: parentChannel.name ?? '',
-                //                 isPrivate: (parentChannel is Channel) &&
-                //                     parentChannel.visibility != null &&
-                //                     parentChannel.visibility == 'private',
-                //               ),
-                //             ),
-                //             SizedBox(height: 4),
-                //             if (parentChannel is Channel)
-                //               ShimmerLoading(
-                //                 key: ValueKey<String>('membersCount'),
-                //                 isLoading: parentChannel.membersCount == null,
-                //                 width: 50,
-                //                 height: 10,
-                //                 child: Text(
-                //                   parentChannel.membersCount == null
-                //                       ? ''
-                //                       : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
-                //                   style: TextStyle(
-                //                     fontSize: 10.0,
-                //                     fontWeight: FontWeight.w400,
-                //                     color: Color(0xff92929C),
-                //                   ),
-                //                 ),
-                //               ),
-                //           ],
-                //         ),
-                //       ),
-                //       SizedBox(width: 15),
-                //     ],
-                //   ),
-                // );
               },
             );
           },
