@@ -15,6 +15,8 @@ import 'package:twake/blocs/messages_bloc/messages_state.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/twacode.dart';
 
+import 'messsage_loaded_type.dart';
+
 export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
@@ -164,7 +166,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorLoadingMore());
           return;
         }
-        this.add(FinishLoadingMessages());
+        this.add(FinishLoadingMessages(messageLoadedType: MessageLoadedType.loadMore));
       });
     } else if (event is FinishLoadingMessages) {
       _sortItems();
@@ -173,6 +175,7 @@ class MessagesBloc<T extends BaseChannelBloc>
         force: DateTime.now().toString(),
         messageCount: repository.itemsCount,
         parentChannel: selectedChannel,
+        messageLoadedType: event.messageLoadedType
       );
 
       // repository.logger.d('New state will yield: ${newState != state}');
@@ -244,6 +247,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           messages: repository.items,
           messageCount: repository.itemsCount,
           parentChannel: selectedChannel,
+          messageLoadedType: MessageLoadedType.afterDelete
         );
 
         repository.logger

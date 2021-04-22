@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:twake/blocs/messages_bloc/messsage_loaded_type.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/utils/twacode.dart';
 
@@ -209,8 +210,12 @@ class GenerateErrorLoadingMore extends MessagesEvent {
 }
 
 class FinishLoadingMessages extends MessagesEvent {
+  final MessageLoadedType messageLoadedType;
+
+  FinishLoadingMessages({this.messageLoadedType = MessageLoadedType.normal});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [messageLoadedType];
 
   @override
   Map<String, dynamic> toMap() {

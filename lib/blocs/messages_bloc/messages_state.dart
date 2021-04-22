@@ -2,6 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/message.dart';
 
+import 'messsage_loaded_type.dart';
+
 abstract class MessagesState extends Equatable {
   final BaseChannel parentChannel;
   final Message threadMessage;
@@ -21,17 +23,19 @@ class MessagesLoaded extends MessagesState {
   final int messageCount;
   final Message threadMessage;
   final String force;
+  final MessageLoadedType messageLoadedType;
 
   const MessagesLoaded({
     this.messageCount,
     this.force,
     this.messages,
     this.threadMessage,
+    this.messageLoadedType = MessageLoadedType.normal,
     BaseChannel parentChannel,
   }) : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props => [messageCount, messages, parentChannel, force];
+  List<Object> get props => [messageCount, messages, parentChannel, force, messageLoadedType];
 }
 
 class MoreMessagesLoading extends MessagesLoaded {
