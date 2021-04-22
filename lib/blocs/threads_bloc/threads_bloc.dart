@@ -248,6 +248,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
     map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompanyId;
     map['workspace_id'] = map['workspace_id'] ??
         (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId);
+    // temporary field for file attachments in directs
+    map['fallback_ws_id'] = ProfileBloc.selectedWorkspaceId;
     map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }
