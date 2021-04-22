@@ -5,7 +5,6 @@ import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
-import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -14,11 +13,7 @@ import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/chat/chat_header.dart';
-import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/repositories/draft_repository.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
-import 'package:twake/widgets/common/shimmer_loading.dart';
-import 'package:twake/widgets/common/channel_title.dart';
 import 'package:twake/pages/chat/message_edit_field.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
@@ -34,7 +29,6 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
-        // toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         toolbarHeight: 60.0,
         leadingWidth: 53.0,
         leading: BlocBuilder<DraftBloc, DraftState>(
@@ -80,7 +74,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (ctx, state) {
+          builder: (_, state) {
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
 
             if ((state is MessagesLoaded || state is MessagesEmpty) &&
@@ -170,7 +164,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   BlocBuilder<DraftBloc, DraftState>(
                     buildWhen: (_, current) =>
                         current is DraftLoaded || current is DraftReset,
-                    builder: (context, state) {
+                    builder: (_, state) {
                       if (state is DraftLoaded &&
                           state.type != DraftType.thread) {
                         draft = state.draft;
