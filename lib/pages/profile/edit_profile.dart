@@ -14,8 +14,8 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  final _nameController = TextEditingController();
-  final _displayedNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _cellularController = TextEditingController();
 
@@ -30,8 +30,8 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _displayedNameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _cellularController.dispose();
     super.dispose();
@@ -39,8 +39,12 @@ class _EditProfileState extends State<EditProfile> {
 
   void _save() {
     print('Save profile!');
-    final firstName = _nameController.text;
-    context.read<ProfileBloc>().add(UpdateProfile(firstName: firstName));
+    final firstName = _firstNameController.text;
+    final lastName = _lastNameController.text;
+    context.read<ProfileBloc>().add(UpdateProfile(
+          firstName: firstName,
+          lastName: lastName,
+        ));
     FocusScope.of(context).requestFocus(FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
     context.read<ProfileBloc>().add(SetProfileFlowStage(ProfileFlowStage.info));
@@ -52,7 +56,8 @@ class _EditProfileState extends State<EditProfile> {
       listener: (context, state) {
         if (state is ProfileLoaded) {
           setState(() {
-            _nameController.text = state.firstName;
+            _firstNameController.text = state.firstName;
+            _lastNameController.text = state.lastName;
             _thumbnail = state.thumbnail;
           });
         }
@@ -147,8 +152,8 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   SizedBox(height: 12.0),
                   RoundedTextField(
-                    controller: _nameController,
-                    prefix: 'Name',
+                    controller: _firstNameController,
+                    prefix: 'First name',
                     hint: 'Not assigned',
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10.0),
@@ -160,23 +165,23 @@ class _EditProfileState extends State<EditProfile> {
                     color: Colors.black.withOpacity(0.1),
                   ),
                   RoundedTextField(
-                    controller: _displayedNameController,
-                    prefix: 'Displayed Name',
-                    hint: '@',
+                    controller: _lastNameController,
+                    prefix: 'Last name',
+                    hint: 'Not assigned',
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(10.0),
                       bottomRight: Radius.circular(10.0),
                     ),
                   ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    '«Displayed name» is how people see your name in Twake\nin @mentions and by other users in channels and private chats',
-                    style: TextStyle(
-                      fontSize: 11.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black.withOpacity(0.35),
-                    ),
-                  ),
+                  // SizedBox(height: 8.0),
+                  // Text(
+                  //   '«Displayed name» is how people see your name in Twake\nin @mentions and by other users in channels and private chats',
+                  //   style: TextStyle(
+                  //     fontSize: 11.0,
+                  //     fontWeight: FontWeight.w400,
+                  //     color: Colors.black.withOpacity(0.35),
+                  //   ),
+                  // ),
                   SizedBox(height: 43.0),
                   Text(
                     'CONTACT DETAILS',
