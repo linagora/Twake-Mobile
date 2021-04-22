@@ -4,11 +4,13 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/utils/extensions.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
   final Color backgroundColor;
   final String icon;
+  final String userpic;
   final Function onTap;
 
   const SelectableAvatar({
@@ -16,6 +18,7 @@ class SelectableAvatar extends StatefulWidget {
     this.size = 48.0,
     this.backgroundColor,
     this.icon,
+    this.userpic,
     this.onTap,
   }) : super(key: key);
 
@@ -27,6 +30,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   final picker = ImagePicker();
 
   File _image;
+  String _userpic;
 
   // String _base64Image;
   Uint8List _bytes;
@@ -40,6 +44,20 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
         // _base64Image = base64Image;
       });
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _userpic = widget.userpic;
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectableAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userpic != widget.userpic) {
+      _userpic = widget.userpic;
+    }
   }
 
   @override
@@ -57,7 +75,9 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
                   style: TextStyle(fontSize: Dim.tm3()),
                 ),
               )
-            : Image.asset("assets/images/pic.png"),
+            : (_userpic != null || _userpic.isNotReallyEmpty)
+                ? Image.network(_userpic, width: 48.0, height: 48.0)
+                : Image.asset('assets/images/pic.png'),
         // child: _bytes != null
         //     ? SizedBox()
         //     : (_image != null
