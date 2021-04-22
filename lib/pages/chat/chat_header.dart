@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
-import 'package:twake/widgets/common/channel_title.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
 
 class ChatHeader extends StatelessWidget {
   final bool isDirect;
@@ -16,8 +15,8 @@ class ChatHeader extends StatelessWidget {
 
   const ChatHeader({
     Key key,
-    this.isDirect,
-    this.isPrivate,
+    @required this.isDirect,
+    this.isPrivate = false,
     this.userId,
     this.membersCount,
     this.icon,
