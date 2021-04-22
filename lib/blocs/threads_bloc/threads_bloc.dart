@@ -51,8 +51,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
         // repository.logger.w(
         // "${state.threadMessage.content.originalStr} == ${threadMessage.content.originalStr}");
         if (threadMessage.id == state.threadMessage.id &&
-            threadMessage.content.originalStr !=
-                state.threadMessage.content.originalStr)
+            (threadMessage.content.originalStr !=
+                    state.threadMessage.content.originalStr ||
+                threadMessage.reactions.keys !=
+                    state.threadMessage.reactions.keys))
           this.add(UpdateThreadMessage(state.threadMessage));
       }
     });

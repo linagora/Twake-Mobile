@@ -34,6 +34,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
             hideShowAnswers: true,
             key: ValueKey(
               state.threadMessage.id +
+                  state.threadMessage.reactions.keys.join() +
                   state.threadMessage.responsesCount.toString() +
                   (state.threadMessage.content.originalStr ?? ''),
             ),
