@@ -37,7 +37,7 @@ class Profile extends StatelessWidget {
                     ),
                     SizedBox(height: 12.0),
                     Text(
-                      'Diana Potokina',
+                      'Username',
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.w600,
