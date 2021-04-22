@@ -367,7 +367,8 @@ class MessagesBloc<T extends BaseChannelBloc>
           apiEndpoint: Endpoint.channelsRead,
           params: {
             "company_id": ProfileBloc.selectedCompanyId,
-            "workspace_id": ProfileBloc.selectedWorkspaceId,
+            "workspace_id":
+                T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId,
             "channel_id": ProfileBloc.selectedChannelId
           });
     }
