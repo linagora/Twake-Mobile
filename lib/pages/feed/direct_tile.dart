@@ -54,6 +54,8 @@ class DirectTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w500,
