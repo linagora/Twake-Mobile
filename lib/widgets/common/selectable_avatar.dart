@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
@@ -31,6 +32,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
 
   File _image;
   String _userpic;
+  String _icon;
 
   // String _base64Image;
   Uint8List _bytes;
@@ -50,6 +52,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   void initState() {
     super.initState();
     _userpic = widget.userpic;
+    _icon = widget.icon;
   }
 
   @override
@@ -57,6 +60,9 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.userpic != widget.userpic) {
       _userpic = widget.userpic;
+    }
+    if (oldWidget.icon != widget.icon) {
+      _icon = widget.icon;
     }
   }
 
@@ -68,16 +74,24 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
       child: Container(
         width: widget.size,
         height: widget.size,
-        child: (widget.icon != null && widget.icon.isNotEmpty)
+        child: (_icon != null && _icon.isNotEmpty)
             ? Center(
                 child: Text(
-                  widget.icon,
+                  _icon,
                   style: TextStyle(fontSize: Dim.tm3()),
                 ),
               )
-            : (_userpic != null || _userpic.isNotReallyEmpty)
-                ? Image.network(_userpic, width: 48.0, height: 48.0)
-                : Image.asset('assets/images/pic.png'),
+            : (_userpic != null && _userpic.isNotReallyEmpty)
+                ? RoundedImage(
+                    _userpic,
+                    width: widget.size,
+                    height: widget.size,
+                  )
+                : Image.asset(
+                    'assets/images/pic.png',
+                    width: widget.size,
+                    height: widget.size,
+                  ),
         // child: _bytes != null
         //     ? SizedBox()
         //     : (_image != null
