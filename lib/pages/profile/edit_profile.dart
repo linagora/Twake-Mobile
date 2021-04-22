@@ -23,7 +23,7 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    _nameController.text = 'Diana Potokina';
+    _nameController.text = 'Username';
   }
 
   @override
