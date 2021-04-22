@@ -114,9 +114,7 @@ class ChannelTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Spacer(),
                       if (messagesUnread != 0) SizedBox(width: Dim.wm2),
-                      // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
                         buildWhen: (_, current) => current is ProfileLoaded,
                         builder: (_, state) {
