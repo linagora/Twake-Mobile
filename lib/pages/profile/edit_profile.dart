@@ -25,7 +25,8 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    // _nameController.text = 'Username';
+    _firstNameController.text = ProfileBloc.firstName ?? 'FirstName';
+    _lastNameController.text = ProfileBloc.lastName ?? 'LastName';
   }
 
   @override
