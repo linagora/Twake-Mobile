@@ -238,6 +238,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                           : Colors.black,
                                     ),
                                   ).message,
+
                                   // Normally we use SizedBox here,
                                   // but it will cut the bottom of emojis
                                   // in last line of the messsage.
