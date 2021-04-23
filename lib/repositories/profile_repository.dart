@@ -79,6 +79,9 @@ class ProfileRepository extends JsonSerializable {
     // Save it to store
     if (loadedFromNetwork) profile.save();
     // return it
+
+    fetchInfo();
+
     return profile;
   }
 
@@ -118,7 +121,7 @@ class ProfileRepository extends JsonSerializable {
   }
 
   static Future<void> fetchInfo() async {
-    final profileMap = await _api.get(Endpoint.profile);
+    final profileMap = await _api.get(Endpoint.profileInfo);
     logger.d('PROFILE INFO: $profileMap');
   }
 
