@@ -47,7 +47,6 @@ Future<InitData> initMain() async {
   try {
     Emojis.load();
     final profile = await ProfileRepository.load();
-    // ProfileRepository.load();
     await profile.syncBadges();
     final sheet = await SheetRepository.load();
     final addChannel = await AddChannelRepository.load();
