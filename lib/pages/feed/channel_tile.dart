@@ -7,8 +7,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
-import 'package:twake/widgets/common/channel_title.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
+import 'package:twake/widgets/common/channel_thumbnail.dart';
 
 class ChannelTile extends StatelessWidget {
   final String id;
@@ -63,6 +62,9 @@ class ChannelTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w500,
@@ -87,6 +89,7 @@ class ChannelTile extends StatelessWidget {
                               if (senderName.isNotEmpty)
                                 Text(
                                   senderName,
+                                  textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 14.0,
@@ -96,6 +99,7 @@ class ChannelTile extends StatelessWidget {
                                 ),
                               Text(
                                 lastMessage['text'] ?? 'This channel is empty',
+                                textAlign: TextAlign.start,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 14.0,
@@ -110,9 +114,7 @@ class ChannelTile extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Spacer(),
                       if (messagesUnread != 0) SizedBox(width: Dim.wm2),
-                      // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
                         buildWhen: (_, current) => current is ProfileLoaded,
                         builder: (_, state) {
@@ -154,37 +156,6 @@ class ChannelTile extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class ChannelThumbnail extends StatelessWidget {
-  final String icon;
-  final bool isPrivate;
-
-  const ChannelThumbnail({
-    Key key,
-    this.icon,
-    this.isPrivate,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topRight,
-      children: [
-        Container(
-          width: 60.0,
-          height: 60.0,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Color(0xfff5f5f5),
-          ),
-          child: TextAvatar(icon),
-        ),
-        if (isPrivate) Image.asset('assets/images/private.png'),
-      ],
     );
   }
 }

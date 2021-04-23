@@ -5,7 +5,6 @@ import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
-import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -13,11 +12,8 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
-import 'package:twake/pages/feed/user_thumbnail.dart';
+import 'package:twake/pages/chat/chat_header.dart';
 import 'package:twake/repositories/draft_repository.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
-import 'package:twake/widgets/common/shimmer_loading.dart';
-import 'package:twake/widgets/common/channel_title.dart';
 import 'package:twake/pages/chat/message_edit_field.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
@@ -33,7 +29,6 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
-        // toolbarHeight: Dim.heightPercent((kToolbarHeight * 0.15).round()),
         toolbarHeight: 60.0,
         leadingWidth: 53.0,
         leading: BlocBuilder<DraftBloc, DraftState>(
@@ -79,117 +74,63 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (ctx, state) {
+          builder: (_, state) {
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
-            var _canEdit = false;
-            var memberId = '';
 
             if ((state is MessagesLoaded || state is MessagesEmpty) &&
                 state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
-
-              if (parentChannel is Channel) {
-                // Possible permissions:
-                // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-                // 'ADD_MEMBER', 'REMOVE_MEMBER',
-                // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                final permissions = parentChannel.permissions;
-
-                if (permissions.contains('UPDATE_NAME') ||
-                    permissions.contains('UPDATE_DESCRIPTION') ||
-                    permissions.contains('ADD_MEMBER') ||
-                    permissions.contains('REMOVE_MEMBER') ||
-                    permissions.contains('UPDATE_PRIVACY') ||
-                    permissions.contains('DELETE_CHANNEL')) {
-                  _canEdit = true;
-                } else {
-                  _canEdit = false;
-                }
-              } else if (parentChannel is Direct &&
-                  parentChannel.members != null) {
-                final userId = ProfileBloc.userId;
-                memberId =
-                    parentChannel.members.firstWhere((id) => id != userId);
-              }
             }
-
-            // print('MessagesBloc state: $state');
-            // print('Parent channel current value: $parentChannel');
-
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
+                var canEdit = false;
+                var memberId = '';
+                var icon = '';
+                var isPrivate = false;
+                var membersCount = 0;
+
+                if (parentChannel is Channel) {
+                  isPrivate = parentChannel.visibility == 'private';
+                  icon = parentChannel.icon;
+                  membersCount = parentChannel.membersCount;
+
+                  // Possible permissions:
+                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
+                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
+                  final permissions = parentChannel.permissions;
+
+                  if (permissions.contains('UPDATE_NAME') ||
+                      permissions.contains('UPDATE_DESCRIPTION') ||
+                      permissions.contains('ADD_MEMBER') ||
+                      permissions.contains('REMOVE_MEMBER') ||
+                      permissions.contains('UPDATE_PRIVACY') ||
+                      permissions.contains('DELETE_CHANNEL')) {
+                    canEdit = true;
+                  } else {
+                    canEdit = false;
+                  }
+                } else if (parentChannel is Direct &&
+                    parentChannel.members != null) {
+                  final userId = ProfileBloc.userId;
+                  memberId =
+                      parentChannel.members.firstWhere((id) => id != userId);
+                }
+
                 if (editState is EditChannelSaved) {
                   context
                       .read<MemberCubit>()
                       .fetchMembers(channelId: channelId);
-                  if (parentChannel is Channel &&
-                      parentChannel.id == editState.channelId) {
-                    parentChannel.icon = editState.icon;
-                    parentChannel.name = editState.name;
-                    parentChannel.description = editState.description;
-                  }
                 }
 
-                return GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: _canEdit ? () => _goEdit(context, state) : null,
-                  child: Row(
-                    children: [
-                      if (parentChannel is Direct)
-                        UserThumbnail(
-                          userId: memberId,
-                          size: 36.0,
-                        ),
-                      if (parentChannel is Channel)
-                        ShimmerLoading(
-                          key: ValueKey<String>('channel_icon'),
-                          isLoading: parentChannel.icon == null ||
-                              parentChannel.icon.isEmpty,
-                          width: 32.0,
-                          height: 32.0,
-                          child: TextAvatar(parentChannel.icon ?? ''),
-                        ),
-                      SizedBox(width: 12.0),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ShimmerLoading(
-                              key: ValueKey<String>('name'),
-                              isLoading: parentChannel.name == null,
-                              width: 60.0,
-                              height: 10.0,
-                              child: ChannelTitle(
-                                name: parentChannel.name ?? '',
-                                isPrivate: (parentChannel is Channel) &&
-                                    parentChannel.visibility != null &&
-                                    parentChannel.visibility == 'private',
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            if (parentChannel is Channel)
-                              ShimmerLoading(
-                                key: ValueKey<String>('membersCount'),
-                                isLoading: parentChannel.membersCount == null,
-                                width: 50,
-                                height: 10,
-                                child: Text(
-                                  parentChannel.membersCount == null
-                                      ? ''
-                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
-                                  style: TextStyle(
-                                    fontSize: 10.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xff92929C),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: 15),
-                    ],
-                  ),
+                return ChatHeader(
+                  isDirect: parentChannel is Direct,
+                  isPrivate: isPrivate,
+                  userId: memberId,
+                  name: parentChannel.name,
+                  icon: icon,
+                  membersCount: membersCount,
+                  onTap: canEdit ? () => _goEdit(context, state) : null,
                 );
               },
             );
@@ -223,7 +164,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   BlocBuilder<DraftBloc, DraftState>(
                     buildWhen: (_, current) =>
                         current is DraftLoaded || current is DraftReset,
-                    builder: (context, state) {
+                    builder: (_, state) {
                       if (state is DraftLoaded &&
                           state.type != DraftType.thread) {
                         draft = state.draft;

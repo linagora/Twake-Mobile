@@ -166,17 +166,17 @@ class MessagesBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorLoadingMore());
           return;
         }
-        this.add(FinishLoadingMessages(messageLoadedType: MessageLoadedType.loadMore));
+        this.add(FinishLoadingMessages(
+            messageLoadedType: MessageLoadedType.loadMore));
       });
     } else if (event is FinishLoadingMessages) {
       _sortItems();
       final newState = MessagesLoaded(
-        messages: repository.items,
-        force: DateTime.now().toString(),
-        messageCount: repository.itemsCount,
-        parentChannel: selectedChannel,
-        messageLoadedType: event.messageLoadedType
-      );
+          messages: repository.items,
+          force: DateTime.now().toString(),
+          messageCount: repository.itemsCount,
+          parentChannel: selectedChannel,
+          messageLoadedType: event.messageLoadedType);
 
       // repository.logger.d('New state will yield: ${newState != state}');
       yield newState;
@@ -244,11 +244,10 @@ class MessagesBloc<T extends BaseChannelBloc>
         _sortItems();
 
         final newState = MessagesLoaded(
-          messages: repository.items,
-          messageCount: repository.itemsCount,
-          parentChannel: selectedChannel,
-          messageLoadedType: MessageLoadedType.afterDelete
-        );
+            messages: repository.items,
+            messageCount: repository.itemsCount,
+            parentChannel: selectedChannel,
+            messageLoadedType: MessageLoadedType.afterDelete);
 
         repository.logger
             .d('Removed message, new state will yield: ${newState != state}');
@@ -346,6 +345,8 @@ class MessagesBloc<T extends BaseChannelBloc>
     map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompanyId;
     map['workspace_id'] = map['workspace_id'] ??
         (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId);
+    // temporary field for file attachments in directs
+    map['fallback_ws_id'] = ProfileBloc.selectedWorkspaceId;
     return map;
   }
 
@@ -366,7 +367,8 @@ class MessagesBloc<T extends BaseChannelBloc>
           apiEndpoint: Endpoint.channelsRead,
           params: {
             "company_id": ProfileBloc.selectedCompanyId,
-            "workspace_id": ProfileBloc.selectedWorkspaceId,
+            "workspace_id":
+                T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId,
             "channel_id": ProfileBloc.selectedChannelId
           });
     }

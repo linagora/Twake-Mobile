@@ -51,8 +51,10 @@ class ThreadsBloc<T extends BaseChannelBloc>
         // repository.logger.w(
         // "${state.threadMessage.content.originalStr} == ${threadMessage.content.originalStr}");
         if (threadMessage.id == state.threadMessage.id &&
-            threadMessage.content.originalStr !=
-                state.threadMessage.content.originalStr)
+            (threadMessage.content.originalStr !=
+                    state.threadMessage.content.originalStr ||
+                threadMessage.reactions.keys !=
+                    state.threadMessage.reactions.keys))
           this.add(UpdateThreadMessage(state.threadMessage));
       }
     });
@@ -246,6 +248,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
     map['company_id'] = map['company_id'] ?? ProfileBloc.selectedCompanyId;
     map['workspace_id'] = map['workspace_id'] ??
         (T == DirectsBloc ? 'direct' : ProfileBloc.selectedWorkspaceId);
+    // temporary field for file attachments in directs
+    map['fallback_ws_id'] = ProfileBloc.selectedWorkspaceId;
     map['limit'] = _THREAD_MESSAGES_LIMIT.toString();
     return map;
   }

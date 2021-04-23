@@ -4,11 +4,14 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/utils/extensions.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
   final Color backgroundColor;
   final String icon;
+  final String userpic;
   final Function onTap;
 
   const SelectableAvatar({
@@ -16,6 +19,7 @@ class SelectableAvatar extends StatefulWidget {
     this.size = 48.0,
     this.backgroundColor,
     this.icon,
+    this.userpic,
     this.onTap,
   }) : super(key: key);
 
@@ -27,6 +31,8 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   final picker = ImagePicker();
 
   File _image;
+  String _userpic;
+  String _icon;
 
   // String _base64Image;
   Uint8List _bytes;
@@ -43,6 +49,24 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _userpic = widget.userpic;
+    _icon = widget.icon;
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectableAvatar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userpic != widget.userpic) {
+      _userpic = widget.userpic;
+    }
+    if (oldWidget.icon != widget.icon) {
+      _icon = widget.icon;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap, // ?? _getImage(),
@@ -50,14 +74,24 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
       child: Container(
         width: widget.size,
         height: widget.size,
-        child: (widget.icon != null && widget.icon.isNotEmpty)
+        child: (_icon != null && _icon.isNotEmpty)
             ? Center(
                 child: Text(
-                  widget.icon,
+                  _icon,
                   style: TextStyle(fontSize: Dim.tm3()),
                 ),
               )
-            : Image.asset("assets/images/pic.png"),
+            : (_userpic != null && _userpic.isNotReallyEmpty)
+                ? RoundedImage(
+                    _userpic,
+                    width: widget.size,
+                    height: widget.size,
+                  )
+                : Image.asset(
+                    'assets/images/pic.png',
+                    width: widget.size,
+                    height: widget.size,
+                  ),
         // child: _bytes != null
         //     ? SizedBox()
         //     : (_image != null

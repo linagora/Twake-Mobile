@@ -20,6 +20,7 @@ class ProfileRepository extends JsonSerializable {
   String firstName;
   @JsonKey(name: 'lastname')
   String lastName;
+
   // Avatar of user
   String thumbnail;
 
@@ -71,6 +72,7 @@ class ProfileRepository extends JsonSerializable {
       loadedFromNetwork = true;
     } else {
       profileMap = jsonDecode(profileMap[_storage.settingsField]);
+      // logger.d('RETRIEVED PROFILE: $profileMap');
     }
     // Get repository instance
     final profile = ProfileRepository.fromJson(profileMap);
@@ -113,6 +115,35 @@ class ProfileRepository extends JsonSerializable {
     firstName = json['firstname'] as String;
     lastName = json['lastname'] as String;
     thumbnail = json['thumbnail'] as String;
+  }
+
+  static Future<void> fetchInfo() async {
+    final profileMap = await _api.get(Endpoint.profile);
+    logger.d('PROFILE INFO: $profileMap');
+  }
+
+  Future<ProfileRepository> patch({
+    String newFirstName,
+    String newLastName,
+    String newLanguage,
+    String oldPassword,
+    String newPassword,
+  }) async {
+    final Map<String, dynamic> profileMap = <String, dynamic>{};
+    if (newFirstName != null) {
+      firstName = newFirstName;
+      profileMap['firstname'] = newFirstName;
+    }
+    if (newLastName != null) {
+      lastName = newLastName;
+      profileMap['lastname'] = newLastName;
+    }
+    final result = await _api.patch(Endpoint.profileInfo, body: toJson());
+    if (result != null) {
+      print('Profile updated: $profileMap');
+      save();
+    }
+    return this;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

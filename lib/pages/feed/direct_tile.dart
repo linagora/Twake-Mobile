@@ -8,7 +8,6 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
-import 'package:twake/widgets/common/channel_title.dart';
 
 class DirectTile extends StatelessWidget {
   final String id;
@@ -55,6 +54,8 @@ class DirectTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w500,

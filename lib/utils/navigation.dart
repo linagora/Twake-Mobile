@@ -31,12 +31,11 @@ void openDirect(BuildContext context, String channelId) =>
 Future<void> _open<T extends BaseChannelBloc>(
     BuildContext context, String channelId) async {
   context.read<T>().add(ChangeSelectedChannel(channelId));
-  context.read<MemberCubit>().fetchMembers(channelId: channelId);
   // print('On open: $channelId');
   await Navigator.of(context)
       .push(MaterialPageRoute(
         // builder: (context) => MessagesPage<T>(),
-      builder: (context) => Chat<T>(),
+        builder: (context) => Chat<T>(),
       ))
       .then((r) => handleError(r, context));
 
@@ -50,6 +49,7 @@ void selectWorkspace(BuildContext context, String workspaceId) {
 
 Future<List<EditChannelState>> openEditChannel(
     BuildContext context, Channel channel) {
+  context.read<MemberCubit>().fetchMembers(channelId: channel.id);
   return Navigator.of(context).push(MaterialPageRoute(
     builder: (context) => EditChannel(channel: channel),
   ));

@@ -41,3 +41,28 @@ class SetProfileFlowStage extends ProfileEvent {
   @override
   List<Object> get props => [stage];
 }
+
+class UpdateProfile extends ProfileEvent {
+  final String firstName;
+  final String lastName;
+  final String language;
+  final String oldPassword;
+  final String newPassword;
+
+  const UpdateProfile({
+    this.firstName,
+    this.lastName,
+    this.language,
+    this.oldPassword,
+    this.newPassword,
+  });
+
+  @override
+  List<Object> get props => [
+        firstName,
+        lastName,
+        language,
+        oldPassword,
+        newPassword,
+      ];
+}
