@@ -72,9 +72,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       }
     });
     _subscription = connectionBloc.listen((state) {
-      if (state is ConnectionLost) {
-        // socket = socket.close();
-      } else if (state is ConnectionActive) {
+      if (state is ConnectionActive) {
         reinit();
       }
     });
@@ -82,6 +80,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     if (connectionBloc.state is ConnectionActive) {
       if (socket.disconnected) socket.connect();
     }
+    // launch health check on socket io
+    // so that on it will make sure that the app is constatly
+    // connected to socket endpoint
+    socketIOHealthCheck();
   }
 
   void _iOSpermission() async {
@@ -94,6 +96,17 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       provisional: false,
       sound: true,
     );
+  }
+
+  void socketIOHealthCheck() {
+    // if user has logged out then terminate health check
+    if (authBloc.state is Unauthenticated) return;
+    // otherwise loop endlessly
+    Future.delayed(Duration(seconds: 10)).then((_) => socketIOHealthCheck());
+    // wait another 10 seconds for connection to apear
+    if (connectionBloc.state is ConnectionLost) return;
+    // if not connected reconnect
+    if (socket.disconnected) socket = socket.connect();
   }
 
   void setupListeners() {
@@ -163,7 +176,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   Future<void> setSubscriptions() async {
     await Future.delayed(Duration(seconds: 3));
-    if (connectionBloc.state is ConnectionLost) return;
     subscriptionRooms = await _api.get(
       Endpoint.notificationRooms,
       params: {
