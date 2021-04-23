@@ -35,7 +35,7 @@ class _CollaboratorsListState extends State<CollaboratorsList> {
   }
 
   void _return() {
-    FocusScope.of(context).requestFocus(new FocusNode());
+   // FocusScope.of(context).requestFocus(new FocusNode());
     context.read<AddWorkspaceCubit>()..setFlowStage(FlowStage.info);
     context.read<FieldsCubit>()
       ..clear()
