@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_bloc.dart';
+import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
@@ -52,6 +54,8 @@ class _EditChannelState extends State<EditChannel> {
   String _icon;
   String _channelName;
   String _channelDescription;
+
+  List<String> _participants = [];
 
   @override
   void initState() {
@@ -159,7 +163,14 @@ class _EditChannelState extends State<EditChannel> {
         );
   }
 
-  void _save() => context.read<EditChannelCubit>().save();
+  void _save() {
+    context.read<EditChannelCubit>().save();
+    if (_participants != null && _participants.length > 0) {
+      context
+          .read<MemberCubit>()
+          .addMembers(channelId: _channelId, members: _participants);
+    }
+  }
 
   void _delete(BuildContext channelContext) {
     showCupertinoModalPopup(
@@ -273,168 +284,180 @@ class _EditChannelState extends State<EditChannel> {
         ),
         body: SafeArea(
           bottom: false,
-          child: BlocListener<EditChannelCubit, EditChannelState>(
-            listenWhen: (_, current) =>
-                current is EditChannelSaved || current is EditChannelDeleted,
-            listener: (context, state) {
-              if (state is EditChannelSaved || state is EditChannelDeleted) {
-                context
-                    .read<ChannelsBloc>()
-                    .add(ReloadChannels(forceFromApi: true));
-                Navigator.of(context).pop([state]);
+          child: BlocListener<AddChannelBloc, AddChannelState>(
+            listener: (context ,state) {
+              if (state is Updated) {
+                _participants = state.repository?.members;
+                if (_participants != null && _participants.length > 0) {
+                  setState(() {
+                    _canSave = true;
+                  });
+                }
               }
             },
-            child: GestureDetector(
-              onTap: () => _closeKeyboards(context),
-              behavior: HitTestBehavior.opaque,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(16.0, 17.0, 16.0, 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            if (_emojiVisible) {
-                              setState(() {
-                                _emojiVisible = false;
-                              });
-                            } else {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Color(0xff3840f7),
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Column(
+            child: BlocListener<EditChannelCubit, EditChannelState>(
+                listenWhen: (_, current) =>
+                current is EditChannelSaved || current is EditChannelDeleted,
+                listener: (context, state) {
+                  if (state is EditChannelSaved || state is EditChannelDeleted) {
+                    context
+                        .read<ChannelsBloc>()
+                        .add(ReloadChannels(forceFromApi: true));
+                    Navigator.of(context).pop([state]);
+                  }
+                },
+                child: GestureDetector(
+                  onTap: () => _closeKeyboards(context),
+                  behavior: HitTestBehavior.opaque,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(16.0, 17.0, 16.0, 20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SelectableAvatar(
-                              size: 74.0,
-                              icon: _icon,
-                              onTap: () => _toggleEmojiBoard(),
-                            ),
-                            SizedBox(height: 4.0),
                             GestureDetector(
-                              onTap: () => _toggleEmojiBoard(),
-                              child: Text('Change avatar',
-                                  style: TextStyle(
-                                    color: Color(0xff3840f7),
-                                    fontSize: 13.0,
-                                    fontWeight: FontWeight.w400,
-                                  )),
+                              onTap: () {
+                                if (_emojiVisible) {
+                                  setState(() {
+                                    _emojiVisible = false;
+                                  });
+                                } else {
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              child: Text(
+                                'Cancel',
+                                style: TextStyle(
+                                  color: Color(0xff3840f7),
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                SelectableAvatar(
+                                  size: 74.0,
+                                  icon: _icon,
+                                  onTap: () => _toggleEmojiBoard(),
+                                ),
+                                SizedBox(height: 4.0),
+                                GestureDetector(
+                                  onTap: () => _toggleEmojiBoard(),
+                                  child: Text('Change avatar',
+                                      style: TextStyle(
+                                        color: Color(0xff3840f7),
+                                        fontSize: 13.0,
+                                        fontWeight: FontWeight.w400,
+                                      )),
+                                ),
+                              ],
+                            ),
+                            GestureDetector(
+                              onTap: _canSave ? () => _save() : null,
+                              child: Text(
+                                'Save',
+                                style: TextStyle(
+                                  color: _canSave
+                                      ? Color(0xff3840f7)
+                                      : Color(0xffa2a2a2),
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        GestureDetector(
-                          onTap: _canSave ? () => _save() : null,
-                          child: Text(
-                            'Save',
-                            style: TextStyle(
-                              color: _canSave
-                                  ? Color(0xff3840f7)
-                                  : Color(0xffa2a2a2),
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      RoundedBoxButton(
-                        cover: Image.asset('assets/images/add_new_member.png'),
-                        title: 'add',
-                        onTap: () => _openAdd(context),
                       ),
-                      SizedBox(width: _canDelete ? 10.0 : 0.0),
-                      if (_canDelete)
-                        RoundedBoxButton(
-                          cover: Image.asset('assets/images/delete.png'),
-                          title: 'delete',
-                          color: Color(0xfff04820),
-                          onTap: () => _delete(context),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RoundedBoxButton(
+                            cover: Image.asset('assets/images/add_new_member.png'),
+                            title: 'add',
+                            onTap: () => _openAdd(context),
+                          ),
+                          SizedBox(width: _canDelete ? 10.0 : 0.0),
+                          if (_canDelete)
+                            RoundedBoxButton(
+                              cover: Image.asset('assets/images/delete.png'),
+                              title: 'delete',
+                              color: Color(0xfff04820),
+                              onTap: () => _delete(context),
+                            ),
+                        ],
+                      ),
+                      SizedBox(height: 24.0),
+                      HintLine(text: 'CHANNEL INFORMATION', isLarge: true),
+                      SizedBox(height: 12.0),
+                      Divider(
+                        thickness: 0.5,
+                        height: 0.5,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                      SheetTextField(
+                        hint: 'Channel name',
+                        controller: _nameController,
+                        focusNode: _nameFocusNode,
+                        maxLength: 30,
+                      ),
+                      Divider(
+                        thickness: 0.5,
+                        height: 0.5,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                      SheetTextField(
+                        hint: 'Description',
+                        controller: _descriptionController,
+                        focusNode: _descriptionFocusNode,
+                      ),
+                      Divider(
+                        thickness: 0.5,
+                        height: 0.5,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                      // ButtonField(
+                      //   title: 'Channel type',
+                      //   trailingTitle: 'Public',
+                      //   hasArrow: true,
+                      // ),
+                      SizedBox(height: 32.0),
+                      HintLine(text: 'MEMBERS', isLarge: true),
+                      SizedBox(height: 12.0),
+                      Divider(
+                        thickness: 0.5,
+                        height: 0.5,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                      ButtonField(
+                        title: 'Member management',
+                        trailingTitle: 'Manage',
+                        hasArrow: true,
+                        onTap: () => _openManagement(context),
+                      ),
+                      Divider(
+                        thickness: 0.5,
+                        height: 0.5,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                      // SwitchField(
+                      //   title: 'Chat history for new members',
+                      //   value: _showHistoryForNew,
+                      //   onChanged: (value) =>
+                      //       _batchUpdateState(showHistoryForNew: value),
+                      //   isExtended: true,
+                      // ),
+                      // SizedBox(height: 8.0),
+                      // HintLine(text: 'Show previous chat history for newly added members'),
+                      Spacer(),
+                      _emojiVisible ? _buildEmojiBoard() : Container(),
                     ],
                   ),
-                  SizedBox(height: 24.0),
-                  HintLine(text: 'CHANNEL INFORMATION', isLarge: true),
-                  SizedBox(height: 12.0),
-                  Divider(
-                    thickness: 0.5,
-                    height: 0.5,
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                  SheetTextField(
-                    hint: 'Channel name',
-                    controller: _nameController,
-                    focusNode: _nameFocusNode,
-                    maxLength: 30,
-                  ),
-                  Divider(
-                    thickness: 0.5,
-                    height: 0.5,
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                  SheetTextField(
-                    hint: 'Description',
-                    controller: _descriptionController,
-                    focusNode: _descriptionFocusNode,
-                  ),
-                  Divider(
-                    thickness: 0.5,
-                    height: 0.5,
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                  // ButtonField(
-                  //   title: 'Channel type',
-                  //   trailingTitle: 'Public',
-                  //   hasArrow: true,
-                  // ),
-                  SizedBox(height: 32.0),
-                  HintLine(text: 'MEMBERS', isLarge: true),
-                  SizedBox(height: 12.0),
-                  Divider(
-                    thickness: 0.5,
-                    height: 0.5,
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                  ButtonField(
-                    title: 'Member management',
-                    trailingTitle: 'Manage',
-                    hasArrow: true,
-                    onTap: () => _openManagement(context),
-                  ),
-                  Divider(
-                    thickness: 0.5,
-                    height: 0.5,
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                  // SwitchField(
-                  //   title: 'Chat history for new members',
-                  //   value: _showHistoryForNew,
-                  //   onChanged: (value) =>
-                  //       _batchUpdateState(showHistoryForNew: value),
-                  //   isExtended: true,
-                  // ),
-                  // SizedBox(height: 8.0),
-                  // HintLine(text: 'Show previous chat history for newly added members'),
-                  Spacer(),
-                  _emojiVisible ? _buildEmojiBoard() : Container(),
-                ],
+                ),
               ),
-            ),
           ),
         ),
       ),
