@@ -539,6 +539,7 @@ enum TType {
   Nop,
   System,
   Attachment,
+  Compile,
   Unknown,
 }
 
@@ -558,13 +559,41 @@ class Delim {
 // Rewrite the renderer once twake chooses
 // one and only format for data representation
 class TwacodeRenderer {
-  final List<dynamic> twacode;
+  List<dynamic> twacode;
   List<InlineSpan> spans;
 
   TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
+    this.twacode.addAll(this.extractFiles(this.twacode));
     spans = render(twacode: this.twacode, parentStyle: parentStyle);
+  }
+
+  // Files should only occur in the end of the twacode structure
+  // they are usually put inside of nop type object's content
+  // or rarely exist as a standalon object in the end of the list
+  List<dynamic> extractFiles(List<dynamic> content) {
+    List<dynamic> files = [];
+    final last = content.last;
+
+    if (last is List) {
+      files.addAll(extractFiles(last));
+    }
+
+    if (last is Map) {
+      if (last['type'] == 'file') {
+        files.add(last);
+        content.removeLast();
+      } else if (last['content'] is List) {
+        var inner = last['content'] as List;
+        for (int i = 0; i < inner.length; i++)
+          if (inner[i] is Map && inner[i]['type'] == 'file') {
+            files.add(inner[i]);
+            inner.removeAt(i);
+          }
+      }
+    }
+    return files;
   }
 
   TextStyle getStyle(TType type) {
@@ -643,6 +672,10 @@ class TwacodeRenderer {
         style = TextStyle(color: Colors.purple);
         break;
 
+      case TType.Unknown:
+        style = TextStyle(fontStyle: FontStyle.italic, fontFamily: MONOSPACE);
+        break;
+
       default:
         style = TextStyle(
           // color: Colors.black,
@@ -714,6 +747,9 @@ class TwacodeRenderer {
               break;
             case 'file':
               type = TType.File;
+              break;
+            case 'compile':
+              type = TType.Compile;
               break;
             default:
               type = TType.Unknown;
@@ -873,8 +909,20 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.Nop) {
-          if (t['content'] is! List) t['content'] = [t['content']];
-          spans.addAll(render(twacode: t['content'], parentStyle: parentStyle));
+          if (t['content'] is Map) {
+            t['content'] = [
+              t['context']
+            ]; // I know, I know, it cannot be uglier
+          }
+          final items = render(twacode: t['content'], parentStyle: parentStyle);
+          spans.add(
+            TextSpan(
+              children: items,
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            ),
+          );
         } else if (type == TType.File) {
           final s = int.parse(t['metadata']['size'] as String);
           const MB = 1024 * 1024;
@@ -949,6 +997,24 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               children: items,
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            ),
+          );
+        } else if (type == TType.Compile) {
+          spans.add(
+            TextSpan(
+              text: t['content'],
+              style: parentStyle.merge(
+                getStyle(type),
+              ),
+            ),
+          );
+        } else if (type == TType.Unknown) {
+          spans.add(
+            TextSpan(
+              text: 'not supported',
               style: parentStyle.merge(
                 getStyle(type),
               ),
