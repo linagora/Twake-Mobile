@@ -132,7 +132,20 @@ class Api {
       // logger.d('METHOD: ${jsonEncode(method)}');
       // logger.d('PARAMS: ${jsonEncode(params)}');
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      // logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
+      // logger.d('GET RESPONSE: ${jsonEncode(response.data)}')
+
+      logger.d('GET RESPONSE:');
+      if (response != null && response.data != null) {
+        final longString = jsonEncode(response.data);
+        int step = longString.length;
+        for (int i = 0; i < longString.length; i+=step) {
+          if (i+ step > longString.length) {
+            i = longString.length - i;
+          }
+          print(longString.substring(i,i+step));
+        }
+      }
+
       return response.data;
     } catch (e) {
       logger.wtf('FAILED TO GET INFO: $e');
@@ -241,15 +254,15 @@ class Api {
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
-            final ultraLongString = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
+            // final ultraLongString = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
 
-            int step = 1024;
-            for (int i = 0; i < ultraLongString.length; i+=step) {
-              if( i+ step > ultraLongString.length) {
-                i = ultraLongString.length - i;
-              }
-              print(ultraLongString.substring(i,i+step));
-            }
+            // int step = 1024;
+            // for (int i = 0; i < ultraLongString.length; i+=step) {
+            //   if( i+ step > ultraLongString.length) {
+            //     i = ultraLongString.length - i;
+            //   }
+            //   print(ultraLongString.substring(i,i+step));
+            // }
 
             // debugPrint('\nMethod: ${jsonEncode(error.requestOptions.method)}', wrapWidth: 1024);
             // debugPrint('\nPATH: ${jsonEncode(error.requestOptions.path)}', wrapWidth: 1024);

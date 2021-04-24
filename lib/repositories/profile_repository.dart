@@ -141,7 +141,7 @@ class ProfileRepository extends JsonSerializable {
       lastName = newLastName;
       profileMap['lastname'] = newLastName;
     }
-    final result = await _api.patch(Endpoint.account, body: toJson());
+    final result = await _api.patch(Endpoint.profile, body: toJson());
     if (result != null) {
       print('Profile updated: $profileMap');
       save();
