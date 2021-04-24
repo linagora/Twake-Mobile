@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-// import 'package:logger/logger.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_event.dart';
 import 'package:twake/models/base_channel.dart';
