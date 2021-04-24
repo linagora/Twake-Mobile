@@ -145,7 +145,13 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                         message: _messages[i],
                         key: ValueKey(
                           _messages[i].id +
-                              _messages[i].reactions.keys.join() +
+                              _messages[i].reactions.entries.fold(
+                                    '',
+                                    (acc, entry) =>
+                                        acc +
+                                        entry.key +
+                                        entry.value.toString(),
+                                  ) +
                               (_messages[i].content.originalStr ?? ''),
                         ),
                       );
