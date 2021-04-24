@@ -241,15 +241,15 @@ class Api {
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
-            // final ultralongstring = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
-            //
-            // int step = 1024;
-            // for (int i = 0; i < ultralongstring.length; i+=step) {
-            //   if( i+step>ultralongstring.length){
-            //     i = ultralongstring.length - i;
-            //   }
-            //   print(ultralongstring.substring(i,i+step));
-            // }
+            final ultraLongString = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
+
+            int step = 1024;
+            for (int i = 0; i < ultraLongString.length; i+=step) {
+              if( i+ step > ultraLongString.length) {
+                i = ultraLongString.length - i;
+              }
+              print(ultraLongString.substring(i,i+step));
+            }
 
             // debugPrint('\nMethod: ${jsonEncode(error.requestOptions.method)}', wrapWidth: 1024);
             // debugPrint('\nPATH: ${jsonEncode(error.requestOptions.path)}', wrapWidth: 1024);

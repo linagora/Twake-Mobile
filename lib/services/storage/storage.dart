@@ -97,4 +97,5 @@ enum StorageType {
   Drafts,
   Member,
   Configuration,
+  Account,
 }

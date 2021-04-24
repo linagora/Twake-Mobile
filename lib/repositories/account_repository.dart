@@ -6,12 +6,12 @@ import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
-part 'profile_repository.g.dart';
+part 'account_repository.g.dart';
 
-const _PROFILE_STORE_KEY = 'profile';
+const _ACCOUNT_STORE_KEY = 'account';
 
 @JsonSerializable(explicitToJson: true)
-class ProfileRepository extends JsonSerializable {
+class AccountRepository extends JsonSerializable {
   @JsonKey(required: true)
   final String id;
   @JsonKey(required: true)
@@ -28,13 +28,13 @@ class ProfileRepository extends JsonSerializable {
   // List<String> notificationRooms;
 
   @JsonKey(required: true)
-  ProfileRepository({
+  AccountRepository({
     this.id,
     this.username,
   });
 
   @JsonKey(ignore: true)
-  static final logger = Logger();
+  static final _logger = Logger();
   @JsonKey(ignore: true)
   static final _api = Api();
   @JsonKey(ignore: true)
@@ -58,35 +58,33 @@ class ProfileRepository extends JsonSerializable {
   Map<String, dynamic> badges = {};
 
   // Pseudo constructor for loading profile from storage or api
-  static Future<ProfileRepository> load() async {
-    logger.w("Loading profile");
+  static Future<AccountRepository> load() async {
+    _logger.w("Loading account:");
     bool loadedFromNetwork = false;
-    var profileMap = await _storage.load(
-      type: StorageType.Profile,
-      key: _PROFILE_STORE_KEY,
+    var accountMap = await _storage.load(
+      type: StorageType.Account,
+      key: _ACCOUNT_STORE_KEY,
     );
-    if (profileMap == null) {
-      logger.d('No profile in storage, requesting from api...');
-      profileMap = await _api.get(Endpoint.profile);
-      logger.d('RECEIVED PROFILE: $profileMap');
+    if (accountMap == null) {
+      _logger.d('No account in storage, requesting from api...');
+      accountMap = await _api.get(Endpoint.account);
+      _logger.d('RECEIVED ACCOUNT: $accountMap');
       loadedFromNetwork = true;
     } else {
-      profileMap = jsonDecode(profileMap[_storage.settingsField]);
-      // logger.d('RETRIEVED PROFILE: $profileMap');
+      accountMap = jsonDecode(accountMap[_storage.settingsField]);
+      // _logger.d('RETRIEVED ACCOUNT: $accountMap');
     }
     // Get repository instance
-    final profile = ProfileRepository.fromJson(profileMap);
+    final account = AccountRepository.fromJson(accountMap);
     // Save it to store
-    if (loadedFromNetwork) profile.save();
+    if (loadedFromNetwork) account.save();
     // return it
 
-    fetchInfo();
-
-    return profile;
+    return account;
   }
 
   Future<void> reload() async {
-    final profileMap = await _api.get(Endpoint.profile);
+    final profileMap = await _api.get(Endpoint.account);
     _update(profileMap);
   }
 
@@ -99,18 +97,18 @@ class ProfileRepository extends JsonSerializable {
 
   Future<void> clean() async {
     await _storage.delete(
-      type: StorageType.Profile,
-      key: _PROFILE_STORE_KEY,
+      type: StorageType.Account,
+      key: _ACCOUNT_STORE_KEY,
     );
   }
 
   Future<void> save() async {
     await _storage.store(
       item: {
-        'id': _PROFILE_STORE_KEY,
+        'id': _ACCOUNT_STORE_KEY,
         _storage.settingsField: jsonEncode(this.toJson())
       },
-      type: StorageType.Profile,
+      type: StorageType.Account,
     );
   }
 
@@ -120,30 +118,25 @@ class ProfileRepository extends JsonSerializable {
     thumbnail = json['thumbnail'] as String;
   }
 
-  static Future<void> fetchInfo() async {
-    final profileMap = await _api.get(Endpoint.account);
-    logger.d('PROFILE INFO: $profileMap');
-  }
-
-  Future<ProfileRepository> patch({
+  Future<AccountRepository> patch({
     String newFirstName,
     String newLastName,
     String newLanguage,
     String oldPassword,
     String newPassword,
   }) async {
-    final Map<String, dynamic> profileMap = <String, dynamic>{};
+    final Map<String, dynamic> accountMap = <String, dynamic>{};
     if (newFirstName != null) {
       firstName = newFirstName;
-      profileMap['firstname'] = newFirstName;
+      accountMap['firstname'] = newFirstName;
     }
     if (newLastName != null) {
       lastName = newLastName;
-      profileMap['lastname'] = newLastName;
+      accountMap['lastname'] = newLastName;
     }
     final result = await _api.patch(Endpoint.account, body: toJson());
     if (result != null) {
-      print('Profile updated: $profileMap');
+      print('Account updated: $accountMap');
       save();
     }
     return this;
@@ -151,18 +144,18 @@ class ProfileRepository extends JsonSerializable {
 
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
-  factory ProfileRepository.fromJson(Map<String, dynamic> json) {
+  factory AccountRepository.fromJson(Map<String, dynamic> json) {
     // json = Map.from(json);
     // if (json['notification_rooms'] is String) {
     // json['notification_rooms'] = jsonDecode(json['notification_rooms']);
     // }
-    return _$ProfileRepositoryFromJson(json);
+    return _$AccountRepositoryFromJson(json);
   }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
-    var map = _$ProfileRepositoryToJson(this);
+    var map = _$AccountRepositoryToJson(this);
     // map['notification_rooms'] = jsonEncode(map['notification_rooms']);
     return map;
   }

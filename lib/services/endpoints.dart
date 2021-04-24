@@ -11,7 +11,7 @@ class Endpoint {
   static const prolong = '/authorization/prolong';
   // API Endpoint for working with user data
   static const profile = '/user';
-  static const profileInfo = '/users/profile';
+  static const account = '/users/profile';
   // API Endpoint for working with other users
   static const users = '/users';
   // API Endpoint for working with bots (applications)
