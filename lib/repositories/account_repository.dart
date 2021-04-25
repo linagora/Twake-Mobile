@@ -5,6 +5,9 @@ import 'package:twake/models/base_channel.dart';
 import 'package:twake/models/company.dart';
 import 'package:twake/models/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/models/account_field.dart';
+import 'package:twake/models/language_field.dart';
+import 'package:twake/models/language_option.dart';
 
 part 'account_repository.g.dart';
 
