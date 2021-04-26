@@ -1,3 +1,7 @@
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:flutter_downloader/flutter_downloader.dart';
+
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
@@ -44,12 +48,27 @@ class _MessageTileState<T extends BaseChannelBloc>
   bool _shouldShowSender;
   Message _message;
 
+  ReceivePort _receivePort = ReceivePort();
+  int progress = 0;
+
+  static downloadingCallback(id, status, progress) {
+
+    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading");
+      
+    sendPort.send([id, status, progress]);
+  }
+
   @override
   void initState() {
     super.initState();
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
+
+    IsolateNameServer.registerPortWithName(
+        _receivePort.sendPort, "downloading");
+
+    FlutterDownloader.registerCallback(downloadingCallback);
   }
 
   @override

@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -561,8 +567,10 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
+  int downloadProgress;
 
-  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
+  TwacodeRenderer(
+      {this.twacode, this.downloadProgress, TextStyle parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
@@ -696,6 +704,31 @@ class TwacodeRenderer {
         children: this.spans,
       ),
     );
+  }
+
+  int progres = 0;
+  void downloadFile(List<dynamic> t) async {
+    final permissionStatus = await Permission.storage.request();
+    final dir = await getExternalStorageDirectory();
+
+    if (permissionStatus.isGranted) {
+      if (Platform.isAndroid) {
+        final dir = getExternalStorageDirectories();
+      } else if (Platform.isIOS) {
+        final dir = getApplicationSupportDirectory();
+      } //
+      /* final id = await FlutterDownloader.enqueue(
+          url: t['metadata']['download'],
+          savedDir: dir.path,
+          fileName: "Name",
+          showNotification: true,
+          openFileFromNotification: true);*/
+    } else {
+      print('Test'); // needed to add a massage
+    }
+
+    // Open the image via photo_view or download link via flutter_downloader
+    // file link is contained in t['metadata']['download'] field
   }
 
   List<InlineSpan> render({List<dynamic> twacode, TextStyle parentStyle}) {
@@ -948,9 +981,35 @@ class TwacodeRenderer {
             padding: EdgeInsets.all(3),
             child: Row(children: [
               InkWell(
-                onTap: () => {
-                  // Open the image via photo_view or download link via flutter_downloader
-                  // file link is contained in t['metadata']['download'] field
+                onTap: () async {
+                  if (t['metadata']['download'] != null) {
+                    final permissionStatus = await Permission.storage.request();
+
+                    if (permissionStatus.isGranted) {
+                      if (Platform.isAndroid) {
+                        final dir = await getExternalStorageDirectory();
+                        final id = await FlutterDownloader.enqueue(
+                            url: //t['metadata']['download'].toString(),
+                                "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3",
+                            savedDir: dir.path,
+                            // fileName: "Test", //auto
+                            showNotification: true,
+                            openFileFromNotification: true);
+                      } else if (Platform.isIOS) {
+                        final dir = await getApplicationSupportDirectory();
+                        final id = await FlutterDownloader.enqueue(
+                            url: t['metadata']['download'].toString(),
+                            savedDir: dir.path,
+                            // fileName: "Test", //auto
+                            showNotification: true,
+                            openFileFromNotification: true);
+                      }
+
+                      // print("TEST link ${t['metadata']['download']}");
+                    } else {
+                      // Ask Permission?
+                    }
+                  }
                 },
                 child: SizedBox(
                   child: t['metadata']['preview'] != null
@@ -960,8 +1019,14 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
-                          
+                          /*CircularProgressIndicator(
+                          backgroundColor: Colors.blueGrey,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.lightBlue),
+                          value: progres.toDouble(),*/
                         ),
+
+                  // ),
                   width: 40,
                   height: 40,
                 ),
