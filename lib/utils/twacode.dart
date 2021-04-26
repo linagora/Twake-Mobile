@@ -1,5 +1,6 @@
 import 'dart:io';
 
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -567,10 +568,10 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
-  int downloadProgress;
+
 
   TwacodeRenderer(
-      {this.twacode, this.downloadProgress, TextStyle parentStyle}) {
+      {this.twacode, TextStyle parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
@@ -984,7 +985,7 @@ class TwacodeRenderer {
                 onTap: () async {
                   if (t['metadata']['download'] != null) {
                     final permissionStatus = await Permission.storage.request();
-
+                    print(t['metadata']['download']);
                     if (permissionStatus.isGranted) {
                       if (Platform.isAndroid) {
                         final dir = await getExternalStorageDirectory();
