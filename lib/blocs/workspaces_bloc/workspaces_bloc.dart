@@ -5,16 +5,15 @@ import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspace_event.dart';
-import 'package:twake/models/workspace.dart';
-import 'package:twake/repositories/collection_repository.dart';
 import 'package:twake/blocs/companies_bloc/company_state.dart';
 import 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
+import 'package:twake/repositories/workspaces_repository.dart';
 
 export 'package:twake/blocs/workspaces_bloc/workspace_event.dart';
 export 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
 
 class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
-  final CollectionRepository<Workspace> repository;
+  final WorkspacesRepository repository;
   final CompaniesBloc companiesBloc;
   StreamSubscription subscription;
   String selectedCompanyId;
@@ -106,6 +105,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         workspaces: repository.items,
         selected: repository.selected,
       );
+      repository.fetchMembers();
     } else if (event is LoadSingleWorkspace) {
       throw 'Not implemented yet';
     } else if (event is RemoveWorkspace) {

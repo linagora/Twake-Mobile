@@ -34,6 +34,7 @@ abstract class Storage {
     String sql,
     List args,
   });
+
   Future<dynamic> customQuery(
     String query, {
     List<List> filters,
@@ -98,4 +99,5 @@ enum StorageType {
   Member,
   Configuration,
   Account,
+  User2Workspace,
 }
