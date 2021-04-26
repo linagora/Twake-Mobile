@@ -2,7 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/models/workspace.dart';
 
 abstract class WorkspaceState extends Equatable {
-  const WorkspaceState();
+  final List<Workspace> workspaces;
+  final Workspace selected;
+
+  const WorkspaceState({this.workspaces, this.selected});
 }
 
 class WorkspacesLoaded extends WorkspaceState {

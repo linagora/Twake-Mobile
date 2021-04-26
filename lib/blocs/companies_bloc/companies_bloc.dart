@@ -47,12 +47,14 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
     } else if (event is ChangeSelectedCompany) {
       repository.select(event.companyId);
       ProfileBloc.selectedCompanyId = event.companyId;
-      yield CompaniesLoaded(
+      final newState = CompaniesLoaded(
         companies: repository.items,
         selected: repository.selected,
       );
+      // repository.ogger
+      // .w("YIELDING NEW COMPANY STATE: ${this.state != newState}");
+      yield newState;
     } else if (event is LoadSingleCompany) {
-      // TODO implement single company loading
       throw 'Not implemented yet';
     } else if (event is RemoveCompany) {
       throw 'Not implemented yet';

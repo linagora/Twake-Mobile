@@ -134,15 +134,15 @@ class Api {
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
       // logger.d('GET RESPONSE: ${jsonEncode(response.data)}')
 
-      logger.d('GET RESPONSE:');
+      // logger.d('GET RESPONSE:');
       if (response != null && response.data != null) {
         final longString = jsonEncode(response.data);
         int step = longString.length;
-        for (int i = 0; i < longString.length; i+=step) {
-          if (i+ step > longString.length) {
+        for (int i = 0; i < longString.length; i += step) {
+          if (i + step > longString.length) {
             i = longString.length - i;
           }
-          print(longString.substring(i,i+step));
+          // print(longString.substring(i, i + step));
         }
       }
 

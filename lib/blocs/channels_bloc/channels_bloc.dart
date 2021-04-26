@@ -32,8 +32,8 @@ class ChannelsBloc extends BaseChannelBloc {
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {
     _subscription = workspacesBloc.listen((WorkspaceState state) {
-      if (state is WorkspaceSelected) {
-        repository.logger.d('WORKSPACE SELECTED ${state.selected.id}');
+      if (state is WorkspacesLoaded) {
+        // repository.logger.e('WORKSPACE SELECTED ${state.selected.name}');
         selectedBeforeId = selectedParentId;
         selectedParentId = state.selected.id;
         this.add(ReloadChannels(workspaceId: selectedParentId));
@@ -118,8 +118,8 @@ class ChannelsBloc extends BaseChannelBloc {
       ProfileBloc.selectedChannelId = event.channelId;
       ProfileBloc.selectedThreadId = null;
 
-      repository.logger
-          .e("CURRENT CHANNEL STATE: ${this.state}\nWILL YIELD: $newState");
+      // repository.logger
+      // .e("CURRENT CHANNEL STATE: ${this.state}\nWILL YIELD: $newState");
       yield newState;
       notificationBloc.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is ModifyMessageCount) {

@@ -9,8 +9,8 @@ import 'package:twake/blocs/connection_bloc/connection_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/notification_bloc/notification_event.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
-import 'package:twake/pages/main_page.dart';
-import 'package:twake/pages/messages_page.dart';
+import 'package:twake/pages/chat/chat.dart';
+import 'package:twake/pages/tabs_controller.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/services/notifications.dart';
 import 'package:twake/blocs/notification_bloc/notification_state.dart';
@@ -100,13 +100,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void socketIOHealthCheck() {
     // if user has logged out then terminate health check
-    if (authBloc.state is Unauthenticated) return;
+    if (authBloc.state is Unauthenticated) {
+      logger.w('UNAUTHENTICATED FOR SOCKET IO');
+      return;
+    }
     // otherwise loop endlessly
     Future.delayed(Duration(seconds: 10)).then((_) => socketIOHealthCheck());
     // wait another 10 seconds for connection to apear
     if (connectionBloc.state is ConnectionLost) return;
     // if not connected reconnect
-    if (socket.disconnected) socket = socket.connect();
+    if (socket.disconnected ||
+        socketConnectionState == SocketConnectionState.DISCONNECTED)
+      socket = socket.connect();
   }
 
   void setupListeners() {
@@ -120,7 +125,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       socketConnectionState = SocketConnectionState.CONNECTED;
       while (socketConnectionState != SocketConnectionState.AUTHENTICATED &&
           authBloc.repository.accessToken != null) {
-        print('AUTHENTICATING SOCKEIO');
+        // print('AUTHENTICATING SOCKEIO');
         if (socket.disconnected) socket = socket.connect();
         socket.emit(SocketIOEvent.AUTHENTICATE, {
           'token': authBloc.repository.accessToken,
@@ -236,10 +241,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   bool shouldNotify(MessageNotification data) {
-    print('Data channel id: ${data.channelId}');
-    print('ProfileBloc id: ${ProfileBloc.selectedChannelId}');
-    print('Data thread id: ${data.threadId}');
-    print('ProfileBloc selected thread id: ${ProfileBloc.selectedThreadId}');
+    // print('Data channel id: ${data.channelId}');
+    // print('ProfileBloc id: ${ProfileBloc.selectedChannelId}');
+    // print('Data thread id: ${data.threadId}');
+    // print('ProfileBloc selected thread id: ${ProfileBloc.selectedThreadId}');
 
     if (data.channelId == ProfileBloc.selectedChannelId &&
         (ProfileBloc.selectedThreadId == data.threadId ||
@@ -249,6 +254,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void onMessageCallback(NotificationData data) {
     if (data is MessageNotification) {
+      // print("ON MESSAGE CALLBACK:\n${data.toJson()} ");
       if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
         // logger.d('adding ThreadMessageEvent');
         this.add(ThreadMessageEvent(data));
@@ -259,15 +265,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         // logger.d('adding ChannelMessageEvent');
         this.add(ChannelMessageEvent(data));
       }
+      navigate(data);
     }
-    navigate(data);
-    // } else if (data is WhatsNewItem) {
-    // if (data.workspaceId == null) {
-    // this.add(UpdateDirectChannel(data));
-    // } else {
-    // this.add(UpdateClassicChannel(data));
-    // }
-    // }
   }
 
   onResumeCallback(MessageNotification data) {
@@ -275,19 +274,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   void navigate(MessageNotification data) {
-    navigator.currentState.popUntil(
-      ModalRoute.withName('/'),
-    ); // navigator.popAndPushNamed(
-    navigator.currentState.push(
-      MaterialPageRoute(
-        builder: (ctx) => MainPage(),
-      ),
+    // navigator.currentState.popUntil((_) => false); // navigator.popAndPushNamed(
+    // navigator.currentState.push(
+    // MaterialPageRoute(
+    // builder: (ctx) => MainPage(),
+    // ),
+    // );
+    navigator.currentState.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (ctx) => TabsController()),
+      (_) => false,
     );
     void Function(BuildContext) messagePage;
     if (data.workspaceId == 'direct')
-      messagePage = (ctx) => MessagesPage<DirectsBloc>();
+      messagePage = (ctx) => Chat<DirectsBloc>();
     else
-      messagePage = (ctx) => MessagesPage<ChannelsBloc>();
+      messagePage = (ctx) => Chat<ChannelsBloc>();
 
     navigator.currentState.push(
       MaterialPageRoute(builder: messagePage),

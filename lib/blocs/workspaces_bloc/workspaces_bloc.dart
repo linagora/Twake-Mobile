@@ -32,7 +32,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
-        // repository.logger.d(
+        // repository.logger.e(
         // 'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId));
       }
@@ -48,7 +48,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
             this.add(ChangeSelectedWorkspace(state.data.workspaceId));
             break;
           } else {
-            print('WAITING FOR COMPANY SELECTION');
+            // print('WAITING FOR COMPANY SELECTION');
             await Future.delayed(Duration(milliseconds: 500));
           }
         }
@@ -70,10 +70,13 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
-      yield WorkspacesLoaded(
+      final newState = WorkspacesLoaded(
         workspaces: repository.items,
         selected: repository.selected,
       );
+      // repository.logger
+      // .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
+      yield newState;
     } else if (event is CheckForChange) {
       // Sorry Pavel, but cannot block the stream here with await
       repository.didChange(
@@ -98,6 +101,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       // print('Workspace id to select: ${event.workspaceId}');
       repository.select(event.workspaceId);
       ProfileBloc.selectedWorkspaceId = event.workspaceId;
+      // repository.logger.w("YIELDING NEW WORKSPACES STATE");
       yield WorkspaceSelected(
         workspaces: repository.items,
         selected: repository.selected,

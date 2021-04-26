@@ -21,7 +21,7 @@ class Notifications {
   Future onDidReceiveLocalNotification(
       int id, String title, String body, String payload) async {
     // display a dialog with the notification details, tap ok to go to another page
-    print('SHOW IOS NOTIFICATION');
+    // print('SHOW IOS NOTIFICATION');
   }
 
   Notifications({
@@ -40,6 +40,7 @@ class Notifications {
       this.platform = Target.MacOS;
     else if (Platform.isWindows) this.platform = Target.Windows;
     FirebaseMessaging.onMessage.listen(onMessage);
+    FirebaseMessaging.onMessageOpenedApp.listen(onResume);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('ic_launcher_foreground');
@@ -53,12 +54,12 @@ class Notifications {
 
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (payload) async {
-      print("PAYLOAD FROM NOTIFY: $payload");
+      // print("PAYLOAD FROM NOTIFY: $payload");
       final map = jsonDecode(payload);
-      print("NOTIFY CLICK: $map");
+      // print("NOTIFY CLICK: $map");
       try {
         final notification = MessageNotification.fromJson(map);
-        print("NOTIFICATION PARSED: $notification");
+        // print("NOTIFICATION PARSED: $notification");
         onMessageCallback(notification);
       } catch (e) {
         logger.wtf('ERROR PARSING NOTIFY: $e');
@@ -121,44 +122,6 @@ class Notifications {
     return notification;
   }
 
-  // String _getBody(Map<String, dynamic> message) {
-  // var data;
-  // switch (platform) {
-  // case Target.Android:
-  // logger.d('Android notification received\n$message');
-  // data = message['body'];
-  // break;
-  // case Target.IOS:
-  // logger.d('iOS notification received\n$message');
-  // data = message['aps']['alert']['body'];
-  // break;
-  // case Target.Linux:
-  // case Target.MacOS:
-  // case Target.Windows:
-  // throw 'Desktop is not supported';
-  // }
-  // return data;
-  // }
-//
-  // String _getTitle(Map<String, dynamic> message) {
-  // var data;
-  // switch (platform) {
-  // case Target.Android:
-  // logger.d('Android notification received\n$message');
-  // data = message['title'];
-  // break;
-  // case Target.IOS:
-  // logger.d('iOS notification received\n$message');
-  // data = message['aps']['alert']['title'];
-  // break;
-  // case Target.Linux:
-  // case Target.MacOS:
-  // case Target.Windows:
-  // throw 'Desktop is not supported';
-  // }
-  // return data;
-  // }
-
   String _getPayload(Map<String, dynamic> message) {
     var data;
     switch (platform) {
@@ -203,16 +166,17 @@ class Notifications {
     return data['channel_id'];
   }
 
-  // Future<dynamic> onResume(RemoteMessage rmessage) async {
-  // Map<String, dynamic> message = rmessage.data;
-  // logger.d('Resuming on message received\n$message');
-  // final notification = messageParse(message);
-  // await onResumeCallback(notification);
-  // }
+  Future<dynamic> onResume(RemoteMessage rmessage) async {
+    Map<String, dynamic> message = rmessage.data;
+    logger.d('Resuming on message received\n$message');
+    final notification = messageParse(message);
+    await onResumeCallback(notification);
+  }
 
-  // Future<dynamic> onLaunch(RemoteMessage message) async {
-  // onResume(message);
-  // }
+//
+  Future<dynamic> onLaunch(RemoteMessage message) async {
+    onResume(message);
+  }
 }
 
 enum Target {
