@@ -38,4 +38,6 @@ class FieldsCubit extends Cubit<FieldsState> {
           : Error('Something went wrong on fields clearing.'),
     );
   }
+
+  List<Widget> getAll() => repository.getAll();
 }

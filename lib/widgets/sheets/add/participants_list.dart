@@ -240,54 +240,56 @@ class _ParticipantsListState extends State<ParticipantsList> {
                         'Selected UsERS: ${_selectedUsers.map((e) => e.username)}');
                     // print('Selected Ids: $selectedIds}');
 
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      padding: EdgeInsets.only(top: 0),
-                      itemCount: _isDirect
-                          ? users.length
-                          : deselectedUsers.length + _selectedUsers.length,
-                      itemBuilder: (context, index) {
-                        User user;
-                        if (_isDirect) {
-                          user = users[index];
-                        } else {
-                          if (index < _selectedUsers.length) {
-                            user = _selectedUsers[index];
+                    return Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(top: 0),
+                        itemCount: _isDirect
+                            ? users.length
+                            : deselectedUsers.length + _selectedUsers.length,
+                        itemBuilder: (context, index) {
+                          User user;
+                          if (_isDirect) {
+                            user = users[index];
                           } else {
-                            user = deselectedUsers[index - _selectedUsers.length];
-                          }
-                        }
-                        return SearchItem(
-                          title: user.firstName.isNotEmpty ||
-                                  user.lastName.isNotEmpty
-                              ? '${user.firstName} ${user.lastName}'
-                              : '${user.username}',
-                          selected: _selectedIds.contains(user.id),
-                          allowMultipleChoice: !_isDirect,
-                          onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            if (_isDirect && !(state is Creation)) {
-                              _selectedIds = [user.id];
-                              _createDirect(_selectedIds);
+                            if (index < _selectedUsers.length) {
+                              user = _selectedUsers[index];
                             } else {
-                              if (_selectedIds.contains(user.id)) {
-                                _selectedIds.remove(user.id);
-                                _selectedUsers.removeWhere((selected) => selected.id == user.id);
-                              } else {
-                                _selectedIds.add(user.id);
-                                _selectedUsers.add(user);
-                              }
-                              context.read<AddChannelBloc>().add(
-                                    Update(
-                                      name: name,
-                                      description: description,
-                                      participants: _selectedIds,
-                                    ),
-                                  );
+                              user = deselectedUsers[index - _selectedUsers.length];
                             }
-                          },
-                        );
-                      },
+                          }
+                          return SearchItem(
+                            title: user.firstName.isNotEmpty ||
+                                    user.lastName.isNotEmpty
+                                ? '${user.firstName} ${user.lastName}'
+                                : '${user.username}',
+                            selected: _selectedIds.contains(user.id),
+                            allowMultipleChoice: !_isDirect,
+                            onTap: () {
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              if (_isDirect && !(state is Creation)) {
+                                _selectedIds = [user.id];
+                                _createDirect(_selectedIds);
+                              } else {
+                                if (_selectedIds.contains(user.id)) {
+                                  _selectedIds.remove(user.id);
+                                  _selectedUsers.removeWhere((selected) => selected.id == user.id);
+                                } else {
+                                  _selectedIds.add(user.id);
+                                  _selectedUsers.add(user);
+                                }
+                                context.read<AddChannelBloc>().add(
+                                      Update(
+                                        name: name,
+                                        description: description,
+                                        participants: _selectedIds,
+                                      ),
+                                    );
+                              }
+                            },
+                          );
+                        },
+                      ),
                     );
                   },
                 );

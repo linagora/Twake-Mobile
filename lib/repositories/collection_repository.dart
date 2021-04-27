@@ -54,8 +54,8 @@ class CollectionRepository<T extends CollectionItem> {
   int get itemsCount => (items ?? []).length;
 
   final logger = Logger();
-  static final _api = Api();
-  static final _storage = Storage();
+  static final api = Api();
+  static final storage = Storage();
 
   static Future<CollectionRepository> load<T extends CollectionItem>(
     String apiEndpoint, {
@@ -63,7 +63,7 @@ class CollectionRepository<T extends CollectionItem> {
     List<List> filters,
     Map<String, bool> sortFields, // fields to sort by + sort direction
   }) async {
-    List<dynamic> itemsList = await _storage.batchLoad(
+    List<dynamic> itemsList = await storage.batchLoad(
       type: _typeToStorageType[T],
       filters: filters,
       orderings: sortFields,
@@ -72,7 +72,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (itemsList.isEmpty) {
       // Logger().d('Requesting $T items from api...');
       try {
-        itemsList = await _api.get(apiEndpoint, params: queryParams);
+        itemsList = await api.get(apiEndpoint, params: queryParams);
       } on ApiError catch (error) {
         Logger().d('ERROR WHILE FETCHING $T items FROM API\n${error.message}');
         throw error;
@@ -102,7 +102,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (saveToStore) saveOne(item);
     saveOne(oldSelected);
     if (apiEndpoint != null && params != null)
-      _api.post(
+      api.post(
         apiEndpoint,
         body: params,
       );
@@ -121,7 +121,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (!forceFromApi) {
       // logger.d(
       // 'Reloading $T items from storage...\nFilters: $filters\nLIMIT: $limit\nOFFSET: $offset');
-      itemsList = await _storage.batchLoad(
+      itemsList = await storage.batchLoad(
         type: _typeToStorageType[T],
         filters: filters,
         orderings: sortFields,
@@ -134,7 +134,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (itemsList.isEmpty) {
       // logger.d('Non in storage. Reloading $T items from api...');
       try {
-        itemsList = await _api.get(apiEndpoint, params: queryParams);
+        itemsList = await api.get(apiEndpoint, params: queryParams);
       } on ApiError catch (error) {
         logger.d('ERROR while reloading $T items from api\n${error.message}');
         return false;
@@ -142,8 +142,8 @@ class CollectionRepository<T extends CollectionItem> {
       saveToStore = true;
     }
     if (forceFromApi) {
-      // await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
-      _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+      // await storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+      storage.batchDelete(type: _typeToStorageType[T], filters: filters);
     }
     _updateItems(itemsList, saveToStore: saveToStore);
     return true;
@@ -153,7 +153,7 @@ class CollectionRepository<T extends CollectionItem> {
     Map<String, dynamic> queryParams,
     List<List> filters, // fields to filter by in store
   }) async {
-    final itemsList = await _storage.batchLoad(
+    final itemsList = await storage.batchLoad(
       type: _typeToStorageType[T],
       filters: filters,
       limit: 100000,
@@ -162,7 +162,7 @@ class CollectionRepository<T extends CollectionItem> {
     List remote;
     if (itemsList.isEmpty) return false;
     try {
-      remote = await _api.get(apiEndpoint, params: queryParams);
+      remote = await api.get(apiEndpoint, params: queryParams);
       logger.w("GOT WORKSPACES: ${remote.map((w) => w['name']).toSet()}");
     } on ApiError catch (error) {
       logger.d('ERROR while reloading $T items from api\n${error.message}');
@@ -170,7 +170,7 @@ class CollectionRepository<T extends CollectionItem> {
     }
     if (remote.length != itemsList.length) {
       logger.w("LOCAL != REMOTE");
-      await _storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+      await storage.batchDelete(type: _typeToStorageType[T], filters: filters);
       _updateItems(remote, saveToStore: true);
       return true;
     }
@@ -184,7 +184,7 @@ class CollectionRepository<T extends CollectionItem> {
     // logger.d('Pulling item $T from api...');
     List resp = [];
     try {
-      resp = (await _api.get(apiEndpoint, params: queryParams));
+      resp = (await api.get(apiEndpoint, params: queryParams));
     } on ApiError catch (error) {
       logger.d('ERROR while loading more $T items from api\n${error.message}');
       return false;
@@ -205,7 +205,7 @@ class CollectionRepository<T extends CollectionItem> {
     // logger.d('Sending item $T to api...');
     var resp;
     try {
-      resp = (await _api.post(apiEndpoint, body: body));
+      resp = (await api.post(apiEndpoint, body: body));
     } catch (error) {
       logger.e('Error while sending $T item to api\n${error.message}');
       if (onError != null) onError();
@@ -222,7 +222,7 @@ class CollectionRepository<T extends CollectionItem> {
   Future<T> getItemById(String id) async {
     var item = items.firstWhere((i) => i.id == id, orElse: () => null);
     if (item == null) {
-      final map = await _storage.load(type: _typeToStorageType[T], key: id);
+      final map = await storage.load(type: _typeToStorageType[T], key: id);
       if (map == null) return null;
       item = _typeToConstructor[T](map);
     }
@@ -231,12 +231,12 @@ class CollectionRepository<T extends CollectionItem> {
 
   Future<dynamic> customGet(
       String method, Map<String, dynamic> queryParams) async {
-    return (await _api.get(method, params: queryParams));
+    return (await api.get(method, params: queryParams));
   }
 
   Future<void> clean() async {
     items.clear();
-    await _storage.truncate(_typeToStorageType[T]);
+    await storage.truncate(_typeToStorageType[T]);
   }
 
   Future<bool> delete(
@@ -247,13 +247,13 @@ class CollectionRepository<T extends CollectionItem> {
   }) async {
     if (apiSync) {
       try {
-        await _api.delete(apiEndpoint, body: requestBody);
+        await api.delete(apiEndpoint, body: requestBody);
       } catch (error) {
         logger.e('Error while sending $T item to api\n${error.message}');
         return false;
       }
     }
-    await _storage.delete(type: _typeToStorageType[T], key: key);
+    await storage.delete(type: _typeToStorageType[T], key: key);
     if (removeFromItems) items.removeWhere((i) => i.id == key);
     return true;
   }
@@ -277,14 +277,14 @@ class CollectionRepository<T extends CollectionItem> {
 
   Future<void> save() async {
     // logger.d('SAVING $T items to store!');
-    await _storage.batchStore(
+    await storage.batchStore(
       items: this.items.map((i) => i.toJson()),
       type: _typeToStorageType[T],
     );
   }
 
   Future<void> saveOne(T item) async {
-    await _storage.store(
+    await storage.store(
       item: item.toJson(),
       type: _typeToStorageType[T],
       key: item,

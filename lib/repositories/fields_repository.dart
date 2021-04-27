@@ -12,6 +12,8 @@ class FieldsRepository {
     @required this.data,
   });
 
+  List<Widget> getAll() => fields;
+
   Future<List<Widget>> clear() async {
     fields = [];
     data = {};

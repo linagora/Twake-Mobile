@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_state.dart';
+import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
+import 'package:twake/blocs/fields_cubit/fields_state.dart' as field_state;
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
@@ -13,6 +15,8 @@ import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
+
+import '../removable_text_field.dart';
 
 class WorkspaceInfoForm extends StatefulWidget {
   @override
@@ -163,7 +167,13 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
                 SizedBox(height: 8),
                 HintLine(text: 'Please provide a name for your new workspace'),
                 SizedBox(height: 8),
-                CollaboratorsButton(count: _collaborators.where((element) => element.isNotReallyEmpty).length),
+                BlocBuilder<FieldsCubit, field_state.FieldsState>(
+                    builder: (context, state) => CollaboratorsButton(
+                        count: context
+                                .read<FieldsCubit>()
+                                .getAll()
+                                .whereType<RemovableTextField>()
+                                .length - 1)),
                 SizedBox(height: 8),
                 HintLine(text: 'Invite collaborators via email'),
               ],

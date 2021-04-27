@@ -17,6 +17,7 @@ import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/repositories/profile_repository.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/repositories/user_repository.dart';
+import 'package:twake/repositories/workspaces_repository.dart';
 
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/repositories/draft_repository.dart';
@@ -61,14 +62,15 @@ Future<InitData> initMain() async {
       sortFields: {'name': true},
     );
     ApplicationRepository(companies.items.map((i) => i.id).toList());
-    final workspaces = await CollectionRepository.load<Workspace>(
+    final workspaces = WorkspacesRepository.fromCollection(
+        await CollectionRepository.load<Workspace>(
       Endpoint.workspaces,
       filters: [
         ['company_id', '=', companies.selected.id]
       ],
       queryParams: {'company_id': companies.selected.id},
       sortFields: {'name': true},
-    );
+    ));
     final channels = await CollectionRepository.load<Channel>(
       Endpoint.channels,
       queryParams: {
@@ -140,7 +142,7 @@ Future<InitData> initMain() async {
 class InitData {
   final ProfileRepository profile;
   final CollectionRepository<Company> companies;
-  final CollectionRepository<Workspace> workspaces;
+  final WorkspacesRepository workspaces;
   final CollectionRepository<Channel> channels;
   final CollectionRepository<Direct> directs;
   final MemberRepository channelMembers;
