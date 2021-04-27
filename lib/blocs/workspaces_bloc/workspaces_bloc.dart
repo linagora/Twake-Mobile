@@ -31,9 +31,9 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     subscription = companiesBloc.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
-        // repository.logger.e(
-        // 'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
-        this.add(ReloadWorkspaces(selectedCompanyId));
+        repository.logger.e(
+        'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
+        this.add(ReloadWorkspaces(selectedCompanyId, forceFromApi: true));
       }
     });
     _notificationSubscription =
@@ -62,7 +62,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   @override
   Stream<WorkspaceState> mapEventToState(WorkspacesEvent event) async* {
     if (event is ReloadWorkspaces) {
-      yield WorkspacesLoading();
+      yield WorkspacesLoading(companyId: event.companyId);
+      print('NEW COMPANY ID: ${event.companyId}');
       await repository.reload(
         filters: [
           ['company_id', '=', event.companyId]
@@ -71,12 +72,14 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
+      print('Selected: ${repository.selected.companyId}');
+
       final newState = WorkspacesLoaded(
         workspaces: repository.items,
         selected: repository.selected,
       );
-      // repository.logger
-      // .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
+      repository.logger
+      .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
       yield newState;
     } else if (event is CheckForChange) {
       // Sorry Pavel, but cannot block the stream here with await
