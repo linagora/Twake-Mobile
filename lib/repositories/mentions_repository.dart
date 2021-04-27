@@ -25,4 +25,14 @@ class MentionsRepository {
 
     return users;
   }
+
+  Future<String> getUserId(String username) async {
+    final user = await _storage.customQuery(
+      'SELECT id FROM user',
+      filters: [
+        ['username', '=', username]
+      ],
+    );
+    return user['id'];
+  }
 }

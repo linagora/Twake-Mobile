@@ -22,7 +22,7 @@ class MessageEditField extends StatefulWidget {
 }
 
 class _MessageEditField extends State<MessageEditField> {
-  final _userMentionRegex = RegExp(r'@[A-Za-z1-9_-]*(\s|$)');
+  final _userMentionRegex = RegExp(r'\s@[A-Za-z1-9_-]*(\s|$)');
   bool _emojiVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;

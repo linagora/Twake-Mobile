@@ -55,6 +55,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     });
     ProfileBloc.selectedWorkspaceId = repository.selected.id;
     selectedCompanyId = companiesBloc.repository.selected.id;
+    // for future use in mentions
+    repository.fetchMembers();
   }
 
   @override

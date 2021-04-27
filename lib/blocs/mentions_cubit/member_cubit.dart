@@ -5,6 +5,7 @@ import 'package:twake/repositories/mentions_repository.dart';
 
 class MentionsCubit extends Cubit<MentionState> {
   final MentionsRepository repository = MentionsRepository();
+  final _userMentionRegex = RegExp(r'\s@[A-Za-z1-9_-]*(\s|$)');
 
   MentionsCubit() : super(MentionsEmpty());
 
@@ -15,5 +16,18 @@ class MentionsCubit extends Cubit<MentionState> {
     } else {
       emit(MentionsEmpty());
     }
+  }
+
+  Future<String> completeMentions(String text) async {
+    final matches = _userMentionRegex.allMatches(text);
+    final completeText = '' + text; // create a copy
+
+    for (var m in matches) {
+      final username = text.substring(m.start, m.end).split('@').last.trim();
+      final userId = repository.getUserId(username);
+      completeText.replaceAll(username, '$username:$userId');
+    }
+
+    return completeText;
   }
 }
