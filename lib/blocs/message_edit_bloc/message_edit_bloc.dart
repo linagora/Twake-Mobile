@@ -19,6 +19,6 @@ class MessageEditBloc extends Bloc<MessageEditEvent, MessageEditState> {
       );
     } else if (event is CancelMessageEdit) {
       yield NoMessageToEdit();
-    }
+    } else if (event is GetMentionableUsers) {}
   }
 }

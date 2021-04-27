@@ -192,6 +192,8 @@ class SQLite with Storage {
       table = 'member';
     else if (type == StorageType.Configuration)
       table = 'configuration';
+    else if (type == StorageType.Account)
+      table = 'configuration';
     else if (type == StorageType.User2Workspace)
       table = 'user2workspace';
     else

@@ -20,3 +20,12 @@ class EditMessage extends MessageEditEvent {
   @override
   List<Object> get props => [originalStr];
 }
+
+class GetMentionableUsers extends MessageEditEvent {
+  final String searchTerm;
+
+  const GetMentionableUsers(this.searchTerm);
+
+  @override
+  List<Object> get props => [searchTerm];
+}
