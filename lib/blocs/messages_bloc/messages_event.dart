@@ -136,8 +136,14 @@ class SendMessage extends MessagesEvent {
   final String content;
   final String threadId;
   final String channelId;
+  final List<dynamic> prepared;
 
-  const SendMessage({this.content, this.threadId, this.channelId});
+  const SendMessage({
+    this.content,
+    this.threadId,
+    this.channelId,
+    this.prepared,
+  });
   @override
   List<Object> get props => [content, threadId];
 
@@ -147,7 +153,7 @@ class SendMessage extends MessagesEvent {
       'original_str': content,
       'thread_id': threadId,
       'channel_id': channelId,
-      'prepared': TwacodeParser(content).message,
+      'prepared': this.prepared ?? TwacodeParser(content).message,
     };
   }
 }

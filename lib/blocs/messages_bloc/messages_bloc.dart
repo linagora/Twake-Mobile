@@ -263,7 +263,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         creationDate: DateTime.now().millisecondsSinceEpoch,
         content: MessageTwacode(
           originalStr: body['original_str'],
-          prepared: TwacodeParser(body['original_str']).message,
+          prepared:
+              event.prepared ?? TwacodeParser(body['original_str']).message,
         ),
         reactions: {},
         responsesCount: 0,
