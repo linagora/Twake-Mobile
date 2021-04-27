@@ -38,6 +38,7 @@ abstract class Storage {
   Future<dynamic> customQuery(
     String query, {
     List<List> filters,
+    List<List> likeFilters: const [],
     Map<String, bool> orderings,
     int limit,
     int offset,
@@ -76,6 +77,8 @@ abstract class Storage {
   dynamic mapTypeToStore(StorageType type);
 
   dynamic filtersBuild(List<List> expressions);
+
+  dynamic likeFiltersBuild(List<List> expressions);
 
   dynamic orderingsBuild(Map<String, bool> orderings);
 

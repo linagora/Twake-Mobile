@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
 
@@ -21,6 +22,7 @@ class MessageEditField extends StatefulWidget {
 }
 
 class _MessageEditField extends State<MessageEditField> {
+  final _userMentionRegex = RegExp(r'@[A-Za-z1-9_-]*(\s|$)');
   bool _emojiVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
@@ -50,6 +52,14 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
+      // TODO implement bloc to fetch users
+      // if (_userMentionRegex.hasMatch(text)) {
+      // BlocProvider.of<MessageEditBloc>(context).add(GetMentionableUsers(
+      // searchTerm:
+      // _userMentionRegex.stringMatch(text).split('@').last.trim(),
+      // currentInput: text,
+      // ));
+      // }
       // Update for cache handlers
       widget.onTextUpdated(text);
       // Sendability  validation
@@ -209,14 +219,14 @@ class TextInput extends StatelessWidget {
               child: Icon(
                 canSend ? Icons.send : Icons.send_outlined,
                 color:
-                canSend ? Theme.of(context).accentColor : Colors.grey[400],
+                    canSend ? Theme.of(context).accentColor : Colors.grey[400],
               ),
             ),
             onPressed: canSend
                 ? () async {
-              await onMessageSend(controller.text);
-              controller.clear();
-            }
+                    await onMessageSend(controller.text);
+                    controller.clear();
+                  }
                 : null,
           ),
         ],

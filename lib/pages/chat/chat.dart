@@ -182,6 +182,9 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
 
                       return BlocBuilder<MessageEditBloc, MessageEditState>(
                         builder: (ctx, state) {
+                          if (state is MessageEditing) {
+                            print("MENTIONABLE USERS:\n${state.mentionable}");
+                          }
                           return MessageEditField(
                             autofocus: state is MessageEditing,
                             initialText: state is MessageEditing
