@@ -1,6 +1,5 @@
 import 'dart:io';
 
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
@@ -11,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:twake/services/service_bundle.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
@@ -569,9 +569,7 @@ class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
 
-
-  TwacodeRenderer(
-      {this.twacode, TextStyle parentStyle}) {
+  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
@@ -705,31 +703,6 @@ class TwacodeRenderer {
         children: this.spans,
       ),
     );
-  }
-
-  int progres = 0;
-  void downloadFile(List<dynamic> t) async {
-    final permissionStatus = await Permission.storage.request();
-    final dir = await getExternalStorageDirectory();
-
-    if (permissionStatus.isGranted) {
-      if (Platform.isAndroid) {
-        final dir = getExternalStorageDirectories();
-      } else if (Platform.isIOS) {
-        final dir = getApplicationSupportDirectory();
-      } //
-      /* final id = await FlutterDownloader.enqueue(
-          url: t['metadata']['download'],
-          savedDir: dir.path,
-          fileName: "Name",
-          showNotification: true,
-          openFileFromNotification: true);*/
-    } else {
-      print('Test'); // needed to add a massage
-    }
-
-    // Open the image via photo_view or download link via flutter_downloader
-    // file link is contained in t['metadata']['download'] field
   }
 
   List<InlineSpan> render({List<dynamic> twacode, TextStyle parentStyle}) {
@@ -985,13 +958,13 @@ class TwacodeRenderer {
                 onTap: () async {
                   if (t['metadata']['download'] != null) {
                     final permissionStatus = await Permission.storage.request();
-                    print(t['metadata']['download']);
+                    //print(t['metadata']['download']);
                     if (permissionStatus.isGranted) {
                       if (Platform.isAndroid) {
+                        //   print(Api.host);
                         final dir = await getExternalStorageDirectory();
                         final id = await FlutterDownloader.enqueue(
-                            url: //t['metadata']['download'].toString(),
-                                "https://file-examples-com.github.io/uploads/2017/11/file_example_MP3_5MG.mp3",
+                            url: Api.host + t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
                             showNotification: true,
@@ -999,16 +972,14 @@ class TwacodeRenderer {
                       } else if (Platform.isIOS) {
                         final dir = await getApplicationSupportDirectory();
                         final id = await FlutterDownloader.enqueue(
-                            url: t['metadata']['download'].toString(),
+                            url: Api.host + t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
                             showNotification: true,
                             openFileFromNotification: true);
                       }
-
-                      // print("TEST link ${t['metadata']['download']}");
                     } else {
-                      // Ask Permission?
+                      // TODO: implementation needed 
                     }
                   }
                 },
@@ -1020,6 +991,7 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
+                          // TODO: implementation needed to show progres 
                           /*CircularProgressIndicator(
                           backgroundColor: Colors.blueGrey,
                           valueColor:
