@@ -8,9 +8,9 @@ export 'package:twake/blocs/file_upload_bloc/file_upload_event.dart';
 export 'package:twake/blocs/file_upload_bloc/file_upload_state.dart';
 
 class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
-  final FileUploadRepository repository;
+  final FileUploadRepository repository = FileUploadRepository();
 
-  FileUploadBloc(this.repository) : super(NothingToUpload());
+  FileUploadBloc() : super(NothingToUpload());
 
   @override
   Stream<FileUploadState> mapEventToState(FileUploadEvent event) async* {

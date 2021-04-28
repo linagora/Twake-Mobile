@@ -4,6 +4,7 @@ import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/pages/chat/message_edit_field.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
+import 'package:twake/repositories/file_upload_repository.dart';
 
 class Chat<T extends BaseChannelBloc> extends StatelessWidget {
   @override
@@ -182,36 +184,39 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
 
                       return BlocBuilder<MessageEditBloc, MessageEditState>(
                         builder: (ctx, state) {
-                          return MessageEditField(
-                            autofocus: state is MessageEditing,
-                            initialText: state is MessageEditing
-                                ? state.originalStr
-                                : draft,
-                            onMessageSend: state is MessageEditing
-                                ? state.onMessageEditComplete
-                                : (content) {
-                                    BlocProvider.of<MessagesBloc<T>>(context)
-                                        .add(
-                                      SendMessage(content: content),
-                                    );
-                                    context.read<DraftBloc>().add(
-                                          ResetDraft(
-                                            id: channelId,
-                                            type: draftType,
-                                          ),
-                                        );
-                                  },
-                            onTextUpdated: state is MessageEditing
-                                ? (text) {}
-                                : (text) {
-                                    context.read<DraftBloc>().add(
-                                          UpdateDraft(
-                                            id: channelId,
-                                            type: draftType,
-                                            draft: text,
-                                          ),
-                                        );
-                                  },
+                          return BlocProvider(
+                            create: (BuildContext context) => FileUploadBloc(),
+                            child: MessageEditField(
+                              autofocus: state is MessageEditing,
+                              initialText: state is MessageEditing
+                                  ? state.originalStr
+                                  : draft,
+                              onMessageSend: state is MessageEditing
+                                  ? state.onMessageEditComplete
+                                  : (content) {
+                                      BlocProvider.of<MessagesBloc<T>>(context)
+                                          .add(
+                                        SendMessage(content: content),
+                                      );
+                                      context.read<DraftBloc>().add(
+                                            ResetDraft(
+                                              id: channelId,
+                                              type: draftType,
+                                            ),
+                                          );
+                                    },
+                              onTextUpdated: state is MessageEditing
+                                  ? (text) {}
+                                  : (text) {
+                                      context.read<DraftBloc>().add(
+                                            UpdateDraft(
+                                              id: channelId,
+                                              type: draftType,
+                                              draft: text,
+                                            ),
+                                          );
+                                    },
+                            ),
                           );
                         },
                       );

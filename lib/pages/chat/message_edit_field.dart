@@ -1,7 +1,17 @@
 import 'dart:math';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/file_upload_bloc/file_upload_bloc.dart';
+import 'package:twake/repositories/file_upload_repository.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
@@ -28,6 +38,16 @@ class _MessageEditField extends State<MessageEditField> {
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String _fileName;
+  List<PlatformFile> _paths;
+  String _directoryPath;
+  String _extension;
+  bool _loadingPath = false;
+  bool _multiPick = false;
+  FileType _pickingType = FileType.any;
+  TextEditingController _controller2 = TextEditingController();
 
   @override
   void initState() {
@@ -112,6 +132,36 @@ class _MessageEditField extends State<MessageEditField> {
     return false;
   }
 
+  void _openFileExplorer() async {
+    setState(() => _loadingPath = true);
+    try {
+      _directoryPath = null;
+      _paths = (await FilePicker.platform.pickFiles(
+        type: _pickingType,
+        allowMultiple: _multiPick,
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension?.replaceAll(' ', '').split(',')
+            : null,
+      ))
+          ?.files;
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    } catch (ex) {
+      print(ex);
+    }
+    if (!mounted) return;
+    setState(() {
+      _loadingPath = false;
+      print(_paths.first.extension);
+      _fileName = _paths != null ? _paths.map((e) => e.name).toString() : '...';
+    });
+    final path = _paths.map((e) => e.path).toList()[0].toString();
+    final name = _paths.map((e) => e.name).toList()[0].toString();
+    //print(path);
+
+    BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -127,6 +177,8 @@ class _MessageEditField extends State<MessageEditField> {
             emojiVisible: _emojiVisible,
             onMessageSend: widget.onMessageSend,
             canSend: _canSend,
+            openFileExplorer: _openFileExplorer,
+            path: _paths,
           ),
           if (_emojiVisible)
             EmojiKeyboard(
@@ -152,17 +204,20 @@ class TextInput extends StatelessWidget {
   final bool emojiVisible;
   final bool canSend;
   final Function onMessageSend;
+  final Function openFileExplorer;
+  final List<PlatformFile> path;
 
-  TextInput({
-    this.onMessageSend,
-    this.controller,
-    this.focusNode,
-    this.autofocus,
-    this.emojiVisible,
-    this.scrollController,
-    this.toggleEmojiBoard,
-    this.canSend,
-  });
+  TextInput(
+      {this.onMessageSend,
+      this.controller,
+      this.focusNode,
+      this.autofocus,
+      this.emojiVisible,
+      this.scrollController,
+      this.toggleEmojiBoard,
+      this.openFileExplorer,
+      this.canSend,
+      this.path});
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +230,9 @@ class TextInput extends StatelessWidget {
           IconButton(
             padding: EdgeInsets.zero,
             icon: Icon(emojiVisible ? Icons.keyboard : Icons.tag_faces),
-            onPressed: toggleEmojiBoard,
+            onPressed: () {
+              print(path);
+            },
             color: Colors.black54,
           ),
           Expanded(
@@ -202,6 +259,12 @@ class TextInput extends StatelessWidget {
             ),
           ),
           IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(Icons.file_download),
+            onPressed: openFileExplorer,
+            color: Colors.black54,
+          ),
+          IconButton(
             padding: EdgeInsets.only(bottom: 5.0),
             icon: Transform(
               alignment: Alignment.center,
@@ -209,14 +272,14 @@ class TextInput extends StatelessWidget {
               child: Icon(
                 canSend ? Icons.send : Icons.send_outlined,
                 color:
-                canSend ? Theme.of(context).accentColor : Colors.grey[400],
+                    canSend ? Theme.of(context).accentColor : Colors.grey[400],
               ),
             ),
             onPressed: canSend
                 ? () async {
-              await onMessageSend(controller.text);
-              controller.clear();
-            }
+                    await onMessageSend(controller.text);
+                    controller.clear();
+                  }
                 : null,
           ),
         ],

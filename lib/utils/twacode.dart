@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -962,7 +963,9 @@ class TwacodeRenderer {
                     if (permissionStatus.isGranted) {
                       if (Platform.isAndroid) {
                         //   print(Api.host);
+
                         final dir = await getExternalStorageDirectory();
+
                         final id = await FlutterDownloader.enqueue(
                             url: Api.host + t['metadata']['download'],
                             savedDir: dir.path,
@@ -979,7 +982,7 @@ class TwacodeRenderer {
                             openFileFromNotification: true);
                       }
                     } else {
-                      // TODO: implementation needed 
+                      // TODO: implementation needed
                     }
                   }
                 },
@@ -991,7 +994,7 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
-                          // TODO: implementation needed to show progres 
+                          // TODO: implementation needed to show progres
                           /*CircularProgressIndicator(
                           backgroundColor: Colors.blueGrey,
                           valueColor:
