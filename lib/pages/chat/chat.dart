@@ -188,7 +188,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                       return BlocBuilder<MessageEditBloc, MessageEditState>(
                         builder: (ctx, state) {
                           return BlocProvider(
-                            create: (BuildContext ctx) => FileUploadBloc(),
+                            create: (BuildContext context) => FileUploadBloc(),
                             child: MessageEditField(
                               autofocus: state is MessageEditing,
                               initialText: state is MessageEditing
@@ -199,11 +199,10 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                   : (content) {
                                       BlocListener<FileUploadBloc,
                                               FileUploadState>(
-                                          listener: (ctx, state) {
+                                          listener: (context, state) {
                                         if (state is FileUploaded) {
                                           fileID = state.id;
                                           // print(fileID);
-
                                           twacode =
                                               TwacodeParser(content).message;
                                           twacode.append(
@@ -218,13 +217,14 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                               ]
                                             },
                                           );
-                                          BlocProvider.of<MessagesBloc<T>>(
+
+                                          /* Test BlocProvider.of<MessagesBloc<T>>(
                                                   context)
                                               .add(
                                             SendMessage(
                                                 content: content,
                                                 prepared: twacode),
-                                          );
+                                          );*/
                                         } else if (state is NothingToUpload) {
                                           print(fileID);
                                         } else if (state is FileUploading) {
