@@ -178,7 +178,6 @@ class _MessageEditField extends State<MessageEditField> {
             onMessageSend: widget.onMessageSend,
             canSend: _canSend,
             openFileExplorer: _openFileExplorer,
-            path: _paths,
           ),
           if (_emojiVisible)
             EmojiKeyboard(
@@ -205,7 +204,6 @@ class TextInput extends StatelessWidget {
   final bool canSend;
   final Function onMessageSend;
   final Function openFileExplorer;
-  final List<PlatformFile> path;
 
   TextInput(
       {this.onMessageSend,
@@ -216,8 +214,7 @@ class TextInput extends StatelessWidget {
       this.scrollController,
       this.toggleEmojiBoard,
       this.openFileExplorer,
-      this.canSend,
-      this.path});
+      this.canSend});
 
   @override
   Widget build(BuildContext context) {
@@ -230,9 +227,7 @@ class TextInput extends StatelessWidget {
           IconButton(
             padding: EdgeInsets.zero,
             icon: Icon(emojiVisible ? Icons.keyboard : Icons.tag_faces),
-            onPressed: () {
-              print(path);
-            },
+            onPressed: toggleEmojiBoard,
             color: Colors.black54,
           ),
           Expanded(
