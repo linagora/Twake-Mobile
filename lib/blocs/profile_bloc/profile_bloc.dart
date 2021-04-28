@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_segment/flutter_segment.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_event.dart';
 import 'package:twake/models/base_channel.dart';
@@ -36,6 +37,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         // Logger().w("GOT NOTIFICATION EVENT $state");
         this.add(UpdateBadges());
       }
+    });
+
+    Segment.identify(userId: rpstr.id).then((r) {
+      ProfileRepository.logger.w('Identified user: ${rpstr.id}');
+      Segment.track(eventName: 'twake-mobile:open_client');
+    }).onError((e, s) {
+      ProfileRepository.logger.e(e);
     });
   }
 
