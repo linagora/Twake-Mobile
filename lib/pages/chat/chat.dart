@@ -19,6 +19,7 @@ import 'package:twake/pages/chat/message_edit_field.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/repositories/file_upload_repository.dart';
+import 'package:twake/utils/twacode.dart';
 
 class Chat<T extends BaseChannelBloc> extends StatelessWidget {
   @override
@@ -26,6 +27,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
     String draft = '';
     String channelId;
     DraftType draftType;
+    String fileID;
+    var twacode;
 
     return Scaffold(
       appBar: AppBar(
@@ -185,7 +188,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                       return BlocBuilder<MessageEditBloc, MessageEditState>(
                         builder: (ctx, state) {
                           return BlocProvider(
-                            create: (BuildContext context) => FileUploadBloc(),
+                            create: (BuildContext ctx) => FileUploadBloc(),
                             child: MessageEditField(
                               autofocus: state is MessageEditing,
                               initialText: state is MessageEditing
@@ -194,6 +197,46 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                               onMessageSend: state is MessageEditing
                                   ? state.onMessageEditComplete
                                   : (content) {
+                                      BlocListener<FileUploadBloc,
+                                              FileUploadState>(
+                                          listener: (ctx, state) {
+                                        if (state is FileUploaded) {
+                                          fileID = state.id;
+                                          // print(fileID);
+
+                                          twacode =
+                                              TwacodeParser(content).message;
+                                          twacode.append(
+                                            {
+                                              "type": "nop",
+                                              "content": [
+                                                {
+                                                  "type": "file",
+                                                  "mode": "preview",
+                                                  "content": fileID,
+                                                }
+                                              ]
+                                            },
+                                          );
+                                          BlocProvider.of<MessagesBloc<T>>(
+                                                  context)
+                                              .add(
+                                            SendMessage(
+                                                content: content,
+                                                prepared: twacode),
+                                          );
+                                        } else if (state is NothingToUpload) {
+                                          print(fileID);
+                                        } else if (state is FileUploading) {
+                                          print(fileID);
+                                        } else if (state is FileUploadFailed) {
+                                          print(fileID);
+                                        } else if (state
+                                            is FileUploadCancelled) {
+                                          print(fileID);
+                                        }
+                                      });
+
                                       BlocProvider.of<MessagesBloc<T>>(context)
                                           .add(
                                         SendMessage(content: content),
