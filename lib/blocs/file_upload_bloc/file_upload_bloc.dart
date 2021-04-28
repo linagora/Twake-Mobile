@@ -26,6 +26,8 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
             id: response['id'],
             fileName: response['filename'],
             size: response['size'],
+            preview: response['preview'],
+            download: response['download'],
           ));
         },
         onError: (e) {
