@@ -137,6 +137,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
             context.read<SheetBloc>().add(CloseSheet());
             // Reset selected participants
             context.read<AddChannelBloc>().add(Update(participants: []));
+            setState(() {
+              _selectedIds.clear();
+              _selectedUsers.clear();
+            });
             _controller.clear();
             // Redirect user to created direct
             if (state is DirectCreated) {
@@ -156,6 +160,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 duration: Duration(seconds: 2),
               ),
             );
+          } else if (state is StageUpdated && state.stage == FlowStage.participants) {
+            if (_searchRequest.isEmpty) {
+              context.read<UserBloc>().add(LoadUsers(_searchRequest));
+            }
           }
         },
         buildWhen: (_, current) {
