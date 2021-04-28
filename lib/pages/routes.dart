@@ -6,6 +6,7 @@ import 'package:twake/pages/thread_page.dart';
 import 'package:twake/pages/edit_channel.dart';
 import 'package:twake/pages/profile/settings.dart';
 
+
 class Routes {
   static const root = '/';
   static const messages = '/messages';
