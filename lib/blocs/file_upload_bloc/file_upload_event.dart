@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:path/path.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 
 abstract class FileUploadEvent extends Equatable {
   const FileUploadEvent();
@@ -14,10 +15,12 @@ class StartUpload extends FileUploadEvent {
 
   StartUpload({this.path, this.workspaceId});
 
-  FormData get payload => FormData.fromMap({
-        'file': MultipartFile.fromFile(path),
-        'workspace_id': workspaceId,
-      });
+  Future<FormData> payload() async {
+    return FormData.fromMap({
+      'file': await MultipartFile.fromFile(path, filename: this.fileName),
+      'workspace_id': workspaceId ?? ProfileBloc.selectedWorkspaceId,
+    });
+  }
 
   String get fileName {
     return basename(path);

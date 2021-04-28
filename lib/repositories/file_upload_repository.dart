@@ -16,7 +16,7 @@ class FileUploadRepository {
         .then((r) => onSuccess(r))
         .onError((e, s) {
       onError(e.toString());
-      _logger.e("ERROR UPLOADING FILE:\n$s");
+      _logger.e("ERROR UPLOADING FILE:\n$e\n$s");
     });
   }
 

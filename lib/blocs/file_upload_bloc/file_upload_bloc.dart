@@ -20,12 +20,12 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       final cancelToken = CancelToken();
 
       repository.upload(
-        payload: event.payload,
+        payload: await event.payload(),
         onSuccess: (Map<String, dynamic> response) {
           this.add(FinishUpload(
             id: response['id'],
             fileName: response['filename'],
-            size: int.parse(response['size']),
+            size: response['size'],
           ));
         },
         onError: (e) {
