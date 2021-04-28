@@ -47,9 +47,16 @@ class FileUploadCancelled extends FileUploadState {
 
 class FileUploaded extends FileUploadState {
   final String id;
+  final String preview;
+  final String download;
 
-  const FileUploaded(this.id, {String fileName, int size})
-      : super(fileName: fileName, size: size);
+  const FileUploaded(
+    this.id, {
+    String fileName,
+    int size,
+    this.download,
+    this.preview,
+  }) : super(fileName: fileName, size: size);
 
   @override
   List<Object> get props => [id];

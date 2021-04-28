@@ -22,6 +22,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       repository.upload(
         payload: await event.payload(),
         onSuccess: (Map<String, dynamic> response) {
+          print('FILE UPLOADED:\n$response');
           this.add(FinishUpload(
             id: response['id'],
             fileName: response['filename'],
@@ -49,9 +50,12 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       repository.cancelUpload(event.cancelToken);
       yield FileUploadCancelled();
     } else if (event is FinishUpload) {
+      print('Yielding state FILE UPLOADED');
       yield FileUploaded(
         event.id,
         fileName: event.fileName,
+        preview: event.preview,
+        download: event.download,
         size: event.size,
       );
     } else if (event is ErrorUpload) {
