@@ -32,7 +32,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
       if (state is CompaniesLoaded) {
         selectedCompanyId = state.selected.id;
         repository.logger.e(
-        'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
+            'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
         this.add(ReloadWorkspaces(selectedCompanyId, forceFromApi: true));
       }
     });
@@ -79,7 +79,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         selected: repository.selected,
       );
       repository.logger
-      .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
+          .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
       yield newState;
     } else if (event is CheckForChange) {
       // Sorry Pavel, but cannot block the stream here with await
