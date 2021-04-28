@@ -8,7 +8,10 @@ class EditChannelCubit extends Cubit<EditChannelState> {
 
   EditChannelCubit(this.repository) : super(EditChannelInitial());
 
-  Future<void> load() async {}
+  Future<void> load({String channelId}) async {
+    final newState = EditChannelLoaded(channelId: channelId);
+    emit(newState);
+  }
 
   Future<void> save() async {
     final isSaved = await repository.edit();

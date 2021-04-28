@@ -133,7 +133,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         return;
       }
       if (repository.items.isEmpty) {
-        yield MessagesEmpty(parentChannel: selectedChannel);
+        final newState = MessagesEmpty(parentChannel: selectedChannel);
+        yield newState;
       } else {
         _sortItems();
         yield MessagesLoaded(

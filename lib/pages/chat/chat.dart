@@ -74,62 +74,72 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (_, state) {
+          builder: (context, state) {
+
+            print('Current messages bloc state: $state');
+            print('Current channel id - selected channel id: ${state.parentChannel.id} - ${ProfileBloc.selectedChannelId}');
+
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
 
-            if ((state is MessagesLoaded || state is MessagesEmpty) &&
-                state.parentChannel.id == ProfileBloc.selectedChannelId) {
+            // if ((state is MessagesLoaded || state is MessagesEmpty) &&
+            //     state.parentChannel.id == ProfileBloc.selectedChannelId) {
+            if (state is MessagesLoaded || state is MessagesEmpty) {
               parentChannel = state.parentChannel;
             }
+            // context.read<EditChannelCubit>().load(channelId: parentChannel.id);
+
+            var canEdit = false;
+            var memberId = '';
+            var icon = '';
+            var isPrivate = false;
+            var membersCount = 0;
+
+            if (parentChannel is Channel) {
+              isPrivate = parentChannel.visibility == 'private';
+              icon = parentChannel.icon;
+              membersCount = parentChannel.membersCount;
+
+              // Possible permissions:
+              // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+              // 'ADD_MEMBER', 'REMOVE_MEMBER',
+              // 'UPDATE_PRIVACY','DELETE_CHANNEL']
+              final permissions = parentChannel.permissions;
+
+              if (permissions.contains('UPDATE_NAME') ||
+                  permissions.contains('UPDATE_DESCRIPTION') ||
+                  permissions.contains('ADD_MEMBER') ||
+                  permissions.contains('REMOVE_MEMBER') ||
+                  permissions.contains('UPDATE_PRIVACY') ||
+                  permissions.contains('DELETE_CHANNEL')) {
+                canEdit = true;
+              } else {
+                canEdit = false;
+              }
+            } else if (parentChannel is Direct &&
+                parentChannel.members != null) {
+              final userId = ProfileBloc.userId;
+              memberId =
+                  parentChannel.members.firstWhere((id) => id != userId);
+            }
+
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
-                var canEdit = false;
-                var memberId = '';
-                var icon = '';
-                var isPrivate = false;
-                var membersCount = 0;
-
-                if (parentChannel is Channel) {
-                  isPrivate = parentChannel.visibility == 'private';
-                  icon = parentChannel.icon;
-                  membersCount = parentChannel.membersCount;
-
-                  // Possible permissions:
-                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
-                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                  final permissions = parentChannel.permissions;
-
-                  if (permissions.contains('UPDATE_NAME') ||
-                      permissions.contains('UPDATE_DESCRIPTION') ||
-                      permissions.contains('ADD_MEMBER') ||
-                      permissions.contains('REMOVE_MEMBER') ||
-                      permissions.contains('UPDATE_PRIVACY') ||
-                      permissions.contains('DELETE_CHANNEL')) {
-                    canEdit = true;
-                  } else {
-                    canEdit = false;
-                  }
-                } else if (parentChannel is Direct &&
-                    parentChannel.members != null) {
-                  final userId = ProfileBloc.userId;
-                  memberId =
-                      parentChannel.members.firstWhere((id) => id != userId);
-                }
-
                 if (editState is EditChannelSaved) {
                   context
                       .read<MemberCubit>()
                       .fetchMembers(channelId: channelId);
                 }
 
+                print('EditChannelCubit state in Chat: $editState');
+                print('DirectBloc state in Chat: $state');
+
                 return ChatHeader(
                   isDirect: parentChannel is Direct,
-                  isPrivate: isPrivate,
-                  userId: memberId,
-                  name: parentChannel.name,
-                  icon: icon,
-                  membersCount: membersCount,
+                  isPrivate: isPrivate ?? false,
+                  userId: memberId ?? '',
+                  name: parentChannel != null ? parentChannel.name : '',
+                  icon: icon ?? '',
+                  membersCount: membersCount ?? 0,
                   onTap: canEdit ? () => _goEdit(context, state) : null,
                 );
               },
