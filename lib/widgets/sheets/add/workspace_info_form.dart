@@ -66,7 +66,8 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   }) {
     context.read<AddWorkspaceCubit>().update(
           name: name ?? _workspaceNameController.text,
-          members: collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
+          members:
+              collaborators, //['31a4a6a4-54f2-11eb-a382-0242ac120004'];]//_collaborators,['senjertomat@yandex.ru'],
         );
   }
 
@@ -173,7 +174,8 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
                                 .read<FieldsCubit>()
                                 .getAll()
                                 .whereType<RemovableTextField>()
-                                .length - 1)),
+                                .length -
+                            1)),
                 SizedBox(height: 8),
                 HintLine(text: 'Invite collaborators via email'),
               ],

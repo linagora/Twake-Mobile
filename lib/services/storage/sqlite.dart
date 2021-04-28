@@ -75,15 +75,23 @@ class SQLite with Storage {
   Future<dynamic> customQuery(
     String sqlQuery, {
     filters,
+    likeFilters: const [],
     orderings,
     limit: 100000,
     offset: 0,
   }) async {
     final orderBy = orderingsBuild(orderings);
     final where = filtersBuild(filters);
-    sqlQuery +=
-        ' WHERE ${where.item1} ORDER BY $orderBy LIMIT $limit OFFSET $offset;';
-    final result = await _db.rawQuery(sqlQuery, where.item2);
+    final like = likeFiltersBuild(likeFilters);
+    var whereArgs = [];
+    sqlQuery += ' WHERE ${where.item1} ';
+    whereArgs += where.item2;
+    if (like.item1 != null) {
+      sqlQuery += 'AND (${like.item1})';
+      whereArgs += like.item2;
+    }
+    sqlQuery += ' ORDER BY $orderBy LIMIT $limit OFFSET $offset;';
+    final result = await _db.rawQuery(sqlQuery, whereArgs);
     return result;
   }
 
@@ -263,6 +271,25 @@ class SQLite with Storage {
       }
     }
     where = where.substring(0, where.length - 4);
+    return Tuple2(where, whereArgs);
+  }
+
+  @override
+  Tuple2<String, List<dynamic>> likeFiltersBuild(List<List> expressions) {
+    if (expressions == null || expressions.isEmpty) {
+      return Tuple2(null, null);
+    }
+    String where = '';
+    List<dynamic> whereArgs = [];
+
+    for (List e in expressions) {
+      assert(e.length == 2);
+      final lhs = e[0];
+      final rhs = e[1];
+      where += '$lhs LIKE ? OR ';
+      whereArgs.add('%$rhs%');
+    }
+    where = where.substring(0, where.length - 3);
     return Tuple2(where, whereArgs);
   }
 

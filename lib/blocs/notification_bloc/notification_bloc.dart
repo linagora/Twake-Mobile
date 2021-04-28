@@ -105,7 +105,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       return;
     }
     // otherwise loop endlessly
-    Future.delayed(Duration(seconds: 10)).then((_) => socketIOHealthCheck());
+    Future.delayed(Duration(seconds: 5)).then((_) => socketIOHealthCheck());
     // wait another 10 seconds for connection to apear
     if (connectionBloc.state is ConnectionLost) return;
     // if not connected reconnect

@@ -6,6 +6,9 @@ abstract class WorkspaceState extends Equatable {
   final Workspace selected;
 
   const WorkspaceState({this.workspaces, this.selected});
+
+  @override
+  List<Object> get props => [workspaces, selected];
 }
 
 class WorkspacesLoaded extends WorkspaceState {
@@ -18,6 +21,7 @@ class WorkspacesLoaded extends WorkspaceState {
     this.force,
     this.selected,
   });
+
   @override
   List<Object> get props => [workspaces, selected, force];
 }
@@ -30,13 +34,17 @@ class WorkspaceSelected extends WorkspacesLoaded {
 }
 
 class WorkspacesLoading extends WorkspaceState {
-  const WorkspacesLoading();
+  final String companyId;
+
+  const WorkspacesLoading({this.companyId});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [companyId];
 }
 
 class WorkspacesEmpty extends WorkspaceState {
   const WorkspacesEmpty();
+
   @override
   List<Object> get props => [];
 }

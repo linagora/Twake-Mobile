@@ -7,7 +7,7 @@ import 'package:twake/models/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/account_field.dart';
 import 'package:twake/models/language_field.dart';
-import 'package:twake/models/language_option.dart';
+import 'package:twake/models/password_field.dart';
 
 part 'account_repository.g.dart';
 
@@ -15,25 +15,26 @@ const _ACCOUNT_STORE_KEY = 'account';
 
 @JsonSerializable(explicitToJson: true)
 class AccountRepository extends JsonSerializable {
-  @JsonKey(required: true)
-  final String id;
-  @JsonKey(required: true)
-  final String username;
-  @JsonKey(name: 'firstname')
-  String firstName;
-  @JsonKey(name: 'lastname')
-  String lastName;
+  @JsonKey(required: true, name: 'username')
+  AccountField userName;
+  @JsonKey(required: true, name: 'firstname')
+  AccountField firstName;
+  @JsonKey(required: true, name: 'lastname')
+  AccountField lastName;
+  @JsonKey(required: false)
+  LanguageField language;
+  @JsonKey(required: false)
+  AccountField picture;
+  @JsonKey(required: false)
+  PasswordField password;
 
-  // Avatar of user
-  String thumbnail;
-
-  // @JsonKey(name: 'notification_rooms')
-  // List<String> notificationRooms;
-
-  @JsonKey(required: true)
   AccountRepository({
-    this.id,
-    this.username,
+    this.userName,
+    this.firstName,
+    this.lastName,
+    this.language,
+    this.picture,
+    this.password,
   });
 
   @JsonKey(ignore: true)
@@ -42,23 +43,6 @@ class AccountRepository extends JsonSerializable {
   static final _api = Api();
   @JsonKey(ignore: true)
   static final _storage = Storage();
-
-  @JsonKey(name: 'selected_company_id')
-  String selectedCompanyId;
-  @JsonKey(name: 'selected_workspace_id')
-  String selectedWorkspaceId;
-  @JsonKey(ignore: true)
-  String selectedChannelId;
-  @JsonKey(ignore: true)
-  String selectedThreadId;
-  @JsonKey(ignore: true)
-  Company selectedCompany;
-  @JsonKey(ignore: true)
-  Workspace selectedWorkspace;
-  @JsonKey(ignore: true)
-  BaseChannel selectedChannel;
-  @JsonKey(ignore: true)
-  Map<String, dynamic> badges = {};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<AccountRepository> load() async {
@@ -82,20 +66,12 @@ class AccountRepository extends JsonSerializable {
     // Save it to store
     if (loadedFromNetwork) account.save();
     // return it
-
     return account;
   }
 
   Future<void> reload() async {
     final profileMap = await _api.get(Endpoint.account);
     _update(profileMap);
-  }
-
-  Future<void> syncBadges() async {
-    this.badges = await _api.get(
-      Endpoint.badges,
-      params: {'company_id': this.selectedCompanyId, 'all_companies': 'true'},
-    );
   }
 
   Future<void> clean() async {
@@ -116,9 +92,9 @@ class AccountRepository extends JsonSerializable {
   }
 
   void _update(Map<String, dynamic> json) {
-    firstName = json['firstname'] as String;
-    lastName = json['lastname'] as String;
-    thumbnail = json['thumbnail'] as String;
+    firstName.value = json['firstname'] as String;
+    lastName.value = json['lastname'] as String;
+    picture.value = json['picture'] as String;
   }
 
   Future<AccountRepository> patch({
@@ -130,11 +106,11 @@ class AccountRepository extends JsonSerializable {
   }) async {
     final Map<String, dynamic> accountMap = <String, dynamic>{};
     if (newFirstName != null) {
-      firstName = newFirstName;
+      firstName.value = newFirstName;
       accountMap['firstname'] = newFirstName;
     }
     if (newLastName != null) {
-      lastName = newLastName;
+      lastName.value = newLastName;
       accountMap['lastname'] = newLastName;
     }
     final result = await _api.patch(Endpoint.account, body: toJson());

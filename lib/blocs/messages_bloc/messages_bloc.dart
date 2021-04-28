@@ -133,7 +133,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         return;
       }
       if (repository.items.isEmpty) {
-        yield MessagesEmpty(parentChannel: selectedChannel);
+        final newState = MessagesEmpty(parentChannel: selectedChannel);
+        yield newState;
       } else {
         _sortItems();
         yield MessagesLoaded(
@@ -263,7 +264,8 @@ class MessagesBloc<T extends BaseChannelBloc>
         creationDate: DateTime.now().millisecondsSinceEpoch,
         content: MessageTwacode(
           originalStr: body['original_str'],
-          prepared: TwacodeParser(body['original_str']).message,
+          prepared:
+              event.prepared ?? TwacodeParser(body['original_str']).message,
         ),
         reactions: {},
         responsesCount: 0,
