@@ -47,8 +47,16 @@ class FinishUpload extends FileUploadEvent {
   final String id;
   final String fileName;
   final int size;
+  final String preview;
+  final String download;
 
-  const FinishUpload({this.id, this.fileName, this.size});
+  const FinishUpload({
+    this.id,
+    this.fileName,
+    this.size,
+    this.preview,
+    this.download,
+  });
 
   @override
   List<Object> get props => [id];
