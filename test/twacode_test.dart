@@ -2,6 +2,12 @@ import 'package:twake/utils/twacode.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test("Should parse empty string", () {
+    final data = "";
+    final parsed = TwacodeParser(data);
+    expect(parsed.message, []);
+  });
+
   test("Should parse plain text", () {
     final data = "This is just a normal text";
     final parsed = TwacodeParser(data);

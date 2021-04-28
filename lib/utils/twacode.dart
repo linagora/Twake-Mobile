@@ -249,6 +249,7 @@ class TwacodeParser {
             text: original.substring(start).trimRight(),
           ));
     }
+    if (nodes.isEmpty) return;
     if (this.nodes.first.text is String &&
         this.nodes.first.text.trimLeft().isEmpty) {
       this.nodes.removeAt(0);
@@ -960,7 +961,6 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
-                          
                         ),
                   width: 40,
                   height: 40,
