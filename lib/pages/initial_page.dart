@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_segment/flutter_segment.dart';
 import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
@@ -75,6 +76,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    Segment.screen(screenName: 'Initial screen');
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<AuthBloc, AuthState>(
