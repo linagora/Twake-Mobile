@@ -15,7 +15,7 @@ import 'package:twake/repositories/file_upload_repository.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
-  final Function(String) onMessageSend;
+  final Function(String, BuildContext) onMessageSend;
   final Function(String) onTextUpdated;
   final String initialText;
 
@@ -253,12 +253,43 @@ class TextInput extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            icon: Icon(Icons.file_download),
-            onPressed: openFileExplorer,
-            color: Colors.black54,
-          ),
+          BlocBuilder<FileUploadBloc, FileUploadState>(
+              builder: (context, state) {
+            if (state is NothingToUpload) {
+              return CircleAvatar(
+                backgroundColor: Colors.indigo[50],
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.file_download),
+                  onPressed: openFileExplorer,
+                  color: Colors.black54,
+                ),
+              );
+            } else if (state is FileUploading) {
+              return CircularProgressIndicator();
+            } else if (state is FileUploaded) {
+              return CircleAvatar(
+                child: (Text('1')),
+                backgroundColor: Colors.indigo[50],
+              );
+            }// TODO: implementation for all states
+            return CircleAvatar(
+              backgroundColor: Colors.indigo[50],
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                icon: Icon(Icons.file_download),
+                onPressed: openFileExplorer,
+                color: Colors.black54,
+              ),
+            );
+
+            /*    else if (state is FileUploadFailed) {
+                                         // print(fileID);
+                                        } else if (state
+                                            is FileUploadCancelled) {
+                                        //  print(fileID);
+                                        }*/
+          }),
           IconButton(
             padding: EdgeInsets.only(bottom: 5.0),
             icon: Transform(
@@ -272,7 +303,7 @@ class TextInput extends StatelessWidget {
             ),
             onPressed: canSend
                 ? () async {
-                    await onMessageSend(controller.text);
+                    await onMessageSend(controller.text, context);
                     controller.clear();
                   }
                 : null,
