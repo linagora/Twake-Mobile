@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,7 @@ class MessageEditField extends StatefulWidget {
 }
 
 class _MessageEditField extends State<MessageEditField> {
+  final _userMentionRegex = RegExp(r'\s@[A-Za-z1-9_-]*$');
   bool _emojiVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
@@ -70,6 +72,14 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
+      // TODO implement bloc to fetch users
+      // if (_userMentionRegex.hasMatch(text)) {
+      // BlocProvider.of<MessageEditBloc>(context).add(GetMentionableUsers(
+      // searchTerm:
+      // _userMentionRegex.stringMatch(text).split('@').last.trim(),
+      // currentInput: text,
+      // ));
+      // }
       // Update for cache handlers
       widget.onTextUpdated(text);
       // Sendability  validation

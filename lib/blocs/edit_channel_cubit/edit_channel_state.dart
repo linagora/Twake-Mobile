@@ -11,8 +11,12 @@ class EditChannelInitial extends EditChannelState {
 }
 
 class EditChannelLoaded extends EditChannelState {
+  final String channelId;
+
+  EditChannelLoaded({this.channelId});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [channelId];
 }
 
 class EditChannelSaved extends EditChannelState {

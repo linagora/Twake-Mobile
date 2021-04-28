@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/workspace.dart';
@@ -56,11 +57,24 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
         title: Column(
           children: [
             BlocBuilder<WorkspacesBloc, WorkspaceState>(
-              buildWhen: (_, current) => current is WorkspacesLoaded,
+              // buildWhen: (_, current) =>
+              //     current is WorkspacesLoaded ||
+              //     current is WorkspaceSelected,
               builder: (context, state) {
-                Workspace selectedWorkspace;
-                if (state is WorkspacesLoaded) {
+                // WorkspaceSelected should be handled here!
+                var name = '';
+                var logo = '';
+                print('Current WorkspacesBloc state in Feed: $state');
+                if (state is WorkspacesLoaded ||
+                    state is WorkspaceSelected) {
+                  print('SELECTED WORKSPACE COMPANY LOGO: ${state.selected.logo}');
+                  var selectedWorkspace = ProfileBloc.selectedWorkspace;
                   selectedWorkspace = state.selected;
+                  name = selectedWorkspace.name;
+                  logo = selectedWorkspace.logo;
+                } else {
+                  name = '';
+                  logo = '';
                 }
                 return GestureDetector(
                   onTap: () => _showWorkspaces(),
@@ -69,7 +83,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                     children: [
                       SizedBox(width: 9.0),
                       RoundedImage(
-                        selectedWorkspace.logo,
+                        logo,
                         width: 40.0,
                         height: 40.0,
                       ),
@@ -77,14 +91,14 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                       Expanded(
                         child: ShimmerLoading(
                           key: ValueKey<String>('name'),
-                          isLoading: selectedWorkspace.name == null,
+                          isLoading: name.isEmpty,
                           width: MediaQuery.of(context).size.width,
                           height: 10.0,
                           child: Row(
                             children: [
                               Flexible(
                                 child: Text(
-                                  selectedWorkspace.name,
+                                  name,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 17.0,

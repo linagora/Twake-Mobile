@@ -257,6 +257,7 @@ class TwacodeParser {
             text: original.substring(start).trimRight(),
           ));
     }
+    if (nodes.isEmpty) return;
     if (this.nodes.first.text is String &&
         this.nodes.first.text.trimLeft().isEmpty) {
       this.nodes.removeAt(0);

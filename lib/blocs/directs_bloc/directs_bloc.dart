@@ -38,9 +38,12 @@ class DirectsBloc extends BaseChannelBloc {
     _notificationSubscription =
         notificationBloc.listen((NotificationState state) async {
       if (state is DirectMessageNotification) {
+        print('state is DirectMessageNotification');
         this.add(ChangeSelectedChannel(state.data.channelId));
       } else if (state is BaseChannelMessageNotification &&
           state.data.workspaceId == 'direct') {
+        print('state is BaseChannelMessageNotification');
+
         while (true) {
           if (selectedParentId == state.data.companyId &&
               this.state is ChannelsLoaded) {
