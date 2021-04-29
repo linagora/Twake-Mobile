@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../blocs/file_upload_bloc/file_upload_bloc.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
+import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
+
+const _categoryHeaderHeight = 40.0;
+const _categoryTitleHeight = _categoryHeaderHeight; // to
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
@@ -59,6 +63,10 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
+      if (_userMentionRegex.hasMatch(text)) {
+        BlocProvider.of<MentionsCubit>(context)
+            .fetchMentionableUsers(searchTerm: text);
+      }
       // Update for cache handlers
       widget.onTextUpdated(text);
       // Sendability  validation
@@ -147,10 +155,35 @@ class _MessageEditField extends State<MessageEditField> {
 
   @override
   Widget build(BuildContext context) {
+    final List<String> listOfUsers = ['Name1', 'Name2', 'Name3'];
     return WillPopScope(
       onWillPop: onBackPress,
       child: Column(
         children: [
+          Container(
+            height: (MediaQuery.of(context).size.height) * 0.3,
+            child: BlocBuilder<MentionsCubit, MentionState>(
+              builder: (context, state) {
+                if (state is MentionableUsersLoaded) {
+                  return ListView.separated(
+                    separatorBuilder: (context, index) => Divider(
+                      color: Colors.black54,
+                    ),
+                    itemCount: state.users.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text('${state.users[index]}'),
+                      );
+                    },
+                  );
+                } else if (state is MentionsEmpty) {
+                  return Text("Empty");
+                  //Text("Empty");
+                }
+                return Text("init");
+              },
+            ),
+          ),
           TextInput(
             controller: _controller,
             scrollController: _scrollController,
