@@ -290,13 +290,6 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                       //         _batchUpdateState(automaticallyAddNew: value),
                       //   ),
                       if (_channelType == ChannelType.private) SizedBox(),
-                      HintLine(
-                        text: _channelType != ChannelType.private
-                            ? (_channelType != ChannelType.direct
-                                ? 'Only available for public channels'
-                                : 'Only available for direct channels')
-                            : '',
-                      ),
                     ],
                   ),
                   _emojiVisible ? _buildEmojiBoard() : Container(),
