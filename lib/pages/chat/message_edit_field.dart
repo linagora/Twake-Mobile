@@ -12,6 +12,7 @@ import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/repositories/file_upload_repository.dart';
+import 'package:twake/blocs/mentions_cubit/member_cubit.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
@@ -70,6 +71,7 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
+      print(text);
       // Update for cache handlers
       widget.onTextUpdated(text);
       // Sendability  validation
@@ -158,6 +160,7 @@ class _MessageEditField extends State<MessageEditField> {
     final path = _paths.map((e) => e.path).toList()[0].toString();
     final name = _paths.map((e) => e.name).toList()[0].toString();
     //print(path);
+    //needed to add indexes for multifiles
 
     BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
   }
@@ -254,8 +257,25 @@ class TextInput extends StatelessWidget {
             ),
           ),
           BlocBuilder<FileUploadBloc, FileUploadState>(
-              builder: (context, state) {
-            if (state is NothingToUpload) {
+            builder: (context, state) {
+              if (state is NothingToUpload) {
+                return CircleAvatar(
+                  backgroundColor: Colors.indigo[50],
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.file_download),
+                    onPressed: openFileExplorer,
+                    color: Colors.black54,
+                  ),
+                );
+              } else if (state is FileUploading) {
+                return CircularProgressIndicator();
+              } else if (state is FileUploaded) {
+                return CircleAvatar(
+                  child: (Text('1')),
+                  backgroundColor: Colors.indigo[50],
+                );
+              } // TODO: implementation for all states
               return CircleAvatar(
                 backgroundColor: Colors.indigo[50],
                 child: IconButton(
@@ -265,31 +285,14 @@ class TextInput extends StatelessWidget {
                   color: Colors.black54,
                 ),
               );
-            } else if (state is FileUploading) {
-              return CircularProgressIndicator();
-            } else if (state is FileUploaded) {
-              return CircleAvatar(
-                child: (Text('1')),
-                backgroundColor: Colors.indigo[50],
-              );
-            }// TODO: implementation for all states
-            return CircleAvatar(
-              backgroundColor: Colors.indigo[50],
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                icon: Icon(Icons.file_download),
-                onPressed: openFileExplorer,
-                color: Colors.black54,
-              ),
-            );
-
-            /*    else if (state is FileUploadFailed) {
-                                         // print(fileID);
+              /*    else if (state is FileUploadFailed) {
+                                         // print();
                                         } else if (state
                                             is FileUploadCancelled) {
-                                        //  print(fileID);
+                                        //  print();
                                         }*/
-          }),
+            },
+          ),
           IconButton(
             padding: EdgeInsets.only(bottom: 5.0),
             icon: Transform(
