@@ -46,7 +46,7 @@ class AccountRepository extends JsonSerializable {
 
   // Pseudo constructor for loading profile from storage or api
   static Future<AccountRepository> load() async {
-    _logger.w("Loading account:");
+    // _logger.w("Loading account:");
     var accountMap = await _storage.load(
       type: StorageType.Account,
       key: _ACCOUNT_STORE_KEY,

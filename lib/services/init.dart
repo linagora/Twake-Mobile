@@ -40,7 +40,7 @@ Future<AuthRepository> initAuth() async {
     Logger.level = Level.error;
 
   final repository = await AuthRepository.load();
-  await repository.getAuthMode();
+  if (repository.accessToken == null) await repository.getAuthMode();
   return repository;
 }
 
