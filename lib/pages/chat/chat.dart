@@ -188,7 +188,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                       return BlocBuilder<MessageEditBloc, MessageEditState>(
                         builder: (ctx, state) {
                           return BlocProvider(
-                            create: (BuildContext ctx) => FileUploadBloc(),
+                            create: (BuildContext context) => FileUploadBloc(),
                             child: MessageEditField(
                               autofocus: state is MessageEditing,
                               initialText: state is MessageEditing
@@ -196,50 +196,42 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                   : draft,
                               onMessageSend: state is MessageEditing
                                   ? state.onMessageEditComplete
-                                  : (content) {
-                                      BlocListener<FileUploadBloc,
-                                              FileUploadState>(
-                                          listener: (ctx, state) {
-                                        if (state is FileUploaded) {
-                                          fileID = state.id;
-                                          // print(fileID);
+                                  : (content, context) {
+                                      twacode = TwacodeParser(content).message;
 
-                                          twacode =
-                                              TwacodeParser(content).message;
-                                          twacode.append(
-                                            {
-                                              "type": "nop",
-                                              "content": [
-                                                {
-                                                  "type": "file",
-                                                  "mode": "preview",
-                                                  "content": fileID,
-                                                }
-                                              ]
-                                            },
-                                          );
-                                          BlocProvider.of<MessagesBloc<T>>(
+                                      final uploadState =
+                                          BlocProvider.of<FileUploadBloc>(
                                                   context)
-                                              .add(
-                                            SendMessage(
-                                                content: content,
-                                                prepared: twacode),
-                                          );
-                                        } else if (state is NothingToUpload) {
-                                          print(fileID);
-                                        } else if (state is FileUploading) {
-                                          print(fileID);
-                                        } else if (state is FileUploadFailed) {
-                                          print(fileID);
-                                        } else if (state
-                                            is FileUploadCancelled) {
-                                          print(fileID);
-                                        }
-                                      });
+                                              .state;
+                                      if (uploadState is FileUploaded) {
+                                        twacode.add(
+                                          {
+                                            "type": "nop",
+                                            "content": [
+                                              {
+                                                "type": "file",
+                                                "mode": "preview",
+                                                "content": uploadState.id,
+                                                "metadata": {
+                                                  "size": uploadState.size,
+                                                  "filename":
+                                                      uploadState.fileName,
+                                                  "preview":
+                                                      uploadState.preview,
+                                                  "download":
+                                                      uploadState.download
+                                                }
+                                              }
+                                            ]
+                                          },
+                                        );
+                                      }
 
                                       BlocProvider.of<MessagesBloc<T>>(context)
                                           .add(
-                                        SendMessage(content: content),
+                                        SendMessage(
+                                            content: content,
+                                            prepared: twacode),
                                       );
                                       context.read<DraftBloc>().add(
                                             ResetDraft(
