@@ -132,19 +132,19 @@ class Api {
       // logger.d('METHOD: ${jsonEncode(method)}');
       // logger.d('PARAMS: ${jsonEncode(params)}');
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      // logger.d('GET RESPONSE: ${jsonEncode(response.data)}')
+      // logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
 
       // logger.d('GET RESPONSE:');
-      if (response != null && response.data != null) {
-        final longString = jsonEncode(response.data);
-        int step = longString.length;
-        for (int i = 0; i < longString.length; i += step) {
-          if (i + step > longString.length) {
-            i = longString.length - i;
-          }
-          // print(longString.substring(i, i + step));
-        }
-      }
+      // if (response != null && response.data != null) {
+      //   final longString = jsonEncode(response.data);
+      //   int step = longString.length;
+      //   for (int i = 0; i < longString.length; i += step) {
+      //     if (i + step > longString.length) {
+      //       i = longString.length - i;
+      //     }
+      //     // print(longString.substring(i, i + step));
+      //   }
+      // }
 
       return response.data;
     } catch (e) {

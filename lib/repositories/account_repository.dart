@@ -64,7 +64,7 @@ class AccountRepository extends JsonSerializable {
     // Get repository instance
     final account = AccountRepository.fromJson(accountMap);
     // Save it to store
-    if (loadedFromNetwork) account.save();
+    // if (loadedFromNetwork) account.save();
     // return it
     return account;
   }
