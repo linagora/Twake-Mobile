@@ -82,11 +82,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                   child: Row(
                     children: [
                       SizedBox(width: 9.0),
-                      RoundedImage(
-                        logo,
-                        width: 40.0,
-                        height: 40.0,
-                      ),
+                 
                       SizedBox(width: 15.0),
                       Expanded(
                         child: ShimmerLoading(
