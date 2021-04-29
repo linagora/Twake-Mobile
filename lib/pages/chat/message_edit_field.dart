@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +139,7 @@ class _MessageEditField extends State<MessageEditField> {
     final path = _paths.map((e) => e.path).toList()[0].toString();
     // final name = _paths.map((e) => e.name).toList()[0].toString();
     //print(path);
+    //needed to add indexes for multifiles
 
     BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
   }
@@ -237,8 +236,25 @@ class TextInput extends StatelessWidget {
             ),
           ),
           BlocBuilder<FileUploadBloc, FileUploadState>(
-              builder: (context, state) {
-            if (state is NothingToUpload) {
+            builder: (context, state) {
+              if (state is NothingToUpload) {
+                return CircleAvatar(
+                  backgroundColor: Colors.indigo[50],
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.file_download),
+                    onPressed: openFileExplorer,
+                    color: Colors.black54,
+                  ),
+                );
+              } else if (state is FileUploading) {
+                return CircularProgressIndicator();
+              } else if (state is FileUploaded) {
+                return CircleAvatar(
+                  child: (Text('1')),
+                  backgroundColor: Colors.indigo[50],
+                );
+              }
               return CircleAvatar(
                 backgroundColor: Colors.indigo[50],
                 child: IconButton(
@@ -248,37 +264,13 @@ class TextInput extends StatelessWidget {
                   color: Colors.black54,
                 ),
               );
-            } else if (state is FileUploading) {
-              return CircularProgressIndicator();
-            } else if (state is FileUploaded) {
-              return CircleAvatar(
-                child: (Text('1')),
-                backgroundColor: Colors.indigo[50],
-              );
-            }
-            // TODO: implementation for all states
-            return CircleAvatar(
-              backgroundColor: Colors.indigo[50],
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                icon: Icon(Icons.file_download),
-                onPressed: openFileExplorer,
-                color: Colors.black54,
-              ),
-            );
-
-            /*    else if (state is FileUploadFailed) {
-                                         // print(fileID);
-                                        } else if (state
-                                            is FileUploadCancelled) {
-                                        //  print(fileID);
-                                        }*/
-          }),
+            },
+          ),
           IconButton(
             padding: EdgeInsets.only(bottom: 5.0),
             icon: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.rotationZ(-pi / 4), // rotate 45 degrees cc
+              transform: Matrix4.rotationZ(3 / 4), // rotate 45 degrees cc
               child: Icon(
                 canSend ? Icons.send : Icons.send_outlined,
                 color:
