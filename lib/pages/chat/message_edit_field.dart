@@ -71,7 +71,6 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
-      print(text);
       // Update for cache handlers
       widget.onTextUpdated(text);
       // Sendability  validation
