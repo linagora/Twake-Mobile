@@ -17,12 +17,12 @@ class StartUpload extends FileUploadEvent {
 
   Future<FormData> payload() async {
     return FormData.fromMap({
-      'file': await MultipartFile.fromFile(path, filename: this.fileName),
+      'file': await MultipartFile.fromFile(path, filename: this.filename),
       'workspace_id': workspaceId ?? ProfileBloc.selectedWorkspaceId,
     });
   }
 
-  String get fileName {
+  String get filename {
     return basename(path);
   }
 
@@ -44,30 +44,18 @@ class CancelUpload extends FileUploadEvent {
 }
 
 class FinishUpload extends FileUploadEvent {
-  final String id;
-  final String fileName;
-  final int size;
-  final String preview;
-  final String download;
-
-  const FinishUpload({
-    this.id,
-    this.fileName,
-    this.size,
-    this.preview,
-    this.download,
-  });
+  const FinishUpload();
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [];
 }
 
 class ErrorUpload extends FileUploadEvent {
   final String reason;
-  final String fileName;
+  final String filename;
   final int size;
 
-  const ErrorUpload({this.reason, this.fileName, this.size});
+  const ErrorUpload({this.reason, this.filename, this.size});
 
   @override
   List<Object> get props => [reason];

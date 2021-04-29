@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:twake/models/uploaded_file.dart';
 
 abstract class FileUploadState extends Equatable {
-  final String fileName;
+  final String filename;
   final int size;
 
-  const FileUploadState({this.fileName, this.size});
+  const FileUploadState({this.filename, this.size});
 }
 
 class NothingToUpload extends FileUploadState {
@@ -20,19 +21,19 @@ class FileUploading extends FileUploadState {
 
   const FileUploading({
     this.cancelToken,
-    String fileName,
+    String filename,
     int size,
-  }) : super(fileName: fileName, size: size);
+  }) : super(filename: filename, size: size);
 
   @override
-  List<Object> get props => [fileName];
+  List<Object> get props => [filename];
 }
 
 class FileUploadFailed extends FileUploadState {
   final String reason;
 
-  const FileUploadFailed(this.reason, {String fileName, int size})
-      : super(fileName: fileName, size: size);
+  const FileUploadFailed(this.reason, {String filename, int size})
+      : super(filename: filename, size: size);
 
   @override
   List<Object> get props => [reason];
@@ -46,18 +47,10 @@ class FileUploadCancelled extends FileUploadState {
 }
 
 class FileUploaded extends FileUploadState {
-  final String id;
-  final String preview;
-  final String download;
+  final List<UploadedFile> files;
 
-  const FileUploaded(
-    this.id, {
-    String fileName,
-    int size,
-    this.download,
-    this.preview,
-  }) : super(fileName: fileName, size: size);
+  const FileUploaded(this.files);
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [files];
 }

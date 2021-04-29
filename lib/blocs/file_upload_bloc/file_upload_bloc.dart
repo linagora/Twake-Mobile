@@ -16,25 +16,18 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
   Stream<FileUploadState> mapEventToState(FileUploadEvent event) async* {
     if (event is StartUpload) {
       final size = await event.size;
-      final fileName = event.fileName;
+      final filename = event.filename;
       final cancelToken = CancelToken();
 
       repository.upload(
         payload: await event.payload(),
         onSuccess: (Map<String, dynamic> response) {
-          print('FILE UPLOADED:\n$response');
-          this.add(FinishUpload(
-            id: response['id'],
-            fileName: response['filename'],
-            size: response['size'],
-            preview: response['preview'],
-            download: response['download'],
-          ));
+          this.add(FinishUpload());
         },
         onError: (e) {
           this.add(ErrorUpload(
             reason: e,
-            fileName: fileName,
+            filename: filename,
             size: size,
           ));
         },
@@ -43,7 +36,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
 
       yield FileUploading(
         cancelToken: cancelToken,
-        fileName: fileName,
+        filename: filename,
         size: size,
       );
     } else if (event is CancelUpload) {
@@ -51,19 +44,16 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       yield FileUploadCancelled();
     } else if (event is FinishUpload) {
       print('Yielding state FILE UPLOADED');
-      yield FileUploaded(
-        event.id,
-        fileName: event.fileName,
-        preview: event.preview,
-        download: event.download,
-        size: event.size,
-      );
+      yield FileUploaded(this.repository.files);
     } else if (event is ErrorUpload) {
       yield FileUploadFailed(
         event.reason,
-        fileName: event.fileName,
+        filename: event.filename,
         size: event.size,
       );
-    } else if (event is ClearUploads) {}
+    } else if (event is ClearUploads) {
+      repository.clearFiles();
+      yield NothingToUpload();
+    }
   }
 }

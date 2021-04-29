@@ -6,7 +6,6 @@ import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
-import 'package:twake/blocs/mentions_cubit/member_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -19,7 +18,6 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/pages/chat/message_edit_field.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
-import 'package:twake/repositories/file_upload_repository.dart';
 import 'package:twake/utils/twacode.dart';
 
 class Chat<T extends BaseChannelBloc> extends StatelessWidget {
@@ -28,7 +26,6 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
     String draft = '';
     String channelId;
     DraftType draftType;
-    var twacode;
 
     return Scaffold(
       appBar: AppBar(
@@ -197,32 +194,38 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                               onMessageSend: state is MessageEditing
                                   ? state.onMessageEditComplete
                                   : (content, context) {
-                                      twacode = TwacodeParser(content).message;
+                                      List<dynamic> twacode =
+                                          TwacodeParser(content).message;
 
                                       final uploadState =
                                           BlocProvider.of<FileUploadBloc>(
                                                   context)
                                               .state;
                                       if (uploadState is FileUploaded) {
+                                        if (twacode.isNotEmpty) {
+                                          twacode.add({
+                                            'start': '\n',
+                                            'end': '',
+                                            'content': [],
+                                          });
+                                        }
                                         twacode.add(
                                           {
                                             "type": "nop",
-                                            "content": [
-                                              {
+                                            "content":
+                                                uploadState.files.map((uf) {
+                                              return {
                                                 "type": "file",
                                                 "mode": "preview",
-                                                "content": uploadState.id,
+                                                "content": uf.id,
                                                 "metadata": {
-                                                  "size": uploadState.size,
-                                                  "filename":
-                                                      uploadState.fileName,
-                                                  "preview":
-                                                      uploadState.preview,
-                                                  "download":
-                                                      uploadState.download
+                                                  "size": uf.size,
+                                                  "filename": uf.filename,
+                                                  "preview": uf.preview,
+                                                  "download": uf.download
                                                 }
-                                              }
-                                            ]
+                                              };
+                                            }).toList(),
                                           },
                                         );
                                       }
@@ -233,6 +236,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                             content: content,
                                             prepared: twacode),
                                       );
+                                      BlocProvider.of<FileUploadBloc>(context)
+                                          .add(ClearUploads());
                                       context.read<DraftBloc>().add(
                                             ResetDraft(
                                               id: channelId,

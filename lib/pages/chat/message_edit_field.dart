@@ -270,7 +270,7 @@ class TextInput extends StatelessWidget {
             padding: EdgeInsets.only(bottom: 5.0),
             icon: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.rotationZ(3 / 4), // rotate 45 degrees cc
+              transform: Matrix4.rotationZ(-3 / 4), // rotate 45 degrees cc
               child: Icon(
                 canSend ? Icons.send : Icons.send_outlined,
                 color:
