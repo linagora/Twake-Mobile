@@ -22,6 +22,7 @@ class MentionsRepository {
       orderings: {'firstname': true},
     );
     final users = result.map((r) => User.fromJson(r)).toList();
+    Logger().e("FOUND: ${users.length} users for match");
 
     return users;
   }

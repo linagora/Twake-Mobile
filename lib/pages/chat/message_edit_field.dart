@@ -64,8 +64,9 @@ class _MessageEditField extends State<MessageEditField> {
     _controller.addListener(() {
       var text = _controller.text;
       if (_userMentionRegex.hasMatch(text)) {
-        BlocProvider.of<MentionsCubit>(context)
-            .fetchMentionableUsers(searchTerm: text);
+        BlocProvider.of<MentionsCubit>(context).fetchMentionableUsers(
+          searchTerm: text.split('@').last.trimRight(),
+        );
       }
       // Update for cache handlers
       widget.onTextUpdated(text);

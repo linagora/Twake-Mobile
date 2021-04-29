@@ -20,6 +20,10 @@ class MentionsCubit extends Cubit<MentionState> {
     }
   }
 
+  void clearMentions() {
+    emit(MentionsEmpty());
+  }
+
   Future<String> completeMentions(String text) async {
     final matches = _userMentionRegex.allMatches(text);
     final completeText = '' + text; // create a copy
