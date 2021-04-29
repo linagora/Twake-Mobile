@@ -1,4 +1,6 @@
 PODS:
+  - Amplitude-iOS (4.8.2)
+  - Analytics (3.7.0)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
@@ -45,6 +47,10 @@ PODS:
   - Flutter (1.0.0)
   - flutter_local_notifications (0.0.1):
     - Flutter
+  - flutter_segment (0.0.1):
+    - Analytics (= 3.7.0)
+    - Flutter
+    - Segment-Amplitude (= 3.0.1)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -80,6 +86,9 @@ PODS:
     - Flutter
   - PromisesObjC (1.2.12)
   - Reachability (3.2)
+  - Segment-Amplitude (3.0.1):
+    - Amplitude-iOS (~> 4.8.0)
+    - Analytics (~> 3.7.0)
   - Sentry (6.1.4):
     - Sentry/Core (= 6.1.4)
   - Sentry/Core (6.1.4)
@@ -101,6 +110,7 @@ DEPENDENCIES:
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
+  - flutter_segment (from `.symlinks/plugins/flutter_segment/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
@@ -111,6 +121,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Amplitude-iOS
+    - Analytics
     - Firebase
     - FirebaseCore
     - FirebaseCoreDiagnostics
@@ -123,6 +135,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - Reachability
+    - Segment-Amplitude
     - Sentry
 
 EXTERNAL SOURCES:
@@ -138,6 +151,8 @@ EXTERNAL SOURCES:
     :path: Flutter
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
+  flutter_segment:
+    :path: ".symlinks/plugins/flutter_segment/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
   package_info:
@@ -154,6 +169,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
+  Amplitude-iOS: 46c8e6e65c49bb1ad1909a9add1a68e1f8562b3f
+  Analytics: 77fd5fb102a4a5eedafa2c2b0245ceb7b7c15e45
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Firebase: 26223c695fe322633274198cb19dca8cb7e54416
@@ -166,6 +183,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: 68d1bcb14880189558a8ae57167abe0b7e417232
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
+  flutter_segment: f20a38d465030de0f1b2aa9325cef9c1442b0721
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   GoogleDataTransport: 1024b1a4dfbd7a0e92cb20d7e0a6f1fb66b449a4
   GoogleUtilities: d866834472f1324d080496bc67ab3ce5d0d46027
@@ -175,6 +193,7 @@ SPEC CHECKSUMS:
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
+  Segment-Amplitude: 1b3b02a2e92f4b08a413a72bf7aa44f78566ab3b
   Sentry: 9d055e2de30a77685e86b219acf02e59b82091fc
   sentry_flutter: 8b2b2e1c0101ef562106b5d272d3c0c741512c01
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904

@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:twake/blocs/mentions_cubit/member_state.dart';
+import 'package:twake/blocs/mentions_cubit/mentions_state.dart';
 import 'package:twake/repositories/mentions_repository.dart';
+
+export 'package:twake/blocs/mentions_cubit/mentions_state.dart';
 
 class MentionsCubit extends Cubit<MentionState> {
   final MentionsRepository repository = MentionsRepository();
-  final _userMentionRegex = RegExp(r'\s@[A-Za-z1-9_-]*(\s|$)');
+  final _userMentionRegex = RegExp(r'\s@[A-Za-z1-9_-]+(\s|$)');
 
   MentionsCubit() : super(MentionsEmpty());
 
