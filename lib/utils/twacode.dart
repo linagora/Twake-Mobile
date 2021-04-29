@@ -937,7 +937,7 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
-          final s = int.parse(t['metadata']['size'] as String);
+          final s = int.parse(t['metadata']['size'].toString());
           InlineSpan text;
           const MB = 1024 * 1024;
           const KB = 1024;
