@@ -1,13 +1,13 @@
 import 'dart:convert' show jsonEncode, jsonDecode;
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:twake/models/base_channel.dart';
-import 'package:twake/models/company.dart';
-import 'package:twake/models/workspace.dart';
-import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/account_field.dart';
 import 'package:twake/models/language_field.dart';
 import 'package:twake/models/password_field.dart';
+// import 'package:twake/models/base_channel.dart';
+// import 'package:twake/models/company.dart';
+// import 'package:twake/models/workspace.dart';
+import 'package:twake/services/service_bundle.dart';
 
 part 'account_repository.g.dart';
 
@@ -47,16 +47,14 @@ class AccountRepository extends JsonSerializable {
   // Pseudo constructor for loading profile from storage or api
   static Future<AccountRepository> load() async {
     _logger.w("Loading account:");
-    bool loadedFromNetwork = false;
     var accountMap = await _storage.load(
       type: StorageType.Account,
       key: _ACCOUNT_STORE_KEY,
     );
     if (accountMap == null) {
-      _logger.d('No account in storage, requesting from api...');
+      // _logger.d('No account in storage, requesting from api...');
       accountMap = await _api.get(Endpoint.account);
-      _logger.d('RECEIVED ACCOUNT: $accountMap');
-      loadedFromNetwork = true;
+      // _logger.d('RECEIVED ACCOUNT: $accountMap');
     } else {
       accountMap = jsonDecode(accountMap[_storage.settingsField]);
       // _logger.d('RETRIEVED ACCOUNT: $accountMap');

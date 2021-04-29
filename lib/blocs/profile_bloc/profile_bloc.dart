@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_segment/flutter_segment.dart';
 import 'package:twake/blocs/notification_bloc/notification_bloc.dart';
@@ -39,12 +40,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     });
 
-    Segment.identify(userId: rpstr.id).then((r) {
-      ProfileRepository.logger.w('Identified user: ${rpstr.id}');
-      Segment.track(eventName: 'twake-mobile:open_client');
-    }).onError((e, s) {
-      ProfileRepository.logger.e(e);
-    });
+    if (!kDebugMode) // only send statistic when in release mode
+      Segment.identify(userId: rpstr.consoleId ?? rpstr.id).then((r) {
+        ProfileRepository.logger.w('Identified user: ${rpstr.id}');
+        Segment.track(eventName: 'twake-mobile:open_client');
+      }).onError((e, s) {
+        ProfileRepository.logger.e(e);
+      });
   }
 
   bool isMe(String userId) => repository.id == userId;

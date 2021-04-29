@@ -21,6 +21,9 @@ class ProfileRepository extends JsonSerializable {
   @JsonKey(name: 'lastname')
   String lastName;
 
+  @JsonKey(name: 'console_id')
+  final String consoleId;
+
   // Avatar of user
   String thumbnail;
 
@@ -31,6 +34,7 @@ class ProfileRepository extends JsonSerializable {
   ProfileRepository({
     this.id,
     this.username,
+    this.consoleId,
   });
 
   @JsonKey(ignore: true)
@@ -122,7 +126,7 @@ class ProfileRepository extends JsonSerializable {
 
   static Future<void> fetchInfo() async {
     final profileMap = await _api.get(Endpoint.account);
-    logger.d('PROFILE INFO: $profileMap');
+    // logger.d('PROFILE INFO: $profileMap');
   }
 
   Future<ProfileRepository> patch({

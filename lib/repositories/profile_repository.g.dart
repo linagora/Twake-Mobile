@@ -11,6 +11,7 @@ ProfileRepository _$ProfileRepositoryFromJson(Map<String, dynamic> json) {
   return ProfileRepository(
     id: json['id'] as String,
     username: json['username'] as String,
+    consoleId: json['console_id'] as String,
   )
     ..firstName = json['firstname'] as String
     ..lastName = json['lastname'] as String
@@ -25,6 +26,7 @@ Map<String, dynamic> _$ProfileRepositoryToJson(ProfileRepository instance) =>
       'username': instance.username,
       'firstname': instance.firstName,
       'lastname': instance.lastName,
+      'console_id': instance.consoleId,
       'thumbnail': instance.thumbnail,
       'selected_company_id': instance.selectedCompanyId,
       'selected_workspace_id': instance.selectedWorkspaceId,

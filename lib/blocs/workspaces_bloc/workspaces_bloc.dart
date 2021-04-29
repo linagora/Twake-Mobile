@@ -63,7 +63,6 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   Stream<WorkspaceState> mapEventToState(WorkspacesEvent event) async* {
     if (event is ReloadWorkspaces) {
       yield WorkspacesLoading(companyId: event.companyId);
-      print('NEW COMPANY ID: ${event.companyId}');
       await repository.reload(
         filters: [
           ['company_id', '=', event.companyId]
@@ -72,14 +71,13 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         sortFields: {'name': true},
         forceFromApi: event.forceFromApi,
       );
-      print('Selected: ${repository.selected.companyId}');
 
       final newState = WorkspacesLoaded(
         workspaces: repository.items,
         selected: repository.selected,
       );
-      repository.logger
-          .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
+      // repository.logger
+      // .w("YIELDING NEW WORKSPACES STATE: ${this.state != newState}");
       yield newState;
     } else if (event is CheckForChange) {
       // Sorry Pavel, but cannot block the stream here with await
