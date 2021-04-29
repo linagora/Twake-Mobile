@@ -13,7 +13,7 @@ class AddChannelFlow extends StatelessWidget {
   Widget build(BuildContext context) {
     // print('Build call');
     final channelFlowWidgets = [
-      SingleChildScrollView(child: ChannelInfoForm()),
+      ChannelInfoForm(),
       BlocProvider<UserBloc>(
         create: (_) => UserBloc(ProfileBloc.userId),
         child: ParticipantsList(title: 'Add participants'),
