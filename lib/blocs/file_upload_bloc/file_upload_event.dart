@@ -72,3 +72,10 @@ class ErrorUpload extends FileUploadEvent {
   @override
   List<Object> get props => [reason];
 }
+
+class ClearUploads extends FileUploadEvent {
+  const ClearUploads();
+
+  @override
+  List<Object> get props => [];
+}

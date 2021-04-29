@@ -1,17 +1,12 @@
 import 'dart:math';
-import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/file_upload_bloc/file_upload_bloc.dart';
-import 'package:twake/repositories/file_upload_repository.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
@@ -39,15 +34,10 @@ class _MessageEditField extends State<MessageEditField> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String _fileName;
   List<PlatformFile> _paths;
-  String _directoryPath;
   String _extension;
-  bool _loadingPath = false;
   bool _multiPick = false;
   FileType _pickingType = FileType.any;
-  TextEditingController _controller2 = TextEditingController();
 
   @override
   void initState() {
@@ -133,14 +123,12 @@ class _MessageEditField extends State<MessageEditField> {
   }
 
   void _openFileExplorer() async {
-    setState(() => _loadingPath = true);
     try {
-      _directoryPath = null;
       _paths = (await FilePicker.platform.pickFiles(
         type: _pickingType,
         allowMultiple: _multiPick,
         allowedExtensions: (_extension?.isNotEmpty ?? false)
-            ? _extension?.replaceAll(' ', '').split(',')
+            ? _extension.replaceAll(' ', '').split(',')
             : null,
       ))
           ?.files;
@@ -150,13 +138,8 @@ class _MessageEditField extends State<MessageEditField> {
       print(ex);
     }
     if (!mounted) return;
-    setState(() {
-      _loadingPath = false;
-      print(_paths.first.extension);
-      _fileName = _paths != null ? _paths.map((e) => e.name).toString() : '...';
-    });
     final path = _paths.map((e) => e.path).toList()[0].toString();
-    final name = _paths.map((e) => e.name).toList()[0].toString();
+    // final name = _paths.map((e) => e.name).toList()[0].toString();
     //print(path);
 
     BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
@@ -272,7 +255,8 @@ class TextInput extends StatelessWidget {
                 child: (Text('1')),
                 backgroundColor: Colors.indigo[50],
               );
-            }// TODO: implementation for all states
+            }
+            // TODO: implementation for all states
             return CircleAvatar(
               backgroundColor: Colors.indigo[50],
               child: IconButton(

@@ -64,6 +64,6 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
         fileName: event.fileName,
         size: event.size,
       );
-    }
+    } else if (event is ClearUploads) {}
   }
 }
