@@ -1,12 +1,14 @@
-import 'dart:math';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/file_upload_bloc/file_upload_bloc.dart';
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
-  final Function(String) onMessageSend;
+  final Function(String, BuildContext) onMessageSend;
   final Function(String) onTextUpdated;
   final String initialText;
 
@@ -31,6 +33,11 @@ class _MessageEditField extends State<MessageEditField> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
 
+  List<PlatformFile> _paths;
+  String _extension;
+  bool _multiPick = false;
+  FileType _pickingType = FileType.any;
+
   @override
   void initState() {
     super.initState();
@@ -52,14 +59,6 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
-      // TODO implement bloc to fetch users
-      // if (_userMentionRegex.hasMatch(text)) {
-      // BlocProvider.of<MessageEditBloc>(context).add(GetMentionableUsers(
-      // searchTerm:
-      // _userMentionRegex.stringMatch(text).split('@').last.trim(),
-      // currentInput: text,
-      // ));
-      // }
       // Update for cache handlers
       widget.onTextUpdated(text);
       // Sendability  validation
@@ -122,6 +121,30 @@ class _MessageEditField extends State<MessageEditField> {
     return false;
   }
 
+  void _openFileExplorer() async {
+    try {
+      _paths = (await FilePicker.platform.pickFiles(
+        type: _pickingType,
+        allowMultiple: _multiPick,
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension.replaceAll(' ', '').split(',')
+            : null,
+      ))
+          ?.files;
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    } catch (ex) {
+      print(ex);
+    }
+    if (!mounted) return;
+    final path = _paths.map((e) => e.path).toList()[0].toString();
+    // final name = _paths.map((e) => e.name).toList()[0].toString();
+    //print(path);
+    //needed to add indexes for multifiles
+
+    BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -137,6 +160,7 @@ class _MessageEditField extends State<MessageEditField> {
             emojiVisible: _emojiVisible,
             onMessageSend: widget.onMessageSend,
             canSend: _canSend,
+            openFileExplorer: _openFileExplorer,
           ),
           if (_emojiVisible)
             EmojiKeyboard(
@@ -162,17 +186,18 @@ class TextInput extends StatelessWidget {
   final bool emojiVisible;
   final bool canSend;
   final Function onMessageSend;
+  final Function openFileExplorer;
 
-  TextInput({
-    this.onMessageSend,
-    this.controller,
-    this.focusNode,
-    this.autofocus,
-    this.emojiVisible,
-    this.scrollController,
-    this.toggleEmojiBoard,
-    this.canSend,
-  });
+  TextInput(
+      {this.onMessageSend,
+      this.controller,
+      this.focusNode,
+      this.autofocus,
+      this.emojiVisible,
+      this.scrollController,
+      this.toggleEmojiBoard,
+      this.openFileExplorer,
+      this.canSend});
 
   @override
   Widget build(BuildContext context) {
@@ -211,11 +236,42 @@ class TextInput extends StatelessWidget {
               ),
             ),
           ),
+          BlocBuilder<FileUploadBloc, FileUploadState>(
+            builder: (context, state) {
+              if (state is NothingToUpload) {
+                return CircleAvatar(
+                  backgroundColor: Colors.indigo[50],
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(Icons.file_download),
+                    onPressed: openFileExplorer,
+                    color: Colors.black54,
+                  ),
+                );
+              } else if (state is FileUploading) {
+                return CircularProgressIndicator();
+              } else if (state is FileUploaded) {
+                return CircleAvatar(
+                  child: (Text('1')),
+                  backgroundColor: Colors.indigo[50],
+                );
+              }
+              return CircleAvatar(
+                backgroundColor: Colors.indigo[50],
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  icon: Icon(Icons.file_download),
+                  onPressed: openFileExplorer,
+                  color: Colors.black54,
+                ),
+              );
+            },
+          ),
           IconButton(
             padding: EdgeInsets.only(bottom: 5.0),
             icon: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.rotationZ(-pi / 4), // rotate 45 degrees cc
+              transform: Matrix4.rotationZ(-3 / 4), // rotate 45 degrees cc
               child: Icon(
                 canSend ? Icons.send : Icons.send_outlined,
                 color:
@@ -224,7 +280,7 @@ class TextInput extends StatelessWidget {
             ),
             onPressed: canSend
                 ? () async {
-                    await onMessageSend(controller.text);
+                    await onMessageSend(controller.text, context);
                     controller.clear();
                   }
                 : null,

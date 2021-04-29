@@ -8,30 +8,26 @@ export 'package:twake/blocs/file_upload_bloc/file_upload_event.dart';
 export 'package:twake/blocs/file_upload_bloc/file_upload_state.dart';
 
 class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
-  final FileUploadRepository repository;
+  final FileUploadRepository repository = FileUploadRepository();
 
-  FileUploadBloc(this.repository) : super(NothingToUpload());
+  FileUploadBloc() : super(NothingToUpload());
 
   @override
   Stream<FileUploadState> mapEventToState(FileUploadEvent event) async* {
     if (event is StartUpload) {
       final size = await event.size;
-      final fileName = event.fileName;
+      final filename = event.filename;
       final cancelToken = CancelToken();
 
       repository.upload(
-        payload: event.payload,
+        payload: await event.payload(),
         onSuccess: (Map<String, dynamic> response) {
-          this.add(FinishUpload(
-            id: response['id'],
-            fileName: response['filename'],
-            size: int.parse(response['size']),
-          ));
+          this.add(FinishUpload());
         },
         onError: (e) {
           this.add(ErrorUpload(
             reason: e,
-            fileName: fileName,
+            filename: filename,
             size: size,
           ));
         },
@@ -40,24 +36,24 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
 
       yield FileUploading(
         cancelToken: cancelToken,
-        fileName: fileName,
+        filename: filename,
         size: size,
       );
     } else if (event is CancelUpload) {
       repository.cancelUpload(event.cancelToken);
       yield FileUploadCancelled();
     } else if (event is FinishUpload) {
-      yield FileUploaded(
-        event.id,
-        fileName: event.fileName,
-        size: event.size,
-      );
+      print('Yielding state FILE UPLOADED');
+      yield FileUploaded(this.repository.files);
     } else if (event is ErrorUpload) {
       yield FileUploadFailed(
         event.reason,
-        fileName: event.fileName,
+        filename: event.filename,
         size: event.size,
       );
+    } else if (event is ClearUploads) {
+      repository.clearFiles();
+      yield NothingToUpload();
     }
   }
 }

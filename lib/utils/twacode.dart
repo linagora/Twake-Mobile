@@ -1,9 +1,17 @@
+import 'dart:io';
+// import 'dart:isolate';
+//
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:twake/services/service_bundle.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
@@ -929,7 +937,7 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
-          final s = int.parse(t['metadata']['size'] as String);
+          final s = int.parse(t['metadata']['size'].toString());
           InlineSpan text;
           const MB = 1024 * 1024;
           const KB = 1024;
@@ -949,9 +957,35 @@ class TwacodeRenderer {
             padding: EdgeInsets.all(3),
             child: Row(children: [
               InkWell(
-                onTap: () => {
-                  // Open the image via photo_view or download link via flutter_downloader
-                  // file link is contained in t['metadata']['download'] field
+                onTap: () async {
+                  if (t['metadata']['download'] != null) {
+                    final permissionStatus = await Permission.storage.request();
+                    //print(t['metadata']['download']);
+                    if (permissionStatus.isGranted) {
+                      if (Platform.isAndroid) {
+                        //   print(Api.host);
+
+                        final dir = await getExternalStorageDirectory();
+
+                        final id = await FlutterDownloader.enqueue(
+                            url: Api.host + t['metadata']['download'],
+                            savedDir: dir.path,
+                            // fileName: "Test", //auto
+                            showNotification: true,
+                            openFileFromNotification: true);
+                      } else if (Platform.isIOS) {
+                        final dir = await getApplicationSupportDirectory();
+                        final id = await FlutterDownloader.enqueue(
+                            url: Api.host + t['metadata']['download'],
+                            savedDir: dir.path,
+                            // fileName: "Test", //auto
+                            showNotification: true,
+                            openFileFromNotification: true);
+                      }
+                    } else {
+                      // TODO: implementation needed
+                    }
+                  }
                 },
                 child: SizedBox(
                   child: t['metadata']['preview'] != null
@@ -961,7 +995,15 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
+                          // TODO: implementation needed to show progres
+                          /*CircularProgressIndicator(
+                          backgroundColor: Colors.blueGrey,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.lightBlue),
+                          value: progres.toDouble(),*/
                         ),
+
+                  // ),
                   width: 40,
                   height: 40,
                 ),

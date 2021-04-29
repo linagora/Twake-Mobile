@@ -4,6 +4,7 @@ import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/pages/chat/message_edit_field.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
+import 'package:twake/utils/twacode.dart';
 
 class Chat<T extends BaseChannelBloc> extends StatelessWidget {
   @override
@@ -74,72 +76,62 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (context, state) {
-
-            print('Current messages bloc state: $state');
-            print('Current channel id - selected channel id: ${state.parentChannel.id} - ${ProfileBloc.selectedChannelId}');
-
+          builder: (_, state) {
             BaseChannel parentChannel = T is Channel ? Channel() : Direct();
 
-            // if ((state is MessagesLoaded || state is MessagesEmpty) &&
-            //     state.parentChannel.id == ProfileBloc.selectedChannelId) {
-            if (state is MessagesLoaded || state is MessagesEmpty) {
+            if ((state is MessagesLoaded || state is MessagesEmpty) &&
+                state.parentChannel.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
-            // context.read<EditChannelCubit>().load(channelId: parentChannel.id);
-
-            var canEdit = false;
-            var memberId = '';
-            var icon = '';
-            var isPrivate = false;
-            var membersCount = 0;
-
-            if (parentChannel is Channel) {
-              isPrivate = parentChannel.visibility == 'private';
-              icon = parentChannel.icon;
-              membersCount = parentChannel.membersCount;
-
-              // Possible permissions:
-              // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-              // 'ADD_MEMBER', 'REMOVE_MEMBER',
-              // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-              final permissions = parentChannel.permissions;
-
-              if (permissions.contains('UPDATE_NAME') ||
-                  permissions.contains('UPDATE_DESCRIPTION') ||
-                  permissions.contains('ADD_MEMBER') ||
-                  permissions.contains('REMOVE_MEMBER') ||
-                  permissions.contains('UPDATE_PRIVACY') ||
-                  permissions.contains('DELETE_CHANNEL')) {
-                canEdit = true;
-              } else {
-                canEdit = false;
-              }
-            } else if (parentChannel is Direct &&
-                parentChannel.members != null) {
-              final userId = ProfileBloc.userId;
-              memberId =
-                  parentChannel.members.firstWhere((id) => id != userId);
-            }
-
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
+                var canEdit = false;
+                var memberId = '';
+                var icon = '';
+                var isPrivate = false;
+                var membersCount = 0;
+
+                if (parentChannel is Channel) {
+                  isPrivate = parentChannel.visibility == 'private';
+                  icon = parentChannel.icon;
+                  membersCount = parentChannel.membersCount;
+
+                  // Possible permissions:
+                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
+                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
+                  final permissions = parentChannel.permissions;
+
+                  if (permissions.contains('UPDATE_NAME') ||
+                      permissions.contains('UPDATE_DESCRIPTION') ||
+                      permissions.contains('ADD_MEMBER') ||
+                      permissions.contains('REMOVE_MEMBER') ||
+                      permissions.contains('UPDATE_PRIVACY') ||
+                      permissions.contains('DELETE_CHANNEL')) {
+                    canEdit = true;
+                  } else {
+                    canEdit = false;
+                  }
+                } else if (parentChannel is Direct &&
+                    parentChannel.members != null) {
+                  final userId = ProfileBloc.userId;
+                  memberId =
+                      parentChannel.members.firstWhere((id) => id != userId);
+                }
+
                 if (editState is EditChannelSaved) {
                   context
                       .read<MemberCubit>()
                       .fetchMembers(channelId: channelId);
                 }
 
-                print('EditChannelCubit state in Chat: $editState');
-                print('DirectBloc state in Chat: $state');
-
                 return ChatHeader(
                   isDirect: parentChannel is Direct,
-                  isPrivate: isPrivate ?? false,
-                  userId: memberId ?? '',
-                  name: parentChannel != null ? parentChannel.name : '',
-                  icon: icon ?? '',
-                  membersCount: membersCount ?? 0,
+                  isPrivate: isPrivate,
+                  userId: memberId,
+                  name: parentChannel.name,
+                  icon: icon,
+                  membersCount: membersCount,
                   onTap: canEdit ? () => _goEdit(context, state) : null,
                 );
               },
@@ -192,39 +184,79 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
 
                       return BlocBuilder<MessageEditBloc, MessageEditState>(
                         builder: (ctx, state) {
-                          if (state is MessageEditing) {
-                            print("MENTIONABLE USERS:\n${state.mentionable}");
-                          }
-                          return MessageEditField(
-                            autofocus: state is MessageEditing,
-                            initialText: state is MessageEditing
-                                ? state.originalStr
-                                : draft,
-                            onMessageSend: state is MessageEditing
-                                ? state.onMessageEditComplete
-                                : (content) {
-                                    BlocProvider.of<MessagesBloc<T>>(context)
-                                        .add(
-                                      SendMessage(content: content),
-                                    );
-                                    context.read<DraftBloc>().add(
-                                          ResetDraft(
-                                            id: channelId,
-                                            type: draftType,
-                                          ),
+                          return BlocProvider(
+                            create: (BuildContext context) => FileUploadBloc(),
+                            child: MessageEditField(
+                              autofocus: state is MessageEditing,
+                              initialText: state is MessageEditing
+                                  ? state.originalStr
+                                  : draft,
+                              onMessageSend: state is MessageEditing
+                                  ? state.onMessageEditComplete
+                                  : (content, context) {
+                                      List<dynamic> twacode =
+                                          TwacodeParser(content).message;
+
+                                      final uploadState =
+                                          BlocProvider.of<FileUploadBloc>(
+                                                  context)
+                                              .state;
+                                      if (uploadState is FileUploaded) {
+                                        if (twacode.isNotEmpty) {
+                                          twacode.add({
+                                            'start': '\n',
+                                            'end': '',
+                                            'content': [],
+                                          });
+                                        }
+                                        twacode.add(
+                                          {
+                                            "type": "nop",
+                                            "content":
+                                                uploadState.files.map((uf) {
+                                              return {
+                                                "type": "file",
+                                                "mode": "preview",
+                                                "content": uf.id,
+                                                "metadata": {
+                                                  "size": uf.size,
+                                                  "filename": uf.filename,
+                                                  "preview": uf.preview,
+                                                  "download": uf.download
+                                                }
+                                              };
+                                            }).toList(),
+                                          },
                                         );
-                                  },
-                            onTextUpdated: state is MessageEditing
-                                ? (text) {}
-                                : (text) {
-                                    context.read<DraftBloc>().add(
-                                          UpdateDraft(
-                                            id: channelId,
-                                            type: draftType,
-                                            draft: text,
-                                          ),
-                                        );
-                                  },
+                                      }
+
+                                      BlocProvider.of<MessagesBloc<T>>(context)
+                                          .add(
+                                        SendMessage(
+                                            content: content,
+                                            prepared: twacode),
+                                      );
+                                      BlocProvider.of<FileUploadBloc>(context)
+                                          .add(ClearUploads());
+                                      context.read<DraftBloc>().add(
+                                            ResetDraft(
+                                              id: channelId,
+                                              type: draftType,
+                                            ),
+                                          );
+                                    },
+                              onTextUpdated: state is MessageEditing
+                                  ? (text) {}
+                                  : (text) {
+                                      context.read<DraftBloc>().add(
+                                            UpdateDraft(
+                                              id: channelId,
+                                              type: draftType,
+                                              draft: text,
+                                            ),
+                                          );
+                                    },
+                            ),
                           );
                         },
                       );

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
 import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
@@ -19,6 +20,7 @@ void main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
+    await FlutterDownloader.initialize(debug: true);
 
     final AuthRepository authRepository = await initAuth();
     final ConfigurationRepository configurationRepository =

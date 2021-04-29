@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:path/path.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 
 abstract class FileUploadEvent extends Equatable {
   const FileUploadEvent();
@@ -14,12 +15,14 @@ class StartUpload extends FileUploadEvent {
 
   StartUpload({this.path, this.workspaceId});
 
-  FormData get payload => FormData.fromMap({
-        'file': MultipartFile.fromFile(path),
-        'workspace_id': workspaceId,
-      });
+  Future<FormData> payload() async {
+    return FormData.fromMap({
+      'file': await MultipartFile.fromFile(path, filename: this.filename),
+      'workspace_id': workspaceId ?? ProfileBloc.selectedWorkspaceId,
+    });
+  }
 
-  String get fileName {
+  String get filename {
     return basename(path);
   }
 
@@ -41,23 +44,26 @@ class CancelUpload extends FileUploadEvent {
 }
 
 class FinishUpload extends FileUploadEvent {
-  final String id;
-  final String fileName;
-  final int size;
-
-  const FinishUpload({this.id, this.fileName, this.size});
+  const FinishUpload();
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [];
 }
 
 class ErrorUpload extends FileUploadEvent {
   final String reason;
-  final String fileName;
+  final String filename;
   final int size;
 
-  const ErrorUpload({this.reason, this.fileName, this.size});
+  const ErrorUpload({this.reason, this.filename, this.size});
 
   @override
   List<Object> get props => [reason];
+}
+
+class ClearUploads extends FileUploadEvent {
+  const ClearUploads();
+
+  @override
+  List<Object> get props => [];
 }
