@@ -74,3 +74,12 @@ class AccountSaved extends AccountState {
         availableLanguages,
       ];
 }
+
+class AccountError extends AccountState {
+  final String message;
+
+  AccountError({this.message});
+
+  @override
+  List<Object> get props => [message];
+}

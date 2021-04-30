@@ -29,4 +29,15 @@ class AccountCubit extends Cubit<AccountState> {
       availableLanguages: availableLanguages,
     ));
   }
+
+  Future<void> update({
+    String userName,
+    String firstName,
+    String lastName,
+    String picture,
+    String languageCode,
+  }) async {
+
+    await accountRepository.patch();
+  }
 }

@@ -3,11 +3,15 @@ import 'dart:convert' show jsonEncode, jsonDecode;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/account_field.dart';
 import 'package:twake/models/language_field.dart';
+import 'package:twake/models/language_option.dart';
 import 'package:twake/models/password_field.dart';
+import 'package:twake/models/password_values.dart';
+
 // import 'package:twake/models/base_channel.dart';
 // import 'package:twake/models/company.dart';
 // import 'package:twake/models/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/extensions.dart';
 
 part 'account_repository.g.dart';
 
@@ -103,20 +107,49 @@ class AccountRepository extends JsonSerializable {
     String newPassword,
   }) async {
     final Map<String, dynamic> accountMap = <String, dynamic>{};
-    if (newFirstName != null) {
+    if (newFirstName != null && newFirstName.isNotReallyEmpty) {
       firstName.value = newFirstName;
       accountMap['firstname'] = newFirstName;
     }
-    if (newLastName != null) {
+    if (newLastName != null && newLastName.isNotReallyEmpty) {
       lastName.value = newLastName;
       accountMap['lastname'] = newLastName;
+    }
+    if (newLanguage != null && newLanguage.isNotReallyEmpty) {
+      language.value = newLanguage;
+      accountMap['language'] = newLanguage;
+    }
+    if (oldPassword != null &&
+        newPassword != null &&
+        oldPassword.isNotReallyEmpty &&
+        newPassword.isNotReallyEmpty) {
+      password = PasswordField(
+        isReadonly: password.isReadonly,
+        value: PasswordValues(
+          oldPass: oldPassword,
+          newPass: newPassword,
+        ),
+      );
+      accountMap['password'] = {
+        'old': oldPassword,
+        'new': newPassword,
+      };
     }
     final result = await _api.patch(Endpoint.account, body: toJson());
     if (result != null) {
       print('Account updated: $accountMap');
-      save();
+      // save();
     }
     return this;
+  }
+
+  LanguageOption _selectedLanguage() {
+    final lang = language.options
+        .firstWhere((option) => option.value == language.value, orElse: () {
+      _logger.e('No matching languages found in options!');
+      return LanguageOption(value: language.value, title: 'unknown');
+    });
+    return lang;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

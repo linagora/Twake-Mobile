@@ -13,8 +13,8 @@ class LanguageField {
   });
 
   final bool isReadonly;
-  final String value;
   final List<LanguageOption> options;
+  String value;
 
   factory LanguageField.fromJson(Map<String, dynamic> json) =>
       _$LanguageFieldFromJson(json);
