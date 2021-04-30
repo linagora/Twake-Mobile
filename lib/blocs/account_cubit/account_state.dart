@@ -21,16 +21,22 @@ class AccountLoaded extends AccountState {
   final String picture;
   final String language;
 
-  AccountLoaded(
+  AccountLoaded({
     this.userName,
     this.firstName,
     this.lastName,
     this.picture,
     this.language,
-  );
+  });
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        userName,
+        firstName,
+        lastName,
+        picture,
+        language,
+      ];
 }
 
 class AccountSaving extends AccountState {
@@ -39,6 +45,26 @@ class AccountSaving extends AccountState {
 }
 
 class AccountSaved extends AccountState {
+  final String userName;
+  final String firstName;
+  final String lastName;
+  final String picture;
+  final String language;
+
+  AccountSaved({
+    this.userName,
+    this.firstName,
+    this.lastName,
+    this.picture,
+    this.language,
+  });
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        userName,
+        firstName,
+        lastName,
+        picture,
+        language,
+      ];
 }
