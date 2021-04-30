@@ -14,11 +14,6 @@ import 'package:twake/blocs/profile_bloc/profile_state.dart';
 export 'package:twake/blocs/profile_bloc/profile_event.dart';
 export 'package:twake/blocs/profile_bloc/profile_state.dart';
 
-enum ProfileFlowStage {
-  info,
-  edit,
-}
-
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static ProfileRepository repository;
   final NotificationBloc notificationBloc;
@@ -126,9 +121,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     } else if (event is ClearProfile) {
       await repository.clean();
       yield ProfileEmpty();
-    } else if (event is SetProfileFlowStage) {
-      final stage = event.stage;
-      yield ProfileFlowStageUpdated(stage);
     } else if (event is UpdateProfile) {
       final result = await repository.patch(
         newFirstName: event.firstName,

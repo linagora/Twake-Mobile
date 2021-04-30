@@ -8,6 +8,11 @@ import 'package:twake/repositories/account_repository.dart';
 
 part 'account_state.dart';
 
+enum AccountFlowStage {
+  info,
+  edit,
+}
+
 class AccountCubit extends Cubit<AccountState> {
   final AccountRepository accountRepository;
 
@@ -55,5 +60,9 @@ class AccountCubit extends Cubit<AccountState> {
       language: accountRepository.selectedLanguage().title,
       availableLanguages: accountRepository.language.options,
     ));
+  }
+
+  Future<void> updateAccountFlowStage(AccountFlowStage stage) async {
+    emit(AccountFlowStageUpdated(stage));
   }
 }

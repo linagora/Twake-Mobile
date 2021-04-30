@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
@@ -20,13 +20,13 @@ class _EditProfileState extends State<EditProfile> {
   final _cellularController = TextEditingController();
 
   var _canSave = true;
-  var _thumbnail = ProfileBloc.thumbnail;
+  var _picture = '';
 
   @override
   void initState() {
     super.initState();
-    _firstNameController.text = ProfileBloc.firstName ?? 'FirstName';
-    _lastNameController.text = ProfileBloc.lastName ?? 'LastName';
+    _firstNameController.text = 'FirstName';
+    _lastNameController.text = 'LastName';
   }
 
   @override
@@ -42,24 +42,24 @@ class _EditProfileState extends State<EditProfile> {
     print('Save profile!');
     final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
-    context.read<ProfileBloc>().add(UpdateProfile(
+    context.read<AccountCubit>().updateInfo(
           firstName: firstName,
           lastName: lastName,
-        ));
+        );
     FocusScope.of(context).requestFocus(FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
-    context.read<ProfileBloc>().add(SetProfileFlowStage(ProfileFlowStage.info));
+    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ProfileBloc, ProfileState>(
+    return BlocListener<AccountCubit, AccountState>(
       listener: (context, state) {
-        if (state is ProfileLoaded) {
+        if (state is AccountLoaded) {
           setState(() {
             _firstNameController.text = state.firstName;
             _lastNameController.text = state.lastName;
-            _thumbnail = state.thumbnail;
+            _picture = state.picture;
           });
         }
       },
@@ -85,8 +85,9 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            context.read<ProfileBloc>().add(
-                                SetProfileFlowStage(ProfileFlowStage.info));
+                            context
+                                .read<AccountCubit>()
+                                .updateAccountFlowStage(AccountFlowStage.info);
                             FocusScope.of(context).requestFocus(FocusNode());
                           },
                           child: Icon(
@@ -124,7 +125,7 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         SelectableAvatar(
                           size: 100.0,
-                          userpic: _thumbnail,
+                          userpic: _picture,
                           onTap: () {},
                         ),
                         SizedBox(height: 12.0),

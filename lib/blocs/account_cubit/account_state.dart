@@ -100,3 +100,12 @@ class AccountError extends AccountState {
   @override
   List<Object> get props => [message];
 }
+
+class AccountFlowStageUpdated extends AccountState {
+  final AccountFlowStage stage;
+
+  const AccountFlowStageUpdated(this.stage);
+
+  @override
+  List<Object> get props => [stage];
+}

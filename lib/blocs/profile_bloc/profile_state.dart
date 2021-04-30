@@ -56,15 +56,6 @@ class ProfileEmpty extends ProfileState {
   List<Object> get props => [];
 }
 
-class ProfileFlowStageUpdated extends ProfileState {
-  final ProfileFlowStage stage;
-
-  const ProfileFlowStageUpdated(this.stage);
-
-  @override
-  List<Object> get props => [stage];
-}
-
 class ProfileUpdated extends ProfileState {
   const ProfileUpdated();
 
