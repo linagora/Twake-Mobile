@@ -65,9 +65,9 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                 var name = '';
                 var logo = '';
                 print('Current WorkspacesBloc state in Feed: $state');
-                if (state is WorkspacesLoaded ||
-                    state is WorkspaceSelected) {
-                  print('SELECTED WORKSPACE COMPANY LOGO: ${state.selected.logo}');
+                if (state is WorkspacesLoaded || state is WorkspaceSelected) {
+                  print(
+                      'SELECTED WORKSPACE COMPANY LOGO: ${state.selected.logo}');
                   var selectedWorkspace = ProfileBloc.selectedWorkspace;
                   selectedWorkspace = state.selected;
                   name = selectedWorkspace.name;
@@ -82,7 +82,11 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                   child: Row(
                     children: [
                       SizedBox(width: 9.0),
-                 
+                      RoundedImage(
+                        logo,
+                        width: 40.0,
+                        height: 40.0,
+                      ),
                       SizedBox(width: 15.0),
                       Expanded(
                         child: ShimmerLoading(
