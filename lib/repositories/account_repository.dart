@@ -58,7 +58,7 @@ class AccountRepository extends JsonSerializable {
     if (accountMap == null) {
       // _logger.d('No account in storage, requesting from api...');
       accountMap = await _api.get(Endpoint.account);
-      // _logger.d('RECEIVED ACCOUNT: $accountMap');
+      _logger.d('RECEIVED ACCOUNT: $accountMap');
     } else {
       accountMap = jsonDecode(accountMap[_storage.settingsField]);
       // _logger.d('RETRIEVED ACCOUNT: $accountMap');
@@ -143,7 +143,7 @@ class AccountRepository extends JsonSerializable {
         'new': newPassword,
       };
     }
-    final result = await _api.patch(Endpoint.account, body: toJson());
+    final result = await _api.patch(Endpoint.account, body: accountMap);
     if (result != null) {
       print('Account updated: $accountMap');
       // save();
@@ -156,7 +156,7 @@ class AccountRepository extends JsonSerializable {
         .firstWhere((option) => option.value == language.value, orElse: () {
       _logger.e(
           'No matching languages found in options for code: ${language.value}');
-      return LanguageOption(value: language.value, title: 'unknown');
+      return LanguageOption(value: language.value, title: '');
     });
     return lang;
   }
@@ -165,7 +165,7 @@ class AccountRepository extends JsonSerializable {
     final lang = language.options.firstWhere((option) => option.title == title,
         orElse: () {
       _logger.e('No matching languages found in options for title: $title');
-      return LanguageOption(value: 'unknown', title: title);
+      return LanguageOption(value: '', title: title);
     });
     return lang.value;
   }

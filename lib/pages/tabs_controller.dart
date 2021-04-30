@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
@@ -101,6 +102,10 @@ class _TabsControllerState extends State<TabsController> {
             ..add(SetFlow(
               flow: index != 0 ? SheetFlow.profile : SheetFlow.addChannel,
             ));
+
+          if (index != 0) {
+            context.read<AccountCubit>().fetch();
+          }
 
           setState(() {
             _selectedIndex = index;
