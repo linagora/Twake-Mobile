@@ -30,12 +30,12 @@ abstract class AccountState extends Equatable {
 
 class AccountInitial extends AccountState {
   const AccountInitial({
-    userName,
-    firstName,
-    lastName,
-    picture,
-    language,
-    availableLanguages,
+    String userName,
+    String firstName,
+    String lastName,
+    String picture,
+    String language,
+    List<LanguageOption> availableLanguages,
   }) : super(
           userName: userName,
           firstName: firstName,

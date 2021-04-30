@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 
 abstract class ProfileState extends Equatable {
   const ProfileState();

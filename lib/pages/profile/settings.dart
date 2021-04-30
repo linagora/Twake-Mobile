@@ -19,7 +19,7 @@ class _SettingsState extends State<Settings> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
-      context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+      // context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
     });
   }
 
