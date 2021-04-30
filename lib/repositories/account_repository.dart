@@ -71,9 +71,17 @@ class AccountRepository extends JsonSerializable {
     return account;
   }
 
-  Future<void> reload() async {
+  Future<AccountRepository> reload() async {
     final profileMap = await _api.get(Endpoint.account);
-    _update(profileMap);
+    // _update(profileMap);
+    final newRepo = AccountRepository.fromJson(profileMap);
+    userName = newRepo.userName;
+    firstName = newRepo.firstName;
+    lastName = newRepo.lastName;
+    language = newRepo.language;
+    picture = newRepo.picture;
+
+    return this;
   }
 
   Future<void> clean() async {
@@ -91,12 +99,6 @@ class AccountRepository extends JsonSerializable {
       },
       type: StorageType.Account,
     );
-  }
-
-  void _update(Map<String, dynamic> json) {
-    firstName.value = json['firstname'] as String;
-    lastName.value = json['lastname'] as String;
-    picture.value = json['picture'] as String;
   }
 
   Future<AccountRepository> patch({
@@ -143,13 +145,17 @@ class AccountRepository extends JsonSerializable {
     return this;
   }
 
-  LanguageOption _selectedLanguage() {
+  LanguageOption selectedLanguage() {
     final lang = language.options
         .firstWhere((option) => option.value == language.value, orElse: () {
       _logger.e('No matching languages found in options!');
       return LanguageOption(value: language.value, title: 'unknown');
     });
     return lang;
+  }
+
+  LanguageOption languageFromTitle() {
+
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

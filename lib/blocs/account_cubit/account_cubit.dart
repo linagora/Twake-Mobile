@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/language_field.dart';
 import 'package:twake/models/language_option.dart';
 import 'package:twake/repositories/account_repository.dart';
 
@@ -14,10 +13,8 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> fetch() async {
     await accountRepository.reload();
 
-    final languageCode = accountRepository.language.value;
     final availableLanguages = accountRepository.language.options;
-    final currentLanguage = availableLanguages
-        .firstWhere((language) => language.value == languageCode);
+    final currentLanguage = accountRepository.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
     emit(AccountLoaded(
@@ -30,14 +27,27 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
-  Future<void> update({
-    String userName,
+  Future<void> updateInfo({
     String firstName,
     String lastName,
-    String picture,
-    String languageCode,
+    String languageTitle,
+    String oldPassword,
+    String newPassword,
   }) async {
-
-    await accountRepository.patch();
+    await accountRepository.patch(
+      newFirstName: firstName,
+      newLastName: lastName,
+      newLanguage: languageTitle,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    );
+    emit(AccountSaved(
+      userName: accountRepository.userName.value,
+      firstName: accountRepository.firstName.value,
+      lastName: accountRepository.lastName.value,
+      picture: accountRepository.picture.value,
+      language: accountRepository.language.value,
+      availableLanguages: accountRepository.language.options,
+    ));
   }
 }
