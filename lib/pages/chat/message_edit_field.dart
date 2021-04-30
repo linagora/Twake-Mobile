@@ -130,9 +130,17 @@ class _MessageEditField extends State<MessageEditField> {
   }
 
   void mentionReplece(String username) async {
-    var text = _controller.text
-        .replaceFirst('@', username, _controller.text.lastIndexOf('@'));
-    _controller.text = text;
+    final text = _controller.text;
+    _controller.text = text.replaceRange(
+      text.lastIndexOf('@'),
+      text.length,
+      '@$username ',
+    );
+    _controller.selection = TextSelection.fromPosition(
+      TextPosition(
+        offset: _controller.text.length,
+      ),
+    );
   }
 
   Future<bool> onBackPress() async {
