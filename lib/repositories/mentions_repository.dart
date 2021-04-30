@@ -34,6 +34,7 @@ class MentionsRepository {
         ['username', '=', username]
       ],
     );
-    return user['id'];
+    print('USER?: $user');
+    return user[0]['id'];
   }
 }

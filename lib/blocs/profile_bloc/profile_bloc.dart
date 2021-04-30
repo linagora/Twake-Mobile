@@ -42,7 +42,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
     if (!kDebugMode) // only send statistic when in release mode
       Segment.identify(userId: rpstr.consoleId ?? rpstr.id).then((r) {
-        ProfileRepository.logger.w('Identified user: ${rpstr.id}');
+        // ProfileRepository.logger.w('Identified user: ${rpstr.id}');
         Segment.track(eventName: 'twake-mobile:open_client');
       }).onError((e, s) {
         ProfileRepository.logger.e(e);
