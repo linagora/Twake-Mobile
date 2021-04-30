@@ -34,10 +34,11 @@ class AccountCubit extends Cubit<AccountState> {
     String oldPassword,
     String newPassword,
   }) async {
+    final languageCode = accountRepository.languageCodeFromTitle(languageTitle);
     await accountRepository.patch(
       newFirstName: firstName,
       newLastName: lastName,
-      newLanguage: languageTitle,
+      newLanguage: languageCode,
       oldPassword: oldPassword,
       newPassword: newPassword,
     );
@@ -46,7 +47,7 @@ class AccountCubit extends Cubit<AccountState> {
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
       picture: accountRepository.picture.value,
-      language: accountRepository.language.value,
+      language: accountRepository.selectedLanguage().title,
       availableLanguages: accountRepository.language.options,
     ));
   }
