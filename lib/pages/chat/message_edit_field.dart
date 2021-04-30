@@ -152,6 +152,13 @@ class _MessageEditField extends State<MessageEditField> {
     //needed to add indexes for multifiles
 
     BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
+    BlocProvider.of<FileUploadBloc>(context).listen((FileUploadState state) {
+      if (state is FileUploaded) {
+        setState(() {
+          _canSend = true;
+        });
+      }
+    });
   }
 
   @override

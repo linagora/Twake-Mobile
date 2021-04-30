@@ -220,7 +220,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                                 "content": uf.id,
                                                 "metadata": {
                                                   "size": uf.size,
-                                                  "filename": uf.filename,
+                                                  "name": uf.filename,
                                                   "preview": uf.preview,
                                                   "download": uf.download
                                                 }
