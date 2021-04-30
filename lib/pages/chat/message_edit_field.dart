@@ -30,6 +30,7 @@ class MessageEditField extends StatefulWidget {
 class _MessageEditField extends State<MessageEditField> {
   final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+$');
   bool _emojiVisible = false;
+  bool _mentionsVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
 
@@ -67,6 +68,7 @@ class _MessageEditField extends State<MessageEditField> {
         BlocProvider.of<MentionsCubit>(context).fetchMentionableUsers(
           searchTerm: text.split('@').last.trimRight(),
         );
+        mentionsVisible();
       }
       // Update for cache handlers
       widget.onTextUpdated(text);
@@ -81,6 +83,15 @@ class _MessageEditField extends State<MessageEditField> {
         });
       }
     });
+  }
+
+  void mentionsVisible() async {
+    final mentionsState = BlocProvider.of<MentionsCubit>(context).state;
+    if (mentionsState is MentionableUsersLoaded) {
+      setState(() {
+        _mentionsVisible = true;
+      });
+    }
   }
 
   @override
@@ -116,6 +127,12 @@ class _MessageEditField extends State<MessageEditField> {
       _forceLooseFocus = false;
       _focusNode.requestFocus();
     }
+  }
+
+  void mentionReplece(String username) async {
+    var text = _controller.text
+        .replaceFirst('@', username, _controller.text.lastIndexOf('@'));
+    _controller.text = text;
   }
 
   Future<bool> onBackPress() async {
@@ -163,35 +180,77 @@ class _MessageEditField extends State<MessageEditField> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> listOfUsers = ['Name1', 'Name2', 'Name3'];
     return WillPopScope(
       onWillPop: onBackPress,
       child: Column(
         children: [
-          Container(
-            height: (MediaQuery.of(context).size.height) * 0.3,
-            child: BlocBuilder<MentionsCubit, MentionState>(
-              builder: (context, state) {
-                if (state is MentionableUsersLoaded) {
-                  return ListView.separated(
-                    separatorBuilder: (context, index) => Divider(
-                      color: Colors.black54,
-                    ),
-                    itemCount: state.users.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text('${state.users[index]}'),
-                      );
+          _mentionsVisible
+              ? Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: BlocBuilder<MentionsCubit, MentionState>(
+                    builder: (context, state) {
+                      if (state is MentionableUsersLoaded) {
+                        return ListView.separated(
+                          reverse: true,
+                          separatorBuilder: (context, index) => Divider(
+                            color: Colors.black54,
+                          ),
+                          itemCount: state.users.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              child: ListTile(
+                                title: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    //TODO have to add user's icon
+                                    CircleAvatar(
+                                      child: Icon(Icons.person,
+                                          color: Colors.grey),
+                                      backgroundColor: Colors.blue[50],
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      '${state.users[index].firstName} ',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    Text(
+                                      ' ${state.users[index].lastName}',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    Expanded(child: SizedBox()),
+                                    Icon(
+                                      Icons.message_rounded,
+                                      color: Colors.grey,
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  BlocProvider.of<MentionsCubit>(context)
+                                      .clearMentions();
+                                  mentionReplece(state.users[index].username);
+                                  setState(() {
+                                    _mentionsVisible = false;
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      } else if (state is MentionsEmpty) {
+                        return Container();
+                        //Text("Empty");
+                      }
+                      return Container();
                     },
-                  );
-                } else if (state is MentionsEmpty) {
-                  return Text("Empty");
-                  //Text("Empty");
-                }
-                return Text("init");
-              },
-            ),
-          ),
+                  ),
+                )
+              : Container(),
           TextInput(
             controller: _controller,
             scrollController: _scrollController,
