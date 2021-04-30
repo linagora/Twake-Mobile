@@ -20,6 +20,7 @@ class AccountLoaded extends AccountState {
   final String lastName;
   final String picture;
   final String language;
+  final List<LanguageOption> availableLanguages;
 
   AccountLoaded({
     this.userName,
@@ -27,6 +28,7 @@ class AccountLoaded extends AccountState {
     this.lastName,
     this.picture,
     this.language,
+    this.availableLanguages,
   });
 
   @override
@@ -36,6 +38,7 @@ class AccountLoaded extends AccountState {
         lastName,
         picture,
         language,
+        availableLanguages,
       ];
 }
 
@@ -50,6 +53,7 @@ class AccountSaved extends AccountState {
   final String lastName;
   final String picture;
   final String language;
+  final List<LanguageOption> availableLanguages;
 
   AccountSaved({
     this.userName,
@@ -57,6 +61,7 @@ class AccountSaved extends AccountState {
     this.lastName,
     this.picture,
     this.language,
+    this.availableLanguages,
   });
 
   @override
@@ -66,5 +71,6 @@ class AccountSaved extends AccountState {
         lastName,
         picture,
         language,
+        availableLanguages,
       ];
 }
