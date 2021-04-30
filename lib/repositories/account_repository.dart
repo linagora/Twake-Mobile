@@ -109,15 +109,21 @@ class AccountRepository extends JsonSerializable {
     String newPassword,
   }) async {
     final Map<String, dynamic> accountMap = <String, dynamic>{};
-    if (newFirstName != null && newFirstName.isNotReallyEmpty) {
+    if (newFirstName != null &&
+        newFirstName.isNotReallyEmpty &&
+        newFirstName != this.firstName.value) {
       firstName.value = newFirstName;
       accountMap['firstname'] = newFirstName;
     }
-    if (newLastName != null && newLastName.isNotReallyEmpty) {
+    if (newLastName != null &&
+        newLastName.isNotReallyEmpty &&
+        newLastName != this.lastName.value) {
       lastName.value = newLastName;
       accountMap['lastname'] = newLastName;
     }
-    if (newLanguage != null && newLanguage.isNotReallyEmpty) {
+    if (newLanguage != null &&
+        newLanguage.isNotReallyEmpty &&
+        newLanguage != this.language.value) {
       language.value = newLanguage;
       accountMap['language'] = newLanguage;
     }
@@ -158,9 +164,9 @@ class AccountRepository extends JsonSerializable {
   String languageCodeFromTitle(String title) {
     final lang = language.options.firstWhere((option) => option.title == title,
         orElse: () {
-          _logger.e('No matching languages found in options for title: $title');
-          return LanguageOption(value: 'unknown', title: title);
-        });
+      _logger.e('No matching languages found in options for title: $title');
+      return LanguageOption(value: 'unknown', title: title);
+    });
     return lang.value;
   }
 

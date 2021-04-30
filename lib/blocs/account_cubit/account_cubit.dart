@@ -11,6 +11,7 @@ class AccountCubit extends Cubit<AccountState> {
   AccountCubit(this.accountRepository) : super(AccountInitial());
 
   Future<void> fetch() async {
+    emit(AccountLoading());
     await accountRepository.reload();
 
     final availableLanguages = accountRepository.language.options;
@@ -34,6 +35,7 @@ class AccountCubit extends Cubit<AccountState> {
     String oldPassword,
     String newPassword,
   }) async {
+    emit(AccountSaving());
     final languageCode = accountRepository.languageCodeFromTitle(languageTitle);
     await accountRepository.patch(
       newFirstName: firstName,
