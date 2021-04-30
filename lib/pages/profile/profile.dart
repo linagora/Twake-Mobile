@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/models/language_option.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/button_field.dart';
 
@@ -11,17 +12,21 @@ class Profile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: BlocBuilder<AccountCubit, AccountState>(
+        buildWhen: (_, current) => current is! AccountFlowStageUpdated,
         builder: (context, state) {
-          var firstName;
-          var lastName;
-          var picture;
-          var language;
-          var availableLanguages;
+          var firstName = '';
+          var lastName = '';
+          var picture = '';
+          var language = '';
+          var availableLanguages = <LanguageOption>[];
 
-          if (state is AccountLoaded || state is AccountSaved) {
+          if (state is AccountLoaded ||
+              state is AccountSaved ||
+              state is AccountInitial) {
             firstName = state.firstName;
             lastName = state.lastName;
             picture = state.picture;
+            availableLanguages = state.availableLanguages;
           }
 
           print('AccountCubit state: $state');
