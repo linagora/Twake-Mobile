@@ -21,7 +21,13 @@ class AccountLoaded extends AccountState {
   final String picture;
   final String language;
 
-  AccountLoaded(this.userName, this.firstName, this.lastName, this.picture, this.language);
+  AccountLoaded(
+    this.userName,
+    this.firstName,
+    this.lastName,
+    this.picture,
+    this.language,
+  );
 
   @override
   List<Object> get props => [];
