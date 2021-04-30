@@ -58,14 +58,9 @@ class _EditProfileState extends State<EditProfile> {
         if (state is AccountLoaded ||
             state is AccountSaved ||
             state is AccountInitial) {
-
-          print('pic pic: ${state.picture}');
-
-          // setState(() {
-            _firstNameController.text = state.firstName;
-            _lastNameController.text = state.lastName;
-            _picture = state.picture;
-          // });
+          _firstNameController.text = state.firstName;
+          _lastNameController.text = state.lastName;
+          _picture = state.picture;
         }
 
         return GestureDetector(
@@ -92,7 +87,8 @@ class _EditProfileState extends State<EditProfile> {
                             onTap: () {
                               context
                                   .read<AccountCubit>()
-                                  .updateAccountFlowStage(AccountFlowStage.info);
+                                  .updateAccountFlowStage(
+                                      AccountFlowStage.info);
                               FocusScope.of(context).requestFocus(FocusNode());
                             },
                             child: Icon(

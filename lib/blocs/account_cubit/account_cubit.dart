@@ -1,8 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/models/language_option.dart';
 import 'package:twake/repositories/account_repository.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'account_state.dart';
 
@@ -78,6 +81,10 @@ class AccountCubit extends Cubit<AccountState> {
       language: accountRepository.selectedLanguage().title,
       availableLanguages: accountRepository.language.options,
     ));
+  }
+
+  Future<void> updateImage(BuildContext context, String path) async {
+    context.read<FileUploadBloc>().add(StartUpload(path: path));
   }
 
   Future<void> updateAccountFlowStage(AccountFlowStage stage) async {

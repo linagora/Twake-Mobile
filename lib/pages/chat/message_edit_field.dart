@@ -129,7 +129,7 @@ class _MessageEditField extends State<MessageEditField> {
     }
   }
 
-  void mentionReplece(String username) async {
+  void mentionReplace(String username) async {
     final text = _controller.text;
     _controller.text = text.replaceRange(
       text.lastIndexOf('@'),
@@ -240,7 +240,7 @@ class _MessageEditField extends State<MessageEditField> {
                                 onTap: () {
                                   BlocProvider.of<MentionsCubit>(context)
                                       .clearMentions();
-                                  mentionReplece(state.users[index].username);
+                                  mentionReplace(state.users[index].username);
                                   setState(() {
                                     _mentionsVisible = false;
                                   });

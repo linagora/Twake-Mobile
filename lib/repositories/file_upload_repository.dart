@@ -10,12 +10,13 @@ class FileUploadRepository {
 
   void upload({
     FormData payload,
+    String endpoint = Endpoint.fileUpload,
     Function(Map<String, dynamic> response) onSuccess,
     Function(String reason) onError,
     CancelToken cancelToken,
   }) {
     _api
-        .post(Endpoint.fileUpload, body: payload, cancelToken: cancelToken)
+        .post(endpoint, body: payload, cancelToken: cancelToken)
         .then((r) {
       this.files.add(UploadedFile.fromJson(r));
       onSuccess(r);
