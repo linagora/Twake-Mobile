@@ -7,13 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 
-const _categoryHeaderHeight = 40.0;
-const _categoryTitleHeight = _categoryHeaderHeight; // to
+// const _categoryHeaderHeight = 40.0;
+// const _categoryTitleHeight = _categoryHeaderHeight; // to
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String, BuildContext) onMessageSend;
-  final Function(String) onTextUpdated;
+  final Function(String, BuildContext) onTextUpdated;
   final String initialText;
 
   MessageEditField({
@@ -47,7 +47,7 @@ class _MessageEditField extends State<MessageEditField> {
   void initState() {
     super.initState();
 
-    widget.onTextUpdated(widget.initialText);
+    widget.onTextUpdated(widget.initialText, context);
     if (widget.initialText.isNotReallyEmpty) {
       _controller.text = widget.initialText; // possibly retrieved from cache.
       setState(() {
@@ -71,7 +71,7 @@ class _MessageEditField extends State<MessageEditField> {
         mentionsVisible();
       }
       // Update for cache handlers
-      widget.onTextUpdated(text);
+      widget.onTextUpdated(text, context);
       // Sendability  validation
       if (text.isReallyEmpty && _canSend) {
         setState(() {
@@ -210,7 +210,6 @@ class _MessageEditField extends State<MessageEditField> {
                                 title: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    //TODO have to add user's icon
                                     CircleAvatar(
                                       child: Icon(Icons.person,
                                           color: Colors.grey),

@@ -20,7 +20,10 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
         : MessageTwacode.fromJson(json['content'] as Map<String, dynamic>),
     channelId: json['channel_id'] as String,
     responsesCount: json['responses_count'] as int ?? 0,
-    reactions: json['reactions'] as Map<String, dynamic> ?? {},
+    reactions: (json['reactions'] as List)
+            ?.map((e) => e as Map<String, dynamic>)
+            ?.toList() ??
+        [],
     username: json['username'] as String,
     lastName: json['lastname'] as String,
     firstName: json['firstname'] as String,

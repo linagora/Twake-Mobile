@@ -221,10 +221,10 @@ class _MessageTileState<T extends BaseChannelBloc>
                             crossAxisAlignment: WrapCrossAlignment.center,
                             textDirection: TextDirection.ltr,
                             children: [
-                              ...messageState.reactions.keys.map((r) {
+                              ...messageState.reactions.map((r) {
                                 return Reaction(
-                                  r,
-                                  messageState.reactions[r]['count'],
+                                  r['name'],
+                                  r['count'],
                                   T == DirectsBloc ? 'direct' : null,
                                 );
                               }),

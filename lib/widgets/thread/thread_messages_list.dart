@@ -34,7 +34,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
             hideShowAnswers: true,
             key: ValueKey(
               state.threadMessage.id +
-                  state.threadMessage.reactions.keys.join() +
+                  state.threadMessage.reactions.map((r) => r['name']).join() +
                   state.threadMessage.responsesCount.toString() +
                   (state.threadMessage.content.originalStr ?? ''),
             ),
@@ -145,12 +145,12 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                         message: _messages[i],
                         key: ValueKey(
                           _messages[i].id +
-                              _messages[i].reactions.entries.fold(
+                              _messages[i].reactions.fold(
                                     '',
                                     (acc, entry) =>
                                         acc +
-                                        entry.key +
-                                        entry.value.toString(),
+                                        entry['name'] +
+                                        entry['count'].toString(),
                                   ) +
                               (_messages[i].content.originalStr ?? ''),
                         ),

@@ -12,7 +12,7 @@ class MessageReady extends SingleMessageState {
   final List<dynamic> content;
   final String text;
   final int charCount;
-  final Map<String, dynamic> reactions;
+  final List<Map<String, dynamic>> reactions;
   final int hash;
   final String userId;
   final String sender;
