@@ -68,7 +68,9 @@ class _MessageEditField extends State<MessageEditField> {
         BlocProvider.of<MentionsCubit>(context).fetchMentionableUsers(
           searchTerm: text.split('@').last.trimRight(),
         );
-        mentionsVisible();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          mentionsVisible();
+        });
       }
       // Update for cache handlers
       widget.onTextUpdated(text);
@@ -210,11 +212,26 @@ class _MessageEditField extends State<MessageEditField> {
                                 title: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    //TODO have to add user's icon
-                                    CircleAvatar(
-                                      child: Icon(Icons.person,
-                                          color: Colors.grey),
-                                      backgroundColor: Colors.blue[50],
+                                    ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                      child: CircleAvatar(
+                                        child: Image.network(
+                                          state.users[index].thumbnail,
+                                          fit: BoxFit.contain,
+                                          loadingBuilder:
+                                              (context, child, progres) {
+                                            return progres == null
+                                                ? child
+                                                : CircleAvatar(
+                                                    child: Icon(Icons.person,
+                                                        color: Colors.grey),
+                                                    backgroundColor:
+                                                        Colors.blue[50],
+                                                  );
+                                          },
+                                        ),
+                                      ),
                                     ),
                                     SizedBox(
                                       width: 15,
