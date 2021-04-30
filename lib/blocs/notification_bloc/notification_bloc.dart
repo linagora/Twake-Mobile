@@ -314,7 +314,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void handleSocketResource(Map resource) {
     final type = getSocketResourceType(resource);
-    logger.w('RESOURCE ID: $type');
+    // logger.w('RESOURCE ID: $type');
     if (type == SocketResourceType.ChannelUpdate) {
       final data =
           SocketChannelUpdateNotification.fromJson(resource['resource']);
