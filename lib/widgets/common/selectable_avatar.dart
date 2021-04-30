@@ -74,7 +74,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
       child: Container(
         width: widget.size,
         height: widget.size,
-        child: (_icon != null && _icon.isNotEmpty)
+        child: (_icon != null && _icon.isNotReallyEmpty)
             ? Center(
                 child: Text(
                   _icon,

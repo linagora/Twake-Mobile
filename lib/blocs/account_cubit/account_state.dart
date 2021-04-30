@@ -53,12 +53,12 @@ class AccountLoading extends AccountState {
 
 class AccountLoaded extends AccountState {
   const AccountLoaded({
-    userName,
-    firstName,
-    lastName,
-    picture,
-    language,
-    availableLanguages,
+    String userName,
+    String firstName,
+    String lastName,
+    String picture,
+    String language,
+    List<LanguageOption> availableLanguages,
   }) : super(
     userName: userName,
     firstName: firstName,
@@ -76,12 +76,12 @@ class AccountSaving extends AccountState {
 
 class AccountSaved extends AccountState {
   const AccountSaved({
-    userName,
-    firstName,
-    lastName,
-    picture,
-    language,
-    availableLanguages,
+    String userName,
+    String firstName,
+    String lastName,
+    String picture,
+    String language,
+    List<LanguageOption> availableLanguages,
   }) : super(
     userName: userName,
     firstName: firstName,

@@ -230,6 +230,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   create: (_) => AccountCubit(
                     state.initData.account,
                   ),
+                  lazy: false,
                 ),
               ],
               child: WillPopScope(

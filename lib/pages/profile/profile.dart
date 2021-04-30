@@ -95,7 +95,6 @@ class Profile extends StatelessWidget {
                   topRight: Radius.circular(10.0),
                 ),
                 onTap: () {
-                  print('Tap tap');
                   context
                       .read<AccountCubit>()
                       .updateAccountFlowStage(AccountFlowStage.edit);
