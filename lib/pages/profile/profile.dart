@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,21 +11,18 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: BlocBuilder<ProfileBloc, ProfileState>(
-          buildWhen: (_, current) =>
-              current is ProfileLoaded ||
-              current is ProfileEmpty ||
-              current is ProfileUpdated ||
-              current is ProfileError,
+      child: BlocBuilder<AccountCubit, AccountState>(
           builder: (context, state) {
-            var firstName = ProfileBloc.firstName;
-            var lastName = ProfileBloc.lastName;
-            var thumbnail = ProfileBloc.thumbnail;
+            var firstName;
+            var lastName;
+            var picture;
+            var language;
+            var availableLanguages;
 
-            if (state is ProfileLoaded) {
+            if (state is AccountLoaded || state is AccountSaved) {
               firstName = state.firstName;
               lastName = state.lastName;
-              thumbnail = state.thumbnail;
+              picture = state.picture;
             }
 
             return Column(
@@ -49,7 +47,7 @@ class Profile extends StatelessWidget {
                         children: [
                           SelectableAvatar(
                             size: 60.0,
-                            userpic: thumbnail,
+                            userpic: picture,
                             onTap: () {},
                           ),
                           SizedBox(height: 12.0),

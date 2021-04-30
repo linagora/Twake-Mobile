@@ -1,12 +1,49 @@
 part of 'account_cubit.dart';
 
 abstract class AccountState extends Equatable {
-  const AccountState();
+  final String userName;
+  final String firstName;
+  final String lastName;
+  final String picture;
+  final String language;
+  final List<LanguageOption> availableLanguages;
+
+  const AccountState({
+    this.userName,
+    this.firstName,
+    this.lastName,
+    this.picture,
+    this.language,
+    this.availableLanguages,
+  });
+
+  @override
+  List<Object> get props => [
+    userName,
+    firstName,
+    lastName,
+    picture,
+    language,
+    availableLanguages,
+  ];
 }
 
 class AccountInitial extends AccountState {
-  @override
-  List<Object> get props => [];
+  const AccountInitial({
+    userName,
+    firstName,
+    lastName,
+    picture,
+    language,
+    availableLanguages,
+  }) : super(
+          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
+          picture: picture,
+          language: language,
+          availableLanguages: availableLanguages,
+        );
 }
 
 class AccountLoading extends AccountState {
@@ -15,31 +52,21 @@ class AccountLoading extends AccountState {
 }
 
 class AccountLoaded extends AccountState {
-  final String userName;
-  final String firstName;
-  final String lastName;
-  final String picture;
-  final String language;
-  final List<LanguageOption> availableLanguages;
-
-  AccountLoaded({
-    this.userName,
-    this.firstName,
-    this.lastName,
-    this.picture,
-    this.language,
-    this.availableLanguages,
-  });
-
-  @override
-  List<Object> get props => [
-        userName,
-        firstName,
-        lastName,
-        picture,
-        language,
-        availableLanguages,
-      ];
+  const AccountLoaded({
+    userName,
+    firstName,
+    lastName,
+    picture,
+    language,
+    availableLanguages,
+  }) : super(
+    userName: userName,
+    firstName: firstName,
+    lastName: lastName,
+    picture: picture,
+    language: language,
+    availableLanguages: availableLanguages,
+  );
 }
 
 class AccountSaving extends AccountState {
@@ -48,31 +75,21 @@ class AccountSaving extends AccountState {
 }
 
 class AccountSaved extends AccountState {
-  final String userName;
-  final String firstName;
-  final String lastName;
-  final String picture;
-  final String language;
-  final List<LanguageOption> availableLanguages;
-
-  AccountSaved({
-    this.userName,
-    this.firstName,
-    this.lastName,
-    this.picture,
-    this.language,
-    this.availableLanguages,
-  });
-
-  @override
-  List<Object> get props => [
-        userName,
-        firstName,
-        lastName,
-        picture,
-        language,
-        availableLanguages,
-      ];
+  const AccountSaved({
+    userName,
+    firstName,
+    lastName,
+    picture,
+    language,
+    availableLanguages,
+  }) : super(
+    userName: userName,
+    firstName: firstName,
+    lastName: lastName,
+    picture: picture,
+    language: language,
+    availableLanguages: availableLanguages,
+  );
 }
 
 class AccountError extends AccountState {

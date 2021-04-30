@@ -165,7 +165,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Tab(
-                  text: 'Direct chats',
+                  text: 'Сhats',
                 ),
               ),
             ],

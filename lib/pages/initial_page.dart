@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_segment/flutter_segment.dart';
 import 'package:lottie/lottie.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/add_workspace_cubit/add_workspace_cubit.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
@@ -47,9 +48,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       Future.delayed(
-          Duration(seconds: 2),
-          () => BlocProvider.of<ConnectionBloc>(context)
-              .add(CheckConnectionState()));
+        Duration(seconds: 2),
+        () => BlocProvider.of<ConnectionBloc>(context).add(
+          CheckConnectionState(),
+        ),
+      );
     }
   }
 
@@ -223,6 +226,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   lazy: false,
                 ),
                 BlocProvider<MentionsCubit>(create: (_) => MentionsCubit()),
+                BlocProvider<AccountCubit>(
+                  create: (_) => AccountCubit(
+                    state.initData.account,
+                  ),
+                ),
               ],
               child: WillPopScope(
                 onWillPop: () async =>
