@@ -7,7 +7,6 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
-import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/sheets/search_item.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
@@ -16,7 +15,6 @@ import 'package:twake/blocs/add_channel_bloc/add_channel_state.dart';
 import 'package:twake/blocs/add_channel_bloc/add_channel_event.dart';
 import 'package:twake/blocs/user_bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/utils/extensions.dart';
 
 class ParticipantsList extends StatefulWidget {
   final bool isDirect;
@@ -139,6 +137,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
             context.read<SheetBloc>().add(CloseSheet());
             // Reset selected participants
             context.read<AddChannelBloc>().add(Update(participants: []));
+            setState(() {
+              _selectedIds.clear();
+              _selectedUsers.clear();
+            });
             _controller.clear();
             // Redirect user to created direct
             if (state is DirectCreated) {
@@ -158,6 +160,10 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 duration: Duration(seconds: 2),
               ),
             );
+          } else if (state is StageUpdated && state.stage == FlowStage.participants) {
+            if (_searchRequest.isEmpty) {
+              context.read<UserBloc>().add(LoadUsers(_searchRequest));
+            }
           }
         },
         buildWhen: (_, current) {
@@ -205,7 +211,17 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 if (state is MultipleUsersLoading) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is MultipleUsersLoaded) {
-                  users = state.users;
+                  if (_isDirect) {
+                    users = state.users;
+                  } else {
+                    if (_selectedUsers.isEmpty) {
+                      _selectedIds.clear();
+                    }
+                    users = state.users..addAll(_selectedUsers);
+                    //remove duplicated user and sort the list
+                    users = users.toSet().toList();
+                    users.sort((a, b) => a.username.compareTo(b.username));
+                  }
                   // print('-------------------------------');
                   // for (var u in users) {
                   //   print('${u.id} - ${u.username}');
@@ -215,7 +231,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 return BlocBuilder<AddChannelBloc, AddChannelState>(
                   buildWhen: (previous, current) => current is Updated || current is Creation,
                   builder: (context, state) {
-                    var deselectedUsers = users;
                     var name = '';
                     var description = '';
                     if (state is Updated) {
@@ -226,14 +241,6 @@ class _ParticipantsListState extends State<ParticipantsList> {
                         print('UsERS: ${users.map((e) => e.username)}');
                         print('UsERS IDS: ${users.map((e) => e.id)}');
                         print('selected ids: $_selectedIds');
-
-                        // _selectedUsers = users
-                        //     .where((user) => _selectedIds.contains(user.id))
-                        //     .toList();
-                        deselectedUsers = users
-                            .where((user) => !_selectedIds.contains(user.id))
-                            .toList();
-                        // users.excludeUsers(selectedUsers);
                       }
                     }
                     print(
@@ -244,20 +251,9 @@ class _ParticipantsListState extends State<ParticipantsList> {
                       child: ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.only(top: 0),
-                        itemCount: _isDirect
-                            ? users.length
-                            : deselectedUsers.length + _selectedUsers.length,
+                        itemCount: users.length,
                         itemBuilder: (context, index) {
-                          User user;
-                          if (_isDirect) {
-                            user = users[index];
-                          } else {
-                            if (index < _selectedUsers.length) {
-                              user = _selectedUsers[index];
-                            } else {
-                              user = deselectedUsers[index - _selectedUsers.length];
-                            }
-                          }
+                          User user = users[index];
                           return SearchItem(
                             title: user.firstName.isNotEmpty ||
                                     user.lastName.isNotEmpty
