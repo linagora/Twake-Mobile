@@ -70,8 +70,8 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
   }
 
   MessageReady get messageReady {
-    final hash = message.reactions.keys.hashCode +
-        message.reactions.values.fold(0, (count, v) => count += v['count']);
+    final hash = message.reactions.map((r) => r['name']).join().hashCode +
+        message.reactions.fold(0, (count, v) => count += v['count']);
     return MessageReady(
       id: message.id,
       responsesCount: message.responsesCount,

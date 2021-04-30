@@ -37,8 +37,8 @@ class Message extends CollectionItem {
   @JsonKey(required: true)
   MessageTwacode content;
 
-  @JsonKey(defaultValue: {})
-  Map<String, dynamic> reactions;
+  @JsonKey(defaultValue: [])
+  List<Map<String, dynamic>> reactions;
 
   @JsonKey(required: true, name: 'channel_id')
   String channelId;
@@ -104,15 +104,15 @@ class Message extends CollectionItem {
     String emojiCode = body['reaction'];
     logger.d('Updating reaction: $emojiCode');
     if (emojiCode == null) return;
-    final oldReactions = Map<String, dynamic>.from(reactions);
-    for (var r in reactions.entries) {
-      final users = r.value['users'] as List;
+    final oldReactions = List.from(reactions);
+    for (var r in reactions) {
+      final users = r['users'] as List;
       if (users.contains(userId)) {
         logger.d('Found userId: $users');
         users.remove(userId);
-        r.value['count'] -= 1;
-        if (users.isEmpty) reactions.remove(r.key);
-        if (emojiCode == r.key) {
+        r['count'] -= 1;
+        if (users.isEmpty) reactions.removeWhere((v) => v['name'] == r['name']);
+        if (emojiCode == r['name']) {
           emojiCode = '';
           body['reaction'] = '';
         }
@@ -120,10 +120,10 @@ class Message extends CollectionItem {
       }
     }
     if (emojiCode.isNotEmpty) {
-      final r = reactions[emojiCode] ?? {'users': [], 'count': 0};
+      final r = reactions.firstWhere((r) => r['name'] == emojiCode,
+          orElse: () => {'name': emojiCode, 'users': [], 'count': 0});
       r['users'].add(userId);
       r['count'] += 1;
-      reactions[emojiCode] = r;
     }
 
     _api.post(Endpoint.reactions, body: body).then((_) {

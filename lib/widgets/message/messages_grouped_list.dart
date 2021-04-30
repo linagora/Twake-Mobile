@@ -16,7 +16,8 @@ class MessagesGroupedList<T extends BaseChannelBloc> extends StatefulWidget {
   State<StatefulWidget> createState() => _MessagesGroupedListState<T>();
 }
 
-class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<MessagesGroupedList<T>> {
+class _MessagesGroupedListState<T extends BaseChannelBloc>
+    extends State<MessagesGroupedList<T>> {
   final _itemPositionListener = ItemPositionsListener.create();
 
   @override
@@ -75,18 +76,22 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
     );
   }
 
-  Widget _buildStickyGroupedListView(BuildContext context, MessagesState state, List<Message> messages) {
+  Widget _buildStickyGroupedListView(
+      BuildContext context, MessagesState state, List<Message> messages) {
     var lastScrollPosition = 0;
     try {
       if (state is MessagesLoaded) {
         if (state.messageLoadedType == MessageLoadedType.loadMore) {
-          lastScrollPosition = _itemPositionListener.itemPositions.value.last.index;
+          lastScrollPosition =
+              _itemPositionListener.itemPositions.value.last.index;
         } else if (state.messageLoadedType == MessageLoadedType.afterDelete) {
-          lastScrollPosition = _itemPositionListener.itemPositions.value.first.index;
+          lastScrollPosition =
+              _itemPositionListener.itemPositions.value.first.index;
         } else {
           final profileState = context.read<ProfileBloc>().state;
           if (profileState is ProfileLoaded) {
-            final badge = profileState.getBadgeForChannel(state.parentChannel.id);
+            final badge =
+                profileState.getBadgeForChannel(state.parentChannel.id);
             lastScrollPosition = badge > 1 ? badge : 0;
           }
         }
@@ -100,13 +105,12 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
         itemPositionsListener: _itemPositionListener,
         key: ValueKey(state is MessagesLoaded ? state.messageCount : 0),
         order: StickyGroupedListOrder.DESC,
-        stickyHeaderBackgroundColor:
-        Theme.of(context).scaffoldBackgroundColor,
+        stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
         reverse: true,
         elements: messages,
         groupBy: (Message m) {
           final DateTime dt =
-          DateTime.fromMillisecondsSinceEpoch(m.creationDate);
+              DateTime.fromMillisecondsSinceEpoch(m.creationDate);
           return DateTime(dt.year, dt.month, dt.day);
         },
         groupComparator: (DateTime value1, DateTime value2) =>
@@ -140,8 +144,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
                       child: Padding(
                         padding: const EdgeInsets.all(1.0),
                         child: Text(
-                          DateFormatter.getVerboseDate(
-                              message.creationDate),
+                          DateFormatter.getVerboseDate(message.creationDate),
                           style: TextStyle(
                             fontSize: 12.0,
                             fontWeight: FontWeight.w400,
@@ -163,7 +166,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc> extends State<Message
             key: ValueKey(
               message.id +
                   message.responsesCount.toString() +
-                  message.reactions.keys.join() +
+                  message.reactions.map((r) => r['name']).join() +
                   (message.content.originalStr ?? ''),
             ),
           );

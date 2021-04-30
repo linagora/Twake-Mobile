@@ -163,7 +163,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (itemsList.isEmpty) return false;
     try {
       remote = await api.get(apiEndpoint, params: queryParams);
-      logger.w("GOT WORKSPACES: ${remote.map((w) => w['name']).toSet()}");
+      // logger.w("GOT WORKSPACES: ${remote.map((w) => w['name']).toSet()}");
     } on ApiError catch (error) {
       logger.d('ERROR while reloading $T items from api\n${error.message}');
       return false;

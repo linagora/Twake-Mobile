@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../blocs/file_upload_bloc/file_upload_bloc.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
+import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
+
+// const _categoryHeaderHeight = 40.0;
+// const _categoryTitleHeight = _categoryHeaderHeight; // to
 
 class MessageEditField extends StatefulWidget {
   final bool autofocus;
   final Function(String, BuildContext) onMessageSend;
-  final Function(String) onTextUpdated;
+  final Function(String, BuildContext) onTextUpdated;
   final String initialText;
 
   MessageEditField({
@@ -24,8 +28,9 @@ class MessageEditField extends StatefulWidget {
 }
 
 class _MessageEditField extends State<MessageEditField> {
-  final _userMentionRegex = RegExp(r'\s@[A-Za-z1-9_-]+$');
+  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+$');
   bool _emojiVisible = false;
+  bool _mentionsVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
 
@@ -42,7 +47,7 @@ class _MessageEditField extends State<MessageEditField> {
   void initState() {
     super.initState();
 
-    widget.onTextUpdated(widget.initialText);
+    widget.onTextUpdated(widget.initialText, context);
     if (widget.initialText.isNotReallyEmpty) {
       _controller.text = widget.initialText; // possibly retrieved from cache.
       setState(() {
@@ -59,8 +64,14 @@ class _MessageEditField extends State<MessageEditField> {
 
     _controller.addListener(() {
       var text = _controller.text;
+      if (_userMentionRegex.hasMatch(text)) {
+        BlocProvider.of<MentionsCubit>(context).fetchMentionableUsers(
+          searchTerm: text.split('@').last.trimRight(),
+        );
+        mentionsVisible();
+      }
       // Update for cache handlers
-      widget.onTextUpdated(text);
+      widget.onTextUpdated(text, context);
       // Sendability  validation
       if (text.isReallyEmpty && _canSend) {
         setState(() {
@@ -72,6 +83,15 @@ class _MessageEditField extends State<MessageEditField> {
         });
       }
     });
+  }
+
+  void mentionsVisible() async {
+    final mentionsState = BlocProvider.of<MentionsCubit>(context).state;
+    if (mentionsState is MentionableUsersLoaded) {
+      setState(() {
+        _mentionsVisible = true;
+      });
+    }
   }
 
   @override
@@ -109,6 +129,20 @@ class _MessageEditField extends State<MessageEditField> {
     }
   }
 
+  void mentionReplece(String username) async {
+    final text = _controller.text;
+    _controller.text = text.replaceRange(
+      text.lastIndexOf('@'),
+      text.length,
+      '@$username ',
+    );
+    _controller.selection = TextSelection.fromPosition(
+      TextPosition(
+        offset: _controller.text.length,
+      ),
+    );
+  }
+
   Future<bool> onBackPress() async {
     if (_emojiVisible) {
       setState(() {
@@ -143,6 +177,13 @@ class _MessageEditField extends State<MessageEditField> {
     //needed to add indexes for multifiles
 
     BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
+    BlocProvider.of<FileUploadBloc>(context).listen((FileUploadState state) {
+      if (state is FileUploaded) {
+        setState(() {
+          _canSend = true;
+        });
+      }
+    });
   }
 
   @override
@@ -151,6 +192,72 @@ class _MessageEditField extends State<MessageEditField> {
       onWillPop: onBackPress,
       child: Column(
         children: [
+          _mentionsVisible
+              ? Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: BlocBuilder<MentionsCubit, MentionState>(
+                    builder: (context, state) {
+                      if (state is MentionableUsersLoaded) {
+                        return ListView.separated(
+                          reverse: true,
+                          separatorBuilder: (context, index) => Divider(
+                            color: Colors.black54,
+                          ),
+                          itemCount: state.users.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              child: ListTile(
+                                title: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    CircleAvatar(
+                                      child: Icon(Icons.person,
+                                          color: Colors.grey),
+                                      backgroundColor: Colors.blue[50],
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      '${state.users[index].firstName} ',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    Text(
+                                      ' ${state.users[index].lastName}',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    Expanded(child: SizedBox()),
+                                    Icon(
+                                      Icons.message_rounded,
+                                      color: Colors.grey,
+                                    )
+                                  ],
+                                ),
+                                onTap: () {
+                                  BlocProvider.of<MentionsCubit>(context)
+                                      .clearMentions();
+                                  mentionReplece(state.users[index].username);
+                                  setState(() {
+                                    _mentionsVisible = false;
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                        );
+                      } else if (state is MentionsEmpty) {
+                        return Container();
+                        //Text("Empty");
+                      }
+                      return Container();
+                    },
+                  ),
+                )
+              : Container(),
           TextInput(
             controller: _controller,
             scrollController: _scrollController,

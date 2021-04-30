@@ -71,18 +71,22 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
     );
   }
 
-  Widget _buildStickyGroupedListView(BuildContext context, MessagesState state, List<Message> messages) {
+  Widget _buildStickyGroupedListView(
+      BuildContext context, MessagesState state, List<Message> messages) {
     var lastScrollPosition = 0;
     try {
       if (state is MessagesLoaded) {
         if (state.messageLoadedType == MessageLoadedType.loadMore) {
-          lastScrollPosition = _itemPositionListener.itemPositions.value.last.index;
+          lastScrollPosition =
+              _itemPositionListener.itemPositions.value.last.index;
         } else if (state.messageLoadedType == MessageLoadedType.afterDelete) {
-          lastScrollPosition = _itemPositionListener.itemPositions.value.first.index;
+          lastScrollPosition =
+              _itemPositionListener.itemPositions.value.first.index;
         } else {
           final profileState = context.read<ProfileBloc>().state;
           if (profileState is ProfileLoaded) {
-            final badge = profileState.getBadgeForChannel(state.parentChannel.id);
+            final badge =
+                profileState.getBadgeForChannel(state.parentChannel.id);
             lastScrollPosition = badge > 1 ? badge : 0;
           }
         }
@@ -145,7 +149,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
           key: ValueKey(
             message.id +
                 message.responsesCount.toString() +
-                message.reactions.keys.join() +
+                message.reactions.map((r) => r['name']).join() +
                 (message.content.originalStr ?? ''),
           ),
         );

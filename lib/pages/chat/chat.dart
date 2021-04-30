@@ -6,6 +6,7 @@ import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
+import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -193,7 +194,11 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                   : draft,
                               onMessageSend: state is MessageEditing
                                   ? state.onMessageEditComplete
-                                  : (content, context) {
+                                  : (content, context) async {
+                                      content =
+                                          await BlocProvider.of<MentionsCubit>(
+                                                  context)
+                                              .completeMentions(content);
                                       List<dynamic> twacode =
                                           TwacodeParser(content).message;
 
@@ -220,7 +225,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                                 "content": uf.id,
                                                 "metadata": {
                                                   "size": uf.size,
-                                                  "filename": uf.filename,
+                                                  "name": uf.filename,
                                                   "preview": uf.preview,
                                                   "download": uf.download
                                                 }
@@ -246,8 +251,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                           );
                                     },
                               onTextUpdated: state is MessageEditing
-                                  ? (text) {}
-                                  : (text) {
+                                  ? (text, ctx) {}
+                                  : (text, ctx) {
                                       context.read<DraftBloc>().add(
                                             UpdateDraft(
                                               id: channelId,

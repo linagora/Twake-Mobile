@@ -107,6 +107,7 @@ class Api {
     bool useTokenDio: false,
   }) async {
     checkConnection();
+    // logger.e('METHOD: $method');
     method = _getMethodPath(method);
     // Extract scheme and host by splitting the url
     var split = Api.host.split('://');

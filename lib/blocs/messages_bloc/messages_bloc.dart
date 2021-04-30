@@ -267,7 +267,7 @@ class MessagesBloc<T extends BaseChannelBloc>
           prepared:
               event.prepared ?? TwacodeParser(body['original_str']).message,
         ),
-        reactions: {},
+        reactions: [],
         responsesCount: 0,
         channelId: body['channel_id'],
         username: ProfileBloc.username,
