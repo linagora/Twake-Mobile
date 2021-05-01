@@ -59,7 +59,14 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> saveInfo() async {
     emit(AccountSaving());
     await accountRepository.patch();
-    emit(AccountSaved());
+    emit(AccountSaved(
+      userName: accountRepository.userName.value,
+      firstName: accountRepository.firstName.value,
+      lastName: accountRepository.lastName.value,
+      picture: accountRepository.picture.value,
+      language: accountRepository.selectedLanguage().title,
+      availableLanguages: accountRepository.language.options,
+    ));
   }
 
   Future<void> updateInfo({
@@ -69,7 +76,7 @@ class AccountCubit extends Cubit<AccountState> {
     String oldPassword,
     String newPassword,
   }) async {
-    emit(AccountSaving());
+    emit(AccountUpdating());
     final languageCode =
         (languageTitle != null && languageTitle.isNotReallyEmpty)
             ? accountRepository.languageCodeFromTitle(languageTitle)
@@ -81,7 +88,7 @@ class AccountCubit extends Cubit<AccountState> {
       oldPassword: oldPassword,
       newPassword: newPassword,
     );
-    emit(AccountSaved(
+    emit(AccountUpdated(
       userName: accountRepository.userName.value,
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
