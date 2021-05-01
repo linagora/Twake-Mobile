@@ -350,7 +350,7 @@ class TextInput extends StatelessWidget {
                   backgroundColor: Colors.indigo[50],
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    icon: Icon(Icons.file_download),
+                    icon: Icon(Icons.attachment),
                     onPressed: openFileExplorer,
                     color: Colors.black54,
                   ),
