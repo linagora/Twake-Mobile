@@ -173,8 +173,12 @@ class _MessageEditField extends State<MessageEditField> {
     if (!mounted) return;
     //final path = _paths.map((e) => e.path).toList()[0].toString();
     // final name = _paths.map((e) => e.name).toList()[0].toString();
-    //print(path);
-    //needed to add indexes for multifiles
+    //if possible to send the list of paths
+    //listPath when will it be possible to send the sheet
+    // final List<String> listPath = [];
+    // _paths.forEach((element) {
+    //   listPath.add(element.path.toString());
+    //  });
 
     _paths.forEach((element) {
       BlocProvider.of<FileUploadBloc>(context)
@@ -380,7 +384,7 @@ class TextInput extends StatelessWidget {
                 return CircleAvatar(
                   child: InkWell(
                     child: (Text('$fileNumber')),
-                    onTap:openFileExplorer,
+                    onTap: openFileExplorer,
                     //  await fileNumClear;
                   ),
                   backgroundColor: Colors.indigo[50],
