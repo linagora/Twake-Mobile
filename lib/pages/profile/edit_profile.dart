@@ -47,9 +47,7 @@ class _EditProfileState extends State<EditProfile> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _firstNameController.addListener(() {
         final firstName = _firstNameController.text;
-        if (firstName != null &&
-            firstName.isNotReallyEmpty &&
-            _firstName != firstName) {
+        if (firstName != null && firstName.isNotReallyEmpty) {
           _firstName = firstName;
           context.read<AccountCubit>().updateInfo(firstName: firstName);
         }
@@ -57,9 +55,7 @@ class _EditProfileState extends State<EditProfile> {
 
       _lastNameController.addListener(() {
         final lastName = _lastNameController.text;
-        if (lastName != null &&
-            lastName.isNotReallyEmpty &&
-            _lastName != lastName) {
+        if (lastName != null && lastName.isNotReallyEmpty) {
           _lastName = lastName;
           context.read<AccountCubit>().updateInfo(lastName: lastName);
         }
@@ -67,9 +63,7 @@ class _EditProfileState extends State<EditProfile> {
 
       _oldPasswordController.addListener(() {
         final oldPassword = _oldPasswordController.text;
-        if (oldPassword != null &&
-            oldPassword.isNotReallyEmpty &&
-            _oldPassword != oldPassword) {
+        if (oldPassword != null && oldPassword.isNotReallyEmpty) {
           _oldPassword = oldPassword;
           context.read<AccountCubit>().updateInfo(oldPassword: oldPassword);
         }
@@ -77,9 +71,7 @@ class _EditProfileState extends State<EditProfile> {
 
       _newPasswordController.addListener(() {
         final newPassword = _newPasswordController.text;
-        if (newPassword != null &&
-            newPassword.isNotReallyEmpty &&
-            _newPassword != newPassword) {
+        if (newPassword != null && newPassword.isNotReallyEmpty) {
           _newPassword = newPassword;
           context.read<AccountCubit>().updateInfo(newPassword: newPassword);
         }
@@ -161,8 +153,30 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AccountCubit, AccountState>(
-      listenWhen: (_, current) => current is AccountSaved,
+      listenWhen: (_, current) => current is AccountPictureUpdated,
       listener: (context, state) {
+        if (state is AccountPictureUpdated) {
+          context.read<AccountCubit>().fetch();
+          _close(context);
+        }
+      },
+      buildWhen: (_, current) =>
+          current is AccountLoaded ||
+          current is AccountUpdated ||
+          current is AccountSaved ||
+          current is AccountPictureUpdating,
+      builder: (context, state) {
+        final _isSaving = state is AccountPictureUpdating;
+
+        if (state is AccountLoaded) {
+          _firstName = state.firstName;
+          _lastName = state.lastName;
+          _picture = state.picture;
+          _userNameController.text = '@${state.userName}';
+          _firstNameController.text = _firstName;
+          _lastNameController.text = _lastName;
+        }
+
         if (state is AccountSaved) {
           if (_shouldUpdateImage) {
             // In case we have picked a new image locally.
@@ -170,29 +184,8 @@ class _EditProfileState extends State<EditProfile> {
             context.read<AccountCubit>().updateImage(context, _fileName);
           } else {
             // If no changes occurred with an image.
-            FocusScope.of(context).requestFocus(FocusNode());
-            context.read<SheetBloc>().add(CloseSheet());
-            context
-                .read<AccountCubit>()
-                .updateAccountFlowStage(AccountFlowStage.info);
+            _close(context);
           }
-        }
-      },
-      buildWhen: (_, current) =>
-          current is AccountLoaded ||
-          current is AccountInitial ||
-          current is AccountSaving ||
-          current is AccountUpdated,
-      builder: (context, state) {
-        final _isSaving = state is AccountSaving;
-
-        if (state is AccountLoaded || state is AccountInitial) {
-          _firstName = state.firstName;
-          _lastName = state.lastName;
-          _picture = state.picture;
-          _userNameController.text = '@${state.userName}';
-          _firstNameController.text = _firstName;
-          _lastNameController.text = _lastName;
         }
 
         print('EditProfile current state: $state');
@@ -422,5 +415,11 @@ class _EditProfileState extends State<EditProfile> {
         );
       },
     );
+  }
+
+  void _close(BuildContext context) {
+    FocusScope.of(context).requestFocus(FocusNode());
+    context.read<SheetBloc>().add(CloseSheet());
+    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
   }
 }

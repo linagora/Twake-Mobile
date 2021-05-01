@@ -103,12 +103,8 @@ class AccountUpdated extends AccountState {
 }
 
 class AccountSaving extends AccountState {
-  final bool isPictureUpdating;
-
-  AccountSaving({this.isPictureUpdating = false});
-
   @override
-  List<Object> get props => [isPictureUpdating];
+  List<Object> get props => [];
 }
 
 class AccountSaved extends AccountState {
@@ -136,6 +132,16 @@ class AccountError extends AccountState {
 
   @override
   List<Object> get props => [message];
+}
+
+class AccountPictureUpdating extends AccountState {
+  @override
+  List<Object> get props => [];
+}
+
+class AccountPictureUpdated extends AccountState {
+  @override
+  List<Object> get props => [];
 }
 
 class AccountFlowStageUpdated extends AccountState {

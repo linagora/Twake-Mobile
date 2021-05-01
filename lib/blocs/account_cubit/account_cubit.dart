@@ -101,7 +101,7 @@ class AccountCubit extends Cubit<AccountState> {
   }
 
   Future<void> updateImage(BuildContext context, String path) async {
-    emit(AccountSaving(isPictureUpdating: true));
+    emit(AccountPictureUpdating());
     context.read<FileUploadBloc>()
       ..add(
         StartUpload(
@@ -112,7 +112,7 @@ class AccountCubit extends Cubit<AccountState> {
       ..listen(
         (FileUploadState state) {
           if (state is FileUploaded) {
-            fetch();
+            emit(AccountPictureUpdated());
           }
         },
       );
