@@ -7,15 +7,17 @@ export 'package:twake/blocs/message_edit_bloc/message_edit_event.dart';
 export 'package:twake/blocs/message_edit_bloc/message_edit_state.dart';
 
 class MessageEditBloc extends Bloc<MessageEditEvent, MessageEditState> {
+  final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
   MessageEditBloc() : super(NoMessageToEdit());
 
   @override
   Stream<MessageEditState> mapEventToState(MessageEditEvent event) async* {
     Logger().d('GOT MESSAGE EDIT EVENT $event');
     if (event is EditMessage) {
+      final text = event.originalStr.replaceAll(idMatch, '');
       yield MessageEditing(
         onMessageEditComplete: event.onMessageEditComplete,
-        originalStr: event.originalStr,
+        originalStr: text,
       );
     } else if (event is CancelMessageEdit) {
       yield NoMessageToEdit();

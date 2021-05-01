@@ -9,6 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
@@ -148,12 +149,14 @@ class _MessageTileState<T extends BaseChannelBloc>
                         mebloc.add(
                           EditMessage(
                             originalStr: _message.content.originalStr ?? '',
-                            onMessageEditComplete: (text) {
+                            onMessageEditComplete: (text, context) async {
                               // smbloc get's closed if
                               // listview disposes of message tile
                               smbloc.add(
                                 UpdateContent(
-                                  content: text,
+                                  content: await BlocProvider.of<MentionsCubit>(
+                                    context,
+                                  ).completeMentions(text),
                                   workspaceId:
                                       T == DirectsBloc ? 'direct' : null,
                                 ),
