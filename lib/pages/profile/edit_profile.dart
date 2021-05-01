@@ -16,10 +16,11 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  final _userNameController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _cellularController = TextEditingController();
+  final _oldPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
 
   var _canSave = true;
   var _picture = '';
@@ -29,16 +30,19 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+    _userNameController.text = '';
     _firstNameController.text = '';
     _lastNameController.text = '';
+    _oldPasswordController.text = '';
+    _newPasswordController.text = '';
   }
 
   @override
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
-    _emailController.dispose();
-    _cellularController.dispose();
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
     super.dispose();
   }
 
@@ -55,7 +59,7 @@ class _EditProfileState extends State<EditProfile> {
     context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
   }
 
-  void _openFileExplorer() async {
+  Future<void> _openFileExplorer() async {
     List<PlatformFile> paths;
     try {
       paths = (await FilePicker.platform.pickFiles(
@@ -67,7 +71,6 @@ class _EditProfileState extends State<EditProfile> {
         print('Filename to be saved: $_fileName');
         context.read<AccountCubit>().updateImage(context, _fileName);
       }
-
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
     } catch (ex) {
@@ -83,6 +86,7 @@ class _EditProfileState extends State<EditProfile> {
         if (state is AccountLoaded ||
             state is AccountSaved ||
             state is AccountInitial) {
+          _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
           _lastNameController.text = state.lastName;
           _picture = state.picture;
@@ -172,6 +176,14 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                     SizedBox(height: 36.0),
+                    RoundedTextField(
+                      controller: _userNameController,
+                      prefix: 'Username',
+                      hint: 'Not assigned',
+                      borderRadius: BorderRadius.circular(10.0),
+                      enabled: false,
+                    ),
+                    SizedBox(height: 43.0),
                     Text(
                       'NAME',
                       style: TextStyle(
@@ -214,7 +226,7 @@ class _EditProfileState extends State<EditProfile> {
                     // ),
                     SizedBox(height: 43.0),
                     Text(
-                      'CONTACT DETAILS',
+                      'CHANGE PASSWORD',
                       style: TextStyle(
                         fontSize: 13.0,
                         fontWeight: FontWeight.w600,
@@ -223,9 +235,9 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     SizedBox(height: 12.0),
                     RoundedTextField(
-                      controller: _emailController,
-                      prefix: 'Email',
-                      hint: 'Not assigned',
+                      controller: _oldPasswordController,
+                      prefix: 'Old',
+                      hint: '',
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(10.0),
                         topRight: Radius.circular(10.0),
@@ -236,66 +248,66 @@ class _EditProfileState extends State<EditProfile> {
                       color: Colors.black.withOpacity(0.1),
                     ),
                     RoundedTextField(
-                      controller: _cellularController,
-                      prefix: 'Cellular',
-                      hint: 'Not assigned',
+                      controller: _newPasswordController,
+                      prefix: 'New',
+                      hint: '',
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(10.0),
                         bottomRight: Radius.circular(10.0),
                       ),
                     ),
-                    SizedBox(height: 24.0),
-                    Text(
-                      'DATE & TIME',
-                      style: TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black.withOpacity(0.35),
-                      ),
-                    ),
-                    SizedBox(height: 12.0),
-                    ButtonField(
-                      title: 'Time Zone',
-                      titleStyle: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black.withOpacity(0.4),
-                      ),
-                      trailingTitle: 'Paris',
-                      trailingTitleStyle: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black,
-                      ),
-                      hasArrow: true,
-                      arrowColor: Color(0xff3c3c43).withOpacity(0.3),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0),
-                      ),
-                      onTap: () {
-                        print('Tap on Time Zone');
-                      },
-                    ),
-                    Divider(
-                      height: 1.0,
-                      color: Colors.black.withOpacity(0.1),
-                    ),
-                    SwitchField(
-                      title: 'Set automatically',
-                      titleStyle: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black.withOpacity(0.4),
-                      ),
-                      value: true,
-                      isExtended: true,
-                      onChanged: (value) {},
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10.0),
-                        bottomRight: Radius.circular(10.0),
-                      ),
-                    ),
+                    // SizedBox(height: 24.0),
+                    // Text(
+                    //   'DATE & TIME',
+                    //   style: TextStyle(
+                    //     fontSize: 13.0,
+                    //     fontWeight: FontWeight.w600,
+                    //     color: Colors.black.withOpacity(0.35),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 12.0),
+                    // ButtonField(
+                    //   title: 'Time Zone',
+                    //   titleStyle: TextStyle(
+                    //     fontSize: 15.0,
+                    //     fontWeight: FontWeight.w400,
+                    //     color: Colors.black.withOpacity(0.4),
+                    //   ),
+                    //   trailingTitle: 'Paris',
+                    //   trailingTitleStyle: TextStyle(
+                    //     fontSize: 15.0,
+                    //     fontWeight: FontWeight.w400,
+                    //     color: Colors.black,
+                    //   ),
+                    //   hasArrow: true,
+                    //   arrowColor: Color(0xff3c3c43).withOpacity(0.3),
+                    //   borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(10.0),
+                    //     topRight: Radius.circular(10.0),
+                    //   ),
+                    //   onTap: () {
+                    //     print('Tap on Time Zone');
+                    //   },
+                    // ),
+                    // Divider(
+                    //   height: 1.0,
+                    //   color: Colors.black.withOpacity(0.1),
+                    // ),
+                    // SwitchField(
+                    //   title: 'Set automatically',
+                    //   titleStyle: TextStyle(
+                    //     fontSize: 15.0,
+                    //     fontWeight: FontWeight.w400,
+                    //     color: Colors.black.withOpacity(0.4),
+                    //   ),
+                    //   value: true,
+                    //   isExtended: true,
+                    //   onChanged: (value) {},
+                    //   borderRadius: BorderRadius.only(
+                    //     bottomLeft: Radius.circular(10.0),
+                    //     bottomRight: Radius.circular(10.0),
+                    //   ),
+                    // ),
                   ],
                 ),
               ],
