@@ -248,7 +248,8 @@ class _MessageEditField extends State<MessageEditField> {
                                                   );
                                           },
                                         ),
-                                      ),),
+                                      ),
+                                    ),
                                     SizedBox(
                                       width: 15,
                                     ),
@@ -398,13 +399,13 @@ class TextInput extends StatelessWidget {
               } else if (state is FileUploading) {
                 return CircularProgressIndicator();
               } else if (state is FileUploaded) {
-                return CircleAvatar(
-                  child: InkWell(
+                return InkWell(
+                  child: CircleAvatar(
                     child: (Text('$fileNumber')),
-                    onTap: openFileExplorer,
                     //  await fileNumClear;
+                    backgroundColor: Colors.indigo[50],
                   ),
-                  backgroundColor: Colors.indigo[50],
+                  onTap: openFileExplorer,
                 );
               }
               return CircleAvatar(
