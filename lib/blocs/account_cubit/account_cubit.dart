@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/models/language_option.dart';
 import 'package:twake/repositories/account_repository.dart';
+import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,7 +41,8 @@ class AccountCubit extends Cubit<AccountState> {
     emit(AccountLoading());
     await accountRepository.reload();
 
-    final availableLanguages = accountRepository.language.options ?? <LanguageOption>[];
+    final availableLanguages =
+        accountRepository.language.options ?? <LanguageOption>[];
     final currentLanguage = accountRepository.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
@@ -84,7 +86,15 @@ class AccountCubit extends Cubit<AccountState> {
   }
 
   Future<void> updateImage(BuildContext context, String path) async {
-    context.read<FileUploadBloc>().add(StartUpload(path: path));
+    context.read<FileUploadBloc>().add(StartUpload(
+          path: path,
+          endpoint: Endpoint.accountPicture,
+        ));
+    context.read<FileUploadBloc>().listen((FileUploadState state) {
+      if (state is FileUploaded) {
+        fetch();
+      }
+    });
   }
 
   Future<void> updateAccountFlowStage(AccountFlowStage stage) async {

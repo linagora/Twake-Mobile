@@ -1,4 +1,6 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
@@ -21,6 +23,11 @@ class _EditProfileState extends State<EditProfile> {
 
   var _canSave = true;
   var _picture = '';
+
+  List<PlatformFile> _paths;
+  String _extension;
+  bool _multiPick = false;
+  FileType _pickingType = FileType.image;
 
   @override
   void initState() {
@@ -49,6 +56,29 @@ class _EditProfileState extends State<EditProfile> {
     FocusScope.of(context).requestFocus(FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
     context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+  }
+
+  void _openFileExplorer() async {
+    try {
+      _paths = (await FilePicker.platform.pickFiles(
+        type: _pickingType,
+        allowMultiple: _multiPick,
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension.replaceAll(' ', '').split(',')
+            : null,
+      ))
+          ?.files;
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+    } catch (ex) {
+      print(ex);
+    }
+    if (!mounted) return;
+    final path = _paths.map((e) => e.path).toList()[0].toString();
+    // final name = _paths.map((e) => e.name).toList()[0].toString();
+    //print(path);
+    //needed to add indexes for multifiles
+    context.read<AccountCubit>().updateImage(context, path);
   }
 
   @override
@@ -127,7 +157,7 @@ class _EditProfileState extends State<EditProfile> {
                           SelectableAvatar(
                             size: 100.0,
                             userpic: _picture,
-                            onTap: () {},
+                            onTap: () => _openFileExplorer(),
                           ),
                           SizedBox(height: 12.0),
                           GestureDetector(
