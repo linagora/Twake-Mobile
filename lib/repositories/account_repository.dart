@@ -79,7 +79,7 @@ class AccountRepository extends JsonSerializable {
     language = newRepo.language;
     picture = newRepo.picture;
 
-    return this;
+    return newRepo;
   }
 
   Future<void> clean() async {
@@ -143,11 +143,15 @@ class AccountRepository extends JsonSerializable {
   }
 
   Future<AccountRepository> patch() async {
-    final result = await _api.patch(Endpoint.account, body: _accountMap);
-    if (result != null) {
-      print('Account updated: $_accountMap');
-      _accountMap = <String, dynamic>{};
-      // save();
+    if (_accountMap.length > 0) {
+      final result = await _api.patch(Endpoint.account, body: _accountMap);
+      if (result != null) {
+        print('Account patch map: $_accountMap');
+        _accountMap = <String, dynamic>{};
+        // save();
+      }
+    } else {
+      print('Nothing to patch!');
     }
     return this;
   }

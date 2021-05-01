@@ -39,18 +39,18 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> fetch() async {
     emit(AccountLoading());
-    await accountRepository.reload();
+    final result = await accountRepository.reload();
 
     final availableLanguages =
-        accountRepository.language.options ?? <LanguageOption>[];
-    final currentLanguage = accountRepository.selectedLanguage();
+        result.language.options ?? <LanguageOption>[];
+    final currentLanguage = result.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
     emit(AccountLoaded(
-      userName: accountRepository.userName.value,
-      firstName: accountRepository.firstName.value,
-      lastName: accountRepository.lastName.value,
-      picture: accountRepository.picture.value,
+      userName: result.userName.value,
+      firstName: result.firstName.value,
+      lastName: result.lastName.value,
+      picture: result.picture.value,
       language: languageTitle,
       availableLanguages: availableLanguages,
     ));
