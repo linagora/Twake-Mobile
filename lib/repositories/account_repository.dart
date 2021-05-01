@@ -43,6 +43,8 @@ class AccountRepository extends JsonSerializable {
   static final _api = Api();
   @JsonKey(ignore: true)
   static final _storage = Storage();
+  @JsonKey(ignore: true)
+  var _accountMap = <String, dynamic>{};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<AccountRepository> load() async {
@@ -97,31 +99,30 @@ class AccountRepository extends JsonSerializable {
     );
   }
 
-  Future<AccountRepository> patch({
+  Future<void> update({
     String newFirstName,
     String newLastName,
     String newLanguage,
     String oldPassword,
     String newPassword,
-  }) async {
-    final Map<String, dynamic> accountMap = <String, dynamic>{};
+  }) {
     if (newFirstName != null &&
         newFirstName.isNotReallyEmpty &&
         newFirstName != this.firstName.value) {
       firstName.value = newFirstName;
-      accountMap['firstname'] = newFirstName;
+      _accountMap['firstname'] = newFirstName;
     }
     if (newLastName != null &&
         newLastName.isNotReallyEmpty &&
         newLastName != this.lastName.value) {
       lastName.value = newLastName;
-      accountMap['lastname'] = newLastName;
+      _accountMap['lastname'] = newLastName;
     }
     if (newLanguage != null &&
         newLanguage.isNotReallyEmpty &&
         newLanguage != this.language.value) {
       language.value = newLanguage;
-      accountMap['language'] = newLanguage;
+      _accountMap['language'] = newLanguage;
     }
     if (oldPassword != null &&
         newPassword != null &&
@@ -134,14 +135,18 @@ class AccountRepository extends JsonSerializable {
           newPass: newPassword,
         ),
       );
-      accountMap['password'] = {
+      _accountMap['password'] = {
         'old': oldPassword,
         'new': newPassword,
       };
     }
-    final result = await _api.patch(Endpoint.account, body: accountMap);
+  }
+
+  Future<AccountRepository> patch() async {
+    final result = await _api.patch(Endpoint.account, body: _accountMap);
     if (result != null) {
-      print('Account updated: $accountMap');
+      print('Account updated: $_accountMap');
+      _accountMap = <String, dynamic>{};
       // save();
     }
     return this;

@@ -56,6 +56,12 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
+  Future<void> saveInfo() async {
+    emit(AccountSaving());
+    await accountRepository.patch();
+    emit(AccountSaved());
+  }
+
   Future<void> updateInfo({
     String firstName,
     String lastName,
@@ -68,7 +74,7 @@ class AccountCubit extends Cubit<AccountState> {
         (languageTitle != null && languageTitle.isNotReallyEmpty)
             ? accountRepository.languageCodeFromTitle(languageTitle)
             : '';
-    await accountRepository.patch(
+    await accountRepository.update(
       newFirstName: firstName,
       newLastName: lastName,
       newLanguage: languageCode ?? '',
