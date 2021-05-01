@@ -313,7 +313,7 @@ class WorkspaceTile extends StatelessWidget {
               children: [
                 SizedBox(width: 16.0),
                 RoundedImage(
-                  image,
+                  imageUrl: image,
                   width: 60.0,
                   height: 60.0,
                 ),

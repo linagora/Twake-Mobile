@@ -83,7 +83,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                     children: [
                       SizedBox(width: 9.0),
                       RoundedImage(
-                        logo,
+                        imageUrl: logo,
                         width: 40.0,
                         height: 40.0,
                       ),

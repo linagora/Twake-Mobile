@@ -24,9 +24,9 @@ class _EditProfileState extends State<EditProfile> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
 
-  var _canSave = true;
+  var _canSave = false;
+  var _shouldUpdateImage = false;
   var _picture = '';
-  var _userName = '';
   var _firstName = '';
   var _lastName = '';
   var _oldPassword = '';
@@ -117,9 +117,12 @@ class _EditProfileState extends State<EditProfile> {
           ?.files;
 
       if (paths != null && paths.length > 0) {
-        _fileName = paths[0].path;
+        setState(() {
+          _fileName = paths[0].path;
+          _picture = _firstName;
+          _shouldUpdateImage = true;
+        });
         print('Filename to be saved: $_fileName');
-        context.read<AccountCubit>().updateImage(context, _fileName);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
@@ -135,12 +138,20 @@ class _EditProfileState extends State<EditProfile> {
       builder: (context, state) {
         final _isUpdating = state is AccountSaving;
         if (state is AccountSaved) {
-          FocusScope.of(context).requestFocus(FocusNode());
-          context.read<SheetBloc>().add(CloseSheet());
-          context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+          if (_shouldUpdateImage) {
+            // In case we have picked a new image locally.
+            _shouldUpdateImage = false;
+            context.read<AccountCubit>().updateImage(context, _fileName);
+          } else {
+            // If no changes occurred with an image.
+            FocusScope.of(context).requestFocus(FocusNode());
+            context.read<SheetBloc>().add(CloseSheet());
+            context
+                .read<AccountCubit>()
+                .updateAccountFlowStage(AccountFlowStage.info);
+          }
         }
-        if (state is AccountLoaded ||
-            state is AccountInitial) {
+        if (state is AccountLoaded || state is AccountInitial) {
           _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
           _lastNameController.text = state.lastName;
@@ -212,12 +223,13 @@ class _EditProfileState extends State<EditProfile> {
                               ? RoundedShimmer(size: 100.0)
                               : SelectableAvatar(
                                   size: 100.0,
-                                  userpic: _picture,
+                                  userpic: _shouldUpdateImage ? '' : _picture,
+                                  localAsset: _fileName,
                                   onTap: () => _openFileExplorer(),
                                 ),
                           SizedBox(height: 12.0),
                           GestureDetector(
-                            onTap: () => print('Change avatar!'),
+                            onTap: () => _openFileExplorer(),
                             child: Text(
                               'Tap to upload',
                               style: TextStyle(
