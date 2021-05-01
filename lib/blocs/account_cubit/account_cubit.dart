@@ -50,16 +50,20 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> saveInfo() async {
     emit(AccountSaving());
-    final afterPatch = await accountRepository.patch();
-    final savedState = AccountSaved(
-      userName: afterPatch.userName.value,
-      firstName: afterPatch.firstName.value,
-      lastName: afterPatch.lastName.value,
-      picture: afterPatch.picture.value,
-      language: afterPatch.selectedLanguage().title,
-      availableLanguages: afterPatch.language.options,
-    );
-    emit(savedState);
+    final patchResult = await accountRepository.patch();
+    if (patchResult) {
+      final savedState = AccountSaved(
+        userName: accountRepository.userName.value,
+        firstName: accountRepository.firstName.value,
+        lastName: accountRepository.lastName.value,
+        picture: accountRepository.picture.value,
+        language: accountRepository.selectedLanguage().title,
+        availableLanguages: accountRepository.language.options,
+      );
+      emit(savedState);
+    } else {
+      emit(AccountError(message: 'Account saving failure'));
+    }
   }
 
   Future<void> updateInfo({

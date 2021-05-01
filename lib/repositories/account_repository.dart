@@ -143,8 +143,7 @@ class AccountRepository extends JsonSerializable {
     return _accountMap;
   }
 
-  Future<AccountRepository> patch() async {
-    AccountRepository newRepo;
+  Future<bool> patch() async {
     if (_accountMap.length > 0) {
       final result = await _api.patch(Endpoint.account, body: _accountMap);
       if (result != null) {
@@ -152,19 +151,21 @@ class AccountRepository extends JsonSerializable {
         _accountMap = <String, dynamic>{};
         // save();
         print('Account PATCH response: ${jsonEncode(result)}');
-        newRepo = AccountRepository.fromJson(result);
+        final newRepo = AccountRepository.fromJson(result);
         userName = newRepo.userName;
         firstName = newRepo.firstName;
         lastName = newRepo.lastName;
         language = newRepo.language;
         picture = newRepo.picture;
 
-        return newRepo;
+        return true;
       } else {
-        return _duplicate();
+        print('PATCH result is null');
+        return false;
       }
     } else {
-      return _duplicate();
+      print('PATCH request body is empty');
+      return false;
     }
   }
 

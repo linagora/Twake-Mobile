@@ -122,7 +122,13 @@ class _EditProfileState extends State<EditProfile> {
       //   )
       //   ..saveInfo();
 
-      context.read<AccountCubit>().saveInfo();
+      if (_shouldUpdateImage) {
+        // In case we have picked a new image locally.
+        _shouldUpdateImage = false;
+        context.read<AccountCubit>().updateImage(context, _fileName);
+      } else {
+        context.read<AccountCubit>().saveInfo();
+      }
     }
   }
 
@@ -154,22 +160,19 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return BlocConsumer<AccountCubit, AccountState>(
       listenWhen: (_, current) =>
-          current is AccountPictureUpdated || current is AccountSaved,
+          current is AccountPictureUpdated ||
+          current is AccountSaved ||
+          current is AccountError,
       listener: (context, state) {
         if (state is AccountPictureUpdated) {
+          context.read<AccountCubit>().saveInfo();
+        }
+        if (state is AccountSaved) {
           context.read<AccountCubit>().fetch();
           _close(context);
         }
-        if (state is AccountSaved) {
-          if (_shouldUpdateImage) {
-            // In case we have picked a new image locally.
-            _shouldUpdateImage = false;
-            context.read<AccountCubit>().updateImage(context, _fileName);
-          } else {
-            // If no changes occurred with an image.
-            context.read<AccountCubit>().fetch();
-            _close(context);
-          }
+        if (state is AccountError) {
+          _close(context);
         }
       },
       buildWhen: (_, current) =>
