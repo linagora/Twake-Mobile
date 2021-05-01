@@ -231,7 +231,7 @@ class _MessageEditField extends State<MessageEditField> {
                                                   );
                                           },
                                         ),
-                                      ),
+                                      ),),
                                     SizedBox(
                                       width: 15,
                                     ),
