@@ -12,8 +12,13 @@ abstract class FileUploadEvent extends Equatable {
 class StartUpload extends FileUploadEvent {
   final String path;
   final String workspaceId;
+  final String endpoint;
 
-  StartUpload({this.path, this.workspaceId});
+  StartUpload({
+    this.path,
+    this.workspaceId,
+    this.endpoint,
+  });
 
   Future<FormData> payload() async {
     return FormData.fromMap({

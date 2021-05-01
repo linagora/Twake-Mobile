@@ -32,7 +32,7 @@ class UserThumbnail extends StatelessWidget {
               thumbnailUrl = state.thumbnail;
               if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
                 return RoundedImage(
-                  thumbnailUrl,
+                  imageUrl: thumbnailUrl,
                   width: size,
                   height: size,
                 );
@@ -47,7 +47,7 @@ class UserThumbnail extends StatelessWidget {
       );
     } else if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
       return RoundedImage(
-        thumbnailUrl,
+        imageUrl: thumbnailUrl,
         width: size,
         height: size,
       );

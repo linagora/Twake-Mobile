@@ -83,7 +83,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                     children: [
                       SizedBox(width: 9.0),
                       RoundedImage(
-                        logo,
+                        imageUrl: logo,
                         width: 40.0,
                         height: 40.0,
                       ),
@@ -165,7 +165,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: Tab(
-                  text: 'Direct chats',
+                  text: 'Сhats',
                 ),
               ),
             ],

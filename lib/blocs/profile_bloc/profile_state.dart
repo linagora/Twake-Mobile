@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 
 abstract class ProfileState extends Equatable {
   const ProfileState();
@@ -54,15 +53,6 @@ class ProfileEmpty extends ProfileState {
 
   @override
   List<Object> get props => [];
-}
-
-class ProfileFlowStageUpdated extends ProfileState {
-  final ProfileFlowStage stage;
-
-  const ProfileFlowStageUpdated(this.stage);
-
-  @override
-  List<Object> get props => [stage];
 }
 
 class ProfileUpdated extends ProfileState {

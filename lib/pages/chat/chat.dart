@@ -251,8 +251,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                           );
                                     },
                               onTextUpdated: state is MessageEditing
-                                  ? (text) {}
-                                  : (text) {
+                                  ? (text, ctx) {}
+                                  : (text, ctx) {
                                       context.read<DraftBloc>().add(
                                             UpdateDraft(
                                               id: channelId,

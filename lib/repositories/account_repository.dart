@@ -3,11 +3,11 @@ import 'dart:convert' show jsonEncode, jsonDecode;
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/account_field.dart';
 import 'package:twake/models/language_field.dart';
+import 'package:twake/models/language_option.dart';
 import 'package:twake/models/password_field.dart';
-// import 'package:twake/models/base_channel.dart';
-// import 'package:twake/models/company.dart';
-// import 'package:twake/models/workspace.dart';
+import 'package:twake/models/password_values.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/extensions.dart';
 
 part 'account_repository.g.dart';
 
@@ -43,6 +43,8 @@ class AccountRepository extends JsonSerializable {
   static final _api = Api();
   @JsonKey(ignore: true)
   static final _storage = Storage();
+  @JsonKey(ignore: true)
+  var _accountMap = <String, dynamic>{};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<AccountRepository> load() async {
@@ -54,7 +56,7 @@ class AccountRepository extends JsonSerializable {
     if (accountMap == null) {
       // _logger.d('No account in storage, requesting from api...');
       accountMap = await _api.get(Endpoint.account);
-      // _logger.d('RECEIVED ACCOUNT: $accountMap');
+      _logger.d('RECEIVED ACCOUNT: $accountMap');
     } else {
       accountMap = jsonDecode(accountMap[_storage.settingsField]);
       // _logger.d('RETRIEVED ACCOUNT: $accountMap');
@@ -67,9 +69,17 @@ class AccountRepository extends JsonSerializable {
     return account;
   }
 
-  Future<void> reload() async {
+  Future<AccountRepository> reload() async {
     final profileMap = await _api.get(Endpoint.account);
-    _update(profileMap);
+    // _update(profileMap);
+    final newRepo = AccountRepository.fromJson(profileMap);
+    userName = newRepo.userName;
+    firstName = newRepo.firstName;
+    lastName = newRepo.lastName;
+    language = newRepo.language;
+    picture = newRepo.picture;
+
+    return this;
   }
 
   Future<void> clean() async {
@@ -89,34 +99,76 @@ class AccountRepository extends JsonSerializable {
     );
   }
 
-  void _update(Map<String, dynamic> json) {
-    firstName.value = json['firstname'] as String;
-    lastName.value = json['lastname'] as String;
-    picture.value = json['picture'] as String;
-  }
-
-  Future<AccountRepository> patch({
+  Future<void> update({
     String newFirstName,
     String newLastName,
     String newLanguage,
     String oldPassword,
     String newPassword,
-  }) async {
-    final Map<String, dynamic> accountMap = <String, dynamic>{};
-    if (newFirstName != null) {
+  }) {
+    if (newFirstName != null &&
+        newFirstName.isNotReallyEmpty &&
+        newFirstName != this.firstName.value) {
       firstName.value = newFirstName;
-      accountMap['firstname'] = newFirstName;
+      _accountMap['firstname'] = newFirstName;
     }
-    if (newLastName != null) {
+    if (newLastName != null &&
+        newLastName.isNotReallyEmpty &&
+        newLastName != this.lastName.value) {
       lastName.value = newLastName;
-      accountMap['lastname'] = newLastName;
+      _accountMap['lastname'] = newLastName;
     }
-    final result = await _api.patch(Endpoint.account, body: toJson());
+    if (newLanguage != null &&
+        newLanguage.isNotReallyEmpty &&
+        newLanguage != this.language.value) {
+      language.value = newLanguage;
+      _accountMap['language'] = newLanguage;
+    }
+    if (oldPassword != null &&
+        newPassword != null &&
+        oldPassword.isNotReallyEmpty &&
+        newPassword.isNotReallyEmpty) {
+      password = PasswordField(
+        isReadonly: password.isReadonly,
+        value: PasswordValues(
+          oldPass: oldPassword,
+          newPass: newPassword,
+        ),
+      );
+      _accountMap['password'] = {
+        'old': oldPassword,
+        'new': newPassword,
+      };
+    }
+  }
+
+  Future<AccountRepository> patch() async {
+    final result = await _api.patch(Endpoint.account, body: _accountMap);
     if (result != null) {
-      print('Account updated: $accountMap');
-      save();
+      print('Account updated: $_accountMap');
+      _accountMap = <String, dynamic>{};
+      // save();
     }
     return this;
+  }
+
+  LanguageOption selectedLanguage() {
+    final lang = language.options
+        .firstWhere((option) => option.value == language.value, orElse: () {
+      _logger.e(
+          'No matching languages found in options for code: ${language.value}');
+      return LanguageOption(value: language.value, title: '');
+    });
+    return lang;
+  }
+
+  String languageCodeFromTitle(String title) {
+    final lang = language.options.firstWhere((option) => option.title == title,
+        orElse: () {
+      _logger.e('No matching languages found in options for title: $title');
+      return LanguageOption(value: '', title: title);
+    });
+    return lang.value;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

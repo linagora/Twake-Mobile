@@ -10,26 +10,23 @@ import flutter_downloader
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    FlutterDownloaderPlugin.setPluginRegistrantCallback(registerPlugins)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-    
-    private func registerPlugins(registry: FlutterPluginRegistry) { 
-    if (!registry.hasPlugin("FlutterDownloaderPlugin")) {
-       FlutterDownloaderPlugin.register(with: registry.registrar(forPlugin: "FlutterDownloaderPlugin")!)
-    }
-}
-
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self
     }
-
+    FlutterDownloaderPlugin.setPluginRegistrantCallback({ registry in
+        FlutterDownloaderPlugin.register(with: registry.registrar(forPlugin: "vn.hunghd.flutter_downloader")!)
+        GeneratedPluginRegistrant.register(with: registry)
+    })
+    
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+
   }
+    
     
 //    override func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 //        completionHandler([.alert, .badge, .sound])
 //    }
+
+
+
 }
-
-
-

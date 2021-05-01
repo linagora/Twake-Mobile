@@ -53,8 +53,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
         if (threadMessage.id == state.threadMessage.id &&
             (threadMessage.content.originalStr !=
                     state.threadMessage.content.originalStr ||
-                threadMessage.reactions.keys !=
-                    state.threadMessage.reactions.keys))
+                threadMessage.reactions.length !=
+                    state.threadMessage.reactions.length))
           this.add(UpdateThreadMessage(state.threadMessage));
       }
     });
@@ -178,7 +178,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
           originalStr: body['original_str'],
           prepared: TwacodeParser(body['original_str']).message,
         ),
-        reactions: {},
+        reactions: [],
         responsesCount: 0,
         channelId: body['channel_id'],
         username: ProfileBloc.username,

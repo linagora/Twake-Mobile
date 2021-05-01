@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/pages/profile/edit_profile.dart';
 import 'package:twake/pages/profile/profile.dart';
 
@@ -9,19 +10,22 @@ class ProfileFlow extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileFlowWidgets = [
       Profile(),
-      EditProfile(),
+      BlocProvider(
+        create: (context) => FileUploadBloc(),
+        child: EditProfile(),
+      ),
     ];
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      buildWhen: (_, current) => current is ProfileFlowStageUpdated,
+    return BlocBuilder<AccountCubit, AccountState>(
+      buildWhen: (_, current) => current is AccountFlowStageUpdated,
       builder: (context, state) {
         var i = 0;
-        if (state is ProfileFlowStageUpdated) {
+        if (state is AccountFlowStageUpdated) {
           // print('Current stage: ${state.stage}');
           switch (state.stage) {
-            case ProfileFlowStage.info:
+            case AccountFlowStage.info:
               i = 0;
               break;
-            case ProfileFlowStage.edit:
+            case AccountFlowStage.edit:
               i = 1;
               break;
           }

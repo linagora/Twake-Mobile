@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_event.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_state.dart';
 import 'package:twake/repositories/file_upload_repository.dart';
+import 'package:twake/services/endpoints.dart';
 
 export 'package:twake/blocs/file_upload_bloc/file_upload_event.dart';
 export 'package:twake/blocs/file_upload_bloc/file_upload_state.dart';
@@ -18,9 +19,11 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       final size = await event.size;
       final filename = event.filename;
       final cancelToken = CancelToken();
+      final endpoint = event.endpoint ?? Endpoint.fileUpload;
 
       repository.upload(
         payload: await event.payload(),
+        endpoint: endpoint,
         onSuccess: (Map<String, dynamic> response) {
           this.add(FinishUpload());
         },

@@ -10,6 +10,7 @@ class RoundedTextField extends StatelessWidget {
   final int maxLength;
   final String Function(String) validator;
   final BorderRadius borderRadius;
+  final bool enabled;
 
   const RoundedTextField({
     Key key,
@@ -20,6 +21,7 @@ class RoundedTextField extends StatelessWidget {
     this.maxLength,
     this.validator,
     this.borderRadius = BorderRadius.zero,
+    this.enabled = true
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class RoundedTextField extends StatelessWidget {
         inputFormatters: [
           LengthLimitingTextInputFormatter(maxLength),
         ],
+        enabled: enabled,
         validator: validator,
         controller: controller,
         focusNode: focusNode,
