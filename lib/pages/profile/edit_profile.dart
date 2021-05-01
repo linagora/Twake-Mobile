@@ -121,14 +121,16 @@ class _EditProfileState extends State<EditProfile> {
   void _save() {
     print('Save profile!');
     if (_canSave) {
-      context.read<AccountCubit>()
-        ..updateInfo(
-          firstName: _firstName,
-          lastName: _lastName,
-          oldPassword: _oldPassword,
-          newPassword: _newPassword,
-        )
-        ..saveInfo();
+      // context.read<AccountCubit>()
+      //   ..updateInfo(
+      //     firstName: _firstName,
+      //     lastName: _lastName,
+      //     oldPassword: _oldPassword,
+      //     newPassword: _newPassword,
+      //   )
+      //   ..saveInfo();
+
+      context.read<AccountCubit>().saveInfo();
     }
   }
 
@@ -158,9 +160,9 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountCubit, AccountState>(
-      builder: (context, state) {
-        final _isUpdating = state is AccountSaving;
+    return BlocConsumer<AccountCubit, AccountState>(
+      listenWhen: (_, current) => current is AccountSaved,
+      listener: (context, state) {
         if (state is AccountSaved) {
           if (_shouldUpdateImage) {
             // In case we have picked a new image locally.
@@ -175,12 +177,25 @@ class _EditProfileState extends State<EditProfile> {
                 .updateAccountFlowStage(AccountFlowStage.info);
           }
         }
+      },
+      buildWhen: (_, current) =>
+          current is AccountLoaded ||
+          current is AccountInitial ||
+          current is AccountSaving ||
+          current is AccountUpdated,
+      builder: (context, state) {
+        final _isSaving = state is AccountSaving;
+
         if (state is AccountLoaded || state is AccountInitial) {
-          _userNameController.text = '@${state.userName}';
-          _firstNameController.text = state.firstName;
-          _lastNameController.text = state.lastName;
+          _firstName = state.firstName;
+          _lastName = state.lastName;
           _picture = state.picture;
+          _userNameController.text = '@${state.userName}';
+          _firstNameController.text = _firstName;
+          _lastNameController.text = _lastName;
         }
+
+        print('EditProfile current state: $state');
 
         return GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -243,7 +258,7 @@ class _EditProfileState extends State<EditProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _isUpdating
+                          _isSaving
                               ? RoundedShimmer(size: 100.0)
                               : SelectableAvatar(
                                   size: 100.0,

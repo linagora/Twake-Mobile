@@ -27,10 +27,8 @@ class Profile extends StatelessWidget {
             picture = state.picture;
             availableLanguages = state.availableLanguages;
           }
-
-          print('AccountCubit state in Profile: $state');
-          print('Picture in profile: $picture');
-
+          // print('AccountCubit state in Profile: $state');
+          // print('Picture in profile: $picture');
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
