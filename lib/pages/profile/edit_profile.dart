@@ -32,11 +32,42 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+
     _userNameController.text = '';
     _firstNameController.text = '';
     _lastNameController.text = '';
     _oldPasswordController.text = '';
     _newPasswordController.text = '';
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _firstNameController.addListener(() {
+        String firstName = _firstNameController.text;
+        if (firstName != null && firstName.isNotReallyEmpty) {
+          context.read<AccountCubit>().updateInfo(firstName: firstName);
+        }
+      });
+
+      _lastNameController.addListener(() {
+        String lastName = _lastNameController.text;
+        if (lastName != null && lastName.isNotReallyEmpty) {
+          context.read<AccountCubit>().updateInfo(lastName: lastName);
+        }
+      });
+
+      _oldPasswordController.addListener(() {
+        String oldPassword = _oldPasswordController.text;
+        if (oldPassword != null && oldPassword.isNotReallyEmpty) {
+          context.read<AccountCubit>().updateInfo(oldPassword: oldPassword);
+        }
+      });
+
+      _newPasswordController.addListener(() {
+        String newPassword = _newPasswordController.text;
+        if (newPassword != null && newPassword.isNotReallyEmpty) {
+          context.read<AccountCubit>().updateInfo(newPassword: newPassword);
+        }
+      });
+    });
   }
 
   @override
@@ -90,6 +121,7 @@ class _EditProfileState extends State<EditProfile> {
 
         if (state is AccountLoaded ||
             state is AccountSaved ||
+            state is AccountUpdated ||
             state is AccountInitial) {
           _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
