@@ -33,6 +33,7 @@ class _MessageEditField extends State<MessageEditField> {
   bool _mentionsVisible = false;
   bool _forceLooseFocus = false;
   bool _canSend = false;
+  int _fileNumber = 0;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -40,7 +41,6 @@ class _MessageEditField extends State<MessageEditField> {
 
   List<PlatformFile> _paths;
   String _extension;
-  bool _multiPick = false;
   FileType _pickingType = FileType.any;
 
   @override
@@ -159,7 +159,7 @@ class _MessageEditField extends State<MessageEditField> {
     try {
       _paths = (await FilePicker.platform.pickFiles(
         type: _pickingType,
-        allowMultiple: _multiPick,
+        allowMultiple: true,
         allowedExtensions: (_extension?.isNotEmpty ?? false)
             ? _extension.replaceAll(' ', '').split(',')
             : null,
@@ -171,12 +171,20 @@ class _MessageEditField extends State<MessageEditField> {
       print(ex);
     }
     if (!mounted) return;
-    final path = _paths.map((e) => e.path).toList()[0].toString();
+    //final path = _paths.map((e) => e.path).toList()[0].toString();
     // final name = _paths.map((e) => e.name).toList()[0].toString();
     //print(path);
     //needed to add indexes for multifiles
 
-    BlocProvider.of<FileUploadBloc>(context).add(StartUpload(path: path));
+    _paths.forEach((element) {
+      BlocProvider.of<FileUploadBloc>(context)
+          .add(StartUpload(path: element.path.toString()));
+    });
+
+    setState(() {
+      _fileNumber += _paths.length;
+    });
+
     BlocProvider.of<FileUploadBloc>(context).listen((FileUploadState state) {
       if (state is FileUploaded) {
         setState(() {
@@ -184,6 +192,11 @@ class _MessageEditField extends State<MessageEditField> {
         });
       }
     });
+  }
+
+  void _fileNumClear() async {
+    _fileNumber = 0;
+    _paths = [];
   }
 
   @override
@@ -268,6 +281,8 @@ class _MessageEditField extends State<MessageEditField> {
             onMessageSend: widget.onMessageSend,
             canSend: _canSend,
             openFileExplorer: _openFileExplorer,
+            fileNumber: _fileNumber,
+            fileNumClear: _fileNumClear,
           ),
           if (_emojiVisible)
             EmojiKeyboard(
@@ -294,6 +309,8 @@ class TextInput extends StatelessWidget {
   final bool canSend;
   final Function onMessageSend;
   final Function openFileExplorer;
+  final Function fileNumClear;
+  int fileNumber;
 
   TextInput(
       {this.onMessageSend,
@@ -304,7 +321,9 @@ class TextInput extends StatelessWidget {
       this.scrollController,
       this.toggleEmojiBoard,
       this.openFileExplorer,
-      this.canSend});
+      this.canSend,
+      this.fileNumber,
+      this.fileNumClear});
 
   @override
   Widget build(BuildContext context) {
@@ -359,7 +378,11 @@ class TextInput extends StatelessWidget {
                 return CircularProgressIndicator();
               } else if (state is FileUploaded) {
                 return CircleAvatar(
-                  child: (Text('1')),
+                  child: InkWell(
+                    child: (Text('$fileNumber')),
+                    onTap:openFileExplorer,
+                    //  await fileNumClear;
+                  ),
                   backgroundColor: Colors.indigo[50],
                 );
               }
@@ -367,7 +390,7 @@ class TextInput extends StatelessWidget {
                 backgroundColor: Colors.indigo[50],
                 child: IconButton(
                   padding: EdgeInsets.zero,
-                  icon: Icon(Icons.file_download),
+                  icon: Icon(Icons.attachment),
                   onPressed: openFileExplorer,
                   color: Colors.black54,
                 ),
@@ -389,6 +412,7 @@ class TextInput extends StatelessWidget {
                 ? () async {
                     await onMessageSend(controller.text, context);
                     controller.clear();
+                    fileNumClear();
                   }
                 : null,
           ),
