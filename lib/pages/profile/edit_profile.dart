@@ -25,9 +25,6 @@ class _EditProfileState extends State<EditProfile> {
   var _picture = '';
 
   String _fileName;
-  String _extension;
-  bool _multiPick = false;
-  FileType _pickingType = FileType.image;
 
   @override
   void initState() {
@@ -62,18 +59,11 @@ class _EditProfileState extends State<EditProfile> {
     List<PlatformFile> paths;
     try {
       paths = (await FilePicker.platform.pickFiles(
-        type: _pickingType,
-        // allowMultiple: _multiPick,
-        allowedExtensions: (_extension?.isNotEmpty ?? false)
-            ? _extension.replaceAll(' ', '').split(',')
-            : null,
-      ))
-          ?.files;
+        type: FileType.image,
+      ))?.files;
 
-      print(paths.first);
       if (paths != null && paths.length > 0) {
-        _fileName = paths[0].path.toString();
-
+        _fileName = paths[0].path;
         print('Filename to be saved: $_fileName');
         context.read<AccountCubit>().updateImage(context, _fileName);
       }
