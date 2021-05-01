@@ -111,6 +111,7 @@ class AccountCubit extends Cubit<AccountState> {
       ..listen(
         (FileUploadState state) {
           if (state is FileUploaded) {
+            print('Uploaded file: ${state.files.first.filename}');
             emit(AccountPictureUpdated());
           }
         },

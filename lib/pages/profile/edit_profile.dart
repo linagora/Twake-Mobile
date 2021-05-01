@@ -112,6 +112,11 @@ class _EditProfileState extends State<EditProfile> {
 
   void _save() {
     print('Save profile!');
+
+    print('FILENAME: $_fileName');
+    print('PIC: $_picture');
+    print('SHOULD: $_shouldUpdateImage');
+
     if (_canSave) {
       // context.read<AccountCubit>()
       //   ..updateInfo(
@@ -143,7 +148,7 @@ class _EditProfileState extends State<EditProfile> {
       if (paths != null && paths.length > 0) {
         setState(() {
           _fileName = paths[0].path;
-          _picture = _firstName;
+          _picture = _fileName;
           _shouldUpdateImage = true;
         });
         print('Filename to be saved: $_fileName');
