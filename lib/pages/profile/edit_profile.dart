@@ -153,17 +153,28 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AccountCubit, AccountState>(
-      listenWhen: (_, current) => current is AccountPictureUpdated,
+      listenWhen: (_, current) =>
+          current is AccountPictureUpdated || current is AccountSaved,
       listener: (context, state) {
         if (state is AccountPictureUpdated) {
           context.read<AccountCubit>().fetch();
           _close(context);
         }
+        if (state is AccountSaved) {
+          if (_shouldUpdateImage) {
+            // In case we have picked a new image locally.
+            _shouldUpdateImage = false;
+            context.read<AccountCubit>().updateImage(context, _fileName);
+          } else {
+            // If no changes occurred with an image.
+            context.read<AccountCubit>().fetch();
+            _close(context);
+          }
+        }
       },
       buildWhen: (_, current) =>
           current is AccountLoaded ||
           current is AccountUpdated ||
-          current is AccountSaved ||
           current is AccountPictureUpdating,
       builder: (context, state) {
         final _isSaving = state is AccountPictureUpdating;
@@ -176,18 +187,6 @@ class _EditProfileState extends State<EditProfile> {
           _firstNameController.text = _firstName;
           _lastNameController.text = _lastName;
         }
-
-        if (state is AccountSaved) {
-          if (_shouldUpdateImage) {
-            // In case we have picked a new image locally.
-            _shouldUpdateImage = false;
-            context.read<AccountCubit>().updateImage(context, _fileName);
-          } else {
-            // If no changes occurred with an image.
-            _close(context);
-          }
-        }
-
         print('EditProfile current state: $state');
 
         return GestureDetector(
@@ -225,11 +224,12 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           // SizedBox(width: 24.0),
                           GestureDetector(
-                            onTap: _canSave ? () => _save() : null,
+                            onTap:
+                                _canSave && !_isSaving ? () => _save() : null,
                             child: Text(
                               'Save',
                               style: TextStyle(
-                                color: _canSave
+                                color: _canSave && !_isSaving
                                     ? Color(0xff3840f7)
                                     : Color(0xffa2a2a2),
                                 fontSize: 17.0,
