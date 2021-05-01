@@ -24,7 +24,7 @@ class RoundedImage extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        child: (imageUrl.isNotReallyEmpty && assetPath.isReallyEmpty)
+        child: imageUrl.isNotReallyEmpty
             ? CachedNetworkImage(
                 fit: BoxFit.cover,
                 imageUrl: imageUrl,
