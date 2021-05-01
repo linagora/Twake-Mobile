@@ -69,6 +69,29 @@ class AccountLoaded extends AccountState {
         );
 }
 
+class AccountUpdating extends AccountState {
+  @override
+  List<Object> get props => [];
+}
+
+class AccountUpdated extends AccountState {
+  const AccountUpdated({
+    String userName,
+    String firstName,
+    String lastName,
+    String picture,
+    String language,
+    List<LanguageOption> availableLanguages,
+  }) : super(
+    userName: userName,
+    firstName: firstName,
+    lastName: lastName,
+    picture: picture,
+    language: language,
+    availableLanguages: availableLanguages,
+  );
+}
+
 class AccountSaving extends AccountState {
   final bool isPictureUpdating;
 
