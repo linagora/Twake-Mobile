@@ -26,6 +26,11 @@ class _EditProfileState extends State<EditProfile> {
 
   var _canSave = true;
   var _picture = '';
+  var _userName = '';
+  var _firstName = '';
+  var _lastName = '';
+  var _oldPassword = '';
+  var _newPassword = '';
 
   String _fileName;
 
@@ -42,28 +47,40 @@ class _EditProfileState extends State<EditProfile> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _firstNameController.addListener(() {
         final firstName = _firstNameController.text;
-        if (firstName != null && firstName.isNotReallyEmpty) {
+        if (firstName != null &&
+            firstName.isNotReallyEmpty &&
+            _firstName != firstName) {
+          _firstName = firstName;
           context.read<AccountCubit>().updateInfo(firstName: firstName);
         }
       });
 
       _lastNameController.addListener(() {
         final lastName = _lastNameController.text;
-        if (lastName != null && lastName.isNotReallyEmpty) {
+        if (lastName != null &&
+            lastName.isNotReallyEmpty &&
+            _lastName != lastName) {
+          _lastName = lastName;
           context.read<AccountCubit>().updateInfo(lastName: lastName);
         }
       });
 
       _oldPasswordController.addListener(() {
         final oldPassword = _oldPasswordController.text;
-        if (oldPassword != null && oldPassword.isNotReallyEmpty) {
+        if (oldPassword != null &&
+            oldPassword.isNotReallyEmpty &&
+            _oldPassword != oldPassword) {
+          _oldPassword = oldPassword;
           context.read<AccountCubit>().updateInfo(oldPassword: oldPassword);
         }
       });
 
       _newPasswordController.addListener(() {
         final newPassword = _newPasswordController.text;
-        if (newPassword != null && newPassword.isNotReallyEmpty) {
+        if (newPassword != null &&
+            newPassword.isNotReallyEmpty &&
+            _newPassword != newPassword) {
+          _newPassword = newPassword;
           context.read<AccountCubit>().updateInfo(newPassword: newPassword);
         }
       });
@@ -81,15 +98,14 @@ class _EditProfileState extends State<EditProfile> {
 
   void _save() {
     print('Save profile!');
-    final firstName = _firstNameController.text;
-    final lastName = _lastNameController.text;
-    context.read<AccountCubit>().updateInfo(
-          firstName: firstName,
-          lastName: lastName,
-        );
-    FocusScope.of(context).requestFocus(FocusNode());
-    context.read<SheetBloc>().add(CloseSheet());
-    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+    context.read<AccountCubit>()
+      ..updateInfo(
+        firstName: _firstName,
+        lastName: _lastName,
+        oldPassword: _oldPassword,
+        newPassword: _newPassword,
+      )
+      ..saveInfo();
   }
 
   Future<void> _openFileExplorer() async {
@@ -118,10 +134,12 @@ class _EditProfileState extends State<EditProfile> {
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
         final _isUpdating = state is AccountSaving;
-
+        if (state is AccountSaved) {
+          FocusScope.of(context).requestFocus(FocusNode());
+          context.read<SheetBloc>().add(CloseSheet());
+          context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+        }
         if (state is AccountLoaded ||
-            state is AccountSaved ||
-            state is AccountUpdated ||
             state is AccountInitial) {
           _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
