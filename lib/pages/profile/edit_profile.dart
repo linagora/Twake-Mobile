@@ -24,7 +24,6 @@ class _EditProfileState extends State<EditProfile> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
 
-  var _canSave = false;
   var _shouldUpdateImage = false;
   var _picture = '';
   var _firstName = '';
@@ -32,7 +31,8 @@ class _EditProfileState extends State<EditProfile> {
   var _oldPassword = '';
   var _newPassword = '';
 
-  String _fileName;
+  var _fileName = '';
+  var _failureMessage = '';
 
   @override
   void initState() {
@@ -96,16 +96,40 @@ class _EditProfileState extends State<EditProfile> {
     super.dispose();
   }
 
+  bool get _canSave {
+    if (_firstName.isReallyEmpty || _lastName.isReallyEmpty) {
+      _failureMessage = 'First and last name cannot be empty';
+      return false;
+    }
+    if ((_oldPassword.isReallyEmpty && _newPassword.isNotReallyEmpty) ||
+        (_oldPassword.isNotReallyEmpty && _newPassword.isReallyEmpty)) {
+      _failureMessage = 'Password cannot be empty';
+      return false;
+    }
+    return true;
+  }
+
+  void _showFailureMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Color(0xffe64646),
+        content: Text(message),
+      ),
+    );
+  }
+
   void _save() {
     print('Save profile!');
-    context.read<AccountCubit>()
-      ..updateInfo(
-        firstName: _firstName,
-        lastName: _lastName,
-        oldPassword: _oldPassword,
-        newPassword: _newPassword,
-      )
-      ..saveInfo();
+    if (_canSave) {
+      context.read<AccountCubit>()
+        ..updateInfo(
+          firstName: _firstName,
+          lastName: _lastName,
+          oldPassword: _oldPassword,
+          newPassword: _newPassword,
+        )
+        ..saveInfo();
+    }
   }
 
   Future<void> _openFileExplorer() async {

@@ -105,7 +105,7 @@ class AccountRepository extends JsonSerializable {
     String newLanguage,
     String oldPassword,
     String newPassword,
-  }) {
+  }) async {
     if (newFirstName != null &&
         newFirstName.isNotReallyEmpty &&
         newFirstName != this.firstName.value) {
