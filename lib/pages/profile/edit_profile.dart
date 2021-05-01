@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/widgets/common/button_field.dart';
+import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
 import 'package:twake/widgets/common/switch_field.dart';
@@ -64,7 +66,8 @@ class _EditProfileState extends State<EditProfile> {
     try {
       paths = (await FilePicker.platform.pickFiles(
         type: FileType.image,
-      ))?.files;
+      ))
+          ?.files;
 
       if (paths != null && paths.length > 0) {
         _fileName = paths[0].path;
@@ -83,6 +86,8 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
+        final _isUpdating = state is AccountSaving;
+
         if (state is AccountLoaded ||
             state is AccountSaved ||
             state is AccountInitial) {
@@ -106,8 +111,7 @@ class _EditProfileState extends State<EditProfile> {
                     maxWidth: MediaQuery.of(context).size.width,
                     maxHeight: 56.0,
                     child: Container(
-                      padding:
-                          const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
                       color: Colors.white,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,8 +123,7 @@ class _EditProfileState extends State<EditProfile> {
                                   .read<AccountCubit>()
                                   .updateAccountFlowStage(
                                       AccountFlowStage.info);
-                              FocusScope.of(context)
-                                  .requestFocus(FocusNode());
+                              FocusScope.of(context).requestFocus(FocusNode());
                             },
                             child: Icon(
                               Icons.arrow_back_ios,
@@ -155,11 +158,13 @@ class _EditProfileState extends State<EditProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SelectableAvatar(
-                            size: 100.0,
-                            userpic: _picture,
-                            onTap: () => _openFileExplorer(),
-                          ),
+                          _isUpdating
+                              ? RoundedShimmer(size: 100.0)
+                              : SelectableAvatar(
+                                  size: 100.0,
+                                  userpic: _picture,
+                                  onTap: () => _openFileExplorer(),
+                                ),
                           SizedBox(height: 12.0),
                           GestureDetector(
                             onTap: () => print('Change avatar!'),

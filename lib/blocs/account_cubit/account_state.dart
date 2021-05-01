@@ -19,13 +19,13 @@ abstract class AccountState extends Equatable {
 
   @override
   List<Object> get props => [
-    userName,
-    firstName,
-    lastName,
-    picture,
-    language,
-    availableLanguages,
-  ];
+        userName,
+        firstName,
+        lastName,
+        picture,
+        language,
+        availableLanguages,
+      ];
 }
 
 class AccountInitial extends AccountState {
@@ -60,18 +60,22 @@ class AccountLoaded extends AccountState {
     String language,
     List<LanguageOption> availableLanguages,
   }) : super(
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    picture: picture,
-    language: language,
-    availableLanguages: availableLanguages,
-  );
+          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
+          picture: picture,
+          language: language,
+          availableLanguages: availableLanguages,
+        );
 }
 
 class AccountSaving extends AccountState {
+  final bool isPictureUpdating;
+
+  AccountSaving({this.isPictureUpdating = false});
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [isPictureUpdating];
 }
 
 class AccountSaved extends AccountState {
@@ -83,13 +87,13 @@ class AccountSaved extends AccountState {
     String language,
     List<LanguageOption> availableLanguages,
   }) : super(
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    picture: picture,
-    language: language,
-    availableLanguages: availableLanguages,
-  );
+          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
+          picture: picture,
+          language: language,
+          availableLanguages: availableLanguages,
+        );
 }
 
 class AccountError extends AccountState {

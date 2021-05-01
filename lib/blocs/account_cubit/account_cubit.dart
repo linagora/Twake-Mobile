@@ -86,16 +86,21 @@ class AccountCubit extends Cubit<AccountState> {
   }
 
   Future<void> updateImage(BuildContext context, String path) async {
+    emit(AccountSaving(isPictureUpdating: true));
     context.read<FileUploadBloc>()
-      ..add(StartUpload(
-        path: path,
-        endpoint: Endpoint.accountPicture,
-      ))
-      ..listen((FileUploadState state) {
-        if (state is FileUploaded) {
-          fetch();
-        }
-      });
+      ..add(
+        StartUpload(
+          path: path,
+          endpoint: Endpoint.accountPicture,
+        ),
+      )
+      ..listen(
+        (FileUploadState state) {
+          if (state is FileUploaded) {
+            fetch();
+          }
+        },
+      );
   }
 
   Future<void> updateAccountFlowStage(AccountFlowStage stage) async {
