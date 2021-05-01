@@ -24,7 +24,7 @@ class _EditProfileState extends State<EditProfile> {
   var _canSave = true;
   var _picture = '';
 
-  List<PlatformFile> _paths;
+  String _fileName;
   String _extension;
   bool _multiPick = false;
   FileType _pickingType = FileType.image;
@@ -59,26 +59,31 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _openFileExplorer() async {
+    List<PlatformFile> paths;
     try {
-      _paths = (await FilePicker.platform.pickFiles(
+      paths = (await FilePicker.platform.pickFiles(
         type: _pickingType,
-        allowMultiple: _multiPick,
+        // allowMultiple: _multiPick,
         allowedExtensions: (_extension?.isNotEmpty ?? false)
             ? _extension.replaceAll(' ', '').split(',')
             : null,
       ))
           ?.files;
+
+      print(paths.first);
+      if (paths != null && paths.length > 0) {
+        _fileName = paths[0].path.toString();
+
+        print('Filename to be saved: $_fileName');
+        context.read<AccountCubit>().updateImage(context, _fileName);
+      }
+
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
     } catch (ex) {
       print(ex);
     }
     if (!mounted) return;
-    final path = _paths.map((e) => e.path).toList()[0].toString();
-    // final name = _paths.map((e) => e.name).toList()[0].toString();
-    //print(path);
-    //needed to add indexes for multifiles
-    context.read<AccountCubit>().updateImage(context, path);
   }
 
   @override
@@ -107,7 +112,8 @@ class _EditProfileState extends State<EditProfile> {
                     maxWidth: MediaQuery.of(context).size.width,
                     maxHeight: 56.0,
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
+                      padding:
+                          const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
                       color: Colors.white,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -119,7 +125,8 @@ class _EditProfileState extends State<EditProfile> {
                                   .read<AccountCubit>()
                                   .updateAccountFlowStage(
                                       AccountFlowStage.info);
-                              FocusScope.of(context).requestFocus(FocusNode());
+                              FocusScope.of(context)
+                                  .requestFocus(FocusNode());
                             },
                             child: Icon(
                               Icons.arrow_back_ios,
