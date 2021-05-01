@@ -26,47 +26,40 @@ class AccountCubit extends Cubit<AccountState> {
           picture: accountRepository.picture.value,
           language: accountRepository.selectedLanguage().title,
           availableLanguages: accountRepository.language.options,
-        )) {
-    emit(AccountLoaded(
-      userName: accountRepository.userName.value,
-      firstName: accountRepository.firstName.value,
-      lastName: accountRepository.lastName.value,
-      picture: accountRepository.picture.value,
-      language: accountRepository.selectedLanguage().title,
-      availableLanguages: accountRepository.language.options,
-    ));
-  }
+        ));
 
   Future<void> fetch() async {
     emit(AccountLoading());
     final result = await accountRepository.reload();
 
-    final availableLanguages =
-        result.language.options ?? <LanguageOption>[];
+    final availableLanguages = result.language.options ?? <LanguageOption>[];
     final currentLanguage = result.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
-    emit(AccountLoaded(
+    final loadedState = AccountLoaded(
       userName: result.userName.value,
       firstName: result.firstName.value,
       lastName: result.lastName.value,
       picture: result.picture.value,
       language: languageTitle,
       availableLanguages: availableLanguages,
-    ));
+    );
+
+    emit(loadedState);
   }
 
   Future<void> saveInfo() async {
     emit(AccountSaving());
-    await accountRepository.patch();
-    emit(AccountSaved(
-      userName: accountRepository.userName.value,
-      firstName: accountRepository.firstName.value,
-      lastName: accountRepository.lastName.value,
-      picture: accountRepository.picture.value,
-      language: accountRepository.selectedLanguage().title,
-      availableLanguages: accountRepository.language.options,
-    ));
+    final afterPatch = await accountRepository.patch();
+    final savedState = AccountSaved(
+      userName: afterPatch.userName.value,
+      firstName: afterPatch.firstName.value,
+      lastName: afterPatch.lastName.value,
+      picture: afterPatch.picture.value,
+      language: afterPatch.selectedLanguage().title,
+      availableLanguages: afterPatch.language.options,
+    );
+    emit(savedState);
   }
 
   Future<void> updateInfo({
@@ -88,7 +81,8 @@ class AccountCubit extends Cubit<AccountState> {
       oldPassword: oldPassword,
       newPassword: newPassword,
     );
-    emit(AccountUpdated(
+
+    final updatedState = AccountUpdated(
       userName: accountRepository.userName.value,
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
@@ -97,7 +91,8 @@ class AccountCubit extends Cubit<AccountState> {
       picture: accountRepository.picture.value,
       language: accountRepository.selectedLanguage().title,
       availableLanguages: accountRepository.language.options,
-    ));
+    );
+    emit(updatedState);
   }
 
   Future<void> updateImage(BuildContext context, String path) async {

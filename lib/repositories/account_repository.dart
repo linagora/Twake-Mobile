@@ -99,7 +99,7 @@ class AccountRepository extends JsonSerializable {
     );
   }
 
-  Future<void> update({
+  Future<Map<String, dynamic>> update({
     String newFirstName,
     String newLastName,
     String newLanguage,
@@ -140,20 +140,43 @@ class AccountRepository extends JsonSerializable {
         'new': newPassword,
       };
     }
+    return _accountMap;
   }
 
   Future<AccountRepository> patch() async {
+    AccountRepository newRepo;
     if (_accountMap.length > 0) {
       final result = await _api.patch(Endpoint.account, body: _accountMap);
       if (result != null) {
-        print('Account patch map: $_accountMap');
+        print('Account PATCH request body: $_accountMap');
         _accountMap = <String, dynamic>{};
         // save();
+        print('Account PATCH response: ${jsonEncode(result)}');
+        newRepo = AccountRepository.fromJson(result);
+        userName = newRepo.userName;
+        firstName = newRepo.firstName;
+        lastName = newRepo.lastName;
+        language = newRepo.language;
+        picture = newRepo.picture;
+
+        return newRepo;
+      } else {
+        return _duplicate();
       }
     } else {
-      print('Nothing to patch!');
+      return _duplicate();
     }
-    return this;
+  }
+
+  AccountRepository _duplicate() {
+    return AccountRepository(
+      userName: this.userName,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      language: this.language,
+      picture: this.picture,
+      password: this.password,
+    );
   }
 
   LanguageOption selectedLanguage() {
