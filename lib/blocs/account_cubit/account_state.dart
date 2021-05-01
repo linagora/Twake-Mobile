@@ -4,6 +4,8 @@ abstract class AccountState extends Equatable {
   final String userName;
   final String firstName;
   final String lastName;
+  final String oldPassword;
+  final String newPassword;
   final String picture;
   final String language;
   final List<LanguageOption> availableLanguages;
@@ -12,6 +14,8 @@ abstract class AccountState extends Equatable {
     this.userName,
     this.firstName,
     this.lastName,
+    this.oldPassword,
+    this.newPassword,
     this.picture,
     this.language,
     this.availableLanguages,
@@ -22,6 +26,8 @@ abstract class AccountState extends Equatable {
         userName,
         firstName,
         lastName,
+        oldPassword,
+        newPassword,
         picture,
         language,
         availableLanguages,
@@ -79,17 +85,21 @@ class AccountUpdated extends AccountState {
     String userName,
     String firstName,
     String lastName,
+    String oldPassword,
+    String newPassword,
     String picture,
     String language,
     List<LanguageOption> availableLanguages,
   }) : super(
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    picture: picture,
-    language: language,
-    availableLanguages: availableLanguages,
-  );
+          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+          picture: picture,
+          language: language,
+          availableLanguages: availableLanguages,
+        );
 }
 
 class AccountSaving extends AccountState {

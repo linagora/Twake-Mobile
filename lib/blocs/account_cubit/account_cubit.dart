@@ -92,6 +92,8 @@ class AccountCubit extends Cubit<AccountState> {
       userName: accountRepository.userName.value,
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
       picture: accountRepository.picture.value,
       language: accountRepository.selectedLanguage().title,
       availableLanguages: accountRepository.language.options,

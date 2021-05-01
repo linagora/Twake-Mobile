@@ -41,28 +41,28 @@ class _EditProfileState extends State<EditProfile> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _firstNameController.addListener(() {
-        String firstName = _firstNameController.text;
+        final firstName = _firstNameController.text;
         if (firstName != null && firstName.isNotReallyEmpty) {
           context.read<AccountCubit>().updateInfo(firstName: firstName);
         }
       });
 
       _lastNameController.addListener(() {
-        String lastName = _lastNameController.text;
+        final lastName = _lastNameController.text;
         if (lastName != null && lastName.isNotReallyEmpty) {
           context.read<AccountCubit>().updateInfo(lastName: lastName);
         }
       });
 
       _oldPasswordController.addListener(() {
-        String oldPassword = _oldPasswordController.text;
+        final oldPassword = _oldPasswordController.text;
         if (oldPassword != null && oldPassword.isNotReallyEmpty) {
           context.read<AccountCubit>().updateInfo(oldPassword: oldPassword);
         }
       });
 
       _newPasswordController.addListener(() {
-        String newPassword = _newPasswordController.text;
+        final newPassword = _newPasswordController.text;
         if (newPassword != null && newPassword.isNotReallyEmpty) {
           context.read<AccountCubit>().updateInfo(newPassword: newPassword);
         }
