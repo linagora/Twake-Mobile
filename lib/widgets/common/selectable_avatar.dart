@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
@@ -27,8 +26,6 @@ class SelectableAvatar extends StatefulWidget {
 }
 
 class _SelectableAvatarState extends State<SelectableAvatar> {
-  final picker = ImagePicker();
-
   String _userpic;
   String _localAsset;
   String _icon;
