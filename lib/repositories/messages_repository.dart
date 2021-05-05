@@ -1,9 +1,6 @@
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/message.dart';
 import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/services/service_bundle.dart';
-
-const DUMMY_ID = 'message';
 
 class MessagesRepository {
   List<Message> items;
@@ -186,7 +183,8 @@ class MessagesRepository {
 
   Future<bool> pullOne(
     Map<String, dynamic> queryParams, {
-    bool addToItems = true,
+    bool addToItems: true,
+    List<String> dummyIds: const [],
   }) async {
     // logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
     List resp = [];
@@ -198,8 +196,12 @@ class MessagesRepository {
     }
     if (resp.isEmpty) return false;
     var item = Message.fromJson(resp[0]);
-    if (items.any((m) => m.id == DUMMY_ID) && item.userId == ProfileBloc.userId)
-      return false;
+    if (dummyIds.isNotEmpty) {
+      if (this.items.where((m) => dummyIds.contains(m.id)).any(
+            (m) => m.content.originalStr == item.content.originalStr,
+          )) return false;
+    }
+
     var isNew = true;
     final m = await getItemById(queryParams['message_id']);
     if (m != null) {

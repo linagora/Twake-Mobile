@@ -21,6 +21,6 @@ LanguageField _$LanguageFieldFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$LanguageFieldToJson(LanguageField instance) =>
     <String, dynamic>{
       'isReadonly': instance.isReadonly,
-      'value': instance.value,
       'options': instance.options,
+      'value': instance.value,
     };

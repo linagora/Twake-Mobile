@@ -94,7 +94,8 @@ class CollectionRepository<T extends CollectionItem> {
     Map<String, dynamic> params,
   }) {
     // logger.w('BEFORE SELECT $T ${selected.id}');
-    final item = items.firstWhere((i) => i.id == itemId);
+    final item = items.firstWhere((i) => i.id == itemId, orElse: () => null);
+    if (item == null) return;
     var oldSelected = selected;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
