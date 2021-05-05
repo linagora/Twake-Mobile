@@ -184,7 +184,7 @@ class _MessageEditField extends State<MessageEditField> {
 
     _paths.forEach((element) {
       BlocProvider.of<FileUploadBloc>(context)
-          .add(StartUpload(path: element.path.toString()));
+          .add(StartUpload(path: element.path));
     });
 
     setState(() {
@@ -212,12 +212,82 @@ class _MessageEditField extends State<MessageEditField> {
       child: Column(
         children: [
           _mentionsVisible
-              ? Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  child: BlocBuilder<MentionsCubit, MentionState>(
-                    builder: (context, state) {
-                      if (state is MentionableUsersLoaded) {
-                        return ListView.separated(
+              ?
+              //  height: MediaQuery.of(context).size.height * 0.3,
+              BlocBuilder<MentionsCubit, MentionState>(
+                  builder: (context, state) {
+                    if (state is MentionableUsersLoaded) {
+                      final List<Widget> _listW = [];
+                      _listW.add(Divider(thickness: 1));
+                      for (int i = 0; i < state.users.length; i++) {
+                        _listW.add(
+                          ListTile(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ClipRRect(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)),
+                                  child: CircleAvatar(
+                                    child: Image.network(
+                                      state.users[i].thumbnail,
+                                      fit: BoxFit.contain,
+                                      loadingBuilder:
+                                          (context, child, progres) {
+                                        return progres == null
+                                            ? child
+                                            : CircleAvatar(
+                                                child: Icon(Icons.person,
+                                                    color: Colors.grey),
+                                                backgroundColor:
+                                                    Colors.blue[50],
+                                              );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Text(
+                                  '${state.users[i].firstName} ',
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w300),
+                                ),
+                                Text(
+                                  ' ${state.users[i].lastName}',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                Expanded(child: SizedBox()),
+                                Icon(
+                                  Icons.message_rounded,
+                                  color: Colors.grey,
+                                )
+                              ],
+                            ),
+                            onTap: () {
+                              BlocProvider.of<MentionsCubit>(context)
+                                  .clearMentions();
+                              mentionReplace(state.users[i].username);
+                              setState(() {
+                                _mentionsVisible = false;
+                              });
+                            },
+                          ),
+                        );
+                        if (i < state.users.length - 1) {
+                          _listW.add(Divider(thickness: 1));
+                        }
+                      }
+
+                      return SingleChildScrollView(
+                          child: Column(
+                        children: _listW,
+                      ));
+                      /* ListView.separated(
                           reverse: true,
                           separatorBuilder: (context, index) => Divider(
                             color: Colors.black54,
@@ -283,14 +353,13 @@ class _MessageEditField extends State<MessageEditField> {
                               ),
                             );
                           },
-                        );
-                      } else if (state is MentionsEmpty) {
-                        return Container();
-                        //Text("Empty");
-                      }
+                        ); */
+                    } else if (state is MentionsEmpty) {
                       return Container();
-                    },
-                  ),
+                      //Text("Empty");
+                    }
+                    return Container();
+                  },
                 )
               : Container(),
           TextInput(

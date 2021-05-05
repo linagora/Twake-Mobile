@@ -63,7 +63,7 @@ class _MessageTileState<T extends BaseChannelBloc>
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
-    IsolateNameServer.registerPortWithName(
+        IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
 
     FlutterDownloader.registerCallback(downloadingCallback);
