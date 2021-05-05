@@ -282,78 +282,11 @@ class _MessageEditField extends State<MessageEditField> {
                           _listW.add(Divider(thickness: 1));
                         }
                       }
-
                       return SingleChildScrollView(
-                          child: Column(
-                        children: _listW,
-                      ));
-                      /* ListView.separated(
-                          reverse: true,
-                          separatorBuilder: (context, index) => Divider(
-                            color: Colors.black54,
-                          ),
-                          itemCount: state.users.length,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              child: ListTile(
-                                title: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(30)),
-                                      child: CircleAvatar(
-                                        child: Image.network(
-                                          state.users[index].thumbnail,
-                                          fit: BoxFit.contain,
-                                          loadingBuilder:
-                                              (context, child, progres) {
-                                            return progres == null
-                                                ? child
-                                                : CircleAvatar(
-                                                    child: Icon(Icons.person,
-                                                        color: Colors.grey),
-                                                    backgroundColor:
-                                                        Colors.blue[50],
-                                                  );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 15,
-                                    ),
-                                    Text(
-                                      '${state.users[index].firstName} ',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w300),
-                                    ),
-                                    Text(
-                                      ' ${state.users[index].lastName}',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                    Expanded(child: SizedBox()),
-                                    Icon(
-                                      Icons.message_rounded,
-                                      color: Colors.grey,
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  BlocProvider.of<MentionsCubit>(context)
-                                      .clearMentions();
-                                  mentionReplace(state.users[index].username);
-                                  setState(() {
-                                    _mentionsVisible = false;
-                                  });
-                                },
-                              ),
-                            );
-                          },
-                        ); */
+                        child: Column(
+                          children: _listW,
+                        ),
+                      );
                     } else if (state is MentionsEmpty) {
                       return Container();
                       //Text("Empty");
