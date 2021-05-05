@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_bloc/channels_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/models/user.dart';
 import 'package:twake/repositories/add_channel_repository.dart';
@@ -221,6 +222,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
                     //remove duplicated user and sort the list
                     users = users.toSet().toList();
                     users.sort((a, b) => a.username.compareTo(b.username));
+                    users.removeWhere((element) => context.read<ProfileBloc>().isMe(element.id));
                   }
                   // print('-------------------------------');
                   // for (var u in users) {
