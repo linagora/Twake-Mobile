@@ -221,61 +221,66 @@ class _MessageEditField extends State<MessageEditField> {
                       _listW.add(Divider(thickness: 1));
                       for (int i = 0; i < state.users.length; i++) {
                         _listW.add(
-                          ListTile(
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ClipRRect(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30)),
-                                  child: CircleAvatar(
-                                    child: Image.network(
-                                      state.users[i].thumbnail,
-                                      fit: BoxFit.contain,
-                                      loadingBuilder:
-                                          (context, child, progres) {
-                                        return progres == null
-                                            ? child
-                                            : CircleAvatar(
-                                                child: Icon(Icons.person,
-                                                    color: Colors.grey),
-                                                backgroundColor:
-                                                    Colors.blue[50],
-                                              );
-                                      },
+                          Container(
+                            alignment: Alignment.center,
+                            height: 43,
+                            child: ListTile(
+                              title: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(30)),
+                                    child: CircleAvatar(
+                                      child: Image.network(
+                                        state.users[i].thumbnail,
+                                        fit: BoxFit.contain,
+                                        loadingBuilder:
+                                            (context, child, progres) {
+                                          return progres == null
+                                              ? child
+                                              : CircleAvatar(
+                                                  child: Icon(Icons.person,
+                                                      color: Colors.grey),
+                                                  backgroundColor:
+                                                      Colors.blue[50],
+                                                );
+                                        },
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Text(
-                                  '${state.users[i].firstName} ',
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w300),
-                                ),
-                                Text(
-                                  ' ${state.users[i].lastName}',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
+                                  SizedBox(
+                                    width: 15,
                                   ),
-                                ),
-                                Expanded(child: SizedBox()),
-                                Icon(
-                                  Icons.message_rounded,
-                                  color: Colors.grey,
-                                )
-                              ],
+                                  Text(
+                                    '${state.users[i].firstName} ',
+                                    style: TextStyle(
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w300),
+                                  ),
+                                  Text(
+                                    ' ${state.users[i].lastName}',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                    ),
+                                  ),
+                                  Expanded(child: SizedBox()),
+                                  Icon(
+                                    Icons.message_rounded,
+                                    color: Colors.grey,
+                                  )
+                                ],
+                              ),
+                              onTap: () {
+                                BlocProvider.of<MentionsCubit>(context)
+                                    .clearMentions();
+                                mentionReplace(state.users[i].username);
+                                setState(() {
+                                  _mentionsVisible = false;
+                                });
+                              },
                             ),
-                            onTap: () {
-                              BlocProvider.of<MentionsCubit>(context)
-                                  .clearMentions();
-                              mentionReplace(state.users[i].username);
-                              setState(() {
-                                _mentionsVisible = false;
-                              });
-                            },
                           ),
                         );
                         if (i < state.users.length - 1) {
@@ -283,9 +288,12 @@ class _MessageEditField extends State<MessageEditField> {
                         }
                       }
                       return ConstrainedBox(
-                        constraints: BoxConstraints(maxHeight: 250),
+                        constraints: BoxConstraints(
+                            maxHeight:
+                                MediaQuery.of(context).size.height * 0.3),
                         child: SingleChildScrollView(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: _listW,
                           ),
                         ),
