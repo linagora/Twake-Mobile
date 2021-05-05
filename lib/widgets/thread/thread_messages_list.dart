@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
-// import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/models/message.dart';
 
@@ -32,12 +30,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
           child: MessageTile<T>(
             message: state.threadMessage,
             hideShowAnswers: true,
-            key: ValueKey(
-              state.threadMessage.id +
-                  state.threadMessage.reactions.map((r) => r['name']).join() +
-                  state.threadMessage.responsesCount.toString() +
-                  (state.threadMessage.content.originalStr ?? ''),
-            ),
+            key: ValueKey(state.threadMessage.key),
           ),
         ),
         Divider(
@@ -71,7 +64,10 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
           height: 12.0,
         ),
         if (state is MessagesLoaded)
-          MessageTile<T>(message: state.messages.last),
+          MessageTile<T>(
+            message: state.messages.last,
+            key: ValueKey(state.messages.last.key),
+          ),
         if (state is MessagesEmpty)
           Center(
             child: Text(
@@ -89,10 +85,6 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 
-  // double _sizedBoxHeight;
-  // Size _screenSize;
-  // double _textHeight;
-  // final GlobalKey _redKey = GlobalKey();
   double appBarHeight;
   List<Widget> widgets = [];
 
@@ -143,17 +135,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                     } else {
                       return MessageTile<T>(
                         message: _messages[i],
-                        key: ValueKey(
-                          _messages[i].id +
-                              _messages[i].reactions.fold(
-                                    '',
-                                    (acc, entry) =>
-                                        acc +
-                                        entry['name'] +
-                                        entry['count'].toString(),
-                                  ) +
-                              (_messages[i].content.originalStr ?? ''),
-                        ),
+                        key: ValueKey(_messages[i].key),
                       );
                     }
                   },
@@ -163,33 +145,4 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
       },
     );
   }
-
-  // Size _getSizes(GlobalKey key) {
-  // final RenderBox renderBoxRed = key.currentContext.findRenderObject();
-  // final sizeRed = renderBoxRed.size;
-  // return sizeRed;
-  // }
-
-  // _insertBlanks() async {
-  // final Size _appBarSize = Size.fromHeight(Dim.heightPercent(
-  // (kToolbarHeight * 0.15).round(),
-  // )); //_getSizes(_appBarKey);
-  // final Size _containerSize = _getSizes(_redKey);
-//
-  // final int _blankLinesTotal = ((_screenSize.height -
-  // _appBarSize.height -
-  // _containerSize.height -
-  // 60) ~/
-  // _textHeight);
-//
-  // final double blankLinesHeight = _textHeight * _blankLinesTotal;
-  // _sizedBoxHeight = blankLinesHeight +
-  // (_screenSize.height -
-  // _appBarSize.height -
-  // _containerSize.height -
-  // 60 -
-  // blankLinesHeight);
-  // widgets.insert(0, SizedBox(height: _sizedBoxHeight));
-  // setState(() {});
-  // }
 }
