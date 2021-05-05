@@ -212,23 +212,22 @@ class _MessageEditField extends State<MessageEditField> {
       child: Column(
         children: [
           _mentionsVisible
-              ?
-              //  height: MediaQuery.of(context).size.height * 0.3,
-              BlocBuilder<MentionsCubit, MentionState>(
+              ? BlocBuilder<MentionsCubit, MentionState>(
                   builder: (context, state) {
                     if (state is MentionableUsersLoaded) {
                       final List<Widget> _listW = [];
                       _listW.add(Divider(thickness: 1));
                       for (int i = 0; i < state.users.length; i++) {
                         _listW.add(
-                          Container(
-                            alignment: Alignment.center,
-                            height: 43,
-                            child: ListTile(
-                              title: Row(
+                          InkWell(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: 40,
+                              child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  SizedBox(width: 15),
                                   ClipRRect(
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(30)),
@@ -269,18 +268,21 @@ class _MessageEditField extends State<MessageEditField> {
                                   Icon(
                                     Icons.message_rounded,
                                     color: Colors.grey,
-                                  )
+                                  ),
+                                  SizedBox(width: 15),
                                 ],
                               ),
-                              onTap: () {
-                                BlocProvider.of<MentionsCubit>(context)
-                                    .clearMentions();
-                                mentionReplace(state.users[i].username);
-                                setState(() {
-                                  _mentionsVisible = false;
-                                });
-                              },
                             ),
+                            onTap: () {
+                              BlocProvider.of<MentionsCubit>(context)
+                                  .clearMentions();
+                              mentionReplace(state.users[i].username);
+                              setState(
+                                () {
+                                  _mentionsVisible = false;
+                                },
+                              );
+                            },
                           ),
                         );
                         if (i < state.users.length - 1) {
