@@ -20,7 +20,7 @@ void main() async {
   runZonedGuarded<Future<void>>(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
-        await FlutterDownloader.initialize(debug: true);
+    await FlutterDownloader.initialize(debug: true);
 
     final AuthRepository authRepository = await initAuth();
     final ConfigurationRepository configurationRepository =
