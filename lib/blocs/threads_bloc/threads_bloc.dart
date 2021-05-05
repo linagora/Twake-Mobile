@@ -38,6 +38,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
     this.notificationBloc,
   }) : super(MessagesEmpty()) {
     messagesSubscription = messagesBloc.listen((MessagesState state) {
+      // print("NEW STATE FROM MESSAGES BLOC: $state");
       if (state is MessageSelected) {
         this.threadMessage = state.threadMessage;
         this.parentChannel = state.parentChannel;
@@ -53,8 +54,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
         if (threadMessage.id == state.threadMessage.id &&
             (threadMessage.content.originalStr !=
                     state.threadMessage.content.originalStr ||
-                threadMessage.reactions.length !=
-                    state.threadMessage.reactions.length))
+                threadMessage.reactions.hashCode !=
+                    state.threadMessage.reactions.hashCode))
           this.add(UpdateThreadMessage(state.threadMessage));
       }
     });
@@ -145,6 +146,14 @@ class ThreadsBloc<T extends BaseChannelBloc>
       yield messagesLoaded;
     } else if (event is UpdateThreadMessage) {
       this.threadMessage = event.threadMessage;
+      if (threadMessage.responsesCount == 0) {
+        yield MessagesEmpty(
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+          force: DateTime.now().toString(),
+        );
+        return;
+      }
       yield messagesLoaded;
     } else if (event is RemoveMessage) {
       messagesBloc.add(ModifyResponsesCount(
@@ -161,6 +170,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
         yield MessagesEmpty(
           threadMessage: threadMessage,
           parentChannel: parentChannel,
+          force: DateTime.now().toString(),
         );
       else {
         _sortItems();
