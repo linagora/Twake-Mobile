@@ -40,7 +40,6 @@
                 android:name="vn.hunghd.flutterdownloader.MAX_CONCURRENT_TASKS"
                 android:value="10" />
         </provider>
-
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
