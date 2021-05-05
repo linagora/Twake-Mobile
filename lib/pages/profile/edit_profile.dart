@@ -24,59 +24,19 @@ class _EditProfileState extends State<EditProfile> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
 
-  var _shouldUpdateImage = false;
+  var _canSave = true;
   var _picture = '';
-  var _firstName = '';
-  var _lastName = '';
-  var _oldPassword = '';
-  var _newPassword = '';
 
-  var _fileName = '';
-  var _failureMessage = '';
+  String _fileName;
 
   @override
   void initState() {
     super.initState();
-
     _userNameController.text = '';
     _firstNameController.text = '';
     _lastNameController.text = '';
     _oldPasswordController.text = '';
     _newPasswordController.text = '';
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _firstNameController.addListener(() {
-        final firstName = _firstNameController.text;
-        if (firstName != null && firstName.isNotReallyEmpty) {
-          _firstName = firstName;
-          context.read<AccountCubit>().updateInfo(firstName: firstName);
-        }
-      });
-
-      _lastNameController.addListener(() {
-        final lastName = _lastNameController.text;
-        if (lastName != null && lastName.isNotReallyEmpty) {
-          _lastName = lastName;
-          context.read<AccountCubit>().updateInfo(lastName: lastName);
-        }
-      });
-
-      _oldPasswordController.addListener(() {
-        final oldPassword = _oldPasswordController.text;
-        if (oldPassword != null && oldPassword.isNotReallyEmpty) {
-          _oldPassword = oldPassword;
-          context.read<AccountCubit>().updateInfo(oldPassword: oldPassword);
-        }
-      });
-
-      _newPasswordController.addListener(() {
-        final newPassword = _newPasswordController.text;
-        if (newPassword != null && newPassword.isNotReallyEmpty) {
-          _newPassword = newPassword;
-          context.read<AccountCubit>().updateInfo(newPassword: newPassword);
-        }
-      });
-    });
   }
 
   @override
@@ -88,53 +48,17 @@ class _EditProfileState extends State<EditProfile> {
     super.dispose();
   }
 
-  bool get _canSave {
-    if (_firstName.isReallyEmpty || _lastName.isReallyEmpty) {
-      _failureMessage = 'First and last name cannot be empty';
-      return false;
-    }
-    if ((_oldPassword.isReallyEmpty && _newPassword.isNotReallyEmpty) ||
-        (_oldPassword.isNotReallyEmpty && _newPassword.isReallyEmpty)) {
-      _failureMessage = 'Password cannot be empty';
-      return false;
-    }
-    return true;
-  }
-
-  void _showFailureMessage(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Color(0xffe64646),
-        content: Text(message),
-      ),
-    );
-  }
-
   void _save() {
     print('Save profile!');
-
-    print('FILENAME: $_fileName');
-    print('PIC: $_picture');
-    print('SHOULD: $_shouldUpdateImage');
-
-    if (_canSave) {
-      // context.read<AccountCubit>()
-      //   ..updateInfo(
-      //     firstName: _firstName,
-      //     lastName: _lastName,
-      //     oldPassword: _oldPassword,
-      //     newPassword: _newPassword,
-      //   )
-      //   ..saveInfo();
-
-      if (_shouldUpdateImage) {
-        // In case we have picked a new image locally.
-        _shouldUpdateImage = false;
-        context.read<AccountCubit>().updateImage(context, _fileName);
-      } else {
-        context.read<AccountCubit>().saveInfo();
-      }
-    }
+    final firstName = _firstNameController.text;
+    final lastName = _lastNameController.text;
+    context.read<AccountCubit>().updateInfo(
+      firstName: firstName,
+      lastName: lastName,
+    );
+    FocusScope.of(context).requestFocus(FocusNode());
+    context.read<SheetBloc>().add(CloseSheet());
+    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
   }
 
   Future<void> _openFileExplorer() async {
@@ -146,12 +70,9 @@ class _EditProfileState extends State<EditProfile> {
           ?.files;
 
       if (paths != null && paths.length > 0) {
-        setState(() {
-          _fileName = paths[0].path;
-          _picture = _fileName;
-          _shouldUpdateImage = true;
-        });
+        _fileName = paths[0].path;
         print('Filename to be saved: $_fileName');
+        context.read<AccountCubit>().updateImage(context, _fileName);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
@@ -163,39 +84,18 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AccountCubit, AccountState>(
-      listenWhen: (_, current) =>
-          current is AccountPictureUpdated ||
-          current is AccountSaved ||
-          current is AccountError,
-      listener: (context, state) {
-        if (state is AccountPictureUpdated) {
-          context.read<AccountCubit>().saveInfo();
-        }
-        if (state is AccountSaved) {
-          context.read<AccountCubit>().fetch();
-          _close(context);
-        }
-        if (state is AccountError) {
-          _close(context);
-        }
-      },
-      buildWhen: (_, current) =>
-          current is AccountLoaded ||
-          current is AccountUpdated ||
-          current is AccountPictureUpdating,
+    return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
-        final _isSaving = state is AccountPictureUpdating;
+        final _isUpdating = state is AccountSaving;
 
-        if (state is AccountLoaded) {
-          _firstName = state.firstName;
-          _lastName = state.lastName;
-          _picture = state.picture;
+        if (state is AccountLoaded ||
+            state is AccountSaved ||
+            state is AccountInitial) {
           _userNameController.text = '@${state.userName}';
-          _firstNameController.text = _firstName;
-          _lastNameController.text = _lastName;
+          _firstNameController.text = state.firstName;
+          _lastNameController.text = state.lastName;
+          _picture = state.picture;
         }
-        print('EditProfile current state: $state');
 
         return GestureDetector(
           onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -222,7 +122,7 @@ class _EditProfileState extends State<EditProfile> {
                               context
                                   .read<AccountCubit>()
                                   .updateAccountFlowStage(
-                                      AccountFlowStage.info);
+                                  AccountFlowStage.info);
                               FocusScope.of(context).requestFocus(FocusNode());
                             },
                             child: Icon(
@@ -232,12 +132,11 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           // SizedBox(width: 24.0),
                           GestureDetector(
-                            onTap:
-                                _canSave && !_isSaving ? () => _save() : null,
+                            onTap: _canSave ? () => _save() : null,
                             child: Text(
                               'Save',
                               style: TextStyle(
-                                color: _canSave && !_isSaving
+                                color: _canSave
                                     ? Color(0xff3840f7)
                                     : Color(0xffa2a2a2),
                                 fontSize: 17.0,
@@ -259,17 +158,16 @@ class _EditProfileState extends State<EditProfile> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _isSaving
+                          _isUpdating
                               ? RoundedShimmer(size: 100.0)
                               : SelectableAvatar(
-                                  size: 100.0,
-                                  userpic: _shouldUpdateImage ? '' : _picture,
-                                  localAsset: _fileName,
-                                  onTap: () => _openFileExplorer(),
-                                ),
+                            size: 100.0,
+                            userpic: _picture,
+                            onTap: () => _openFileExplorer(),
+                          ),
                           SizedBox(height: 12.0),
                           GestureDetector(
-                            onTap: () => _openFileExplorer(),
+                            onTap: () => print('Change avatar!'),
                             child: Text(
                               'Tap to upload',
                               style: TextStyle(
@@ -423,11 +321,5 @@ class _EditProfileState extends State<EditProfile> {
         );
       },
     );
-  }
-
-  void _close(BuildContext context) {
-    FocusScope.of(context).requestFocus(FocusNode());
-    context.read<SheetBloc>().add(CloseSheet());
-    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
   }
 }

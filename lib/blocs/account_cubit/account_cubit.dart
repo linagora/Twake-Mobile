@@ -20,50 +20,40 @@ class AccountCubit extends Cubit<AccountState> {
 
   AccountCubit(this.accountRepository)
       : super(AccountInitial(
-          userName: accountRepository.userName.value,
-          firstName: accountRepository.firstName.value,
-          lastName: accountRepository.lastName.value,
-          picture: accountRepository.picture.value,
-          language: accountRepository.selectedLanguage().title,
-          availableLanguages: accountRepository.language.options,
-        ));
+    userName: accountRepository.userName.value,
+    firstName: accountRepository.firstName.value,
+    lastName: accountRepository.lastName.value,
+    picture: accountRepository.picture.value,
+    language: accountRepository.selectedLanguage().title,
+    availableLanguages: accountRepository.language.options,
+  )) {
+    emit(AccountLoaded(
+      userName: accountRepository.userName.value,
+      firstName: accountRepository.firstName.value,
+      lastName: accountRepository.lastName.value,
+      picture: accountRepository.picture.value,
+      language: accountRepository.selectedLanguage().title,
+      availableLanguages: accountRepository.language.options,
+    ));
+  }
 
   Future<void> fetch() async {
     emit(AccountLoading());
-    final result = await accountRepository.reload();
+    await accountRepository.reload();
 
-    final availableLanguages = result.language.options ?? <LanguageOption>[];
-    final currentLanguage = result.selectedLanguage();
+    final availableLanguages =
+        accountRepository.language.options ?? <LanguageOption>[];
+    final currentLanguage = accountRepository.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
-    final loadedState = AccountLoaded(
-      userName: result.userName.value,
-      firstName: result.firstName.value,
-      lastName: result.lastName.value,
-      picture: result.picture.value,
+    emit(AccountLoaded(
+      userName: accountRepository.userName.value,
+      firstName: accountRepository.firstName.value,
+      lastName: accountRepository.lastName.value,
+      picture: accountRepository.picture.value,
       language: languageTitle,
       availableLanguages: availableLanguages,
-    );
-
-    emit(loadedState);
-  }
-
-  Future<void> saveInfo() async {
-    emit(AccountSaving());
-    final patchResult = await accountRepository.patch();
-    if (patchResult) {
-      final savedState = AccountSaved(
-        userName: accountRepository.userName.value,
-        firstName: accountRepository.firstName.value,
-        lastName: accountRepository.lastName.value,
-        picture: accountRepository.picture.value,
-        language: accountRepository.selectedLanguage().title,
-        availableLanguages: accountRepository.language.options,
-      );
-      emit(savedState);
-    } else {
-      emit(AccountError(message: 'Account saving failure'));
-    }
+    ));
   }
 
   Future<void> updateInfo({
@@ -73,34 +63,30 @@ class AccountCubit extends Cubit<AccountState> {
     String oldPassword,
     String newPassword,
   }) async {
-    emit(AccountUpdating());
+    emit(AccountSaving());
     final languageCode =
-        (languageTitle != null && languageTitle.isNotReallyEmpty)
-            ? accountRepository.languageCodeFromTitle(languageTitle)
-            : '';
-    await accountRepository.update(
+    (languageTitle != null && languageTitle.isNotReallyEmpty)
+        ? accountRepository.languageCodeFromTitle(languageTitle)
+        : '';
+    await accountRepository.patch(
       newFirstName: firstName,
       newLastName: lastName,
       newLanguage: languageCode ?? '',
       oldPassword: oldPassword,
       newPassword: newPassword,
     );
-
-    final updatedState = AccountUpdated(
+    emit(AccountSaved(
       userName: accountRepository.userName.value,
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
-      oldPassword: oldPassword,
-      newPassword: newPassword,
       picture: accountRepository.picture.value,
       language: accountRepository.selectedLanguage().title,
       availableLanguages: accountRepository.language.options,
-    );
-    emit(updatedState);
+    ));
   }
 
   Future<void> updateImage(BuildContext context, String path) async {
-    emit(AccountPictureUpdating());
+    emit(AccountSaving(isPictureUpdating: true));
     context.read<FileUploadBloc>()
       ..add(
         StartUpload(
@@ -109,10 +95,9 @@ class AccountCubit extends Cubit<AccountState> {
         ),
       )
       ..listen(
-        (FileUploadState state) {
+            (FileUploadState state) {
           if (state is FileUploaded) {
-            print('Uploaded file: ${state.files.first.filename}');
-            emit(AccountPictureUpdated());
+            fetch();
           }
         },
       );

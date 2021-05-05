@@ -43,8 +43,6 @@ class AccountRepository extends JsonSerializable {
   static final _api = Api();
   @JsonKey(ignore: true)
   static final _storage = Storage();
-  @JsonKey(ignore: true)
-  var _accountMap = <String, dynamic>{};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<AccountRepository> load() async {
@@ -79,7 +77,7 @@ class AccountRepository extends JsonSerializable {
     language = newRepo.language;
     picture = newRepo.picture;
 
-    return newRepo;
+    return this;
   }
 
   Future<void> clean() async {
@@ -99,30 +97,31 @@ class AccountRepository extends JsonSerializable {
     );
   }
 
-  Future<Map<String, dynamic>> update({
+  Future<AccountRepository> patch({
     String newFirstName,
     String newLastName,
     String newLanguage,
     String oldPassword,
     String newPassword,
   }) async {
+    final Map<String, dynamic> accountMap = <String, dynamic>{};
     if (newFirstName != null &&
         newFirstName.isNotReallyEmpty &&
         newFirstName != this.firstName.value) {
       firstName.value = newFirstName;
-      _accountMap['firstname'] = newFirstName;
+      accountMap['firstname'] = newFirstName;
     }
     if (newLastName != null &&
         newLastName.isNotReallyEmpty &&
         newLastName != this.lastName.value) {
       lastName.value = newLastName;
-      _accountMap['lastname'] = newLastName;
+      accountMap['lastname'] = newLastName;
     }
     if (newLanguage != null &&
         newLanguage.isNotReallyEmpty &&
         newLanguage != this.language.value) {
       language.value = newLanguage;
-      _accountMap['language'] = newLanguage;
+      accountMap['language'] = newLanguage;
     }
     if (oldPassword != null &&
         newPassword != null &&
@@ -135,49 +134,17 @@ class AccountRepository extends JsonSerializable {
           newPass: newPassword,
         ),
       );
-      _accountMap['password'] = {
+      accountMap['password'] = {
         'old': oldPassword,
         'new': newPassword,
       };
     }
-    return _accountMap;
-  }
-
-  Future<bool> patch() async {
-    if (_accountMap.length > 0) {
-      final result = await _api.patch(Endpoint.account, body: _accountMap);
-      if (result != null) {
-        print('Account PATCH request body: $_accountMap');
-        _accountMap = <String, dynamic>{};
-        // save();
-        print('Account PATCH response: ${jsonEncode(result)}');
-        final newRepo = AccountRepository.fromJson(result);
-        userName = newRepo.userName;
-        firstName = newRepo.firstName;
-        lastName = newRepo.lastName;
-        language = newRepo.language;
-        picture = newRepo.picture;
-
-        return true;
-      } else {
-        print('PATCH result is null');
-        return false;
-      }
-    } else {
-      print('PATCH request body is empty');
-      return false;
+    final result = await _api.patch(Endpoint.account, body: accountMap);
+    if (result != null) {
+      print('Account updated: $accountMap');
+      // save();
     }
-  }
-
-  AccountRepository _duplicate() {
-    return AccountRepository(
-      userName: this.userName,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      language: this.language,
-      picture: this.picture,
-      password: this.password,
-    );
+    return this;
   }
 
   LanguageOption selectedLanguage() {
@@ -193,9 +160,9 @@ class AccountRepository extends JsonSerializable {
   String languageCodeFromTitle(String title) {
     final lang = language.options.firstWhere((option) => option.title == title,
         orElse: () {
-      _logger.e('No matching languages found in options for title: $title');
-      return LanguageOption(value: '', title: title);
-    });
+          _logger.e('No matching languages found in options for title: $title');
+          return LanguageOption(value: '', title: title);
+        });
     return lang.value;
   }
 
