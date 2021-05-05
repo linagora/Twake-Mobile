@@ -18,7 +18,6 @@ export 'package:twake/blocs/messages_bloc/messages_state.dart';
 export 'package:twake/blocs/messages_bloc/messages_event.dart';
 
 const _THREAD_MESSAGES_LIMIT = 1000;
-const _DUMMY_ID = 'message';
 
 class ThreadsBloc<T extends BaseChannelBloc>
     extends Bloc<MessagesEvent, MessagesState> {
@@ -28,6 +27,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
 
   StreamSubscription notificationSubscription;
   StreamSubscription messagesSubscription;
+  int counter = 0;
+  List<String> dummyIds = [];
 
   Message threadMessage;
   BaseChannel parentChannel;
@@ -38,6 +39,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
     this.notificationBloc,
   }) : super(MessagesEmpty()) {
     messagesSubscription = messagesBloc.listen((MessagesState state) {
+      // print("NEW STATE FROM MESSAGES BLOC: $state");
       if (state is MessageSelected) {
         this.threadMessage = state.threadMessage;
         this.parentChannel = state.parentChannel;
@@ -53,8 +55,8 @@ class ThreadsBloc<T extends BaseChannelBloc>
         if (threadMessage.id == state.threadMessage.id &&
             (threadMessage.content.originalStr !=
                     state.threadMessage.content.originalStr ||
-                threadMessage.reactions.length !=
-                    state.threadMessage.reactions.length))
+                threadMessage.reactions.hashCode !=
+                    state.threadMessage.reactions.hashCode))
           this.add(UpdateThreadMessage(state.threadMessage));
       }
     });
@@ -125,26 +127,33 @@ class ThreadsBloc<T extends BaseChannelBloc>
       _sortItems();
       yield messagesLoaded;
     } else if (event is LoadSingleMessage) {
-      var attempt = 3;
-      while (repository.items.any((m) => m.id == _DUMMY_ID) && attempt > 0) {
-        await Future.delayed(Duration(milliseconds: 100));
-        attempt -= 1;
-      }
-      final updateParent = await repository.pullOne(_makeQueryParams(event),
-          addToItems: threadMessage != null
-              ? threadMessage.id == event.threadId
-              : false);
-      if (updateParent) {
-        _updateParentChannel(event.channelId);
-      }
-      _sortItems();
-      messagesBloc.add(ModifyResponsesCount(
-        channelId: event.channelId,
-        threadId: event.threadId,
-      ));
+      repository
+          .pullOne(
+        _makeQueryParams(event),
+        addToItems:
+            threadMessage != null ? threadMessage.id == event.threadId : false,
+        dummyIds: this.dummyIds,
+      )
+          .then((success) {
+        if (success) {
+          this.add(FinishLoadingMessages());
+          messagesBloc.add(ModifyResponsesCount(
+            channelId: event.channelId,
+            threadId: event.threadId,
+          ));
+        }
+      });
       yield messagesLoaded;
     } else if (event is UpdateThreadMessage) {
       this.threadMessage = event.threadMessage;
+      if (threadMessage.responsesCount == 0) {
+        yield MessagesEmpty(
+          threadMessage: threadMessage,
+          parentChannel: parentChannel,
+          force: DateTime.now().toString(),
+        );
+        return;
+      }
       yield messagesLoaded;
     } else if (event is RemoveMessage) {
       messagesBloc.add(ModifyResponsesCount(
@@ -161,19 +170,23 @@ class ThreadsBloc<T extends BaseChannelBloc>
         yield MessagesEmpty(
           threadMessage: threadMessage,
           parentChannel: parentChannel,
+          force: DateTime.now().toString(),
         );
       else {
         _sortItems();
         yield messagesLoaded;
       }
     } else if (event is SendMessage) {
-      final String dummyId = _DUMMY_ID;
+      counter += 1;
+      final String dummyId = counter.toString();
+      final creationDate = DateTime.now().millisecondsSinceEpoch;
+      dummyIds.add(dummyId);
       final body = _makeQueryParams(event);
       var tempItem = Message(
         id: dummyId,
         threadId: body['thread_id'],
         userId: ProfileBloc.userId,
-        creationDate: DateTime.now().millisecondsSinceEpoch,
+        creationDate: creationDate,
         content: MessageTwacode(
           originalStr: body['original_str'],
           prepared: TwacodeParser(body['original_str']).message,
@@ -191,25 +204,26 @@ class ThreadsBloc<T extends BaseChannelBloc>
         addToItems: false,
         onError: () {
           this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.dummyIds.removeWhere((i) => i == dummyId);
           this.add(GenerateErrorSendingMessage());
         },
         onSuccess: (message) {
           this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.dummyIds.removeWhere((i) => i == dummyId);
+          message.creationDate = creationDate;
           message.thumbnail = ProfileBloc.thumbnail;
           message.username = ProfileBloc.username;
           message.firstName = ProfileBloc.firstName;
           message.lastName = ProfileBloc.lastName;
           this.repository.items.add(message);
           this.add(FinishLoadingMessages());
-          this
-              .messagesBloc
-              .channelsBloc
-              .add(ChangeSelectedChannel(parentChannel.id));
+          this.messagesBloc.channelsBloc.add(
+                ChangeSelectedChannel(parentChannel.id, false),
+              );
           messagesBloc.add(ModifyResponsesCount(
             channelId: event.channelId,
             threadId: message.threadId,
           ));
-          _updateParentChannel(event.channelId, 0);
         },
       );
       this.repository.items.add(tempItem);
@@ -268,14 +282,13 @@ class ThreadsBloc<T extends BaseChannelBloc>
         parentChannel: parentChannel,
       );
 
-  void _updateParentChannel(String channelId, [int hasUnread = 1]) {
-    // print("HAS UNREAD: $hasUnread");
-    messagesBloc.channelsBloc.add(ModifyMessageCount(
-      channelId: channelId,
-      workspaceId:
-          T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspaceId,
-      companyId: ProfileBloc.selectedCompanyId,
-      hasUnread: hasUnread,
-    ));
-  }
+  // void _updateParentChannel(String channelId, [int hasUnread = 1]) {
+  // messagesBloc.channelsBloc.add(ModifyMessageCount(
+  // channelId: channelId,
+  // workspaceId:
+  // T == DirectsBloc ? "direct" : ProfileBloc.selectedWorkspaceId,
+  // companyId: ProfileBloc.selectedCompanyId,
+  // hasUnread: hasUnread,
+  // ));
+  // }
 }

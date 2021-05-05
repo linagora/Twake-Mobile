@@ -64,6 +64,13 @@ class Message extends CollectionItem {
   @JsonKey(ignore: true)
   final _storage = Storage();
 
+  int get key {
+    return (this.content.originalStr ?? '').hashCode +
+        this.reactions.map((r) => r['name']).join().hashCode +
+        this.reactions.fold(0, (acc, r) => acc + r['count']) +
+        this.id.hashCode;
+  }
+
   String get sender {
     if (userId != null) {
       return firstName.isNotEmpty

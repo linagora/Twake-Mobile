@@ -33,6 +33,9 @@ class MessagesBloc<T extends BaseChannelBloc>
 
   BaseChannel selectedChannel;
 
+  int counter = 0;
+  List<String> dummyIds = [];
+
   String _previousMessageId;
 
   MessagesBloc({
@@ -167,8 +170,11 @@ class MessagesBloc<T extends BaseChannelBloc>
           this.add(GenerateErrorLoadingMore());
           return;
         }
-        this.add(FinishLoadingMessages(
-            messageLoadedType: MessageLoadedType.loadMore));
+        this.add(
+          FinishLoadingMessages(
+            messageLoadedType: MessageLoadedType.loadMore,
+          ),
+        );
       });
     } else if (event is FinishLoadingMessages) {
       _sortItems();
@@ -187,27 +193,17 @@ class MessagesBloc<T extends BaseChannelBloc>
         messages: repository.items,
       );
     } else if (event is LoadSingleMessage) {
-      repository.logger.d(
-          'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
-
-      final updateParent = await repository.pullOne(
+      // repository.logger.d(
+      // 'IS IN CURRENT CHANNEL: ${event.channelId == selectedChannel.id}\n${event.channelId}\n${selectedChannel.id}');
+      repository
+          .pullOne(
         _makeQueryParams(event),
         addToItems: event.channelId == selectedChannel.id,
-      );
-      if (updateParent) {
-        _updateParentChannel(event.channelId);
-      }
-      _sortItems();
-      final newState = MessagesLoaded(
-        messages: repository.items,
-        messageCount: repository.itemsCount,
-        threadMessage: repository.selected,
-        force: DateTime.now().toString(),
-        parentChannel: selectedChannel,
-      );
-      repository.logger
-          .w("MESSAGES OLD STATE == NEW STATE: ${newState == this.state}");
-      yield newState;
+        dummyIds: this.dummyIds,
+      )
+          .then((success) {
+        if (success) this.add(FinishLoadingMessages());
+      });
     } else if (event is ModifyResponsesCount) {
       var thread = await repository.updateResponsesCount(event.threadId);
       if (thread == null) return;
@@ -255,13 +251,16 @@ class MessagesBloc<T extends BaseChannelBloc>
         yield newState;
       }
     } else if (event is SendMessage) {
-      final String dummyId = DUMMY_ID;
+      counter += 1;
+      final String dummyId = counter.toString();
+      dummyIds.add(dummyId);
       final body = _makeQueryParams(event);
+      final creationDate = DateTime.now().millisecondsSinceEpoch;
       var tempItem = Message(
         id: dummyId,
         threadId: body['thread_id'],
         userId: ProfileBloc.userId,
-        creationDate: DateTime.now().millisecondsSinceEpoch,
+        creationDate: creationDate,
         content: MessageTwacode(
           originalStr: body['original_str'],
           prepared:
@@ -280,10 +279,13 @@ class MessagesBloc<T extends BaseChannelBloc>
         addToItems: false,
         onError: () {
           this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.dummyIds.removeWhere((i) => i == dummyId);
           this.add(GenerateErrorSendingMessage());
         },
         onSuccess: (message) {
           this.repository.items.removeWhere((m) => m.id == dummyId);
+          this.dummyIds.removeWhere((i) => i == dummyId);
+          message.creationDate = creationDate;
           message.thumbnail = ProfileBloc.thumbnail;
           message.username = ProfileBloc.username;
           message.firstName = ProfileBloc.firstName;
@@ -296,7 +298,7 @@ class MessagesBloc<T extends BaseChannelBloc>
                   false,
                 ),
               );
-          _updateParentChannel(selectedChannel.id, 0);
+          // _updateParentChannel(selectedChannel.id, 0);
         },
       );
       this.repository.items.add(tempItem);
@@ -352,14 +354,14 @@ class MessagesBloc<T extends BaseChannelBloc>
     return map;
   }
 
-  void _updateParentChannel(String channelId, [int hasUnread = 1]) {
-    channelsBloc.add(ModifyMessageCount(
-      workspaceId: ProfileBloc.selectedWorkspaceId,
-      channelId: channelId ?? selectedChannel.id,
-      companyId: ProfileBloc.selectedCompanyId,
-      hasUnread: hasUnread,
-    ));
-  }
+  // void _updateParentChannel(String channelId, [int hasUnread = 1]) {
+  // channelsBloc.add(ModifyMessageCount(
+  // workspaceId: ProfileBloc.selectedWorkspaceId,
+  // channelId: channelId ?? selectedChannel.id,
+  // companyId: ProfileBloc.selectedCompanyId,
+  // hasUnread: hasUnread,
+  // ));
+  // }
 
   void markChannelRead() {
     if (ProfileBloc.selectedChannelId == selectedChannel.id) {

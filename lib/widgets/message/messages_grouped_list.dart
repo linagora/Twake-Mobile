@@ -163,12 +163,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         itemBuilder: (_, Message message) {
           return MessageTile<T>(
             message: message,
-            key: ValueKey(
-              message.id +
-                  message.responsesCount.toString() +
-                  message.reactions.map((r) => r['name']).join() +
-                  (message.content.originalStr ?? ''),
-            ),
+            key: ValueKey(message.key),
           );
         });
   }

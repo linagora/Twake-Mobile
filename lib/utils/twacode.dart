@@ -967,7 +967,7 @@ class TwacodeRenderer {
 
                         final dir = await getExternalStorageDirectory();
 
-                        final id = await FlutterDownloader.enqueue(
+                        await FlutterDownloader.enqueue(
                             url: Api.host + t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
@@ -975,7 +975,7 @@ class TwacodeRenderer {
                             openFileFromNotification: true);
                       } else if (Platform.isIOS) {
                         final dir = await getApplicationSupportDirectory();
-                        final id = await FlutterDownloader.enqueue(
+                        await FlutterDownloader.enqueue(
                             url: Api.host + t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
@@ -1104,7 +1104,7 @@ class TwacodeRenderer {
           }
           spans.add(
             TextSpan(
-              text: content,
+              text: content is String ? content : 'not supported',
               style: parentStyle.merge(
                 getStyle(type),
               ),

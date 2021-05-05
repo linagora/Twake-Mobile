@@ -68,8 +68,11 @@ class SocketChannelUpdateNotification extends NotificationData {
 
 @JsonSerializable()
 class SocketDirectUpdateNotification extends NotificationData {
+  @JsonKey(name: 'id')
   final String directId;
+  @JsonKey(name: 'last_activity')
   final int lastActivity;
+  @JsonKey(name: 'last_message')
   final Map<String, dynamic> lastMessage;
 
   const SocketDirectUpdateNotification({

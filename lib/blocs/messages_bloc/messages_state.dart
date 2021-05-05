@@ -35,7 +35,8 @@ class MessagesLoaded extends MessagesState {
   }) : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props => [messageCount, messages, parentChannel, force, messageLoadedType];
+  List<Object> get props =>
+      [messageCount, messages, parentChannel, force, messageLoadedType];
 }
 
 class MoreMessagesLoading extends MessagesLoaded {
@@ -50,11 +51,13 @@ class MoreMessagesLoading extends MessagesLoaded {
 }
 
 class MessagesEmpty extends MessagesState {
-  const MessagesEmpty({BaseChannel parentChannel, Message threadMessage})
+  final String force;
+  const MessagesEmpty(
+      {BaseChannel parentChannel, Message threadMessage, this.force})
       : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props => [parentChannel, threadMessage];
+  List<Object> get props => [parentChannel, threadMessage, force];
 }
 
 class MessageSelected extends MessagesLoaded {

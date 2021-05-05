@@ -71,6 +71,7 @@ class DirectsBloc extends BaseChannelBloc {
     print('Event in DirectsBloc: $event');
 
     if (event is ReloadChannels) {
+      print('IS silent: ${event.silent}');
       if (!event.silent) yield ChannelsLoading();
       final filter = {
         'company_id': event.companyId ?? selectedParentId,
@@ -121,6 +122,7 @@ class DirectsBloc extends BaseChannelBloc {
       ProfileBloc.selectedChannelId = event.channelId;
       ProfileBloc.selectedThreadId = null;
 
+      if (!event.shouldYield) return;
       yield ChannelPicked(
         channels: repository.items,
         selected: repository.selected,
