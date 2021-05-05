@@ -282,9 +282,12 @@ class _MessageEditField extends State<MessageEditField> {
                           _listW.add(Divider(thickness: 1));
                         }
                       }
-                      return SingleChildScrollView(
-                        child: Column(
-                          children: _listW,
+                      return ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: 250),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: _listW,
+                          ),
                         ),
                       );
                     } else if (state is MentionsEmpty) {
