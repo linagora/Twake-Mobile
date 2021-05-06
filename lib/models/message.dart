@@ -152,11 +152,14 @@ class Message extends CollectionItem {
 
   factory Message.fromJson(Map<String, dynamic> json) {
     json = Map.from(json);
+    print('Reactions: ${json['reactions']}');
     if (json['content'] is String) {
       json['content'] = jsonDecode(json['content']);
     }
     if (json['reactions'] is String) {
       json['reactions'] = jsonDecode(json['reactions']);
+    } else if (json['reactions'] is Map) {
+      json['reactions'] = [json['reactions']];
     }
     return _$MessageFromJson(json);
   }

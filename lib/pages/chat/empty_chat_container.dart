@@ -63,6 +63,7 @@ class EmptyChatContainer extends StatelessWidget {
               isError
                   ? 'Couldn\'t load messages'
                   : 'There are no messages in\nthis ${isDirect ? 'chat' : 'channel'}! Start conversation\nwith $userName by sending\nsome text, image or document',
+              minFontSize: 10.0,
               maxLines: 4,
               textAlign: TextAlign.center,
               softWrap: false,
