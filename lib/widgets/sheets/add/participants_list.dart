@@ -123,6 +123,12 @@ class _ParticipantsListState extends State<ParticipantsList> {
       listener: (context, state) {
         if (state is SheetOpened && _isDirect && _focusNode.canRequestFocus) {
           _focusNode.requestFocus();
+        } else if (state is SheetShouldClear) {
+          _controller.text = '';
+          _searchRequest = '';
+          context.read<UserBloc>().add(LoadUsers(_searchRequest));
+          _selectedIds = [];
+          _selectedUsers = [];
         }
       },
       child: BlocConsumer<AddChannelBloc, AddChannelState>(
