@@ -37,6 +37,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
       ..add(SetFlow(
         flow: _controller.index != 0 ? SheetFlow.direct : SheetFlow.addChannel,
       ))
+      ..add(ClearSheet())
       ..add(OpenSheet());
   }
 
