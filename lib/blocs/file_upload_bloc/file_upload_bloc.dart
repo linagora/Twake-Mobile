@@ -25,9 +25,11 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
         payload: await event.payload(),
         endpoint: endpoint,
         onSuccess: (Map<String, dynamic> response) {
+          print('File upload response: $response');
           this.add(FinishUpload());
         },
         onError: (e) {
+          print('File upload error: $e');
           this.add(ErrorUpload(
             reason: e,
             filename: filename,

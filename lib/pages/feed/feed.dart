@@ -145,19 +145,20 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
             indicatorPadding: const EdgeInsets.symmetric(horizontal: 15.0),
             indicatorColor: Color(0xff004dff),
             indicatorSize: TabBarIndicatorSize.label,
-            labelStyle: TextStyle(
-              color: Colors.black,
+            labelColor: Colors.black,
+            unselectedLabelColor: Color(0xff8e8e93),
+
+          labelStyle: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
             ),
             unselectedLabelStyle: TextStyle(
-              color: Color(0xff8e8e93),
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
             ),
             tabs: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                padding: const EdgeInsets.symmetric(horizontal: 28.0),
                 child: Tab(
                   text: 'Channels',
                 ),

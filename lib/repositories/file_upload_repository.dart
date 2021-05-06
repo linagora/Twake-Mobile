@@ -15,6 +15,7 @@ class FileUploadRepository {
     Function(String reason) onError,
     CancelToken cancelToken,
   }) {
+    print('Payload fields in upload request: ${payload.fields}');
     _api
         .post(endpoint, body: payload, cancelToken: cancelToken)
         .then((r) {
