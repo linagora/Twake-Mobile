@@ -30,11 +30,17 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
 
         if (state is MessagesLoaded) {
           if (state.messages.isEmpty) {
-            return EmptyChatContainer(isDirect: isDirect);
+            return EmptyChatContainer(
+              isDirect: isDirect,
+              userName: state.parentChannel.name,
+            );
           }
           messages = state.messages;
         } else if (state is MessagesEmpty) {
-          return EmptyChatContainer(isDirect: isDirect);
+          return EmptyChatContainer(
+            isDirect: isDirect,
+            userName: state.parentChannel.name,
+          );
         } else if (state is ErrorLoadingMessages) {
           return EmptyChatContainer(isError: true);
         } else {

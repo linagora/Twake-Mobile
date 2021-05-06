@@ -148,8 +148,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
             indicatorSize: TabBarIndicatorSize.label,
             labelColor: Colors.black,
             unselectedLabelColor: Color(0xff8e8e93),
-
-          labelStyle: TextStyle(
+            labelStyle: TextStyle(
               fontSize: 16.0,
               fontWeight: FontWeight.w500,
             ),

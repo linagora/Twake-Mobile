@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class EmptyChatContainer extends StatelessWidget {
   final bool isDirect;
@@ -21,7 +22,7 @@ class EmptyChatContainer extends StatelessWidget {
         children: [
           Container(
             margin: const EdgeInsets.only(left: 36.0, top: 16.0, right: 36.0),
-            padding: const EdgeInsets.only(top: 16.0, bottom: 12.0),
+            padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 12.0),
             decoration: BoxDecoration(
               color: Color(0xfff6f6f6),
               borderRadius: BorderRadius.only(
@@ -49,7 +50,7 @@ class EmptyChatContainer extends StatelessWidget {
           ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 36.0),
-            padding: const EdgeInsets.only(bottom: 16.0),
+            padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 16.0),
             decoration: BoxDecoration(
               color: Color(0xfff6f6f6),
               borderRadius: BorderRadius.only(
@@ -58,7 +59,7 @@ class EmptyChatContainer extends StatelessWidget {
               ),
             ),
             alignment: Alignment.center,
-            child: Text(
+            child: AutoSizeText(
               isError
                   ? 'Couldn\'t load messages'
                   : 'There are no messages in\nthis ${isDirect ? 'chat' : 'channel'}! Start conversation\nwith $userName by sending\nsome text, image or document',
