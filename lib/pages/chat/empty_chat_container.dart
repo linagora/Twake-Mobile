@@ -19,68 +19,64 @@ class EmptyChatContainer extends StatelessWidget {
         ? 'There are no messages in\nthis chat! Start conversation\nwith $userName by sending\nsome text, image or document'
         : 'There are no messages in\nthis channel! Start conversation by\nsending some text, image or document';
     return Expanded(
-      child: Container(
-        color: Colors.blueAccent,
-        width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.fromLTRB(36.0, 0.0, 36.0, 16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 16.0),
-            Container(
-              width: MediaQuery.of(context).size.width - 72.0,
-              decoration: BoxDecoration(
-                color: Color(0xfff6f6f6),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(18.0),
-                  topRight: Radius.circular(18.0),
-                ),
-              ),
-              child: Container(
-                width: 32.0,
-                height: 32.0,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    transform: GradientRotation(2.79253), // 160 degrees
-                    tileMode: TileMode.repeated,
-                    colors: [
-                      Color(0xff4838b7),
-                      Color(0xff3840f7),
-                    ],
-                  ),
-                ),
-                alignment: Alignment.center,
-                child: Image.asset('assets/images/twake.png'),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(height: 16.0),
+          Container(
+            width: MediaQuery.of(context).size.width - 72.0,
+            padding: const EdgeInsets.only(top: 16.0),
+            decoration: BoxDecoration(
+              color: Color(0xfff6f6f6),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(18.0),
+                topRight: Radius.circular(18.0),
               ),
             ),
-            Container(
-              padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
-              width: MediaQuery.of(context).size.width - 72.0,
+            child: Container(
+              width: 32.0,
+              height: 32.0,
               decoration: BoxDecoration(
-                color: Colors.red, //(0xfff6f6f6),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(18.0),
-                  bottomRight: Radius.circular(18.0),
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  transform: GradientRotation(2.79253), // 160 degrees
+                  tileMode: TileMode.repeated,
+                  colors: [
+                    Color(0xff4838b7),
+                    Color(0xff3840f7),
+                  ],
                 ),
               ),
-              child: AutoSizeText(
-                isError ? 'Couldn\'t load messages' : message,
-                minFontSize: 10.0,
-                maxFontSize: 15.0,
-                maxLines: 4,
-                textAlign: TextAlign.center,
-                softWrap: false,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                ),
+              alignment: Alignment.center,
+              child: Image.asset('assets/images/twake.png'),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
+            width: MediaQuery.of(context).size.width - 72.0,
+            decoration: BoxDecoration(
+              color: Color(0xfff6f6f6),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(18.0),
+                bottomRight: Radius.circular(18.0),
               ),
             ),
-            Expanded(child: Container(color: Colors.blueGrey)),
-          ],
-        ),
+            child: AutoSizeText(
+              isError ? 'Couldn\'t load messages' : message,
+              minFontSize: 10.0,
+              maxFontSize: 15.0,
+              maxLines: 4,
+              textAlign: TextAlign.center,
+              softWrap: false,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          Spacer(),
+        ],
       ),
     );
   }
