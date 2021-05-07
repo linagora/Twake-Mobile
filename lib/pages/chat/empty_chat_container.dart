@@ -20,8 +20,6 @@ class EmptyChatContainer extends StatelessWidget {
         : 'There are no messages in\nthis channel! Start conversation by\nsending some text, image or document';
     return Expanded(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(height: 16.0),
           Container(
