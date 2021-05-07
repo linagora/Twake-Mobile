@@ -130,9 +130,9 @@ class Api {
       queryParameters: params,
     );
     try {
-      // logger.d('METHOD: ${jsonEncode(method)}');
-      // logger.d('PARAMS: ${jsonEncode(params)}');
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
+      logger.d('METHOD: ${jsonEncode(method)}');
+      logger.d('PARAMS: ${jsonEncode(params)}');
       logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
 
       // logger.d('GET RESPONSE:');
@@ -144,7 +144,6 @@ class Api {
       //   }
       //   print(ultraLongString.substring(i, i + step));
       // }
-
       return response.data;
     } catch (e) {
       logger.wtf('FAILED TO GET INFO: $e');
