@@ -39,7 +39,7 @@ class EmptyChatContainer extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   transform: GradientRotation(2.79253), // 160 degrees
-                  tileMode: TileMode.repeated,
+                  tileMode: TileMode.mirror,
                   colors: [
                     Color(0xff4838b7),
                     Color(0xff3840f7),

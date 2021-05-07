@@ -54,7 +54,7 @@ class DirectTile extends StatelessWidget {
                       Expanded(
                         child: Text(
                           name,
-                          maxLines: 2,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 15.0,
@@ -76,7 +76,9 @@ class DirectTile extends StatelessWidget {
                           padding: EdgeInsets.only(top: 4.0),
                           child: Text(
                             lastMessage['text'] ?? 'This conversation is empty',
+                            textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                             style: TextStyle(
                               fontSize: 14.0,
                               fontStyle: lastMessage['text'] != null

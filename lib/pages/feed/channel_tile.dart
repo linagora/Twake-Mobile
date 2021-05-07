@@ -91,6 +91,7 @@ class ChannelTile extends StatelessWidget {
                                   senderName,
                                   textAlign: TextAlign.start,
                                   overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   style: TextStyle(
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.w500,
@@ -101,6 +102,7 @@ class ChannelTile extends StatelessWidget {
                                 lastMessage['text'] ?? 'This channel is empty',
                                 textAlign: TextAlign.start,
                                 overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
                                 style: TextStyle(
                                   fontSize: 14.0,
                                   fontStyle: lastMessage['text'] != null
