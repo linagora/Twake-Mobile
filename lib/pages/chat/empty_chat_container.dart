@@ -15,66 +15,58 @@ class EmptyChatContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final message = isDirect
+        ? 'There are no messages in\nthis chat! Start conversation\nwith $userName by sending\nsome text, image or document'
+        : 'There are no messages in\nthis channel! Start conversation by\nsending some text, image or document';
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(left: 36.0, top: 16.0, right: 36.0),
-            padding: const EdgeInsets.fromLTRB(32.0, 16.0, 32.0, 12.0),
-            decoration: BoxDecoration(
-              color: Color(0xfff6f6f6),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0),
+      child: Container(
+        color: Colors.white,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.fromLTRB(36.0, 0.0, 36.0, 16.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xfff6f6f6),
+            borderRadius: BorderRadius.circular(18.0),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 16.0),
+              Container(
+                width: 32.0,
+                height: 32.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    transform: GradientRotation(2.79253), // 160 degrees
+                    tileMode: TileMode.repeated,
+                    colors: [
+                      Color(0xff4838b7),
+                      Color(0xff3840f7),
+                    ],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Image.asset('assets/images/twake.png'),
               ),
-            ),
-            child: Container(
-              width: 32.0,
-              height: 32.0,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  transform: GradientRotation(2.79253), // 160 degrees
-                  tileMode: TileMode.repeated,
-                  colors: [
-                    Color(0xff4838b7),
-                    Color(0xff3840f7),
-                  ],
+              SizedBox(height: 12.0),
+              AutoSizeText(
+                isError ? 'Couldn\'t load messages' : message,
+                minFontSize: 10.0,
+                maxFontSize: 15.0,
+                maxLines: 4,
+                textAlign: TextAlign.center,
+                softWrap: false,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
-              alignment: Alignment.center,
-              child: Image.asset('assets/images/twake.png'),
-            ),
+              SizedBox(height: 16.0),
+            ],
           ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 36.0),
-            padding: const EdgeInsets.fromLTRB(32.0, 0.0, 32.0, 16.0),
-            decoration: BoxDecoration(
-              color: Color(0xfff6f6f6),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(18.0),
-                bottomRight: Radius.circular(18.0),
-              ),
-            ),
-            alignment: Alignment.center,
-            child: AutoSizeText(
-              isError
-                  ? 'Couldn\'t load messages'
-                  : 'There are no messages in\nthis ${isDirect ? 'chat' : 'channel'}! Start conversation\nwith $userName by sending\nsome text, image or document',
-              minFontSize: 10.0,
-              maxLines: 4,
-              textAlign: TextAlign.center,
-              softWrap: false,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 15.0,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
