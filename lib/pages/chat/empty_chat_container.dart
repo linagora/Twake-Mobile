@@ -20,20 +20,24 @@ class EmptyChatContainer extends StatelessWidget {
         : 'There are no messages in\nthis channel! Start conversation by\nsending some text, image or document';
     return Expanded(
       child: Container(
-        color: Colors.white,
+        color: Colors.blueAccent,
         width: MediaQuery.of(context).size.width,
         padding: const EdgeInsets.fromLTRB(36.0, 0.0, 36.0, 16.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xfff6f6f6),
-            borderRadius: BorderRadius.circular(18.0),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 16.0),
-              Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 16.0),
+            Container(
+              width: MediaQuery.of(context).size.width - 72.0,
+              decoration: BoxDecoration(
+                color: Color(0xfff6f6f6),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(18.0),
+                  topRight: Radius.circular(18.0),
+                ),
+              ),
+              child: Container(
                 width: 32.0,
                 height: 32.0,
                 decoration: BoxDecoration(
@@ -50,8 +54,18 @@ class EmptyChatContainer extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Image.asset('assets/images/twake.png'),
               ),
-              SizedBox(height: 12.0),
-              AutoSizeText(
+            ),
+            Container(
+              padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
+              width: MediaQuery.of(context).size.width - 72.0,
+              decoration: BoxDecoration(
+                color: Colors.red, //(0xfff6f6f6),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(18.0),
+                  bottomRight: Radius.circular(18.0),
+                ),
+              ),
+              child: AutoSizeText(
                 isError ? 'Couldn\'t load messages' : message,
                 minFontSize: 10.0,
                 maxFontSize: 15.0,
@@ -63,9 +77,9 @@ class EmptyChatContainer extends StatelessWidget {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              SizedBox(height: 16.0),
-            ],
-          ),
+            ),
+            Expanded(child: Container(color: Colors.blueGrey)),
+          ],
         ),
       ),
     );
