@@ -11,18 +11,24 @@ abstract class FileUploadEvent extends Equatable {
 
 class StartUpload extends FileUploadEvent {
   final String path;
+  final List<int> bytes;
   final String workspaceId;
   final String endpoint;
 
   StartUpload({
-    this.path,
+    this.path = '',
+    this.bytes,
     this.workspaceId,
     this.endpoint,
   });
 
   Future<FormData> payload() async {
+    final file = bytes != null && bytes.isNotEmpty
+        ? MultipartFile.fromBytes(bytes, filename: this.filename)
+        : await MultipartFile.fromFile(path, filename: this.filename);
+
     return FormData.fromMap({
-      'file': await MultipartFile.fromFile(path, filename: this.filename),
+      'file': file,
       'workspace_id': workspaceId ?? ProfileBloc.selectedWorkspaceId,
     });
   }

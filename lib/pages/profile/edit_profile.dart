@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'dart:isolate';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,7 @@ import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
 import 'package:twake/widgets/common/switch_field.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:twake/utils/image_processor.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -66,13 +69,26 @@ class _EditProfileState extends State<EditProfile> {
     try {
       paths = (await FilePicker.platform.pickFiles(
         type: FileType.image,
+        withData: true,
       ))
           ?.files;
 
       if (paths != null && paths.length > 0) {
-        _fileName = paths[0].path;
-        print('Filename to be saved: $_fileName');
-        context.read<AccountCubit>().updateImage(context, _fileName);
+        final path = paths[0].path;
+        print('Source path: $path');
+        print('Source size: ${paths[0].size}');
+
+        final file = File(path);
+        final processedFile = await processFile(file);
+        final platformFile = PlatformFile(bytes: processedFile.readAsBytesSync());
+        print('Processed file path: ${platformFile.path}');
+        print('Processed file size: ${platformFile.size}');
+
+        // Image processor
+
+        // _fileName = paths[0].path;
+        // print('Filename to be saved: $_fileName');
+        // context.read<AccountCubit>().updateImage(context, _fileName);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
@@ -167,7 +183,7 @@ class _EditProfileState extends State<EditProfile> {
                           ),
                           SizedBox(height: 12.0),
                           GestureDetector(
-                            onTap: () => print('Change avatar!'),
+                            onTap: () => _openFileExplorer(),
                             child: Text(
                               'Tap to upload',
                               style: TextStyle(
