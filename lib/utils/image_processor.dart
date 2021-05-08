@@ -33,8 +33,9 @@ Future<File> processFile(File file) async {
       decodeIsolate, DecodeParam(file, receivePort.sendPort));
   // Get the processed image from the isolate.
   var image = await receivePort.first as Image;
-
-  return await File('twake_profile_picture.jpg').writeAsBytes(encodeJpg(image));
+  // print('Image to proccess: ${image.}'};
+  final result = await File(file.path).writeAsBytes(encodeJpg(image));
+  return result;
 }
 
 // Decode and process an image file in a separate thread (isolate) to avoid
