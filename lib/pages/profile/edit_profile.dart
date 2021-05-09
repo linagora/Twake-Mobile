@@ -81,15 +81,15 @@ class _EditProfileState extends State<EditProfile> {
 
         final file = File(path);
         final processed = await processFile(file);
-        print('Processed file path: ${processed.path}');
-        print('Processed file size: ${processed.lengthSync()}');
+        // print('Processed file bytes: ${processed.path}');
+        // print('Processed file size: ${processed.lengthSync()}');
 
         // final platformFile = PlatformFile(path: processed.path, bytes: processed.readAsBytesSync(), size: processed.lengthSync());
         // Image processor
 
         // _fileName = paths[0].path;
         // print('Filename to be saved: $_fileName');
-        context.read<AccountCubit>().updateImage(context, processed.path);
+        // context.read<AccountCubit>().updateImage(context, processed.path);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());

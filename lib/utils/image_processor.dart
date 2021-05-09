@@ -17,24 +17,24 @@ class DecodeParam {
 }
 
 void decodeIsolate(DecodeParam param) {
-  // Read an image from file (webp in this case).
-  // decodeImage will identify the format of the image and use the appropriate
-  // decoder.
+  // decodeImage will identify the format of the image
+  // and use the appropriate decoder.
   var image = decodeImage(param.file.readAsBytesSync());
-  // Resize the image to a 120x? thumbnail (maintaining the aspect ratio).
-  var thumbnail = copyResize(image, width: param.width,);
+  // Resize the image to a <width>x? thumbnail (maintaining the aspect ratio).
+  var thumbnail = copyResize(image, width: param.width);
   param.sendPort.send(thumbnail);
 }
 
-Future<File> processFile(File file) async {
+Future<List<int>> processFile(File file, {bool overwrite = false}) async {
   final receivePort = ReceivePort();
 
   await Isolate.spawn(
       decodeIsolate, DecodeParam(file, receivePort.sendPort));
   // Get the processed image from the isolate.
   var image = await receivePort.first as Image;
-  // print('Image to proccess: ${image.}'};
-  final result = await File(file.path).writeAsBytes(encodeJpg(image));
+  // print('Image to process: ${image.}'};
+  //await File(file.path).writeAsBytes();
+  final result = encodeJpg(image);
   return result;
 }
 
