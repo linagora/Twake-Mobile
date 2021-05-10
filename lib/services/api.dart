@@ -137,12 +137,14 @@ class Api {
 
       // logger.d('GET RESPONSE:');
       // final ultraLongString = jsonEncode(response.data);
-      // int step = ultraLongString.length ~/ 3;
-      // for (int i = 0; i < ultraLongString.length; i += step) {
-      //   if (i + step > ultraLongString.length) {
-      //     i = ultraLongString.length - i;
+      // if (ultraLongString.isNotEmpty) {
+      //   int step = ultraLongString.length ~/ 3;
+      //   for (int i = 0; i < ultraLongString.length; i += step) {
+      //     if (i + step > ultraLongString.length) {
+      //       i = ultraLongString.length - i;
+      //     }
+      //     print(ultraLongString.substring(i, i + step));
       //   }
-      //   print(ultraLongString.substring(i, i + step));
       // }
       return response.data;
     } catch (e) {
@@ -252,24 +254,6 @@ class Api {
           // we randomly get token expirations, so if we have a
           // refresh token, we automatically use it to get a new token
           if (error.response != null) {
-            // final ultraLongString = '\nHeaders: ${jsonEncode(error.requestOptions.headers)}';
-
-            // int step = 1024;
-            // for (int i = 0; i < ultraLongString.length; i+=step) {
-            //   if( i+ step > ultraLongString.length) {
-            //     i = ultraLongString.length - i;
-            //   }
-            //   print(ultraLongString.substring(i,i+step));
-            // }
-
-            // debugPrint('\nMethod: ${jsonEncode(error.requestOptions.method)}', wrapWidth: 1024);
-            // debugPrint('\nPATH: ${jsonEncode(error.requestOptions.path)}', wrapWidth: 1024);
-            // debugPrint('\nHeaders: ${jsonEncode(error.requestOptions.headers)}', wrapWidth: 2000);
-            // debugPrint('\nResponse: ${jsonEncode(error.response.data)}', wrapWidth: 1024);
-            // debugPrint('\nBODY: ${jsonEncode(error.requestOptions.data)}', wrapWidth: 1024);
-            // debugPrint('\nHeaders: ${jsonEncode(error.requestOptions.headers)}', wrapWidth: 1024);
-            // debugPrint('\nQUERY: ${jsonEncode(error.requestOptions.queryParameters)}', wrapWidth: 1024);
-
             logger.e('Error during network request!' +
                 '\nMethod: ${jsonEncode(error.requestOptions.method)}' +
                 '\nPATH: ${jsonEncode(error.requestOptions.path)}' +
