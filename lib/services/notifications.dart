@@ -43,7 +43,7 @@ class Notifications {
     FirebaseMessaging.onMessageOpenedApp.listen(onResume);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('ic_launcher_foreground');
+        AndroidInitializationSettings('ic_notification');
     final IOSInitializationSettings initializationSettingsIOS =
         IOSInitializationSettings();
     final InitializationSettings initializationSettings =
