@@ -222,7 +222,7 @@ class _ComposeBar extends State<ComposeBar> {
                           InkWell(
                             child: Container(
                               alignment: Alignment.center,
-                              height: 40,
+                              height: 40.0,
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -447,9 +447,9 @@ class _TextInputState extends State<TextInput> {
               ),
               child: TextField(
                 style: TextStyle(
-                  fontSize: 13.0,
+                  fontSize: 17.0,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff444444),
+                  color: Colors.black,
                 ),
                 maxLines: 4,
                 minLines: 1,
@@ -461,7 +461,11 @@ class _TextInputState extends State<TextInput> {
                   contentPadding:
                       const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
                   hintText: 'New reply...',
-                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
+                  hintStyle: TextStyle(
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black.withOpacity(0.2),
+                  ),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       style: BorderStyle.none,
