@@ -232,7 +232,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                               : draft,
                           onMessageSend: state is MessageEditing
                               ? state.onMessageEditComplete
-                              : (content) {
+                              : (content, context) {
                                   BlocProvider.of<MessagesBloc<T>>(context).add(
                                     SendMessage(content: content),
                                   );

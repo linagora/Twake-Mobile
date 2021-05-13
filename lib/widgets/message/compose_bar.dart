@@ -456,25 +456,29 @@ class _TextInputState extends State<TextInput> {
               );
             },
           ),
-          IconButton(
-            padding: EdgeInsets.only(bottom: 5.0),
-            icon: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.rotationZ(-3 / 4), // rotate 45ish degree cc
-              child: Icon(
-                widget.canSend ? Icons.send : Icons.send_outlined,
-                color: widget.canSend
-                    ? Theme.of(context).accentColor
-                    : Colors.grey[400],
-              ),
-            ),
-            onPressed: widget.canSend
+          GestureDetector(
+            onTap: widget.canSend
                 ? () async {
                     await widget.onMessageSend(widget.controller.text, context);
                     widget.controller.clear();
                     widget.fileNumClear();
                   }
                 : null,
+            child: Container(
+              padding: EdgeInsets.only(bottom: 5.0),
+              child: Transform(
+                  alignment: Alignment.center,
+                  transform: Matrix4.rotationZ(-3 / 4),
+                  // rotate 45ish degree cc
+                  child: Image.asset('assets/images/send.png')
+                  // child: Icon(
+                  //   widget.canSend ? Icons.send : Icons.send_outlined,
+                  //   color: widget.canSend
+                  //       ? Theme.of(context).accentColor
+                  //       : Colors.grey[400],
+                  // ),
+                  ),
+            ),
           ),
         ],
       ),

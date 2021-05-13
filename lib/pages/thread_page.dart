@@ -175,7 +175,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                             : draft ?? '',
                                         onMessageSend: state is MessageEditing
                                             ? state.onMessageEditComplete
-                                            : (content) {
+                                            : (content, context) {
                                                 BlocProvider.of<ThreadsBloc<T>>(
                                                         context)
                                                     .add(
