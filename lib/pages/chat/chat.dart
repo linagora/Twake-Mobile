@@ -140,11 +140,11 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
           },
         ),
       ),
-      body: SafeArea(
-        child: BlocBuilder<MessagesBloc<T>, MessagesState>(
-          builder: (_, messagesState) {
-            return BlocProvider<MessageEditBloc>(
-              create: (_) => MessageEditBloc(),
+      body: BlocBuilder<MessagesBloc<T>, MessagesState>(
+        builder: (_, messagesState) {
+          return BlocProvider<MessageEditBloc>(
+            create: (_) => MessageEditBloc(),
+            child: Container(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -269,9 +269,9 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

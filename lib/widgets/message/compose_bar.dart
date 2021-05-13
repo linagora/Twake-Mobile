@@ -387,7 +387,10 @@ class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(top: 11.0, bottom: 11.0),
+      padding: EdgeInsets.only(
+        top: 11.0,
+        bottom: 11.0 + MediaQuery.of(context).padding.bottom,
+      ),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300], width: 1.5)),
         color: Color(0xfff6f6f6),
@@ -507,20 +510,20 @@ class _TextInputState extends State<TextInput> {
                   }
                 : null,
             child: Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset('assets/images/send.png')
-              // child: Transform(
-              //   alignment: Alignment.center,
-              //   transform: Matrix4.rotationZ(-3 / 4),
-              //   // rotate 45ish degree cc
-              //   child: Icon(
-              //     widget.canSend ? Icons.send : Icons.send_outlined,
-              //     color: widget.canSend
-              //         ? Theme.of(context).accentColor
-              //         : Colors.grey[400],
-              //   ),
-              // ),
-            ),
+                padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+                child: Image.asset('assets/images/send.png')
+                // child: Transform(
+                //   alignment: Alignment.center,
+                //   transform: Matrix4.rotationZ(-3 / 4),
+                //   // rotate 45ish degree cc
+                //   child: Icon(
+                //     widget.canSend ? Icons.send : Icons.send_outlined,
+                //     color: widget.canSend
+                //         ? Theme.of(context).accentColor
+                //         : Colors.grey[400],
+                //   ),
+                // ),
+                ),
           ),
         ],
       ),
