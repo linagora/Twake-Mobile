@@ -5,13 +5,15 @@ part 'password_values.g.dart';
 
 @JsonSerializable()
 class PasswordValues {
-  PasswordValues({
-    @required this.oldPass,
-    @required this.newPass,
+  const PasswordValues({
+    @required this.oldPassword,
+    @required this.newPassword,
   });
 
-  final String oldPass;
-  final String newPass;
+  @JsonKey(name: 'old', defaultValue: '')
+  final String oldPassword;
+  @JsonKey(name: 'new', defaultValue: '')
+  final String newPassword;
 
   factory PasswordValues.fromJson(Map<String, dynamic> json) =>
       _$PasswordValuesFromJson(json);

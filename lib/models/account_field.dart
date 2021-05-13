@@ -7,7 +7,9 @@ part 'account_field.g.dart';
 class AccountField {
   AccountField({@required this.isReadonly, @required this.value});
 
+  @JsonKey(name: 'readonly', defaultValue: false)
   bool isReadonly;
+  @JsonKey(defaultValue: '')
   String value;
 
   factory AccountField.fromJson(Map<String, dynamic> json) =>

@@ -6,11 +6,12 @@ part 'password_field.g.dart';
 
 @JsonSerializable()
 class PasswordField {
-  PasswordField({
+  const PasswordField({
     @required this.isReadonly,
     @required this.value,
   });
 
+  @JsonKey(name: 'readonly', defaultValue: false)
   final bool isReadonly;
   final PasswordValues value;
 

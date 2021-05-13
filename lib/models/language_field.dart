@@ -12,8 +12,11 @@ class LanguageField {
     @required this.options,
   });
 
+  @JsonKey(name: 'readonly', defaultValue: false)
   final bool isReadonly;
+  @JsonKey(defaultValue: [])
   final List<LanguageOption> options;
+  @JsonKey(defaultValue: '')
   String value;
 
   factory LanguageField.fromJson(Map<String, dynamic> json) =>

@@ -132,8 +132,8 @@ class AccountRepository extends JsonSerializable {
       password = PasswordField(
         isReadonly: password.isReadonly,
         value: PasswordValues(
-          oldPass: oldPassword,
-          newPass: newPassword,
+          oldPassword: oldPassword,
+          newPassword: newPassword,
         ),
       );
       accountMap['password'] = {
@@ -171,18 +171,12 @@ class AccountRepository extends JsonSerializable {
   /// Convenience methods to avoid deserializing this class from JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   factory AccountRepository.fromJson(Map<String, dynamic> json) {
-    // json = Map.from(json);
-    // if (json['notification_rooms'] is String) {
-    // json['notification_rooms'] = jsonDecode(json['notification_rooms']);
-    // }
     return _$AccountRepositoryFromJson(json);
   }
 
   /// Convenience methods to avoid serializing this class to JSON
   /// https://flutter.dev/docs/development/data-and-backend/json#code-generation
   Map<String, dynamic> toJson() {
-    var map = _$AccountRepositoryToJson(this);
-    // map['notification_rooms'] = jsonEncode(map['notification_rooms']);
-    return map;
+    return _$AccountRepositoryToJson(this);
   }
 }

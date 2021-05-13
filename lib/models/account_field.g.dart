@@ -8,13 +8,13 @@ part of 'account_field.dart';
 
 AccountField _$AccountFieldFromJson(Map<String, dynamic> json) {
   return AccountField(
-    isReadonly: json['isReadonly'] as bool,
-    value: json['value'] as String,
+    isReadonly: json['readonly'] as bool ?? false,
+    value: json['value'] as String ?? '',
   );
 }
 
 Map<String, dynamic> _$AccountFieldToJson(AccountField instance) =>
     <String, dynamic>{
-      'isReadonly': instance.isReadonly,
+      'readonly': instance.isReadonly,
       'value': instance.value,
     };

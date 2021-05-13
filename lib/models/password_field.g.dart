@@ -8,7 +8,7 @@ part of 'password_field.dart';
 
 PasswordField _$PasswordFieldFromJson(Map<String, dynamic> json) {
   return PasswordField(
-    isReadonly: json['isReadonly'] as bool,
+    isReadonly: json['readonly'] as bool ?? false,
     value: json['value'] == null
         ? null
         : PasswordValues.fromJson(json['value'] as Map<String, dynamic>),
@@ -17,6 +17,6 @@ PasswordField _$PasswordFieldFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$PasswordFieldToJson(PasswordField instance) =>
     <String, dynamic>{
-      'isReadonly': instance.isReadonly,
+      'readonly': instance.isReadonly,
       'value': instance.value,
     };

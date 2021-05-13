@@ -8,13 +8,13 @@ part of 'password_values.dart';
 
 PasswordValues _$PasswordValuesFromJson(Map<String, dynamic> json) {
   return PasswordValues(
-    oldPass: json['oldPass'] as String,
-    newPass: json['newPass'] as String,
+    oldPassword: json['old'] as String ?? '',
+    newPassword: json['new'] as String ?? '',
   );
 }
 
 Map<String, dynamic> _$PasswordValuesToJson(PasswordValues instance) =>
     <String, dynamic>{
-      'oldPass': instance.oldPass,
-      'newPass': instance.newPass,
+      'old': instance.oldPassword,
+      'new': instance.newPassword,
     };
