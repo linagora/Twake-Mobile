@@ -83,10 +83,6 @@ class ProfileRepository extends JsonSerializable {
     // Save it to store
     if (loadedFromNetwork) profile.save();
     // return it
-
-    // TODO uncomment when ready
-    // fetchInfo();
-
     return profile;
   }
 

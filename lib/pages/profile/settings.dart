@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/common/button_field.dart';
@@ -16,6 +17,7 @@ class _SettingsState extends State<Settings> {
   @override
   void initState() {
     super.initState();
+    print('USER\'S EMAIL: ${ProfileBloc.email}');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
     });
