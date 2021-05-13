@@ -100,6 +100,33 @@ class AccountRepository extends JsonSerializable {
     );
   }
 
+  void update({
+    String newFirstName = '',
+    String newLastName = '',
+    String newLanguage = '',
+    String oldPassword = '',
+    String newPassword = '',
+  }) {
+    if (newFirstName.isNotReallyEmpty) {
+      firstName.value = newFirstName;
+    }
+    if (newLastName.isNotReallyEmpty) {
+      lastName.value = newLastName;
+    }
+    if (newLanguage.isNotReallyEmpty) {
+      language.value = newLanguage;
+    }
+    if (oldPassword.isNotReallyEmpty && newPassword.isNotReallyEmpty) {
+      password = PasswordField(
+        isReadonly: password.isReadonly,
+        value: PasswordValues(
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+        ),
+      );
+    }
+  }
+
   Future<AccountRepository> patch({
     String newFirstName,
     String newLastName,
@@ -130,23 +157,16 @@ class AccountRepository extends JsonSerializable {
         newPassword != null &&
         oldPassword.isNotReallyEmpty &&
         newPassword.isNotReallyEmpty) {
-      // password = PasswordField(
-      //   isReadonly: password.isReadonly,
-      //   value: PasswordValues(
-      //     oldPassword: oldPassword,
-      //     newPassword: newPassword,
-      //   ),
-      // );
       accountMap['password'] = {
         'old': oldPassword,
         'new': newPassword,
       };
     }
     print('Data for account update: $accountMap');
-    final result = await _api.patch(Endpoint.account, body: accountMap);
-    if (result != null) {
-      print('Updated account: ${jsonEncode(result)}');
-    }
+    // final result = await _api.patch(Endpoint.account, body: accountMap);
+    // if (result != null) {
+    //   print('Updated account: ${jsonEncode(result)}');
+    // }
     return this;
   }
 
@@ -163,9 +183,9 @@ class AccountRepository extends JsonSerializable {
   String languageCodeFromTitle(String title) {
     final lang = language.options.firstWhere((option) => option.title == title,
         orElse: () {
-          _logger.e('No matching languages found in options for title: $title');
-          return LanguageOption(value: '', title: title);
-        });
+      _logger.e('No matching languages found in options for title: $title');
+      return LanguageOption(value: '', title: title);
+    });
     return lang.value;
   }
 
