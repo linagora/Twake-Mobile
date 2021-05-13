@@ -393,19 +393,17 @@ class _TextInputState extends State<TextInput> {
         color: Color(0xfff6f6f6),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           BlocBuilder<FileUploadBloc, FileUploadState>(
             builder: (context, state) {
               if (state is NothingToUpload) {
-                return CircleAvatar(
-                  backgroundColor: Colors.indigo[50],
-                  child: IconButton(
-                    padding: EdgeInsets.zero,
-                    icon: Icon(Icons.attachment),
-                    onPressed: widget.openFileExplorer,
-                    color: Colors.black54,
-                  ),
+                return IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 24.0,
+                  icon: Icon(Icons.attachment),
+                  onPressed: widget.openFileExplorer,
+                  color: Colors.black54,
                 );
               } else if (state is FileUploading) {
                 return CircularProgressIndicator();
