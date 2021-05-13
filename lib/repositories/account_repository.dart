@@ -44,9 +44,11 @@ class AccountRepository extends JsonSerializable {
   @JsonKey(ignore: true)
   static final _storage = Storage();
 
-  // Pseudo constructor for loading profile from storage or api
+  // Pseudo constructor for loading account from storage or api
   static Future<AccountRepository> load() async {
     // _logger.w("Loading account:");
+    bool loadedFromNetwork = false;
+
     var accountMap = await _storage.load(
       type: StorageType.Account,
       key: _ACCOUNT_STORE_KEY,
@@ -55,22 +57,22 @@ class AccountRepository extends JsonSerializable {
       // _logger.d('No account in storage, requesting from api...');
       accountMap = await _api.get(Endpoint.account);
       _logger.d('RECEIVED ACCOUNT: $accountMap');
+      loadedFromNetwork = true;
     } else {
       accountMap = jsonDecode(accountMap[_storage.settingsField]);
-      // _logger.d('RETRIEVED ACCOUNT: $accountMap');
+      _logger.d('RETRIEVED FROM STORAGE ACCOUNT: $accountMap');
     }
     // Get repository instance
     final account = AccountRepository.fromJson(accountMap);
     // Save it to store
-    // if (loadedFromNetwork) account.save();
+    if (loadedFromNetwork) account.save();
     // return it
     return account;
   }
 
   Future<AccountRepository> reload() async {
-    final profileMap = await _api.get(Endpoint.account);
-    // _update(profileMap);
-    final newRepo = AccountRepository.fromJson(profileMap);
+    final accountMap = await _api.get(Endpoint.account);
+    final newRepo = AccountRepository.fromJson(accountMap);
     userName = newRepo.userName;
     firstName = newRepo.firstName;
     lastName = newRepo.lastName;

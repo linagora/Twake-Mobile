@@ -65,6 +65,7 @@ class ProfileRepository extends JsonSerializable {
   static Future<ProfileRepository> load() async {
     // logger.w("Loading profile");
     bool loadedFromNetwork = false;
+
     var profileMap = await _storage.load(
       type: StorageType.Profile,
       key: _PROFILE_STORE_KEY,
