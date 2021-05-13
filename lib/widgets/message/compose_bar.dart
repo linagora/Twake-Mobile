@@ -400,10 +400,9 @@ class _TextInputState extends State<TextInput> {
               if (state is NothingToUpload) {
                 return IconButton(
                   padding: EdgeInsets.zero,
-                  iconSize: 24.0,
                   icon: Icon(Icons.attachment),
                   onPressed: widget.openFileExplorer,
-                  color: Colors.black54,
+                  color: Color(0xff8a898e),
                 );
               } else if (state is FileUploading) {
                 return CircularProgressIndicator();
@@ -502,7 +501,7 @@ class _TextInputState extends State<TextInput> {
                   }
                 : null,
             child: Container(
-              padding: EdgeInsets.fromLTRB(17.0, 17.0, 18.0, 17.0),
+              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
               child: Image.asset('assets/images/send.png')
               // child: Transform(
               //   alignment: Alignment.center,
