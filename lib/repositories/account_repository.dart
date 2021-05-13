@@ -65,7 +65,7 @@ class AccountRepository extends JsonSerializable {
     // Get repository instance
     final account = AccountRepository.fromJson(accountMap);
     // Save it to store
-    if (loadedFromNetwork) account.save();
+    if (loadedFromNetwork) account._save();
     // return it
     return account;
   }
@@ -78,19 +78,19 @@ class AccountRepository extends JsonSerializable {
     lastName = newRepo.lastName;
     language = newRepo.language;
     picture = newRepo.picture;
-    save();
+    _save();
 
     return this;
   }
 
-  Future<void> clean() async {
+  Future<void> _clean() async {
     await _storage.delete(
       type: StorageType.Account,
       key: _ACCOUNT_STORE_KEY,
     );
   }
 
-  Future<void> save() async {
+  Future<void> _save() async {
     await _storage.store(
       item: {
         'id': _ACCOUNT_STORE_KEY,
@@ -107,7 +107,7 @@ class AccountRepository extends JsonSerializable {
     String oldPassword,
     String newPassword,
   }) async {
-    final Map<String, dynamic> accountMap = <String, dynamic>{};
+    final accountMap = <String, dynamic>{};
     if (newFirstName != null &&
         newFirstName.isNotReallyEmpty &&
         newFirstName != this.firstName.value) {
@@ -130,22 +130,22 @@ class AccountRepository extends JsonSerializable {
         newPassword != null &&
         oldPassword.isNotReallyEmpty &&
         newPassword.isNotReallyEmpty) {
-      password = PasswordField(
-        isReadonly: password.isReadonly,
-        value: PasswordValues(
-          oldPassword: oldPassword,
-          newPassword: newPassword,
-        ),
-      );
+      // password = PasswordField(
+      //   isReadonly: password.isReadonly,
+      //   value: PasswordValues(
+      //     oldPassword: oldPassword,
+      //     newPassword: newPassword,
+      //   ),
+      // );
       accountMap['password'] = {
         'old': oldPassword,
         'new': newPassword,
       };
     }
+    print('Data for account update: $accountMap');
     final result = await _api.patch(Endpoint.account, body: accountMap);
     if (result != null) {
-      print('Account updated: $accountMap');
-      // save();
+      print('Updated account: ${jsonEncode(result)}');
     }
     return this;
   }
