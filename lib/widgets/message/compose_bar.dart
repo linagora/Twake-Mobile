@@ -29,11 +29,11 @@ class ComposeBar extends StatefulWidget {
 
 class _ComposeBar extends State<ComposeBar> {
   final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+$');
-  bool _emojiVisible = false;
-  bool _mentionsVisible = false;
-  bool _forceLooseFocus = false;
-  bool _canSend = false;
-  int _fileNumber = 0;
+  var _emojiVisible = false;
+  var _mentionsVisible = false;
+  var _forceLooseFocus = false;
+  var _canSend = false;
+  var _fileNumber = 0;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -368,7 +368,7 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
-  int _fileNumber;
+  var _fileNumber = 0;
 
   @override
   void initState() {
