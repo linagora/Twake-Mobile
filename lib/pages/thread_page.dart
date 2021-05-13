@@ -177,6 +177,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                   child: BlocBuilder<MessageEditBloc,
                                       MessageEditState>(
                                     builder: (ctx, state) {
+                                      print('Current State in Thread: $state');
                                       return ComposeBar(
                                         initialText: state is MessageEditing
                                             ? state.originalStr

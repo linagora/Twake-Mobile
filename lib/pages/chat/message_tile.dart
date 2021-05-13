@@ -150,7 +150,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                           EditMessage(
                             originalStr: _message.content.originalStr ?? '',
                             onMessageEditComplete: (text, context) async {
-                              // smbloc get's closed if
+                              // smbloc gets closed if
                               // listview disposes of message tile
                               smbloc.add(
                                 UpdateContent(
