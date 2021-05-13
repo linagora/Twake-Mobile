@@ -82,7 +82,9 @@ class DirectsBloc extends BaseChannelBloc {
           ['company_id', '=', selectedParentId]
         ],
         sortFields: {'last_activity': false},
-        forceFromApi: event.forceFromApi,
+        onApiLoaded: () {
+          this.add(ReEmitChannels());
+        },
       );
       if (repository.isEmpty)
         yield ChannelsEmpty();
@@ -103,6 +105,13 @@ class DirectsBloc extends BaseChannelBloc {
           force: DateTime.now().toString(),
         );
       }
+    } else if (event is ReEmitChannels) {
+      repository.items.sort((c1, c2) => c1.name.compareTo(c2.name));
+
+      yield ChannelsLoaded(
+        channels: repository.items,
+        force: DateTime.now().toString(),
+      );
     } else if (event is ClearChannels) {
       await repository.clean();
       yield ChannelsEmpty();

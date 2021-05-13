@@ -77,7 +77,9 @@ class ChannelsBloc extends BaseChannelBloc {
           ['workspace_id', '=', event.workspaceId ?? selectedParentId]
         ],
         sortFields: {'name': true},
-        forceFromApi: event.forceFromApi,
+        onApiLoaded: () {
+          this.add(ReEmitChannels());
+        },
       );
       if (!success) {
         repository.logger.d('Failed to change workspace');
@@ -148,7 +150,6 @@ class ChannelsBloc extends BaseChannelBloc {
             ['workspace_id', '=', selectedParentId]
           ],
           sortFields: {'name': true},
-          forceFromApi: true,
         );
         yield ChannelsLoaded(
           selected: repository.selected,
@@ -167,6 +168,13 @@ class ChannelsBloc extends BaseChannelBloc {
       yield ChannelsLoaded(
         channels: repository.items,
         force: DateTime.now().toString(),
+      );
+    } else if (event is ReEmitChannels) {
+      repository.items.sort((c1, c2) => c1.name.compareTo(c2.name));
+
+      yield ChannelsLoaded(
+        channels: repository.items,
+        // force: DateTime.now().toString(),
       );
     } else if (event is LoadSingleChannel) {
       throw 'Not implemented yet';

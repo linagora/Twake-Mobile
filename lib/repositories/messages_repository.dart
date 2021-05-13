@@ -34,53 +34,64 @@ class MessagesRepository {
     saveOne(oldSelected);
   }
 
-  Future<bool> reload({
+  Future<bool> load({
     Map<String, dynamic> queryParams,
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
-    bool forceFromApi: false,
+    Function onNewMessagesCallback,
     int limit,
   }) async {
-    List<dynamic> itemsList = [];
-
-    final messageCountQuery = 'SELECT count(id) as count '
+    final maxDateQuery =
+        // 'SELECT max(modification_date) as max_mod, '
+        'SELECT max(creation_date) as max_create '
         'FROM message';
-    final List count =
-        await _storage.customQuery(messageCountQuery, filters: filters);
-    if (count[0]['count'] < 10) {
-      forceFromApi = true;
+    final List max = await _storage.customQuery(maxDateQuery, filters: filters);
+    // logger.d('REQUESTING MESSAGES AFTER: $max');
+    if (max.isNotEmpty && max[0]['max_create'] != null) {
+      queryParams['after_date'] = max[0]['max_create'].toString();
     }
-    if (!forceFromApi) {
-      final maxDateQuery =
-          // 'SELECT max(modification_date) as max_mod, '
-          'SELECT max(creation_date) as max_create '
-          'FROM message';
-      final maxFilter = List.from(filters);
-      maxFilter.removeLast();
-      final List max =
-          await _storage.customQuery(maxDateQuery, filters: filters);
-      // logger.d('REQUESTING MESSAGES AFTER: $max');
-      if (max.isNotEmpty && max[0]['max_create'] != null) {
-        queryParams['after_date'] = max[0]['max_create'].toString();
-      }
-    }
-    try {
-      // logger.d('Query params is: $queryParams');
-      itemsList = await _api.get(apiEndpoint, params: queryParams);
-    } on ApiError catch (error) {
-      logger.d('ERROR while reloading Messages from api\n${error.message}');
-    }
-    final Set<String> userIds =
-        itemsList.map((i) => (i['user_id'] as String)).toSet();
-    logger.d('USERIDS: $userIds');
-    await UserRepository().batchUsersLoad(userIds);
-    await _storage.batchStore(
-      items: itemsList.map((i) {
-        final m = Message.fromJson(i).toJson();
-        return m;
-      }),
-      type: StorageType.Message,
+    _api
+        .get(apiEndpoint, params: queryParams)
+        .then((rawMessages) => getRequestedMessages(
+              rawMessages: rawMessages,
+              filters: filters,
+              sortFields: sortFields,
+              limit: limit,
+            ))
+        .then((itemsList) {
+          if (itemsList.isNotEmpty) _updateItems(itemsList);
+        })
+        .then((_) => onNewMessagesCallback())
+        .catchError((error) =>
+            logger.d('ERROR while reloading Messages from api\n$error'));
+
+    final itemsList = await this.getRequestedMessages(
+      filters: filters,
+      sortFields: sortFields,
+      limit: limit,
     );
+    _updateItems(itemsList);
+    return true;
+  }
+
+  Future<List<dynamic>> getRequestedMessages({
+    List<dynamic> rawMessages: const [],
+    List<List> filters, // fields to filter by in store
+    Map<String, bool> sortFields, // fields to sort by + sort direction
+    int limit: 50,
+  }) async {
+    if (rawMessages.isNotEmpty) {
+      final Set<String> userIds =
+          rawMessages.map((i) => (i['user_id'] as String)).toSet();
+      await UserRepository().batchUsersLoad(userIds);
+      await _storage.batchStore(
+        items: rawMessages.map((i) {
+          final m = Message.fromJson(i).toJson();
+          return m;
+        }),
+        type: StorageType.Message,
+      );
+    }
     final query = 'SELECT message.*, '
         'user.username, '
         'user.firstname, '
@@ -88,16 +99,13 @@ class MessagesRepository {
         'user.thumbnail, '
         'application.name '
         'FROM message LEFT JOIN user ON user.id = message.user_id LEFT JOIN application ON application.id = message.app_id';
-    itemsList = await _storage.customQuery(
+    return await _storage.customQuery(
       query,
       filters: filters,
       orderings: sortFields,
       limit: limit,
       offset: 0,
     );
-    await _updateItems(itemsList, saveToStore: false);
-    // logger.d('Loaded ${itemsList.length} messages');
-    return true;
   }
 
   Future<bool> loadMore({
@@ -149,7 +157,7 @@ class MessagesRepository {
       );
     }
     if (itemsList.isNotEmpty) {
-      await _updateItems(itemsList, saveToStore: false, extendItems: true);
+      _updateItems(itemsList, extendItems: true);
     }
     return true;
   }
@@ -310,17 +318,15 @@ class MessagesRepository {
     this.items.clear();
   }
 
-  Future<void> _updateItems(
+  void _updateItems(
     List<dynamic> itemsList, {
-    bool saveToStore: false,
     bool extendItems: false,
-  }) async {
+  }) {
     final items = itemsList.map((c) => Message.fromJson(c));
     if (extendItems)
       this.items.addAll(items);
     else
       this.items = items.toList();
-    if (saveToStore) await this.save();
   }
 
   Future<void> save() async {

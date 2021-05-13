@@ -21,6 +21,13 @@ class ReloadChannels extends ChannelsEvent {
   List<Object> get props => [];
 }
 
+class ReEmitChannels extends ChannelsEvent {
+  const ReEmitChannels();
+
+  @override
+  List<Object> get props => [];
+}
+
 class ClearChannels extends ChannelsEvent {
   const ClearChannels();
   @override

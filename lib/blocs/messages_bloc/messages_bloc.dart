@@ -117,13 +117,16 @@ class MessagesBloc<T extends BaseChannelBloc>
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     if (event is LoadMessages) {
       yield MessagesLoading(parentChannel: selectedChannel);
-      bool success = await repository.reload(
+      bool success = await repository.load(
         queryParams: _makeQueryParams(event),
         filters: [
           ['channel_id', '=', selectedChannel.id],
           ['thread_id', '=', null],
         ],
         sortFields: {'creation_date': false},
+        onNewMessagesCallback: () {
+          this.add(FinishLoadingMessages());
+        },
         limit: _MESSAGE_LIMIT,
       );
       if (!success) {

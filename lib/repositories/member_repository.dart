@@ -58,7 +58,6 @@ class MemberRepository extends CollectionRepository<Member> {
         'channel_id': channelId,
       },
       sortFields: {'channel_id': true},
-      forceFromApi: true,
     );
   }
 
