@@ -114,39 +114,29 @@ class CollectionRepository<T extends CollectionItem> {
     Map<String, dynamic> queryParams,
     List<List> filters, // fields to filter by in store
     Map<String, bool> sortFields, // fields to sort by + sort direction
-    bool forceFromApi: false,
+    Function onApiLoaded,
     int limit,
     int offset,
   }) async {
     List<dynamic> itemsList = [];
-    if (!forceFromApi) {
-      // logger.d(
-      // 'Reloading $T items from storage...\nFilters: $filters\nLIMIT: $limit\nOFFSET: $offset');
-      itemsList = await storage.batchLoad(
-        type: _typeToStorageType[T],
-        filters: filters,
-        orderings: sortFields,
-        limit: limit,
-        offset: offset,
-      );
-      // logger.d('Loaded ${itemsList.length} items');
-    }
-    bool saveToStore = false;
-    if (itemsList.isEmpty) {
-      // logger.d('Non in storage. Reloading $T items from api...');
-      try {
-        itemsList = await api.get(apiEndpoint, params: queryParams);
-      } on ApiError catch (error) {
-        logger.d('ERROR while reloading $T items from api\n${error.message}');
-        return false;
-      }
-      saveToStore = true;
-    }
-    if (forceFromApi) {
-      // await storage.batchDelete(type: _typeToStorageType[T], filters: filters);
+    itemsList = await storage.batchLoad(
+      type: _typeToStorageType[T],
+      filters: filters,
+      orderings: sortFields,
+      limit: limit,
+      offset: offset,
+    );
+
+    api.get(apiEndpoint, params: queryParams).then((itemsList) {
       storage.batchDelete(type: _typeToStorageType[T], filters: filters);
-    }
-    _updateItems(itemsList, saveToStore: saveToStore);
+      _updateItems(itemsList, saveToStore: true);
+
+      if (onApiLoaded != null) onApiLoaded();
+    }).catchError((error) {
+      logger.d('ERROR while reloading $T items from api\n${error.message}');
+      return false;
+    });
+    _updateItems(itemsList, saveToStore: false);
     return true;
   }
 

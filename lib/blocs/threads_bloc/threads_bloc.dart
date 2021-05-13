@@ -109,7 +109,7 @@ class ThreadsBloc<T extends BaseChannelBloc>
       List<List> filters = [
         ['thread_id', '=', event.threadId],
       ];
-      bool success = await repository.reload(
+      bool success = await repository.load(
         queryParams: _makeQueryParams(event),
         filters: filters,
         sortFields: {'creation_date': true},

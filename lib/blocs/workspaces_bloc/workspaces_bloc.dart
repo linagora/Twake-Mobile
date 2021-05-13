@@ -64,13 +64,18 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
     if (event is ReloadWorkspaces) {
       yield WorkspacesLoading(companyId: event.companyId);
       await repository.reload(
-        filters: [
-          ['company_id', '=', event.companyId]
-        ],
-        queryParams: {'company_id': event.companyId},
-        sortFields: {'name': true},
-        forceFromApi: event.forceFromApi,
-      );
+          filters: [
+            ['company_id', '=', event.companyId]
+          ],
+          queryParams: {
+            'company_id': event.companyId
+          },
+          sortFields: {
+            'name': true
+          },
+          onApiLoaded: () {
+            this.add(ForceRefresh());
+          });
 
       final newState = WorkspacesLoaded(
         workspaces: repository.items,
