@@ -114,6 +114,9 @@ class ThreadsBloc<T extends BaseChannelBloc>
         filters: filters,
         sortFields: {'creation_date': true},
         limit: _THREAD_MESSAGES_LIMIT,
+        onNewMessagesCallback: () {
+          this.add(FinishLoadingMessages());
+        },
       );
       if (!success) {
         repository.clean();
