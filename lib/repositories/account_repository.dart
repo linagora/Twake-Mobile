@@ -43,6 +43,8 @@ class AccountRepository extends JsonSerializable {
   static final _api = Api();
   @JsonKey(ignore: true)
   static final _storage = Storage();
+  @JsonKey(ignore: true)
+  final _accountMap = <String, dynamic>{};
 
   // Pseudo constructor for loading account from storage or api
   static Future<AccountRepository> load() async {
@@ -109,64 +111,29 @@ class AccountRepository extends JsonSerializable {
   }) {
     if (newFirstName.isNotReallyEmpty) {
       firstName.value = newFirstName;
+      _accountMap['firstname'] = newFirstName;
     }
     if (newLastName.isNotReallyEmpty) {
       lastName.value = newLastName;
+      _accountMap['lastname'] = newLastName;
     }
     if (newLanguage.isNotReallyEmpty) {
       language.value = newLanguage;
+      _accountMap['language'] = newLanguage;
     }
     if (oldPassword.isNotReallyEmpty && newPassword.isNotReallyEmpty) {
-      password = PasswordField(
-        isReadonly: password.isReadonly,
-        value: PasswordValues(
-          oldPassword: oldPassword,
-          newPassword: newPassword,
-        ),
-      );
-    }
-  }
-
-  Future<AccountRepository> patch({
-    String newFirstName,
-    String newLastName,
-    String newLanguage,
-    String oldPassword,
-    String newPassword,
-  }) async {
-    final accountMap = <String, dynamic>{};
-    if (newFirstName != null &&
-        newFirstName.isNotReallyEmpty &&
-        newFirstName != this.firstName.value) {
-      firstName.value = newFirstName;
-      accountMap['firstname'] = newFirstName;
-    }
-    if (newLastName != null &&
-        newLastName.isNotReallyEmpty &&
-        newLastName != this.lastName.value) {
-      lastName.value = newLastName;
-      accountMap['lastname'] = newLastName;
-    }
-    if (newLanguage != null &&
-        newLanguage.isNotReallyEmpty &&
-        newLanguage != this.language.value) {
-      language.value = newLanguage;
-      accountMap['language'] = newLanguage;
-    }
-    if (oldPassword != null &&
-        newPassword != null &&
-        oldPassword.isNotReallyEmpty &&
-        newPassword.isNotReallyEmpty) {
-      accountMap['password'] = {
+      _accountMap['password'] = {
         'old': oldPassword,
         'new': newPassword,
       };
     }
-    print('Data for account update: $accountMap');
-    // final result = await _api.patch(Endpoint.account, body: accountMap);
-    // if (result != null) {
-    //   print('Updated account: ${jsonEncode(result)}');
-    // }
+  }
+
+  Future<AccountRepository> patch() async {
+    print('Data for account update: $_accountMap');
+    final result = await _api.patch(Endpoint.account, body: _accountMap);
+    print('Updated account: ${jsonEncode(result)}');
+    _accountMap.clear();
     return this;
   }
 

@@ -68,7 +68,7 @@ class AccountCubit extends Cubit<AccountState> {
     (languageTitle != null && languageTitle.isNotReallyEmpty)
         ? accountRepository.languageCodeFromTitle(languageTitle)
         : '';
-    await accountRepository.patch(
+    await accountRepository.update(
       newFirstName: firstName,
       newLastName: lastName,
       newLanguage: languageCode ?? '',
