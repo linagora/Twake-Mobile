@@ -395,10 +395,15 @@ class _TextInputState extends State<TextInput> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          SizedBox(width: 14.0),
           BlocBuilder<FileUploadBloc, FileUploadState>(
             builder: (context, state) {
               if (state is NothingToUpload) {
                 return IconButton(
+                  constraints: BoxConstraints(
+                    minHeight: 24.0,
+                    minWidth: 24.0,
+                  ),
                   padding: EdgeInsets.zero,
                   icon: Icon(Icons.attachment),
                   onPressed: widget.openFileExplorer,
@@ -427,6 +432,7 @@ class _TextInputState extends State<TextInput> {
               );
             },
           ),
+          SizedBox(width: 14.0),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
