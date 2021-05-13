@@ -395,56 +395,6 @@ class _TextInputState extends State<TextInput> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            padding: EdgeInsets.zero,
-            icon: Icon(widget.emojiVisible ? Icons.keyboard : Icons.tag_faces),
-            onPressed: widget.toggleEmojiBoard,
-            color: Colors.black54,
-          ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: Color(0xff979797).withOpacity(0.4),
-                ),
-              ),
-              child: TextField(
-                style: TextStyle(
-                  fontSize: 13.0,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff444444),
-                ),
-                maxLines: 4,
-                minLines: 1,
-                autofocus: widget.autofocus,
-                focusNode: widget.focusNode,
-                scrollController: widget.scrollController,
-                controller: widget.controller,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
-                  hintText: 'New reply...',
-                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
           BlocBuilder<FileUploadBloc, FileUploadState>(
             builder: (context, state) {
               if (state is NothingToUpload) {
@@ -480,6 +430,71 @@ class _TextInputState extends State<TextInput> {
               );
             },
           ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: Color(0xff979797).withOpacity(0.4),
+                ),
+              ),
+              child: TextField(
+                style: TextStyle(
+                  fontSize: 13.0,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff444444),
+                ),
+                maxLines: 4,
+                minLines: 1,
+                autofocus: widget.autofocus,
+                focusNode: widget.focusNode,
+                scrollController: widget.scrollController,
+                controller: widget.controller,
+                decoration: InputDecoration(
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
+                  hintText: 'New reply...',
+                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  suffixIcon: GestureDetector(
+                    onTap: widget.toggleEmojiBoard,
+                    child: Container(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Image.asset(
+                        'assets/images/emoji.png',
+                      ),
+                    ), //Image.asset('assets/images/attach.png'),
+                  ),
+                  suffixIconConstraints: BoxConstraints(
+                      minHeight: 24.0,
+                      minWidth: 24.0,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // IconButton(
+          //   padding: EdgeInsets.zero,
+          //   icon: Icon(widget.emojiVisible ? Icons.keyboard : Icons.tag_faces),
+          //   onPressed: widget.toggleEmojiBoard,
+          //   color: Colors.black54,
+          // ),
           GestureDetector(
             onTap: widget.canSend
                 ? () async {
