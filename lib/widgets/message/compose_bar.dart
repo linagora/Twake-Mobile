@@ -236,8 +236,8 @@ class _ComposeBar extends State<ComposeBar> {
                                         state.users[i].thumbnail,
                                         fit: BoxFit.contain,
                                         loadingBuilder:
-                                            (context, child, progres) {
-                                          return progres == null
+                                            (context, child, progress) {
+                                          return progress == null
                                               ? child
                                               : CircleAvatar(
                                                   child: Icon(Icons.person,
@@ -336,7 +336,7 @@ class _ComposeBar extends State<ComposeBar> {
   }
 }
 
-class TextInput extends StatelessWidget {
+class TextInput extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final ScrollController scrollController;
@@ -347,20 +347,42 @@ class TextInput extends StatelessWidget {
   final Function onMessageSend;
   final Function openFileExplorer;
   final Function fileNumClear;
-  int fileNumber;
+  final int fileNumber;
 
-  TextInput(
-      {this.onMessageSend,
-      this.controller,
-      this.focusNode,
-      this.autofocus,
-      this.emojiVisible,
-      this.scrollController,
-      this.toggleEmojiBoard,
-      this.openFileExplorer,
-      this.canSend,
-      this.fileNumber,
-      this.fileNumClear});
+  TextInput({
+    this.onMessageSend,
+    this.controller,
+    this.focusNode,
+    this.autofocus,
+    this.emojiVisible,
+    this.scrollController,
+    this.toggleEmojiBoard,
+    this.openFileExplorer,
+    this.canSend,
+    this.fileNumber,
+    this.fileNumClear,
+  });
+
+  @override
+  _TextInputState createState() => _TextInputState();
+}
+
+class _TextInputState extends State<TextInput> {
+  int _fileNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    _fileNumber = widget.fileNumber;
+  }
+
+  @override
+  void didUpdateWidget(covariant TextInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.fileNumber != widget.fileNumber) {
+      _fileNumber = widget.fileNumber;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -372,8 +394,8 @@ class TextInput extends StatelessWidget {
         children: [
           IconButton(
             padding: EdgeInsets.zero,
-            icon: Icon(emojiVisible ? Icons.keyboard : Icons.tag_faces),
-            onPressed: toggleEmojiBoard,
+            icon: Icon(widget.emojiVisible ? Icons.keyboard : Icons.tag_faces),
+            onPressed: widget.toggleEmojiBoard,
             color: Colors.black54,
           ),
           Expanded(
@@ -388,10 +410,10 @@ class TextInput extends StatelessWidget {
                 cursorHeight: 20,
                 maxLines: 4,
                 minLines: 1,
-                autofocus: autofocus,
-                focusNode: focusNode,
-                scrollController: scrollController,
-                controller: controller,
+                autofocus: widget.autofocus,
+                focusNode: widget.focusNode,
+                scrollController: widget.scrollController,
+                controller: widget.controller,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type your message...',
                   hintStyle: TextStyle(color: Colors.blueGrey),
@@ -407,7 +429,7 @@ class TextInput extends StatelessWidget {
                   child: IconButton(
                     padding: EdgeInsets.zero,
                     icon: Icon(Icons.attachment),
-                    onPressed: openFileExplorer,
+                    onPressed: widget.openFileExplorer,
                     color: Colors.black54,
                   ),
                 );
@@ -416,11 +438,11 @@ class TextInput extends StatelessWidget {
               } else if (state is FileUploaded) {
                 return InkWell(
                   child: CircleAvatar(
-                    child: (Text('$fileNumber')),
+                    child: (Text('$_fileNumber')),
                     //  await fileNumClear;
                     backgroundColor: Colors.indigo[50],
                   ),
-                  onTap: openFileExplorer,
+                  onTap: widget.openFileExplorer,
                 );
               }
               return CircleAvatar(
@@ -428,7 +450,7 @@ class TextInput extends StatelessWidget {
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(Icons.attachment),
-                  onPressed: openFileExplorer,
+                  onPressed: widget.openFileExplorer,
                   color: Colors.black54,
                 ),
               );
@@ -440,16 +462,17 @@ class TextInput extends StatelessWidget {
               alignment: Alignment.center,
               transform: Matrix4.rotationZ(-3 / 4), // rotate 45ish degree cc
               child: Icon(
-                canSend ? Icons.send : Icons.send_outlined,
-                color:
-                    canSend ? Theme.of(context).accentColor : Colors.grey[400],
+                widget.canSend ? Icons.send : Icons.send_outlined,
+                color: widget.canSend
+                    ? Theme.of(context).accentColor
+                    : Colors.grey[400],
               ),
             ),
-            onPressed: canSend
+            onPressed: widget.canSend
                 ? () async {
-                    await onMessageSend(controller.text, context);
-                    controller.clear();
-                    fileNumClear();
+                    await widget.onMessageSend(widget.controller.text, context);
+                    widget.controller.clear();
+                    widget.fileNumClear();
                   }
                 : null,
           ),
