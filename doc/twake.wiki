@@ -1,50 +1,32 @@
 = Twake: Mobile application =
 
 == State management == 
+
 State management in twake mobile is currently
 implemented using [[https://bloclibrary.dev/|BLoC]] pattern.  
 
 The list of different BLoCs, currently used:
-1. [[Account BLoC]] (cubit) - manages user account (possible merge with
-   [[Profile BLoC]])
-2. [[Add Channel BLoC]] - manages state of the screen when adding a new channel
-   (possible merge with [[Channels BLoC]])
-3. [[Add Workspace BLoC]] (cubit) - manages state when adding a new workspace
-   (possible merge with [[Workspaces BLoC]])
+1. [[Account BLoC]] (cubit) - manages user account (possible merge with [[Profile BLoC]])
+2. [[Add Channel BLoC]] - manages state of the screen when adding a new channel (possible merge with [[Channels BLoC]])
+3. [[Add Workspace BLoC]] (cubit) - manages state when adding a new workspace (possible merge with [[Workspaces BLoC]])
 4. [[Auth BLoC]] - manages user authentication and JWTokens
-5. [[Channels BLoC]] - manages fetching the list of user's channels in given
-   workspace
-6. [[Companies BLoC]] - manages fetching the list of user's companies (user may
-   be a member of multiple companies)
-7. [[Configuration BLoC]] (cubit) - manages user specific configuration,
-   currently only has HOST field.
-8. [[Connection BLoC]] - keeps track of network connection, possible condidate
-   for merge with [[Configuration BLoC]], as both provide some global state
-9. [[Directs BLoC]] - same as [[Channels BLoC]], but manages direct chats of
-   the user in given company
-10. [[Drafts BLoC]] - keeps track of unsent messages in
-    channels/directs/threads, possible merge with [[Channels BLoC]]/[[Directs BLoC]]/[[Single Message BLoC]]
-11. [[Edit Channel BLoC]] - Used to keep state of the screen during message
-    Editing, might be merged with [[Channels BLoC]]
-12. [[Fields BLoC]] (cubit) - manages the state of screen when adding
-    collaborators in workspaces (possible merge with some other BLoC), needs a
-    better naming
-13. [[File Upload BLoC]] - manages the state of file upload in channels or
-    threads 
+5. [[Channels BLoC]] - manages fetching the list of user's channels in given workspace
+6. [[Companies BLoC]] - manages fetching the list of user's companies (user may be a member of multiple companies)
+7. [[Configuration BLoC]] (cubit) - manages user specific configuration, currently only has HOST field.
+8. [[Connection BLoC]] - keeps track of network connection, possible condidate for merge with [[Configuration BLoC]], as both provide some global state
+9. [[Directs BLoC]] - same as [[Channels BLoC]], but manages direct chats of the user in given company
+10. [[Drafts BLoC]] - keeps track of unsent messages in channels/directs/threads, possible merge with [[Channels BLoC]]/[[Directs BLoC]]/[[Single Message BLoC]]
+11. [[Edit Channel BLoC]] - Used to keep state of the screen during message Editing, might be merged with [[Channels BLoC]]
+12. [[Fields BLoC]] (cubit) - manages the state of screen when adding collaborators in workspaces (possible merge with some other BLoC), needs a better naming
+13. [[File Upload BLoC]] - manages the state of file upload in channels or threads 
 14. [[Member BLoC]] (cubit) - manages the list of users in channel
-15. [[Mentions BLoC]] (cubit) - manages the list of users which can be
-    mentioned in given workspace
-16. [[Message Edit BLoC]] - manages single message which the user decided to
-    edit, possible merge with some other BLoC
+15. [[Mentions BLoC]] (cubit) - manages the list of users which can be mentioned in given workspace
+16. [[Message Edit BLoC]] - manages single message which the user decided to edit, possible merge with some other BLoC
 17. [[Messages BLoC]] - manages list of messages in public or direct channels
-18. [[Notifications BLoC]] - the most important BLoC of all, manages push
-    notifications and socketIO syncs with remote server
+18. [[Notifications BLoC]] - the most important BLoC of all, manages push notifications and socketIO syncs with remote server
 19. [[Profile BLoC]] - used to hold global state of user related data
-20. [[Sheet BLoC]] - manages the state of screen when user pulls up a draggable
-    scrollable, needs a better naming
-21. [[Single Message BLoC]] - manages the state of one message, in order to
-    update it's reactions or content without update entire list, might be
-    merged with [[Messages BLoC]]
+20. [[Sheet BLoC]] - manages the state of screen when user pulls up a draggable scrollable, needs a better naming
+21. [[Single Message BLoC]] - manages the state of one message, in order to update it's reactions or content without update entire list, might be merged with [[Messages BLoC]]
 22. [[Threads BLoC]] - same as [[Messages BLoC]], but for thread messages
 23. [[User BLoC]] - manages the state of individual user, holds almost no value, and may be removed
 24. [[Workspaces BLoC]] - manages the list of workspaces in chosen company
