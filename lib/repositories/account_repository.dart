@@ -78,6 +78,7 @@ class AccountRepository extends JsonSerializable {
     lastName = newRepo.lastName;
     language = newRepo.language;
     picture = newRepo.picture;
+    save();
 
     return this;
   }
