@@ -45,7 +45,6 @@ Future<AuthRepository> initAuth() async {
 }
 
 Future<InitData> initMain() async {
-  print("INIT MAIN");
   try {
     Emojis.load();
     final account = await AccountRepository.load();

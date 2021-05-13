@@ -20,13 +20,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   StreamSubscription _subscription;
 
   ProfileBloc(ProfileRepository rpstr, {this.notificationBloc})
-      : super(ProfileLoaded(
-          userId: rpstr.id,
-          firstName: rpstr.firstName,
-          lastName: rpstr.lastName,
-          thumbnail: rpstr.thumbnail,
-          badges: rpstr.badges,
-        )) {
+      : super(
+          ProfileLoaded(
+            userId: rpstr.id,
+            firstName: rpstr.firstName,
+            lastName: rpstr.lastName,
+            thumbnail: rpstr.thumbnail,
+            email: rpstr.email,
+            badges: rpstr.badges,
+          ),
+        ) {
     repository = rpstr;
     _subscription = notificationBloc.listen((NotificationState state) {
       if (state is BadgesUpdated || state is ChannelUpdated) {
@@ -55,6 +58,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   static String get thumbnail => repository.thumbnail;
 
   static String get username => repository.username;
+
+  static String get email => repository.email;
 
   static String get selectedCompanyId => repository.selectedCompanyId;
 
@@ -105,6 +110,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         firstName: repository.firstName,
         lastName: repository.lastName,
         thumbnail: repository.thumbnail,
+        email: repository.email,
         badges: repository.badges,
       );
     } else if (event is UpdateBadges) {
@@ -114,6 +120,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         firstName: repository.firstName,
         lastName: repository.lastName,
         thumbnail: repository.thumbnail,
+        email: repository.email,
         badges: repository.badges,
       );
       // Logger().w("SYNCING BADGES: ${this.state != state}");
@@ -121,19 +128,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     } else if (event is ClearProfile) {
       await repository.clean();
       yield ProfileEmpty();
-    } else if (event is UpdateProfile) {
-      final result = await repository.patch(
-        newFirstName: event.firstName,
-        newLastName: event.lastName,
-        newLanguage: event.language,
-        oldPassword: event.oldPassword,
-        newPassword: event.newPassword,
-      );
-      if (result != null) {
-        yield ProfileUpdated();
-      } else {
-        yield ProfileError('Something went wrong during Profile PATCH');
-      }
     }
   }
 

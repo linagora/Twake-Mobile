@@ -9,6 +9,7 @@ class ProfileLoaded extends ProfileState {
   final String firstName;
   final String lastName;
   final String thumbnail;
+  final String email;
   final Map<String, dynamic> badges;
 
   const ProfileLoaded({
@@ -16,6 +17,7 @@ class ProfileLoaded extends ProfileState {
     this.firstName,
     this.lastName,
     this.thumbnail,
+    this.email,
     this.badges = const {},
   });
 
@@ -50,13 +52,6 @@ class ProfileLoading extends ProfileState {
 
 class ProfileEmpty extends ProfileState {
   const ProfileEmpty();
-
-  @override
-  List<Object> get props => [];
-}
-
-class ProfileUpdated extends ProfileState {
-  const ProfileUpdated();
 
   @override
   List<Object> get props => [];
