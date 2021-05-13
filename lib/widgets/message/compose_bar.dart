@@ -387,10 +387,13 @@ class _TextInputState extends State<TextInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.only(top: 11.0, bottom: 11.0),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300], width: 1.5)),
+        color: Color(0xfff6f6f6),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           IconButton(
             padding: EdgeInsets.zero,
@@ -399,24 +402,36 @@ class _TextInputState extends State<TextInput> {
             color: Colors.black54,
           ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 2),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16.0),
+                border: Border.all(
+                  color: Color(0xff979797).withOpacity(0.4),
+                ),
+              ),
               child: TextField(
                 style: TextStyle(
-                  fontSize: 16.0,
+                  fontSize: 13.0,
                   fontWeight: FontWeight.w400,
                   color: Color(0xff444444),
                 ),
-                cursorHeight: 20,
                 maxLines: 4,
                 minLines: 1,
                 autofocus: widget.autofocus,
                 focusNode: widget.focusNode,
                 scrollController: widget.scrollController,
                 controller: widget.controller,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
-                  hintStyle: TextStyle(color: Colors.blueGrey),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
+                  hintText: 'New reply...',
+                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 0.0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
                 ),
               ),
             ),
