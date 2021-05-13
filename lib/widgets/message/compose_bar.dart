@@ -10,13 +10,13 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 // const _categoryHeaderHeight = 40.0;
 // const _categoryTitleHeight = _categoryHeaderHeight; // to
 
-class MessageEditField extends StatefulWidget {
+class ComposeBar extends StatefulWidget {
   final bool autofocus;
   final Function(String, BuildContext) onMessageSend;
   final Function(String, BuildContext) onTextUpdated;
   final String initialText;
 
-  MessageEditField({
+  ComposeBar({
     @required this.onMessageSend,
     @required this.onTextUpdated,
     this.autofocus = false,
@@ -24,10 +24,10 @@ class MessageEditField extends StatefulWidget {
   });
 
   @override
-  _MessageEditField createState() => _MessageEditField();
+  _ComposeBar createState() => _ComposeBar();
 }
 
-class _MessageEditField extends State<MessageEditField> {
+class _ComposeBar extends State<ComposeBar> {
   final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+$');
   bool _emojiVisible = false;
   bool _mentionsVisible = false;
@@ -105,7 +105,7 @@ class _MessageEditField extends State<MessageEditField> {
   }
 
   @override
-  void didUpdateWidget(covariant MessageEditField oldWidget) {
+  void didUpdateWidget(covariant ComposeBar oldWidget) {
     if (oldWidget.initialText != widget.initialText) {
       _controller.text = widget.initialText;
     }

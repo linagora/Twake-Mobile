@@ -9,7 +9,7 @@ import 'package:twake/models/direct.dart';
 import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
-import 'package:twake/widgets/message/message_edit_field.dart';
+import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
 class ThreadPage<T extends BaseChannelBloc> extends StatefulWidget {
@@ -169,7 +169,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                   child: BlocBuilder<MessageEditBloc,
                                       MessageEditState>(
                                     builder: (ctx, state) {
-                                      return MessageEditField(
+                                      return ComposeBar(
                                         initialText: state is MessageEditing
                                             ? state.originalStr
                                             : draft ?? '',
@@ -195,8 +195,8 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                                             DraftType.thread));
                                               },
                                         onTextUpdated: state is MessageEditing
-                                            ? (text) {}
-                                            : (text) {
+                                            ? (text, context) {}
+                                            : (text, context) {
                                                 context
                                                     .read<DraftBloc>()
                                                     .add(UpdateDraft(

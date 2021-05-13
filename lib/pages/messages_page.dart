@@ -17,7 +17,7 @@ import 'package:twake/widgets/common/stacked_image_avatars.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/widgets/common/channel_title.dart';
-import 'package:twake/widgets/message/message_edit_field.dart';
+import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/widgets/message/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
 
@@ -225,7 +225,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
 
                     return BlocBuilder<MessageEditBloc, MessageEditState>(
                       builder: (ctx, state) {
-                        return MessageEditField(
+                        return ComposeBar(
                           autofocus: state is MessageEditing,
                           initialText: state is MessageEditing
                               ? state.originalStr
@@ -242,8 +242,8 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                       );
                                 },
                           onTextUpdated: state is MessageEditing
-                              ? (text) {}
-                              : (text) {
+                              ? (text, context) {}
+                              : (text, context) {
                                   context.read<DraftBloc>().add(
                                         UpdateDraft(
                                           id: channelId,

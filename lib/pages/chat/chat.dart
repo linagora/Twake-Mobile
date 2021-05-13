@@ -16,7 +16,7 @@ import 'package:twake/models/channel.dart';
 import 'package:twake/models/direct.dart';
 import 'package:twake/pages/chat/chat_header.dart';
 import 'package:twake/repositories/draft_repository.dart';
-import 'package:twake/pages/chat/message_edit_field.dart';
+import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/utils/twacode.dart';
@@ -187,7 +187,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                         builder: (ctx, state) {
                           return BlocProvider(
                             create: (BuildContext context) => FileUploadBloc(),
-                            child: MessageEditField(
+                            child: ComposeBar(
                               autofocus: state is MessageEditing,
                               initialText: state is MessageEditing
                                   ? state.originalStr
