@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -133,8 +134,15 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                       maxHeight: Dim.heightPercent(88),
                       minHeight: Dim.heightPercent(78),
                     ),
-                    child: BlocProvider<MessageEditBloc>(
-                      create: (ctx) => MessageEditBloc(),
+                    child: MultiBlocProvider(
+                      providers: [
+                        BlocProvider<MessageEditBloc>(
+                          create: (BuildContext context) => MessageEditBloc(),
+                        ),
+                        BlocProvider<FileUploadBloc>(
+                          create: (BuildContext context) => FileUploadBloc(),
+                        ),
+                      ],
                       child: Column(
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
