@@ -426,9 +426,18 @@ class _TextInputState extends State<TextInput> {
                   contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
                   hintText: 'New reply...',
                   hintStyle: TextStyle(color: Colors.black.withOpacity(0.2)),
-                  border: UnderlineInputBorder(
+                  border: OutlineInputBorder(
                     borderSide: BorderSide(
-                      width: 0.0,
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      style: BorderStyle.none,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
                       style: BorderStyle.none,
                     ),
                   ),
