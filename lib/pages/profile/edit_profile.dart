@@ -1,17 +1,13 @@
 import 'dart:io';
-import 'dart:isolate';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
-import 'package:twake/widgets/common/button_field.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
-import 'package:twake/widgets/common/switch_field.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/image_processor.dart';
 
@@ -89,7 +85,7 @@ class _EditProfileState extends State<EditProfile> {
 
         // _fileName = paths[0].path;
         // print('Filename to be saved: $_fileName');
-        context.read<AccountCubit>().updateImage(context, processed);
+        // context.read<AccountCubit>().updateImage(context, processed);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());

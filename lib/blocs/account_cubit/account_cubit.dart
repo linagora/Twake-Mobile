@@ -78,36 +78,44 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
-  Future<void> updateImage(BuildContext context, List<int> bytes) async {
-    print('Call with bytes: $bytes');
-    emit(AccountSaving(shouldUploadPicture: true));
-    context.read<FileUploadBloc>()
-      ..add(
-        StartUpload(
-          bytes: bytes,
-          endpoint: Endpoint.accountPicture,
-        ),
-      )
-      ..listen(
-        (FileUploadState state) {
-          print('File upload state: $state');
+  void updateImage(List<int> bytes) {
 
-          if (state is FileUploaded) {
-            // fetch();
-            // final uploadedFile = state.files.first;
-            // final link = uploadedFile.toJson();
-            // print('Link: $link');
-            for (var file in state.files) {
-              final link = file.toJson();
-              print('Link: $link');
-            }
-            context.read<FileUploadBloc>().add(ClearUploads());
-
-            emit(AccountPictureUploaded(bytes.toString()));
-          }
-        },
-      );
   }
+
+  void uploadImage() {
+
+  }
+
+  // Future<void> updateImage(BuildContext context, List<int> bytes) async {
+  //   print('Call with bytes: $bytes');
+  //   emit(AccountSaving(shouldUploadPicture: true));
+  //   context.read<FileUploadBloc>()
+  //     ..add(
+  //       StartUpload(
+  //         bytes: bytes,
+  //         endpoint: Endpoint.accountPicture,
+  //       ),
+  //     )
+  //     ..listen(
+  //       (FileUploadState state) {
+  //         print('File upload state: $state');
+  //
+  //         if (state is FileUploaded) {
+  //           // fetch();
+  //           // final uploadedFile = state.files.first;
+  //           // final link = uploadedFile.toJson();
+  //           // print('Link: $link');
+  //           for (var file in state.files) {
+  //             final link = file.toJson();
+  //             print('Link: $link');
+  //           }
+  //           context.read<FileUploadBloc>().add(ClearUploads());
+  //
+  //           emit(AccountPictureUploaded(bytes.toString()));
+  //         }
+  //       },
+  //     );
+  // }
 
   void updateAccountFlowStage(AccountFlowStage stage) {
     emit(AccountFlowStageUpdated(stage: stage));
