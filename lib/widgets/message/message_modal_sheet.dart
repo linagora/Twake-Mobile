@@ -4,7 +4,6 @@ import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/utils/twacode.dart';
 
 class MessageModalSheet extends StatefulWidget {
   final String userId;
