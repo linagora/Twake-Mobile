@@ -12,7 +12,7 @@ class Profile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: BlocBuilder<AccountCubit, AccountState>(
-        buildWhen: (_, current) => current is! AccountFlowStageUpdated,
+        buildWhen: (_, current) => current is AccountLoaded,
         builder: (context, state) {
           var firstName = '';
           var lastName = '';

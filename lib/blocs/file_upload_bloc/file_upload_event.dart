@@ -49,7 +49,7 @@ class StartUpload extends FileUploadEvent {
       : Future.value(Uint8List.fromList(bytes).elementSizeInBytes);
 
   @override
-  List<Object> get props => [path, bytes];
+  List<Object> get props => [];
 }
 
 class CancelUpload extends FileUploadEvent {
@@ -76,7 +76,7 @@ class ErrorUpload extends FileUploadEvent {
   const ErrorUpload({this.reason, this.filename, this.size});
 
   @override
-  List<Object> get props => [reason];
+  List<Object> get props => [];
 }
 
 class ClearUploads extends FileUploadEvent {

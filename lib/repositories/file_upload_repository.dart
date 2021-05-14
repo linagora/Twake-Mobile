@@ -8,6 +8,10 @@ class FileUploadRepository {
 
   List<UploadedFile> files = [];
 
+  // FileUploadRepository() {
+  //   print('FileUploadRepository initialization');
+  // }
+
   void upload({
     FormData payload,
     String endpoint = Endpoint.fileUpload,
