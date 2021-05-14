@@ -83,6 +83,7 @@ class AccountCubit extends Cubit<AccountState> {
     context.read<FileUploadBloc>()
       ..add(
         StartUpload(
+          // path: 'userpic.jpg',
           bytes: bytes,
           endpoint: Endpoint.accountPicture,
         ),
@@ -92,7 +93,7 @@ class AccountCubit extends Cubit<AccountState> {
           if (state is FileUploaded && state.files.isNotEmpty) {
             // fetch();
             final uploadedFile = state.files.first;
-            final link = uploadedFile.download;
+            final link = uploadedFile.filename;
             print('Link: $link');
             emit(AccountPictureUploaded(link));
           }

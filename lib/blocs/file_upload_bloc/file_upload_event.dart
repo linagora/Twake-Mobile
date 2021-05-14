@@ -34,11 +34,11 @@ class StartUpload extends FileUploadEvent {
   }
 
   String get filename {
-    return basename(path);
+    return path.isNotEmpty ? basename(path) : 'userpic.jpg';
   }
 
   Future<int> get size {
-    return File(path).length();
+    return path.isNotEmpty ? File(path).length() : Future.value(0);
   }
 
   @override
