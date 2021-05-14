@@ -99,12 +99,12 @@ class AccountUpdated extends AccountState {
 }
 
 class AccountSaving extends AccountState {
-  final bool shouldUpdatePicture;
+  final bool shouldUploadPicture;
 
-  AccountSaving({this.shouldUpdatePicture = false});
+  AccountSaving({this.shouldUploadPicture = false});
 
   @override
-  List<Object> get props => [shouldUpdatePicture];
+  List<Object> get props => [shouldUploadPicture];
 }
 
 class AccountSaved extends AccountState {
@@ -124,6 +124,15 @@ class AccountSaved extends AccountState {
         lastName,
         language,
       ];
+}
+
+class AccountPictureUploaded extends AccountState {
+  final String link;
+
+  const AccountPictureUploaded(this.link);
+
+  @override
+  List<Object> get props => [link];
 }
 
 class AccountError extends AccountState {

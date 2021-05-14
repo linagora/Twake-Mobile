@@ -78,19 +78,23 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
-  Future<void> updateImage(BuildContext context, String path) async {
-    emit(AccountSaving(shouldUpdatePicture: true));
+  Future<void> updateImage(BuildContext context, List<int> bytes) async {
+    emit(AccountSaving(shouldUploadPicture: true));
     context.read<FileUploadBloc>()
       ..add(
         StartUpload(
-          path: path,
+          bytes: bytes,
           endpoint: Endpoint.accountPicture,
         ),
       )
       ..listen(
         (FileUploadState state) {
-          if (state is FileUploaded) {
-            fetch();
+          if (state is FileUploaded && state.files.isNotEmpty) {
+            // fetch();
+            final uploadedFile = state.files.first;
+            final link = uploadedFile.download;
+            print('Link: $link');
+            emit(AccountPictureUploaded(link));
           }
         },
       );
