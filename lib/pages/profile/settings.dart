@@ -4,6 +4,7 @@ import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/repositories/sheet_repository.dart';
+import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/switch_field.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
@@ -156,6 +157,8 @@ class _SettingsState extends State<Settings> {
                 ),
                 SizedBox(height: 24.0),
                 ButtonField(
+                  onTap: () => openTwakeWebView(context,
+                      'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=${ProfileBloc.email}'),
                   image: 'assets/images/support.png',
                   title: 'Customer support',
                   titleStyle: TextStyle(
