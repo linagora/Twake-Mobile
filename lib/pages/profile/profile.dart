@@ -20,16 +20,14 @@ class Profile extends StatelessWidget {
           var language = '';
           var availableLanguages = <LanguageOption>[];
 
-          if (state is AccountLoaded ||
-              state is AccountSaved ||
-              state is AccountInitial) {
+          if (state is AccountLoaded) {
             firstName = state.firstName;
             lastName = state.lastName;
             picture = state.picture;
             availableLanguages = state.availableLanguages;
           }
 
-          print('AccountCubit state: $state');
+          print('AccountCubit state in Profile: $state');
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

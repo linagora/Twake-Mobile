@@ -56,9 +56,9 @@ class _EditProfileState extends State<EditProfile> {
     final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
     context.read<AccountCubit>().updateInfo(
-      firstName: firstName,
-      lastName: lastName,
-    );
+          firstName: firstName,
+          lastName: lastName,
+        );
     FocusScope.of(context).requestFocus(FocusNode());
     context.read<SheetBloc>().add(CloseSheet());
     context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
@@ -103,11 +103,10 @@ class _EditProfileState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return BlocBuilder<AccountCubit, AccountState>(
       builder: (context, state) {
-        final _isUpdating = state is AccountSaving;
+        print('AccountCubit state in EditProfile: $state');
 
-        if (state is AccountLoaded ||
-            state is AccountSaved ||
-            state is AccountInitial) {
+        final _isUpdating = state is AccountSaving;
+        if (state is AccountLoaded) {
           _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
           _lastNameController.text = state.lastName;
@@ -139,7 +138,7 @@ class _EditProfileState extends State<EditProfile> {
                               context
                                   .read<AccountCubit>()
                                   .updateAccountFlowStage(
-                                  AccountFlowStage.info);
+                                      AccountFlowStage.info);
                               FocusScope.of(context).requestFocus(FocusNode());
                             },
                             child: Icon(
@@ -178,10 +177,10 @@ class _EditProfileState extends State<EditProfile> {
                           _isUpdating
                               ? RoundedShimmer(size: 100.0)
                               : SelectableAvatar(
-                            size: 100.0,
-                            userpic: _picture,
-                            onTap: () => _openFileExplorer(),
-                          ),
+                                  size: 100.0,
+                                  userpic: _picture,
+                                  onTap: () => _openFileExplorer(),
+                                ),
                           SizedBox(height: 12.0),
                           GestureDetector(
                             onTap: () => _openFileExplorer(),

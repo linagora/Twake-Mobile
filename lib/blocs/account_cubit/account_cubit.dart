@@ -19,27 +19,12 @@ class AccountCubit extends Cubit<AccountState> {
   final AccountRepository accountRepository;
 
   AccountCubit(this.accountRepository)
-      : super(AccountInitial(
-    userName: accountRepository.userName.value,
-    firstName: accountRepository.firstName.value,
-    lastName: accountRepository.lastName.value,
-    picture: accountRepository.picture.value,
-    language: accountRepository.selectedLanguage().title,
-    availableLanguages: accountRepository.language.options,
-  )) {
-    emit(AccountLoaded(
-      userName: accountRepository.userName.value,
-      firstName: accountRepository.firstName.value,
-      lastName: accountRepository.lastName.value,
-      picture: accountRepository.picture.value,
-      language: accountRepository.selectedLanguage().title,
-      availableLanguages: accountRepository.language.options,
-    ));
-  }
+      : super(AccountInitial(stage: AccountFlowStage.info));
 
-  Future<void> fetch() async {
+  Future<void> fetch({bool fromNetwork = true}) async {
     emit(AccountLoading());
-    await accountRepository.reload();
+
+    if (fromNetwork) await accountRepository.reload();
 
     final availableLanguages =
         accountRepository.language.options ?? <LanguageOption>[];
@@ -56,37 +41,45 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
-  Future<void> updateInfo({
+  void updateInfo({
+    // In the local storage :)
     String firstName,
     String lastName,
     String languageTitle,
     String oldPassword,
     String newPassword,
+    bool shouldUpdateCache = false,
   }) async {
-    emit(AccountSaving());
+    emit(AccountUpdating(
+      firstName: firstName,
+      lastName: lastName,
+      language: languageTitle,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    ));
     final languageCode =
-    (languageTitle != null && languageTitle.isNotReallyEmpty)
-        ? accountRepository.languageCodeFromTitle(languageTitle)
-        : '';
-    await accountRepository.update(
+        (languageTitle != null && languageTitle.isNotReallyEmpty)
+            ? accountRepository.languageCodeFromTitle(languageTitle)
+            : '';
+    accountRepository.update(
       newFirstName: firstName,
       newLastName: lastName,
       newLanguage: languageCode ?? '',
       oldPassword: oldPassword,
       newPassword: newPassword,
+      shouldUpdateCache: shouldUpdateCache,
     );
-    emit(AccountSaved(
-      userName: accountRepository.userName.value,
+    emit(AccountUpdated(
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
-      picture: accountRepository.picture.value,
       language: accountRepository.selectedLanguage().title,
-      availableLanguages: accountRepository.language.options,
+      oldPassword: oldPassword,
+      newPassword: newPassword,
     ));
   }
 
   Future<void> updateImage(BuildContext context, String path) async {
-    emit(AccountSaving(isPictureUpdating: true));
+    emit(AccountSaving(shouldUpdatePicture: true));
     context.read<FileUploadBloc>()
       ..add(
         StartUpload(
@@ -95,7 +88,7 @@ class AccountCubit extends Cubit<AccountState> {
         ),
       )
       ..listen(
-            (FileUploadState state) {
+        (FileUploadState state) {
           if (state is FileUploaded) {
             fetch();
           }
@@ -103,7 +96,7 @@ class AccountCubit extends Cubit<AccountState> {
       );
   }
 
-  Future<void> updateAccountFlowStage(AccountFlowStage stage) async {
-    emit(AccountFlowStageUpdated(stage));
+  void updateAccountFlowStage(AccountFlowStage stage) {
+    emit(AccountFlowStageUpdated(stage: stage));
   }
 }

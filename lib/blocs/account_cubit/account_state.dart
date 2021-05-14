@@ -1,6 +1,26 @@
 part of 'account_cubit.dart';
 
 abstract class AccountState extends Equatable {
+  const AccountState();
+}
+
+class AccountInitial extends AccountState {
+  final AccountFlowStage stage;
+
+  const AccountInitial({@required this.stage});
+
+  @override
+  List<Object> get props => [stage];
+}
+
+class AccountLoading extends AccountState {
+  const AccountLoading();
+
+  @override
+  List<Object> get props => [];
+}
+
+class AccountLoaded extends AccountState {
   final String userName;
   final String firstName;
   final String lastName;
@@ -8,7 +28,7 @@ abstract class AccountState extends Equatable {
   final String language;
   final List<LanguageOption> availableLanguages;
 
-  const AccountState({
+  const AccountLoaded({
     this.userName,
     this.firstName,
     this.lastName,
@@ -19,87 +39,97 @@ abstract class AccountState extends Equatable {
 
   @override
   List<Object> get props => [
-    userName,
-    firstName,
-    lastName,
-    picture,
-    language,
-    availableLanguages,
-  ];
+        userName,
+        firstName,
+        lastName,
+        picture,
+        language,
+        availableLanguages,
+      ];
 }
 
-class AccountInitial extends AccountState {
-  const AccountInitial({
-    String userName,
-    String firstName,
-    String lastName,
-    String picture,
-    String language,
-    List<LanguageOption> availableLanguages,
-  }) : super(
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    picture: picture,
-    language: language,
-    availableLanguages: availableLanguages,
-  );
-}
+class AccountUpdating extends AccountState {
+  final String firstName;
+  final String lastName;
+  final String language;
+  final String oldPassword;
+  final String newPassword;
 
-class AccountLoading extends AccountState {
+  const AccountUpdating({
+    this.firstName,
+    this.lastName,
+    this.language,
+    this.oldPassword,
+    this.newPassword,
+  });
+
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        firstName,
+        lastName,
+        language,
+        oldPassword,
+        newPassword,
+      ];
 }
 
-class AccountLoaded extends AccountState {
-  const AccountLoaded({
-    String userName,
-    String firstName,
-    String lastName,
-    String picture,
-    String language,
-    List<LanguageOption> availableLanguages,
-  }) : super(
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    picture: picture,
-    language: language,
-    availableLanguages: availableLanguages,
-  );
+class AccountUpdated extends AccountState {
+  final String firstName;
+  final String lastName;
+  final String language;
+  final String oldPassword;
+  final String newPassword;
+
+  const AccountUpdated({
+    this.firstName,
+    this.lastName,
+    this.language,
+    this.oldPassword,
+    this.newPassword,
+  });
+
+  @override
+  List<Object> get props => [
+        firstName,
+        lastName,
+        language,
+        oldPassword,
+        newPassword,
+      ];
 }
 
 class AccountSaving extends AccountState {
-  final bool isPictureUpdating;
+  final bool shouldUpdatePicture;
 
-  AccountSaving({this.isPictureUpdating = false});
+  AccountSaving({this.shouldUpdatePicture = false});
 
   @override
-  List<Object> get props => [isPictureUpdating];
+  List<Object> get props => [shouldUpdatePicture];
 }
 
 class AccountSaved extends AccountState {
+  final String firstName;
+  final String lastName;
+  final String language;
+
   const AccountSaved({
-    String userName,
-    String firstName,
-    String lastName,
-    String picture,
-    String language,
-    List<LanguageOption> availableLanguages,
-  }) : super(
-    userName: userName,
-    firstName: firstName,
-    lastName: lastName,
-    picture: picture,
-    language: language,
-    availableLanguages: availableLanguages,
-  );
+    this.firstName,
+    this.lastName,
+    this.language,
+  });
+
+  @override
+  List<Object> get props => [
+        firstName,
+        lastName,
+        language,
+      ];
 }
 
 class AccountError extends AccountState {
   final String message;
 
-  AccountError({this.message});
+  const AccountError({this.message});
 
   @override
   List<Object> get props => [message];
@@ -108,7 +138,7 @@ class AccountError extends AccountState {
 class AccountFlowStageUpdated extends AccountState {
   final AccountFlowStage stage;
 
-  const AccountFlowStageUpdated(this.stage);
+  const AccountFlowStageUpdated({this.stage});
 
   @override
   List<Object> get props => [stage];

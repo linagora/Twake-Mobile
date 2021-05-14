@@ -108,6 +108,7 @@ class AccountRepository extends JsonSerializable {
     String newLanguage = '',
     String oldPassword = '',
     String newPassword = '',
+    bool shouldUpdateCache = false,
   }) {
     if (newFirstName.isNotReallyEmpty) {
       firstName.value = newFirstName;
@@ -127,6 +128,7 @@ class AccountRepository extends JsonSerializable {
         'new': newPassword,
       };
     }
+    if (shouldUpdateCache) _save();
   }
 
   Future<AccountRepository> patch() async {
