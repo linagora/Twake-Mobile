@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
@@ -23,9 +24,17 @@ class StartUpload extends FileUploadEvent {
   });
 
   Future<FormData> payload() async {
+    var almostUniqueName = '';
+    if (path.isEmpty) {
+      // If bytes is all we have.
+      almostUniqueName =
+          '${DateTime.now().microsecondsSinceEpoch.toString()}.jpg';
+      print('Almost unique filename: $almostUniqueName');
+    }
+
     final file = bytes != null && bytes.isNotEmpty
-        ? MultipartFile.fromBytes(bytes, filename: this.filename)
-        : await MultipartFile.fromFile(path, filename: this.filename);
+        ? MultipartFile.fromBytes(bytes, filename: almostUniqueName)
+        : await MultipartFile.fromFile(path, filename: filename);
 
     return FormData.fromMap({
       'file': file,
@@ -33,16 +42,14 @@ class StartUpload extends FileUploadEvent {
     });
   }
 
-  String get filename {
-    return path.isNotEmpty ? basename(path) : 'userpic.jpg';
-  }
+  String get filename => basename(path);
 
-  Future<int> get size {
-    return path.isNotEmpty ? File(path).length() : Future.value(0);
-  }
+  Future<int> get size => path.isNotEmpty
+      ? File(path).length()
+      : Future.value(Uint8List.fromList(bytes).elementSizeInBytes);
 
   @override
-  List<Object> get props => [path];
+  List<Object> get props => [path, bytes];
 }
 
 class CancelUpload extends FileUploadEvent {

@@ -83,7 +83,6 @@ class AccountCubit extends Cubit<AccountState> {
     context.read<FileUploadBloc>()
       ..add(
         StartUpload(
-          // path: 'userpic.jpg',
           bytes: bytes,
           endpoint: Endpoint.accountPicture,
         ),
