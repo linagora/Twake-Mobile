@@ -16,10 +16,10 @@ class ProfileFlow extends StatelessWidget {
       ),
     ];
     return BlocBuilder<AccountCubit, AccountState>(
-      buildWhen: (_, current) => current is AccountFlowStageUpdated,
+      buildWhen: (_, current) => current is AccountFlowStageUpdateSuccess,
       builder: (context, state) {
         var i = 0;
-        if (state is AccountFlowStageUpdated) {
+        if (state is AccountFlowStageUpdateSuccess) {
           // print('Current stage: ${state.stage}');
           switch (state.stage) {
             case AccountFlowStage.info:

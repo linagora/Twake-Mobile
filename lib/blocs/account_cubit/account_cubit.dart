@@ -22,7 +22,7 @@ class AccountCubit extends Cubit<AccountState> {
       : super(AccountInitial(stage: AccountFlowStage.info));
 
   Future<void> fetch({bool fromNetwork = true}) async {
-    emit(AccountLoading());
+    emit(AccountLoadInProgress());
 
     if (fromNetwork) await accountRepository.reload();
 
@@ -31,7 +31,7 @@ class AccountCubit extends Cubit<AccountState> {
     final currentLanguage = accountRepository.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
-    emit(AccountLoaded(
+    emit(AccountLoadSuccess(
       userName: accountRepository.userName.value,
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
@@ -50,7 +50,7 @@ class AccountCubit extends Cubit<AccountState> {
     String newPassword,
     bool shouldUpdateCache = false,
   }) async {
-    emit(AccountUpdating(
+    emit(AccountUpdateInProgress(
       firstName: firstName,
       lastName: lastName,
       language: languageTitle,
@@ -69,7 +69,7 @@ class AccountCubit extends Cubit<AccountState> {
       newPassword: newPassword,
       shouldUpdateCache: shouldUpdateCache,
     );
-    emit(AccountUpdated(
+    emit(AccountUpdateSuccess(
       firstName: accountRepository.firstName.value,
       lastName: accountRepository.lastName.value,
       language: accountRepository.selectedLanguage().title,
@@ -79,7 +79,7 @@ class AccountCubit extends Cubit<AccountState> {
   }
 
   void updateImage(List<int> bytes) {
-
+    accountRepository.encodedImage = bytes;
   }
 
   void uploadImage() {
@@ -118,6 +118,6 @@ class AccountCubit extends Cubit<AccountState> {
   // }
 
   void updateAccountFlowStage(AccountFlowStage stage) {
-    emit(AccountFlowStageUpdated(stage: stage));
+    emit(AccountFlowStageUpdateSuccess(stage: stage));
   }
 }

@@ -133,7 +133,7 @@ class AccountRepository extends JsonSerializable {
     if (shouldUpdateCache) _save();
   }
 
-  set updateImage(List<int> bytes) => _bytes = bytes;
+  set encodedImage(List<int> bytes) => _bytes = bytes;
 
   Future<AccountRepository> patch() async {
     print('Data for account update: $_accountMap');

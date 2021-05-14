@@ -101,8 +101,8 @@ class _EditProfileState extends State<EditProfile> {
       builder: (context, state) {
         print('AccountCubit state in EditProfile: $state');
 
-        final _isUpdating = state is AccountSaving;
-        if (state is AccountLoaded) {
+        final _isUpdating = state is AccountSaveInProgress;
+        if (state is AccountLoadSuccess) {
           _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
           _lastNameController.text = state.lastName;

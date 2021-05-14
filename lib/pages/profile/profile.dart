@@ -12,7 +12,7 @@ class Profile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: BlocBuilder<AccountCubit, AccountState>(
-        buildWhen: (_, current) => current is AccountLoaded,
+        buildWhen: (_, current) => current is AccountLoadSuccess,
         builder: (context, state) {
           var firstName = '';
           var lastName = '';
@@ -20,7 +20,7 @@ class Profile extends StatelessWidget {
           var language = '';
           var availableLanguages = <LanguageOption>[];
 
-          if (state is AccountLoaded) {
+          if (state is AccountLoadSuccess) {
             firstName = state.firstName;
             lastName = state.lastName;
             picture = state.picture;
