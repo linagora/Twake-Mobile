@@ -10,10 +10,7 @@ class ProfileFlow extends StatelessWidget {
   Widget build(BuildContext context) {
     final profileFlowWidgets = [
       Profile(),
-      BlocProvider(
-        create: (context) => FileUploadBloc(),
-        child: EditProfile(),
-      ),
+      EditProfile(),
     ];
     return BlocBuilder<AccountCubit, AccountState>(
       buildWhen: (_, current) => current is AccountFlowStageUpdateSuccess,

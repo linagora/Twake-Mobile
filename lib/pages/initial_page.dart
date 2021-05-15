@@ -13,6 +13,7 @@ import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/fields_cubit/fields_cubit.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
@@ -226,9 +227,14 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   lazy: false,
                 ),
                 BlocProvider<MentionsCubit>(create: (_) => MentionsCubit()),
+                BlocProvider<FileUploadBloc>(
+                  create: (_) => FileUploadBloc(),
+                  lazy: false,
+                ),
                 BlocProvider<AccountCubit>(
-                  create: (_) => AccountCubit(
+                  create: (context) => AccountCubit(
                     state.initData.account,
+                    fileUploadBloc: BlocProvider.of<FileUploadBloc>(context),
                   ),
                   lazy: false,
                 ),

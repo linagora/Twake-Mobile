@@ -81,7 +81,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       if (socket.disconnected) socket.connect();
     }
     // launch health check on socket io
-    // so that on it will make sure that the app is constatly
+    // so that on it will make sure that the app is constantly
     // connected to socket endpoint
     socketIOHealthCheck();
   }
@@ -106,7 +106,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     }
     // otherwise loop endlessly
     Future.delayed(Duration(seconds: 5)).then((_) => socketIOHealthCheck());
-    // wait another 10 seconds for connection to apear
+    // wait another 10 seconds for connection to appear
     if (connectionBloc.state is ConnectionLost) return;
     // if not connected reconnect
     if (socket.disconnected ||

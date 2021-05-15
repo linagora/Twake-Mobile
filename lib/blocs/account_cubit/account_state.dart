@@ -145,7 +145,7 @@ class AccountPictureUploadInProgress extends AccountState {
 class AccountPictureUploadSuccess extends AccountState {
   final String link;
 
-  const AccountPictureUploadSuccess(this.link);
+  const AccountPictureUploadSuccess({this.link});
 
   @override
   List<Object> get props => [link];

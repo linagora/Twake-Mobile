@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
+import 'package:twake/services/endpoints.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
@@ -76,7 +78,7 @@ class _EditProfileState extends State<EditProfile> {
         print('Source size: ${paths[0].size}');
 
         final file = File(path);
-        final processed = await processFile(file);
+        final bytes = await processFile(file);
         // print('Processed file bytes: ${processed.path}');
         // print('Processed file size: ${processed.lengthSync()}');
 
@@ -85,7 +87,7 @@ class _EditProfileState extends State<EditProfile> {
 
         // _fileName = paths[0].path;
         // print('Filename to be saved: $_fileName');
-        // context.read<AccountCubit>().updateImage(context, processed);
+        context.read<AccountCubit>().updateImage(bytes);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());

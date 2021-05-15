@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,9 +19,28 @@ enum AccountFlowStage {
 
 class AccountCubit extends Cubit<AccountState> {
   final AccountRepository accountRepository;
+  final FileUploadBloc fileUploadBloc;
+  StreamSubscription _fileUploadSubscription;
 
-  AccountCubit(this.accountRepository)
-      : super(AccountInitial(stage: AccountFlowStage.info));
+  AccountCubit(this.accountRepository, {this.fileUploadBloc})
+      : super(AccountInitial(stage: AccountFlowStage.info)) {
+    // Listening for FileUploadBloc event
+    _fileUploadSubscription = fileUploadBloc.listen((state) {
+      print('File upload state: $state');
+
+      if (state is FileUploaded) {
+        // final uploadedFile = state.files.first;
+        // final link = uploadedFile.toJson();
+        // print('Link: $link');
+        for (var file in state.files) {
+          final link = file.toJson();
+          print('Link: $link');
+        }
+        fileUploadBloc.add(ClearUploads());
+        emit(AccountPictureUploadSuccess());
+      }
+    });
+  }
 
   Future<void> fetch({bool fromNetwork = true}) async {
     emit(AccountLoadInProgress());
@@ -78,46 +99,22 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
-  void updateImage(List<int> bytes) {
-    accountRepository.encodedImage = bytes;
+  Future<void> updateImage(List<int> bytes) async {
+    print('Call with bytes: $bytes');
+    fileUploadBloc.add(StartUpload(
+      bytes: bytes,
+      endpoint: Endpoint.accountPicture,
+    ));
+    emit(AccountPictureUploadInProgress());
   }
-
-  void uploadImage() {
-
-  }
-
-  // Future<void> updateImage(BuildContext context, List<int> bytes) async {
-  //   print('Call with bytes: $bytes');
-  //   emit(AccountSaving(shouldUploadPicture: true));
-  //   context.read<FileUploadBloc>()
-  //     ..add(
-  //       StartUpload(
-  //         bytes: bytes,
-  //         endpoint: Endpoint.accountPicture,
-  //       ),
-  //     )
-  //     ..listen(
-  //       (FileUploadState state) {
-  //         print('File upload state: $state');
-  //
-  //         if (state is FileUploaded) {
-  //           // fetch();
-  //           // final uploadedFile = state.files.first;
-  //           // final link = uploadedFile.toJson();
-  //           // print('Link: $link');
-  //           for (var file in state.files) {
-  //             final link = file.toJson();
-  //             print('Link: $link');
-  //           }
-  //           context.read<FileUploadBloc>().add(ClearUploads());
-  //
-  //           emit(AccountPictureUploaded(bytes.toString()));
-  //         }
-  //       },
-  //     );
-  // }
 
   void updateAccountFlowStage(AccountFlowStage stage) {
     emit(AccountFlowStageUpdateSuccess(stage: stage));
+  }
+
+  @override
+  Future<void> close() async {
+    await _fileUploadSubscription.cancel();
+    return super.close();
   }
 }
