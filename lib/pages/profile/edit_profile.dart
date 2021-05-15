@@ -53,13 +53,16 @@ class _EditProfileState extends State<EditProfile> {
     print('Save profile!');
     final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
+    final oldPassword = _oldPasswordController.text;
+    final newPassword = _newPasswordController.text;
     context.read<AccountCubit>().updateInfo(
           firstName: firstName,
           lastName: lastName,
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+          shouldUpdateCache: true,
         );
-    FocusScope.of(context).requestFocus(FocusNode());
-    context.read<SheetBloc>().add(CloseSheet());
-    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+    context.read<AccountCubit>().saveInfo();
   }
 
   Future<void> _openFileExplorer() async {
@@ -109,6 +112,11 @@ class _EditProfileState extends State<EditProfile> {
           _firstNameController.text = state.firstName;
           _lastNameController.text = state.lastName;
           _picture = state.picture;
+        }
+        if (state is AccountSaveSuccess) {
+          FocusScope.of(context).requestFocus(FocusNode());
+          context.read<SheetBloc>().add(CloseSheet());
+          context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
         }
 
         return GestureDetector(

@@ -133,6 +133,15 @@ class AccountSaveSuccess extends AccountState {
       ];
 }
 
+class AccountSaveFailure extends AccountState {
+  final String message;
+
+  const AccountSaveFailure({this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
 // Picture
 
 class AccountPictureUploadInProgress extends AccountState {

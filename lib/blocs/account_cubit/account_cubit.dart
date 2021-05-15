@@ -99,6 +99,16 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
+  Future<void>saveInfo() async {
+    emit(AccountSaveInProgress());
+    final result = await accountRepository.patch();
+    if (result is AccountRepository) {
+      emit(AccountSaveSuccess());
+    } else {
+      emit(AccountSaveFailure());
+    }
+  }
+
   Future<void> updateImage(List<int> bytes) async {
     print('Call with bytes: $bytes');
     fileUploadBloc.add(StartUpload(
