@@ -1,8 +1,5 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
@@ -10,7 +7,6 @@ import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
 import 'package:twake/utils/extensions.dart';
-import 'package:twake/utils/image_processor.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -122,7 +118,10 @@ class _EditProfileState extends State<EditProfile> {
           _onSuccess();
         }
         if (state is AccountPictureUpdateFailure) {
-          _picture = state.fallbackImage;
+          // If no image previously selected from picker.
+          if (_imageBytes.isEmpty) {
+            _picture = state.fallbackImage;
+          }
         }
 
         return GestureDetector(
