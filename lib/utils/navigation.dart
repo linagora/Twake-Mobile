@@ -7,12 +7,12 @@ import 'package:twake/blocs/member_cubit/member_cubit.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/channel.dart';
-import 'package:twake/pages/messages_page.dart';
 import 'package:twake/pages/edit_channel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/pages/profile/settings.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/chat/chat.dart';
+import 'package:twake/pages/twake_web_view.dart';
 
 void openSettings(BuildContext context) async {
   await Navigator.of(context)
@@ -60,6 +60,14 @@ void openChooseServer(BuildContext context) {
   Navigator.of(context)
       .push(MaterialPageRoute(
         builder: (context) => ServerConfiguration(),
+      ))
+      .then((r) => handleError(r, context));
+}
+
+void openTwakeWebView(BuildContext context, String url) {
+  Navigator.of(context)
+      .push(MaterialPageRoute(
+        builder: (context) => TwakeWebView(url),
       ))
       .then((r) => handleError(r, context));
 }
