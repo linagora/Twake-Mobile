@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/utils/extensions.dart';
@@ -9,6 +11,7 @@ class SelectableAvatar extends StatefulWidget {
   final String icon;
   final String userpic;
   final String localAsset;
+  final Uint8List bytes;
   final Function onTap;
 
   const SelectableAvatar({
@@ -17,7 +20,8 @@ class SelectableAvatar extends StatefulWidget {
     this.backgroundColor,
     this.icon,
     this.userpic,
-    this.localAsset = 'assets/images/pic.png',
+    this.localAsset,
+    this.bytes,
     this.onTap,
   }) : super(key: key);
 
@@ -29,6 +33,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   String _userpic;
   String _localAsset;
   String _icon;
+  Uint8List _bytes;
 
   @override
   void initState() {
@@ -36,6 +41,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
     _userpic = widget.userpic;
     _localAsset = widget.localAsset;
     _icon = widget.icon;
+    _bytes = widget.bytes;
   }
 
   @override
@@ -49,6 +55,9 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
     }
     if (oldWidget.localAsset != widget.localAsset) {
       _localAsset = widget.localAsset;
+    }
+    if (oldWidget.bytes != widget.bytes) {
+      _bytes = widget.bytes;
     }
   }
 
@@ -75,6 +84,7 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
                       (_localAsset != null && _localAsset.isNotReallyEmpty)
                           ? _localAsset
                           : '',
+                  bytes: _bytes,
                   width: widget.size,
                   height: widget.size,
                 )

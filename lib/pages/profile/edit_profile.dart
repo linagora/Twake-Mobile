@@ -1,12 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
-import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
-import 'package:twake/services/endpoints.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
@@ -27,8 +26,7 @@ class _EditProfileState extends State<EditProfile> {
 
   var _canSave = true;
   var _picture = '';
-
-  String _fileName;
+  var _imageBytes = <int>[];
 
   @override
   void initState() {
@@ -65,6 +63,12 @@ class _EditProfileState extends State<EditProfile> {
     context.read<AccountCubit>().saveInfo();
   }
 
+  void _onSuccess() {
+    FocusScope.of(context).requestFocus(FocusNode());
+    context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+    context.read<SheetBloc>().add(CloseSheet());
+  }
+
   Future<void> _openFileExplorer() async {
     List<PlatformFile> paths;
     try {
@@ -79,18 +83,11 @@ class _EditProfileState extends State<EditProfile> {
         final path = paths[0].path;
         print('Source path: $path');
         print('Source size: ${paths[0].size}');
-
         final file = File(path);
-        final bytes = await processFile(file);
-        // print('Processed file bytes: ${processed.path}');
-        // print('Processed file size: ${processed.lengthSync()}');
-
-        // final platformFile = PlatformFile(path: path, bytes: processed, size: processed);
-        // Image processor
-
-        // _fileName = paths[0].path;
-        // print('Filename to be saved: $_fileName');
-        context.read<AccountCubit>().updateImage(bytes);
+        _imageBytes = await processFile(file);
+        print(
+            'Reduced to: ${Uint8List.fromList(_imageBytes).elementSizeInBytes}');
+        context.read<AccountCubit>().updateImage(_imageBytes);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
@@ -102,21 +99,50 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AccountCubit, AccountState>(
+    return BlocConsumer<AccountCubit, AccountState>(
+      listenWhen: (_, current) =>
+          current is AccountLoadFailure ||
+          current is AccountSaveFailure ||
+          current is AccountPictureUpdateFailure ||
+          current is AccountPictureUploadFailure,
+      listener: (context, state) {
+        print('AccountCubit state in EditProfile listener: $state');
+      },
+      buildWhen: (_, current) =>
+          current is AccountLoadInProgress ||
+          current is AccountSaveInProgress ||
+          current is AccountPictureUploadInProgress ||
+          current is AccountPictureUploadSuccess ||
+          current is AccountSaveSuccess ||
+          current is AccountLoadSuccess ||
+          current is AccountPictureUpdateInProgress ||
+          current is AccountPictureUpdateSuccess,
       builder: (context, state) {
-        print('AccountCubit state in EditProfile: $state');
+        print('AccountCubit state in EditProfile builder: $state');
 
-        final _isUpdating = state is AccountSaveInProgress;
+        final _isUpdating = state is AccountPictureUpdateInProgress ||
+            state is AccountPictureUploadInProgress;
+
         if (state is AccountLoadSuccess) {
           _userNameController.text = '@${state.userName}';
           _firstNameController.text = state.firstName;
           _lastNameController.text = state.lastName;
           _picture = state.picture;
         }
+        if (state is AccountPictureUpdateSuccess) {
+          _imageBytes = state.bytes;
+          _picture = '';
+        }
         if (state is AccountSaveSuccess) {
-          FocusScope.of(context).requestFocus(FocusNode());
-          context.read<SheetBloc>().add(CloseSheet());
-          context.read<AccountCubit>().updateAccountFlowStage(AccountFlowStage.info);
+          if (_imageBytes.isNotEmpty) {
+            // There is an image to update.
+            context.read<AccountCubit>().uploadImage(_imageBytes);
+          } else {
+            _onSuccess();
+          }
+        }
+        if (state is AccountPictureUploadSuccess) {
+          _onSuccess();
         }
 
         return GestureDetector(
@@ -185,6 +211,7 @@ class _EditProfileState extends State<EditProfile> {
                               : SelectableAvatar(
                                   size: 100.0,
                                   userpic: _picture,
+                                  bytes: Uint8List.fromList(_imageBytes),
                                   onTap: () => _openFileExplorer(),
                                 ),
                           SizedBox(height: 12.0),

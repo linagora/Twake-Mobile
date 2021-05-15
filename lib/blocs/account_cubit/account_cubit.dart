@@ -36,8 +36,8 @@ class AccountCubit extends Cubit<AccountState> {
           final link = file.toJson();
           print('Link: $link');
         }
-        fileUploadBloc.add(ClearUploads());
         emit(AccountPictureUploadSuccess());
+        fileUploadBloc.add(ClearUploads());
       }
     });
   }
@@ -109,13 +109,17 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
-  Future<void> updateImage(List<int> bytes) async {
+  void updateImage(List<int> bytes) { // For local update.
+    emit(AccountPictureUpdateSuccess(bytes));
+  }
+
+  Future<void> uploadImage(List<int> bytes) async {
+    emit(AccountPictureUploadInProgress());
     print('Call with bytes: $bytes');
     fileUploadBloc.add(StartUpload(
       bytes: bytes,
       endpoint: Endpoint.accountPicture,
     ));
-    emit(AccountPictureUploadInProgress());
   }
 
   void updateAccountFlowStage(AccountFlowStage stage) {

@@ -142,7 +142,32 @@ class AccountSaveFailure extends AccountState {
   List<Object> get props => [message];
 }
 
-// Picture
+// Picture locally
+
+class AccountPictureUpdateInProgress extends AccountState {
+  const AccountPictureUpdateInProgress();
+
+  @override
+  List<Object> get props => [];
+}
+
+class AccountPictureUpdateSuccess extends AccountState {
+  final List<int> bytes;
+
+  const AccountPictureUpdateSuccess(this.bytes);
+
+  @override
+  List<Object> get props => [bytes];
+}
+
+class AccountPictureUpdateFailure extends AccountState {
+  const AccountPictureUpdateFailure();
+
+  @override
+  List<Object> get props => [];
+}
+
+// Picture via network
 
 class AccountPictureUploadInProgress extends AccountState {
   const AccountPictureUploadInProgress();
