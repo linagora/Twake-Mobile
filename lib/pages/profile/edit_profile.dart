@@ -80,7 +80,6 @@ class _EditProfileState extends State<EditProfile> {
       listenWhen: (_, current) =>
           current is AccountLoadFailure ||
           current is AccountSaveFailure ||
-          current is AccountPictureUpdateFailure ||
           current is AccountPictureUploadFailure,
       listener: (context, state) {
         print('AccountCubit state in EditProfile listener: $state');
@@ -93,7 +92,8 @@ class _EditProfileState extends State<EditProfile> {
           current is AccountSaveSuccess ||
           current is AccountLoadSuccess ||
           current is AccountPictureUpdateInProgress ||
-          current is AccountPictureUpdateSuccess,
+          current is AccountPictureUpdateSuccess ||
+          current is AccountPictureUpdateFailure,
       builder: (context, state) {
         print('AccountCubit state in EditProfile builder: $state');
 
@@ -120,6 +120,9 @@ class _EditProfileState extends State<EditProfile> {
         }
         if (state is AccountPictureUploadSuccess) {
           _onSuccess();
+        }
+        if (state is AccountPictureUpdateFailure) {
+          _picture = state.fallbackImage;
         }
 
         return GestureDetector(

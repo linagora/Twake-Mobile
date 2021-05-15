@@ -114,8 +114,12 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
-  Future<void> updateImage() async { // For local update.
+  Future<void> updateImage() async {
+    // For local update.
     emit(AccountPictureUpdateInProgress());
+
+    // For picker failure cases.
+    final fallbackImage = accountRepository.picture.value;
 
     List<PlatformFile> files;
     try {
@@ -138,14 +142,24 @@ class AccountCubit extends Cubit<AccountState> {
         print('Reduced to: $sizeSize');
         emit(AccountPictureUpdateSuccess(imageBytes));
       } else {
-        emit(AccountPictureUpdateFailure());
+        emit(AccountPictureUpdateFailure(
+          message: 'No files selected',
+          fallbackImage: fallbackImage,
+        ));
       }
     } on PlatformException catch (e) {
-      print("Unsupported operation" + e.toString());
-      emit(AccountPictureUpdateFailure());
-    } catch (ex) {
-      print(ex);
-      emit(AccountPictureUpdateFailure());
+      final message = "Unsupported operation" + e.toString();
+      print(message);
+      emit(AccountPictureUpdateFailure(
+        message: message,
+        fallbackImage: fallbackImage,
+      ));
+    } catch (e) {
+      print(e);
+      emit(AccountPictureUpdateFailure(
+        message: e.toString(),
+        fallbackImage: fallbackImage,
+      ));
     }
   }
 

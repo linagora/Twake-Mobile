@@ -161,10 +161,13 @@ class AccountPictureUpdateSuccess extends AccountState {
 }
 
 class AccountPictureUpdateFailure extends AccountState {
-  const AccountPictureUpdateFailure();
+  final String message;
+  final String fallbackImage;
+
+  const AccountPictureUpdateFailure({this.message, this.fallbackImage});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [message, fallbackImage];
 }
 
 // Picture via network
