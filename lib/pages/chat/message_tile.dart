@@ -63,7 +63,7 @@ class _MessageTileState<T extends BaseChannelBloc>
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
-        IsolateNameServer.registerPortWithName(
+    IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
 
     FlutterDownloader.registerCallback(downloadingCallback);
@@ -134,6 +134,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                   isScrollControlled: true,
                   builder: (_) {
                     return MessageModalSheet(
+                      originalStr: _message.content.originalStr,
                       userId: messageState.userId,
                       messageId: messageState.id,
                       responsesCount: messageState.responsesCount,

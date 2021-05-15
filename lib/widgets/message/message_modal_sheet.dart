@@ -8,6 +8,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 class MessageModalSheet extends StatefulWidget {
   final String userId;
   final String messageId;
+  final String originalStr;
   final int responsesCount;
   final void Function(BuildContext, String, {bool autofocus}) onReply;
   final void Function(BuildContext) onDelete;
@@ -26,6 +27,7 @@ class MessageModalSheet extends StatefulWidget {
     this.onEdit,
     this.onCopy,
     this.ctx,
+    this.originalStr,
     Key key,
   }) : super(key: key);
 
@@ -139,20 +141,22 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       height: 1.0,
                       color: Color(0xffEEEEEE),
                     ),
-                  ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16.0),
-                    leading: Icon(Icons.copy),
-                    title: Text(
-                      'Copy',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff444444),
-                      ),
-                    ),
-                    onTap: widget.onCopy,
-                  ),
+                  widget.originalStr.isEmpty
+                      ? Container()
+                      : ListTile(
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 16.0),
+                          leading: Icon(Icons.copy),
+                          title: Text(
+                            'Copy',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff444444),
+                            ),
+                          ),
+                          onTap: widget.onCopy,
+                        ),
                 ],
               ),
             ),
