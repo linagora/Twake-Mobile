@@ -6,6 +6,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/models/language_option.dart';
 import 'package:twake/repositories/account_repository.dart';
@@ -113,15 +114,39 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
-  Future<void> updateImage(PlatformFile imageFile) async {
-    // For local update.
+  Future<void> updateImage() async { // For local update.
     emit(AccountPictureUpdateInProgress());
-    print('Source path: ${imageFile.path}');
-    print('Source size: ${imageFile.size}');
-    final file = File(imageFile.path);
-    final imageBytes = await processFile(file);
-    print('Reduced to: ${Uint8List.fromList(imageBytes).elementSizeInBytes}');
-    emit(AccountPictureUpdateSuccess(imageBytes));
+
+    List<PlatformFile> files;
+    try {
+      files = (await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true,
+        withReadStream: true,
+      ))
+          ?.files;
+
+      if (files != null && files.length > 0) {
+        final imageFile = files.first;
+        final path = imageFile.path;
+        print('Source path: $path');
+        print('Source size: ${imageFile.size}');
+        final file = File(path);
+        final imageBytes = await processFile(file);
+
+        final sizeSize = Uint8List.fromList(imageBytes).elementSizeInBytes;
+        print('Reduced to: $sizeSize');
+        emit(AccountPictureUpdateSuccess(imageBytes));
+      } else {
+        emit(AccountPictureUpdateFailure());
+      }
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+      emit(AccountPictureUpdateFailure());
+    } catch (ex) {
+      print(ex);
+      emit(AccountPictureUpdateFailure());
+    }
   }
 
   Future<void> uploadImage(List<int> bytes) async {
