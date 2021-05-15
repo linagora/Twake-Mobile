@@ -70,24 +70,17 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _openFileExplorer() async {
-    List<PlatformFile> paths;
+    List<PlatformFile> files;
     try {
-      paths = (await FilePicker.platform.pickFiles(
+      files = (await FilePicker.platform.pickFiles(
         type: FileType.image,
         withData: true,
         withReadStream: true,
       ))
           ?.files;
 
-      if (paths != null && paths.length > 0) {
-        final path = paths[0].path;
-        print('Source path: $path');
-        print('Source size: ${paths[0].size}');
-        final file = File(path);
-        _imageBytes = await processFile(file);
-        print(
-            'Reduced to: ${Uint8List.fromList(_imageBytes).elementSizeInBytes}');
-        context.read<AccountCubit>().updateImage(_imageBytes);
+      if (files != null && files.length > 0) {
+        context.read<AccountCubit>().updateImage(files.first);
       }
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());

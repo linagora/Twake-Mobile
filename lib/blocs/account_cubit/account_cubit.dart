@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/models/language_option.dart';
@@ -9,6 +12,7 @@ import 'package:twake/repositories/account_repository.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/utils/image_processor.dart';
 
 part 'account_state.dart';
 
@@ -99,7 +103,7 @@ class AccountCubit extends Cubit<AccountState> {
     ));
   }
 
-  Future<void>saveInfo() async {
+  Future<void> saveInfo() async {
     emit(AccountSaveInProgress());
     final result = await accountRepository.patch();
     if (result is AccountRepository) {
@@ -109,8 +113,15 @@ class AccountCubit extends Cubit<AccountState> {
     }
   }
 
-  void updateImage(List<int> bytes) { // For local update.
-    emit(AccountPictureUpdateSuccess(bytes));
+  Future<void> updateImage(PlatformFile imageFile) async {
+    // For local update.
+    emit(AccountPictureUpdateInProgress());
+    print('Source path: ${imageFile.path}');
+    print('Source size: ${imageFile.size}');
+    final file = File(imageFile.path);
+    final imageBytes = await processFile(file);
+    print('Reduced to: ${Uint8List.fromList(imageBytes).elementSizeInBytes}');
+    emit(AccountPictureUpdateSuccess(imageBytes));
   }
 
   Future<void> uploadImage(List<int> bytes) async {
