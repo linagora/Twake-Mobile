@@ -34,12 +34,19 @@ class AccountCubit extends Cubit<AccountState> {
       print('File upload state: $state');
 
       if (state is FileUploaded) {
-        for (var file in state.files) {
-          final link = file.toJson();
-          print('Link: $link');
+        final files = state.files;
+        if (files.length > 0) {
+          final file = files.first;
+          final link = file.file;
+          emit(AccountPictureUploadSuccess(link: link));
+        } else {
+          emit(AccountPictureUploadFailure());
         }
-        emit(AccountPictureUploadSuccess());
         fileUploadBloc.add(ClearUploads());
+      }
+      if (state is FileUploadFailed) {
+        final reason = state.reason;
+        emit(AccountPictureUploadFailure(message: reason));
       }
     });
   }

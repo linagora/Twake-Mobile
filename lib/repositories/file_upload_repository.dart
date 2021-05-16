@@ -24,8 +24,6 @@ class FileUploadRepository {
         .post(endpoint, body: payload, cancelToken: cancelToken)
         .then((r) {
       this.files.add(UploadedFile.fromJson(r));
-      print('Files length: ${this.files.length}');
-      print('First file: ${this.files.first.filename}');
       onSuccess(r);
     }).onError((e, s) {
       onError(e.toString());
