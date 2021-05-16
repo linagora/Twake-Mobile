@@ -13,6 +13,8 @@ class UploadedFile {
 
   final String download;
 
+  final String file;
+
   final int size;
 
   const UploadedFile({
@@ -20,6 +22,7 @@ class UploadedFile {
     this.filename,
     this.preview,
     this.download,
+    this.file,
     this.size,
   });
 

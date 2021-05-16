@@ -34,9 +34,6 @@ class AccountCubit extends Cubit<AccountState> {
       print('File upload state: $state');
 
       if (state is FileUploaded) {
-        // final uploadedFile = state.files.first;
-        // final link = uploadedFile.toJson();
-        // print('Link: $link');
         for (var file in state.files) {
           final link = file.toJson();
           print('Link: $link');

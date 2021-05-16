@@ -12,6 +12,7 @@ UploadedFile _$UploadedFileFromJson(Map<String, dynamic> json) {
     filename: json['name'] as String,
     preview: json['preview'] as String,
     download: json['download'] as String,
+    file: json['file'] as String,
     size: json['size'] as int,
   );
 }
@@ -22,5 +23,6 @@ Map<String, dynamic> _$UploadedFileToJson(UploadedFile instance) =>
       'name': instance.filename,
       'preview': instance.preview,
       'download': instance.download,
+      'file': instance.file,
       'size': instance.size,
     };
