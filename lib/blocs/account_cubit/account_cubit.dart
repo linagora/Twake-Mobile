@@ -112,7 +112,14 @@ class AccountCubit extends Cubit<AccountState> {
     emit(AccountSaveInProgress());
     final result = await accountRepository.patch();
     if (result is AccountRepository) {
-      emit(AccountSaveSuccess());
+      final firstName = result.firstName.value;
+      final lastName = result.lastName.value;
+      final language = result.language.value;
+      emit(AccountSaveSuccess(
+        firstName: firstName,
+        lastName: lastName,
+        language: language,
+      ));
     } else {
       emit(AccountSaveFailure());
     }

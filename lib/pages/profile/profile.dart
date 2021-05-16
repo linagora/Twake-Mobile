@@ -6,25 +6,41 @@ import 'package:twake/models/language_option.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/button_field.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
+  @override
+  _ProfileState createState() => _ProfileState();
+}
+
+class _ProfileState extends State<Profile> {
+
+  var _firstName = '';
+  var _lastName = '';
+  var _picture = '';
+  var _language = '';
+  var _availableLanguages = <LanguageOption>[];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: BlocBuilder<AccountCubit, AccountState>(
-        buildWhen: (_, current) => current is AccountLoadSuccess,
+        buildWhen: (_, current) =>
+            current is AccountLoadSuccess ||
+            current is AccountSaveSuccess ||
+            current is AccountPictureUploadSuccess,
         builder: (context, state) {
-          var firstName = '';
-          var lastName = '';
-          var picture = '';
-          var language = '';
-          var availableLanguages = <LanguageOption>[];
-
           if (state is AccountLoadSuccess) {
-            firstName = state.firstName;
-            lastName = state.lastName;
-            picture = state.picture;
-            availableLanguages = state.availableLanguages;
+            _firstName = state.firstName;
+            _lastName = state.lastName;
+            _picture = state.picture;
+            _availableLanguages = state.availableLanguages;
+          }
+          if (state is AccountSaveSuccess) {
+            _firstName = state.firstName;
+            _lastName = state.lastName;
+          }
+          if (state is AccountPictureUploadSuccess) {
+            _picture = state.link;
           }
 
           print('AccountCubit state in Profile: $state');
@@ -51,12 +67,12 @@ class Profile extends StatelessWidget {
                       children: [
                         SelectableAvatar(
                           size: 60.0,
-                          userpic: picture,
+                          userpic: _picture,
                           onTap: () {},
                         ),
                         SizedBox(height: 12.0),
                         Text(
-                          '$firstName $lastName',
+                          '$_firstName $_lastName',
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w600,
