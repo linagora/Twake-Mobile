@@ -57,9 +57,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
         size: event.size,
       );
     } else if (event is ClearUploads) {
-      print('Files in repo before: ${repository.files}');
       repository.clearFiles();
-      print('Files in repo: ${repository.files}');
       yield NothingToUpload();
     }
   }

@@ -21,11 +21,8 @@ class AccountRepository extends JsonSerializable {
   AccountField firstName;
   @JsonKey(required: true, name: 'lastname')
   AccountField lastName;
-  @JsonKey(required: false)
   LanguageField language;
-  @JsonKey(required: false)
   AccountField picture;
-  @JsonKey(required: false)
   PasswordField password;
 
   AccountRepository({

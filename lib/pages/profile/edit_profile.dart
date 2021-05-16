@@ -44,7 +44,6 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _save() {
-    print('Save profile!');
     final firstName = _firstNameController.text;
     final lastName = _lastNameController.text;
     final oldPassword = _oldPasswordController.text;
@@ -72,14 +71,7 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AccountCubit, AccountState>(
-      listenWhen: (_, current) =>
-          current is AccountLoadFailure ||
-          current is AccountSaveFailure ||
-          current is AccountPictureUploadFailure,
-      listener: (context, state) {
-        print('AccountCubit state in EditProfile listener: $state');
-      },
+    return BlocBuilder<AccountCubit, AccountState>(
       buildWhen: (_, current) =>
           current is AccountLoadInProgress ||
           current is AccountSaveInProgress ||
@@ -91,8 +83,7 @@ class _EditProfileState extends State<EditProfile> {
           current is AccountPictureUpdateSuccess ||
           current is AccountPictureUpdateFailure,
       builder: (context, state) {
-        print('AccountCubit state in EditProfile builder: $state');
-
+        // print('AccountCubit state in EditProfile builder: $state');
         final _isUpdating = state is AccountPictureUpdateInProgress ||
             state is AccountPictureUploadInProgress;
 

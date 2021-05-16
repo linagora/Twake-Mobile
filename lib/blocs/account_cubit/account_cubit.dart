@@ -176,7 +176,6 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> uploadImage(List<int> bytes) async {
     emit(AccountPictureUploadInProgress());
-    print('Call with bytes: $bytes');
     fileUploadBloc.add(StartUpload(
       bytes: bytes,
       endpoint: Endpoint.accountPicture,

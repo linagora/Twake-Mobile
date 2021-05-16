@@ -42,9 +42,7 @@ class _ProfileState extends State<Profile> {
           if (state is AccountPictureUploadSuccess) {
             _picture = state.link;
           }
-
-          print('AccountCubit state in Profile: $state');
-
+          // print('AccountCubit state in Profile: $state');
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
