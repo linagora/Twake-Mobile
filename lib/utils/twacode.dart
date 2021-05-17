@@ -12,6 +12,11 @@ import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:path/path.dart' as path;
+import 'package:dio/dio.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:open_file/open_file.dart';
+import 'notify.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
@@ -963,24 +968,20 @@ class TwacodeRenderer {
                     //print(t['metadata']['download']);
                     if (permissionStatus.isGranted) {
                       if (Platform.isAndroid) {
-                        //   print(Api.host);
-
+                        final Dio dio = Dio();
                         final dir = await getExternalStorageDirectory();
+                        final dir2 = path.join(dir.path, t['metadata']['name']);
 
-                        await FlutterDownloader.enqueue(
-                            url: Api.host + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
+                        dio.download(
+                            Api.host + t['metadata']['download'], dir2);
+                        await notificationPlugin.showNotification();
                       } else if (Platform.isIOS) {
+                        final Dio dio = Dio();
                         final dir = await getApplicationSupportDirectory();
-                        await FlutterDownloader.enqueue(
-                            url: Api.host + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
+                        final dir2 = path.join(dir.path, t['metadata']['name']);
+                        dio.download(
+                            Api.host + t['metadata']['download'], dir2);
+                        await notificationPlugin.showNotification();
                       }
                     } else {
                       // TODO: implementation needed

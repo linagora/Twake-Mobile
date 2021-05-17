@@ -24,6 +24,10 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
+import './../../utils/notify.dart';
+import 'package:open_file/open_file.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as notify;
 
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
@@ -48,14 +52,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   bool _hideShowAnswers;
   bool _shouldShowSender;
   Message _message;
-  ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-
-  static downloadingCallback(id, status, progress) {
-    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading");
-
-    sendPort.send([id, status, progress]);
-  }
 
   @override
   void initState() {
@@ -63,11 +60,20 @@ class _MessageTileState<T extends BaseChannelBloc>
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
-    IsolateNameServer.registerPortWithName(
-        _receivePort.sendPort, "downloading");
 
-    FlutterDownloader.registerCallback(downloadingCallback);
+    notificationPlugin.setOnNotificationClick(onNotificationClick);
   }
+
+  onNotificationClick(String payload) {
+    print('Payload $payload');
+    OpenFile.open(
+        "/Users/evgenii/Library/Developer/CoreSimulator/Devices/057AFC5F-5D98-4745-BC4F-ED702A2CDF66/data/Containers/Data/Application/AF6628B0-5C84-449D-A0CE-69DF1D7C8B9F/Library/Application Support/photo_2021-05-13 09.58.09-2.jpeg");
+  }
+
+  //Future<void> onNotificationClick() async {
+  //   OpenFile.open(
+  //       "/storage/emulated/0/Android/data/com.twake.twake/files/photo_2021-05-13 09.58.09-2.jpeg");
+  // }
 
   @override
   void didUpdateWidget(covariant MessageTile<T> oldWidget) {
