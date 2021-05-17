@@ -25,6 +25,7 @@ import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 import './../../utils/notify.dart';
+import 'package:open_file/open_file.dart';
 
 //import 'package:flutter_local_notifications/flutter_local_notifications.dart'
 ////  as notify;
@@ -62,11 +63,16 @@ class _MessageTileState<T extends BaseChannelBloc>
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
 
-    notificationPlugin.setOnNotificationClick(onNotificationClick);
+    notificationPlugin.setOnNotificationClick(() async {
+      print("sdsdsdsdssdddd");
+      OpenFile.open(
+          "/storage/emulated/0/Android/data/com.twake.twake/files/photo_2021-05-13 09.58.09-2.jpeg");
+    });
   }
 
-  onNotificationClick() {
-    print('Payload !!!!!!!!!!');
+  Future<void> onNotificationClick() async {
+    OpenFile.open(
+        "/storage/emulated/0/Android/data/com.twake.twake/files/photo_2021-05-13 09.58.09-2.jpeg");
   }
 
   @override

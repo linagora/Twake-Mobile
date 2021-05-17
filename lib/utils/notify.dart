@@ -25,7 +25,7 @@ class NotificationPlugin {
 
   initializePlatformSpecifics() {
     var initializationSettingsAndroid =
-        AndroidInitializationSettings('app_notf_icon');
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     var initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -50,7 +50,7 @@ class NotificationPlugin {
         .requestPermissions(
           alert: false,
           badge: true,
-          sound: true,
+          sound: false,
         );
   }
 
@@ -86,7 +86,7 @@ class NotificationPlugin {
       'Test Title',
       'Test Body', //null
       platformChannelSpecifics,
-      payload: 'New Payload',
+      payload: "test",
     );
   }
 

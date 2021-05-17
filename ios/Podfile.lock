@@ -117,6 +117,8 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - open_file (0.0.1):
+    - Flutter
   - package_info (0.0.1):
     - Flutter
   - path_provider (0.0.1):
@@ -156,6 +158,7 @@ DEPENDENCIES:
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_segment (from `.symlinks/plugins/flutter_segment/ios`)
+  - open_file (from `.symlinks/plugins/open_file/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -206,6 +209,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_segment:
     :path: ".symlinks/plugins/flutter_segment/ios"
+  open_file:
+    :path: ".symlinks/plugins/open_file/ios"
   package_info:
     :path: ".symlinks/plugins/package_info/ios"
   path_provider:
@@ -245,6 +250,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: cd9db2180fcecd8da1b561aea31e3e56cf834aa7
   GoogleUtilities: 284cddc7fffc14ae1907efb6f78ab95c1fccaedc
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  open_file: 02eb5cb6b21264bd3a696876f5afbfb7ca4f4b7d
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0

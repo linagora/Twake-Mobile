@@ -15,7 +15,7 @@ import 'package:twake/services/service_bundle.dart';
 import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:open_file/open_file.dart';
 import 'notify.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
@@ -968,18 +968,13 @@ class TwacodeRenderer {
                     //print(t['metadata']['download']);
                     if (permissionStatus.isGranted) {
                       if (Platform.isAndroid) {
-                        await notificationPlugin.showNotification();
-                        onNotificationClick(String payload) {
-                          print('Payload $payload');
-                        }
-
                         final Dio dio = Dio();
                         final dir = await getExternalStorageDirectory();
                         final dir2 = path.join(dir.path, t['metadata']['name']);
+
                         dio.download(
                             Api.host + t['metadata']['download'], dir2);
-                        //   print(Api.host);
-
+                        await notificationPlugin.showNotification();
                       } else if (Platform.isIOS) {
                         final Dio dio = Dio();
                         final dir = await getApplicationSupportDirectory();
