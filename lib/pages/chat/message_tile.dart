@@ -24,7 +24,12 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
+import './../../utils/notify.dart';
 
+//import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+////  as notify;
+
+//notify.FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
 class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
@@ -48,14 +53,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   bool _hideShowAnswers;
   bool _shouldShowSender;
   Message _message;
-  ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-
-  static downloadingCallback(id, status, progress) {
-    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading");
-
-    sendPort.send([id, status, progress]);
-  }
 
   @override
   void initState() {
@@ -63,10 +61,12 @@ class _MessageTileState<T extends BaseChannelBloc>
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
-    IsolateNameServer.registerPortWithName(
-        _receivePort.sendPort, "downloading");
 
-    FlutterDownloader.registerCallback(downloadingCallback);
+    notificationPlugin.setOnNotificationClick(onNotificationClick);
+  }
+
+  onNotificationClick() {
+    print('Payload !!!!!!!!!!');
   }
 
   @override
