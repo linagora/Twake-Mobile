@@ -131,9 +131,9 @@ class Api {
     );
     try {
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      logger.d('METHOD: ${jsonEncode(method)}');
-      logger.d('PARAMS: ${jsonEncode(params)}');
-      logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
+      // logger.d('METHOD: ${jsonEncode(method)}');
+      // logger.d('PARAMS: ${jsonEncode(params)}');
+      // logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
 
       // logger.d('GET RESPONSE:');
       // final ultraLongString = jsonEncode(response.data);
