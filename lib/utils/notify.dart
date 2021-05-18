@@ -67,7 +67,8 @@ class NotificationPlugin {
     });
   }
 
-  Future<void> showNotification(Map<String, String> payload) async {
+  Future<void> showNotification(
+      Map<String, String> payload, bool isErr, String err) async {
     var androidChannelSpecifics = AndroidNotificationDetails(
       'CHANNEL_ID',
       'CHANNEL_NAME',
@@ -84,7 +85,7 @@ class NotificationPlugin {
 
     await flutterLocalNotificationsPlugin.show(
       0,
-      payload['title'],
+      isErr ? ' downloading failed' : payload['title'],
       payload['body'], //null
       platformChannelSpecifics,
       payload: payload['payload'], //null

@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
@@ -14,8 +13,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:path/path.dart' as path;
 import 'package:dio/dio.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:open_file/open_file.dart';
 import 'notify.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
@@ -979,11 +976,21 @@ class TwacodeRenderer {
                           'title':
                               '${t['metadata']['name']} downloaded successfully',
                           'Body': t['metadata']['name'],
-                          'payload': dir2
+                          'payload': dir2,
                         };
-                        dio.download(
-                            Api.host + t['metadata']['download'], dir2);
-                        await notificationPlugin.showNotification(payload);
+                        bool isErr = false;
+                        String err;
+
+                        try {
+                          dio.download(
+                              Api.host + t['metadata']['download'], dir2);
+                        } catch (exeption) {
+                          isErr = true;
+                          err = exeption.toString();
+                        } finally {
+                          await notificationPlugin.showNotification(
+                              payload, isErr, err);
+                        }
                       } else if (Platform.isIOS) {
                         final Dio dio = Dio();
                         final dir = await getApplicationSupportDirectory();
@@ -995,9 +1002,19 @@ class TwacodeRenderer {
                           'Body': t['metadata']['name'],
                           'payload': dir2
                         };
-                        dio.download(
-                            Api.host + t['metadata']['download'], dir2);
-                        await notificationPlugin.showNotification(payload);
+                        bool isErr = false;
+                        String err;
+
+                        try {
+                          dio.download(
+                              Api.host + t['metadata']['download'], dir2);
+                        } catch (exeption) {
+                          isErr = true;
+                          err = exeption.toString();
+                        } finally {
+                          await notificationPlugin.showNotification(
+                              payload, isErr, err);
+                        }
                       }
                     } else {
                       // TODO: implementation needed
