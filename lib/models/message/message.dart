@@ -2,6 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'message_content.dart';
 import 'reaction.dart';
 
+part 'message.g.dart';
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Message {
   final String id;
@@ -50,4 +52,9 @@ class Message {
     this.lastName,
     this.thumbnail,
   });
+
+  factory Message.fromJson(Map<String, dynamic> json) =>
+      _$MessageFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
 }
