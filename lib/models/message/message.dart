@@ -19,8 +19,8 @@ class Message {
   List<Reaction> reactions;
 
   final String username;
-  final String? firstName;
-  final String? lastName;
+  final String? firstname;
+  final String? lastname;
   final String? thumbnail;
 
   int get hash {
@@ -31,10 +31,10 @@ class Message {
   }
 
   String get sender {
-    if (this.firstName == null || this.lastName == null) {
+    if (this.firstname == null || this.lastname == null) {
       return this.username;
     }
-    return '$firstName $lastName';
+    return '$firstname $lastname';
   }
 
   Message({
@@ -48,8 +48,8 @@ class Message {
     required this.username,
     required this.content,
     required this.reactions,
-    this.firstName,
-    this.lastName,
+    this.firstname,
+    this.lastname,
     this.thumbnail,
   });
 
