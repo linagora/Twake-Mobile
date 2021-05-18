@@ -64,10 +64,9 @@ class _MessageTileState<T extends BaseChannelBloc>
     notificationPlugin.setOnNotificationClick(onNotificationClick);
   }
 
-  onNotificationClick(String payload) {
-    print('Payload $payload');
-    OpenFile.open(
-        "/Users/evgenii/Library/Developer/CoreSimulator/Devices/057AFC5F-5D98-4745-BC4F-ED702A2CDF66/data/Containers/Data/Application/AF6628B0-5C84-449D-A0CE-69DF1D7C8B9F/Library/Application Support/photo_2021-05-13 09.58.09-2.jpeg");
+  onNotificationClick(String payloadPath) {
+    //print('Payload Download $payloadPath');
+    OpenFile.open(payloadPath);
   }
 
   //Future<void> onNotificationClick() async {
@@ -256,6 +255,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   SizedBox(height: _isMyMessage ? 0.0 : 4.0),
                                   TwacodeRenderer(
                                     twacode: messageState.content,
+                                    onNotificationClick: onNotificationClick,
                                     parentStyle: TextStyle(
                                       fontSize: 15.0,
                                       fontWeight: FontWeight.w400,

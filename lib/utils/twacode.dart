@@ -575,12 +575,18 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
+  Function onNotificationClick;
 
-  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
+  TwacodeRenderer(
+      {this.twacode, this.onNotificationClick, TextStyle parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
-    spans = render(twacode: this.twacode, parentStyle: parentStyle);
+
+    spans = render(
+        twacode: this.twacode,
+        onNotificationClick: onNotificationClick,
+        parentStyle: parentStyle);
   }
 
   // Files should only occur in the end of the twacode structure
@@ -712,7 +718,11 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render({List<dynamic> twacode, TextStyle parentStyle}) {
+  List<InlineSpan> render({
+    List<dynamic> twacode,
+    Function onNotificationClick,
+    TextStyle parentStyle,
+  }) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -974,14 +984,18 @@ class TwacodeRenderer {
 
                         dio.download(
                             Api.host + t['metadata']['download'], dir2);
-                        await notificationPlugin.showNotification();
+
+                        //   onNotificationClick(
+                        //      '${t['metadata']['name']} downloaded successfully');
+
+                        await notificationPlugin.showNotification(dir2);
                       } else if (Platform.isIOS) {
                         final Dio dio = Dio();
                         final dir = await getApplicationSupportDirectory();
                         final dir2 = path.join(dir.path, t['metadata']['name']);
                         dio.download(
                             Api.host + t['metadata']['download'], dir2);
-                        await notificationPlugin.showNotification();
+                        await notificationPlugin.showNotification(dir2);
                       }
                     } else {
                       // TODO: implementation needed
