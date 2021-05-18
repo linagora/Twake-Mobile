@@ -1,5 +1,4 @@
 const String CREATE_SETTINGS_V1 = '''
-CREATE TABLE setting (
     id TEXT PRIMARY KEY,
     value TEXT NOT NULL
 )

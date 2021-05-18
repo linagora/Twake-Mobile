@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/utils/json.dart';
+
 import 'message_content.dart';
 import 'reaction.dart';
 
@@ -6,6 +8,8 @@ part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Message {
+  static const COMPOSITE_FIELDS = ['content', 'reactions'];
+
   final String id;
   final String? threadId;
   final String channelId;
@@ -53,8 +57,13 @@ class Message {
     this.thumbnail,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) =>
-      _$MessageFromJson(json);
+  factory Message.fromJson(Map<String, dynamic> json) {
+    json = jsonify(json: json, keys: COMPOSITE_FIELDS);
+    return _$MessageFromJson(json);
+  }
 
-  Map<String, dynamic> toJson() => _$MessageToJson(this);
+  Map<String, dynamic> toJson() {
+    final json = _$MessageToJson(this);
+    return stringify(json: json, keys: COMPOSITE_FIELDS);
+  }
 }
