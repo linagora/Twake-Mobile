@@ -14,7 +14,7 @@ const DEFAULT_HOST = 'https://beta.twake.app';
 @JsonSerializable()
 class ConfigurationRepository extends JsonSerializable {
   @JsonKey(required: true, name: 'host')
-  String host;
+  String? host;
 
   @JsonKey(ignore: true)
   static final _storage = Storage();

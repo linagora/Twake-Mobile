@@ -9,7 +9,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 const String _FALLBACK_IMG = 'assets/images/oldtwakelogo.jpg';
 
 class ImageAvatar extends StatelessWidget {
-  final String imageUrl;
+  final String? imageUrl;
   final double width;
   final double height;
 
@@ -26,7 +26,7 @@ class ImageAvatar extends StatelessWidget {
       borderRadius: BorderRadius.circular(
         Dim.widthMultiplier * 1.5,
       ),
-      child: imageUrl == null || imageUrl.isEmpty
+      child: imageUrl == null || imageUrl!.isEmpty
           ? onErrorFallbackImg(width ?? Dim.tm5(), height ?? Dim.tm5())
           : Container(
         width: width,
@@ -37,7 +37,7 @@ class ImageAvatar extends StatelessWidget {
             height ?? Dim.tm5(),
           ),
           fit: BoxFit.cover,
-          image: imageUrl,
+          image: imageUrl!,
           width: width ?? Dim.tm5(),
           height: height ?? Dim.tm5(),
           placeholder: _FALLBACK_IMG,

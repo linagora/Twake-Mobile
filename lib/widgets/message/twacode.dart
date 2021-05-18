@@ -35,7 +35,7 @@ TextStyle generateStyle(
 }
 
 class Parser {
-  List<TwacodeItem> items;
+  List<TwacodeItem>? items;
   final charCount;
 
   Parser(List<dynamic> items, this.charCount) {
@@ -57,7 +57,7 @@ class Parser {
 }
 
 class Twacode extends StatefulWidget {
-  final List<dynamic> items;
+  final List<dynamic>? items;
   final int charCount;
 
   Twacode(this.items, this.charCount);
@@ -94,7 +94,7 @@ class _TwacodeState extends State<Twacode> {
   @override
   Widget build(BuildContext context) {
     List<InlineSpan> spans = [];
-    widget.items.forEach((element) {
+    widget.items!.forEach((element) {
       spans.add((element as TwacodeItem).render());
     });
     return RichText(
@@ -153,15 +153,15 @@ enum TwacodeType {
 }
 
 class TwacodeItem {
-  TextStyle style;
+  TextStyle? style;
 
   final logger = Logger();
-  String content;
-  String id;
-  TwacodeType type;
+  String? content;
+  String? id;
+  TwacodeType? type;
   bool newLine = false;
 
-  TapGestureRecognizer recognizer;
+  TapGestureRecognizer? recognizer;
 
   Future<void> _launchUrlInBrowser(String url) async {
     if (await canLaunch(url)) {
@@ -175,7 +175,7 @@ class TwacodeItem {
     }
   }
 
-  TwacodeItem(String type, String content, String id) {
+  TwacodeItem(String? type, String? content, String? id) {
     this.content = content;
     this.id = id;
 
@@ -214,7 +214,7 @@ class TwacodeItem {
         this.recognizer = TapGestureRecognizer()
           ..onTap = () {
             logger.d('Content: ${this.content}');
-            _launchUrlInBrowser(this.content);
+            _launchUrlInBrowser(this.content!);
           };
         break;
       case 'channel':
@@ -297,7 +297,7 @@ class TwacodeItem {
         this.type = TwacodeType.text;
         break;
       default:
-        throw ("No implementation for " + type);
+        throw ("No implementation for " + type!);
     }
   }
 
@@ -314,7 +314,7 @@ class TwacodeItem {
       if (this.id != null) {
         logger.d('CODE POINT: ${this.id}\nCONTENT: ${this.content}');
         List<int> codePoints = [];
-        for (String cp in this.id.split('-')) {
+        for (String cp in this.id!.split('-')) {
           codePoints.add(int.parse(cp, radix: 16));
         }
         this.content = String.fromCharCodes(codePoints);
@@ -322,7 +322,7 @@ class TwacodeItem {
         this.content = this.content;
       }
     }
-    var content = this.newLine ? ('\n' + this.content + '\n') : this.content;
+    var content = this.newLine ? ('\n' + this.content! + '\n') : this.content;
     // Workaround for softWrap = true of RichText
     // if (this.type == TwacodeType.text) {
     //   content = content.replaceAll('', '\u200b');

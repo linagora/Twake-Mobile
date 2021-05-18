@@ -15,9 +15,9 @@ class Directs extends StatelessWidget {
           current is ChannelsLoaded ||
           current is ChannelsEmpty,
       builder: (context, state) {
-        var directs = <Direct>[];
+        List<Direct?>? directs = <Direct>[];
         if (state is ChannelsLoaded) {
-          directs = state.channels;
+          directs = state.channels as List<Direct?>?;
         }
         // final userId = ProfileBloc.userId;
 
@@ -33,10 +33,10 @@ class Directs extends StatelessWidget {
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.only(top: 12.0, bottom: 80.0),
-            itemCount: directs.length,
+            itemCount: directs!.length,
             itemBuilder: (context, index) {
-              final direct = directs[index];
-              final memberId = direct.members.first;
+              final direct = directs![index]!;
+              final memberId = direct.members!.first;
               return DirectTile(
                 key: ValueKey(direct.id),
                 id: direct.id,

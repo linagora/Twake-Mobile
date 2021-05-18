@@ -16,14 +16,14 @@ const _ACCOUNT_STORE_KEY = 'account';
 @JsonSerializable(explicitToJson: true)
 class AccountRepository extends JsonSerializable {
   @JsonKey(required: true, name: 'username')
-  AccountField userName;
+  AccountField? userName;
   @JsonKey(required: true, name: 'firstname')
-  AccountField firstName;
+  AccountField? firstName;
   @JsonKey(required: true, name: 'lastname')
-  AccountField lastName;
-  LanguageField language;
-  AccountField picture;
-  PasswordField password;
+  AccountField? lastName;
+  LanguageField? language;
+  AccountField? picture;
+  PasswordField? password;
 
   AccountRepository({
     this.userName,
@@ -54,7 +54,7 @@ class AccountRepository extends JsonSerializable {
     );
     if (accountMap == null) {
       // _logger.d('No account in storage, requesting from api...');
-      accountMap = await _api.get(Endpoint.account);
+      accountMap = await (_api.get(Endpoint.account) as FutureOr<Map<String, dynamic>?>);
       _logger.d('RECEIVED ACCOUNT: $accountMap');
       loadedFromNetwork = true;
     } else {
@@ -62,7 +62,7 @@ class AccountRepository extends JsonSerializable {
       _logger.d('RETRIEVED FROM STORAGE ACCOUNT: $accountMap');
     }
     // Get repository instance
-    final account = AccountRepository.fromJson(accountMap);
+    final account = AccountRepository.fromJson(accountMap!);
     // Save it to store
     if (loadedFromNetwork) account._save();
     // return it
@@ -104,22 +104,22 @@ class AccountRepository extends JsonSerializable {
     String newLastName = '',
     String newLanguage = '',
     String oldPassword = '',
-    String newPassword = '',
+    String? newPassword = '',
     bool shouldUpdateCache = false,
   }) {
     if (newFirstName.isNotReallyEmpty) {
-      firstName.value = newFirstName;
+      firstName!.value = newFirstName;
       _accountMap['firstname'] = newFirstName;
     }
     if (newLastName.isNotReallyEmpty) {
-      lastName.value = newLastName;
+      lastName!.value = newLastName;
       _accountMap['lastname'] = newLastName;
     }
     if (newLanguage.isNotReallyEmpty) {
-      language.value = newLanguage;
+      language!.value = newLanguage;
       _accountMap['language'] = newLanguage;
     }
-    if (oldPassword.isNotReallyEmpty && newPassword.isNotReallyEmpty) {
+    if (oldPassword.isNotReallyEmpty && newPassword!.isNotReallyEmpty) {
       _accountMap['password'] = {
         'old': oldPassword,
         'new': newPassword,
@@ -137,17 +137,17 @@ class AccountRepository extends JsonSerializable {
   }
 
   LanguageOption selectedLanguage() {
-    final lang = language.options
-        .firstWhere((option) => option.value == language.value, orElse: () {
+    final lang = language!.options
+        .firstWhere((option) => option.value == language!.value, orElse: () {
       _logger.e(
-          'No matching languages found in options for code: ${language.value}');
-      return LanguageOption(value: language.value, title: '');
+          'No matching languages found in options for code: ${language!.value}');
+      return LanguageOption(value: language!.value, title: '');
     });
     return lang;
   }
 
-  String languageCodeFromTitle(String title) {
-    final lang = language.options.firstWhere((option) => option.title == title,
+  String? languageCodeFromTitle(String title) {
+    final lang = language!.options.firstWhere((option) => option.title == title,
         orElse: () {
       _logger.e('No matching languages found in options for title: $title');
       return LanguageOption(value: '', title: title);

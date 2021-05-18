@@ -12,10 +12,10 @@ const String _DATABASE_FILE = 'twakesql.db';
 const int _CURRENT_MIGRATION = 4;
 
 class SQLite with Storage {
-  static Database _db;
+  static late Database _db;
 
   @override
-  final settingsField = 'value';
+  final dynamic settingsField = 'value';
 
   SQLite();
 
@@ -85,10 +85,10 @@ class SQLite with Storage {
     final like = likeFiltersBuild(likeFilters);
     var whereArgs = [];
     sqlQuery += ' WHERE ${where.item1} ';
-    whereArgs += where.item2;
+    whereArgs += where.item2!;
     if (like.item1 != null) {
       sqlQuery += 'AND (${like.item1})';
-      whereArgs += like.item2;
+      whereArgs += like.item2!;
     }
     sqlQuery += ' ORDER BY $orderBy LIMIT $limit OFFSET $offset;';
     final result = await _db.rawQuery(sqlQuery, whereArgs);
@@ -97,33 +97,33 @@ class SQLite with Storage {
 
   @override
   Future<dynamic> customUpdate({
-    String sql,
-    List args,
+    String? sql,
+    List? args,
   }) async {
-    final result = await _db.rawUpdate(sql, args);
+    final result = await _db.rawUpdate(sql!, args);
     return result;
   }
 
   @override
   Future<void> store({
-    Map<String, dynamic> item,
-    StorageType type,
+    Map<String?, dynamic>? item,
+    StorageType? type,
     key,
   }) async {
     final table = mapTypeToStore(type);
-    await _db.insert(table, item, conflictAlgorithm: ConflictAlgorithm.replace);
+    await _db.insert(table, item as Map<String, Object?>, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
-  Future<Map<String, dynamic>> load({
-    StorageType type,
+  Future<Map<String, dynamic>?> load({
+    StorageType? type,
     dynamic key,
-    List<String> fields,
+    List<String?>? fields,
   }) async {
     final table = mapTypeToStore(type);
     final items = await _db.query(
       table,
-      columns: fields,
+      columns: fields as List<String>?,
       where: 'id = ?',
       whereArgs: [key],
     );
@@ -135,15 +135,15 @@ class SQLite with Storage {
 
   @override
   Future<void> batchStore({
-    Iterable<Map<String, dynamic>> items,
-    StorageType type,
+    Iterable<Map<String, dynamic>>? items,
+    StorageType? type,
   }) async {
     final table = mapTypeToStore(type);
     await _db.transaction((txn) async {
-      for (Map i in items) {
+      for (Map i in items!) {
         await txn.insert(
           table,
-          i,
+          i as Map<String, Object?>,
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -152,11 +152,11 @@ class SQLite with Storage {
 
   @override
   Future<List<Map<String, dynamic>>> batchLoad({
-    StorageType type,
-    List<List> filters,
-    Map<String, bool> orderings,
-    int limit,
-    int offset,
+    StorageType? type,
+    List<List>? filters,
+    Map<String, bool>? orderings,
+    int? limit,
+    int? offset,
   }) async {
     final table = mapTypeToStore(type);
     final filter = filtersBuild(filters);
@@ -172,7 +172,7 @@ class SQLite with Storage {
   }
 
   @override
-  String mapTypeToStore(StorageType type) {
+  String mapTypeToStore(StorageType? type) {
     String table;
     if (type == StorageType.Auth)
       table = 'setting';
@@ -210,15 +210,15 @@ class SQLite with Storage {
   }
 
   @override
-  Future<void> delete({StorageType type, key}) async {
+  Future<void> delete({StorageType? type, key}) async {
     final table = mapTypeToStore(type);
     await _db.delete(table, where: 'id = ?', whereArgs: [key]);
   }
 
   @override
   Future<void> batchDelete({
-    StorageType type,
-    List<List> filters,
+    StorageType? type,
+    List<List>? filters,
   }) async {
     logger.e('REQUESTING BATCH DELETE\nTYPE: $type\nFILTERS: $filters');
     final table = mapTypeToStore(type);
@@ -227,19 +227,19 @@ class SQLite with Storage {
   }
 
   @override
-  Future<void> truncate(StorageType type) async {
+  Future<void> truncate(StorageType? type) async {
     final table = mapTypeToStore(type);
     await _db.delete(table);
   }
 
   @override
-  Future<void> truncateAll({List<StorageType> except}) async {
+  Future<void> truncateAll({List<StorageType>? except}) async {
     List<String> storagesToKeep = [];
     if (except != null && except.length > 0) {
       storagesToKeep = except.map((e) => mapTypeToStore(e)).toList();
     }
     await _db.transaction((txn) async {
-      for (String s in getAllStorages()) {
+      for (String s in getAllStorages() as Iterable<String>) {
         if (!storagesToKeep.contains(s)) {
           print('Storage to delete: $s');
           await txn.delete(s);
@@ -249,7 +249,7 @@ class SQLite with Storage {
   }
 
   @override
-  Tuple2<String, List<dynamic>> filtersBuild(List<List> expressions) {
+  Tuple2<String?, List<dynamic>?> filtersBuild(List<List>? expressions) {
     if (expressions == null || expressions.isEmpty) {
       return Tuple2(null, null);
     }
@@ -275,7 +275,7 @@ class SQLite with Storage {
   }
 
   @override
-  Tuple2<String, List<dynamic>> likeFiltersBuild(List<List> expressions) {
+  Tuple2<String?, List<dynamic>?> likeFiltersBuild(List<List> expressions) {
     if (expressions == null || expressions.isEmpty) {
       return Tuple2(null, null);
     }
@@ -294,7 +294,7 @@ class SQLite with Storage {
   }
 
   @override
-  String orderingsBuild(Map<String, bool> orderings) {
+  String? orderingsBuild(Map<String, bool>? orderings) {
     if (orderings == null) return null;
 
     String orderBy = '';

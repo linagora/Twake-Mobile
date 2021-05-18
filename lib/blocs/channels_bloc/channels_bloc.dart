@@ -15,14 +15,14 @@ export 'package:twake/blocs/channels_bloc/channel_event.dart';
 export 'package:twake/blocs/channels_bloc/channel_state.dart';
 
 class ChannelsBloc extends BaseChannelBloc {
-  final WorkspacesBloc workspacesBloc;
-  final NotificationBloc notificationBloc;
+  final WorkspacesBloc? workspacesBloc;
+  final NotificationBloc? notificationBloc;
 
-  StreamSubscription _subscription;
-  StreamSubscription _notificationSubscription;
+  late StreamSubscription _subscription;
+  late StreamSubscription _notificationSubscription;
 
   ChannelsBloc({
-    CollectionRepository<Channel> repository,
+    required CollectionRepository<Channel> repository,
     this.workspacesBloc,
     this.notificationBloc,
   }) : super(
@@ -30,17 +30,17 @@ class ChannelsBloc extends BaseChannelBloc {
             initState: repository.isEmpty
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {
-    _subscription = workspacesBloc.listen((WorkspaceState state) {
+    _subscription = workspacesBloc!.listen((WorkspaceState state) {
       if (state is WorkspacesLoaded) {
         // repository.logger.e('WORKSPACE SELECTED ${state.selected.name}');
         selectedBeforeId = selectedParentId;
-        selectedParentId = state.selected.id;
+        selectedParentId = state.selected!.id;
         this.add(ReloadChannels(workspaceId: selectedParentId));
-        notificationBloc.add(ReinitSubscriptions());
+        notificationBloc!.add(ReinitSubscriptions());
       }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) async {
+        notificationBloc!.listen((NotificationState state) async {
       if (state is BaseChannelMessageNotification &&
           state.data.workspaceId != 'direct') {
         while (true) {
@@ -61,17 +61,17 @@ class ChannelsBloc extends BaseChannelBloc {
         ));
       }
     });
-    selectedParentId = workspacesBloc.repository.selected.id;
+    selectedParentId = workspacesBloc!.repository.selected!.id;
   }
 
   @override
   Stream<ChannelState> mapEventToState(ChannelsEvent event) async* {
     if (event is ReloadChannels) {
       yield ChannelsLoading();
-      bool success = await repository.reload(
+      bool success = await repository!.reload(
         queryParams: {
           'workspace_id': event.workspaceId ?? selectedParentId,
-          'company_id': workspacesBloc.selectedCompanyId,
+          'company_id': workspacesBloc!.selectedCompanyId,
         },
         filters: [
           ['workspace_id', '=', event.workspaceId ?? selectedParentId]
@@ -82,23 +82,23 @@ class ChannelsBloc extends BaseChannelBloc {
         },
       );
       if (!success) {
-        repository.logger.d('Failed to change workspace');
+        repository!.logger.d('Failed to change workspace');
         if (selectedBeforeId != null)
-          workspacesBloc.add(ChangeSelectedWorkspace(selectedBeforeId));
-        yield ErrorLoadingChannels(channels: repository.items);
+          workspacesBloc!.add(ChangeSelectedWorkspace(selectedBeforeId));
+        yield ErrorLoadingChannels(channels: repository!.items);
       }
-      if (repository.isEmpty) yield ChannelsEmpty();
+      if (repository!.isEmpty) yield ChannelsEmpty();
       yield ChannelsLoaded(
-        selected: repository.selected,
-        channels: repository.items,
+        selected: repository!.selected,
+        channels: repository!.items,
         force: DateTime.now().toString(),
       );
     } else if (event is ClearChannels) {
-      await repository.clean();
+      await repository!.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
       // repository.logger.w('CHANNEL ${event.channelId} is selected');
-      repository.select(event.channelId,
+      repository!.select(event.channelId,
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,
           params: {
@@ -107,14 +107,14 @@ class ChannelsBloc extends BaseChannelBloc {
             "channel_id": event.channelId
           });
 
-      repository.selected.messagesUnread = 0;
-      repository.selected.hasUnread = 0;
-      repository.saveOne(repository.selected);
+      repository!.selected!.messagesUnread = 0;
+      repository!.selected!.hasUnread = 0;
+      repository!.saveOne(repository!.selected);
       if (!event.shouldYield) return;
       final newState = ChannelPicked(
-        channels: repository.items,
-        selected: repository.selected,
-        hasUnread: repository.selected.hasUnread,
+        channels: repository!.items,
+        selected: repository!.selected,
+        hasUnread: repository!.selected!.hasUnread,
       );
       ProfileBloc.selectedChannelId = event.channelId;
       ProfileBloc.selectedThreadId = null;
@@ -122,18 +122,18 @@ class ChannelsBloc extends BaseChannelBloc {
       // repository.logger
       // .e("CURRENT CHANNEL STATE: ${this.state}\nWILL YIELD: $newState");
       yield newState;
-      notificationBloc.add(CancelPendingSubscriptions(event.channelId));
+      notificationBloc!.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);
       if (event.workspaceId == selectedParentId) {
         yield ChannelsLoaded(
-          channels: repository.items,
+          channels: repository!.items,
           force: DateTime.now().toString(),
         );
       }
     } else if (event is UpdateSingleChannel) {
       // repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
-      var item = await repository.getItemById(event.data.channelId) as Channel;
+      var item = await repository!.getItemById(event.data.channelId) as Channel?;
       if (item != null) {
         item.icon = event.data.icon ?? item.icon ?? '👽';
         item.name = event.data.name ?? item.name;
@@ -141,10 +141,10 @@ class ChannelsBloc extends BaseChannelBloc {
         item.visibility = event.data.visibility ?? item.visibility;
         item.lastMessage = event.data.lastMessage ?? item.lastMessage;
       } else {
-        await repository.reload(
+        await repository!.reload(
           queryParams: {
             'workspace_id': selectedParentId,
-            'company_id': workspacesBloc.selectedCompanyId,
+            'company_id': workspacesBloc!.selectedCompanyId,
           },
           filters: [
             ['workspace_id', '=', selectedParentId]
@@ -152,44 +152,44 @@ class ChannelsBloc extends BaseChannelBloc {
           sortFields: {'name': true},
         );
         yield ChannelsLoaded(
-          selected: repository.selected,
-          channels: repository.items,
+          selected: repository!.selected,
+          channels: repository!.items,
           force: DateTime.now().toString(),
         );
 
         return;
       }
-      await repository.saveOne(item);
+      await repository!.saveOne(item);
       if (event.data.workspaceId == selectedParentId) {
-        repository.items.removeWhere((c) => c.id == item.id);
-        repository.items.add(item);
+        repository!.items!.removeWhere((c) => c!.id == item.id);
+        repository!.items!.add(item);
       }
-      repository.items.sort((c1, c2) => c1.name.compareTo(c2.name));
+      repository!.items!.sort((c1, c2) => c1!.name!.compareTo(c2!.name!));
       yield ChannelsLoaded(
-        channels: repository.items,
+        channels: repository!.items,
         force: DateTime.now().toString(),
       );
     } else if (event is ReEmitChannels) {
-      repository.items.sort((c1, c2) => c1.name.compareTo(c2.name));
+      repository!.items!.sort((c1, c2) => c1!.name!.compareTo(c2!.name!));
 
       yield ChannelsLoaded(
-        channels: repository.items,
+        channels: repository!.items,
         // force: DateTime.now().toString(),
       );
     } else if (event is LoadSingleChannel) {
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
-      repository.items.removeWhere((i) => i.id == event.channelId);
+      repository!.items!.removeWhere((i) => i!.id == event.channelId);
       if (event.workspaceId == selectedParentId) {
         yield ChannelsLoaded(
-          channels: repository.items,
+          channels: repository!.items,
           force: DateTime.now().toString(),
         );
       }
     } else if (event is ModifyChannelState) {
       await updateChannelState(event);
       yield ChannelsLoaded(
-        channels: repository.items,
+        channels: repository!.items,
         force: DateTime.now().toString(),
       );
     }

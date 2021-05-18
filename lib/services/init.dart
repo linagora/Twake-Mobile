@@ -62,35 +62,35 @@ Future<InitData> initMain() async {
       Endpoint.companies,
       sortFields: {'name': true},
     );
-    ApplicationRepository(companies.items.map((i) => i.id).toList());
+    ApplicationRepository(companies.items!.map((i) => i!.id).toList());
     final workspaces = WorkspacesRepository.fromCollection(
-        await CollectionRepository.load<Workspace>(
+        await (CollectionRepository.load<Workspace>(
       Endpoint.workspaces,
       filters: [
-        ['company_id', '=', companies.selected.id]
+        ['company_id', '=', companies.selected!.id]
       ],
-      queryParams: {'company_id': companies.selected.id},
+      queryParams: {'company_id': companies.selected!.id},
       sortFields: {'name': true},
-    ));
+    ) as FutureOr<CollectionRepository<Workspace>>));
     final channels = await CollectionRepository.load<Channel>(
       Endpoint.channels,
       queryParams: {
-        'workspace_id': workspaces.selected.id,
-        'company_id': companies.selected.id,
+        'workspace_id': workspaces.selected!.id,
+        'company_id': companies.selected!.id,
       },
       filters: [
-        ['workspace_id', '=', workspaces.selected.id]
+        ['workspace_id', '=', workspaces.selected!.id]
       ],
       sortFields: {'name': true},
     );
     final directs = await CollectionRepository.load<Direct>(
       Endpoint.directs,
       queryParams: {
-        'company_id': companies.selected.id,
+        'company_id': companies.selected!.id,
       },
       sortFields: {'last_activity': false},
       filters: [
-        ['company_id', '=', companies.selected.id]
+        ['company_id', '=', companies.selected!.id]
       ],
     );
     final messages =
@@ -104,9 +104,9 @@ Future<InitData> initMain() async {
       channelMembers = await MemberRepository.load(
         Endpoint.channelMembers,
         queryParams: {
-          'company_id': companies.selected.id,
-          'workspace_id': workspaces.selected.id,
-          'channel_id': channels.selected.id,
+          'company_id': companies.selected!.id,
+          'workspace_id': workspaces.selected!.id,
+          'channel_id': channels.selected!.id,
         },
         sortFields: {'channel_id': true},
       );
@@ -118,10 +118,10 @@ Future<InitData> initMain() async {
     return InitData(
       account: account,
       profile: profile,
-      companies: companies,
+      companies: companies as CollectionRepository<Company>?,
       workspaces: workspaces,
-      channels: channels,
-      directs: directs,
+      channels: channels as CollectionRepository<Channel>?,
+      directs: directs as CollectionRepository<Direct>?,
       messages: messages,
       messagesDirect: messagesDirect,
       threads: threads,
@@ -142,23 +142,23 @@ Future<InitData> initMain() async {
 }
 
 class InitData {
-  final AccountRepository account;
-  final ProfileRepository profile;
-  final CollectionRepository<Company> companies;
-  final WorkspacesRepository workspaces;
-  final CollectionRepository<Channel> channels;
-  final CollectionRepository<Direct> directs;
-  final MemberRepository channelMembers;
-  final MessagesRepository messages;
-  final MessagesRepository messagesDirect;
-  final MessagesRepository threads;
-  final SheetRepository sheet;
-  final AddChannelRepository addChannel;
-  final AddDirectRepository addDirect;
-  final EditChannelRepository editChannel;
-  final AddWorkspaceRepository addWorkspace;
-  final DraftRepository draft;
-  final FieldsRepository fields;
+  final AccountRepository? account;
+  final ProfileRepository? profile;
+  final CollectionRepository<Company>? companies;
+  final WorkspacesRepository? workspaces;
+  final CollectionRepository<Channel>? channels;
+  final CollectionRepository<Direct>? directs;
+  final MemberRepository? channelMembers;
+  final MessagesRepository? messages;
+  final MessagesRepository? messagesDirect;
+  final MessagesRepository? threads;
+  final SheetRepository? sheet;
+  final AddChannelRepository? addChannel;
+  final AddDirectRepository? addDirect;
+  final EditChannelRepository? editChannel;
+  final AddWorkspaceRepository? addWorkspace;
+  final DraftRepository? draft;
+  final FieldsRepository? fields;
 
   InitData({
     this.account,

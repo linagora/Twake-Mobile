@@ -10,7 +10,7 @@ part 'draft_event.dart';
 part 'draft_state.dart';
 
 class DraftBloc extends Bloc<DraftEvent, DraftState> {
-  final DraftRepository repository;
+  final DraftRepository? repository;
 
   DraftBloc(this.repository) : super(DraftInitial());
 
@@ -21,7 +21,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
     if (event is LoadDraft) {
       yield DraftLoading();
       // print('DRAFT Loading');
-      final draft = await repository.load(id: event.id, type: event.type);
+      final draft = await repository!.load(id: event.id, type: event.type);
       // print('DRAFT Loaded: ${event.type}');
       yield DraftLoaded(id: event.id, type: event.type, draft: draft);
     } else if (event is UpdateDraft) {
@@ -29,9 +29,9 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
     } else if (event is SaveDraft) {
       yield DraftSaving();
       try {
-        await repository.save(
+        await repository!.save(
           id: event.id,
-          type: event.type,
+          type: event.type!,
           draft: event.draft,
         );
         // print('DRAFT SAVING: ${event.draft}');
@@ -43,7 +43,7 @@ class DraftBloc extends Bloc<DraftEvent, DraftState> {
     } else if (event is ResetDraft) {
       yield DraftSaving();
       try {
-        await repository.remove(id: event.id, type: event.type);
+        await repository!.remove(id: event.id, type: event.type!);
         yield DraftReset();
         // print('DRAFT RESET: ${event.type}');
       } on Exception {

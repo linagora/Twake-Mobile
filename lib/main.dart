@@ -25,7 +25,7 @@ void main() async {
     final AuthRepository authRepository = await initAuth();
     final ConfigurationRepository configurationRepository =
         await ConfigurationRepository.load();
-    cb.ConnectionState connectionState;
+    cb.ConnectionState? connectionState;
     final res = await Connectivity().checkConnectivity();
     if (res == ConnectivityResult.none) {
       connectionState = cb.ConnectionLost('');
@@ -43,7 +43,7 @@ void main() async {
       } else {
         // In production mode, report to the application zone to report to
         // Sentry.
-        Zone.current.handleUncaughtError(details.exception, details.stack);
+        Zone.current.handleUncaughtError(details.exception, details.stack!);
       }
     };
     runApp(TwakeMobileApp(
@@ -61,7 +61,7 @@ void main() async {
 class TwakeMobileApp extends StatelessWidget {
   final AuthRepository authRepository;
   final ConfigurationRepository configurationRepository;
-  final cb.ConnectionState connectionState;
+  final cb.ConnectionState? connectionState;
 
   TwakeMobileApp(
     this.authRepository,

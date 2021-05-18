@@ -13,11 +13,11 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
 
-  var _firstName = '';
-  var _lastName = '';
-  var _picture = '';
+  String? _firstName = '';
+  String? _lastName = '';
+  String? _picture = '';
   var _language = '';
-  var _availableLanguages = <LanguageOption>[];
+  List<LanguageOption>? _availableLanguages = <LanguageOption>[];
 
   @override
   Widget build(BuildContext context) {

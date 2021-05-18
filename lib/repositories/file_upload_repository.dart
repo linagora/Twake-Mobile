@@ -13,20 +13,20 @@ class FileUploadRepository {
   // }
 
   void upload({
-    FormData payload,
+    required FormData payload,
     String endpoint = Endpoint.fileUpload,
-    Function(Map<String, dynamic> response) onSuccess,
-    Function(String reason) onError,
-    CancelToken cancelToken,
+    Function(Map<String, dynamic>? response)? onSuccess,
+    Function(String reason)? onError,
+    CancelToken? cancelToken,
   }) {
     print('Payload fields in upload request: ${payload.fields}');
     _api
         .post(endpoint, body: payload, cancelToken: cancelToken)
         .then((r) {
       this.files.add(UploadedFile.fromJson(r));
-      onSuccess(r);
-    }).onError((e, s) {
-      onError(e.toString());
+      onSuccess!(r);
+    }).onError((dynamic e, s) {
+      onError!(e.toString());
       _logger.e("ERROR UPLOADING FILE:\n$e\n$s");
     });
   }

@@ -32,8 +32,8 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   final _channelDescriptionFocusNode = FocusNode();
 
   var _canGoNext = false;
-  var _channelType = ChannelType.public;
-  var _participants = <String>[];
+  ChannelType? _channelType = ChannelType.public;
+  List<String?>? _participants = <String>[];
   // var _automaticallyAddNew = true;
   var _icon = '📄';
   var _emojiVisible = false;
@@ -82,12 +82,12 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
   }
 
   void _batchUpdateState({
-    String icon,
-    String name,
-    String description,
-    ChannelType type,
-    List<String> participants,
-    bool automaticallyAddNew,
+    String? icon,
+    String? name,
+    String? description,
+    ChannelType? type,
+    List<String?>? participants,
+    bool? automaticallyAddNew,
   }) {
     context.read<AddChannelBloc>().add(
           Update(
@@ -130,7 +130,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
         BlocListener<MemberCubit, MemberState>(
           listener: (context, state) {
             if (state is MembersAdded) {
-              String channelId = state.channelId;
+              String? channelId = state.channelId;
               openChannel(context, channelId);
             }
           },
@@ -161,7 +161,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           listener: (context, state) {
         if (state is Created) {
           if (_channelType == ChannelType.private &&
-              _participants.length != 0) {
+              _participants!.length != 0) {
             context
                 .read<MemberCubit>()
                 .addMembers(channelId: state.id, members: _participants);
@@ -176,7 +176,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
           context.read<SheetBloc>().add(ClearSheet());
           // Redirect user to created channel
           if (_channelType != ChannelType.private ||
-              _participants.length == 0) {
+              _participants!.length == 0) {
             String channelId = state.id;
             openChannel(context, channelId);
           }
@@ -287,7 +287,7 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
                               if (_channelType == ChannelType.private)
                                 SizedBox(height: 8),
                               if (_channelType == ChannelType.private)
-                                ParticipantsButton(count: _participants.length),
+                                ParticipantsButton(count: _participants!.length),
                               SizedBox(height: 8),
                               // if (_channelType == ChannelType.public)
                               //   SwitchField(
@@ -324,15 +324,15 @@ class _ChannelInfoFormState extends State<ChannelInfoForm> {
 }
 
 class ChannelTypesContainer extends StatelessWidget {
-  final ChannelType type;
+  final ChannelType? type;
   final Function onPublicTap;
   final Function onPrivateTap;
 
   const ChannelTypesContainer({
-    Key key,
-    @required this.type,
-    @required this.onPublicTap,
-    @required this.onPrivateTap,
+    Key? key,
+    required this.type,
+    required this.onPublicTap,
+    required this.onPrivateTap,
   }) : super(key: key);
 
   @override
@@ -366,16 +366,16 @@ class SelectableItem extends StatelessWidget {
   final Function onTap;
 
   const SelectableItem({
-    Key key,
-    @required this.title,
-    @required this.selected,
-    @required this.onTap,
+    Key? key,
+    required this.title,
+    required this.selected,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       child: Container(
         height: 44.0,
         color: Colors.white,
@@ -421,7 +421,7 @@ class SelectableItem extends StatelessWidget {
 class ParticipantsButton extends StatelessWidget {
   final int count;
 
-  const ParticipantsButton({Key key, this.count = 0}) : super(key: key);
+  const ParticipantsButton({Key? key, this.count = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

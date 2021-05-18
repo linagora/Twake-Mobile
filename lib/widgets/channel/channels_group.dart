@@ -19,7 +19,7 @@ class ChannelsGroup extends StatelessWidget {
             ),
             SizedBox(height: 11),
             if (state is ChannelsLoaded)
-              ...state.channels.map((c) => ChannelTile(c)).toList(),
+              ...state.channels!.map((c) => ChannelTile(c as Channel?)).toList(),
             if (state is ChannelsEmpty)
               Padding(
                 padding: EdgeInsets.all(7.0),

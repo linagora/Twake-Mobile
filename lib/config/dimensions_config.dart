@@ -12,8 +12,8 @@ const double _BLOCK_SIZE_HORZ = 100;
 /// Configuration of screen dimensions, should be initialized
 /// from the root of the application, when it's run.
 class Dim {
-  static double _screenWidth;
-  static double _screenHeight;
+  static double? _screenWidth;
+  static double? _screenHeight;
   static bool isPortrait = true;
   // static bool isMobilePortrait = false;
 
@@ -32,8 +32,8 @@ class Dim {
 
     // Calculating number of blocks, in order to determine values
     // of scaling multipliers
-    _blockWidth = _screenWidth / _BLOCK_SIZE_HORZ;
-    _blockHeight = _screenHeight / _BLOCK_SIZE_VERT;
+    _blockWidth = _screenWidth! / _BLOCK_SIZE_HORZ;
+    _blockHeight = _screenHeight! / _BLOCK_SIZE_VERT;
   }
 
   // Number of blocks, of width _BLOCK_SIZE_XXX, which can fit
@@ -70,13 +70,13 @@ class Dim {
 
   /// Available screen height
   /// Must be accessed only after init
-  static double get maxScreenHeight {
+  static double? get maxScreenHeight {
     return isPortrait ? _screenHeight : _screenWidth;
   }
 
   /// Available screen width
   /// Must be accessed only after init
-  static double get maxScreenWidth {
+  static double? get maxScreenWidth {
     return isPortrait ? _screenWidth : _screenHeight;
   }
 

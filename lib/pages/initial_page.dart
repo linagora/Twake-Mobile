@@ -41,7 +41,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
     BlocProvider.of<AuthBloc>(context).add(AuthInitialize());
   }
 
@@ -59,7 +59,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
   }
 
@@ -117,7 +117,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 ),
                 BlocProvider<ProfileBloc>(
                   create: (ctx) => ProfileBloc(
-                    state.initData.profile,
+                    state.initData.profile!,
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   ),
                   lazy: false,
@@ -125,7 +125,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 BlocProvider<CompaniesBloc>(
                   lazy: false,
                   create: (ctx) => CompaniesBloc(
-                    state.initData.companies,
+                    state.initData.companies!,
                     BlocProvider.of<NotificationBloc>(ctx),
                   ),
                 ),
@@ -133,7 +133,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     lazy: false,
                     create: (ctx) {
                       return WorkspacesBloc(
-                        repository: state.initData.workspaces,
+                        repository: state.initData.workspaces!,
                         companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
                         notificationBloc:
                             BlocProvider.of<NotificationBloc>(ctx),
@@ -141,14 +141,14 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     }),
                 BlocProvider<ChannelsBloc>(create: (ctx) {
                   return ChannelsBloc(
-                    repository: state.initData.channels,
+                    repository: state.initData.channels!,
                     workspacesBloc: BlocProvider.of<WorkspacesBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
                 }),
                 BlocProvider<DirectsBloc>(create: (ctx) {
                   return DirectsBloc(
-                    repository: state.initData.directs,
+                    repository: state.initData.directs!,
                     companiesBloc: BlocProvider.of<CompaniesBloc>(ctx),
                     notificationBloc: BlocProvider.of<NotificationBloc>(ctx),
                   );
@@ -196,7 +196,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   lazy: false,
                 ),
                 BlocProvider<SheetBloc>(
-                  create: (_) => SheetBloc(state.initData.sheet),
+                  create: (_) => SheetBloc(state.initData.sheet!),
                   lazy: false,
                 ),
                 BlocProvider<AddChannelBloc>(
@@ -241,7 +241,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
               ],
               child: WillPopScope(
                 onWillPop: () async =>
-                    !await _navigatorKey.currentState.maybePop(),
+                    !await _navigatorKey.currentState!.maybePop(),
                 child: Stack(
                   children: [
                     Navigator(

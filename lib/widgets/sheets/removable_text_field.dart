@@ -7,11 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class RemovableTextField extends StatefulWidget {
   final int index;
   final bool isLastOne;
-  final String initialText;
+  final String? initialText;
 
   const RemovableTextField({
-    Key key,
-    @required this.index,
+    Key? key,
+    required this.index,
     this.isLastOne = false,
     this.initialText = '',
   }) : super(key: key);
@@ -31,9 +31,9 @@ class _RemovableTextFieldState extends State<RemovableTextField> {
     super.initState();
     _index = widget.index;
     _isLastOne = widget.isLastOne;
-    _controller.text = widget.initialText;
+    _controller.text = widget.initialText!;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       _controller.addListener(() {
         String text = _controller.text;
         print('Update text: $text');

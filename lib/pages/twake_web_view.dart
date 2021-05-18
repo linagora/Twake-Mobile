@@ -6,7 +6,7 @@ class TwakeWebView extends StatelessWidget {
 
   const TwakeWebView(
     this.initUrl, {
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

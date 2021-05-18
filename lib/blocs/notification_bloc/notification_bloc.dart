@@ -24,21 +24,21 @@ export 'package:twake/blocs/notification_bloc/notification_state.dart';
 export 'package:twake/models/notification.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  Notifications service;
-  ConnectionBloc connectionBloc;
-  IO.Socket socket;
+  late Notifications service;
+  ConnectionBloc? connectionBloc;
+  late IO.Socket socket;
   var socketConnectionState = SocketConnectionState.DISCONNECTED;
 
-  AuthBloc authBloc;
-  GlobalKey<NavigatorState> navigator;
+  AuthBloc? authBloc;
+  GlobalKey<NavigatorState>? navigator;
 
   final logger = Logger();
   final _api = Api();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-  Map<String, dynamic> subscriptionRooms = {};
-  StreamSubscription _subscription;
-  StreamSubscription _authSubscription;
+  Map<String, dynamic>? subscriptionRooms = {};
+  late StreamSubscription _subscription;
+  late StreamSubscription _authSubscription;
 
   NotificationBloc({
     this.authBloc,
@@ -55,7 +55,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       shouldNotify: shouldNotify,
     );
     socket = IO.io(
-      authBloc.repository.socketIOHost,
+      authBloc!.repository.socketIOHost,
       IO.OptionBuilder()
           .setPath('/socket')
           .enableAutoConnect()
@@ -63,21 +63,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           .enableReconnection()
           .setTransports(['websocket']).build(),
     );
-    _authSubscription = authBloc.listen((state) {
+    _authSubscription = authBloc!.listen((state) {
       if (state is Unauthenticated || state is HostReset) {
-        for (String room in subscriptionRooms.keys) {
+        for (String room in subscriptionRooms!.keys) {
           unsubscribe(room);
         }
         service.cancelAll();
       }
     });
-    _subscription = connectionBloc.listen((state) {
+    _subscription = connectionBloc!.listen((state) {
       if (state is ConnectionActive) {
         reinit();
       }
     });
     setupListeners();
-    if (connectionBloc.state is ConnectionActive) {
+    if (connectionBloc!.state is ConnectionActive) {
       if (socket.disconnected) socket.connect();
     }
     // launch health check on socket io
@@ -100,14 +100,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void socketIOHealthCheck() {
     // if user has logged out then terminate health check
-    if (authBloc.state is Unauthenticated) {
+    if (authBloc!.state is Unauthenticated) {
       logger.w('UNAUTHENTICATED FOR SOCKET IO');
       return;
     }
     // otherwise loop endlessly
     Future.delayed(Duration(seconds: 5)).then((_) => socketIOHealthCheck());
     // wait another 10 seconds for connection to appear
-    if (connectionBloc.state is ConnectionLost) return;
+    if (connectionBloc!.state is ConnectionLost) return;
     // if not connected reconnect
     if (socket.disconnected ||
         socketConnectionState == SocketConnectionState.DISCONNECTED)
@@ -124,11 +124,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       await _api.autoProlongToken();
       socketConnectionState = SocketConnectionState.CONNECTED;
       while (socketConnectionState != SocketConnectionState.AUTHENTICATED &&
-          authBloc.repository.accessToken != null) {
+          authBloc!.repository.accessToken != null) {
         // print('AUTHENTICATING SOCKEIO');
         if (socket.disconnected) socket = socket.connect();
         socket.emit(SocketIOEvent.AUTHENTICATE, {
-          'token': authBloc.repository.accessToken,
+          'token': authBloc!.repository.accessToken,
         });
         await Future.delayed(Duration(seconds: 5));
       }
@@ -164,7 +164,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   void reinit() async {
     while (true) {
-      if (connectionBloc.state is ConnectionLost) return;
+      if (connectionBloc!.state is ConnectionLost) return;
       if (socket.disconnected) socket = socket.connect();
       // Wait for the socket to authenticate;
       await Future.delayed(Duration(seconds: 3));
@@ -172,7 +172,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         break;
       }
     }
-    for (String room in subscriptionRooms.keys) {
+    for (String room in subscriptionRooms!.keys) {
       unsubscribe(room);
     }
     setSubscriptions();
@@ -181,14 +181,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
   Future<void> setSubscriptions() async {
     await Future.delayed(Duration(seconds: 3));
-    subscriptionRooms = await _api.get(
+    subscriptionRooms = await (_api.get(
       Endpoint.notificationRooms,
       params: {
         'company_id': ProfileBloc.selectedCompanyId,
         'workspace_id': ProfileBloc.selectedWorkspaceId,
       },
-    );
-    for (String room in subscriptionRooms.keys) {
+    ) as FutureOr<Map<String, dynamic>?>);
+    for (String room in subscriptionRooms!.keys) {
       subscribe(room);
     }
   }
@@ -206,23 +206,23 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   @override
   Stream<NotificationState> mapEventToState(NotificationEvent event) async* {
     if (event is DirectMessageEvent) {
-      yield DirectMessageNotification(event.data);
+      yield DirectMessageNotification(event.data as MessageNotification);
     } else if (event is ChannelMessageEvent) {
-      yield ChannelMessageNotification(event.data);
+      yield ChannelMessageNotification(event.data as MessageNotification);
     } else if (event is ThreadMessageEvent) {
       yield ThreadMessageNotification(event.data);
     } else if (event is ChannelMessageSocketEvent) {
-      yield ChannelMessageArrived(event.data);
+      yield ChannelMessageArrived(event.data as SocketMessageUpdateNotification);
     } else if (event is DirectMessageSocketEvent) {
-      yield DirectMessageArrived(event.data);
+      yield DirectMessageArrived(event.data as SocketMessageUpdateNotification);
     } else if (event is ChannelThreadSocketEvent) {
-      yield ChannelThreadMessageArrived(event.data);
+      yield ChannelThreadMessageArrived(event.data as SocketMessageUpdateNotification);
     } else if (event is DirectThreadSocketEvent) {
-      yield DirectThreadMessageArrived(event.data);
+      yield DirectThreadMessageArrived(event.data as SocketMessageUpdateNotification);
     } else if (event is ThreadMessageDeletedEvent) {
-      yield ThreadMessageDeleted(event.data);
+      yield ThreadMessageDeleted(event.data as SocketMessageUpdateNotification);
     } else if (event is MessageDeletedEvent) {
-      yield MessageDeleted(event.data);
+      yield MessageDeleted(event.data as SocketMessageUpdateNotification);
     } else if (event is ChannelUpdateEvent) {
       yield ChannelUpdated(event.data);
     } else if (event is ChannelDeleteEvent) {
@@ -255,7 +255,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   void onMessageCallback(NotificationData data) {
     if (data is MessageNotification) {
       // print("ON MESSAGE CALLBACK:\n${data.toJson()} ");
-      if (data.threadId.isNotEmpty && data.threadId != data.messageId) {
+      if (data.threadId!.isNotEmpty && data.threadId != data.messageId) {
         // logger.d('adding ThreadMessageEvent');
         this.add(ThreadMessageEvent(data));
       } else if (data.workspaceId == 'direct') {
@@ -280,7 +280,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     // builder: (ctx) => MainPage(),
     // ),
     // );
-    navigator.currentState.pushAndRemoveUntil(
+    navigator!.currentState!.pushAndRemoveUntil(
       MaterialPageRoute(builder: (ctx) => TabsController()),
       (_) => false,
     );
@@ -290,8 +290,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     else
       messagePage = (ctx) => Chat<ChannelsBloc>();
 
-    navigator.currentState.push(
-      MaterialPageRoute(builder: messagePage),
+    navigator!.currentState!.push(
+      MaterialPageRoute(builder: messagePage as Widget Function(BuildContext)),
     );
     if (data.threadId != data.messageId) {
       if (data.workspaceId == 'direct')
@@ -299,7 +299,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       else
         messagePage = (ctx) => ThreadPage<ChannelsBloc>();
       // await Future.delayed(Duration(seconds: 4));
-      navigator.currentState.push(
+      navigator!.currentState!.push(
         MaterialPageRoute(
           builder: messagePage,
         ),
@@ -354,35 +354,35 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         break;
 
       case SocketEventType.ChannelMessage:
-        this.add(ChannelMessageSocketEvent(data));
+        this.add(ChannelMessageSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.DirectMessage:
-        this.add(DirectMessageSocketEvent(data));
+        this.add(DirectMessageSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.ChannelThreadMessage:
-        this.add(ChannelThreadSocketEvent(data));
+        this.add(ChannelThreadSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.DirectThreadMessage:
-        this.add(DirectThreadSocketEvent(data));
+        this.add(DirectThreadSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.ThreadMessageDeleted:
-        this.add(ThreadMessageDeletedEvent(data));
+        this.add(ThreadMessageDeletedEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.MessageDeleted:
-        this.add(MessageDeletedEvent(data));
+        this.add(MessageDeletedEvent(data as SocketMessageUpdateNotification));
         break;
     }
   }
 
   SocketEventType getSocketEventType(Map event) {
-    if (!subscriptionRooms.containsKey(event['name']))
+    if (!subscriptionRooms!.containsKey(event['name']))
       return SocketEventType.Unknown;
-    final type = subscriptionRooms[event['name']]['type'];
+    final type = subscriptionRooms![event['name']]['type'];
     if (event['data']['action'] == 'update') {
       if (type == 'CHANNEL') {
         if (event['data']['thread_id'] != null &&
@@ -409,9 +409,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   SocketResourceType getSocketResourceType(Map resource) {
-    if (!subscriptionRooms.containsKey(resource['room']))
+    if (!subscriptionRooms!.containsKey(resource['room']))
       return SocketResourceType.Unknown;
-    final type = subscriptionRooms[resource['room']]['type'];
+    final type = subscriptionRooms![resource['room']]['type'];
     if (type == 'CHANNELS_LIST') {
       if (resource['type'] == 'channel' ||
           resource['type'] == 'channel_activity' ||
@@ -435,9 +435,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     return SocketResourceType.Unknown;
   }
 
-  String getRoomSubscriberId(String name) {
-    if (!subscriptionRooms.containsKey(name)) return null;
-    return subscriptionRooms[name]['id'];
+  String? getRoomSubscriberId(String? name) {
+    if (!subscriptionRooms!.containsKey(name)) return null;
+    return subscriptionRooms![name!]['id'];
   }
 
   @override

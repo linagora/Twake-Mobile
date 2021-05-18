@@ -16,7 +16,7 @@ class MentionsEmpty extends MentionState {
 class MentionableUsersLoaded extends MentionState {
   final List<User> users;
 
-  const MentionableUsersLoaded({@required this.users});
+  const MentionableUsersLoaded({required this.users});
 
   @override
   List<Object> get props => [users];

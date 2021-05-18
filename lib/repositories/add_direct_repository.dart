@@ -9,11 +9,11 @@ part 'add_direct_repository.g.dart';
 @JsonSerializable(explicitToJson: true)
 class AddDirectRepository {
   @JsonKey(required: true, name: 'company_id')
-  String companyId;
+  String? companyId;
   @JsonKey(required: true)
-  String member;
+  String? member;
   @JsonKey(required: true, name: 'workspace_id')
-  String workspaceId = 'direct';
+  String? workspaceId = 'direct';
 
   @JsonKey(ignore: true)
   static final _logger = Logger();
@@ -36,21 +36,21 @@ class AddDirectRepository {
     member = '';
   }
 
-  Future<String> create() async {
+  Future<String?> create() async {
     this.companyId = ProfileBloc.selectedCompanyId;
     this.workspaceId = 'direct';
 
     final body = this.toJson();
     _logger.d('Direct creation request body: $body');
-    Map<String, dynamic> resp;
+    Map<String, dynamic>? resp;
     try {
-      resp = await _api.post(Endpoint.directs, body: body);
+      resp = await (_api.post(Endpoint.directs, body: body) as FutureOr<Map<String, dynamic>?>);
     } catch (error) {
       _logger.e('Error while trying to create a direct:\n${error.message}');
       return '';
     }
     _logger.d('RESPONSE AFTER DIRECT CREATION: $resp');
-    String directId = resp['id'];
+    String? directId = resp!['id'];
     return directId;
   }
 }

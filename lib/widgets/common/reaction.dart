@@ -5,9 +5,9 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
 
 class Reaction extends StatelessWidget {
-  final String reaction;
-  final int count;
-  final String workspaceId;
+  final String? reaction;
+  final int? count;
+  final String? workspaceId;
   Reaction(this.reaction, this.count, [this.workspaceId]);
 
   @override

@@ -19,7 +19,7 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     print('USER\'S EMAIL: ${ProfileBloc.email}');
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.profile));
     });
   }

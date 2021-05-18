@@ -76,13 +76,13 @@ class CupertinoWarning extends StatelessWidget {
 }
 
 class ActionWidget extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final Icon icon;
+  final String? title;
+  final String? subtitle;
+  final Icon? icon;
   final bool isDestructive;
 
   const ActionWidget({
-    Key key,
+    Key? key,
     this.title,
     this.subtitle,
     this.icon,
@@ -94,12 +94,12 @@ class ActionWidget extends StatelessWidget {
     return Container(
       child: Row(
         children: [
-          icon,
+          icon!,
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                title,
+                title!,
                 maxLines: 1,
                 textAlign: TextAlign.start,
                 style: TextStyle(
@@ -110,7 +110,7 @@ class ActionWidget extends StatelessWidget {
               ),
               SizedBox(height: 2.0),
               Text(
-                subtitle,
+                subtitle!,
                 maxLines: 1,
                 textAlign: TextAlign.start,
                 style: TextStyle(

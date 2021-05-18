@@ -5,7 +5,7 @@ import 'package:twake/widgets/message/compose_bar.dart';
 
 class MessageEditModalSheet extends StatelessWidget {
   final Message message;
-  final Function onMessageSend;
+  final Function? onMessageSend;
 
   MessageEditModalSheet(this.message, {this.onMessageSend});
 
@@ -16,9 +16,9 @@ class MessageEditModalSheet extends StatelessWidget {
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: ComposeBar(
-        onMessageSend: onMessageSend,
+        onMessageSend: onMessageSend as dynamic Function(String, BuildContext)?,
         onTextUpdated: (content, context) {},
-        initialText: message.content.originalStr,
+        initialText: message.content!.originalStr,
         autofocus: true,
       ),
     );

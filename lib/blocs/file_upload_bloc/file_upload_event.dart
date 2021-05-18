@@ -11,10 +11,10 @@ abstract class FileUploadEvent extends Equatable {
 }
 
 class StartUpload extends FileUploadEvent {
-  final String path;
-  final List<int> bytes;
-  final String workspaceId;
-  final String endpoint;
+  final String? path;
+  final List<int>? bytes;
+  final String? workspaceId;
+  final String? endpoint;
 
   StartUpload({
     this.path = '',
@@ -25,16 +25,16 @@ class StartUpload extends FileUploadEvent {
 
   Future<FormData> payload() async {
     var almostUniqueName = '';
-    if (path.isEmpty) {
+    if (path!.isEmpty) {
       // If bytes is all we have.
       almostUniqueName =
           '${DateTime.now().microsecondsSinceEpoch.toString()}.jpg';
       print('Almost unique filename: $almostUniqueName');
     }
 
-    final file = bytes != null && bytes.isNotEmpty
-        ? MultipartFile.fromBytes(bytes, filename: almostUniqueName)
-        : await MultipartFile.fromFile(path, filename: filename);
+    final file = bytes != null && bytes!.isNotEmpty
+        ? MultipartFile.fromBytes(bytes!, filename: almostUniqueName)
+        : await MultipartFile.fromFile(path!, filename: filename);
 
     return FormData.fromMap({
       'file': file,
@@ -42,11 +42,11 @@ class StartUpload extends FileUploadEvent {
     });
   }
 
-  String get filename => basename(path);
+  String get filename => basename(path!);
 
-  Future<int> get size => path.isNotEmpty
-      ? File(path).length()
-      : Future.value(Uint8List.fromList(bytes).elementSizeInBytes);
+  Future<int> get size => path!.isNotEmpty
+      ? File(path!).length()
+      : Future.value(Uint8List.fromList(bytes!).elementSizeInBytes);
 
   @override
   List<Object> get props => [];
@@ -69,9 +69,9 @@ class FinishUpload extends FileUploadEvent {
 }
 
 class ErrorUpload extends FileUploadEvent {
-  final String reason;
-  final String filename;
-  final int size;
+  final String? reason;
+  final String? filename;
+  final int? size;
 
   const ErrorUpload({this.reason, this.filename, this.size});
 

@@ -23,7 +23,7 @@ class TwakeDrawer extends StatefulWidget {
 class _TwakeDrawerState extends State<TwakeDrawer> {
   var _companiesHidden = true;
   var _canCreateWorkspace = false;
-  var _companies = <Company>[];
+  List<Company?>? _companies = <Company>[];
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                 if (state is CompaniesLoaded) {
                   _companies = state.companies;
 
-                  final selectedCompany = state.selected;
-                  final permissions = selectedCompany.permissions;
+                  final selectedCompany = state.selected!;
+                  final permissions = selectedCompany.permissions!;
                   if (permissions.length > 0 &&
                       permissions.contains('CREATE_WORKSPACES')) {
                     _canCreateWorkspace = true;
@@ -110,12 +110,12 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                 ? ListView.builder(
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 15),
-                                    itemCount: state.workspaces.length,
+                                    itemCount: state.workspaces!.length,
                                     itemBuilder: (ctx, i) => InkWell(
                                           onTap: () {
                                             BlocProvider.of<WorkspacesBloc>(ctx)
                                                 .add(ChangeSelectedWorkspace(
-                                                    state.workspaces[i].id));
+                                                    state.workspaces![i]!.id));
                                             BlocProvider.of<ProfileBloc>(ctx)
                                                 .add(UpdateBadges());
                                             Navigator.of(context).pop();
@@ -129,7 +129,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 ImageAvatar(
-                                                  state.workspaces[i].logo,
+                                                  state.workspaces![i]!.logo,
                                                   width: 30,
                                                   height: 30,
                                                 ),
@@ -146,7 +146,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                                       SizedBox(height: 12),
                                                       Text(
                                                         state
-                                                            .workspaces[i].name,
+                                                            .workspaces![i]!.name!,
                                                         maxLines: 1,
                                                         overflow: TextOverflow
                                                             .ellipsis,
@@ -160,7 +160,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                                       ),
                                                       SizedBox(height: 4),
                                                       Text(
-                                                        '${state.workspaces[i].totalMembers} members',
+                                                        '${state.workspaces![i]!.totalMembers} members',
                                                         style: TextStyle(
                                                           fontSize: 12.0,
                                                           fontWeight:
@@ -181,7 +181,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                                     final count = (pstate
                                                             as ProfileLoaded)
                                                         .getBadgeForWorkspace(
-                                                            state.workspaces[i]
+                                                            state.workspaces![i]!
                                                                 .id);
                                                     if (count > 0)
                                                       return Badge(
@@ -220,11 +220,11 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.symmetric(horizontal: 15),
-                          itemCount: _companies.length,
+                          itemCount: _companies!.length,
                           itemBuilder: (ctx, i) => InkWell(
                             onTap: () {
                               BlocProvider.of<CompaniesBloc>(ctx)
-                                  .add(ChangeSelectedCompany(_companies[i].id));
+                                  .add(ChangeSelectedCompany(_companies![i]!.id));
                               BlocProvider.of<ProfileBloc>(ctx)
                                   .add(UpdateBadges());
                               setState(() {
@@ -236,7 +236,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 ImageAvatar(
-                                  _companies[i].logo,
+                                  _companies![i]!.logo,
                                   width: 30,
                                   height: 30,
                                 ),
@@ -247,7 +247,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                   children: [
                                     SizedBox(height: 12),
                                     Text(
-                                      _companies[i].name,
+                                      _companies![i]!.name!,
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w600,
@@ -255,9 +255,9 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                       ),
                                     ),
                                     SizedBox(height: 4),
-                                    if (_companies[i].totalMembers != null)
+                                    if (_companies![i]!.totalMembers != null)
                                       Text(
-                                        '${_companies[i].totalMembers} members',
+                                        '${_companies![i]!.totalMembers} members',
                                         style: TextStyle(
                                           fontSize: 12.0,
                                           fontWeight: FontWeight.w400,
@@ -273,7 +273,7 @@ class _TwakeDrawerState extends State<TwakeDrawer> {
                                       curr is ProfileLoaded,
                                   builder: (ctx, pstate) {
                                     final count = (pstate as ProfileLoaded)
-                                        .getBadgeForCompany(_companies[i].id);
+                                        .getBadgeForCompany(_companies![i]!.id);
                                     if (count > 0)
                                       return Badge(
                                         shape: BadgeShape.square,

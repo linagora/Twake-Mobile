@@ -3,15 +3,15 @@ import 'package:twake/models/user.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class UserRepository {
-  Map<String, User> items = {};
-  static UserRepository _userRepository;
-  final String apiEndpoint;
+  Map<String?, User> items = {};
+  static UserRepository? _userRepository;
+  final String? apiEndpoint;
 
-  factory UserRepository([String apiEndpoint]) {
+  factory UserRepository([String? apiEndpoint]) {
     if (_userRepository == null || apiEndpoint != null) {
       _userRepository = UserRepository._(apiEndpoint);
     }
-    return _userRepository;
+    return _userRepository!;
   }
 
   UserRepository._(this.apiEndpoint);
@@ -20,8 +20,8 @@ class UserRepository {
   final _storage = Storage();
   final logger = Logger();
 
-  Future<User> user(String userId) async {
-    User item = items[userId];
+  Future<User?> user(String? userId) async {
+    User? item = items[userId];
     if (item == null) {
       final userMap = await _storage.load(type: StorageType.User, key: userId);
       if (userMap != null) {
@@ -30,16 +30,16 @@ class UserRepository {
       }
     }
     if (item == null) {
-      List list;
+      List? list;
       try {
-        list = await _api.get(apiEndpoint, params: {'id': userId});
+        list = await (_api.get(apiEndpoint!, params: {'id': userId}) as FutureOr<List<dynamic>?>);
       } on ApiError catch (error) {
         logger.d('ERROR WHILE FETCHING user FROM API\n${error.message}');
         throw error;
       }
-      final Map userMap = list[0];
+      final Map userMap = list![0];
       if (userMap.isNotEmpty) {
-        item = User.fromJson(userMap);
+        item = User.fromJson(userMap as Map<String, dynamic>);
         items[userId] = item;
         save(item);
       }
@@ -47,12 +47,12 @@ class UserRepository {
     return item;
   }
 
-  Future<bool> batchUsersLoad(Set<String> userIds) async {
+  Future<bool> batchUsersLoad(Set<String?> userIds) async {
     items.removeWhere((id, _) => !userIds.contains(id));
     userIds.removeAll(items.keys);
     userIds.removeWhere((i) => i == null);
-    List<String> toBeFetched = [];
-    for (String id in userIds) {
+    List<String?> toBeFetched = [];
+    for (String? id in userIds) {
       final item = await _storage.load(type: StorageType.User, key: id);
       if (item == null)
         toBeFetched.add(id);
@@ -61,14 +61,14 @@ class UserRepository {
     }
     if (toBeFetched.isNotEmpty) {
       // logger.d('TOBE FETCHED FROM API: $toBeFetched');
-      List response = [];
+      List? response = [];
       try {
-        response = await _api.get(
-          apiEndpoint,
+        response = await (_api.get(
+          apiEndpoint!,
           params: {
             'id': toBeFetched,
           },
-        );
+        ) as FutureOr<List<dynamic>>);
         // logger.d('$response');
       } on ApiError catch (error) {
         logger.e('ERROR WHILE FETCHING users FROM API\n${error.message}');
@@ -97,15 +97,15 @@ class UserRepository {
   Future<List<User>> searchUsers(String request) async {
     if (request.isEmpty) return <User>[];
     var companyId = ProfileBloc.selectedCompanyId;
-    List response = [];
+    List? response = [];
     try {
-      response = await _api.get(
+      response = await (_api.get(
         Endpoint.usersSearch,
         params: {
           'company_id': companyId,
           'name': request,
         },
-      );
+      ) as FutureOr<List<dynamic>>);
     } on ApiError catch (error) {
       logger.e('ERROR WHILE SEARCHING users FROM API\n${error.message}');
       return [];

@@ -23,10 +23,10 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessagesBloc<T>, MessagesState>(builder: (ctx, state) {
-      var messages = <Message>[];
+      List<Message?>? messages = <Message>[];
 
       if (state is MessagesLoaded) {
-        if (state.messages.isEmpty) {
+        if (state.messages!.isEmpty) {
           return _buildEmptyMessage(state);
         }
         messages = state.messages;
@@ -46,8 +46,8 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
             if (state is MessagesLoaded) {
               BlocProvider.of<MessagesBloc<T>>(context).add(
                 LoadMoreMessages(
-                  beforeId: state.messages.first.id,
-                  beforeTimeStamp: state.messages.first.creationDate,
+                  beforeId: state.messages!.first!.id,
+                  beforeTimeStamp: state.messages!.first!.creationDate,
                 ),
               );
             }
@@ -57,7 +57,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         child: Expanded(
           child: GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
-            child: _buildStickyGroupedListView(context, state, messages),
+            child: _buildStickyGroupedListView(context, state, messages!),
           ),
         ),
       );
@@ -77,7 +77,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
   }
 
   Widget _buildStickyGroupedListView(
-      BuildContext context, MessagesState state, List<Message> messages) {
+      BuildContext context, MessagesState state, List<Message?> messages) {
     var lastScrollPosition = 0;
     try {
       if (state is MessagesLoaded) {
@@ -88,10 +88,10 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
           lastScrollPosition =
               _itemPositionListener.itemPositions.value.first.index;
         } else {
-          final profileState = context.read<ProfileBloc>().state;
+          final ProfileState profileState = context.read<ProfileBloc>().state;
           if (profileState is ProfileLoaded) {
             final badge =
-                profileState.getBadgeForChannel(state.parentChannel.id);
+                profileState.getBadgeForChannel(state.parentChannel!.id);
             lastScrollPosition = badge > 1 ? badge : 0;
           }
         }
@@ -100,7 +100,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
       lastScrollPosition = 0;
     }
 
-    return StickyGroupedListView<Message, DateTime>(
+    return StickyGroupedListView<Message?, DateTime>(
         initialScrollIndex: lastScrollPosition,
         itemPositionsListener: _itemPositionListener,
         key: ValueKey(state is MessagesLoaded ? state.messageCount : 0),
@@ -108,21 +108,21 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
         stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
         reverse: true,
         elements: messages,
-        groupBy: (Message m) {
+        groupBy: (Message? m) {
           final DateTime dt =
-              DateTime.fromMillisecondsSinceEpoch(m.creationDate);
+              DateTime.fromMillisecondsSinceEpoch(m!.creationDate!);
           return DateTime(dt.year, dt.month, dt.day);
         },
         groupComparator: (DateTime value1, DateTime value2) =>
             value1.compareTo(value2),
-        itemComparator: (Message m1, Message m2) {
-          return m1.creationDate.compareTo(m2.creationDate);
+        itemComparator: (Message? m1, Message? m2) {
+          return m1!.creationDate!.compareTo(m2!.creationDate!);
         },
         separator: SizedBox(height: Dim.hm2),
-        groupSeparatorBuilder: (Message message) {
+        groupSeparatorBuilder: (Message? message) {
           return GestureDetector(
             onTap: () {
-              FocusManager.instance.primaryFocus.unfocus();
+              FocusManager.instance.primaryFocus!.unfocus();
             },
             child: Container(
               height: Dim.hm3,
@@ -144,7 +144,7 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
                       child: Padding(
                         padding: const EdgeInsets.all(1.0),
                         child: Text(
-                          DateFormatter.getVerboseDate(message.creationDate),
+                          DateFormatter.getVerboseDate(message!.creationDate!),
                           style: TextStyle(
                             fontSize: 12.0,
                             fontWeight: FontWeight.w400,
@@ -160,10 +160,10 @@ class _MessagesGroupedListState<T extends BaseChannelBloc>
             ),
           );
         },
-        itemBuilder: (_, Message message) {
+        itemBuilder: (_, Message? message) {
           return MessageTile<T>(
             message: message,
-            key: ValueKey(message.key),
+            key: ValueKey(message!.key),
           );
         });
   }

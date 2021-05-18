@@ -12,8 +12,8 @@ class MainPageTitle extends StatelessWidget {
   final bool isDirect;
 
   const MainPageTitle({
-    Key key,
-    @required this.title,
+    Key? key,
+    required this.title,
     this.isDirect = false,
   }) : super(key: key);
 

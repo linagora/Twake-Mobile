@@ -3,8 +3,8 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:auto_size_text/auto_size_text.dart';
 
 class TextAvatar extends StatelessWidget {
-  final String text;
-  final double fontSize;
+  final String? text;
+  final double? fontSize;
   final double width;
   final double height;
 
@@ -27,7 +27,7 @@ class TextAvatar extends StatelessWidget {
         ),
       ),
       child: AutoSizeText(
-        text,
+        text!,
         style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
       ),
     );

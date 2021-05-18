@@ -7,9 +7,9 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 // import 'package:twake/utils/navigation.dart';
 
 class AuthForm extends StatefulWidget {
-  final Function onConfigurationOpen;
+  final Function? onConfigurationOpen;
 
-  const AuthForm({Key key, this.onConfigurationOpen}) : super(key: key);
+  const AuthForm({Key? key, this.onConfigurationOpen}) : super(key: key);
 
   @override
   _AuthFormState createState() => _AuthFormState();
@@ -44,10 +44,10 @@ class _AuthFormState extends State<AuthForm> {
     super.initState();
     _usernameController.addListener(onUsernameSaved);
     _passwordController.addListener(onPasswordSaved);
-    final state = BlocProvider.of<AuthBloc>(context).state;
+    final AuthState state = BlocProvider.of<AuthBloc>(context).state;
     if (state is Unauthenticated) {
-      _usernameController.text = state.username;
-      _passwordController.text = state.password;
+      _usernameController.text = state.username!;
+      _passwordController.text = state.password!;
     }
   }
 
@@ -60,14 +60,14 @@ class _AuthFormState extends State<AuthForm> {
     super.dispose();
   }
 
-  String validateUsername(String value) {
+  String? validateUsername(String value) {
     if (value.isEmpty) {
       return 'Username cannot be empty';
     }
     return null;
   }
 
-  String validatePassword(String value) {
+  String? validatePassword(String value) {
     if (value.isEmpty) {
       return 'Password cannot be empty';
     }
@@ -213,7 +213,7 @@ class _AuthFormState extends State<AuthForm> {
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: widget.onConfigurationOpen,
+                          onTap: widget.onConfigurationOpen as void Function()?,
                           //() => openChooseServer(context),
                           behavior: HitTestBehavior.opaque,
                           child: Text(
@@ -266,12 +266,12 @@ class _AuthTextForm extends StatefulWidget {
   final bool obscured;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final String Function(String) validator;
+  final String? Function(String?)? validator;
 
   const _AuthTextForm({
-    @required this.label,
-    @required this.controller,
-    @required this.focusNode,
+    required this.label,
+    required this.controller,
+    required this.focusNode,
     this.validator,
     this.obscured: false,
   });

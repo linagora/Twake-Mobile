@@ -20,14 +20,14 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
           id: message.id,
           responsesCount: message.responsesCount,
           creationDate: message.creationDate,
-          content: message.content.prepared,
+          content: message.content!.prepared,
           threadId: message.threadId,
-          text: (message.content.originalStr ?? '').replaceAllMapped(_userId,
+          text: (message.content!.originalStr ?? '').replaceAllMapped(_userId,
               (match) {
-            final end = message.content.originalStr.indexOf(':', match.start);
-            return message.content.originalStr.substring(match.start, end);
+            final end = message.content!.originalStr!.indexOf(':', match.start);
+            return message.content!.originalStr!.substring(match.start, end);
           }),
-          charCount: (message.content.originalStr ?? ' ').length,
+          charCount: (message.content!.originalStr ?? ' ').length,
           reactions: message.reactions,
           userId: message.userId,
           sender: message.sender,
@@ -70,21 +70,21 @@ class SingleMessageBloc extends Bloc<SingleMessageEvent, SingleMessageState> {
   }
 
   MessageReady get messageReady {
-    final hash = message.reactions.map((r) => r['name']).join().hashCode +
-        message.reactions.fold(0, (count, v) => count += v['count']);
+    final hash = message.reactions!.map((r) => r['name']).join().hashCode +
+        message.reactions!.fold(0, (count, v) => count += v['count']);
     return MessageReady(
       id: message.id,
       responsesCount: message.responsesCount,
       creationDate: message.creationDate,
-      content: message.content.prepared,
-      text: (message.content.originalStr ?? '').replaceAllMapped(_userId,
+      content: message.content!.prepared,
+      text: (message.content!.originalStr ?? '').replaceAllMapped(_userId,
           (match) {
-        final end = message.content.originalStr.indexOf(':', match.start);
-        return message.content.originalStr.substring(match.start, end);
+        final end = message.content!.originalStr!.indexOf(':', match.start);
+        return message.content!.originalStr!.substring(match.start, end);
       }),
-      charCount: (message.content.originalStr ?? '').length,
+      charCount: (message.content!.originalStr ?? '').length,
       reactions: message.reactions,
-      hash: hash,
+      hash: hash as int?,
       userId: message.userId,
       threadId: message.threadId,
       sender: message.sender,

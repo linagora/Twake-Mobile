@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 
 class ChannelThumbnail extends StatelessWidget {
-  final String icon;
-  final bool isPrivate;
+  final String? icon;
+  final bool? isPrivate;
   final double width;
   final double height;
 
   const ChannelThumbnail({
-    Key key,
+    Key? key,
     this.icon,
     this.isPrivate,
     this.width = 60.0,
@@ -30,7 +30,7 @@ class ChannelThumbnail extends StatelessWidget {
           ),
           child: TextAvatar(icon),
         ),
-        if (isPrivate) Image.asset('assets/images/private.png'),
+        if (isPrivate!) Image.asset('assets/images/private.png'),
       ],
     );
   }

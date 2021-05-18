@@ -5,8 +5,8 @@ class HintLine extends StatelessWidget {
   final bool isLarge;
 
   const HintLine({
-    Key key,
-    @required this.text,
+    Key? key,
+    required this.text,
     this.isLarge = false,
   }) : super(key: key);
 

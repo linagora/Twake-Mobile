@@ -2,14 +2,14 @@ import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 
 class ChannelTitle extends StatelessWidget {
-  final String name;
+  final String? name;
   final bool isPrivate;
   final bool hasUnread;
 
   const ChannelTitle({
-    Key key,
-    @required this.name,
-    @required this.isPrivate,
+    Key? key,
+    required this.name,
+    required this.isPrivate,
     this.hasUnread = false,
   }) : super(key: key);
 

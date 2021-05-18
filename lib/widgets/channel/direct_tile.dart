@@ -14,7 +14,7 @@ import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/stacked_image_avatars.dart';
 
 class DirectTile extends StatelessWidget {
-  final Direct direct;
+  final Direct? direct;
 
   DirectTile(this.direct, Key key) : super(key: key);
 
@@ -23,11 +23,11 @@ class DirectTile extends StatelessWidget {
     return InkWell(
       onTap: () {
         var draftType = DraftType.direct;
-        final id = direct.id;
+        final id = direct!.id;
         // Load draft from local storage
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
 
-        openDirect(context, direct.id);
+        openDirect(context, direct!.id);
       },
       child: SizedBox(
         height: 62.0,
@@ -35,7 +35,7 @@ class DirectTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // SizedBox(width: 12),
-            StackedUserAvatars(direct.members),
+            StackedUserAvatars(direct!.members),
             SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -43,22 +43,22 @@ class DirectTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    direct.name,
+                    direct!.name!,
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       fontSize: 16.0,
-                      fontWeight: direct.hasUnread == 1
+                      fontWeight: direct!.hasUnread == 1
                           ? FontWeight.w900
                           : FontWeight.w400,
                       color: Color(0xff444444),
                     ),
                   ),
-                  if (direct.description?.isNotEmpty ?? false)
+                  if (direct!.description?.isNotEmpty ?? false)
                     Padding(
                       padding: EdgeInsets.only(top: 4.0),
                       child: Text(
-                        direct.description,
+                        direct!.description!,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.start,
                         style: TextStyle(
@@ -76,15 +76,15 @@ class DirectTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  DateFormatter.getVerboseDateTime(direct.lastActivity),
+                  DateFormatter.getVerboseDateTime(direct!.lastActivity),
                   style: Theme.of(context).textTheme.subtitle2,
                 ),
-                if (direct.messagesUnread != 0) SizedBox(width: Dim.wm2),
+                if (direct!.messagesUnread != 0) SizedBox(width: Dim.wm2),
                 BlocBuilder<ProfileBloc, ProfileState>(
                   buildWhen: (prev, curr) => curr is ProfileLoaded,
                   builder: (ctx, state) {
                     final count =
-                        (state as ProfileLoaded).getBadgeForChannel(direct.id);
+                        (state as ProfileLoaded).getBadgeForChannel(direct!.id);
                     if (count > 0)
                       return Badge(
                         shape: BadgeShape.square,

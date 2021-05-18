@@ -23,14 +23,14 @@ enum AccountFlowStage {
 }
 
 class AccountCubit extends Cubit<AccountState> {
-  final AccountRepository accountRepository;
-  final FileUploadBloc fileUploadBloc;
-  StreamSubscription _fileUploadSubscription;
+  final AccountRepository? accountRepository;
+  final FileUploadBloc? fileUploadBloc;
+  late StreamSubscription _fileUploadSubscription;
 
   AccountCubit(this.accountRepository, {this.fileUploadBloc})
       : super(AccountInitial(stage: AccountFlowStage.info)) {
     // Listening for FileUploadBloc event
-    _fileUploadSubscription = fileUploadBloc.listen((state) {
+    _fileUploadSubscription = fileUploadBloc!.listen((state) {
       print('File upload state: $state');
 
       if (state is FileUploaded) {
@@ -42,7 +42,7 @@ class AccountCubit extends Cubit<AccountState> {
         } else {
           emit(AccountPictureUploadFailure());
         }
-        fileUploadBloc.add(ClearUploads());
+        fileUploadBloc!.add(ClearUploads());
       }
       if (state is FileUploadFailed) {
         final reason = state.reason;
@@ -54,18 +54,18 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> fetch({bool fromNetwork = true}) async {
     emit(AccountLoadInProgress());
 
-    if (fromNetwork) await accountRepository.reload();
+    if (fromNetwork) await accountRepository!.reload();
 
     final availableLanguages =
-        accountRepository.language.options ?? <LanguageOption>[];
-    final currentLanguage = accountRepository.selectedLanguage();
+        accountRepository!.language!.options ?? <LanguageOption>[];
+    final currentLanguage = accountRepository!.selectedLanguage();
     final languageTitle = currentLanguage.title;
 
     emit(AccountLoadSuccess(
-      userName: accountRepository.userName.value,
-      firstName: accountRepository.firstName.value,
-      lastName: accountRepository.lastName.value,
-      picture: accountRepository.picture.value,
+      userName: accountRepository!.userName!.value,
+      firstName: accountRepository!.firstName!.value,
+      lastName: accountRepository!.lastName!.value,
+      picture: accountRepository!.picture!.value,
       language: languageTitle,
       availableLanguages: availableLanguages,
     ));
@@ -73,11 +73,11 @@ class AccountCubit extends Cubit<AccountState> {
 
   void updateInfo({
     // In the local storage :)
-    String firstName,
-    String lastName,
-    String languageTitle,
-    String oldPassword,
-    String newPassword,
+    required String firstName,
+    required String lastName,
+    String? languageTitle,
+    required String oldPassword,
+    String? newPassword,
     bool shouldUpdateCache = false,
   }) async {
     emit(AccountUpdateInProgress(
@@ -89,9 +89,9 @@ class AccountCubit extends Cubit<AccountState> {
     ));
     final languageCode =
         (languageTitle != null && languageTitle.isNotReallyEmpty)
-            ? accountRepository.languageCodeFromTitle(languageTitle)
+            ? accountRepository!.languageCodeFromTitle(languageTitle)
             : '';
-    accountRepository.update(
+    accountRepository!.update(
       newFirstName: firstName,
       newLastName: lastName,
       newLanguage: languageCode ?? '',
@@ -100,9 +100,9 @@ class AccountCubit extends Cubit<AccountState> {
       shouldUpdateCache: shouldUpdateCache,
     );
     emit(AccountUpdateSuccess(
-      firstName: accountRepository.firstName.value,
-      lastName: accountRepository.lastName.value,
-      language: accountRepository.selectedLanguage().title,
+      firstName: accountRepository!.firstName!.value,
+      lastName: accountRepository!.lastName!.value,
+      language: accountRepository!.selectedLanguage().title,
       oldPassword: oldPassword,
       newPassword: newPassword,
     ));
@@ -110,11 +110,11 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> saveInfo() async {
     emit(AccountSaveInProgress());
-    final result = await accountRepository.patch();
+    final result = await accountRepository!.patch();
     if (result is AccountRepository) {
-      final firstName = result.firstName.value;
-      final lastName = result.lastName.value;
-      final language = result.language.value;
+      final firstName = result.firstName!.value;
+      final lastName = result.lastName!.value;
+      final language = result.language!.value;
       emit(AccountSaveSuccess(
         firstName: firstName,
         lastName: lastName,
@@ -130,9 +130,9 @@ class AccountCubit extends Cubit<AccountState> {
     emit(AccountPictureUpdateInProgress());
 
     // For picker failure cases.
-    final fallbackImage = accountRepository.picture.value;
+    final fallbackImage = accountRepository!.picture!.value;
 
-    List<PlatformFile> files;
+    List<PlatformFile>? files;
     try {
       files = (await FilePicker.platform.pickFiles(
         type: FileType.image,
@@ -143,7 +143,7 @@ class AccountCubit extends Cubit<AccountState> {
 
       if (files != null && files.length > 0) {
         final imageFile = files.first;
-        final path = imageFile.path;
+        final path = imageFile.path!;
         print('Source path: $path');
         print('Source size: ${imageFile.size}');
         final file = File(path);
@@ -176,7 +176,7 @@ class AccountCubit extends Cubit<AccountState> {
 
   Future<void> uploadImage(List<int> bytes) async {
     emit(AccountPictureUploadInProgress());
-    fileUploadBloc.add(StartUpload(
+    fileUploadBloc!.add(StartUpload(
       bytes: bytes,
       endpoint: Endpoint.accountPicture,
     ));

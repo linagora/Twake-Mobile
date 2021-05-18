@@ -10,9 +10,9 @@ abstract class MessagesEvent extends Equatable {
 }
 
 class LoadMessages extends MessagesEvent {
-  final String channelId;
-  final String threadId;
-  final bool forceFromApi;
+  final String? channelId;
+  final String? threadId;
+  final bool? forceFromApi;
   const LoadMessages({
     this.channelId,
     this.threadId,
@@ -20,7 +20,7 @@ class LoadMessages extends MessagesEvent {
   });
 
   @override
-  List<Object> get props => [threadId, channelId];
+  List<Object?> get props => [threadId, channelId];
 
   @override
   Map<String, dynamic> toMap() {
@@ -32,10 +32,10 @@ class LoadMessages extends MessagesEvent {
 }
 
 class LoadMoreMessages extends MessagesEvent {
-  final String channelId;
-  final String threadId;
-  final String beforeId;
-  final int beforeTimeStamp;
+  final String? channelId;
+  final String? threadId;
+  final String? beforeId;
+  final int? beforeTimeStamp;
 
   const LoadMoreMessages({
     this.channelId,
@@ -45,7 +45,7 @@ class LoadMoreMessages extends MessagesEvent {
   });
 
   @override
-  List<Object> get props => [beforeId, beforeTimeStamp];
+  List<Object?> get props => [beforeId, beforeTimeStamp];
 
   @override
   Map<String, dynamic> toMap() {
@@ -58,11 +58,11 @@ class LoadMoreMessages extends MessagesEvent {
 }
 
 class LoadSingleMessage extends MessagesEvent {
-  final String messageId;
-  final String channelId;
-  final String threadId;
-  final String workspaceId;
-  final String companyId;
+  final String? messageId;
+  final String? channelId;
+  final String? threadId;
+  final String? workspaceId;
+  final String? companyId;
   const LoadSingleMessage({
     this.channelId,
     this.threadId,
@@ -72,7 +72,7 @@ class LoadSingleMessage extends MessagesEvent {
   });
 
   @override
-  List<Object> get props => [messageId];
+  List<Object?> get props => [messageId];
 
   @override
   Map<String, dynamic> toMap() {
@@ -87,8 +87,8 @@ class LoadSingleMessage extends MessagesEvent {
 }
 
 class ModifyResponsesCount extends MessagesEvent {
-  final String threadId;
-  final String channelId;
+  final String? threadId;
+  final String? channelId;
 
   const ModifyResponsesCount({
     this.channelId,
@@ -96,7 +96,7 @@ class ModifyResponsesCount extends MessagesEvent {
   });
 
   @override
-  List<Object> get props => [this.threadId];
+  List<Object?> get props => [this.threadId];
 
   @override
   Map<String, dynamic> toMap() {
@@ -107,9 +107,9 @@ class ModifyResponsesCount extends MessagesEvent {
 }
 
 class RemoveMessage extends MessagesEvent {
-  final String messageId;
-  final String channelId;
-  final String threadId;
+  final String? messageId;
+  final String? channelId;
+  final String? threadId;
   final bool onNotify;
 
   const RemoveMessage({
@@ -120,7 +120,7 @@ class RemoveMessage extends MessagesEvent {
   });
 
   @override
-  List<Object> get props => [messageId, threadId];
+  List<Object?> get props => [messageId, threadId];
 
   @override
   Map<String, dynamic> toMap() {
@@ -133,10 +133,10 @@ class RemoveMessage extends MessagesEvent {
 }
 
 class SendMessage extends MessagesEvent {
-  final String content;
-  final String threadId;
-  final String channelId;
-  final List<dynamic> prepared;
+  final String? content;
+  final String? threadId;
+  final String? channelId;
+  final List<dynamic>? prepared;
 
   const SendMessage({
     this.content,
@@ -145,7 +145,7 @@ class SendMessage extends MessagesEvent {
     this.prepared,
   });
   @override
-  List<Object> get props => [content, threadId];
+  List<Object?> get props => [content, threadId];
 
   @override
   Map<String, dynamic> toMap() {
@@ -169,7 +169,7 @@ class ClearMessages extends MessagesEvent {
 }
 
 class UpdateThreadMessage extends MessagesEvent {
-  final Message threadMessage;
+  final Message? threadMessage;
   const UpdateThreadMessage(this.threadMessage);
 
   @override
@@ -182,10 +182,10 @@ class UpdateThreadMessage extends MessagesEvent {
 }
 
 class SelectMessage extends MessagesEvent {
-  final String messageId;
+  final String? messageId;
   const SelectMessage(this.messageId);
   @override
-  List<Object> get props => [messageId];
+  List<Object?> get props => [messageId];
 
   @override
   Map<String, dynamic> toMap() {

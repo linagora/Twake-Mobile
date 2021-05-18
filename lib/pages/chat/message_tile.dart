@@ -30,13 +30,13 @@ final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
   final bool hideShowAnswers;
   final bool shouldShowSender;
-  final Message message;
+  final Message? message;
 
   MessageTile({
     this.message,
     this.hideShowAnswers = false,
     this.shouldShowSender = true,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -45,14 +45,14 @@ class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
 
 class _MessageTileState<T extends BaseChannelBloc>
     extends State<MessageTile<T>> {
-  bool _hideShowAnswers;
-  bool _shouldShowSender;
-  Message _message;
+  late bool _hideShowAnswers;
+  late bool _shouldShowSender;
+  Message? _message;
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
 
   static downloadingCallback(id, status, progress) {
-    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading");
+    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
 
     sendPort.send([id, status, progress]);
   }
@@ -83,10 +83,10 @@ class _MessageTileState<T extends BaseChannelBloc>
     }
   }
 
-  void onReply(context, String messageId, {bool autofocus: false}) {
+  void onReply(context, String? messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
     BlocProvider.of<DraftBloc>(context)
-        .add(LoadDraft(id: _message.id, type: DraftType.thread));
+        .add(LoadDraft(id: _message!.id, type: DraftType.thread));
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -97,7 +97,7 @@ class _MessageTileState<T extends BaseChannelBloc>
     );
   }
 
-  onCopy({context, text}) {
+  onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -109,7 +109,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   }
 
   void onDelete(context, RemoveMessage event) {
-    if (_message.threadId == null)
+    if (_message!.threadId == null)
       BlocProvider.of<MessagesBloc<T>>(context).add(event);
     else
       BlocProvider.of<ThreadsBloc<T>>(context).add(event);
@@ -119,7 +119,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   @override
   Widget build(BuildContext context) {
     return BlocProvider<SingleMessageBloc>(
-      create: (_) => SingleMessageBloc(_message),
+      create: (_) => SingleMessageBloc(_message!),
       lazy: false,
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
         builder: (context, messageState) {
@@ -134,7 +134,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                   isScrollControlled: true,
                   builder: (_) {
                     return MessageModalSheet(
-                      originalStr: _message.content.originalStr,
+                      originalStr: _message!.content!.originalStr,
                       userId: messageState.userId,
                       messageId: messageState.id,
                       responsesCount: messageState.responsesCount,
@@ -149,7 +149,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                         final mebloc = context.read<MessageEditBloc>();
                         mebloc.add(
                           EditMessage(
-                            originalStr: _message.content.originalStr ?? '',
+                            originalStr: _message!.content!.originalStr ?? '',
                             onMessageEditComplete: (text, context) async {
                               // smbloc gets closed if
                               // listview disposes of message tile
@@ -163,7 +163,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                 ),
                               );
                               mebloc.add(CancelMessageEdit());
-                              FocusManager.instance.primaryFocus.unfocus();
+                              FocusManager.instance.primaryFocus!.unfocus();
                             },
                           ),
                         );
@@ -173,7 +173,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                         onDelete(
                           context,
                           RemoveMessage(
-                            channelId: _message.channelId,
+                            channelId: _message!.channelId,
                             messageId: messageState.id,
                             threadId: messageState.threadId,
                           ),
@@ -187,7 +187,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                 );
               },
               onTap: () {
-                FocusManager.instance.primaryFocus.unfocus();
+                FocusManager.instance.primaryFocus!.unfocus();
                 if (messageState.threadId == null &&
                     messageState.responsesCount != 0 &&
                     !_hideShowAnswers) {
@@ -212,7 +212,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                           ? UserThumbnail(
                               thumbnailUrl: messageState.thumbnail,
                               userName: (messageState.sender != null ||
-                                      messageState.sender.isEmpty)
+                                      messageState.sender!.isEmpty)
                                   ? ''
                                   : messageState.sender,
                               size: 24.0,
@@ -273,14 +273,14 @@ class _MessageTileState<T extends BaseChannelBloc>
                                         WrapCrossAlignment.center,
                                     textDirection: TextDirection.ltr,
                                     children: [
-                                      ...messageState.reactions.map((r) {
+                                      ...messageState.reactions!.map((r) {
                                         return Reaction(
                                           r['name'],
                                           r['count'],
                                           T == DirectsBloc ? 'direct' : null,
                                         );
                                       }),
-                                      if (messageState.responsesCount > 0 &&
+                                      if (messageState.responsesCount! > 0 &&
                                           messageState.threadId == null &&
                                           !_hideShowAnswers)
                                         Text(
@@ -298,7 +298,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   ? DateFormatter.getVerboseDateTime(
                                       messageState.creationDate)
                                   : DateFormatter.getVerboseTime(
-                                      messageState.creationDate),
+                                      messageState.creationDate!),
                               textAlign: TextAlign.end,
                               style: TextStyle(
                                 fontSize: 11.0,

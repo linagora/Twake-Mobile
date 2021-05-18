@@ -31,7 +31,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
 
   // A workaround for unintended redirects when panel is closed.
   var _shouldRedirect = false;
-  var _collaborators = <String>[];
+  List<String>? _collaborators = <String>[];
   var _workspaceId = '';
 
   @override
@@ -61,8 +61,8 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
   }
 
   void _batchUpdateState({
-    String name,
-    List<String> collaborators,
+    String? name,
+    List<String>? collaborators,
   }) {
     context.read<AddWorkspaceCubit>().update(
           name: name ?? _workspaceNameController.text,
@@ -190,7 +190,7 @@ class _WorkspaceInfoFormState extends State<WorkspaceInfoForm> {
 class CollaboratorsButton extends StatelessWidget {
   final int count;
 
-  const CollaboratorsButton({Key key, this.count = 0}) : super(key: key);
+  const CollaboratorsButton({Key? key, this.count = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

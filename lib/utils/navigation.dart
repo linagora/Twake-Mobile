@@ -22,14 +22,14 @@ void openSettings(BuildContext context) async {
       .then((r) => handleError(r, context));
 }
 
-void openChannel(BuildContext context, String channelId) =>
+void openChannel(BuildContext context, String? channelId) =>
     _open<ChannelsBloc>(context, channelId);
 
-void openDirect(BuildContext context, String channelId) =>
+void openDirect(BuildContext context, String? channelId) =>
     _open<DirectsBloc>(context, channelId);
 
 Future<void> _open<T extends BaseChannelBloc>(
-    BuildContext context, String channelId) async {
+    BuildContext context, String? channelId) async {
   context.read<T>().add(ChangeSelectedChannel(channelId));
   // print('On open: $channelId');
   await Navigator.of(context)
@@ -47,7 +47,7 @@ void selectWorkspace(BuildContext context, String workspaceId) {
   context.read<WorkspacesBloc>().add(ChangeSelectedWorkspace(workspaceId));
 }
 
-Future<List<EditChannelState>> openEditChannel(
+Future<List<EditChannelState>?> openEditChannel(
     BuildContext context, Channel channel) {
   context.read<MemberCubit>().fetchMembers(channelId: channel.id);
   return Navigator.of(context).push(MaterialPageRoute(

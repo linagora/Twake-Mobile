@@ -14,11 +14,11 @@ enum FlowStage {
 @JsonSerializable(explicitToJson: true)
 class AddWorkspaceRepository {
   @JsonKey(required: true, name: 'company_id')
-  String companyId;
+  String? companyId;
   @JsonKey(required: true)
-  String name;
+  String? name;
   @JsonKey(required: false)
-  List<String> members;
+  List<String>? members;
 
   @JsonKey(ignore: true)
   static final _logger = Logger();
@@ -42,18 +42,18 @@ class AddWorkspaceRepository {
     members = [];
   }
 
-  Future<String> create() async {
+  Future<String?> create() async {
     this.companyId = ProfileBloc.selectedCompanyId;
     final body = this.toJson();
 
-    Map<String, dynamic> resp;
+    Map<String, dynamic>? resp;
     try {
-      resp = await _api.post(Endpoint.workspaces, body: body);
+      resp = await (_api.post(Endpoint.workspaces, body: body) as FutureOr<Map<String, dynamic>?>);
     } catch (error) {
       _logger.e('Error while trying to create a workspace:\n${error.message}');
       return '';
     }
-    String workspaceId = resp['id'];
+    String? workspaceId = resp!['id'];
     return workspaceId;
   }
 

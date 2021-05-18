@@ -7,10 +7,10 @@ import 'package:twake/blocs/connection_bloc/connection_state.dart';
 export 'package:twake/blocs/connection_bloc/connection_event.dart';
 export 'package:twake/blocs/connection_bloc/connection_state.dart';
 
-class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState> {
-  var _subscribtion;
+class ConnectionBloc extends Bloc<ConnectionEvent, ConnectionState?> {
+  late var _subscribtion;
   Api _api = Api();
-  ConnectionBloc(ConnectionState initState) : super(initState) {
+  ConnectionBloc(ConnectionState? initState) : super(initState) {
     _subscribtion = Connectivity().onConnectivityChanged.listen((_) {
       Future.delayed(
           Duration(seconds: 1), () => this.add(CheckConnectionState()));

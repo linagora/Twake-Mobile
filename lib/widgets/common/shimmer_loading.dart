@@ -6,11 +6,11 @@ import 'package:meta/meta.dart';
 
 class ShimmerLoading extends StatefulWidget {
   const ShimmerLoading({
-    Key key,
-    @required this.isLoading,
-    @required this.child,
-    @required this.width,
-    @required this.height,
+    Key? key,
+    required this.isLoading,
+    required this.child,
+    required this.width,
+    required this.height,
   }) : super(key: key);
 
   final bool isLoading;
@@ -50,9 +50,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
 
 class Shimmer extends StatefulWidget {
   Shimmer({
-    @required this.child,
-    @required Color baseColor,
-    @required Color highlightColor,
+    required this.child,
+    required Color baseColor,
+    required Color highlightColor,
     this.duration = const Duration(milliseconds: 1500),
   }) : gradient = LinearGradient(
           begin: Alignment.topLeft,
@@ -70,7 +70,7 @@ class Shimmer extends StatefulWidget {
 }
 
 class _ShimmerState extends State<Shimmer> with TickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
 
   @override
   void initState() {
@@ -97,10 +97,10 @@ class _ShimmerState extends State<Shimmer> with TickerProviderStateMixin {
 }
 
 class _Shimmer extends SingleChildRenderObjectWidget {
-  _Shimmer({Widget child, this.gradient, this.percent}) : super(child: child);
+  _Shimmer({Widget? child, this.gradient, this.percent}) : super(child: child);
 
-  final Gradient gradient;
-  final double percent;
+  final Gradient? gradient;
+  final double? percent;
 
   @override
   RenderObject createRenderObject(BuildContext context) =>
@@ -116,10 +116,10 @@ class _Shimmer extends SingleChildRenderObjectWidget {
 class _ShimmerFilter extends RenderProxyBox {
   _ShimmerFilter(this._gradient);
 
-  final Gradient _gradient;
-  double _shiftPercentage = 0.0;
+  final Gradient? _gradient;
+  double? _shiftPercentage = 0.0;
 
-  set shiftPercentage(double newValue) {
+  set shiftPercentage(double? newValue) {
     if (_shiftPercentage != newValue) {
       _shiftPercentage = newValue;
       markNeedsPaint();
@@ -127,7 +127,7 @@ class _ShimmerFilter extends RenderProxyBox {
   }
 
   @override
-  ShaderMaskLayer get layer => super.layer;
+  ShaderMaskLayer? get layer => super.layer as ShaderMaskLayer?;
 
   @override
   bool get alwaysNeedsCompositing => child != null;
@@ -137,22 +137,22 @@ class _ShimmerFilter extends RenderProxyBox {
     if (child != null) {
       assert(needsCompositing);
 
-      final width = child.size.width;
-      final height = child.size.height;
+      final width = child!.size.width;
+      final height = child!.size.height;
       double dx =
-          _offset(start: -width, end: width * 2, percent: _shiftPercentage);
+          _offset(start: -width, end: width * 2, percent: _shiftPercentage!);
       double dy = 0.0;
       final rect = Rect.fromLTWH(dx, dy, width, height);
 
       layer ??= ShaderMaskLayer();
       layer
-        ..shader = _gradient.createShader(rect)
+        ..shader = _gradient!.createShader(rect)
         ..maskRect = offset & size
         ..blendMode = BlendMode.srcIn;
-      context.pushLayer(layer, super.paint, offset);
+      context.pushLayer(layer!, super.paint, offset);
     }
   }
 
-  double _offset({double start, double end, double percent}) =>
+  double _offset({required double start, required double end, required double percent}) =>
       start + (end - start) * percent;
 }

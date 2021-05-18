@@ -36,12 +36,12 @@ class Creation extends AddChannelState {
 
 class Created extends AddChannelState {
   final String id;
-  final ChannelType channelType;
+  final ChannelType? channelType;
 
   Created(this.id, {this.channelType});
 
   @override
-  List<Object> get props => [id, channelType];
+  List<Object?> get props => [id, channelType];
 }
 
 class DirectCreated extends AddChannelState {
@@ -63,12 +63,12 @@ class Error extends AddChannelState {
 }
 
 class FlowTypeSet extends AddChannelState {
-  final bool isDirect;
+  final bool? isDirect;
 
   FlowTypeSet(this.isDirect);
 
   @override
-  List<Object> get props => [isDirect];
+  List<Object?> get props => [isDirect];
 }
 
 class StageUpdated extends AddChannelState {

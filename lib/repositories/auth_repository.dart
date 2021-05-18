@@ -16,16 +16,16 @@ const AUTH_STORE_KEY = 'auth';
 @JsonSerializable()
 class AuthRepository extends JsonSerializable {
   @JsonKey(required: true, name: 'token')
-  String accessToken;
+  String? accessToken;
 
   @JsonKey(required: true, name: 'refresh_token')
-  String refreshToken;
+  String? refreshToken;
 
   @JsonKey(required: true, name: 'expiration')
-  int accessTokenExpiration;
+  int? accessTokenExpiration;
 
   @JsonKey(required: true, name: 'refresh_expiration')
-  int refreshTokenExpiration;
+  int? refreshTokenExpiration;
 
   // required by twake api
   @JsonKey(ignore: true)
@@ -38,12 +38,12 @@ class AuthRepository extends JsonSerializable {
   @JsonKey(ignore: true)
   final logger = Logger();
   @JsonKey(ignore: true)
-  String fcmToken;
+  String? fcmToken;
   @JsonKey(ignore: true)
-  String apiVersion;
+  String? apiVersion;
 
   @JsonKey(name: 'socket_io_host')
-  String socketIOHost;
+  String? socketIOHost;
 
   AuthRepository({this.fcmToken, this.apiVersion}) {
     updateHeaders();
@@ -89,8 +89,8 @@ class AuthRepository extends JsonSerializable {
   String get platform => Platform.isAndroid ? 'android' : 'apple';
 
   Future<AuthResult> authenticate({
-    String username,
-    String password,
+    String? username,
+    String? password,
   }) async {
     try {
       final response = await _api.post(
@@ -130,8 +130,8 @@ class AuthRepository extends JsonSerializable {
 
   Future<bool> setAuthData(Map<String, dynamic> authData) async {
     try {
-      authData = await initSession(
-          token: authData['token'], username: authData['username']);
+      authData = await (initSession(
+          token: authData['token'], username: authData['username']) as FutureOr<Map<String, dynamic>>);
       logger.d('AUTH FROM INIT $authData');
     } on ApiError catch (error) {
       logger.e('ERROR AFTER SUCCESSFUL AUTH: ${error.message}');
@@ -141,15 +141,15 @@ class AuthRepository extends JsonSerializable {
     return true;
   }
 
-  Future<Map<String, dynamic>> initSession(
-      {String username, String token}) async {
+  Future<Map<String, dynamic>?> initSession(
+      {String? username, String? token}) async {
     final body = {
       "timezoneoffset": timeZoneOffset,
       "fcm_token": fcmToken,
       "token": token,
       "username": username,
     };
-    return await _api.post(Endpoint.init, body: body, useTokenDio: true);
+    return await (_api.post(Endpoint.init, body: body, useTokenDio: true) as FutureOr<Map<String, dynamic>?>);
   }
 
   Future<void> clean() async {
@@ -219,9 +219,9 @@ class AuthRepository extends JsonSerializable {
     final now = DateTime.now();
     // timestamp is in microseconds, adjusting by multiplying by 1000
     final accessTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration * 1000);
+        DateTime.fromMillisecondsSinceEpoch(this.accessTokenExpiration! * 1000);
     final refreshTokenExpiration =
-        DateTime.fromMillisecondsSinceEpoch(this.refreshTokenExpiration * 1000);
+        DateTime.fromMillisecondsSinceEpoch(this.refreshTokenExpiration! * 1000);
     if (now.isAfter(accessTokenExpiration)) {
       if (now.isAfter(refreshTokenExpiration)) {
         logger.w('Tokens has expired');
@@ -241,7 +241,7 @@ class AuthRepository extends JsonSerializable {
   }
 
   void updateHeaders() {
-    Map<String, String> headers = {
+    Map<String, String?> headers = {
       'content-type': 'application/json',
       'Authorization': 'Bearer $accessToken',
       'Accept-version': apiVersion,

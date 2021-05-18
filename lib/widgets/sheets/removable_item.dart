@@ -3,13 +3,13 @@ import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
 
 class RemovableItem extends StatelessWidget {
-  final String title;
+  final String? title;
   final bool removable;
-  final Function onRemove;
+  final Function? onRemove;
 
   const RemovableItem({
-    Key key,
-    @required this.title,
+    Key? key,
+    required this.title,
     this.removable = true,
     this.onRemove,
   }) : super(key: key);
@@ -40,7 +40,7 @@ class RemovableItem extends StatelessWidget {
               SizedBox(width: 16.0),
               Expanded(
                 child: Text(
-                  title,
+                  title!,
                   style: TextStyle(
                     fontSize: 15.0,
                     fontWeight: FontWeight.w400,

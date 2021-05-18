@@ -9,11 +9,11 @@ import 'package:twake/blocs/configuration_cubit/configuration_state.dart';
 import 'package:twake/utils/extensions.dart';
 
 class ServerConfiguration extends StatefulWidget {
-  final Function onCancel;
-  final Function onConfirm;
+  final Function? onCancel;
+  final Function? onConfirm;
 
   const ServerConfiguration({
-    Key key,
+    Key? key,
     this.onCancel,
     this.onConfirm,
   }) : super(key: key);
@@ -49,7 +49,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     return Scaffold(
       appBar: AppBar(
         leading: CloseButton(
-          onPressed: widget.onCancel,
+          onPressed: widget.onCancel as void Function()?,
         ),
       ),
       body: SafeArea(
@@ -62,7 +62,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             listener: (context, state) {
               if (state is ConfigurationSaved) {
                 // context.read<AuthBloc>().add(ValidateHost(_controller.text));
-                widget.onConfirm();
+                widget.onConfirm!();
               }
               if (state is ConfigurationError) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -85,7 +85,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
               // print('Current state: $state');
 
               if (_controller.text.isReallyEmpty) {
-                _controller.text = state.host;
+                _controller.text = state.host!;
               }
               // print('Server host: ${state.host}');
 
@@ -142,7 +142,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                       child: TextFormField(
                         key: _formKey,
                         validator: (value) =>
-                            value.isEmpty ? 'Address cannot be blank' : null,
+                            value!.isEmpty ? 'Address cannot be blank' : null,
                         controller: _controller,
                         onFieldSubmitted: (_) => _connect(),
                         style: TextStyle(

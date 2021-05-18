@@ -2,14 +2,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class WarningDialog extends StatelessWidget {
-  final String title;
-  final String leadingActionTitle;
-  final Function leadingAction;
-  final String trailingActionTitle;
-  final Function trailingAction;
+  final String? title;
+  final String? leadingActionTitle;
+  final Function? leadingAction;
+  final String? trailingActionTitle;
+  final Function? trailingAction;
 
   const WarningDialog({
-    Key key,
+    Key? key,
     this.title,
     this.leadingActionTitle,
     this.leadingAction,
@@ -36,7 +36,7 @@ class WarningDialog extends StatelessWidget {
               child: Container(
                 alignment: Alignment.centerLeft,
                 child: AutoSizeText(
-                  title,
+                  title!,
                   minFontSize: 12,
                   maxFontSize: 16,
                   textAlign: TextAlign.start,
@@ -60,7 +60,7 @@ class WarningDialog extends StatelessWidget {
                   child: InkWell(
                     onTap: () => Navigator.of(context).pop(),
                     child: Text(
-                      leadingActionTitle,
+                      leadingActionTitle!,
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         fontSize: 15,
@@ -75,9 +75,9 @@ class WarningDialog extends StatelessWidget {
                   height: 36.0,
                   alignment: Alignment.centerRight,
                   child: InkWell(
-                    onTap: trailingAction,
+                    onTap: trailingAction as void Function()?,
                     child: Text(
-                      trailingActionTitle,
+                      trailingActionTitle!,
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         fontSize: 15,

@@ -8,9 +8,9 @@ import 'package:twake/utils/extensions.dart';
 const String _FALLBACK_IMG = 'assets/images/oldtwakelogo.jpg';
 
 class RoundedImage extends StatelessWidget {
-  final String imageUrl;
-  final String assetPath;
-  final Uint8List bytes;
+  final String? imageUrl;
+  final String? assetPath;
+  final Uint8List? bytes;
   final double width;
   final double height;
 
@@ -28,10 +28,10 @@ class RoundedImage extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        child: imageUrl.isNotReallyEmpty
+        child: imageUrl!.isNotReallyEmpty
             ? CachedNetworkImage( // Loading from network.
                 fit: BoxFit.cover,
-                imageUrl: imageUrl,
+                imageUrl: imageUrl!,
                 progressIndicatorBuilder: (context, url, downloadProgress) {
                   return ShimmerLoading(
                     isLoading: true,
@@ -44,9 +44,9 @@ class RoundedImage extends StatelessWidget {
                   return _onErrorFallbackImg(width, height);
                 },
               )
-            : (assetPath.isNotReallyEmpty // Try to load from local path.
+            : (assetPath!.isNotReallyEmpty // Try to load from local path.
                 ? Image.asset(
-                    assetPath,
+                    assetPath!,
                     fit: BoxFit.cover,
                     width: width,
                     height: height,

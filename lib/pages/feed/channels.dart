@@ -15,9 +15,9 @@ class Channels extends StatelessWidget {
           current is ChannelsLoaded ||
           current is ChannelsEmpty,
       builder: (context, state) {
-        var channels = <Channel>[];
+        List<Channel?>? channels = <Channel>[];
         if (state is ChannelsLoaded) {
-          channels = state.channels;
+          channels = state.channels as List<Channel?>?;
         }
         return RefreshIndicator(
           onRefresh: () {
@@ -31,9 +31,9 @@ class Channels extends StatelessWidget {
             shrinkWrap: true,
             physics: AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.only(top: 12.0, bottom: 80.0),
-            itemCount: channels.length,
+            itemCount: channels!.length,
             itemBuilder: (context, index) {
-              final channel = channels[index];
+              final channel = channels![index]!;
               return ChannelTile(
                 key: ValueKey(channel.id),
                 id: channel.id,

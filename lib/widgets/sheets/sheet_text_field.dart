@@ -4,17 +4,17 @@ import 'package:flutter/services.dart';
 
 class SheetTextField extends StatefulWidget {
   final String hint;
-  final Function leadingAction;
-  final Function trailingAction;
+  final Function? leadingAction;
+  final Function? trailingAction;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final int maxLength;
-  final String Function(String) validator;
+  final int? maxLength;
+  final String Function(String?)? validator;
 
   const SheetTextField({
-    @required this.controller,
-    @required this.focusNode,
-    @required this.hint,
+    required this.controller,
+    required this.focusNode,
+    required this.hint,
     this.leadingAction,
     this.trailingAction,
     this.validator,
@@ -64,7 +64,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
                   height: 25,
                   padding: EdgeInsets.only(right: 10),
                   child: IconButton(
-                    onPressed: widget.leadingAction,
+                    onPressed: widget.leadingAction as void Function()?,
                     padding: EdgeInsets.all(0),
                     iconSize: 20,
                     icon: Icon(
@@ -80,7 +80,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
                   height: 25,
                   padding: EdgeInsets.only(left: 10),
                   child: IconButton(
-                    onPressed: widget.trailingAction,
+                    onPressed: widget.trailingAction as void Function()?,
                     padding: EdgeInsets.all(0),
                     iconSize: 20,
                     icon: Icon(

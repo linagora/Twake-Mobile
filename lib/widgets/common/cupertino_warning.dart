@@ -3,14 +3,14 @@ import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rich_text_span.dart';
 
 class CupertinoWarning extends StatelessWidget {
-  final String icon;
-  final List<RichTextSpan> title;
-  final String confirmTitle;
-  final Function confirmAction;
-  final String cancelTitle;
+  final String? icon;
+  final List<RichTextSpan>? title;
+  final String? confirmTitle;
+  final Function? confirmAction;
+  final String? cancelTitle;
 
   const CupertinoWarning({
-    Key key,
+    Key? key,
     this.icon,
     this.title,
     this.confirmTitle,
@@ -31,15 +31,15 @@ class CupertinoWarning extends StatelessWidget {
             color: CupertinoColors.black,
           ),
           children: <TextSpan>[
-            ...title.map((e) => e.buildSpan()),
+            ...title!.map((e) => e.buildSpan()),
           ],
         ),
       ),
       actions: [
         CupertinoActionSheetAction(
-          onPressed: confirmAction,
+          onPressed: confirmAction as void Function(),
           child: Text(
-            confirmTitle,
+            confirmTitle!,
             maxLines: 1,
             textAlign: TextAlign.start,
             style: TextStyle(
@@ -53,7 +53,7 @@ class CupertinoWarning extends StatelessWidget {
       cancelButton: CupertinoActionSheetAction(
         onPressed: () => Navigator.of(context).pop(),
         child: Text(
-          cancelTitle,
+          cancelTitle!,
           maxLines: 1,
           textAlign: TextAlign.start,
           style: TextStyle(

@@ -13,10 +13,10 @@ class UserLoading extends UserState {
 }
 
 class UserReady extends UserState {
-  final String thumbnail;
-  final String username;
-  final String firstName;
-  final String lastName;
+  final String? thumbnail;
+  final String? username;
+  final String? firstName;
+  final String? lastName;
 
   const UserReady({
     this.thumbnail,
@@ -26,7 +26,7 @@ class UserReady extends UserState {
   });
 
   @override
-  List<Object> get props => [username];
+  List<Object?> get props => [username];
 }
 
 class MultipleUsersLoading extends UserState {

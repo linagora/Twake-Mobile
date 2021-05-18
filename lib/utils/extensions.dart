@@ -7,8 +7,8 @@ extension StringExtension on String {
   bool get isReallyEmpty => this.trim().isEmpty;
 }
 
-extension MemberExtension on List<Member> {
-  List<String> get ids => this.map((e) => e.userId).toList();
+extension MemberExtension on List<Member?> {
+  List<String?> get ids => this.map((e) => e!.userId).toList();
 }
 
 extension UsersListExtension on List<User> {

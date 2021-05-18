@@ -13,18 +13,18 @@ class AuthInitializing extends AuthState {
 }
 
 class Unauthenticated extends AuthState {
-  final String message;
-  final String username;
-  final String password;
+  final String? message;
+  final String? username;
+  final String? password;
 
   const Unauthenticated({this.message, this.username, this.password});
 
   @override
-  List<Object> get props => [username, password];
+  List<Object?> get props => [username, password];
 }
 
 class WrongCredentials extends Unauthenticated {
-  const WrongCredentials({String username, String password})
+  const WrongCredentials({String? username, String? password})
       : super(username: username, password: password);
 
   @override
@@ -66,7 +66,7 @@ class PasswordReset extends AuthState {
 }
 
 class AuthenticationError extends Unauthenticated {
-  const AuthenticationError({String username, String password})
+  const AuthenticationError({String? username, String? password})
       : super(username: username, password: password);
 
   @override

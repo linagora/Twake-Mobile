@@ -24,9 +24,9 @@ import 'package:twake/utils/twacode.dart';
 class Chat<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String draft = '';
-    String channelId;
-    DraftType draftType;
+    String? draft = '';
+    String? channelId;
+    DraftType? draftType;
 
     return Scaffold(
       appBar: AppBar(
@@ -50,7 +50,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 if (draftType != null) {
-                  if (draft.isNotEmpty) {
+                  if (draft!.isNotEmpty) {
                     context.read<DraftBloc>().add(
                           SaveDraft(
                             id: channelId,
@@ -78,19 +78,19 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (_, state) {
-            BaseChannel parentChannel = T is Channel ? Channel() : Direct();
+            BaseChannel? parentChannel = T is Channel ? Channel() : Direct();
 
             if ((state is MessagesLoaded || state is MessagesEmpty) &&
-                state.parentChannel.id == ProfileBloc.selectedChannelId) {
+                state.parentChannel!.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
             return BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
                 var canEdit = false;
                 var memberId = '';
-                var icon = '';
+                String? icon = '';
                 var isPrivate = false;
-                var membersCount = 0;
+                int? membersCount = 0;
 
                 if (parentChannel is Channel) {
                   isPrivate = parentChannel.visibility == 'private';
@@ -101,7 +101,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
                   // 'ADD_MEMBER', 'REMOVE_MEMBER',
                   // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                  final permissions = parentChannel.permissions;
+                  final permissions = parentChannel.permissions!;
 
                   if (permissions.contains('UPDATE_NAME') ||
                       permissions.contains('UPDATE_DESCRIPTION') ||
@@ -117,7 +117,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                     parentChannel.members != null) {
                   final userId = ProfileBloc.userId;
                   memberId =
-                      parentChannel.members.firstWhere((id) => id != userId);
+                      parentChannel.members!.firstWhere((id) => id != userId);
                 }
 
                 if (editState is EditChannelSaved) {
@@ -130,7 +130,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                   isDirect: parentChannel is Direct,
                   isPrivate: isPrivate,
                   userId: memberId,
-                  name: parentChannel.name,
+                  name: parentChannel!.name,
                   icon: icon,
                   membersCount: membersCount,
                   onTap: canEdit ? () => _goEdit(context, state) : null,
@@ -176,7 +176,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                         draft = '';
                       }
 
-                      final channelId = messagesState.parentChannel.id;
+                      final channelId = messagesState.parentChannel!.id;
                       if (messagesState.parentChannel is Channel) {
                         draftType = DraftType.channel;
                       } else if (messagesState.parentChannel is Direct) {
@@ -193,7 +193,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                   ? state.originalStr
                                   : draft,
                               onMessageSend: state is MessageEditing
-                                  ? state.onMessageEditComplete
+                                  ? state.onMessageEditComplete as dynamic Function(String, BuildContext)?
                                   : (content, context) async {
                                       content =
                                           await BlocProvider.of<MentionsCubit>(
@@ -202,7 +202,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                       List<dynamic> twacode =
                                           TwacodeParser(content).message;
 
-                                      final uploadState =
+                                      final FileUploadState uploadState =
                                           BlocProvider.of<FileUploadBloc>(
                                                   context)
                                               .state;
@@ -277,7 +277,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
   }
 
   void _goEdit(BuildContext context, MessagesState state) async {
-    final params = await openEditChannel(context, state.parentChannel);
+    final params = await openEditChannel(context, state.parentChannel as Channel);
     if (params != null && params.length > 0) {
       final editingState = params.first;
       if (editingState is EditChannelDeleted) {

@@ -17,7 +17,7 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
-  TabController _controller;
+  TabController? _controller;
   final _tabs = [Channels(), Directs()];
 
   @override
@@ -28,14 +28,14 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
   void _create() {
     context.read<SheetBloc>()
       ..add(SetFlow(
-        flow: _controller.index != 0 ? SheetFlow.direct : SheetFlow.addChannel,
+        flow: _controller!.index != 0 ? SheetFlow.direct : SheetFlow.addChannel,
       ))
       ..add(ClearSheet())
       ..add(OpenSheet());
@@ -63,15 +63,15 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
               //     current is WorkspaceSelected,
               builder: (context, state) {
                 // WorkspaceSelected should be handled here!
-                var name = '';
-                var logo = '';
+                String? name = '';
+                String? logo = '';
                 print('Current WorkspacesBloc state in Feed: $state');
                 if (state is WorkspacesLoaded || state is WorkspaceSelected) {
                   // print(
                   //     'SELECTED WORKSPACE COMPANY LOGO: ${state.selected.logo}');
                   var selectedWorkspace = ProfileBloc.selectedWorkspace;
                   selectedWorkspace = state.selected;
-                  name = selectedWorkspace.name;
+                  name = selectedWorkspace!.name;
                   logo = selectedWorkspace.logo;
                 } else {
                   name = '';
@@ -92,7 +92,7 @@ class _FeedState extends State<Feed> with SingleTickerProviderStateMixin {
                       Expanded(
                         child: ShimmerLoading(
                           key: ValueKey<String>('name'),
-                          isLoading: name.isEmpty,
+                          isLoading: name!.isEmpty,
                           width: MediaQuery.of(context).size.width,
                           height: 10.0,
                           child: Row(

@@ -11,22 +11,22 @@ class EditChannelInitial extends EditChannelState {
 }
 
 class EditChannelLoaded extends EditChannelState {
-  final String channelId;
+  final String? channelId;
 
   EditChannelLoaded({this.channelId});
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class EditChannelSaved extends EditChannelState {
-  final String companyId;
-  final String workspaceId;
-  final String channelId;
-  final String icon;
-  final String name;
-  final String description;
-  final bool def;
+  final String? companyId;
+  final String? workspaceId;
+  final String? channelId;
+  final String? icon;
+  final String? name;
+  final String? description;
+  final bool? def;
 
   EditChannelSaved({
     this.companyId,
@@ -39,7 +39,7 @@ class EditChannelSaved extends EditChannelState {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         this.companyId,
         this.workspaceId,
         this.channelId,

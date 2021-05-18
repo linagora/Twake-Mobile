@@ -6,16 +6,16 @@ import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class MessageModalSheet extends StatefulWidget {
-  final String userId;
-  final String messageId;
-  final String originalStr;
-  final int responsesCount;
-  final void Function(BuildContext, String, {bool autofocus}) onReply;
-  final void Function(BuildContext) onDelete;
-  final Function onEdit;
-  final Function onCopy;
+  final String? userId;
+  final String? messageId;
+  final String? originalStr;
+  final int? responsesCount;
+  final void Function(BuildContext, String?, {bool? autofocus})? onReply;
+  final void Function(BuildContext)? onDelete;
+  final Function? onEdit;
+  final Function? onCopy;
   final bool isThread;
-  final BuildContext ctx;
+  final BuildContext? ctx;
 
   const MessageModalSheet({
     this.userId,
@@ -28,7 +28,7 @@ class MessageModalSheet extends StatefulWidget {
     this.onCopy,
     this.ctx,
     this.originalStr,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -39,9 +39,9 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
   bool _emojiVisible = false;
 
   onEmojiSelected(String emojiCode) {
-    BlocProvider.of<SingleMessageBloc>(widget.ctx)
+    BlocProvider.of<SingleMessageBloc>(widget.ctx!)
         .add(UpdateReaction(emojiCode: emojiCode));
-    FocusManager.instance.primaryFocus.unfocus();
+    FocusManager.instance.primaryFocus!.unfocus();
   }
 
   void showEmojiBoard() async {
@@ -91,7 +91,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                           color: Color(0xff444444),
                         ),
                       ),
-                      onTap: widget.onEdit,
+                      onTap: widget.onEdit as void Function()?,
                     ),
                   if (!widget.isThread)
                     ListTile(
@@ -108,7 +108,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
-                        widget.onReply(context, widget.messageId,
+                        widget.onReply!(context, widget.messageId,
                             autofocus: true);
                       },
                     ),
@@ -132,7 +132,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                         ),
                       ),
                       onTap: () {
-                        widget.onDelete(context);
+                        widget.onDelete!(context);
                       },
                     ),
                   if (isMe && widget.responsesCount == 0)
@@ -141,7 +141,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       height: 1.0,
                       color: Color(0xffEEEEEE),
                     ),
-                  widget.originalStr.isEmpty
+                  widget.originalStr!.isEmpty
                       ? Container()
                       : ListTile(
                           contentPadding:
@@ -155,7 +155,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                               color: Color(0xff444444),
                             ),
                           ),
-                          onTap: widget.onCopy,
+                          onTap: widget.onCopy as void Function()?,
                         ),
                 ],
               ),
@@ -165,8 +165,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
 }
 
 class EmojiLine extends StatelessWidget {
-  final Function onEmojiSelected;
-  final Function showEmojiBoard;
+  final Function? onEmojiSelected;
+  final Function? showEmojiBoard;
 
   EmojiLine({this.onEmojiSelected, this.showEmojiBoard});
 
@@ -197,7 +197,7 @@ class EmojiLine extends StatelessWidget {
           ...EMOJISET.map((e) => InkWell(
                 onTap: () {
                   Navigator.of(context).pop();
-                  onEmojiSelected(e);
+                  onEmojiSelected!(e);
                 },
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8.0),
@@ -210,7 +210,7 @@ class EmojiLine extends StatelessWidget {
           IconButton(
             padding: EdgeInsets.zero,
             icon: Icon(Icons.tag_faces),
-            onPressed: showEmojiBoard,
+            onPressed: showEmojiBoard as void Function()?,
             iconSize: fontSize + 3,
           ),
         ],

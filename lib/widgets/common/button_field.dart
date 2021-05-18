@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 
 class ButtonField extends StatelessWidget {
   final String title;
-  final String trailingTitle;
-  final String image;
+  final String? trailingTitle;
+  final String? image;
   final double imageSize;
   final bool hasArrow;
   final bool isRounded;
-  final Widget trailingWidget;
-  final Function onTap;
+  final Widget? trailingWidget;
+  final Function? onTap;
   final double height;
-  final TextStyle titleStyle;
-  final Color arrowColor;
-  final TextStyle trailingTitleStyle;
+  final TextStyle? titleStyle;
+  final Color? arrowColor;
+  final TextStyle? trailingTitleStyle;
   final BorderRadius borderRadius;
 
   const ButtonField({
-    Key key,
-    @required this.title,
+    Key? key,
+    required this.title,
     this.image,
     this.imageSize = 29.0,
     this.trailingTitle,
@@ -50,13 +50,13 @@ class ButtonField extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(width: 14.0),
-            if (image != null && image.isNotEmpty)
+            if (image != null && image!.isNotEmpty)
               SizedBox(
                 width: imageSize,
                 height: imageSize,
-                child: Image.asset(image),
+                child: Image.asset(image!),
               ),
-            if (image != null && image.isNotEmpty) SizedBox(width: 12),
+            if (image != null && image!.isNotEmpty) SizedBox(width: 12),
             Text(
               title,
               style: titleStyle ??
@@ -73,7 +73,7 @@ class ButtonField extends StatelessWidget {
                       children: [
                         if (trailingTitle != null)
                           Text(
-                            trailingTitle,
+                            trailingTitle!,
                             style: trailingTitleStyle ??
                                 TextStyle(
                                   fontSize: 17.0,
@@ -90,7 +90,7 @@ class ButtonField extends StatelessWidget {
                   : Padding(
                       padding: const EdgeInsets.only(right: 9.0),
                       child: Text(
-                        trailingTitle,
+                        trailingTitle!,
                         style: TextStyle(
                           fontSize: 17.0,
                           fontWeight: FontWeight.w400,
@@ -98,7 +98,7 @@ class ButtonField extends StatelessWidget {
                         ),
                       ),
                     ),
-            if (trailingWidget != null) trailingWidget,
+            if (trailingWidget != null) trailingWidget!,
             SizedBox(width: 14),
           ],
         ),

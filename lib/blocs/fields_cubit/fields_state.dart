@@ -18,7 +18,7 @@ class FieldsInitial extends FieldsState {
 class Added extends FieldsState {
   final List<Widget> fields;
 
-  Added({@required this.fields});
+  Added({required this.fields});
 
   @override
   List<Object> get props => [fields];
@@ -27,7 +27,7 @@ class Added extends FieldsState {
 class Removed extends FieldsState {
   final List<Widget> fields;
 
-  Removed({@required this.fields});
+  Removed({required this.fields});
 
   @override
   List<Object> get props => [fields];
@@ -44,7 +44,7 @@ class Cleared extends FieldsState {
 class Updated extends FieldsState {
   final Map<int, String> data;
 
-  Updated({@required this.data});
+  Updated({required this.data});
 
   @override
   List<Object> get props => [data];

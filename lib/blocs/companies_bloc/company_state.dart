@@ -6,14 +6,14 @@ abstract class CompaniesState extends Equatable {
 }
 
 class CompaniesLoaded extends CompaniesState {
-  final List<Company> companies;
-  final Company selected;
+  final List<Company?>? companies;
+  final Company? selected;
   const CompaniesLoaded({
     this.companies,
     this.selected,
   });
   @override
-  List<Object> get props => [companies, selected];
+  List<Object?> get props => [companies, selected];
 }
 
 class CompaniesLoading extends CompaniesState {

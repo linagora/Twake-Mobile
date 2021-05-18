@@ -12,7 +12,7 @@ import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/common/channel_title.dart';
 
 class ChannelTile extends StatelessWidget {
-  final Channel channel;
+  final Channel? channel;
 
   ChannelTile(this.channel);
 
@@ -21,11 +21,11 @@ class ChannelTile extends StatelessWidget {
     return InkWell(
       onTap: () {
         var draftType = DraftType.channel;
-        final id = channel.id;
+        final id = channel!.id;
         // Load draft from local storage
         context.read<DraftBloc>().add(LoadDraft(id: id, type: draftType));
 
-        openChannel(context, channel.id);
+        openChannel(context, channel!.id);
       },
       child: SizedBox(
         height: 62.0,
@@ -33,7 +33,7 @@ class ChannelTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // SizedBox(width: 12),
-            TextAvatar(channel.icon),
+            TextAvatar(channel!.icon),
             SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -44,14 +44,14 @@ class ChannelTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ChannelTitle(
-                          name: channel.name,
-                          hasUnread: channel.hasUnread == 1,
-                          isPrivate: channel.visibility != null &&
-                              channel.visibility == 'private',
+                          name: channel!.name,
+                          hasUnread: channel!.hasUnread == 1,
+                          isPrivate: channel!.visibility != null &&
+                              channel!.visibility == 'private',
                         ),
                       ),
                       Text(
-                        DateFormatter.getVerboseDateTime(channel.lastActivity),
+                        DateFormatter.getVerboseDateTime(channel!.lastActivity),
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                     ],
@@ -61,7 +61,7 @@ class ChannelTile extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: 4.0),
                         child: Text(
-                          channel.lastMessage['text'] ?? 'No messages yet',
+                          channel!.lastMessage!['text'] ?? 'No messages yet',
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
                           style: TextStyle(
@@ -72,13 +72,13 @@ class ChannelTile extends StatelessWidget {
                         ),
                       ),
                       Spacer(),
-                      if (channel.messagesUnread != 0) SizedBox(width: Dim.wm2),
+                      if (channel!.messagesUnread != 0) SizedBox(width: Dim.wm2),
                       // if (channel.messagesUnread != 0)
                       BlocBuilder<ProfileBloc, ProfileState>(
                         buildWhen: (_, curr) => curr is ProfileLoaded,
                         builder: (ctx, state) {
                           final count = (state as ProfileLoaded)
-                              .getBadgeForChannel(channel.id);
+                              .getBadgeForChannel(channel!.id);
                           if (count > 0) {
                             return Badge(
                               shape: BadgeShape.square,

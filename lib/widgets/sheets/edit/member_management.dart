@@ -16,9 +16,9 @@ class MemberManagement extends StatefulWidget {
 }
 
 class _MemberManagementState extends State<MemberManagement> {
-  String _channelId;
-  List<Member> _members = [];
-  List<Member> _toDelete = [];
+  String? _channelId;
+  List<Member?>? _members = [];
+  List<Member?> _toDelete = [];
 
   void _cancel() {
     setState(() {
@@ -31,7 +31,7 @@ class _MemberManagementState extends State<MemberManagement> {
     FocusScope.of(context).requestFocus(new FocusNode());
     final ids = _toDelete.ids;
     print('IDS to DELETE: $ids');
-    print('EMAILS to DELETE: ${_toDelete.map((e) => e.email)}');
+    print('EMAILS to DELETE: ${_toDelete.map((e) => e!.email)}');
     context.read<MemberCubit>().deleteMembers(
           channelId: _channelId,
           members: ids,
@@ -41,8 +41,8 @@ class _MemberManagementState extends State<MemberManagement> {
 
   void _remove(int index) {
     setState(() {
-      _toDelete.add(_members[index]);
-      _members.removeAt(index);
+      _toDelete.add(_members![index]);
+      _members!.removeAt(index);
     });
   }
 
@@ -56,7 +56,7 @@ class _MemberManagementState extends State<MemberManagement> {
       },
       buildWhen: (_, current) => current is MembersLoaded,
       builder: (context, state) {
-        Member _himself;
+        Member? _himself;
 
         if (state is MembersLoaded) {
           _channelId = state.channelId;
@@ -64,12 +64,12 @@ class _MemberManagementState extends State<MemberManagement> {
 
           // print(_members.map((e) => e.email));
 
-          _himself ??= _members.firstWhere(
-            (m) => m.id == ProfileBloc.userId,
+          _himself ??= _members!.firstWhere(
+            (m) => m!.id == ProfileBloc.userId,
             orElse: () => Member('no_id', 'no_id', email: 'email unknown'),
           );
-          _members.removeWhere((m) => m.userId == _himself.userId);
-          _members.insert(0, _himself);
+          _members!.removeWhere((m) => m!.userId == _himself!.userId);
+          _members!.insert(0, _himself);
 
           // print(_members.map((e) => e.email));
           // print(_members.map((e) => e.userId));
@@ -85,7 +85,7 @@ class _MemberManagementState extends State<MemberManagement> {
               trailingAction: () => _save(),
             ),
             SizedBox(height: 32.0),
-            HintLine(text: '${_members.length} MEMBERS', isLarge: true),
+            HintLine(text: '${_members!.length} MEMBERS', isLarge: true),
             SizedBox(height: 8.0),
             Divider(
               thickness: 0.5,
@@ -95,11 +95,11 @@ class _MemberManagementState extends State<MemberManagement> {
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.only(top: 0),
-                itemCount: _members.length,
+                itemCount: _members!.length,
                 itemBuilder: (context, index) {
                   return RemovableItem(
                     key: UniqueKey(),
-                    title: _members[index].email,
+                    title: _members![index]!.email,
                     removable: index != 0,
                     onRemove: () => _remove(index),
                   );

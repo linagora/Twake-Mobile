@@ -11,13 +11,13 @@ EditChannelRepository _$EditChannelRepositoryFromJson(
   $checkKeys(json,
       requiredKeys: const ['company_id', 'workspace_id', 'channel_id', 'name']);
   return EditChannelRepository(
-    channelId: json['channel_id'] as String,
-    name: json['name'] as String,
-    companyId: json['company_id'] as String,
-    workspaceId: json['workspace_id'] as String,
-    icon: json['icon'] as String,
-    description: json['description'] as String,
-    def: json['def'] as bool,
+    channelId: json['channel_id'] as String?,
+    name: json['name'] as String?,
+    companyId: json['company_id'] as String?,
+    workspaceId: json['workspace_id'] as String?,
+    icon: json['icon'] as String?,
+    description: json['description'] as String?,
+    def: json['def'] as bool?,
   );
 }
 

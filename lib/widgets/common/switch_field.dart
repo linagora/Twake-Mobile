@@ -3,20 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:twake/widgets/common/button_field.dart';
 
 class SwitchField extends StatelessWidget {
-  final String image;
+  final String? image;
   final String title;
   final bool value;
   final Function(bool) onChanged;
   final bool isExtended;
   final bool isRounded;
   final BorderRadius borderRadius;
-  final TextStyle titleStyle;
+  final TextStyle? titleStyle;
 
   const SwitchField({
-    Key key,
-    @required this.title,
-    @required this.value,
-    @required this.onChanged,
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.onChanged,
     this.isExtended = false,
     this.isRounded = true,
     this.borderRadius = BorderRadius.zero,

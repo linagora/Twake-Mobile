@@ -5,7 +5,7 @@ class RichTextSpan extends TextSpan {
   final String text;
   final bool isBold;
 
-  const RichTextSpan({@required this.text, this.isBold = false});
+  const RichTextSpan({required this.text, this.isBold = false});
 
   TextSpan buildSpan() {
     return TextSpan(

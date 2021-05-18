@@ -2,8 +2,8 @@ import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class ConfigurationState extends Equatable {
-  final String host;
-  const ConfigurationState({@required this.host});
+  final String? host;
+  const ConfigurationState({required this.host});
 }
 
 class ConfigurationInitial extends ConfigurationState {
@@ -12,18 +12,18 @@ class ConfigurationInitial extends ConfigurationState {
 }
 
 class ConfigurationLoaded extends ConfigurationState {
-  final String host;
+  final String? host;
 
-  ConfigurationLoaded({@required this.host});
+  ConfigurationLoaded({required this.host});
 
   @override
-  List<Object> get props => [host];
+  List<Object?> get props => [host];
 }
 
 class ConfigurationSaving extends ConfigurationState {
   final String host;
 
-  ConfigurationSaving({@required this.host});
+  ConfigurationSaving({required this.host});
   @override
   List<Object> get props => [host];
 }
@@ -31,7 +31,7 @@ class ConfigurationSaving extends ConfigurationState {
 class ConfigurationSaved extends ConfigurationState {
   final String host;
 
-  ConfigurationSaved({@required this.host});
+  ConfigurationSaved({required this.host});
 
   @override
   List<Object> get props => [host];
@@ -40,7 +40,7 @@ class ConfigurationSaved extends ConfigurationState {
 class ConfigurationError extends ConfigurationState {
   final String message;
 
-  ConfigurationError({@required this.message});
+  ConfigurationError({required this.message});
 
   @override
   List<Object> get props => [message];

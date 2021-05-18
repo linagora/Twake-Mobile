@@ -25,21 +25,21 @@ class _WorkspacesState extends State<Workspaces> {
     return BlocBuilder<CompaniesBloc, CompaniesState>(
       buildWhen: (_, current) => current is CompaniesLoaded,
       builder: (context, state) {
-        var companies = <Company>[];
-        Company selectedCompany;
+        List<Company?>? companies = <Company>[];
+        Company? selectedCompany;
         var canCreateWorkspace = false;
 
         if (state is CompaniesLoaded) {
           companies = state.companies;
           selectedCompany = state.selected;
-          final permissions = selectedCompany.permissions;
+          final permissions = selectedCompany!.permissions!;
           canCreateWorkspace = permissions.length > 0 &&
               permissions.contains('CREATE_WORKSPACES');
         }
         return BlocBuilder<WorkspacesBloc, WorkspaceState>(
           builder: (context, state) {
-            Workspace selectedWorkspace;
-            var workspaces = <Workspace>[];
+            Workspace? selectedWorkspace;
+            List<Workspace?>? workspaces = <Workspace>[];
             if (state is WorkspacesLoaded) {
               selectedWorkspace = state.selected;
               workspaces = state.workspaces;
@@ -103,19 +103,19 @@ class _WorkspacesState extends State<Workspaces> {
                           bottom: MediaQuery.of(context).padding.bottom,
                         ),
                         itemCount: canCreateWorkspace
-                            ? workspaces.length + 1
-                            : workspaces.length,
+                            ? workspaces!.length + 1
+                            : workspaces!.length,
                         itemBuilder: (context, index) {
                           if (index == 0 && canCreateWorkspace) {
                             return AddWorkspaceTile();
                           } else {
                             final workspace = canCreateWorkspace
-                                ? workspaces[index - 1]
-                                : workspaces[index];
+                                ? workspaces![index - 1]!
+                                : workspaces![index]!;
                             return WorkspaceTile(
                               title: workspace.name,
                               image: workspace.logo,
-                              selected: workspace.id == selectedWorkspace.id,
+                              selected: workspace.id == selectedWorkspace!.id,
                               onTap: () {
                                 BlocProvider.of<WorkspacesBloc>(context).add(
                                   ChangeSelectedWorkspace(workspace.id),
@@ -136,11 +136,11 @@ class _WorkspacesState extends State<Workspaces> {
                     Expanded(
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(horizontal: 15),
-                        itemCount: companies.length,
+                        itemCount: companies!.length,
                         itemBuilder: (ctx, i) => InkWell(
                           onTap: () {
                             BlocProvider.of<CompaniesBloc>(context)
-                                .add(ChangeSelectedCompany(companies[i].id));
+                                .add(ChangeSelectedCompany(companies![i]!.id));
                             BlocProvider.of<ProfileBloc>(context)
                                 .add(UpdateBadges());
                             setState(() {
@@ -152,7 +152,7 @@ class _WorkspacesState extends State<Workspaces> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               ImageAvatar(
-                                companies[i].logo,
+                                companies![i]!.logo,
                                 width: 30,
                                 height: 30,
                               ),
@@ -163,7 +163,7 @@ class _WorkspacesState extends State<Workspaces> {
                                 children: [
                                   SizedBox(height: 12),
                                   Text(
-                                    companies[i].name,
+                                    companies[i]!.name!,
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w600,
@@ -171,9 +171,9 @@ class _WorkspacesState extends State<Workspaces> {
                                     ),
                                   ),
                                   SizedBox(height: 4),
-                                  if (companies[i].totalMembers != null)
+                                  if (companies[i]!.totalMembers != null)
                                     Text(
-                                      '${companies[i].totalMembers} members',
+                                      '${companies[i]!.totalMembers} members',
                                       style: TextStyle(
                                         fontSize: 12.0,
                                         fontWeight: FontWeight.w400,
@@ -190,7 +190,7 @@ class _WorkspacesState extends State<Workspaces> {
                                 builder: (context, state) {
                                   if (state is ProfileLoaded) {
                                     final count = state
-                                        .getBadgeForCompany(companies[i].id);
+                                        .getBadgeForCompany(companies![i]!.id);
                                     if (count > 0) {
                                       return Badge(
                                         shape: BadgeShape.square,
@@ -284,14 +284,14 @@ class AddWorkspaceTile extends StatelessWidget {
 }
 
 class WorkspaceTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String image;
-  final bool selected;
-  final Function onTap;
+  final String? title;
+  final String? subtitle;
+  final String? image;
+  final bool? selected;
+  final Function? onTap;
 
   const WorkspaceTile({
-    Key key,
+    Key? key,
     this.title,
     this.subtitle,
     this.image,
@@ -302,7 +302,7 @@ class WorkspaceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -324,7 +324,7 @@ class WorkspaceTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        title!,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 15.0,
@@ -332,9 +332,9 @@ class WorkspaceTile extends StatelessWidget {
                           color: Colors.black,
                         ),
                       ),
-                      if (subtitle != null && subtitle.isNotEmpty)
+                      if (subtitle != null && subtitle!.isNotEmpty)
                         Text(
-                          subtitle,
+                          subtitle!,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 10.0,
@@ -345,7 +345,7 @@ class WorkspaceTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (selected)
+                if (selected!)
                   Icon(
                     CupertinoIcons.check_mark_circled_solid,
                     color: Color(0xff3840F7),

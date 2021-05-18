@@ -3,17 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class RoundedTextField extends StatelessWidget {
-  final String hint;
-  final String prefix;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final int maxLength;
-  final String Function(String) validator;
+  final String? hint;
+  final String? prefix;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final int? maxLength;
+  final String Function(String?)? validator;
   final BorderRadius borderRadius;
   final bool enabled;
 
   const RoundedTextField({
-    Key key,
+    Key? key,
     this.hint,
     this.prefix,
     this.controller,

@@ -10,16 +10,16 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/navigation.dart';
 
 class DirectTile extends StatelessWidget {
-  final String id;
-  final String name;
-  final String memberId;
-  final bool hasUnread;
-  final int lastActivity;
-  final int messagesUnread;
-  final Map<String, dynamic> lastMessage;
+  final String? id;
+  final String? name;
+  final String? memberId;
+  final bool? hasUnread;
+  final int? lastActivity;
+  final int? messagesUnread;
+  final Map<String, dynamic>? lastMessage;
 
   const DirectTile({
-    Key key,
+    Key? key,
     this.id,
     this.name,
     this.memberId,
@@ -53,7 +53,7 @@ class DirectTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          name,
+                          name!,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -75,13 +75,13 @@ class DirectTile extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.only(top: 4.0),
                           child: Text(
-                            lastMessage['text'] ?? 'This conversation is empty',
+                            lastMessage!['text'] ?? 'This conversation is empty',
                             textAlign: TextAlign.start,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             style: TextStyle(
                               fontSize: 14.0,
-                              fontStyle: lastMessage['text'] != null
+                              fontStyle: lastMessage!['text'] != null
                                   ? FontStyle.normal
                                   : FontStyle.italic,
                               fontWeight: FontWeight.w400,

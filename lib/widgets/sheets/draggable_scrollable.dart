@@ -8,9 +8,9 @@ import 'package:twake/widgets/sheets/add/add_workspace_flow.dart';
 import 'package:twake/widgets/sheets/edit/edit_channel_flow.dart';
 
 class DraggableScrollable extends StatelessWidget {
-  final SheetFlow flow;
+  final SheetFlow? flow;
 
-  const DraggableScrollable({Key key, this.flow}) : super(key: key);
+  const DraggableScrollable({Key? key, this.flow}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

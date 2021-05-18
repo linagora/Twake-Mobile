@@ -4,20 +4,20 @@ import 'package:twake/blocs/member_cubit/member_state.dart';
 import 'package:twake/repositories/member_repository.dart';
 
 class MemberCubit extends Cubit<MemberState> {
-  final MemberRepository repository;
+  final MemberRepository? repository;
 
   MemberCubit(this.repository) : super(MemberInitial());
 
-  Future<void> fetchMembers({@required String channelId}) async {
-    await repository.fetch(channelId: channelId);
-    emit(MembersLoaded(channelId: channelId, members: repository.items));
+  Future<void> fetchMembers({required String? channelId}) async {
+    await repository!.fetch(channelId: channelId);
+    emit(MembersLoaded(channelId: channelId, members: repository!.items));
   }
 
   Future<void> addMembers({
-    @required String channelId,
-    @required List<String> members,
+    required String? channelId,
+    required List<String?>? members,
   }) async {
-    final updatedMembers = await repository.addMembers(
+    final updatedMembers = await repository!.addMembers(
       members: members,
       channelId: channelId,
     );
@@ -29,10 +29,10 @@ class MemberCubit extends Cubit<MemberState> {
   }
 
   Future<void> deleteMembers({
-    @required String channelId,
-    @required List<String> members,
+    required String? channelId,
+    required List<String?> members,
   }) async {
-    final updatedMembers = await repository.deleteMembers(
+    final updatedMembers = await repository!.deleteMembers(
       members: members,
       channelId: channelId,
     );
@@ -44,10 +44,10 @@ class MemberCubit extends Cubit<MemberState> {
   }
 
   Future<void> deleteYourself({
-    @required String channelId,
+    required String channelId,
   }) async {
     final success =
-        await repository.deleteYourself(channelId: channelId);
+        await repository!.deleteYourself(channelId: channelId);
     if (success) {
       emit(SelfDeleted(channelId: channelId));
     } else {

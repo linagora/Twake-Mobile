@@ -15,9 +15,9 @@ export 'package:twake/blocs/profile_bloc/profile_event.dart';
 export 'package:twake/blocs/profile_bloc/profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  static ProfileRepository repository;
-  final NotificationBloc notificationBloc;
-  StreamSubscription _subscription;
+  static late ProfileRepository repository;
+  final NotificationBloc? notificationBloc;
+  late StreamSubscription _subscription;
 
   ProfileBloc(ProfileRepository rpstr, {this.notificationBloc})
       : super(
@@ -31,7 +31,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           ),
         ) {
     repository = rpstr;
-    _subscription = notificationBloc.listen((NotificationState state) {
+    _subscription = notificationBloc!.listen((NotificationState state) {
       if (state is BadgesUpdated || state is ChannelUpdated) {
         // Logger().w("GOT NOTIFICATION EVENT $state");
         this.add(UpdateBadges());
@@ -42,64 +42,64 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       Segment.identify(userId: rpstr.consoleId ?? rpstr.id).then((r) {
         // ProfileRepository.logger.w('Identified user: ${rpstr.id}');
         Segment.track(eventName: 'twake-mobile:open_client');
-      }).onError((e, s) {
+      }).onError((dynamic e, s) {
         ProfileRepository.logger.e(e);
       });
   }
 
-  bool isMe(String userId) => repository.id == userId;
+  bool isMe(String? userId) => repository.id == userId;
 
-  static String get userId => repository.id;
+  static String? get userId => repository.id;
 
-  static String get firstName => repository.firstName;
+  static String? get firstName => repository.firstName;
 
-  static String get lastName => repository.lastName;
+  static String? get lastName => repository.lastName;
 
-  static String get thumbnail => repository.thumbnail;
+  static String? get thumbnail => repository.thumbnail;
 
-  static String get username => repository.username;
+  static String? get username => repository.username;
 
-  static String get email => repository.email;
+  static String? get email => repository.email;
 
-  static String get selectedCompanyId => repository.selectedCompanyId;
+  static String? get selectedCompanyId => repository.selectedCompanyId;
 
-  static String get selectedWorkspaceId => repository.selectedWorkspaceId;
+  static String? get selectedWorkspaceId => repository.selectedWorkspaceId;
 
-  static String get selectedChannelId => repository.selectedChannelId;
+  static String? get selectedChannelId => repository.selectedChannelId;
 
-  static String get selectedThreadId => repository.selectedThreadId;
+  static String? get selectedThreadId => repository.selectedThreadId;
 
-  static Company get selectedCompany => repository.selectedCompany;
+  static Company? get selectedCompany => repository.selectedCompany;
 
-  static Workspace get selectedWorkspace => repository.selectedWorkspace;
+  static Workspace? get selectedWorkspace => repository.selectedWorkspace;
 
-  static BaseChannel get selectedChannel => repository.selectedChannel;
+  static BaseChannel? get selectedChannel => repository.selectedChannel;
 
-  static set selectedCompanyId(String val) {
+  static set selectedCompanyId(String? val) {
     repository.selectedCompanyId = val;
     repository.save();
   }
 
-  static set selectedWorkspaceId(String val) {
+  static set selectedWorkspaceId(String? val) {
     repository.selectedWorkspaceId = val;
     repository.save();
   }
 
-  static set selectedChannelId(String val) {
+  static set selectedChannelId(String? val) {
     repository.selectedChannelId = val;
   }
 
-  static set selectedThreadId(String val) {
+  static set selectedThreadId(String? val) {
     repository.selectedThreadId = val;
   }
 
-  static set selectedCompany(Company val) {
+  static set selectedCompany(Company? val) {
     repository.selectedCompany = val;
   }
 
-  static set selectedWorkspace(Workspace val) => val;
+  static set selectedWorkspace(Workspace? val) => val;
 
-  static set selectedChannel(BaseChannel val) => val;
+  static set selectedChannel(BaseChannel? val) => val;
 
   @override
   Stream<ProfileState> mapEventToState(ProfileEvent event) async* {

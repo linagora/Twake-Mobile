@@ -7,15 +7,15 @@ import 'package:twake/widgets/common/shimmer_loading.dart';
 class ChatHeader extends StatelessWidget {
   final bool isDirect;
   final bool isPrivate;
-  final int membersCount;
-  final String userId;
-  final String icon;
-  final String name;
-  final Function onTap;
+  final int? membersCount;
+  final String? userId;
+  final String? icon;
+  final String? name;
+  final Function? onTap;
 
   const ChatHeader({
-    Key key,
-    @required this.isDirect,
+    Key? key,
+    required this.isDirect,
     this.isPrivate = false,
     this.userId,
     this.membersCount,
@@ -28,7 +28,7 @@ class ChatHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       child: Row(
         children: [
           if (isDirect)
@@ -39,7 +39,7 @@ class ChatHeader extends StatelessWidget {
           if (!isDirect)
             ShimmerLoading(
               key: ValueKey<String>('channel_icon'),
-              isLoading: icon == null || icon.isEmpty,
+              isLoading: icon == null || icon!.isEmpty,
               width: 38.0,
               height: 38.0,
               child: ChannelThumbnail(
@@ -78,7 +78,7 @@ class ChatHeader extends StatelessWidget {
                     child: Text(
                       membersCount == null
                           ? ''
-                          : '${membersCount > 0 ? membersCount : 'No'} members',
+                          : '${membersCount! > 0 ? membersCount : 'No'} members',
                       style: TextStyle(
                         fontSize: 10.0,
                         fontWeight: FontWeight.w400,

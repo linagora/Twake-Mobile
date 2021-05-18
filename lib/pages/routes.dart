@@ -15,7 +15,7 @@ class Routes {
   static const serverConfiguration = '/server_configuration';
   static const settings = '/settings';
 
-  static MaterialPageRoute onGenerateRoute(String routeName) {
+  static MaterialPageRoute onGenerateRoute(String? routeName) {
     Widget page;
     switch (routeName) {
       case Routes.root:

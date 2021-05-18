@@ -6,9 +6,9 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/widgets/common/image_avatar.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final GlobalKey<ScaffoldState> scaffoldKey;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
-  const MainAppBar({Key key, this.scaffoldKey}) : super(key: key);
+  const MainAppBar({Key? key, this.scaffoldKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,8 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         onTap: () {
           context
               .read<WorkspacesBloc>()
-              .add(CheckForChange(ProfileBloc.selectedCompany.id));
-          scaffoldKey.currentState.openDrawer();
+              .add(CheckForChange(ProfileBloc.selectedCompany!.id));
+          scaffoldKey!.currentState!.openDrawer();
         },
         child: Image.asset('assets/images/menu.png'),
       ),
@@ -35,10 +35,10 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
             leading: SizedBox(
               width: 32,
               height: 32,
-              child: ImageAvatar(state.selected.logo),
+              child: ImageAvatar(state.selected!.logo),
             ),
             title: Text(
-              state.selected.name,
+              state.selected!.name!,
               style: TextStyle(
                 fontSize: 17.0,
                 fontWeight: FontWeight.w600,

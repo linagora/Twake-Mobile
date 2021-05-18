@@ -5,13 +5,13 @@ import 'package:twake/models/message.dart';
 import 'messsage_loaded_type.dart';
 
 abstract class MessagesState extends Equatable {
-  final BaseChannel parentChannel;
-  final Message threadMessage;
+  final BaseChannel? parentChannel;
+  final Message? threadMessage;
   const MessagesState({this.parentChannel, this.threadMessage});
 }
 
 class MessagesLoading extends MessagesState {
-  const MessagesLoading({BaseChannel parentChannel, Message threadMessage})
+  const MessagesLoading({BaseChannel? parentChannel, Message? threadMessage})
       : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
@@ -19,10 +19,10 @@ class MessagesLoading extends MessagesState {
 }
 
 class MessagesLoaded extends MessagesState {
-  final List<Message> messages;
-  final int messageCount;
-  final Message threadMessage;
-  final String force;
+  final List<Message?>? messages;
+  final int? messageCount;
+  final Message? threadMessage;
+  final String? force;
   final MessageLoadedType messageLoadedType;
 
   const MessagesLoaded({
@@ -31,18 +31,18 @@ class MessagesLoaded extends MessagesState {
     this.messages,
     this.threadMessage,
     this.messageLoadedType = MessageLoadedType.normal,
-    BaseChannel parentChannel,
+    BaseChannel? parentChannel,
   }) : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props =>
+  List<Object?> get props =>
       [messageCount, messages, parentChannel, force, messageLoadedType];
 }
 
 class MoreMessagesLoading extends MessagesLoaded {
   const MoreMessagesLoading({
-    List<Message> messages,
-    BaseChannel parentChannel,
+    required List<Message?> messages,
+    BaseChannel? parentChannel,
   }) : super(
           messageCount: messages.length,
           messages: messages,
@@ -51,25 +51,25 @@ class MoreMessagesLoading extends MessagesLoaded {
 }
 
 class MessagesEmpty extends MessagesState {
-  final String force;
+  final String? force;
   const MessagesEmpty(
-      {BaseChannel parentChannel, Message threadMessage, this.force})
+      {BaseChannel? parentChannel, Message? threadMessage, this.force})
       : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props => [parentChannel, threadMessage, force];
+  List<Object?> get props => [parentChannel, threadMessage, force];
 }
 
 class MessageSelected extends MessagesLoaded {
-  final Message threadMessage;
+  final Message? threadMessage;
   final responsesCount;
 
   const MessageSelected({
     this.threadMessage,
     this.responsesCount,
-    List<Message> messages,
-    BaseChannel parentChannel,
-    String force,
+    required List<Message?> messages,
+    BaseChannel? parentChannel,
+    String? force,
   }) : super(
           messages: messages,
           messageCount: messages.length,
@@ -79,26 +79,26 @@ class MessageSelected extends MessagesLoaded {
         );
 
   @override
-  List<Object> get props => [threadMessage, responsesCount, force];
+  List<Object?> get props => [threadMessage, responsesCount, force];
 }
 
 class ErrorLoadingMessages extends MessagesEmpty {
-  final String force;
+  final String? force;
   const ErrorLoadingMessages(
-      {BaseChannel parentChannel, Message threadMessage, this.force})
+      {BaseChannel? parentChannel, Message? threadMessage, this.force})
       : super(parentChannel: parentChannel, threadMessage: threadMessage);
 
   @override
-  List<Object> get props => [parentChannel, threadMessage, force];
+  List<Object?> get props => [parentChannel, threadMessage, force];
 }
 
 class ErrorLoadingMoreMessages extends MessagesLoaded {
-  final String force;
+  final String? force;
   const ErrorLoadingMoreMessages({
     this.force,
-    BaseChannel parentChannel,
-    Message threadMessage,
-    List<Message> messages,
+    BaseChannel? parentChannel,
+    Message? threadMessage,
+    List<Message?>? messages,
   }) : super(
           parentChannel: parentChannel,
           threadMessage: threadMessage,
@@ -106,16 +106,16 @@ class ErrorLoadingMoreMessages extends MessagesLoaded {
         );
 
   @override
-  List<Object> get props => [parentChannel, threadMessage, force];
+  List<Object?> get props => [parentChannel, threadMessage, force];
 }
 
 class ErrorSendingMessage extends MessagesLoaded {
-  final String force;
+  final String? force;
   const ErrorSendingMessage({
     this.force,
-    BaseChannel parentChannel,
-    Message threadMessage,
-    List<Message> messages,
+    BaseChannel? parentChannel,
+    Message? threadMessage,
+    List<Message?>? messages,
   }) : super(
           parentChannel: parentChannel,
           threadMessage: threadMessage,
@@ -123,5 +123,5 @@ class ErrorSendingMessage extends MessagesLoaded {
         );
 
   @override
-  List<Object> get props => [parentChannel, threadMessage, force];
+  List<Object?> get props => [parentChannel, threadMessage, force];
 }

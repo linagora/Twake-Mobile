@@ -5,7 +5,7 @@ import 'package:image/image.dart';
 class DecodeParam {
   final File file;
   final int width;
-  final int height;
+  final int? height;
   final SendPort sendPort;
 
   DecodeParam(
@@ -19,7 +19,7 @@ class DecodeParam {
 void decodeIsolate(DecodeParam param) {
   // decodeImage will identify the format of the image
   // and use the appropriate decoder.
-  var image = decodeImage(param.file.readAsBytesSync());
+  var image = decodeImage(param.file.readAsBytesSync())!;
   // Resize the image to a <width>x? thumbnail (maintaining the aspect ratio).
   var thumbnail = copyResize(image, width: param.width);
   param.sendPort.send(thumbnail);

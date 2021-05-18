@@ -16,14 +16,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   var tempCreds = {};
   cb.ConnectionBloc connectionBloc;
-  StreamSubscription subscription;
+  late StreamSubscription subscription;
 
   bool connectionLost = false;
 
   AuthBloc(this.repository, this.connectionBloc) : super(AuthInitializing()) {
     Api().resetAuthentication = resetAuthentication;
     Api().invalidateConfiguration = resetHost;
-    subscription = connectionBloc.listen((cb.ConnectionState state) async {
+    subscription = connectionBloc.listen((cb.ConnectionState? state) async {
       if (state is cb.ConnectionLost) {
         connectionLost = true;
       } else if (connectionLost && !(state is cb.ConnectionLost)) {

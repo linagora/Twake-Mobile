@@ -24,9 +24,9 @@ import 'package:twake/utils/navigation.dart';
 class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String draft = '';
-    String channelId;
-    DraftType draftType;
+    String? draft = '';
+    String? channelId;
+    DraftType? draftType;
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +48,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
             return BackButton(
               onPressed: () {
                 if (draftType != null) {
-                  if (draft.isNotEmpty) {
+                  if (draft!.isNotEmpty) {
                     context.read<DraftBloc>().add(
                           SaveDraft(
                             id: channelId,
@@ -69,10 +69,10 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
         ),
         title: BlocBuilder<MessagesBloc<T>, MessagesState>(
           builder: (ctx, state) {
-            BaseChannel parentChannel = T is Channel ? Channel() : Direct();
+            BaseChannel? parentChannel = T is Channel ? Channel() : Direct();
 
             if ((state is MessagesLoaded || state is MessagesEmpty) &&
-                state.parentChannel.id == ProfileBloc.selectedChannelId) {
+                state.parentChannel!.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
             // print('MessagesBloc state: $state');
@@ -98,7 +98,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                   // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
                   // 'ADD_MEMBER', 'REMOVE_MEMBER',
                   // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                  final permissions = parentChannel.permissions;
+                  final permissions = parentChannel.permissions!;
                   if (permissions.contains('UPDATE_NAME') ||
                       permissions.contains('UPDATE_DESCRIPTION') ||
                       permissions.contains('ADD_MEMBER') ||
@@ -118,7 +118,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         ShimmerLoading(
                           key: ValueKey<String>('direct_icon'),
                           isLoading: parentChannel.members == null ||
-                              parentChannel.members.isEmpty,
+                              parentChannel.members!.isEmpty,
                           width: 32.0,
                           height: 32.0,
                           child:
@@ -128,7 +128,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                         ShimmerLoading(
                           key: ValueKey<String>('channel_icon'),
                           isLoading: parentChannel.icon == null ||
-                              parentChannel.icon.isEmpty,
+                              parentChannel.icon!.isEmpty,
                           width: 32.0,
                           height: 32.0,
                           child: TextAvatar(parentChannel.icon ?? ''),
@@ -140,7 +140,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                           children: [
                             ShimmerLoading(
                               key: ValueKey<String>('name'),
-                              isLoading: parentChannel.name == null,
+                              isLoading: parentChannel!.name == null,
                               width: 60.0,
                               height: 10.0,
                               child: ChannelTitle(
@@ -160,7 +160,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                                 child: Text(
                                   parentChannel.membersCount == null
                                       ? ''
-                                      : '${parentChannel.membersCount > 0 ? parentChannel.membersCount : 'No'} members',
+                                      : '${parentChannel.membersCount! > 0 ? parentChannel.membersCount : 'No'} members',
                                   style: TextStyle(
                                     fontSize: 10.0,
                                     fontWeight: FontWeight.w400,
@@ -216,7 +216,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                       draft = '';
                     }
 
-                    final channelId = messagesState.parentChannel.id;
+                    final channelId = messagesState.parentChannel!.id;
                     if (messagesState.parentChannel is Channel) {
                       draftType = DraftType.channel;
                     } else if (messagesState.parentChannel is Direct) {
@@ -231,7 +231,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
                               ? state.originalStr
                               : draft,
                           onMessageSend: state is MessageEditing
-                              ? state.onMessageEditComplete
+                              ? state.onMessageEditComplete as dynamic Function(String, BuildContext)?
                               : (content, context) {
                                   BlocProvider.of<MessagesBloc<T>>(context).add(
                                     SendMessage(content: content),
@@ -266,7 +266,7 @@ class MessagesPage<T extends BaseChannelBloc> extends StatelessWidget {
   }
 
   void _goEdit(BuildContext context, MessagesState state) async {
-    final params = await openEditChannel(context, state.parentChannel);
+    final params = await openEditChannel(context, state.parentChannel as Channel);
     if (params != null && params.length > 0) {
       final editingState = params.first;
       if (editingState is EditChannelDeleted) {

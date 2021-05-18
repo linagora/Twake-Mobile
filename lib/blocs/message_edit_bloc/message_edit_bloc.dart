@@ -14,7 +14,7 @@ class MessageEditBloc extends Bloc<MessageEditEvent, MessageEditState> {
   Stream<MessageEditState> mapEventToState(MessageEditEvent event) async* {
     Logger().d('GOT MESSAGE EDIT EVENT $event');
     if (event is EditMessage) {
-      final text = event.originalStr.replaceAll(idMatch, '');
+      final text = event.originalStr!.replaceAll(idMatch, '');
       yield MessageEditing(
         onMessageEditComplete: event.onMessageEditComplete,
         originalStr: text,

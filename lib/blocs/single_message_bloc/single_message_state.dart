@@ -5,18 +5,18 @@ abstract class SingleMessageState extends Equatable {
 }
 
 class MessageReady extends SingleMessageState {
-  final String id;
-  final String threadId;
-  final int responsesCount;
-  final int creationDate;
-  final List<dynamic> content;
-  final String text;
-  final int charCount;
-  final List<Map<String, dynamic>> reactions;
-  final int hash;
-  final String userId;
-  final String sender;
-  final String thumbnail;
+  final String? id;
+  final String? threadId;
+  final int? responsesCount;
+  final int? creationDate;
+  final List<dynamic>? content;
+  final String? text;
+  final int? charCount;
+  final List<Map<String, dynamic>>? reactions;
+  final int? hash;
+  final String? userId;
+  final String? sender;
+  final String? thumbnail;
 
   const MessageReady({
     this.id,
@@ -34,7 +34,7 @@ class MessageReady extends SingleMessageState {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         id,
         text,
         responsesCount,

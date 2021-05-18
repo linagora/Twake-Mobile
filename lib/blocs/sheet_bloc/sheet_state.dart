@@ -5,12 +5,12 @@ abstract class SheetState extends Equatable {
 }
 
 class SheetInitial extends SheetState {
-  final SheetFlow flow;
+  final SheetFlow? flow;
 
-  SheetInitial({@required this.flow});
+  SheetInitial({required this.flow});
 
   @override
-  List<Object> get props => [flow];
+  List<Object?> get props => [flow];
 }
 
 class SheetShouldOpen extends SheetState {
@@ -65,7 +65,7 @@ class SheetProcessing extends SheetState {
 class FlowUpdated extends SheetState {
   final SheetFlow flow;
 
-  FlowUpdated({@required this.flow});
+  FlowUpdated({required this.flow});
 
   @override
   List<Object> get props => [flow];

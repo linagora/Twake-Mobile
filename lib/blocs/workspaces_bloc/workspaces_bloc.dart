@@ -14,35 +14,35 @@ export 'package:twake/blocs/workspaces_bloc/workspace_state.dart';
 
 class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
   final WorkspacesRepository repository;
-  final CompaniesBloc companiesBloc;
-  StreamSubscription subscription;
-  String selectedCompanyId;
-  final NotificationBloc notificationBloc;
-  StreamSubscription _notificationSubscription;
+  final CompaniesBloc? companiesBloc;
+  late StreamSubscription subscription;
+  String? selectedCompanyId;
+  final NotificationBloc? notificationBloc;
+  late StreamSubscription _notificationSubscription;
 
   WorkspacesBloc({
-    this.repository,
+    required this.repository,
     this.companiesBloc,
     this.notificationBloc,
   }) : super(WorkspacesLoaded(
           workspaces: repository.items,
           selected: repository.selected,
         )) {
-    subscription = companiesBloc.listen((CompaniesState state) {
+    subscription = companiesBloc!.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
-        selectedCompanyId = state.selected.id;
+        selectedCompanyId = state.selected!.id;
         repository.logger.e(
-            'Company selected: ${state.selected.name}\nID: ${state.selected.id}');
+            'Company selected: ${state.selected!.name}\nID: ${state.selected!.id}');
         this.add(ReloadWorkspaces(selectedCompanyId, forceFromApi: true));
       }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) async {
+        notificationBloc!.listen((NotificationState state) async {
       if (state is BaseChannelMessageNotification &&
           state.data.workspaceId != 'direct') {
         while (true) {
-          if (companiesBloc.state is CompaniesLoaded &&
-              (companiesBloc.state as CompaniesLoaded).selected.id ==
+          if (companiesBloc!.state is CompaniesLoaded &&
+              (companiesBloc!.state as CompaniesLoaded).selected!.id ==
                   state.data.companyId) {
             this.add(ChangeSelectedWorkspace(state.data.workspaceId));
             break;
@@ -53,8 +53,8 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         }
       }
     });
-    ProfileBloc.selectedWorkspaceId = repository.selected.id;
-    selectedCompanyId = companiesBloc.repository.selected.id;
+    ProfileBloc.selectedWorkspaceId = repository.selected!.id;
+    selectedCompanyId = companiesBloc!.repository.selected!.id;
     // for future use in mentions
     repository.fetchMembers();
   }
@@ -95,7 +95,7 @@ class WorkspacesBloc extends Bloc<WorkspacesEvent, WorkspaceState> {
         if (changed) this.add(ForceRefresh());
       });
     } else if (event is ForceRefresh) {
-      repository.items.sort((w1, w2) => w1.name.compareTo(w2.name));
+      repository.items!.sort((w1, w2) => w1!.name!.compareTo(w2!.name!));
       yield WorkspacesLoaded(
         workspaces: repository.items,
         selected: repository.selected,

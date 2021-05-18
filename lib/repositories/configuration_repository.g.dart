@@ -10,7 +10,7 @@ ConfigurationRepository _$ConfigurationRepositoryFromJson(
     Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['host']);
   return ConfigurationRepository(
-    host: json['host'] as String,
+    host: json['host'] as String?,
   );
 }
 

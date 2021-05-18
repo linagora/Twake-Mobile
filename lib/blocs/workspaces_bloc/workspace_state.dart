@@ -2,19 +2,19 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/models/workspace.dart';
 
 abstract class WorkspaceState extends Equatable {
-  final List<Workspace> workspaces;
-  final Workspace selected;
+  final List<Workspace?>? workspaces;
+  final Workspace? selected;
 
   const WorkspaceState({this.workspaces, this.selected});
 
   @override
-  List<Object> get props => [workspaces, selected];
+  List<Object?> get props => [workspaces, selected];
 }
 
 class WorkspacesLoaded extends WorkspaceState {
-  final List<Workspace> workspaces;
-  final Workspace selected;
-  final String force;
+  final List<Workspace?>? workspaces;
+  final Workspace? selected;
+  final String? force;
 
   const WorkspacesLoaded({
     this.workspaces,
@@ -23,7 +23,7 @@ class WorkspacesLoaded extends WorkspaceState {
   });
 
   @override
-  List<Object> get props => [workspaces, selected, force];
+  List<Object?> get props => [workspaces, selected, force];
 }
 
 class WorkspaceSelected extends WorkspacesLoaded {
@@ -34,12 +34,12 @@ class WorkspaceSelected extends WorkspacesLoaded {
 }
 
 class WorkspacesLoading extends WorkspaceState {
-  final String companyId;
+  final String? companyId;
 
   const WorkspacesLoading({this.companyId});
 
   @override
-  List<Object> get props => [companyId];
+  List<Object?> get props => [companyId];
 }
 
 class WorkspacesEmpty extends WorkspaceState {

@@ -6,13 +6,13 @@ abstract class WorkspacesEvent extends Equatable {
 
 class ReloadWorkspaces extends WorkspacesEvent {
   // parent company id
-  final String companyId;
+  final String? companyId;
   final bool forceFromApi;
 
   const ReloadWorkspaces(this.companyId, {this.forceFromApi = false});
 
   @override
-  List<Object> get props => [companyId];
+  List<Object?> get props => [companyId];
 }
 
 class ForceRefresh extends WorkspacesEvent {
@@ -25,12 +25,12 @@ class ForceRefresh extends WorkspacesEvent {
 
 class CheckForChange extends WorkspacesEvent {
   // parent company id
-  final String companyId;
+  final String? companyId;
 
   const CheckForChange(this.companyId);
 
   @override
-  List<Object> get props => [companyId];
+  List<Object?> get props => [companyId];
 }
 
 class ClearWorkspaces extends WorkspacesEvent {
@@ -50,12 +50,12 @@ class LoadSingleWorkspace extends WorkspacesEvent {
 }
 
 class ChangeSelectedWorkspace extends WorkspacesEvent {
-  final String workspaceId;
+  final String? workspaceId;
 
   const ChangeSelectedWorkspace(this.workspaceId);
 
   @override
-  List<Object> get props => [workspaceId];
+  List<Object?> get props => [workspaceId];
 }
 
 class RemoveWorkspace extends WorkspacesEvent {

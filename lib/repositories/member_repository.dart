@@ -8,10 +8,10 @@ import 'package:twake/services/storage/storage.dart';
 import 'package:twake/utils/extensions.dart';
 
 class MemberRepository extends CollectionRepository<Member> {
-  List<Member> items;
+  List<Member?>? items;
   final String apiEndpoint;
 
-  MemberRepository({this.items, @required this.apiEndpoint})
+  MemberRepository({this.items, required this.apiEndpoint})
       : super(items: items, apiEndpoint: apiEndpoint);
 
   static final _api = Api();
@@ -19,9 +19,9 @@ class MemberRepository extends CollectionRepository<Member> {
 
   static Future<MemberRepository> load(
     String apiEndpoint, {
-    Map<String, dynamic> queryParams,
-    List<List> filters,
-    Map<String, bool> sortFields, // fields to sort by + sort direction
+    Map<String, dynamic>? queryParams,
+    List<List>? filters,
+    Map<String, bool>? sortFields, // fields to sort by + sort direction
   }) async {
     List<dynamic> itemsList = await _storage.batchLoad(
       type: StorageType.Member,
@@ -32,7 +32,7 @@ class MemberRepository extends CollectionRepository<Member> {
     if (itemsList.isEmpty) {
       // Logger().d('Requesting $T items from api...');
       try {
-        itemsList = await _api.get(apiEndpoint, params: queryParams);
+        itemsList = await (_api.get(apiEndpoint, params: queryParams) as FutureOr<List<dynamic>>);
       } on ApiError catch (error) {
         Logger()
             .d('ERROR WHILE FETCHING MEMBER items FROM API\n${error.message}');
@@ -47,10 +47,10 @@ class MemberRepository extends CollectionRepository<Member> {
   }
 
   Future<bool> fetch({
-    @required channelId,
+    required channelId,
   }) async {
-    String companyId = ProfileBloc.selectedCompanyId;
-    String workspaceId = ProfileBloc.selectedWorkspaceId;
+    String? companyId = ProfileBloc.selectedCompanyId;
+    String? workspaceId = ProfileBloc.selectedWorkspaceId;
     return super.reload(
       queryParams: {
         'company_id': companyId,
@@ -62,8 +62,8 @@ class MemberRepository extends CollectionRepository<Member> {
   }
 
   Future<List<Member>> addMembers({
-    @required List<String> members,
-    @required String channelId,
+    required List<String?>? members,
+    required String? channelId,
   }) async {
     return process(
       members: members,
@@ -74,8 +74,8 @@ class MemberRepository extends CollectionRepository<Member> {
   }
 
   Future<List<Member>> deleteMembers({
-    @required List<String> members,
-    @required String channelId,
+    required List<String?> members,
+    required String? channelId,
   }) async {
     return process(
       members: members,
@@ -86,7 +86,7 @@ class MemberRepository extends CollectionRepository<Member> {
   }
 
   Future<bool> deleteYourself({
-    @required String channelId,
+    required String channelId,
   }) async {
     final userId = ProfileBloc.userId;
 
@@ -101,16 +101,16 @@ class MemberRepository extends CollectionRepository<Member> {
   }
 
   Future<List<Member>> process({
-    @required List<String> members,
-    @required String channelId,
-    @required bool shouldUpdate,
-    @required bool shouldExcludeOwner,
+    required List<String?>? members,
+    required String? channelId,
+    required bool shouldUpdate,
+    required bool shouldExcludeOwner,
   }) async {
-    String companyId = ProfileBloc.selectedCompanyId;
-    String workspaceId = ProfileBloc.selectedWorkspaceId;
+    String? companyId = ProfileBloc.selectedCompanyId;
+    String? workspaceId = ProfileBloc.selectedWorkspaceId;
 
     if (shouldExcludeOwner)
-      members.remove(ProfileBloc.userId); // Remove author.
+      members!.remove(ProfileBloc.userId); // Remove author.
 
     final body = <String, dynamic>{
       'company_id': companyId,
@@ -118,12 +118,12 @@ class MemberRepository extends CollectionRepository<Member> {
       'channel_id': channelId,
       'members': members,
     };
-    List response;
+    List? response;
     try {
       if (shouldUpdate) {
-        response = (await _api.post(apiEndpoint, body: body));
+        response = (await (_api.post(apiEndpoint, body: body) as FutureOr<List<dynamic>?>));
       } else {
-        response = (await _api.delete(apiEndpoint, body: body));
+        response = (await (_api.delete(apiEndpoint, body: body) as FutureOr<List<dynamic>?>));
       }
     } catch (error) {
       logger.e('Error while sending members to api\n${error.message}');
@@ -131,8 +131,8 @@ class MemberRepository extends CollectionRepository<Member> {
     }
     logger.d('RESPONSE AFTER SENDING MEMBERS: $response');
     final updatedMembers =
-        response.map((json) => Member.fromJson(json)).toList();
-    super.items.addAll(updatedMembers);
+        response!.map((json) => Member.fromJson(json)).toList();
+    super.items!.addAll(updatedMembers);
     super.save();
     return updatedMembers;
   }

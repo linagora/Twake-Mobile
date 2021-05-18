@@ -30,7 +30,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
           child: MessageTile<T>(
             message: state.threadMessage,
             hideShowAnswers: true,
-            key: ValueKey(state.threadMessage.key),
+            key: ValueKey(state.threadMessage!.key),
           ),
         ),
         Divider(
@@ -44,7 +44,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 12.0),
           child: Text(
-            state.threadMessage.respCountStr + ' responses',
+            state.threadMessage!.respCountStr + ' responses',
             style: TextStyle(
               fontSize: 12.0,
               fontWeight: FontWeight.w400,
@@ -65,8 +65,8 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
         ),
         if (state is MessagesLoaded)
           MessageTile<T>(
-            message: state.messages.last,
-            key: ValueKey(state.messages.last.key),
+            message: state.messages!.last,
+            key: ValueKey(state.messages!.last!.key),
           ),
         if (state is MessagesEmpty)
           Center(
@@ -85,10 +85,10 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 
-  double appBarHeight;
+  double? appBarHeight;
   List<Widget> widgets = [];
 
-  var _messages = <Message>[];
+  List<Message?>? _messages = <Message>[];
 
   var _controller = ScrollController();
   ScrollPhysics _physics = BouncingScrollPhysics();
@@ -128,14 +128,14 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                   physics: _physics,
                   reverse: true,
                   shrinkWrap: true,
-                  itemCount: _messages.length,
+                  itemCount: _messages!.length,
                   itemBuilder: (context, i) {
-                    if (i == _messages.length - 1) {
+                    if (i == _messages!.length - 1) {
                       return buildThreadMessageColumn(state);
                     } else {
                       return MessageTile<T>(
-                        message: _messages[i],
-                        key: ValueKey(_messages[i].key),
+                        message: _messages![i],
+                        key: ValueKey(_messages![i]!.key),
                       );
                     }
                   },

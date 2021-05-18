@@ -14,11 +14,11 @@ AuthRepository _$AuthRepositoryFromJson(Map<String, dynamic> json) {
     'refresh_expiration'
   ]);
   return AuthRepository()
-    ..accessToken = json['token'] as String
-    ..refreshToken = json['refresh_token'] as String
-    ..accessTokenExpiration = json['expiration'] as int
-    ..refreshTokenExpiration = json['refresh_expiration'] as int
-    ..socketIOHost = json['socket_io_host'] as String;
+    ..accessToken = json['token'] as String?
+    ..refreshToken = json['refresh_token'] as String?
+    ..accessTokenExpiration = json['expiration'] as int?
+    ..refreshTokenExpiration = json['refresh_expiration'] as int?
+    ..socketIOHost = json['socket_io_host'] as String?;
 }
 
 Map<String, dynamic> _$AuthRepositoryToJson(AuthRepository instance) =>

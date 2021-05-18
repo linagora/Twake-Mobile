@@ -2,14 +2,14 @@ import 'package:twake/models/application.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class ApplicationRepository {
-  static Map<String, Application> items = {};
-  static ApplicationRepository _repository;
+  static Map<String?, Application> items = {};
+  static ApplicationRepository? _repository;
 
-  factory ApplicationRepository([List<String> companies]) {
+  factory ApplicationRepository([List<String?>? companies]) {
     if (_repository == null || companies != null) {
-      _repository = ApplicationRepository._()..load(companies);
+      _repository = ApplicationRepository._()..load(companies!);
     }
-    return _repository;
+    return _repository!;
   }
 
   ApplicationRepository._();
@@ -18,19 +18,19 @@ class ApplicationRepository {
   final _storage = Storage();
   final logger = Logger();
 
-  Future<void> load(List<String> companies) async {
+  Future<void> load(List<String?> companies) async {
     for (var c in companies) {
       await fetchForCompany(c);
     }
   }
 
-  Future<void> fetchForCompany(String companyId) async {
-    final List<dynamic> applications = await this._api.get(
+  Future<void> fetchForCompany(String? companyId) async {
+    final List<dynamic> applications = await (this._api.get(
       Endpoint.applications,
       params: {
         'company_id': companyId,
       },
-    );
+    ) as FutureOr<List<dynamic>>);
     items.addEntries(
       applications.map(
         (a) => MapEntry(

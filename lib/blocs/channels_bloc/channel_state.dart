@@ -6,28 +6,28 @@ abstract class ChannelState extends Equatable {
 }
 
 class ChannelsLoaded extends ChannelState {
-  final List<BaseChannel> channels;
-  final BaseChannel selected;
-  final String force;
+  final List<BaseChannel?>? channels;
+  final BaseChannel? selected;
+  final String? force;
   const ChannelsLoaded({
     this.channels,
     this.force,
     this.selected,
   });
   @override
-  List<Object> get props => [channels, force];
+  List<Object?> get props => [channels, force];
 }
 
 class ChannelPicked extends ChannelsLoaded {
-  final int hasUnread;
+  final int? hasUnread;
   const ChannelPicked({
-    List<BaseChannel> channels,
-    BaseChannel selected,
+    List<BaseChannel?>? channels,
+    BaseChannel? selected,
     this.hasUnread: 0,
   }) : super(channels: channels, selected: selected);
 
   @override
-  List<Object> get props => [selected.id, hasUnread];
+  List<Object?> get props => [selected!.id, hasUnread];
 }
 
 class ChannelsLoading extends ChannelState {
@@ -43,7 +43,7 @@ class ChannelsEmpty extends ChannelState {
 }
 
 class ErrorLoadingChannels extends ChannelsLoaded {
-  const ErrorLoadingChannels({List<BaseChannel> channels})
+  const ErrorLoadingChannels({List<BaseChannel?>? channels})
       : super(channels: channels);
 
   @override

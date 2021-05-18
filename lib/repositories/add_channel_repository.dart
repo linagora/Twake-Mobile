@@ -21,36 +21,36 @@ enum ChannelType {
 @JsonSerializable(explicitToJson: true)
 class AddChannelRepository {
   @JsonKey(required: true, name: 'company_id')
-  String companyId;
+  String? companyId;
   @JsonKey(required: true, name: 'workspace_id')
-  String workspaceId;
+  String? workspaceId;
   @JsonKey(required: true)
-  String name;
+  String? name;
   @JsonKey(required: false, defaultValue: 'public')
-  String visibility;
+  String? visibility;
 
   @JsonKey(required: false)
-  String icon;
+  String? icon;
   @JsonKey(required: false)
-  String description;
+  String? description;
   @JsonKey(required: false, name: 'channel_group')
-  String channelGroup;
+  String? channelGroup;
   @JsonKey(required: false, name: 'default')
-  bool def;
+  bool? def;
   @JsonKey(required: false)
-  List<String> members;
+  List<String?>? members;
 
   @JsonKey(ignore: true)
   static final _logger = Logger();
   @JsonKey(ignore: true)
   static final _api = Api();
   @JsonKey(ignore: true)
-  ChannelType type;
+  ChannelType? type;
 
   AddChannelRepository({
-    @required this.companyId,
-    @required this.workspaceId,
-    @required this.name,
+    required this.companyId,
+    required this.workspaceId,
+    required this.name,
     this.visibility,
     this.icon,
     this.description,
@@ -81,7 +81,7 @@ class AddChannelRepository {
     type = ChannelType.public;
   }
 
-  Future<String> create() async {
+  Future<String?> create() async {
     this.companyId = ProfileBloc.selectedCompanyId;
     this.workspaceId = ProfileBloc.selectedWorkspaceId;
 
@@ -98,22 +98,22 @@ class AddChannelRepository {
         break;
     }
 
-    if (this.name.isEmpty) {
+    if (this.name!.isEmpty) {
       this.workspaceId = 'direct';
       this.visibility = 'direct';
     }
 
     final body = this.toJson();
     _logger.d('Channel creation request body: $body');
-    Map<String, dynamic> resp;
+    Map<String, dynamic>? resp;
     try {
-      resp = await _api.post(Endpoint.channels, body: body);
+      resp = await (_api.post(Endpoint.channels, body: body) as FutureOr<Map<String, dynamic>?>);
     } catch (error) {
       _logger.e('Error while trying to create a channel:\n${error.message}');
       return '';
     }
     _logger.d('RESPONSE AFTER CHANNEL CREATION: $resp');
-    String channelId = resp['id'];
+    String? channelId = resp!['id'];
     return channelId;
   }
 }

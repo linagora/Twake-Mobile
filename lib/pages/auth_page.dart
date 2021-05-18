@@ -17,7 +17,7 @@ class AuthPage extends StatefulWidget {
 
 class _AuthPageState extends State<AuthPage> {
   var _index = 0;
-  List<Widget> _widgets;
+  late List<Widget> _widgets;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _AuthPageState extends State<AuthPage> {
       ),
     ];
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       context.read<ConfigurationCubit>().load();
     });
   }

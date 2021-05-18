@@ -8,9 +8,9 @@ class SearchItem extends StatelessWidget {
   final bool allowMultipleChoice;
 
   const SearchItem({
-    Key key,
-    @required this.title,
-    @required this.onTap,
+    Key? key,
+    required this.title,
+    required this.onTap,
     this.selected = false,
     this.allowMultipleChoice = false,
   }) : super(key: key);
@@ -18,7 +18,7 @@ class SearchItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap as void Function()?,
       behavior: HitTestBehavior.opaque,
       child: Container(
         height: 52.0,

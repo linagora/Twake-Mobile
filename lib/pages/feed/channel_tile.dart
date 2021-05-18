@@ -10,17 +10,17 @@ import 'package:twake/utils/navigation.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
 
 class ChannelTile extends StatelessWidget {
-  final String id;
-  final String name;
-  final String icon;
-  final bool hasUnread;
-  final bool isPrivate;
-  final int lastActivity;
-  final int messagesUnread;
-  final Map<String, dynamic> lastMessage;
+  final String? id;
+  final String? name;
+  final String? icon;
+  final bool? hasUnread;
+  final bool? isPrivate;
+  final int? lastActivity;
+  final int? messagesUnread;
+  final Map<String, dynamic>? lastMessage;
 
   const ChannelTile({
-    Key key,
+    Key? key,
     this.id,
     this.name,
     this.icon,
@@ -34,7 +34,7 @@ class ChannelTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print(lastMessage);
-    var senderName = lastMessage['sender_name'] ?? '';
+    var senderName = lastMessage!['sender_name'] ?? '';
 
     return InkWell(
       onTap: () {
@@ -61,7 +61,7 @@ class ChannelTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          name,
+                          name!,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.start,
@@ -99,13 +99,13 @@ class ChannelTile extends StatelessWidget {
                                   ),
                                 ),
                               Text(
-                                lastMessage['text'] ?? 'This channel is empty',
+                                lastMessage!['text'] ?? 'This channel is empty',
                                 textAlign: TextAlign.start,
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
                                 style: TextStyle(
                                   fontSize: 14.0,
-                                  fontStyle: lastMessage['text'] != null
+                                  fontStyle: lastMessage!['text'] != null
                                       ? FontStyle.normal
                                       : FontStyle.italic,
                                   fontWeight: FontWeight.w400,

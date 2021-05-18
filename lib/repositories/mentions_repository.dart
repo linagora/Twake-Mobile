@@ -7,7 +7,7 @@ class MentionsRepository {
 
   Future<List<User>> mentionableUsers(String match) async {
     // Logger().e("SEARCHING FOR: $match");
-    final List<Map> result = await _storage.customQuery(
+    final List<Map> result = await (_storage.customQuery(
       'SELECT user.* FROM user '
       'JOIN user2workspace AS u2w ON '
       'user.id == u2w.user_id',
@@ -20,14 +20,14 @@ class MentionsRepository {
         ['lastname', match]
       ],
       orderings: {'firstname': true},
-    );
-    final users = result.map((r) => User.fromJson(r)).toList();
+    ) as FutureOr<List<Map<dynamic, dynamic>>>);
+    final users = result.map((r) => User.fromJson(r as Map<String, dynamic>)).toList();
     // Logger().e("FOUND: ${users.length} users for match");
 
     return users;
   }
 
-  Future<String> getUserId(String username) async {
+  Future<String?> getUserId(String username) async {
     final user = await _storage.customQuery(
       'SELECT id FROM user',
       filters: [

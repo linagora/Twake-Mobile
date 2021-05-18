@@ -7,15 +7,15 @@ import 'package:twake/widgets/common/rounded_image.dart';
 
 class SelectableAvatar extends StatefulWidget {
   final double size;
-  final Color backgroundColor;
-  final String icon;
-  final String userpic;
-  final String localAsset;
-  final Uint8List bytes;
-  final Function onTap;
+  final Color? backgroundColor;
+  final String? icon;
+  final String? userpic;
+  final String? localAsset;
+  final Uint8List? bytes;
+  final Function? onTap;
 
   const SelectableAvatar({
-    Key key,
+    Key? key,
     this.size = 48.0,
     this.backgroundColor,
     this.icon,
@@ -30,10 +30,10 @@ class SelectableAvatar extends StatefulWidget {
 }
 
 class _SelectableAvatarState extends State<SelectableAvatar> {
-  String _userpic;
-  String _localAsset;
-  String _icon;
-  Uint8List _bytes;
+  String? _userpic;
+  String? _localAsset;
+  String? _icon;
+  Uint8List? _bytes;
 
   @override
   void initState() {
@@ -64,24 +64,24 @@ class _SelectableAvatarState extends State<SelectableAvatar> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: widget.onTap, // ?? _getImage(),
+      onTap: widget.onTap as void Function()?, // ?? _getImage(),
       behavior: HitTestBehavior.opaque,
       child: Container(
           width: widget.size,
           height: widget.size,
-          child: (_icon != null && _icon.isNotReallyEmpty)
+          child: (_icon != null && _icon!.isNotReallyEmpty)
               ? Center(
                   child: Text(
-                    _icon,
+                    _icon!,
                     style: TextStyle(fontSize: Dim.tm3()),
                   ),
                 )
               : RoundedImage(
-                  imageUrl: (_userpic != null && _userpic.isNotReallyEmpty)
+                  imageUrl: (_userpic != null && _userpic!.isNotReallyEmpty)
                       ? _userpic
                       : '',
                   assetPath:
-                      (_localAsset != null && _localAsset.isNotReallyEmpty)
+                      (_localAsset != null && _localAsset!.isNotReallyEmpty)
                           ? _localAsset
                           : '',
                   bytes: _bytes,

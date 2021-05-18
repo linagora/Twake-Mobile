@@ -19,14 +19,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ParticipantsList extends StatefulWidget {
   final bool isDirect;
-  final bool isModal;
+  final bool? isModal;
   final String title;
 
   const ParticipantsList({
-    Key key,
+    Key? key,
     this.isDirect = false,
     this.isModal,
-    @required this.title,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -36,14 +36,14 @@ class ParticipantsList extends StatefulWidget {
 class _ParticipantsListState extends State<ParticipantsList> {
   final _controller = TextEditingController();
   final _focusNode = FocusNode();
-  Timer _debounce;
-  String _searchRequest;
-  bool _isDirect;
-  bool _isModal;
+  Timer? _debounce;
+  String? _searchRequest;
+  bool? _isDirect;
+  bool? _isModal;
   bool _shouldFocus = true;
-  String _title;
+  String? _title;
 
-  var _selectedIds = <String>[];
+  List<String?>? _selectedIds = <String?>[];
   var _selectedUsers = <User>[];
 
   @override
@@ -58,7 +58,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
     }
 
     _controller.addListener(() {
-      if (_debounce?.isActive ?? false) _debounce.cancel();
+      if (_debounce?.isActive ?? false) _debounce!.cancel();
       _debounce = Timer(const Duration(milliseconds: 500), () {
         if (_searchRequest != _controller.text) {
           _searchRequest = _controller.text;
@@ -108,7 +108,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
     context.read<AddChannelBloc>().add(SetFlowStage(FlowStage.info));
   }
 
-  void _createDirect(List<String> participantsIds) {
+  void _createDirect(List<String?> participantsIds) {
     context.read<AddChannelBloc>()
       ..add(UpdateDirect(
         member: participantsIds.first,
@@ -121,7 +121,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
   Widget build(BuildContext context) {
     return BlocListener<SheetBloc, SheetState>(
       listener: (context, state) {
-        if (state is SheetOpened && _isDirect && _focusNode.canRequestFocus) {
+        if (state is SheetOpened && _isDirect! && _focusNode.canRequestFocus) {
           _focusNode.requestFocus();
         } else if (state is SheetShouldClear) {
           _controller.text = '';
@@ -145,7 +145,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
             // Reset selected participants
             context.read<AddChannelBloc>().add(Update(participants: []));
             setState(() {
-              _selectedIds.clear();
+              _selectedIds!.clear();
               _selectedUsers.clear();
             });
             _controller.clear();
@@ -168,7 +168,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
               ),
             );
           } else if (state is StageUpdated && state.stage == FlowStage.participants) {
-            if (_searchRequest.isEmpty) {
+            if (_searchRequest!.isEmpty) {
               context.read<UserBloc>().add(LoadUsers(_searchRequest));
             }
           }
@@ -183,7 +183,7 @@ class _ParticipantsListState extends State<ParticipantsList> {
           if (state is StageUpdated) {
             // print('STAGE REBUILD: ${state.stage}');
             if (state.stage == FlowStage.participants &&
-                !_isDirect &&
+                !_isDirect! &&
                 _shouldFocus) {
               if (_focusNode.canRequestFocus) _focusNode.requestFocus();
               _shouldFocus = false;
@@ -193,16 +193,16 @@ class _ParticipantsListState extends State<ParticipantsList> {
             children: [
               SheetTitleBar(
                 title: _title,
-                leadingTitle: _isModal ? 'Close' : 'Back',
-                leadingAction: _isModal ? () => _close() : () => _return(),
-                trailingTitle: _isDirect
+                leadingTitle: _isModal! ? 'Close' : 'Back',
+                leadingAction: _isModal! ? () => _close() : () => _return(),
+                trailingTitle: _isDirect!
                     ? null
-                    : _isModal
+                    : _isModal!
                         ? 'Add'
                         : 'Save',
-                trailingAction: _isDirect
+                trailingAction: _isDirect!
                     ? null
-                    : (_isModal ? () => _close() : () => _return()),
+                    : (_isModal! ? () => _close() : () => _return()),
               ),
               Container(
                 padding: const EdgeInsets.fromLTRB(16, 9, 16, 7),
@@ -218,16 +218,16 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 if (state is MultipleUsersLoading) {
                   return Center(child: CircularProgressIndicator());
                 } else if (state is MultipleUsersLoaded) {
-                  if (_isDirect) {
+                  if (_isDirect!) {
                     users = state.users;
                   } else {
                     if (_selectedUsers.isEmpty) {
-                      _selectedIds.clear();
+                      _selectedIds!.clear();
                     }
                     users = state.users..addAll(_selectedUsers);
                     //remove duplicated user and sort the list
                     users = users.toSet().toList();
-                    users.sort((a, b) => a.username.compareTo(b.username));
+                    users.sort((a, b) => a.username!.compareTo(b.username!));
                     users.removeWhere((element) => context.read<ProfileBloc>().isMe(element.id));
                   }
                   // print('-------------------------------');
@@ -239,13 +239,13 @@ class _ParticipantsListState extends State<ParticipantsList> {
                 return BlocBuilder<AddChannelBloc, AddChannelState>(
                   buildWhen: (previous, current) => current is Updated || current is Creation,
                   builder: (context, state) {
-                    var name = '';
-                    var description = '';
+                    String? name = '';
+                    String? description = '';
                     if (state is Updated) {
                       name = state.repository?.name;
                       description = state.repository?.description;
                       _selectedIds = state.repository?.members;
-                      if (!_isDirect) {
+                      if (!_isDirect!) {
                         print('UsERS: ${users.map((e) => e.username)}');
                         print('UsERS IDS: ${users.map((e) => e.id)}');
                         print('selected ids: $_selectedIds');
@@ -262,23 +262,23 @@ class _ParticipantsListState extends State<ParticipantsList> {
                         itemBuilder: (context, index) {
                           User user = users[index];
                           return SearchItem(
-                            title: user.firstName.isNotEmpty ||
-                                    user.lastName.isNotEmpty
+                            title: user.firstName!.isNotEmpty ||
+                                    user.lastName!.isNotEmpty
                                 ? '${user.firstName} ${user.lastName}'
                                 : '${user.username}',
-                            selected: _selectedIds.contains(user.id),
-                            allowMultipleChoice: !_isDirect,
+                            selected: _selectedIds!.contains(user.id),
+                            allowMultipleChoice: !_isDirect!,
                             onTap: () {
                               FocusScope.of(context).requestFocus(FocusNode());
-                              if (_isDirect && !(state is Creation)) {
+                              if (_isDirect! && !(state is Creation)) {
                                 _selectedIds = [user.id];
-                                _createDirect(_selectedIds);
+                                _createDirect(_selectedIds!);
                               } else {
-                                if (_selectedIds.contains(user.id)) {
-                                  _selectedIds.remove(user.id);
+                                if (_selectedIds!.contains(user.id)) {
+                                  _selectedIds!.remove(user.id);
                                   _selectedUsers.removeWhere((selected) => selected.id == user.id);
                                 } else {
-                                  _selectedIds.add(user.id);
+                                  _selectedIds!.add(user.id);
                                   _selectedUsers.add(user);
                                 }
                                 context.read<AddChannelBloc>().add(
@@ -311,10 +311,10 @@ class SearchTextField extends StatefulWidget {
   final FocusNode focusNode;
 
   const SearchTextField({
-    Key key,
-    @required this.hint,
-    @required this.controller,
-    @required this.focusNode,
+    Key? key,
+    required this.hint,
+    required this.controller,
+    required this.focusNode,
   }) : super(key: key);
 
   @override

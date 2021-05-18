@@ -5,20 +5,20 @@ abstract class SingleMessageEvent extends Equatable {
 }
 
 class UpdateContent extends SingleMessageEvent {
-  final String content;
-  final String workspaceId;
+  final String? content;
+  final String? workspaceId;
 
   const UpdateContent({this.content, this.workspaceId});
 
   @override
-  List<Object> get props => [content];
+  List<Object?> get props => [content];
 }
 
 class UpdateReaction extends SingleMessageEvent {
-  final String emojiCode;
-  final String userId;
-  final String companyId;
-  final String workspaceId;
+  final String? emojiCode;
+  final String? userId;
+  final String? companyId;
+  final String? workspaceId;
 
   const UpdateReaction({
     this.emojiCode,
@@ -28,7 +28,7 @@ class UpdateReaction extends SingleMessageEvent {
   });
 
   @override
-  List<Object> get props => [emojiCode, userId];
+  List<Object?> get props => [emojiCode, userId];
 }
 
 class UpdateResponseCount extends SingleMessageEvent {

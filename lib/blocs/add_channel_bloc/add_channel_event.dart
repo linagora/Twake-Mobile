@@ -21,13 +21,13 @@ class CreateDirect extends AddChannelEvent {
 }
 
 class Update extends AddChannelEvent {
-  final String icon;
-  final String name;
-  final String description;
-  final String groupName;
-  final ChannelType type;
-  final bool automaticallyAddNew;
-  final List<String> participants;
+  final String? icon;
+  final String? name;
+  final String? description;
+  final String? groupName;
+  final ChannelType? type;
+  final bool? automaticallyAddNew;
+  final List<String?>? participants;
 
   Update({
     this.icon,
@@ -40,7 +40,7 @@ class Update extends AddChannelEvent {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         icon,
         name,
         description,
@@ -52,21 +52,21 @@ class Update extends AddChannelEvent {
 }
 
 class UpdateDirect extends AddChannelEvent {
-  final String member;
+  final String? member;
 
   UpdateDirect({this.member});
 
   @override
-  List<Object> get props => [member];
+  List<Object?> get props => [member];
 }
 
 class SetFlowType extends AddChannelEvent {
-  final bool isDirect;
+  final bool? isDirect;
 
   SetFlowType({this.isDirect});
 
   @override
-  List<Object> get props => [isDirect];
+  List<Object?> get props => [isDirect];
 }
 
 class SetFlowStage extends AddChannelEvent {

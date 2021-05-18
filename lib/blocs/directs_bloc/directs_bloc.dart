@@ -14,14 +14,14 @@ export 'package:twake/blocs/channels_bloc/channel_event.dart';
 export 'package:twake/blocs/channels_bloc/channel_state.dart';
 
 class DirectsBloc extends BaseChannelBloc {
-  final CompaniesBloc companiesBloc;
-  final NotificationBloc notificationBloc;
+  final CompaniesBloc? companiesBloc;
+  final NotificationBloc? notificationBloc;
 
-  StreamSubscription _subscription;
-  StreamSubscription _notificationSubscription;
+  late StreamSubscription _subscription;
+  late StreamSubscription _notificationSubscription;
 
   DirectsBloc({
-    CollectionRepository<Direct> repository,
+    required CollectionRepository<Direct> repository,
     this.companiesBloc,
     this.notificationBloc,
   }) : super(
@@ -29,14 +29,14 @@ class DirectsBloc extends BaseChannelBloc {
             initState: repository.isEmpty
                 ? ChannelsEmpty()
                 : ChannelsLoaded(channels: repository.items)) {
-    _subscription = companiesBloc.listen((CompaniesState state) {
+    _subscription = companiesBloc!.listen((CompaniesState state) {
       if (state is CompaniesLoaded) {
-        selectedParentId = state.selected.id;
+        selectedParentId = state.selected!.id;
         this.add(ReloadChannels(companyId: selectedParentId));
       }
     });
     _notificationSubscription =
-        notificationBloc.listen((NotificationState state) async {
+        notificationBloc!.listen((NotificationState state) async {
       if (state is DirectMessageNotification) {
         print('state is DirectMessageNotification');
         this.add(ChangeSelectedChannel(state.data.channelId));
@@ -54,7 +54,7 @@ class DirectsBloc extends BaseChannelBloc {
           }
         }
       } else if (state is DirectUpdated) {
-        if (repository.items.any((d) => d.id == state.data.directId)) {
+        if (repository.items!.any((d) => d!.id == state.data.directId)) {
           this.add(UpdateSingleChannel(state.data));
         } else {
           this.add(ReloadChannels(forceFromApi: true, silent: true));
@@ -63,7 +63,7 @@ class DirectsBloc extends BaseChannelBloc {
         this.add(RemoveChannel(channelId: state.data.directId));
       }
     });
-    selectedParentId = companiesBloc.repository.selected.id;
+    selectedParentId = companiesBloc!.repository.selected!.id;
   }
 
   @override
@@ -76,7 +76,7 @@ class DirectsBloc extends BaseChannelBloc {
       final filter = {
         'company_id': event.companyId ?? selectedParentId,
       };
-      await repository.reload(
+      await repository!.reload(
         queryParams: filter,
         filters: [
           ['company_id', '=', selectedParentId]
@@ -86,37 +86,37 @@ class DirectsBloc extends BaseChannelBloc {
           this.add(ReEmitChannels());
         },
       );
-      if (repository.isEmpty)
+      if (repository!.isEmpty)
         yield ChannelsEmpty();
       else {
         _sortItems();
         yield ChannelsLoaded(
-          channels: repository.items,
+          channels: repository!.items,
         );
       }
     } else if (event is ModifyMessageCount) {
       await this.updateMessageCount(event);
-      repository.logger
+      repository!.logger
           .d('REORDERING DIRECTS ${event.companyId == selectedParentId}');
       if (event.companyId == selectedParentId) {
         _sortItems();
         yield ChannelsLoaded(
-          channels: repository.items,
+          channels: repository!.items,
           force: DateTime.now().toString(),
         );
       }
     } else if (event is ReEmitChannels) {
-      repository.items.sort((c1, c2) => c1.name.compareTo(c2.name));
+      repository!.items!.sort((c1, c2) => c1!.name!.compareTo(c2!.name!));
 
       yield ChannelsLoaded(
-        channels: repository.items,
+        channels: repository!.items,
         force: DateTime.now().toString(),
       );
     } else if (event is ClearChannels) {
-      await repository.clean();
+      await repository!.clean();
       yield ChannelsEmpty();
     } else if (event is ChangeSelectedChannel) {
-      repository.select(event.channelId,
+      repository!.select(event.channelId,
           saveToStore: false,
           apiEndpoint: Endpoint.channelsRead,
           params: {
@@ -124,50 +124,50 @@ class DirectsBloc extends BaseChannelBloc {
             "workspace_id": "direct",
             "channel_id": event.channelId
           });
-      repository.selected.messagesUnread = 0;
-      repository.selected.hasUnread = 0;
-      repository.saveOne(repository.selected);
+      repository!.selected!.messagesUnread = 0;
+      repository!.selected!.hasUnread = 0;
+      repository!.saveOne(repository!.selected);
 
       ProfileBloc.selectedChannelId = event.channelId;
       ProfileBloc.selectedThreadId = null;
 
       if (!event.shouldYield) return;
       yield ChannelPicked(
-        channels: repository.items,
-        selected: repository.selected,
+        channels: repository!.items,
+        selected: repository!.selected,
       );
-      notificationBloc.add(CancelPendingSubscriptions(event.channelId));
+      notificationBloc!.add(CancelPendingSubscriptions(event.channelId));
     } else if (event is UpdateSingleChannel) {
       // repository.logger.d('UPDATING CHANNELS\n${event.data.toJson()}');
-      var item = await repository.getItemById(event.data.directId) as Direct;
+      var item = await repository!.getItemById(event.data.directId) as Direct;
       item.lastMessage = event.data.lastMessage ?? item.lastMessage;
       item.lastActivity = event.data.lastActivity ?? item.lastActivity;
       yield ChannelsLoaded(
-        selected: repository.selected,
-        channels: repository.items,
+        selected: repository!.selected,
+        channels: repository!.items,
         force: DateTime.now().toString(),
       );
     } else if (event is LoadSingleChannel) {
       throw 'Not implemented yet';
     } else if (event is RemoveChannel) {
-      repository.items.removeWhere((i) => i.id == event.channelId);
+      repository!.items!.removeWhere((i) => i!.id == event.channelId);
       yield ChannelsLoaded(
-        channels: repository.items,
-        selected: repository.selected,
+        channels: repository!.items,
+        selected: repository!.selected,
         force: DateTime.now().toString(),
       );
     } else if (event is ModifyChannelState) {
       await updateChannelState(event);
       yield ChannelsLoaded(
-        channels: repository.items,
+        channels: repository!.items,
         force: DateTime.now().toString(),
       );
     }
   }
 
   void _sortItems() {
-    repository.items.sort(
-      (i1, i2) => i2.lastActivity.compareTo(i1.lastActivity),
+    repository!.items!.sort(
+      (i1, i2) => i2!.lastActivity!.compareTo(i1!.lastActivity!),
     );
   }
 

@@ -57,8 +57,8 @@ class MembersUpdated extends AddWorkspaceState {
   final List<String> members;
 
   MembersUpdated({
-    @required this.workspaceId,
-    @required this.members,
+    required this.workspaceId,
+    required this.members,
   });
 
   @override

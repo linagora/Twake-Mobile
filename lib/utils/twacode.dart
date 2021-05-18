@@ -16,7 +16,7 @@ import 'package:twake/services/service_bundle.dart';
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
 class TwacodeParser {
-  final String original;
+  final String? original;
 
   List<ASTNode> nodes = [];
 
@@ -28,74 +28,74 @@ class TwacodeParser {
 
   void parse() {
     int start = 0;
-    for (int i = 0; i < original.length - 1; i++) {
+    for (int i = 0; i < original!.length - 1; i++) {
       // Bold text
-      if (original[i] == Delim.star && original[i + 1] == Delim.star) {
+      if (original![i] == Delim.star && original![i + 1] == Delim.star) {
         final index = this.doesCloseBold(i + 2);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.isNotEmpty) {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
-              type: TType.Bold, text: original.substring(i + 2, index - 2)));
+              type: TType.Bold, text: original!.substring(i + 2, index - 2)));
           start = index;
           i = index - 1;
         }
       }
       // Underline text
-      else if (original[i] == Delim.underline &&
-          original[i + 1] == Delim.underline) {
+      else if (original![i] == Delim.underline &&
+          original![i + 1] == Delim.underline) {
         final index = doesCloseUnderline(i + 2);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.isNotEmpty) {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
                 type: TType.Underline,
-                text: original.substring(i + 2, index - 2),
+                text: original!.substring(i + 2, index - 2),
               ));
           start = index;
           i = index - 1;
         }
       }
       // Italic text
-      else if (original[i] == Delim.underline &&
-          original[i + 1] != Delim.underline) {
+      else if (original![i] == Delim.underline &&
+          original![i + 1] != Delim.underline) {
         final index = doesCloseItalic(i + 1);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.isNotEmpty) {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
                 type: TType.Italic,
-                text: original.substring(i + 1, index - 1),
+                text: original!.substring(i + 1, index - 1),
               ));
           start = index;
           i = index - 1;
         }
       }
       // StrikeThrough text
-      else if (original[i] == Delim.tilde && original[i + 1] == Delim.tilde) {
+      else if (original![i] == Delim.tilde && original![i + 1] == Delim.tilde) {
         final index = doesCloseStrikeThrough(i + 2);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.isNotEmpty) {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
                 type: TType.StrikeThrough,
-                text: original.substring(i + 2, index - 2),
+                text: original!.substring(i + 2, index - 2),
               ));
           start = index;
           i = index - 1;
         }
       }
       // Newline text
-      else if (original[i] == Delim.lf) {
-        final acc = original.substring(start, i);
+      else if (original![i] == Delim.lf) {
+        final acc = original!.substring(start, i);
         if (acc.trimRight().isNotEmpty) {
           this.nodes.add(ASTNode(type: TType.Text, text: acc));
         }
@@ -106,113 +106,113 @@ class TwacodeParser {
         start = i + 1;
       }
       // Quote detection
-      else if (original[i] == Delim.gt) {
+      else if (original![i] == Delim.gt) {
         if (nodes.isEmpty || nodes.last.type == TType.LineBreak) {
           // Multline Quote detection
-          if (original[i + 1] == Delim.gt &&
-              i + 2 < original.length &&
-              original[i + 2] == Delim.gt) {
+          if (original![i + 1] == Delim.gt &&
+              i + 2 < original!.length &&
+              original![i + 2] == Delim.gt) {
             this.nodes.add(ASTNode(
                   type: TType.MultiQuote,
-                  text: TwacodeParser(original.substring(i + 3).trimLeft())
+                  text: TwacodeParser(original!.substring(i + 3).trimLeft())
                       .message,
                 ));
-            start = i = original.length;
+            start = i = original!.length;
             break;
           }
 
           int index = this.hasLineFeed(i + 1);
-          index = index != 0 ? index : original.length;
+          index = index != 0 ? index : original!.length;
           this.nodes.add(ASTNode(
                 type: TType.Quote,
-                text: original.substring(i + 1, index),
+                text: original!.substring(i + 1, index),
               ));
           start = index;
           i = index - 1;
         }
       }
       // Username
-      else if (original[i] == Delim.at &&
+      else if (original![i] == Delim.at &&
           (i == 0 ||
-              original[i - 1] == Delim.ws ||
-              original[i - 1] == Delim.lf)) {
+              original![i - 1] == Delim.ws ||
+              original![i - 1] == Delim.lf)) {
         final index = this.isUser(i + 1);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.isNotEmpty) {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
                 type: TType.User,
-                text: original.substring(i + 1, index),
+                text: original!.substring(i + 1, index),
               ));
           start = index;
           i = index - 1;
         }
       }
       // Email
-      else if (original[i] == Delim.at &&
+      else if (original![i] == Delim.at &&
           (i != 0 &&
-              original[i - 1] != Delim.ws &&
-              original[i - 1] != Delim.lf)) {
+              original![i - 1] != Delim.ws &&
+              original![i - 1] != Delim.lf)) {
         final range = isEmail(i);
         if (range.item1 != 0 || range.item2 != 0) {
           this.nodes.add(
                 ASTNode(
                   type: TType.Text,
-                  text: original.substring(start, range.item1),
+                  text: original!.substring(start, range.item1),
                 ),
               );
           this.nodes.add(ASTNode(
                 type: TType.Email,
-                text: original.substring(range.item1, range.item2),
+                text: original!.substring(range.item1, range.item2),
               ));
           start = range.item2;
           i = range.item2 - 1;
         }
       }
       // URL with full protocol description like https://hello.world
-      else if (original[i] == Delim.slash && original[i + 1] == Delim.slash) {
+      else if (original![i] == Delim.slash && original![i + 1] == Delim.slash) {
         final range = this.isUrl(i + 1);
         if (range.item1 != 0 || range.item2 != 0) {
           this.nodes.add(
                 ASTNode(
                   type: TType.Text,
-                  text: original.substring(start, range.item1),
+                  text: original!.substring(start, range.item1),
                 ),
               );
           this.nodes.add(ASTNode(
                 type: TType.Url,
-                text: original.substring(range.item1, range.item2),
+                text: original!.substring(range.item1, range.item2),
               ));
           start = range.item2;
           i = range.item2 - 1;
         }
       }
       // InlineCode text
-      else if (original[i] == Delim.tick && original[i + 1] != Delim.tick) {
+      else if (original![i] == Delim.tick && original![i + 1] != Delim.tick) {
         final index = this.doesCloseInlineCode(i + 1);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.trimRight().isNotEmpty) {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
                 type: TType.InlineCode,
-                text: original.substring(i + 1, index - 1),
+                text: original!.substring(i + 1, index - 1),
               ));
           start = index;
           i = index - 1;
         }
       }
       // MultiLineCode text
-      else if (original[i] == Delim.tick &&
-          original[i + 1] == Delim.tick &&
-          i + 2 < original.length &&
-          original[i + 2] == Delim.tick) {
+      else if (original![i] == Delim.tick &&
+          original![i + 1] == Delim.tick &&
+          i + 2 < original!.length &&
+          original![i + 2] == Delim.tick) {
         final index = this.doesCloseMultiCode(i + 3);
         if (index != 0) {
-          final acc = original.substring(start, i);
+          final acc = original!.substring(start, i);
           if (acc.trimRight().isNotEmpty) {
             this.nodes.add(
                   ASTNode(
@@ -223,18 +223,18 @@ class TwacodeParser {
           }
           this.nodes.add(ASTNode(
                 type: TType.MultiLineCode,
-                text: original.substring(i + 3, index - 3),
+                text: original!.substring(i + 3, index - 3),
               ));
           start = index;
           i = index - 1;
         }
       }
       // #Channel
-      else if (original[i] == Delim.pound &&
-          original[i + 1] != Delim.ws &&
-          original[i + 1] != Delim.lf) {
+      else if (original![i] == Delim.pound &&
+          original![i + 1] != Delim.ws &&
+          original![i + 1] != Delim.lf) {
         final index = this.isChannel(i + 1);
-        final acc = original.substring(start, i);
+        final acc = original!.substring(start, i);
         if (acc.isNotEmpty) {
           this.nodes.add(
                 ASTNode(
@@ -245,16 +245,16 @@ class TwacodeParser {
         }
         this.nodes.add(ASTNode(
               type: TType.Channel,
-              text: original.substring(i + 1, index),
+              text: original!.substring(i + 1, index),
             ));
         start = index;
         i = index - 1;
       }
     }
-    if (start < original.length) {
+    if (start < original!.length) {
       this.nodes.add(ASTNode(
             type: TType.Text,
-            text: original.substring(start).trimRight(),
+            text: original!.substring(start).trimRight(),
           ));
     }
     if (nodes.isEmpty) return;
@@ -269,9 +269,9 @@ class TwacodeParser {
   }
 
   int doesCloseBold(int i) {
-    final len = original.length - 1;
-    for (int j = i; j < len && original[j] != '\n'; j++) {
-      if (original[j] == Delim.star && original[j + 1] == Delim.star) {
+    final len = original!.length - 1;
+    for (int j = i; j < len && original![j] != '\n'; j++) {
+      if (original![j] == Delim.star && original![j + 1] == Delim.star) {
         return j + 2;
       }
     }
@@ -279,9 +279,9 @@ class TwacodeParser {
   }
 
   int doesCloseItalic(int i) {
-    final len = original.length;
-    for (int j = i; j < len && original[j] != '\n'; j++) {
-      if (original[j] == Delim.underline) {
+    final len = original!.length;
+    for (int j = i; j < len && original![j] != '\n'; j++) {
+      if (original![j] == Delim.underline) {
         return j + 1;
       }
     }
@@ -292,20 +292,20 @@ class TwacodeParser {
     var start = i;
     var end = i;
     while (start > 0) {
-      final cur = original[start - 1];
+      final cur = original![start - 1];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       start -= 1;
     }
-    while (end < original.length) {
-      final cur = original[end];
+    while (end < original!.length) {
+      final cur = original![end];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       end += 1;
     }
-    final parts = original.substring(start, end).split('@');
+    final parts = original!.substring(start, end).split('@');
     if (parts[0].isEmpty || parts[1].isEmpty) {
       return Tuple2(0, 0);
     }
@@ -325,20 +325,20 @@ class TwacodeParser {
     var start = i;
     var end = i;
     while (start > 0) {
-      final cur = original[start - 1];
+      final cur = original![start - 1];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       start -= 1;
     }
-    while (end < original.length) {
-      final cur = original[end];
+    while (end < original!.length) {
+      final cur = original![end];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       end += 1;
     }
-    final parts = original.substring(start, end).split('://');
+    final parts = original!.substring(start, end).split('://');
     if (parts[0].isEmpty || parts[1].isEmpty) {
       return Tuple2(0, 0);
     }
@@ -353,10 +353,10 @@ class TwacodeParser {
   }
 
   int doesCloseUnderline(int i) {
-    final len = original.length - 1;
-    for (int j = i; j < len && original[j] != '\n'; j++) {
-      if (original[j] == Delim.underline &&
-          original[j + 1] == Delim.underline) {
+    final len = original!.length - 1;
+    for (int j = i; j < len && original![j] != '\n'; j++) {
+      if (original![j] == Delim.underline &&
+          original![j + 1] == Delim.underline) {
         return j + 2;
       }
     }
@@ -364,35 +364,35 @@ class TwacodeParser {
   }
 
   int isUser(int i) {
-    for (int j = i; j < original.length; j++) {
-      if (original[j] == Delim.ws || original[j] == Delim.lf) {
-        if (idMatch.hasMatch(original.substring(i, j))) {
+    for (int j = i; j < original!.length; j++) {
+      if (original![j] == Delim.ws || original![j] == Delim.lf) {
+        if (idMatch.hasMatch(original!.substring(i, j))) {
           return j;
         } else {
           return 0;
         }
       }
     }
-    if (idMatch.hasMatch(original.substring(i))) {
-      return original.length;
+    if (idMatch.hasMatch(original!.substring(i))) {
+      return original!.length;
     } else {
       return 0;
     }
   }
 
   int isChannel(int i) {
-    for (int j = i; j < original.length; j++) {
-      if (original[j] == Delim.ws || original[j] == Delim.lf) {
+    for (int j = i; j < original!.length; j++) {
+      if (original![j] == Delim.ws || original![j] == Delim.lf) {
         return j;
       }
     }
-    return original.length;
+    return original!.length;
   }
 
   int doesCloseStrikeThrough(int i) {
-    final len = original.length - 1;
-    for (int j = i; j < len && original[j] != '\n'; j++) {
-      if (original[j] == Delim.tilde && original[j + 1] == Delim.tilde) {
+    final len = original!.length - 1;
+    for (int j = i; j < len && original![j] != '\n'; j++) {
+      if (original![j] == Delim.tilde && original![j + 1] == Delim.tilde) {
         return j + 2;
       }
     }
@@ -400,9 +400,9 @@ class TwacodeParser {
   }
 
   int doesCloseInlineCode(int i) {
-    final len = original.length;
-    for (int j = i; j < len && original[j] != '\n'; j++) {
-      if (original[j] == Delim.tick) {
+    final len = original!.length;
+    for (int j = i; j < len && original![j] != '\n'; j++) {
+      if (original![j] == Delim.tick) {
         return j + 1;
       }
     }
@@ -410,10 +410,10 @@ class TwacodeParser {
   }
 
   int doesCloseMultiCode(int i) {
-    final len = original.length;
+    final len = original!.length;
     int ticks = 0;
     for (int j = i; j < len; j++) {
-      if (original[j] == Delim.tick) {
+      if (original![j] == Delim.tick) {
         if (ticks == 2) {
           return j + 1;
         } else {
@@ -427,9 +427,9 @@ class TwacodeParser {
   }
 
   int hasLineFeed(int i) {
-    final len = original.length;
+    final len = original!.length;
     for (int j = i; j < len; j++) {
-      if (original[j] == Delim.lf) {
+      if (original![j] == Delim.lf) {
         return j;
       }
     }
@@ -438,7 +438,7 @@ class TwacodeParser {
 }
 
 class ASTNode {
-  TType type;
+  TType? type;
   dynamic text;
   ASTNode({this.type, this.text});
 
@@ -568,14 +568,14 @@ class Delim {
 // Rewrite the renderer once twake chooses
 // one and only format for data representation
 class TwacodeRenderer {
-  List<dynamic> twacode;
-  List<InlineSpan> spans;
+  List<dynamic>? twacode;
+  List<InlineSpan>? spans;
 
-  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
+  TwacodeRenderer({this.twacode, TextStyle? parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
-    this.twacode.addAll(this.extractFiles(this.twacode));
-    spans = render(twacode: this.twacode, parentStyle: parentStyle);
+    this.twacode!.addAll(this.extractFiles(this.twacode!));
+    spans = render(twacode: this.twacode!, parentStyle: parentStyle);
   }
 
   // Files should only occur in the end of the twacode structure
@@ -605,7 +605,7 @@ class TwacodeRenderer {
     return files;
   }
 
-  TextStyle getStyle(TType type) {
+  TextStyle getStyle(TType? type) {
     TextStyle style;
     switch (type) {
       case TType.InlineCode:
@@ -707,7 +707,7 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render({List<dynamic> twacode, TextStyle parentStyle}) {
+  List<InlineSpan> render({required List<dynamic> twacode, TextStyle? parentStyle}) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -716,7 +716,7 @@ class TwacodeRenderer {
           TextSpan(
             text:
                 spans.isEmpty ? (twacode[i] as String).trimLeft() : twacode[i],
-            style: parentStyle.merge(
+            style: parentStyle!.merge(
               getStyle(TType.Text),
             ),
           ),
@@ -725,7 +725,7 @@ class TwacodeRenderer {
         spans.addAll(render(twacode: twacode[i], parentStyle: parentStyle));
       } else if (twacode[i] is Map) {
         final t = twacode[i];
-        TType type;
+        TType? type;
         if (t['type'] != null) {
           switch (t['type']) {
             case 'nop':
@@ -828,7 +828,7 @@ class TwacodeRenderer {
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: parentStyle.backgroundColor,
+                  color: parentStyle!.backgroundColor,
                   border: Border.all(color: Colors.grey, width: 0.9),
                 ),
                 child: SingleChildScrollView(
@@ -845,7 +845,7 @@ class TwacodeRenderer {
           );
           final text = TextSpan(
             children: items,
-            style: parentStyle.merge(
+            style: parentStyle!.merge(
               getStyle(type),
             ),
           );
@@ -880,7 +880,7 @@ class TwacodeRenderer {
             );
             text = TextSpan(
               children: items,
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             );
@@ -888,7 +888,7 @@ class TwacodeRenderer {
             // t['content'] is String
             text = TextSpan(
               text: t['content'],
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             );
@@ -931,7 +931,7 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               children: items,
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             ),
@@ -948,7 +948,7 @@ class TwacodeRenderer {
                   : '$s B';
           text = TextSpan(
             text: t['metadata']['name'],
-            style: parentStyle.merge(
+            style: parentStyle!.merge(
               getStyle(type),
             ),
           );
@@ -965,10 +965,10 @@ class TwacodeRenderer {
                       if (Platform.isAndroid) {
                         //   print(Api.host);
 
-                        final dir = await getExternalStorageDirectory();
+                        final dir = await (getExternalStorageDirectory() as FutureOr<Directory>);
 
                         await FlutterDownloader.enqueue(
-                            url: Api.host + t['metadata']['download'],
+                            url: Api.host! + t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
                             showNotification: true,
@@ -976,7 +976,7 @@ class TwacodeRenderer {
                       } else if (Platform.isIOS) {
                         final dir = await getApplicationSupportDirectory();
                         await FlutterDownloader.enqueue(
-                            url: Api.host + t['metadata']['download'],
+                            url: Api.host! + t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
                             showNotification: true,
@@ -1069,7 +1069,7 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               children: items,
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             ),
@@ -1078,7 +1078,7 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               text: t['content'],
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             ),
@@ -1087,7 +1087,7 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               text: 'not supported',
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             ),
@@ -1105,7 +1105,7 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               text: content is String ? content : 'not supported',
-              style: parentStyle.merge(
+              style: parentStyle!.merge(
                 getStyle(type),
               ),
             ),

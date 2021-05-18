@@ -9,16 +9,15 @@ part of 'add_channel_repository.dart';
 AddChannelRepository _$AddChannelRepositoryFromJson(Map<String, dynamic> json) {
   $checkKeys(json, requiredKeys: const ['company_id', 'workspace_id', 'name']);
   return AddChannelRepository(
-    companyId: json['company_id'] as String,
-    workspaceId: json['workspace_id'] as String,
-    name: json['name'] as String,
+    companyId: json['company_id'] as String?,
+    workspaceId: json['workspace_id'] as String?,
+    name: json['name'] as String?,
     visibility: json['visibility'] as String? ?? 'public',
-    icon: json['icon'] as String,
-    description: json['description'] as String,
-    channelGroup: json['channel_group'] as String,
-    def: json['default'] as bool,
-    members:
-        (json['members'] as List<dynamic>).map((e) => e as String).toList(),
+    icon: json['icon'] as String?,
+    description: json['description'] as String?,
+    channelGroup: json['channel_group'] as String?,
+    def: json['default'] as bool?,
+    members: (json['members'] as List?)?.map((e) => e as String)?.toList(),
   );
 }
 

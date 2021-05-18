@@ -22,12 +22,12 @@ final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
 class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
   final bool hideShowAnswers;
-  final Message message;
+  final Message? message;
 
   MessageTile({
     this.message,
     this.hideShowAnswers: false,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -36,8 +36,8 @@ class MessageTile<T extends BaseChannelBloc> extends StatefulWidget {
 
 class _MessageTileState<T extends BaseChannelBloc>
     extends State<MessageTile<T>> {
-  bool _hideShowAnswers;
-  Message _message;
+  late bool _hideShowAnswers;
+  Message? _message;
 
   @override
   void initState() {
@@ -46,10 +46,10 @@ class _MessageTileState<T extends BaseChannelBloc>
     _message = widget.message;
   }
 
-  void onReply(context, String messageId, {bool autofocus: false}) {
+  void onReply(context, String? messageId, {bool autofocus: false}) {
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
     BlocProvider.of<DraftBloc>(context)
-        .add(LoadDraft(id: _message.id, type: DraftType.thread));
+        .add(LoadDraft(id: _message!.id, type: DraftType.thread));
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -60,7 +60,7 @@ class _MessageTileState<T extends BaseChannelBloc>
     );
   }
 
-  onCopy({context, text}) {
+  onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -72,7 +72,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   }
 
   void onDelete(context, RemoveMessage event) {
-    if (_message.threadId == null)
+    if (_message!.threadId == null)
       BlocProvider.of<MessagesBloc<T>>(context).add(event);
     else
       BlocProvider.of<ThreadsBloc<T>>(context).add(event);
@@ -82,7 +82,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   @override
   Widget build(BuildContext context) {
     return BlocProvider<SingleMessageBloc>(
-      create: (_) => SingleMessageBloc(_message),
+      create: (_) => SingleMessageBloc(_message!),
       lazy: false,
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
         builder: (ctx, messageState) {
@@ -110,7 +110,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                           final mebloc = ctx.read<MessageEditBloc>();
                           mebloc.add(
                             EditMessage(
-                              originalStr: _message.content.originalStr ?? '',
+                              originalStr: _message!.content!.originalStr ?? '',
                               onMessageEditComplete: (text, context) {
                                 // smbloc gets closed if
                                 // listview disposes of message tile
@@ -122,7 +122,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   ),
                                 );
                                 mebloc.add(CancelMessageEdit());
-                                FocusManager.instance.primaryFocus.unfocus();
+                                FocusManager.instance.primaryFocus!.unfocus();
                               },
                             ),
                           );
@@ -131,7 +131,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                         onDelete: (ctx) => onDelete(
                             ctx,
                             RemoveMessage(
-                              channelId: _message.channelId,
+                              channelId: _message!.channelId,
                               messageId: messageState.id,
                               threadId: messageState.threadId,
                             )),
@@ -142,7 +142,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                     });
               },
               onTap: () {
-                FocusManager.instance.primaryFocus.unfocus();
+                FocusManager.instance.primaryFocus!.unfocus();
                 if (messageState.threadId == null &&
                     messageState.responsesCount != 0 &&
                     !_hideShowAnswers) {
@@ -191,7 +191,7 @@ class _MessageTileState<T extends BaseChannelBloc>
                                     ? DateFormatter.getVerboseDateTime(
                                         messageState.creationDate)
                                     : DateFormatter.getVerboseTime(
-                                        messageState.creationDate),
+                                        messageState.creationDate!),
                                 style: TextStyle(
                                   fontSize: 11.0,
                                   fontWeight: FontWeight.w400,
@@ -221,14 +221,14 @@ class _MessageTileState<T extends BaseChannelBloc>
                             crossAxisAlignment: WrapCrossAlignment.center,
                             textDirection: TextDirection.ltr,
                             children: [
-                              ...messageState.reactions.map((r) {
+                              ...messageState.reactions!.map((r) {
                                 return Reaction(
                                   r['name'],
                                   r['count'],
                                   T == DirectsBloc ? 'direct' : null,
                                 );
                               }),
-                              if (messageState.responsesCount > 0 &&
+                              if (messageState.responsesCount! > 0 &&
                                   messageState.threadId == null &&
                                   !_hideShowAnswers)
                                 Text(

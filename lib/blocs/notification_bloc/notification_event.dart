@@ -65,11 +65,11 @@ class ReinitSubscriptions extends NotificationEvent {
 }
 
 class CancelPendingSubscriptions extends NotificationEvent {
-  final String channelId;
+  final String? channelId;
   const CancelPendingSubscriptions(this.channelId);
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class ChannelMessageEvent extends BaseChannelMessageEvent {

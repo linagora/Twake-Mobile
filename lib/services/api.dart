@@ -9,32 +9,32 @@ const _PROXY_PREFIX = "/internal/mobile";
 
 class Api {
   // singleton Api class instance
-  static Api _api;
+  static Api? _api;
 
   // Server address
-  static String host;
+  static String? host;
 
   // logging utility
   static final logger = Logger(printer: PrettyPrinter());
 
   // callback function to auto prolong token, if access token has expired
-  Future<dynamic> Function() _prolongToken;
+  Future<dynamic> Function()? _prolongToken;
 
   // callback function to validate token
-  TokenStatus Function() _tokenIsValid;
+  TokenStatus Function()? _tokenIsValid;
 
   // callback to reset authentication if for e.g. token has expired
-  void Function() _resetAuthentication;
+  void Function()? _resetAuthentication;
 
   // callback to invalidate current backend configuration
-  void Function() _invalidateConfiguration;
+  void Function()? _invalidateConfiguration;
 
   bool hasConnection = false;
 
-  Dio dio;
+  late Dio dio;
   final Dio tokenDio = Dio();
 
-  factory Api({Map<String, String> headers, String ip}) {
+  factory Api({Map<String, String>? headers, String? ip}) {
     // if the headers are present, e.g. token has changed,
     // reinitialize Dio
     if (_api == null) {
@@ -43,7 +43,7 @@ class Api {
     if (ip != null) {
       host = ip;
     }
-    return _api;
+    return _api!;
   }
 
   // internal private constructor (singleton pattern)
@@ -58,7 +58,7 @@ class Api {
     _addDioInterceptors();
   }
 
-  set headers(Map<String, String> value) {
+  set headers(Map<String, String?> value) {
     dio.options.headers = value;
     tokenDio.options.headers = Map.from(value)..remove('Authorization');
   }
@@ -83,12 +83,12 @@ class Api {
 
   Future<dynamic> delete(
     String method, {
-    Map<String, dynamic> body,
+    Map<String, dynamic>? body,
   }) async {
     checkConnection();
     // final url = _SHOST + method;
     method = _getMethodPath(method);
-    final url = host + method;
+    final url = host! + method;
     try {
       final response = await dio.delete(url, data: body);
       // logger.d('METHOD: $url');
@@ -103,14 +103,14 @@ class Api {
 
   Future<dynamic> get(
     String method, {
-    Map<String, dynamic> params: const {},
+    Map<String, dynamic>? params: const {},
     bool useTokenDio: false,
   }) async {
     checkConnection();
     // logger.e('METHOD: $method');
     method = _getMethodPath(method);
     // Extract scheme and host by splitting the url
-    var split = Api.host.split('://');
+    var split = Api.host!.split('://');
     assert(split.length == 2, 'PROXY URL DOES NOT CONTAIN URI SCHEME OR HOST');
     final scheme = split[0];
     var host = split[1];
@@ -131,9 +131,9 @@ class Api {
     );
     try {
       final response = await (useTokenDio ? tokenDio : dio).getUri(uri);
-      // logger.d('METHOD: ${jsonEncode(method)}');
-      // logger.d('PARAMS: ${jsonEncode(params)}');
-      // logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
+      logger.d('METHOD: ${jsonEncode(method)}');
+      logger.d('PARAMS: ${jsonEncode(params)}');
+      logger.d('GET RESPONSE: ${jsonEncode(response.data)}');
 
       // logger.d('GET RESPONSE:');
       // final ultraLongString = jsonEncode(response.data);
@@ -155,12 +155,12 @@ class Api {
 
   Future<dynamic> patch(
     String method, {
-    Map<String, dynamic> body,
+    Map<String, dynamic>? body,
   }) async {
     checkConnection();
     // final url = _SHOST + method;
     method = _getMethodPath(method);
-    final url = host + method;
+    final url = host! + method;
 
     try {
       final response = await dio.patch(url, data: body);
@@ -172,12 +172,12 @@ class Api {
 
   Future<dynamic> put(
     String method, {
-    Map<String, dynamic> body,
+    Map<String, dynamic>? body,
   }) async {
     checkConnection();
     // final url = _SHOST + method;
     method = _getMethodPath(method);
-    final url = host + method;
+    final url = host! + method;
 
     try {
       final response = await dio.put(url, data: body);
@@ -191,12 +191,12 @@ class Api {
     String method, {
     dynamic body,
     bool useTokenDio = false,
-    CancelToken cancelToken,
+    CancelToken? cancelToken,
   }) async {
     checkConnection();
     method = _getMethodPath(method);
     // final url = _SHOST + method;
-    final url = host + method;
+    final url = host! + method;
 
     try {
       // logger.d('METHOD: $url\nHEADERS: ${dio.options.headers}');
@@ -216,14 +216,14 @@ class Api {
 
   Future<bool> autoProlongToken() async {
     if (_tokenIsValid != null) {
-      switch (_tokenIsValid()) {
+      switch (_tokenIsValid!()) {
         case TokenStatus.Valid:
           break;
         case TokenStatus.AccessExpired:
-          await _prolongToken();
+          await _prolongToken!();
           break;
         case TokenStatus.BothExpired:
-          if (_resetAuthentication != null) _resetAuthentication();
+          if (_resetAuthentication != null) _resetAuthentication!();
           return false;
       }
     }
@@ -258,20 +258,20 @@ class Api {
                 '\nMethod: ${jsonEncode(error.requestOptions.method)}' +
                 '\nPATH: ${jsonEncode(error.requestOptions.path)}' +
                 '\nHeaders: ${jsonEncode(error.requestOptions.headers)}' +
-                '\nResponse: ${jsonEncode(error.response.data)}' +
+                '\nResponse: ${jsonEncode(error.response!.data)}' +
                 '\nBODY: ${jsonEncode(error.requestOptions.data)}' +
                 '\nQUERY: ${jsonEncode(error.requestOptions.queryParameters)}');
           } else {
             logger.wtf("UNEXPECTED NETWORK ERROR:\n$error");
           }
-          if (error.response.statusCode == 401 && _prolongToken != null) {
+          if (error.response!.statusCode == 401 && _prolongToken != null) {
             logger.e('Token has expired prematuraly, prolonging...');
-            await _prolongToken();
-          } else if (error.response.statusCode == 404 &&
+            await _prolongToken!();
+          } else if (error.response!.statusCode == 404 &&
               _invalidateConfiguration != null) {
-            _invalidateConfiguration();
+            _invalidateConfiguration!();
           } else {
-            logger.e('status code: ${error.response.statusCode}');
+            logger.e('status code: ${error.response!.statusCode}');
           }
           handler.next(error);
         },
@@ -301,20 +301,20 @@ class ApiError implements Exception {
     if (error.response == null) {
       Logger().wtf("UNEXPECTED ERROR:\n${error.error}");
       apiErrorType = ApiErrorType.Unauthorized;
-    } else if (error.response.statusCode == 500) {
+    } else if (error.response!.statusCode == 500) {
       apiErrorType = ApiErrorType.ServerError;
-    } else if (const [401, 403].contains(error.response.statusCode)) {
+    } else if (const [401, 403].contains(error.response!.statusCode)) {
       apiErrorType = ApiErrorType.Unauthorized;
-    } else if (error.response.statusCode == 400) {
+    } else if (error.response!.statusCode == 400) {
       apiErrorType = ApiErrorType.BadRequest;
-    } else if (error.response.statusCode == 404) {
+    } else if (error.response!.statusCode == 404) {
       apiErrorType = ApiErrorType.NotFound;
     } else {
       throw error;
     }
 
     return ApiError(
-      message: '${error.response != null ? error.response.data : error}',
+      message: '${error.response != null ? error.response!.data : error}',
       type: apiErrorType,
     );
   }

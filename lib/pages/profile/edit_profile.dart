@@ -21,7 +21,7 @@ class _EditProfileState extends State<EditProfile> {
   final _newPasswordController = TextEditingController();
 
   var _canSave = true;
-  var _picture = '';
+  String? _picture = '';
   var _imageBytes = <int>[];
 
   @override
@@ -89,8 +89,8 @@ class _EditProfileState extends State<EditProfile> {
 
         if (state is AccountLoadSuccess) {
           _userNameController.text = '@${state.userName}';
-          _firstNameController.text = state.firstName;
-          _lastNameController.text = state.lastName;
+          _firstNameController.text = state.firstName!;
+          _lastNameController.text = state.lastName!;
           _picture = state.picture;
         }
         if (state is AccountPictureUpdateSuccess) {

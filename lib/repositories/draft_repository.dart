@@ -14,9 +14,9 @@ class DraftRepository {
 
   DraftRepository();
 
-  Future<String> load({
-    @required String id,
-    @required DraftType type,
+  Future<String?> load({
+    required String? id,
+    required DraftType type,
   }) async {
     final key = '$id-${describeEnum(type)}';
 
@@ -29,9 +29,9 @@ class DraftRepository {
   }
 
   Future<void> save({
-    @required String id,
-    @required DraftType type,
-    @required String draft,
+    required String? id,
+    required DraftType type,
+    required String? draft,
   }) async {
     final key = '$id-${describeEnum(type)}';
     await _storage.store(
@@ -41,7 +41,7 @@ class DraftRepository {
     );
   }
 
-  Future<void> remove({@required String id, @required DraftType type}) async {
+  Future<void> remove({required String? id, required DraftType type}) async {
     final key = '$id-${describeEnum(type)}';
     await _storage.delete(
       type: StorageType.Drafts,

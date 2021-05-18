@@ -8,7 +8,7 @@ enum SheetFlow {
 }
 
 class SheetRepository {
-  final SheetFlow flow;
+  final SheetFlow? flow;
   SheetRepository({this.flow});
 
   static Future<SheetRepository> load() async {

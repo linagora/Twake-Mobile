@@ -33,8 +33,8 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
 
   @override
   Widget build(BuildContext context) {
-    String threadId;
-    String draft;
+    String? threadId;
+    String? draft;
 
     return BlocBuilder<ThreadsBloc<T>, MessagesState>(builder: (ctx, state) {
       // print('STATE IS ${state.runtimeType}');
@@ -63,7 +63,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                         return BackButton(
                           onPressed: () {
                             if (draft != null) {
-                              if (draft.isNotEmpty) {
+                              if (draft!.isNotEmpty) {
                                 context.read<DraftBloc>().add(SaveDraft(
                                       id: threadId,
                                       type: DraftType.thread,
@@ -86,7 +86,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                           ? StackedUserAvatars(
                               (state.parentChannel as Direct).members)
                           : TextAvatar(
-                              state.parentChannel.icon,
+                              state.parentChannel!.icon,
                               fontSize: Dim.tm4(),
                             ),
                       SizedBox(width: 12.0),
@@ -103,7 +103,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                           ),
                           SizedBox(height: 1.0),
                           Text(
-                            state.parentChannel.name,
+                            state.parentChannel!.name!,
                             style: TextStyle(
                               fontSize: 10.0,
                               fontWeight: FontWeight.w400,
@@ -121,7 +121,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                   listener: (ctx, state) {
                     state = state;
                     if (state is ErrorSendingMessage) {
-                      FocusManager.instance.primaryFocus.unfocus();
+                      FocusManager.instance.primaryFocus!.unfocus();
                       Scaffold.of(ctx).showSnackBar(
                         SnackBar(
                           content: Text('Error sending message, no connection'),
@@ -160,10 +160,10 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                 } else if (state is DraftReset) {
                                   draft = '';
                                 }
-                                final threadState =
+                                final MessagesState threadState =
                                     BlocProvider.of<ThreadsBloc<T>>(context)
                                         .state;
-                                threadId = threadState.threadMessage.id;
+                                threadId = threadState.threadMessage!.id;
 
                                 return BlocListener<MessageEditBloc,
                                     MessageEditState>(
@@ -182,7 +182,7 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                             ? state.originalStr
                                             : draft ?? '',
                                         onMessageSend: state is MessageEditing
-                                            ? state.onMessageEditComplete
+                                            ? state.onMessageEditComplete as dynamic Function(String, BuildContext)?
                                             : (content, context) {
                                                 BlocProvider.of<ThreadsBloc<T>>(
                                                         context)
@@ -190,15 +190,15 @@ class _ThreadPageState<T extends BaseChannelBloc> extends State<ThreadPage<T>> {
                                                   SendMessage(
                                                     content: content,
                                                     channelId: threadState
-                                                        .parentChannel.id,
+                                                        .parentChannel!.id,
                                                     threadId: threadState
-                                                        .threadMessage.id,
+                                                        .threadMessage!.id,
                                                   ),
                                                 );
                                                 context.read<DraftBloc>().add(
                                                     ResetDraft(
                                                         id: threadState
-                                                            .threadMessage.id,
+                                                            .threadMessage!.id,
                                                         type:
                                                             DraftType.thread));
                                               },

@@ -14,7 +14,7 @@ export 'package:twake/blocs/companies_bloc/company_state.dart';
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
   final CollectionRepository<Company> repository;
   final NotificationBloc notificationBloc;
-  StreamSubscription _notificationSubscription;
+  late StreamSubscription _notificationSubscription;
 
   CompaniesBloc(this.repository, this.notificationBloc)
       : super(CompaniesLoaded(
@@ -22,7 +22,7 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
           selected: repository.selected,
         )) {
     // repository.logger.w('SELECTED COMPANY: ${repository.selected.id}');
-    ProfileBloc.selectedCompanyId = repository.selected.id;
+    ProfileBloc.selectedCompanyId = repository.selected!.id;
     ProfileBloc.selectedCompany = repository.selected;
 
     _notificationSubscription =

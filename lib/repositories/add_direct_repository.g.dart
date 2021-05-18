@@ -10,9 +10,9 @@ AddDirectRepository _$AddDirectRepositoryFromJson(Map<String, dynamic> json) {
   $checkKeys(json,
       requiredKeys: const ['company_id', 'member', 'workspace_id']);
   return AddDirectRepository(
-    companyId: json['company_id'] as String,
-    workspaceId: json['workspace_id'] as String,
-    member: json['member'] as String,
+    companyId: json['company_id'] as String?,
+    workspaceId: json['workspace_id'] as String?,
+    member: json['member'] as String?,
   );
 }
 

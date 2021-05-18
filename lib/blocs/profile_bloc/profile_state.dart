@@ -5,12 +5,12 @@ abstract class ProfileState extends Equatable {
 }
 
 class ProfileLoaded extends ProfileState {
-  final String userId;
-  final String firstName;
-  final String lastName;
-  final String thumbnail;
-  final String email;
-  final Map<String, dynamic> badges;
+  final String? userId;
+  final String? firstName;
+  final String? lastName;
+  final String? thumbnail;
+  final String? email;
+  final Map<String, dynamic>? badges;
 
   const ProfileLoaded({
     this.userId,
@@ -22,24 +22,24 @@ class ProfileLoaded extends ProfileState {
   });
 
   @override
-  List<Object> get props => [userId, badges];
+  List<Object?> get props => [userId, badges];
 
-  int getBadgeForCompany(String id) {
-    if (badges['companies'] == null) return 0;
-    final items = badges['companies'] as Map<String, dynamic>;
-    return items[id] ?? 0;
+  int getBadgeForCompany(String? id) {
+    if (badges!['companies'] == null) return 0;
+    final items = badges!['companies'] as Map<String, dynamic>;
+    return items[id!] ?? 0;
   }
 
-  int getBadgeForWorkspace(String id) {
-    if (badges['workspaces'] == null) return 0;
-    final items = badges['workspaces'] as Map<String, dynamic>;
-    return items[id] ?? 0;
+  int getBadgeForWorkspace(String? id) {
+    if (badges!['workspaces'] == null) return 0;
+    final items = badges!['workspaces'] as Map<String, dynamic>;
+    return items[id!] ?? 0;
   }
 
-  int getBadgeForChannel(String id) {
-    if (badges['channels'] == null) return 0;
-    final items = badges['channels'] as Map<String, dynamic>;
-    return items[id] ?? 0;
+  int getBadgeForChannel(String? id) {
+    if (badges!['channels'] == null) return 0;
+    final items = badges!['channels'] as Map<String, dynamic>;
+    return items[id!] ?? 0;
   }
 }
 

@@ -3,13 +3,13 @@ import 'package:twake/repositories/add_workspace_repository.dart';
 import 'add_workspace_state.dart';
 
 class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
-  final AddWorkspaceRepository repository;
+  final AddWorkspaceRepository? repository;
 
   AddWorkspaceCubit(this.repository) : super(AddWorkspaceInitial());
 
   Future<void> create() async {
     emit(Creation());
-    final result = await repository.create();
+    final result = await (repository!.create() as FutureOr<String>);
     if (result.isNotEmpty) {
       emit(Created(result));
     } else {
@@ -33,16 +33,16 @@ class AddWorkspaceCubit extends Cubit<AddWorkspaceState> {
   // }
 
   void clear() {
-    repository.clear();
+    repository!.clear();
   }
 
-  void update({String name, List<String> members}) {
-    repository.name = name ?? repository.name;
-    repository.members = members ?? repository.members ?? [];
+  void update({String? name, List<String>? members}) {
+    repository!.name = name ?? repository!.name;
+    repository!.members = members ?? repository!.members ?? [];
 
     var newRepo = AddWorkspaceRepository(
-      name: repository.name,
-      members: repository.members,
+      name: repository!.name,
+      members: repository!.members,
     );
     emit(Updated(newRepo));
   }

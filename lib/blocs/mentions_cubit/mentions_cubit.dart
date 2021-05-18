@@ -11,7 +11,7 @@ class MentionsCubit extends Cubit<MentionState> {
 
   MentionsCubit() : super(MentionsEmpty());
 
-  Future<void> fetchMentionableUsers({@required String searchTerm}) async {
+  Future<void> fetchMentionableUsers({required String searchTerm}) async {
     final users = await repository.mentionableUsers(searchTerm);
     if (users.isNotEmpty) {
       emit(MentionableUsersLoaded(users: users));

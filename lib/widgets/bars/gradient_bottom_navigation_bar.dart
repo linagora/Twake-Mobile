@@ -119,13 +119,13 @@ class GradientBottomNavigationBar extends StatefulWidget {
   /// [ThemeData.primaryColor], is used. However if [GradientBottomNavigationBar.type] is
   /// [BottomNavigationBarType.shifting] then [fixedColor] is ignored.
   GradientBottomNavigationBar({
-    Key key,
-    @required this.items,
+    Key? key,
+    required this.items,
     this.onTap,
-    @required this.backgroundColorStart,
-    @required this.backgroundColorEnd,
+    required this.backgroundColorStart,
+    required this.backgroundColorEnd,
     this.currentIndex = 0,
-    BottomNavigationBarType type,
+    BottomNavigationBarType? type,
     this.fixedColor,
     this.iconSize = 24.0,
   })  : assert(items != null),
@@ -152,7 +152,7 @@ class GradientBottomNavigationBar extends StatefulWidget {
   /// The widget creating the bottom navigation bar needs to keep track of the
   /// current index and call `setState` to rebuild it with the newly provided
   /// index.
-  final ValueChanged<int> onTap;
+  final ValueChanged<int>? onTap;
 
   /// The index into [items] of the current active item.
   final int currentIndex;
@@ -176,7 +176,7 @@ class GradientBottomNavigationBar extends StatefulWidget {
   /// If [fixedColor] is null then the theme's primary color,
   /// [ThemeData.primaryColor], is used. However if [GradientBottomNavigationBar.type] is
   /// [BottomNavigationBarType.shifting] then [fixedColor] is ignored.
-  final Color fixedColor;
+  final Color? fixedColor;
 
   /// The size of all of the [BottomNavigationBarItem] icons.
   ///
@@ -207,19 +207,19 @@ class _BottomNavigationTile extends StatelessWidget {
   final BottomNavigationBarItem item;
   final Animation<double> animation;
   final double iconSize;
-  final VoidCallback onTap;
-  final ColorTween colorTween;
-  final double flex;
+  final VoidCallback? onTap;
+  final ColorTween? colorTween;
+  final double? flex;
   final bool selected;
-  final String indexLabel;
+  final String? indexLabel;
 
   Widget _buildIcon() {
-    double tweenStart;
-    Color iconColor;
+    double? tweenStart;
+    Color? iconColor;
     switch (type) {
       case BottomNavigationBarType.fixed:
         tweenStart = 8.0;
-        iconColor = colorTween.evaluate(animation);
+        iconColor = colorTween!.evaluate(animation);
         break;
       case BottomNavigationBarType.shifting:
         tweenStart = 16.0;
@@ -256,7 +256,7 @@ class _BottomNavigationTile extends StatelessWidget {
         child: DefaultTextStyle.merge(
           style: TextStyle(
             fontSize: _kActiveFontSize,
-            color: colorTween.evaluate(animation),
+            color: colorTween!.evaluate(animation),
           ),
           // The font size should grow here when active, but because of the way
           // font rendering works, it doesn't grow smoothly if we just animate
@@ -301,7 +301,7 @@ class _BottomNavigationTile extends StatelessWidget {
               fontSize: _kActiveFontSize,
               color: Colors.white,
             ),
-            child: item.title,
+            child: item.title!,
           ),
         ),
       ),
@@ -314,15 +314,15 @@ class _BottomNavigationTile extends StatelessWidget {
     // need to divide the changes in flex allotment into smaller pieces to
     // produce smooth animation. We do this by multiplying the flex value
     // (which is an integer) by a large number.
-    int size;
-    Widget label;
+    late int size;
+    Widget? label;
     switch (type) {
       case BottomNavigationBarType.fixed:
         size = 1;
         label = _buildFixedLabel();
         break;
       case BottomNavigationBarType.shifting:
-        size = (flex * 1000.0).round();
+        size = (flex! * 1000.0).round();
         label = _buildShiftingLabel();
         break;
     }
@@ -340,10 +340,10 @@ class _BottomNavigationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
+                (children: <Widget?>[
                   _buildIcon(),
                   label,
-                ],
+                ]) as List<Widget>,
               ),
             ),
             Semantics(
@@ -359,14 +359,14 @@ class _BottomNavigationTile extends StatelessWidget {
 class _GradientBottomNavigationBarState
     extends State<GradientBottomNavigationBar> with TickerProviderStateMixin {
   List<AnimationController> _controllers = <AnimationController>[];
-  List<CurvedAnimation> _animations;
+  late List<CurvedAnimation> _animations;
 
   // A queue of color splashes currently being animated.
   final Queue<_Circle> _circles = Queue<_Circle>();
 
   // Last splash circle's color, and the final color of the control after
   // animation is complete.
-  Color _backgroundColor;
+  Color? _backgroundColor;
 
   static final Animatable<double> _flexTween =
   Tween<double>(begin: 1.0, end: 1.5);
@@ -424,7 +424,7 @@ class _GradientBottomNavigationBarState
         _Circle(
           state: this,
           index: index,
-          color: widget.items[index].backgroundColor,
+          color: widget.items[index].backgroundColor!,
           vsync: this,
         )..controller.addStatusListener(
               (AnimationStatus status) {
@@ -482,7 +482,7 @@ class _GradientBottomNavigationBarState
       case BottomNavigationBarType.fixed:
         final ThemeData themeData = Theme.of(context);
         final TextTheme textTheme = themeData.textTheme;
-        Color themeColor;
+        Color? themeColor;
         switch (themeData.brightness) {
           case Brightness.light:
             themeColor = themeData.primaryColor;
@@ -492,7 +492,7 @@ class _GradientBottomNavigationBarState
             break;
         }
         final ColorTween colorTween = ColorTween(
-          begin: textTheme.caption.color,
+          begin: textTheme.caption!.color,
           end: widget.fixedColor ?? themeColor,
         );
         for (int i = 0; i < widget.items.length; i += 1) {
@@ -503,7 +503,7 @@ class _GradientBottomNavigationBarState
               _animations[i],
               widget.iconSize,
               onTap: () {
-                if (widget.onTap != null) widget.onTap(i);
+                if (widget.onTap != null) widget.onTap!(i);
               },
               colorTween: colorTween,
               selected: i == widget.currentIndex,
@@ -522,7 +522,7 @@ class _GradientBottomNavigationBarState
               _animations[i],
               widget.iconSize,
               onTap: () {
-                if (widget.onTap != null) widget.onTap(i);
+                if (widget.onTap != null) widget.onTap!(i);
               },
               flex: _evaluateFlex(_animations[i]),
               selected: i == widget.currentIndex,
@@ -618,10 +618,10 @@ class _GradientBottomNavigationBarState
 // Describes an animating color splash circle.
 class _Circle {
   _Circle({
-    @required this.state,
-    @required this.index,
-    @required this.color,
-    @required TickerProvider vsync,
+    required this.state,
+    required this.index,
+    required this.color,
+    required TickerProvider vsync,
   })  : assert(state != null),
         assert(index != null),
         assert(color != null) {
@@ -639,8 +639,8 @@ class _Circle {
   final _GradientBottomNavigationBarState state;
   final int index;
   final Color color;
-  AnimationController controller;
-  CurvedAnimation animation;
+  late AnimationController controller;
+  late CurvedAnimation animation;
 
   double get horizontalLeadingOffset {
     double weightSum(Iterable<Animation<double>> animations) {
@@ -670,8 +670,8 @@ class _Circle {
 // Paints the animating color splash circles.
 class _RadialPainter extends CustomPainter {
   _RadialPainter({
-    @required this.circles,
-    @required this.textDirection,
+    required this.circles,
+    required this.textDirection,
   })  : assert(circles != null),
         assert(textDirection != null);
 
@@ -704,7 +704,7 @@ class _RadialPainter extends CustomPainter {
       final Paint paint = Paint()..color = circle.color;
       final Rect rect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
       canvas.clipRect(rect);
-      double leftFraction;
+      late double leftFraction;
       switch (textDirection) {
         case TextDirection.rtl:
           leftFraction = 1.0 - circle.horizontalLeadingOffset;

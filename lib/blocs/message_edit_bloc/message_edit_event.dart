@@ -12,11 +12,11 @@ class CancelMessageEdit extends MessageEditEvent {
 }
 
 class EditMessage extends MessageEditEvent {
-  final Function onMessageEditComplete;
-  final String originalStr;
+  final Function? onMessageEditComplete;
+  final String? originalStr;
 
   const EditMessage({this.onMessageEditComplete, this.originalStr});
 
   @override
-  List<Object> get props => [originalStr];
+  List<Object?> get props => [originalStr];
 }

@@ -26,10 +26,10 @@ import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
 
 class EditChannel extends StatefulWidget {
-  final Channel channel;
-  final List<Member> members;
+  final Channel? channel;
+  final List<Member>? members;
 
-  const EditChannel({Key key, this.channel, this.members}) : super(key: key);
+  const EditChannel({Key? key, this.channel, this.members}) : super(key: key);
 
   @override
   _EditChannelState createState() => _EditChannelState();
@@ -44,18 +44,18 @@ class _EditChannelState extends State<EditChannel> {
 
   final PanelController _panelController = PanelController();
 
-  var _members = <Member>[];
+  List<Member>? _members = <Member>[];
   var _canSave = false;
   var _emojiVisible = false;
   var _canDelete = false;
 
-  Channel _channel;
-  String _channelId;
-  String _icon;
-  String _channelName;
-  String _channelDescription;
+  Channel? _channel;
+  String? _channelId;
+  String? _icon;
+  String? _channelName;
+  String? _channelDescription;
 
-  List<String> _participants = [];
+  List<String?>? _participants = [];
 
   @override
   void initState() {
@@ -63,12 +63,12 @@ class _EditChannelState extends State<EditChannel> {
 
     if (widget.channel != null) {
       _channel = widget.channel;
-      _channelId = widget.channel.id;
-      _nameController.text = _channel.name;
-      _channelName = _channel.name;
-      _descriptionController.text = _channel.description;
-      _channelDescription = _channel.description;
-      _icon = _channel.icon ?? '';
+      _channelId = widget.channel!.id;
+      _nameController.text = _channel!.name!;
+      _channelName = _channel!.name;
+      _descriptionController.text = _channel!.description!;
+      _channelDescription = _channel!.description;
+      _icon = _channel!.icon ?? '';
       _batchUpdateState(channelId: _channelId);
     }
 
@@ -103,7 +103,7 @@ class _EditChannelState extends State<EditChannel> {
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       context.read<SheetBloc>().add(SetFlow(flow: SheetFlow.editChannel));
     });
 
@@ -119,7 +119,7 @@ class _EditChannelState extends State<EditChannel> {
       }
     });
 
-    final permissions = _channel.permissions;
+    final permissions = _channel!.permissions!;
     _canDelete = permissions.contains('DELETE_CHANNEL');
   }
 
@@ -138,8 +138,8 @@ class _EditChannelState extends State<EditChannel> {
     if (oldWidget.channel != widget.channel) {
       setState(() {
         _channel = widget.channel;
-        _channelId = widget.channel.id;
-        _icon = widget.channel.icon;
+        _channelId = widget.channel!.id;
+        _icon = widget.channel!.icon;
       });
     }
     if (oldWidget.members != widget.members) {
@@ -150,10 +150,10 @@ class _EditChannelState extends State<EditChannel> {
   }
 
   void _batchUpdateState({
-    String channelId,
-    String icon,
-    String name,
-    String description,
+    String? channelId,
+    String? icon,
+    String? name,
+    String? description,
   }) {
     context.read<EditChannelCubit>().update(
           channelId: channelId ?? _channelId,
@@ -165,7 +165,7 @@ class _EditChannelState extends State<EditChannel> {
 
   void _save() {
     context.read<EditChannelCubit>().save();
-    if (_participants != null && _participants.length > 0) {
+    if (_participants != null && _participants!.length > 0) {
       context
           .read<MemberCubit>()
           .addMembers(channelId: _channelId, members: _participants);
@@ -177,14 +177,14 @@ class _EditChannelState extends State<EditChannel> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoWarning(
-          icon: _channel.icon,
+          icon: _channel!.icon,
           title: <RichTextSpan>[
             RichTextSpan(
               text: 'Are you sure you want to delete\n',
               isBold: false,
             ),
             RichTextSpan(
-              text: '${_channel.name}',
+              text: '${_channel!.name}',
               isBold: true,
             ),
             RichTextSpan(
@@ -291,7 +291,7 @@ class _EditChannelState extends State<EditChannel> {
             listener: (context ,state) {
               if (state is Updated) {
                 _participants = state.repository?.members;
-                if (_participants != null && _participants.length > 0) {
+                if (_participants != null && _participants!.length > 0) {
                   setState(() {
                     _canSave = true;
                   });
@@ -479,14 +479,14 @@ class _EditChannelState extends State<EditChannel> {
 class RoundedBoxButton extends StatelessWidget {
   final Widget cover;
   final String title;
-  final Color color;
+  final Color? color;
   final Function onTap;
 
   const RoundedBoxButton({
-    Key key,
-    @required this.cover,
-    @required this.title,
-    @required this.onTap,
+    Key? key,
+    required this.cover,
+    required this.title,
+    required this.onTap,
     this.color,
   }) : super(key: key);
 

@@ -12,13 +12,13 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
-  final Function(String, BuildContext) onMessageSend;
-  final Function(String, BuildContext) onTextUpdated;
-  final String initialText;
+  final Function(String, BuildContext)? onMessageSend;
+  final Function(String?, BuildContext) onTextUpdated;
+  final String? initialText;
 
   ComposeBar({
-    @required this.onMessageSend,
-    @required this.onTextUpdated,
+    required this.onMessageSend,
+    required this.onTextUpdated,
     this.autofocus = false,
     this.initialText = '',
   });
@@ -39,8 +39,8 @@ class _ComposeBar extends State<ComposeBar> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
 
-  List<PlatformFile> _paths;
-  String _extension;
+  List<PlatformFile>? _paths;
+  String? _extension;
   FileType _pickingType = FileType.any;
 
   @override
@@ -48,8 +48,8 @@ class _ComposeBar extends State<ComposeBar> {
     super.initState();
 
     widget.onTextUpdated(widget.initialText, context);
-    if (widget.initialText.isNotReallyEmpty) {
-      _controller.text = widget.initialText; // possibly retrieved from cache.
+    if (widget.initialText!.isNotReallyEmpty) {
+      _controller.text = widget.initialText!; // possibly retrieved from cache.
       setState(() {
         _canSend = true;
       });
@@ -88,7 +88,7 @@ class _ComposeBar extends State<ComposeBar> {
   }
 
   void mentionsVisible() async {
-    final mentionsState = BlocProvider.of<MentionsCubit>(context).state;
+    final MentionState mentionsState = BlocProvider.of<MentionsCubit>(context).state;
     if (mentionsState is MentionableUsersLoaded) {
       setState(() {
         _mentionsVisible = true;
@@ -107,7 +107,7 @@ class _ComposeBar extends State<ComposeBar> {
   @override
   void didUpdateWidget(covariant ComposeBar oldWidget) {
     if (oldWidget.initialText != widget.initialText) {
-      _controller.text = widget.initialText;
+      _controller.text = widget.initialText!;
     }
     // print('FORCE LOOSE FOCUS: $_forceLooseFocus');
     if (widget.autofocus && !_forceLooseFocus) {
@@ -131,7 +131,7 @@ class _ComposeBar extends State<ComposeBar> {
     }
   }
 
-  void mentionReplace(String username) async {
+  void mentionReplace(String? username) async {
     final text = _controller.text;
     _controller.text = text.replaceRange(
       text.lastIndexOf('@'),
@@ -163,7 +163,7 @@ class _ComposeBar extends State<ComposeBar> {
         type: _pickingType,
         allowMultiple: true,
         allowedExtensions: (_extension?.isNotEmpty ?? false)
-            ? _extension.replaceAll(' ', '').split(',')
+            ? _extension!.replaceAll(' ', '').split(',')
             : null,
       ))
           ?.files;
@@ -182,13 +182,13 @@ class _ComposeBar extends State<ComposeBar> {
     //   listPath.add(element.path.toString());
     //  });
 
-    _paths.forEach((element) {
+    _paths!.forEach((element) {
       BlocProvider.of<FileUploadBloc>(context)
           .add(StartUpload(path: element.path));
     });
 
     setState(() {
-      _fileNumber += _paths.length;
+      _fileNumber += _paths!.length;
     });
 
     BlocProvider.of<FileUploadBloc>(context).listen((FileUploadState state) {
@@ -233,7 +233,7 @@ class _ComposeBar extends State<ComposeBar> {
                                         BorderRadius.all(Radius.circular(30)),
                                     child: CircleAvatar(
                                       child: Image.network(
-                                        state.users[i].thumbnail,
+                                        state.users[i].thumbnail!,
                                         fit: BoxFit.contain,
                                         loadingBuilder:
                                             (context, child, progress) {
@@ -337,17 +337,17 @@ class _ComposeBar extends State<ComposeBar> {
 }
 
 class TextInput extends StatefulWidget {
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final ScrollController scrollController;
-  final Function toggleEmojiBoard;
-  final bool autofocus;
-  final bool emojiVisible;
-  final bool canSend;
-  final Function onMessageSend;
-  final Function openFileExplorer;
-  final Function fileNumClear;
-  final int fileNumber;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
+  final ScrollController? scrollController;
+  final Function? toggleEmojiBoard;
+  final bool? autofocus;
+  final bool? emojiVisible;
+  final bool? canSend;
+  final Function? onMessageSend;
+  final Function? openFileExplorer;
+  final Function? fileNumClear;
+  final int? fileNumber;
 
   TextInput({
     this.onMessageSend,
@@ -368,7 +368,7 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
-  var _fileNumber = 0;
+  int? _fileNumber = 0;
 
   @override
   void initState() {
@@ -392,7 +392,7 @@ class _TextInputState extends State<TextInput> {
         bottom: 11.0 + MediaQuery.of(context).padding.bottom,
       ),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[300], width: 1.5)),
+        border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1.5)),
         color: Color(0xfff6f6f6),
       ),
       child: Row(
@@ -409,7 +409,7 @@ class _TextInputState extends State<TextInput> {
                   ),
                   padding: EdgeInsets.zero,
                   icon: Icon(Icons.attachment),
-                  onPressed: widget.openFileExplorer,
+                  onPressed: widget.openFileExplorer as void Function()?,
                   color: Color(0xff8a898e),
                 );
               } else if (state is FileUploading) {
@@ -421,7 +421,7 @@ class _TextInputState extends State<TextInput> {
                     //  await fileNumClear;
                     backgroundColor: Colors.indigo[50],
                   ),
-                  onTap: widget.openFileExplorer,
+                  onTap: widget.openFileExplorer as void Function()?,
                 );
               }
               return CircleAvatar(
@@ -429,7 +429,7 @@ class _TextInputState extends State<TextInput> {
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(Icons.attachment),
-                  onPressed: widget.openFileExplorer,
+                  onPressed: widget.openFileExplorer as void Function()?,
                   color: Colors.black54,
                 ),
               );
@@ -453,7 +453,7 @@ class _TextInputState extends State<TextInput> {
                 ),
                 maxLines: 4,
                 minLines: 1,
-                autofocus: widget.autofocus,
+                autofocus: widget.autofocus!,
                 focusNode: widget.focusNode,
                 scrollController: widget.scrollController,
                 controller: widget.controller,
@@ -483,7 +483,7 @@ class _TextInputState extends State<TextInput> {
                   ),
                   floatingLabelBehavior: FloatingLabelBehavior.always,
                   suffixIcon: GestureDetector(
-                    onTap: widget.toggleEmojiBoard,
+                    onTap: widget.toggleEmojiBoard as void Function()?,
                     child: Container(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Image.asset(
@@ -506,11 +506,11 @@ class _TextInputState extends State<TextInput> {
           //   color: Colors.black54,
           // ),
           GestureDetector(
-            onTap: widget.canSend
+            onTap: widget.canSend!
                 ? () async {
-                    await widget.onMessageSend(widget.controller.text, context);
-                    widget.controller.clear();
-                    widget.fileNumClear();
+                    await widget.onMessageSend!(widget.controller!.text, context);
+                    widget.controller!.clear();
+                    widget.fileNumClear!();
                   }
                 : null,
             child: Container(

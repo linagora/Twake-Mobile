@@ -8,14 +8,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class Notifications {
   final logger = Logger();
-  Target platform;
-  final Function(MessageNotification) onMessageCallback;
-  final Function(MessageNotification) onResumeCallback;
-  final Function(MessageNotification) onLaunchCallback;
-  final bool Function(MessageNotification) shouldNotify;
+  Target? platform;
+  final Function(MessageNotification)? onMessageCallback;
+  final Function(MessageNotification)? onResumeCallback;
+  final Function(MessageNotification)? onLaunchCallback;
+  final bool Function(MessageNotification)? shouldNotify;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  Map<String, List<int>> pendingNotifications = {};
+  Map<String?, List<int>> pendingNotifications = {};
   var counter = 0;
 
   Future onDidReceiveLocalNotification(
@@ -55,12 +55,12 @@ class Notifications {
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: (payload) async {
       // print("PAYLOAD FROM NOTIFY: $payload");
-      final map = jsonDecode(payload);
+      final map = jsonDecode(payload!);
       // print("NOTIFY CLICK: $map");
       try {
         final notification = MessageNotification.fromJson(map);
         // print("NOTIFICATION PARSED: $notification");
-        onMessageCallback(notification);
+        onMessageCallback!(notification);
       } catch (e) {
         logger.wtf('ERROR PARSING NOTIFY: $e');
       }
@@ -71,7 +71,7 @@ class Notifications {
     Map<String, dynamic> message = rmessage.data;
     logger.d('GOT MESSAGE FROM FIREBASE: $message, ${rmessage.toString()}');
     final notification = messageParse(message);
-    if (!shouldNotify(notification)) return;
+    if (!shouldNotify!(notification)) return;
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
             'some-random-text', 'Twake', 'Twake Mobile App',
@@ -86,19 +86,19 @@ class Notifications {
     if (pendingNotifications[channelId] == null) {
       pendingNotifications[channelId] = [];
     }
-    pendingNotifications[channelId].add(counter);
+    pendingNotifications[channelId]!.add(counter);
 
     await flutterLocalNotificationsPlugin.show(
       counter,
-      rmessage.notification.title,
-      rmessage.notification.body,
+      rmessage.notification!.title,
+      rmessage.notification!.body,
       platformChannelSpecifics,
       payload: _getPayload(message),
     );
     counter++;
   }
 
-  Future<void> cancelNotificationForChannel(String channelId) async {
+  Future<void> cancelNotificationForChannel(String? channelId) async {
     final channelNotifications = pendingNotifications[channelId];
     if (channelNotifications == null) return;
     for (var n in channelNotifications) {
@@ -117,12 +117,12 @@ class Notifications {
 
   MessageNotification messageParse(Map<String, dynamic> message) {
     // logger.d("ok, that's what we have:\n$data");
-    final data = jsonDecode(_getPayload(message));
+    final data = jsonDecode(_getPayload(message)!);
     MessageNotification notification = MessageNotification.fromJson(data);
     return notification;
   }
 
-  String _getPayload(Map<String, dynamic> message) {
+  String? _getPayload(Map<String, dynamic> message) {
     var data;
     switch (platform) {
       case Target.Android:
@@ -144,7 +144,7 @@ class Notifications {
     return data;
   }
 
-  String _getChannelId(Map<String, dynamic> message) {
+  String? _getChannelId(Map<String, dynamic> message) {
     var data;
     switch (platform) {
       case Target.Android:
@@ -170,7 +170,7 @@ class Notifications {
     Map<String, dynamic> message = rmessage.data;
     logger.d('Resuming on message received\n$message');
     final notification = messageParse(message);
-    await onResumeCallback(notification);
+    await onResumeCallback!(notification);
   }
 
 //

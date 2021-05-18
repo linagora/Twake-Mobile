@@ -13,9 +13,9 @@ class NoMessageToEdit extends MessageEditState {
 }
 
 class MessageEditing extends MessageEditState {
-  final Function onMessageEditComplete;
-  final String originalStr;
-  final List<User> mentionable;
+  final Function? onMessageEditComplete;
+  final String? originalStr;
+  final List<User>? mentionable;
 
   MessageEditing({
     this.onMessageEditComplete,
@@ -24,5 +24,5 @@ class MessageEditing extends MessageEditState {
   });
 
   @override
-  List<Object> get props => [originalStr, mentionable];
+  List<Object?> get props => [originalStr, mentionable];
 }

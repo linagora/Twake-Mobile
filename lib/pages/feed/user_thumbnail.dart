@@ -7,13 +7,13 @@ import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 
 class UserThumbnail extends StatelessWidget {
-  final String userId;
-  final String thumbnailUrl;
-  final String userName;
+  final String? userId;
+  final String? thumbnailUrl;
+  final String? userName;
   final double size;
 
   const UserThumbnail({
-    Key key,
+    Key? key,
     this.userId,
     this.thumbnailUrl,
     this.userName,
@@ -22,12 +22,12 @@ class UserThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (userId != null && userId.isNotReallyEmpty) {
+    if (userId != null && userId!.isNotReallyEmpty) {
       return BlocProvider<UserBloc>(
         create: (_) => UserBloc(userId),
         child: BlocBuilder<UserBloc, UserState>(
           builder: (_, state) {
-            String thumbnailUrl;
+            String? thumbnailUrl;
             if (state is UserReady) {
               thumbnailUrl = state.thumbnail;
               if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
@@ -45,13 +45,13 @@ class UserThumbnail extends StatelessWidget {
           },
         ),
       );
-    } else if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
+    } else if (thumbnailUrl != null && thumbnailUrl!.isNotReallyEmpty) {
       return RoundedImage(
         imageUrl: thumbnailUrl,
         width: size,
         height: size,
       );
-    } else if (userName != null && userName.isNotReallyEmpty) {
+    } else if (userName != null && userName!.isNotReallyEmpty) {
       return NamedAvatar(size: size, name: userName);
     } else {
       return RoundedShimmer(size: size);
@@ -61,19 +61,19 @@ class UserThumbnail extends StatelessWidget {
 
 class NamedAvatar extends StatelessWidget {
   const NamedAvatar({
-    Key key,
+    Key? key,
     this.size = 60.0,
     this.name = '',
   }) : super(key: key);
 
   final double size;
-  final String name;
+  final String? name;
 
   @override
   Widget build(BuildContext context) {
     String firstNameCharacter = '';
-    if (name.isNotReallyEmpty) {
-      firstNameCharacter = name[0];
+    if (name!.isNotReallyEmpty) {
+      firstNameCharacter = name![0];
     }
 
     return CircleAvatar(
@@ -100,8 +100,8 @@ class NamedAvatar extends StatelessWidget {
 
 class RoundedShimmer extends StatelessWidget {
   const RoundedShimmer({
-    Key key,
-    @required this.size,
+    Key? key,
+    required this.size,
   }) : super(key: key);
 
   final double size;

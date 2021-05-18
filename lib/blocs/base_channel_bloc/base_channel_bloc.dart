@@ -9,14 +9,14 @@ import 'package:twake/blocs/channels_bloc/channel_state.dart';
 export 'package:twake/blocs/channels_bloc/channel_event.dart';
 export 'package:twake/blocs/channels_bloc/channel_state.dart';
 
-abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
-  final CollectionRepository<BaseChannel> repository;
-  String selectedParentId;
-  String selectedBeforeId;
+abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState?> {
+  final CollectionRepository<BaseChannel?>? repository;
+  String? selectedParentId;
+  String? selectedBeforeId;
 
   BaseChannelBloc({
     this.repository,
-    ChannelState initState,
+    ChannelState? initState,
   }) : super(initState);
 
   @override
@@ -25,25 +25,25 @@ abstract class BaseChannelBloc extends Bloc<ChannelsEvent, ChannelState> {
   }
 
   Future<void> updateMessageCount(ModifyMessageCount event) async {
-    final ch = await repository.getItemById(event.channelId);
+    final ch = await repository!.getItemById(event.channelId);
     if (ch != null) {
       // ch.messagesTotal += event.totalModifier ?? 0;
       ch.hasUnread = event.hasUnread ?? 1;
       ch.messagesUnread += event.unreadModifier ?? 0;
       ch.lastActivity =
           event.timeStamp ?? DateTime.now().millisecondsSinceEpoch;
-      repository.saveOne(ch);
+      repository!.saveOne(ch);
     }
   }
 
   Future<void> updateChannelState(ModifyChannelState event) async {
-    final ch = await repository.getItemById(event.channelId);
+    final ch = await repository!.getItemById(event.channelId);
     if (ch != null) {
       ch.hasUnread = 1;
       if (event.threadId != null || event.messageId != null) {
         ch.messagesUnread += 1;
       }
-      repository.saveOne(ch);
+      repository!.saveOne(ch);
     }
   }
 }

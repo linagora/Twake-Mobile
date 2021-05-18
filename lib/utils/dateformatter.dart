@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 class DateFormatter {
   /// Function to get a verbose representation of timestamp,
   /// like [just now] or [today]
-  static String getVerboseDateTime(int timestamp) {
+  static String getVerboseDateTime(int? timestamp) {
     if (timestamp == null || timestamp == 0) return '';
     final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
     final localDT = dateTime.toLocal();

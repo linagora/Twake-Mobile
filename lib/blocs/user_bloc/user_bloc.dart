@@ -17,7 +17,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
     if (event is LoadUser) {
-      final user = await repository.user(event.userId);
+      final user = await (repository.user(event.userId) as FutureOr<User>);
       yield UserReady(
         thumbnail: user.thumbnail,
         username: user.username,
@@ -28,7 +28,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       throw 'Not implemented yet';
     } else if (event is LoadUsers) {
       yield MultipleUsersLoading();
-      final users = await repository.searchUsers(event.request);
+      final users = await repository.searchUsers(event.request!);
       if (users != null) {
         yield MultipleUsersLoaded(users);
       } else {

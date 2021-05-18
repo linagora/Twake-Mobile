@@ -7,7 +7,7 @@ abstract class AccountState extends Equatable {
 class AccountInitial extends AccountState {
   final AccountFlowStage stage;
 
-  const AccountInitial({@required this.stage});
+  const AccountInitial({required this.stage});
 
   @override
   List<Object> get props => [stage];
@@ -21,12 +21,12 @@ class AccountLoadInProgress extends AccountState {
 }
 
 class AccountLoadSuccess extends AccountState {
-  final String userName;
-  final String firstName;
-  final String lastName;
-  final String picture;
-  final String language;
-  final List<LanguageOption> availableLanguages;
+  final String? userName;
+  final String? firstName;
+  final String? lastName;
+  final String? picture;
+  final String? language;
+  final List<LanguageOption>? availableLanguages;
 
   const AccountLoadSuccess({
     this.userName,
@@ -38,7 +38,7 @@ class AccountLoadSuccess extends AccountState {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         userName,
         firstName,
         lastName,
@@ -49,20 +49,20 @@ class AccountLoadSuccess extends AccountState {
 }
 
 class AccountLoadFailure extends AccountState {
-  final String message;
+  final String? message;
 
   const AccountLoadFailure({this.message});
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message];
 }
 
 class AccountUpdateInProgress extends AccountState {
-  final String firstName;
-  final String lastName;
-  final String language;
-  final String oldPassword;
-  final String newPassword;
+  final String? firstName;
+  final String? lastName;
+  final String? language;
+  final String? oldPassword;
+  final String? newPassword;
 
   const AccountUpdateInProgress({
     this.firstName,
@@ -73,7 +73,7 @@ class AccountUpdateInProgress extends AccountState {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         firstName,
         lastName,
         language,
@@ -83,11 +83,11 @@ class AccountUpdateInProgress extends AccountState {
 }
 
 class AccountUpdateSuccess extends AccountState {
-  final String firstName;
-  final String lastName;
-  final String language;
-  final String oldPassword;
-  final String newPassword;
+  final String? firstName;
+  final String? lastName;
+  final String? language;
+  final String? oldPassword;
+  final String? newPassword;
 
   const AccountUpdateSuccess({
     this.firstName,
@@ -98,7 +98,7 @@ class AccountUpdateSuccess extends AccountState {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         firstName,
         lastName,
         language,
@@ -115,9 +115,9 @@ class AccountSaveInProgress extends AccountState {
 }
 
 class AccountSaveSuccess extends AccountState {
-  final String firstName;
-  final String lastName;
-  final String language;
+  final String? firstName;
+  final String? lastName;
+  final String? language;
 
   const AccountSaveSuccess({
     this.firstName,
@@ -126,7 +126,7 @@ class AccountSaveSuccess extends AccountState {
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         firstName,
         lastName,
         language,
@@ -134,12 +134,12 @@ class AccountSaveSuccess extends AccountState {
 }
 
 class AccountSaveFailure extends AccountState {
-  final String message;
+  final String? message;
 
   const AccountSaveFailure({this.message});
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message];
 }
 
 // Picture locally
@@ -161,13 +161,13 @@ class AccountPictureUpdateSuccess extends AccountState {
 }
 
 class AccountPictureUpdateFailure extends AccountState {
-  final String message;
-  final String fallbackImage;
+  final String? message;
+  final String? fallbackImage;
 
   const AccountPictureUpdateFailure({this.message, this.fallbackImage});
 
   @override
-  List<Object> get props => [message, fallbackImage];
+  List<Object?> get props => [message, fallbackImage];
 }
 
 // Picture via network
@@ -180,39 +180,39 @@ class AccountPictureUploadInProgress extends AccountState {
 }
 
 class AccountPictureUploadSuccess extends AccountState {
-  final String link;
+  final String? link;
 
   const AccountPictureUploadSuccess({this.link});
 
   @override
-  List<Object> get props => [link];
+  List<Object?> get props => [link];
 }
 
 class AccountPictureUploadFailure extends AccountState {
-  final String message;
+  final String? message;
 
   const AccountPictureUploadFailure({this.message});
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message];
 }
 
 // Flow stages
 
 class AccountFlowStageUpdateSuccess extends AccountState {
-  final AccountFlowStage stage;
+  final AccountFlowStage? stage;
 
   const AccountFlowStageUpdateSuccess({this.stage});
 
   @override
-  List<Object> get props => [stage];
+  List<Object?> get props => [stage];
 }
 
 class AccountFlowStageUpdateFailure extends AccountState {
-  final String message;
+  final String? message;
 
   const AccountFlowStageUpdateFailure({this.message});
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message];
 }

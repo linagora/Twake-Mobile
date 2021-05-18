@@ -34,12 +34,12 @@ class SetAuthData extends AuthEvent {
 }
 
 class ResetAuthentication extends AuthEvent {
-  final String message;
+  final String? message;
 
   ResetAuthentication({this.message});
 
   @override
-  List<Object> get props => [message];
+  List<Object?> get props => [message];
 }
 
 class ResetPassword extends AuthEvent {

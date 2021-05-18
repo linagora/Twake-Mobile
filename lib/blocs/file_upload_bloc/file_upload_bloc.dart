@@ -24,7 +24,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       repository.upload(
         payload: await event.payload(),
         endpoint: endpoint,
-        onSuccess: (Map<String, dynamic> response) {
+        onSuccess: (Map<String, dynamic>? response) {
           print('File upload response: $response');
           this.add(FinishUpload());
         },

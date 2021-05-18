@@ -3,8 +3,8 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/models/uploaded_file.dart';
 
 abstract class FileUploadState extends Equatable {
-  final String filename;
-  final int size;
+  final String? filename;
+  final int? size;
 
   const FileUploadState({this.filename, this.size});
 }
@@ -17,26 +17,26 @@ class NothingToUpload extends FileUploadState {
 }
 
 class FileUploading extends FileUploadState {
-  final CancelToken cancelToken;
+  final CancelToken? cancelToken;
 
   const FileUploading({
     this.cancelToken,
-    String filename,
-    int size,
+    String? filename,
+    int? size,
   }) : super(filename: filename, size: size);
 
   @override
-  List<Object> get props => [filename];
+  List<Object?> get props => [filename];
 }
 
 class FileUploadFailed extends FileUploadState {
-  final String reason;
+  final String? reason;
 
-  const FileUploadFailed(this.reason, {String filename, int size})
+  const FileUploadFailed(this.reason, {String? filename, int? size})
       : super(filename: filename, size: size);
 
   @override
-  List<Object> get props => [reason];
+  List<Object?> get props => [reason];
 }
 
 class FileUploadCancelled extends FileUploadState {

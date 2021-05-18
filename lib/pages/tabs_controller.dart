@@ -27,7 +27,7 @@ class _TabsControllerState extends State<TabsController> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       context.read<CompaniesBloc>().add(ReloadCompanies());
     });
   }

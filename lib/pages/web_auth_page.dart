@@ -20,7 +20,7 @@ class WebAuthPage extends StatefulWidget {
 }
 
 class _WebAuthPageState extends State<WebAuthPage> {
-  WebViewController webViewController;
+  WebViewController? webViewController;
   // final twakeConsole =
   // 'https://beta.twake.app/ajax/users/console/openid?mobile=1';
 

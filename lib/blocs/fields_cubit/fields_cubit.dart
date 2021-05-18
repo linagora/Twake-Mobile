@@ -5,33 +5,33 @@ import 'package:twake/repositories/fields_repository.dart';
 import 'fields_state.dart';
 
 class FieldsCubit extends Cubit<FieldsState> {
-  final FieldsRepository repository;
+  final FieldsRepository? repository;
 
   FieldsCubit(this.repository) : super(FieldsInitial());
 
-  Future<void> add({@required Widget field, @required int atIndex}) async {
-    final result = await repository.add(field, atIndex);
+  Future<void> add({required Widget field, required int atIndex}) async {
+    final result = await repository!.add(field, atIndex);
     // print('Current map: ${repository.data}');
     emit(Added(fields: result));
   }
 
-  Future<void> remove({@required int atIndex}) async {
-    final result = await repository.remove(atIndex);
+  Future<void> remove({required int atIndex}) async {
+    final result = await repository!.remove(atIndex);
     // print('Current map: ${repository.data}');
     emit(Removed(fields: result));
   }
 
   Future<void> update({
-    @required String withContent,
-    @required int atIndex,
+    required String withContent,
+    required int atIndex,
   }) async {
-    final result = await repository.updateData(atIndex, withContent);
+    final result = await repository!.updateData(atIndex, withContent);
     // print('Current map: $result');
     emit(Updated(data: result));
   }
 
   Future<void> clear() async {
-    final result = await repository.clear();
+    final result = await repository!.clear();
     emit(
       result.isEmpty
           ? Cleared()
@@ -39,5 +39,5 @@ class FieldsCubit extends Cubit<FieldsState> {
     );
   }
 
-  List<Widget> getAll() => repository.getAll();
+  List<Widget> getAll() => repository!.getAll();
 }

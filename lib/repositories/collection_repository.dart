@@ -7,31 +7,31 @@ import 'package:twake/models/channel.dart';
 import 'package:twake/models/collection_item.dart';
 import 'package:twake/services/service_bundle.dart';
 
-class CollectionRepository<T extends CollectionItem> {
-  List<T> items;
-  final String apiEndpoint;
+class CollectionRepository<T extends CollectionItem?> {
+  List<T?>? items;
+  final String? apiEndpoint;
 
   // Ugly hack, but there's no other way to get constructor from generic type
-  static Map<Type, CollectionItem Function(Map<String, dynamic>)>
+  static Map<Type, CollectionItem Function(Map<String, dynamic>?)>
       _typeToConstructor = {
-    Company: (Map<String, dynamic> json) => Company.fromJson(json),
-    Workspace: (Map<String, dynamic> json) => Workspace.fromJson(json),
-    Channel: (Map<String, dynamic> json) {
-      json = Map.from(json);
+    Company: (Map<String, dynamic>? json) => Company.fromJson(json!),
+    Workspace: (Map<String, dynamic>? json) => Workspace.fromJson(json!),
+    Channel: (Map<String, dynamic>? json) {
+      json = Map.from(json!);
       return Channel.fromJson(json);
     },
-    Message: (Map<String, dynamic> json) {
-      json = Map.from(json);
+    Message: (Map<String, dynamic>? json) {
+      json = Map.from(json!);
       return Message.fromJson(json);
     },
-    Direct: (Map<String, dynamic> json) {
-      json = Map.from(json);
+    Direct: (Map<String, dynamic>? json) {
+      json = Map.from(json!);
       return Direct.fromJson(json);
     },
-    Member: (Map<String, dynamic> json) => Member.fromJson(json),
+    Member: (Map<String, dynamic>? json) => Member.fromJson(json!),
   };
 
-  List<T> get roItems => [...items];
+  List<T?> get roItems => [...items!];
 
   static Map<Type, StorageType> _typeToStorageType = {
     Company: StorageType.Company,
@@ -44,10 +44,10 @@ class CollectionRepository<T extends CollectionItem> {
 
   CollectionRepository({this.items, this.apiEndpoint});
 
-  bool get isEmpty => items.isEmpty;
+  bool get isEmpty => items!.isEmpty;
 
-  T get selected => items.firstWhere((i) => i.isSelected == 1, orElse: () {
-        if (items.isNotEmpty) return items[0];
+  T? get selected => items!.firstWhere((i) => i!.isSelected == 1, orElse: () {
+        if (items!.isNotEmpty) return items![0];
         return null;
       });
 
@@ -59,9 +59,9 @@ class CollectionRepository<T extends CollectionItem> {
 
   static Future<CollectionRepository> load<T extends CollectionItem>(
     String apiEndpoint, {
-    Map<String, dynamic> queryParams,
-    List<List> filters,
-    Map<String, bool> sortFields, // fields to sort by + sort direction
+    Map<String, dynamic>? queryParams,
+    List<List>? filters,
+    Map<String, bool>? sortFields, // fields to sort by + sort direction
   }) async {
     List<dynamic> itemsList = await storage.batchLoad(
       type: _typeToStorageType[T],
@@ -72,7 +72,7 @@ class CollectionRepository<T extends CollectionItem> {
     if (itemsList.isEmpty) {
       // Logger().d('Requesting $T items from api...');
       try {
-        itemsList = await api.get(apiEndpoint, params: queryParams);
+        itemsList = await (api.get(apiEndpoint, params: queryParams) as FutureOr<List<dynamic>>);
       } on ApiError catch (error) {
         Logger().d('ERROR WHILE FETCHING $T items FROM API\n${error.message}');
         throw error;
@@ -80,7 +80,7 @@ class CollectionRepository<T extends CollectionItem> {
       saveToStore = true;
     }
     final items =
-        itemsList.map((i) => (_typeToConstructor[T](i) as T)).toList();
+        itemsList.map((i) => (_typeToConstructor[T]!(i) as T)).toList();
     final collection =
         CollectionRepository<T>(items: items, apiEndpoint: apiEndpoint);
     if (saveToStore) collection.save();
@@ -88,18 +88,18 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   void select(
-    String itemId, {
+    String? itemId, {
     bool saveToStore: true,
-    String apiEndpoint,
-    Map<String, dynamic> params,
+    String? apiEndpoint,
+    Map<String, dynamic>? params,
   }) {
     // logger.w('BEFORE SELECT $T ${selected.id}');
-    final item = items.firstWhere((i) => i.id == itemId, orElse: () => null);
+    final item = items!.firstWhere((i) => i!.id == itemId, orElse: () => null);
     if (item == null) return;
-    var oldSelected = selected;
+    T oldSelected = selected!;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
-    assert(selected.id == item.id);
+    assert(selected!.id == item.id);
     if (saveToStore) saveOne(item);
     saveOne(oldSelected);
     if (apiEndpoint != null && params != null)
@@ -111,12 +111,12 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<bool> reload({
-    Map<String, dynamic> queryParams,
-    List<List> filters, // fields to filter by in store
-    Map<String, bool> sortFields, // fields to sort by + sort direction
-    Function onApiLoaded,
-    int limit,
-    int offset,
+    Map<String, dynamic>? queryParams,
+    List<List>? filters, // fields to filter by in store
+    Map<String, bool>? sortFields, // fields to sort by + sort direction
+    Function? onApiLoaded,
+    int? limit,
+    int? offset,
   }) async {
     List<dynamic> itemsList = [];
     itemsList = await storage.batchLoad(
@@ -127,7 +127,7 @@ class CollectionRepository<T extends CollectionItem> {
       offset: offset,
     );
 
-    api.get(apiEndpoint, params: queryParams).then((itemsList) {
+    api.get(apiEndpoint!, params: queryParams).then((itemsList) {
       storage.batchDelete(type: _typeToStorageType[T], filters: filters);
       _updateItems(itemsList, saveToStore: true);
 
@@ -141,8 +141,8 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<bool> didChange({
-    Map<String, dynamic> queryParams,
-    List<List> filters, // fields to filter by in store
+    Map<String, dynamic>? queryParams,
+    List<List>? filters, // fields to filter by in store
   }) async {
     final itemsList = await storage.batchLoad(
       type: _typeToStorageType[T],
@@ -150,16 +150,16 @@ class CollectionRepository<T extends CollectionItem> {
       limit: 100000,
       offset: 0,
     );
-    List remote;
+    List? remote;
     if (itemsList.isEmpty) return false;
     try {
-      remote = await api.get(apiEndpoint, params: queryParams);
+      remote = await (api.get(apiEndpoint!, params: queryParams) as FutureOr<List<dynamic>?>);
       // logger.w("GOT WORKSPACES: ${remote.map((w) => w['name']).toSet()}");
     } on ApiError catch (error) {
       logger.d('ERROR while reloading $T items from api\n${error.message}');
       return false;
     }
-    if (remote.length != itemsList.length) {
+    if (remote!.length != itemsList.length) {
       logger.w("LOCAL != REMOTE");
       await storage.batchDelete(type: _typeToStorageType[T], filters: filters);
       _updateItems(remote, saveToStore: true);
@@ -173,49 +173,49 @@ class CollectionRepository<T extends CollectionItem> {
     bool addToItems = true,
   }) async {
     // logger.d('Pulling item $T from api...');
-    List resp = [];
+    List? resp = [];
     try {
-      resp = (await api.get(apiEndpoint, params: queryParams));
+      resp = (await (api.get(apiEndpoint!, params: queryParams) as FutureOr<List<dynamic>>));
     } on ApiError catch (error) {
       logger.d('ERROR while loading more $T items from api\n${error.message}');
       return false;
     }
     if (resp.isEmpty) return false;
-    final item = _typeToConstructor[T](resp[0]);
-    if (addToItems) this.items.add(item);
-    saveOne(item);
+    final item = _typeToConstructor[T]!(resp[0]);
+    if (addToItems) this.items!.add(item as T?);
+    saveOne(item as T);
     return true;
   }
 
   Future<bool> pushOne(
     Map<String, dynamic> body, {
-    Function onError,
-    Function(T) onSuccess,
+    Function? onError,
+    Function(T)? onSuccess,
     addToItems = true,
   }) async {
     // logger.d('Sending item $T to api...');
     var resp;
     try {
-      resp = (await api.post(apiEndpoint, body: body));
+      resp = (await api.post(apiEndpoint!, body: body));
     } catch (error) {
       logger.e('Error while sending $T item to api\n${error.message}');
       if (onError != null) onError();
       return false;
     }
     logger.d('RESPONSE AFTER SENDING ITEM: $resp');
-    final item = _typeToConstructor[T](resp);
-    if (addToItems) this.items.add(item);
-    if (onSuccess != null) onSuccess(item);
-    saveOne(item);
+    final item = _typeToConstructor[T]!(resp);
+    if (addToItems) this.items!.add(item as T?);
+    if (onSuccess != null) onSuccess(item as T);
+    saveOne(item as T);
     return true;
   }
 
-  Future<T> getItemById(String id) async {
-    var item = items.firstWhere((i) => i.id == id, orElse: () => null);
+  Future<T?> getItemById(String? id) async {
+    var item = items!.firstWhere((i) => i!.id == id, orElse: () => null);
     if (item == null) {
       final map = await storage.load(type: _typeToStorageType[T], key: id);
       if (map == null) return null;
-      item = _typeToConstructor[T](map);
+      item = _typeToConstructor[T]!(map) as T?;
     }
     return item;
   }
@@ -226,7 +226,7 @@ class CollectionRepository<T extends CollectionItem> {
   }
 
   Future<void> clean() async {
-    items.clear();
+    items!.clear();
     await storage.truncate(_typeToStorageType[T]);
   }
 
@@ -234,23 +234,23 @@ class CollectionRepository<T extends CollectionItem> {
     key, {
     bool apiSync: true,
     bool removeFromItems: true,
-    Map<String, dynamic> requestBody,
+    Map<String, dynamic>? requestBody,
   }) async {
     if (apiSync) {
       try {
-        await api.delete(apiEndpoint, body: requestBody);
+        await api.delete(apiEndpoint!, body: requestBody);
       } catch (error) {
         logger.e('Error while sending $T item to api\n${error.message}');
         return false;
       }
     }
     await storage.delete(type: _typeToStorageType[T], key: key);
-    if (removeFromItems) items.removeWhere((i) => i.id == key);
+    if (removeFromItems) items!.removeWhere((i) => i!.id == key);
     return true;
   }
 
   void clear() {
-    this.items.clear();
+    this.items!.clear();
   }
 
   void _updateItems(
@@ -258,9 +258,9 @@ class CollectionRepository<T extends CollectionItem> {
     bool saveToStore: false,
     bool extendItems: false,
   }) {
-    final items = itemsList.map((c) => (_typeToConstructor[T](c) as T));
+    final items = itemsList.map((c) => (_typeToConstructor[T]!(c) as T));
     if (extendItems)
-      this.items.addAll(items);
+      this.items!.addAll(items);
     else
       this.items = items.toList();
     if (saveToStore) this.save();
@@ -269,7 +269,7 @@ class CollectionRepository<T extends CollectionItem> {
   Future<void> save() async {
     // logger.d('SAVING $T items to store!');
     await storage.batchStore(
-      items: this.items.map((i) => i.toJson()),
+      items: this.items!.map((i) => i!.toJson()),
       type: _typeToStorageType[T],
     );
   }

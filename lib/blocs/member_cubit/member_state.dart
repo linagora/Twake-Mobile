@@ -12,39 +12,39 @@ class MemberInitial extends MemberState {
 }
 
 class MembersLoaded extends MemberState {
-  final String channelId;
-  final List<Member> members;
+  final String? channelId;
+  final List<Member?>? members;
 
-  MembersLoaded({@required this.channelId, @required this.members});
+  MembersLoaded({required this.channelId, required this.members});
 
   @override
-  List<Object> get props => [channelId, members];
+  List<Object?> get props => [channelId, members];
 }
 
 class MembersAdded extends MemberState {
-  final String channelId;
+  final String? channelId;
   final List<Member> members;
 
-  MembersAdded({@required this.channelId, @required this.members});
+  MembersAdded({required this.channelId, required this.members});
 
   @override
-  List<Object> get props => [channelId, members];
+  List<Object?> get props => [channelId, members];
 }
 
 class MembersDeleted extends MemberState {
-  final String channelId;
+  final String? channelId;
   final List<Member> members;
 
-  MembersDeleted({@required this.channelId, @required this.members});
+  MembersDeleted({required this.channelId, required this.members});
 
   @override
-  List<Object> get props => [channelId, members];
+  List<Object?> get props => [channelId, members];
 }
 
 class SelfDeleted extends MemberState {
   final String channelId;
 
-  SelfDeleted({@required this.channelId});
+  SelfDeleted({required this.channelId});
 
   @override
   List<Object> get props => [channelId];

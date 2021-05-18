@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 
 class SheetTitleBar extends StatelessWidget {
   const SheetTitleBar({
-    Key key,
-    @required this.title,
+    Key? key,
+    required this.title,
     this.leadingTitle,
     this.trailingTitle,
     this.leadingAction,
     this.trailingAction,
   }) : super(key: key);
 
-  final String title;
-  final String leadingTitle;
-  final String trailingTitle;
-  final Function leadingAction;
-  final Function trailingAction;
+  final String? title;
+  final String? leadingTitle;
+  final String? trailingTitle;
+  final Function? leadingAction;
+  final Function? trailingAction;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class SheetTitleBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton(
-            onPressed: leadingAction,
+            onPressed: leadingAction as void Function()?,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -60,7 +60,7 @@ class SheetTitleBar extends StatelessWidget {
             ),
           ),
           Text(
-            title,
+            title!,
             style: TextStyle(
               color: Colors.black,
               fontSize: 17.0,
@@ -69,7 +69,7 @@ class SheetTitleBar extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           TextButton(
-            onPressed: trailingAction,
+            onPressed: trailingAction as void Function()?,
             child: Text(
               trailingTitle ?? '',
               style: TextStyle(

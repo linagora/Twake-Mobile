@@ -6,9 +6,9 @@ abstract class ChannelsEvent extends Equatable {
 }
 
 class ReloadChannels extends ChannelsEvent {
-  final String workspaceId;
+  final String? workspaceId;
   // parent company id for directs
-  final String companyId;
+  final String? companyId;
   final bool forceFromApi;
   final bool silent;
   const ReloadChannels({
@@ -52,21 +52,21 @@ class LoadSingleChannel extends ChannelsEvent {
 }
 
 class ChangeSelectedChannel extends ChannelsEvent {
-  final String channelId;
+  final String? channelId;
   final bool shouldYield;
   ChangeSelectedChannel(this.channelId, [this.shouldYield = true]);
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class ModifyMessageCount extends ChannelsEvent {
-  final String channelId;
-  final String workspaceId;
-  final String companyId;
-  final int unreadModifier;
-  final int hasUnread;
-  final int timeStamp;
+  final String? channelId;
+  final String? workspaceId;
+  final String? companyId;
+  final int? unreadModifier;
+  final int? hasUnread;
+  final int? timeStamp;
 
   ModifyMessageCount({
     this.channelId,
@@ -78,15 +78,15 @@ class ModifyMessageCount extends ChannelsEvent {
   });
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class ModifyChannelState extends ChannelsEvent {
-  final String channelId;
-  final String workspaceId;
-  final String companyId;
-  final String threadId;
-  final String messageId;
+  final String? channelId;
+  final String? workspaceId;
+  final String? companyId;
+  final String? threadId;
+  final String? messageId;
 
   ModifyChannelState({
     this.channelId,
@@ -97,23 +97,23 @@ class ModifyChannelState extends ChannelsEvent {
   });
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class RemoveChannel extends ChannelsEvent {
-  final String workspaceId;
-  final String channelId;
+  final String? workspaceId;
+  final String? channelId;
 
   RemoveChannel({this.channelId, this.workspaceId});
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class FetchMembers extends ChannelsEvent {
   final String channelId;
 
-  FetchMembers({@required this.channelId});
+  FetchMembers({required this.channelId});
 
   @override
   List<Object> get props => [channelId];

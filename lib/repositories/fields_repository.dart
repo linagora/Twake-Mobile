@@ -5,11 +5,11 @@ import 'package:twake/widgets/sheets/removable_text_field.dart';
 
 class FieldsRepository {
   List<Widget> fields;
-  Map<int, String> data;
+  Map<int, String?> data;
 
   FieldsRepository({
-    @required this.fields,
-    @required this.data,
+    required this.fields,
+    required this.data,
   });
 
   List<Widget> getAll() => fields;
@@ -29,7 +29,7 @@ class FieldsRepository {
   Future<List<Widget>> remove(int index) async {
     var newIndex = 0;
     var newFields = <Widget>[];
-    var newMap = <int, String>{};
+    var newMap = <int, String?>{};
 
     for (var key in data.keys) {
       if (key != index) {

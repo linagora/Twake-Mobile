@@ -13,19 +13,19 @@ const _PROFILE_STORE_KEY = 'profile';
 @JsonSerializable(explicitToJson: true)
 class ProfileRepository extends JsonSerializable {
   @JsonKey(required: true)
-  final String id;
+  final String? id;
   @JsonKey(required: true)
-  final String username;
+  final String? username;
   @JsonKey(name: 'firstname')
-  String firstName;
+  String? firstName;
   @JsonKey(name: 'lastname')
-  String lastName;
+  String? lastName;
   @JsonKey(name: 'console_id')
-  final String consoleId;
+  final String? consoleId;
 
   // Avatar of user
-  String thumbnail;
-  String email;
+  String? thumbnail;
+  String? email;
 
   // @JsonKey(name: 'notification_rooms')
   // List<String> notificationRooms;
@@ -45,21 +45,21 @@ class ProfileRepository extends JsonSerializable {
   static final _storage = Storage();
 
   @JsonKey(name: 'selected_company_id')
-  String selectedCompanyId;
+  String? selectedCompanyId;
   @JsonKey(name: 'selected_workspace_id')
-  String selectedWorkspaceId;
+  String? selectedWorkspaceId;
   @JsonKey(ignore: true)
-  String selectedChannelId;
+  String? selectedChannelId;
   @JsonKey(ignore: true)
-  String selectedThreadId;
+  String? selectedThreadId;
   @JsonKey(ignore: true)
-  Company selectedCompany;
+  Company? selectedCompany;
   @JsonKey(ignore: true)
-  Workspace selectedWorkspace;
+  Workspace? selectedWorkspace;
   @JsonKey(ignore: true)
-  BaseChannel selectedChannel;
+  BaseChannel? selectedChannel;
   @JsonKey(ignore: true)
-  Map<String, dynamic> badges = {};
+  Map<String, dynamic>? badges = {};
 
   // Pseudo constructor for loading profile from storage or api
   static Future<ProfileRepository> load() async {
@@ -72,7 +72,7 @@ class ProfileRepository extends JsonSerializable {
     );
     if (profileMap == null) {
       logger.d('No profile in storage, requesting from api...');
-      profileMap = await _api.get(Endpoint.profile);
+      profileMap = await (_api.get(Endpoint.profile) as FutureOr<Map<String, dynamic>?>);
       logger.d('RECEIVED PROFILE: $profileMap');
       loadedFromNetwork = true;
     } else {
@@ -80,7 +80,7 @@ class ProfileRepository extends JsonSerializable {
       logger.d('RETRIEVED FROM STORAGE PROFILE: $profileMap');
     }
     // Get repository instance
-    final profile = ProfileRepository.fromJson(profileMap);
+    final profile = ProfileRepository.fromJson(profileMap!);
     // Save it to store
     if (loadedFromNetwork) profile.save();
     // return it
@@ -93,10 +93,10 @@ class ProfileRepository extends JsonSerializable {
   }
 
   Future<void> syncBadges() async {
-    this.badges = await _api.get(
+    this.badges = await (_api.get(
       Endpoint.badges,
       params: {'company_id': this.selectedCompanyId, 'all_companies': 'true'},
-    );
+    ) as FutureOr<Map<String, dynamic>?>);
   }
 
   Future<void> clean() async {
@@ -117,10 +117,10 @@ class ProfileRepository extends JsonSerializable {
   }
 
   void _update(Map<String, dynamic> json) {
-    firstName = json['firstname'] as String;
-    lastName = json['lastname'] as String;
-    thumbnail = json['thumbnail'] as String;
-    email = json['email'] as String;
+    firstName = json['firstname'] as String?;
+    lastName = json['lastname'] as String?;
+    thumbnail = json['thumbnail'] as String?;
+    email = json['email'] as String?;
   }
 
   /// Convenience methods to avoid deserializing this class from JSON

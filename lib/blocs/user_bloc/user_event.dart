@@ -5,12 +5,12 @@ abstract class UserEvent extends Equatable {
 }
 
 class LoadUser extends UserEvent {
-  final String userId;
+  final String? userId;
 
   const LoadUser(this.userId);
 
   @override
-  List<Object> get props => [userId];
+  List<Object?> get props => [userId];
 }
 
 class RemoveUser extends UserEvent {
@@ -23,10 +23,10 @@ class RemoveUser extends UserEvent {
 }
 
 class LoadUsers extends UserEvent {
-  final String request;
+  final String? request;
 
   LoadUsers(this.request);
 
   @override
-  List<Object> get props => [request];
+  List<Object?> get props => [request];
 }

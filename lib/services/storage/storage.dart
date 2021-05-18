@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:twake/services/storage/sqlite.dart';
 
 abstract class Storage {
-  final settingsField = null;
-  static Storage _storage;
+  final dynamic settingsField = null;
+  static Storage? _storage;
   factory Storage() {
     if (_storage == null) {
       if ((defaultTargetPlatform == TargetPlatform.iOS) ||
@@ -19,60 +19,60 @@ abstract class Storage {
         throw 'Web is not supported yet';
       }
     }
-    return _storage;
+    return _storage!;
   }
 
   Future<void> initDb();
 
-  Future<Map<String, dynamic>> load({
-    StorageType type,
+  Future<Map<String, dynamic>?> load({
+    StorageType? type,
     dynamic key,
-    List<String> fields,
+    List<String?>? fields,
   });
 
   Future<dynamic> customUpdate({
-    String sql,
-    List args,
+    String? sql,
+    List? args,
   });
 
   Future<dynamic> customQuery(
     String query, {
-    List<List> filters,
+    List<List>? filters,
     List<List> likeFilters: const [],
-    Map<String, bool> orderings,
-    int limit,
-    int offset,
+    Map<String, bool>? orderings,
+    int? limit,
+    int? offset,
   });
 
   Future<void> store({
-    Map<String, dynamic> item,
-    StorageType type,
+    Map<String?, dynamic>? item,
+    StorageType? type,
     dynamic key,
   });
 
   Future<void> batchStore({
-    Iterable<Map<String, dynamic>> items,
-    StorageType type,
+    Iterable<Map<String, dynamic>>? items,
+    StorageType? type,
   });
 
   Future<List<Map<String, dynamic>>> batchLoad({
-    StorageType type,
-    List<List> filters,
-    Map<String, bool> orderings,
-    int limit,
-    int offset,
+    StorageType? type,
+    List<List>? filters,
+    Map<String, bool>? orderings,
+    int? limit,
+    int? offset,
   });
 
   Future<void> batchDelete({
-    StorageType type,
-    List<List> filters,
+    StorageType? type,
+    List<List>? filters,
   });
 
-  Future<void> delete({StorageType type, dynamic key});
+  Future<void> delete({StorageType? type, dynamic key});
 
-  Future<void> truncate(StorageType type);
+  Future<void> truncate(StorageType? type);
 
-  Future<void> truncateAll({List<StorageType> except});
+  Future<void> truncateAll({List<StorageType>? except});
 
   dynamic mapTypeToStore(StorageType type);
 

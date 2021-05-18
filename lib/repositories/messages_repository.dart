@@ -3,18 +3,18 @@ import 'package:twake/repositories/user_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class MessagesRepository {
-  List<Message> items;
-  final String apiEndpoint;
+  List<Message?>? items;
+  final String? apiEndpoint;
 
-  List<Message> get roItems => [...items];
+  List<Message?> get roItems => [...items!];
 
   MessagesRepository({this.items, this.apiEndpoint});
 
-  bool get isEmpty => items.isEmpty;
+  bool get isEmpty => items!.isEmpty;
 
-  Message get selected =>
-      items.firstWhere((i) => i.isSelected == 1, orElse: () {
-        if (items.isNotEmpty) return items[0];
+  Message? get selected =>
+      items!.firstWhere((i) => i!.isSelected == 1, orElse: () {
+        if (items!.isNotEmpty) return items![0];
         return null;
       });
 
@@ -24,9 +24,9 @@ class MessagesRepository {
   static final _api = Api();
   static final _storage = Storage();
 
-  void select(String itemId, {bool saveToStore: true}) {
-    final item = items.firstWhere((i) => i.id == itemId);
-    var oldSelected = selected;
+  void select(String? itemId, {bool saveToStore: true}) {
+    final item = items!.firstWhere((i) => i!.id == itemId)!;
+    var oldSelected = selected!;
     oldSelected.isSelected = 0;
     item.isSelected = 1;
     // assert(selected.id == item.id);
@@ -35,23 +35,23 @@ class MessagesRepository {
   }
 
   Future<bool> load({
-    Map<String, dynamic> queryParams,
-    List<List> filters, // fields to filter by in store
-    Map<String, bool> sortFields, // fields to sort by + sort direction
-    Function onNewMessagesCallback,
-    int limit,
+    Map<String, dynamic>? queryParams,
+    List<List>? filters, // fields to filter by in store
+    Map<String, bool>? sortFields, // fields to sort by + sort direction
+    Function? onNewMessagesCallback,
+    int? limit,
   }) async {
     final maxDateQuery =
         // 'SELECT max(modification_date) as max_mod, '
         'SELECT max(creation_date) as max_create '
         'FROM message';
-    final List max = await _storage.customQuery(maxDateQuery, filters: filters);
+    final List max = await (_storage.customQuery(maxDateQuery, filters: filters) as FutureOr<List<dynamic>>);
     // logger.d('REQUESTING MESSAGES AFTER: $max');
     if (max.isNotEmpty && max[0]['max_create'] != null) {
-      queryParams['after_date'] = max[0]['max_create'].toString();
+      queryParams!['after_date'] = max[0]['max_create'].toString();
     }
     _api
-        .get(apiEndpoint, params: queryParams)
+        .get(apiEndpoint!, params: queryParams)
         .then((rawMessages) => getRequestedMessages(
               rawMessages: rawMessages,
               filters: filters,
@@ -61,7 +61,7 @@ class MessagesRepository {
         .then((itemsList) {
           if (itemsList.isNotEmpty) _updateItems(itemsList);
         })
-        .then((_) => onNewMessagesCallback())
+        .then(((_) => onNewMessagesCallback!()) as FutureOr<_> Function(Null))
         .catchError((error) =>
             logger.d('ERROR while reloading Messages from api\n$error'));
 
@@ -76,13 +76,13 @@ class MessagesRepository {
 
   Future<List<dynamic>> getRequestedMessages({
     List<dynamic> rawMessages: const [],
-    List<List> filters, // fields to filter by in store
-    Map<String, bool> sortFields, // fields to sort by + sort direction
-    int limit: 50,
+    List<List>? filters, // fields to filter by in store
+    Map<String, bool>? sortFields, // fields to sort by + sort direction
+    int? limit: 50,
   }) async {
     if (rawMessages.isNotEmpty) {
-      final Set<String> userIds =
-          rawMessages.map((i) => (i['user_id'] as String)).toSet();
+      final Set<String?> userIds =
+          rawMessages.map((i) => (i['user_id'] as String?)).toSet();
       await UserRepository().batchUsersLoad(userIds);
       await _storage.batchStore(
         items: rawMessages.map((i) {
@@ -99,23 +99,23 @@ class MessagesRepository {
         'user.thumbnail, '
         'application.name '
         'FROM message LEFT JOIN user ON user.id = message.user_id LEFT JOIN application ON application.id = message.app_id';
-    return await _storage.customQuery(
+    return await (_storage.customQuery(
       query,
       filters: filters,
       orderings: sortFields,
       limit: limit,
       offset: 0,
-    );
+    ) as FutureOr<List<dynamic>>);
   }
 
   Future<bool> loadMore({
-    Map<String, dynamic> queryParams,
-    List<List> filters, // fields to filter by in store
-    Map<String, bool> sortFields, // fields to sort by + sort direction
-    int limit,
-    int offset,
+    Map<String, dynamic>? queryParams,
+    List<List>? filters, // fields to filter by in store
+    Map<String, bool>? sortFields, // fields to sort by + sort direction
+    int? limit,
+    int? offset,
   }) async {
-    List<dynamic> itemsList = [];
+    List<dynamic>? itemsList = [];
     logger.d('Loading more messages from storage...\nFilters: $filters');
     final query = 'SELECT message.*, '
         'user.username, '
@@ -124,37 +124,37 @@ class MessagesRepository {
         'user.thumbnail, '
         'application.name '
         'FROM message LEFT JOIN user ON user.id = message.user_id LEFT JOIN application ON application.id = message.app_id';
-    itemsList = await _storage.customQuery(
+    itemsList = await (_storage.customQuery(
       query,
       filters: filters,
       orderings: sortFields,
       limit: limit,
       offset: 0,
-    );
+    ) as FutureOr<List<dynamic>>);
     // logger.d('Loaded ${itemsList.length} items');
     if (itemsList.isEmpty) {
       try {
-        itemsList = await _api.get(apiEndpoint, params: queryParams);
+        itemsList = await (_api.get(apiEndpoint!, params: queryParams) as FutureOr<List<dynamic>>);
         // logger.d('Loaded ${itemsList.length} MESSAGES FROM API');
       } on ApiError catch (error) {
         logger
             .d('ERROR while loading more Messages from api\n${error.message}');
         return false;
       }
-      final Set<String> userIds =
-          itemsList.map((i) => (i['user_id'] as String)).toSet();
+      final Set<String?> userIds =
+          itemsList.map((i) => (i['user_id'] as String?)).toSet();
       await UserRepository().batchUsersLoad(userIds);
       await _storage.batchStore(
         items: itemsList.map((i) => Message.fromJson(i).toJson()),
         type: StorageType.Message,
       );
-      itemsList = await _storage.customQuery(
+      itemsList = await (_storage.customQuery(
         query,
         filters: filters,
         orderings: sortFields,
         limit: limit,
         offset: 0,
-      );
+      ) as FutureOr<List<dynamic>>);
     }
     if (itemsList.isNotEmpty) {
       _updateItems(itemsList, extendItems: true);
@@ -162,7 +162,7 @@ class MessagesRepository {
     return true;
   }
 
-  Future<Message> updateResponsesCount(String messageId) async {
+  Future<Message?> updateResponsesCount(String? messageId) async {
     var m = await getItemById(messageId);
     if (m == null) return null;
     // print('BEFORE COUNT: ${m.responsesCount}\nID: $messageId');
@@ -195,9 +195,9 @@ class MessagesRepository {
     List<String> dummyIds: const [],
   }) async {
     // logger.d('Pulling item Message from api...\nPARAMS: $queryParams');
-    List resp = [];
+    List? resp = [];
     try {
-      resp = (await _api.get(apiEndpoint, params: queryParams));
+      resp = (await (_api.get(apiEndpoint!, params: queryParams) as FutureOr<List<dynamic>>));
     } on ApiError catch (error) {
       logger.e('ERROR while loading more Message from api\n${error.message}');
       return false;
@@ -205,8 +205,8 @@ class MessagesRepository {
     if (resp.isEmpty) return false;
     var item = Message.fromJson(resp[0]);
     if (dummyIds.isNotEmpty) {
-      if (this.items.where((m) => dummyIds.contains(m.id)).any(
-            (m) => m.content.originalStr == item.content.originalStr,
+      if (this.items!.where((m) => dummyIds.contains(m!.id)).any(
+            (m) => m!.content!.originalStr == item.content!.originalStr,
           )) return false;
     }
 
@@ -225,14 +225,14 @@ class MessagesRepository {
           'user.lastname, '
           'user.thumbnail '
           'FROM message INNER JOIN user ON user.id = message.user_id';
-      final List itemMapTemp = (await _storage.customQuery(
+      final List itemMapTemp = (await (_storage.customQuery(
         query,
         filters: [
           ['message.id', '=', item.id]
         ],
         limit: 1,
         offset: 0,
-      ));
+      ) as FutureOr<List<dynamic>>));
       var itemMap;
       if (itemMapTemp.isNotEmpty) {
         itemMap = itemMapTemp[0];
@@ -244,9 +244,9 @@ class MessagesRepository {
 
       final message = Message.fromJson(itemMap);
       final old =
-          this.items.firstWhere((m) => m.id == message.id, orElse: () => null);
-      if (old != null) this.items.remove(old);
-      this.items.add(message);
+          this.items!.firstWhere((m) => m!.id == message.id, orElse: () => null);
+      if (old != null) this.items!.remove(old);
+      this.items!.add(message);
     }
 
     // logger.d('Pulled item: ${item.toJson()}');
@@ -255,14 +255,14 @@ class MessagesRepository {
 
   Future<bool> pushOne(
     Map<String, dynamic> body, {
-    Function onError,
-    Function(Message) onSuccess,
+    Function? onError,
+    Function(Message)? onSuccess,
     addToItems = true,
   }) async {
     // logger.d('Sending item Message to api...');
     var resp;
     try {
-      resp = (await _api.post(apiEndpoint, body: body));
+      resp = (await _api.post(apiEndpoint!, body: body));
     } catch (error) {
       logger.e('Error while sending Message to api\n${error.message}');
       if (onError != null) onError();
@@ -271,15 +271,15 @@ class MessagesRepository {
     // logger.d('RESPONSE AFTER SENDING ITEM: $resp');
     final item = Message.fromJson(resp);
     await saveOne(item);
-    if (addToItems) this.items.add(item);
+    if (addToItems) this.items!.add(item);
     if (onSuccess != null) onSuccess(item);
     return true;
   }
 
-  Future<Message> getItemById(String id, [forceFromDB = false]) async {
-    Message item;
+  Future<Message?> getItemById(String? id, [forceFromDB = false]) async {
+    Message? item;
     if (!forceFromDB)
-      item = items.firstWhere((i) => i.id == id, orElse: () => null);
+      item = items!.firstWhere((i) => i!.id == id, orElse: () => null);
     if (item == null) {
       // print('GETTING MESSAGE BY ID: $id');
       var map = await _storage.load(type: StorageType.Message, key: id);
@@ -291,7 +291,7 @@ class MessagesRepository {
   }
 
   Future<void> clean() async {
-    items.clear();
+    items!.clear();
     await _storage.truncate(StorageType.Message);
   }
 
@@ -299,23 +299,23 @@ class MessagesRepository {
     key, {
     bool apiSync: true,
     bool removeFromItems: true,
-    Map<String, dynamic> requestBody,
+    Map<String, dynamic>? requestBody,
   }) async {
     if (apiSync) {
       try {
-        await _api.delete(apiEndpoint, body: requestBody);
+        await _api.delete(apiEndpoint!, body: requestBody);
       } catch (error) {
         logger.e('Error while sending Message to api\n${error.message}');
         return false;
       }
     }
     await _storage.delete(type: StorageType.Message, key: key);
-    if (removeFromItems) items.removeWhere((i) => i.id == key);
+    if (removeFromItems) items!.removeWhere((i) => i!.id == key);
     return true;
   }
 
   void clear() {
-    this.items.clear();
+    this.items!.clear();
   }
 
   void _updateItems(
@@ -324,7 +324,7 @@ class MessagesRepository {
   }) {
     final items = itemsList.map((c) => Message.fromJson(c));
     if (extendItems)
-      this.items.addAll(items);
+      this.items!.addAll(items);
     else
       this.items = items.toList();
   }
@@ -332,7 +332,7 @@ class MessagesRepository {
   Future<void> save() async {
     logger.d('SAVING Messages items to store!');
     await _storage.batchStore(
-      items: this.items.map((i) => i.toJson()),
+      items: this.items!.map((i) => i!.toJson()),
       type: StorageType.Message,
     );
   }

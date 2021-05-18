@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class DecoratedTabBar extends StatelessWidget implements PreferredSizeWidget {
   DecoratedTabBar({
-    @required this.tabBar,
-    @required this.decoration,
+    required this.tabBar,
+    required this.decoration,
   });
 
   final TabBar tabBar;

@@ -5,7 +5,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'image_avatar.dart';
 
 class StackedUserAvatars extends StatelessWidget {
-  final List<String> userIds;
+  final List<String>? userIds;
   final double width;
   final double height;
 
@@ -17,16 +17,16 @@ class StackedUserAvatars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (userIds.length == 0) return Container(width: width, height: height);
+    if (userIds!.length == 0) return Container(width: width, height: height);
 
     List<Container> paddedAvatars = [];
-    for (int i = 0; i < userIds.length; i++) {
+    for (int i = 0; i < userIds!.length; i++) {
       paddedAvatars.add(
         Container(
           width: width,
           height: height,
           child: BlocProvider<UserBloc>(
-            create: (_) => UserBloc(userIds[i]),
+            create: (_) => UserBloc(userIds![i]),
             child: BlocBuilder<UserBloc, UserState>(builder: (ctx, state) {
               return ImageAvatar(
                 state is UserReady ? state.thumbnail : null,

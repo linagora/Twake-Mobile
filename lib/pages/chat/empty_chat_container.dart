@@ -4,10 +4,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 class EmptyChatContainer extends StatelessWidget {
   final bool isDirect;
   final bool isError;
-  final String userName;
+  final String? userName;
 
   const EmptyChatContainer({
-    Key key,
+    Key? key,
     this.isDirect = false,
     this.isError = false,
     this.userName = '',
