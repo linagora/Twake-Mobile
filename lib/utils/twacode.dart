@@ -575,18 +575,13 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
-  Function onNotificationClick;
 
-  TwacodeRenderer(
-      {this.twacode, this.onNotificationClick, TextStyle parentStyle}) {
+  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
 
-    spans = render(
-        twacode: this.twacode,
-        onNotificationClick: onNotificationClick,
-        parentStyle: parentStyle);
+    spans = render(twacode: this.twacode, parentStyle: parentStyle);
   }
 
   // Files should only occur in the end of the twacode structure
@@ -720,7 +715,6 @@ class TwacodeRenderer {
 
   List<InlineSpan> render({
     List<dynamic> twacode,
-    Function onNotificationClick,
     TextStyle parentStyle,
   }) {
     List<InlineSpan> spans = [];
@@ -981,21 +975,29 @@ class TwacodeRenderer {
                         final Dio dio = Dio();
                         final dir = await getExternalStorageDirectory();
                         final dir2 = path.join(dir.path, t['metadata']['name']);
-
+                        final Map<String, String> payload = {
+                          'title':
+                              '${t['metadata']['name']} downloaded successfully',
+                          'Body': t['metadata']['name'],
+                          'payload': dir2
+                        };
                         dio.download(
                             Api.host + t['metadata']['download'], dir2);
-
-                        //   onNotificationClick(
-                        //      '${t['metadata']['name']} downloaded successfully');
-
-                        await notificationPlugin.showNotification(dir2);
+                        await notificationPlugin.showNotification(payload);
                       } else if (Platform.isIOS) {
                         final Dio dio = Dio();
                         final dir = await getApplicationSupportDirectory();
-                        final dir2 = path.join(dir.path, t['metadata']['name']);
+                        final dir2 =
+                            path.join("${dir.path}", t['metadata']['name']);
+                        final Map<String, String> payload = {
+                          'title':
+                              '${t['metadata']['name']} downloaded successfully',
+                          'Body': t['metadata']['name'],
+                          'payload': dir2
+                        };
                         dio.download(
                             Api.host + t['metadata']['download'], dir2);
-                        await notificationPlugin.showNotification(dir2);
+                        await notificationPlugin.showNotification(payload);
                       }
                     } else {
                       // TODO: implementation needed

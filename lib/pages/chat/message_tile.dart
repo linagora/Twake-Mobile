@@ -1,11 +1,10 @@
-import 'dart:isolate';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
@@ -24,10 +23,8 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
-import './../../utils/notify.dart';
+import 'package:twake/utils/notify.dart';
 import 'package:open_file/open_file.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'
-    as notify;
 
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
@@ -64,15 +61,15 @@ class _MessageTileState<T extends BaseChannelBloc>
     notificationPlugin.setOnNotificationClick(onNotificationClick);
   }
 
-  onNotificationClick(String payloadPath) {
-    //print('Payload Download $payloadPath');
-    OpenFile.open(payloadPath);
+  onNotificationClick(String payloadPath) async {
+    //print('payloadPath $payloadPath');
+    if (Platform.isAndroid) {
+      OpenFile.open(payloadPath);
+    }
+    if (Platform.isIOS) {
+      OpenFile.open("$payloadPath");
+    }
   }
-
-  //Future<void> onNotificationClick() async {
-  //   OpenFile.open(
-  //       "/storage/emulated/0/Android/data/com.twake.twake/files/photo_2021-05-13 09.58.09-2.jpeg");
-  // }
 
   @override
   void didUpdateWidget(covariant MessageTile<T> oldWidget) {
@@ -255,7 +252,6 @@ class _MessageTileState<T extends BaseChannelBloc>
                                   SizedBox(height: _isMyMessage ? 0.0 : 4.0),
                                   TwacodeRenderer(
                                     twacode: messageState.content,
-                                    onNotificationClick: onNotificationClick,
                                     parentStyle: TextStyle(
                                       fontSize: 15.0,
                                       fontWeight: FontWeight.w400,

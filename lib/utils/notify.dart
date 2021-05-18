@@ -67,7 +67,7 @@ class NotificationPlugin {
     });
   }
 
-  Future<void> showNotification(String payload) async {
+  Future<void> showNotification(Map<String, String> payload) async {
     var androidChannelSpecifics = AndroidNotificationDetails(
       'CHANNEL_ID',
       'CHANNEL_NAME',
@@ -81,12 +81,13 @@ class NotificationPlugin {
     var iosChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+
     await flutterLocalNotificationsPlugin.show(
       0,
-      'Test Title',
-      'Test Body', //null
+      payload['title'],
+      payload['body'], //null
       platformChannelSpecifics,
-      payload: payload,
+      payload: payload['payload'], //null
     );
   }
 
