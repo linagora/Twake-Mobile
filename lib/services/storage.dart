@@ -8,11 +8,11 @@ import 'package:twake/sql/migrations.dart';
 
 const String _DATABASE_FILE = 'twakesql.db';
 
-class Storage {
+class StorageService {
   static late Database _db;
   final _logger = Logger();
 
-  Future<void> initDb() async {
+  Future<void> init() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, _DATABASE_FILE);
 

@@ -1,14 +1,21 @@
 class Endpoint {
+  /// List of public methods
+
   // API Endpoint for getting API version info + auth method
   static const version = '/';
-  // API Endpoint for sending logout event to backend
-  static const logout = '/logout';
   // API Endpoint for authentication
-  static const auth = '/authorize';
+  static const authorize = '/authorize';
+  // API Endpoint for prolonging token
+  static const authorizationProlong = '/authorization/prolong';
   // API Endpoint for initializing some server required data
   static const init = '/init';
-  // API Endpoint for prolonging token
-  static const prolong = '/authorization/prolong';
+  // API Endpoint for getting current supported emojis
+  static const emojis = '/info/emoji';
+
+  /// List of internal methods, for authorized users only
+
+  // API Endpoint for sending logout event to backend
+  static const logout = '/logout';
   // API Endpoint for working with user data
   static const profile = '/user';
   // API Endpoint for working with account data
@@ -39,14 +46,22 @@ class Endpoint {
   static const messages = '/messages';
   // API Endpoint for working with message reactions
   static const reactions = '/reactions';
-  // API Endpoint for getting current supported emojis
-  static const emojis = '/info/emoji';
   // API Endpoint for searching users by name
   static const usersSearch = '/users/search';
-  // API Endpoint for getting latest updates about messages
-  static const whatsNew = '/messages/whatsnew';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const notificationRooms = '/workspace/notifications';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const fileUpload = '/media/upload';
+
+  static const publicMethods = const [
+    version,
+    authorize,
+    authorizationProlong,
+    init,
+    emojis
+  ];
+  // Returns true if the method is publicly accessable, i.e. without authorization
+  static bool isPublic(String method) {
+    return publicMethods.contains(method);
+  }
 }

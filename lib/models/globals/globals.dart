@@ -10,7 +10,7 @@ part 'globals.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Globals extends BaseModel {
-  static Globals? _globals;
+  static late Globals _globals;
 
   String host;
   String? companyId;
@@ -30,10 +30,8 @@ class Globals extends BaseModel {
   String fcmtoken;
   String userId;
 
-  // return value is guarranted to be a valid instance
-  Globals? get instance {
-    if (_globals == null)
-      throw Exception('Globals instance is not initialized!');
+  // Make sure to call the factory constructor before accessing instance
+  static Globals get instance {
     return _globals;
   }
 
@@ -49,7 +47,7 @@ class Globals extends BaseModel {
     String? channelId,
     String? threadId,
   }) {
-    return _globals ??= Globals._(
+    _globals = Globals._(
       host: host,
       channelsType: channelsType,
       tabs: tabs,
@@ -61,6 +59,7 @@ class Globals extends BaseModel {
       channelId: channelId,
       threadId: threadId,
     );
+    return _globals;
   }
 
   Globals._({

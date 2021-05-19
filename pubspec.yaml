@@ -39,7 +39,7 @@ dependencies:
   sqflite: ^2.0.0+3
   tuple: 2.0.0
   flutter_segment: ^3.0.0
-  sentry_flutter: ^4.0.6
+  sentry_flutter: ^5.0.0
   firebase_core: ^1.0.2
   firebase_messaging: ^9.1.0
   equatable: ^1.2.5
