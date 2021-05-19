@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 import 'message_content.dart';
@@ -7,7 +8,7 @@ import 'reaction.dart';
 part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Message {
+class Message extends BaseModel {
   static const COMPOSITE_FIELDS = ['content', 'reactions'];
 
   final String id;
@@ -79,6 +80,7 @@ class Message {
     return _$MessageFromJson(json);
   }
 
+  @override
   Map<String, dynamic> toJson({stringify: true}) {
     var json = _$MessageToJson(this);
     // message that is to be stored to sqlite database should have

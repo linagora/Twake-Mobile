@@ -1,9 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_model/base_model.dart';
 
 part 'authentication.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Authentication {
+class Authentication extends BaseModel {
   final String token;
   final String refreshToken;
 
@@ -13,7 +14,9 @@ class Authentication {
   factory Authentication.fromJson(Map<String, dynamic> json) =>
       _$AuthenticationFromJson(json);
 
-  Map<String, dynamic> toJson() => _$AuthenticationToJson(this);
+  @override
+  Map<String, dynamic> toJson({stringify: true}) =>
+      _$AuthenticationToJson(this);
 }
 
 /// /authorize response example

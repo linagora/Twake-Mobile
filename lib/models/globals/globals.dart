@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_model/base_model.dart';
 import 'channels_type.dart';
 import 'tabs.dart';
 
@@ -8,7 +9,7 @@ export 'tabs.dart';
 part 'globals.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Globals {
+class Globals extends BaseModel {
   static Globals? _globals;
 
   String host;
@@ -78,5 +79,6 @@ class Globals {
   factory Globals.fromJson(Map<String, dynamic> json) =>
       _$GlobalsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GlobalsToJson(this);
+  @override
+  Map<String, dynamic> toJson({stringify: true}) => _$GlobalsToJson(this);
 }

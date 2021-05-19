@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:json_annotation/json_annotation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/sql/migrations.dart';
 
@@ -59,7 +59,7 @@ class Storage {
   // This function can be used both for inserts and updates
   static Future<void> insert({
     required Table table,
-    required JsonSerializable data,
+    required BaseModel data,
   }) async {
     await _db.insert(
       table.name,
@@ -71,7 +71,7 @@ class Storage {
   // This function can be used both for inserts and updates
   static Future<void> multiInsert({
     required Table table,
-    required List<JsonSerializable> data,
+    required List<BaseModel> data,
   }) async {
     final batch = _db.batch();
     for (final item in data) {
