@@ -572,8 +572,10 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
+  Function onReceiveProgress;
 
-  TwacodeRenderer({this.twacode, TextStyle parentStyle}) {
+  TwacodeRenderer(
+      {this.twacode, TextStyle parentStyle, this.onReceiveProgress}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
@@ -982,8 +984,9 @@ class TwacodeRenderer {
                         String err;
 
                         try {
-                          dio.download(
-                              Api.host + t['metadata']['download'], dir2);
+                          await dio.download(
+                              Api.host + t['metadata']['download'], dir2,
+                              onReceiveProgress: onReceiveProgress);
                         } catch (exeption) {
                           isErr = true;
                           err = exeption.toString();
@@ -1006,8 +1009,9 @@ class TwacodeRenderer {
                         String err;
 
                         try {
-                          dio.download(
-                              Api.host + t['metadata']['download'], dir2);
+                          await dio.download(
+                              Api.host + t['metadata']['download'], dir2,
+                              onReceiveProgress: onReceiveProgress);
                         } catch (exeption) {
                           isErr = true;
                           err = exeption.toString();
@@ -1024,18 +1028,20 @@ class TwacodeRenderer {
                 child: SizedBox(
                   child: t['metadata']['preview'] != null
                       ? ClipRRect(
-                          child: Image.network(t['metadata']['preview']),
+                          child: Image.network(
+                              Api.host + t['metadata']['preview']),
                           borderRadius: BorderRadius.all(Radius.circular(8)))
-                      : CircleAvatar(
-                          child: Icon(Icons.cloud_download),
-                          backgroundColor: Colors.indigo[100],
-                          // TODO: implementation needed to show progres
-                          /*CircularProgressIndicator(
+                      : Icon(
+                          Icons.insert_drive_file_rounded,
+                          color: Colors.white,
+                        ),
+
+                  // TODO: implementation needed to show progres
+                  /*CircularProgressIndicator(
                           backgroundColor: Colors.blueGrey,
                           valueColor:
                               AlwaysStoppedAnimation<Color>(Colors.lightBlue),
                           value: progres.toDouble(),*/
-                        ),
 
                   // ),
                   width: 40,
