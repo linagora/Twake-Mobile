@@ -8,7 +8,7 @@ Map<String, dynamic> stringify({
   required List<String> keys,
 }) {
   for (final k in keys) {
-    json[k] = jsonEncode(json[k]);
+    json[k] = jsonDecode(json[k]);
   }
   return json;
 }
@@ -18,8 +18,10 @@ Map<String, dynamic> jsonify({
   required Map<String, dynamic> json,
   required List<String> keys,
 }) {
+  // just in case if map is read only, happens with sqflite
+  final Map<String, dynamic> newJson = Map.from(json);
   for (final k in keys) {
-    json[k] = jsonDecode(json[k]);
+    newJson[k] = jsonEncode(json[k]);
   }
-  return json;
+  return newJson;
 }
