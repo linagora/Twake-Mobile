@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:twake/utils/json.dart';
+import 'package:twake/utils/json.dart' as jsn;
 
 import 'message_content.dart';
 import 'reaction.dart';
@@ -26,6 +26,7 @@ class Message {
   final String? firstname;
   final String? lastname;
   final String? thumbnail;
+  final String? draft;
 
   int get hash {
     return this.id.hashCode +
@@ -55,15 +56,30 @@ class Message {
     this.firstname,
     this.lastname,
     this.thumbnail,
+    this.draft,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) {
-    json = jsonify(json: json, keys: COMPOSITE_FIELDS);
+  factory Message.fromJson({
+    required Map<String, dynamic> json,
+    bool jsonify: true,
+  }) {
+    // message retrieved from sqlite database will have
+    // it's composite fields json string encoded, so there's a
+    // need to decode them back
+    if (jsonify) {
+      json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
+    }
     return _$MessageFromJson(json);
   }
 
-  Map<String, dynamic> toJson() {
-    final json = _$MessageToJson(this);
-    return stringify(json: json, keys: COMPOSITE_FIELDS);
+  Map<String, dynamic> toJson({stringify: true}) {
+    var json = _$MessageToJson(this);
+    // message that is to be stored to sqlite database should have
+    // it's composite fields json string encoded, because sqlite doesn't support
+    // non primitive data types, so we need to encode those fields
+    if (stringify) {
+      json = jsn.stringify(json: json, keys: COMPOSITE_FIELDS);
+    }
+    return json;
   }
 }
