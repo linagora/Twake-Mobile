@@ -5,13 +5,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:path/path.dart' as path;
+import 'package:dio/dio.dart';
+import 'notify.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
@@ -575,6 +577,7 @@ class TwacodeRenderer {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode.addAll(this.extractFiles(this.twacode));
+
     spans = render(twacode: this.twacode, parentStyle: parentStyle);
   }
 
@@ -707,7 +710,10 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render({List<dynamic> twacode, TextStyle parentStyle}) {
+  List<InlineSpan> render({
+    List<dynamic> twacode,
+    TextStyle parentStyle,
+  }) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -963,24 +969,52 @@ class TwacodeRenderer {
                     //print(t['metadata']['download']);
                     if (permissionStatus.isGranted) {
                       if (Platform.isAndroid) {
-                        //   print(Api.host);
-
+                        final Dio dio = Dio();
                         final dir = await getExternalStorageDirectory();
+                        final dir2 = path.join(dir.path, t['metadata']['name']);
+                        final Map<String, String> payload = {
+                          'title':
+                              '${t['metadata']['name']} downloaded successfully',
+                          'Body': t['metadata']['name'],
+                          'payload': dir2,
+                        };
+                        bool isErr = false;
+                        String err;
 
-                        await FlutterDownloader.enqueue(
-                            url: Api.host + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
+                        try {
+                          dio.download(
+                              Api.host + t['metadata']['download'], dir2);
+                        } catch (exeption) {
+                          isErr = true;
+                          err = exeption.toString();
+                        } finally {
+                          await notificationPlugin.showNotification(
+                              payload, isErr, err);
+                        }
                       } else if (Platform.isIOS) {
+                        final Dio dio = Dio();
                         final dir = await getApplicationSupportDirectory();
-                        await FlutterDownloader.enqueue(
-                            url: Api.host + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
+                        final dir2 =
+                            path.join("${dir.path}", t['metadata']['name']);
+                        final Map<String, String> payload = {
+                          'title':
+                              '${t['metadata']['name']} downloaded successfully',
+                          'Body': t['metadata']['name'],
+                          'payload': dir2
+                        };
+                        bool isErr = false;
+                        String err;
+
+                        try {
+                          dio.download(
+                              Api.host + t['metadata']['download'], dir2);
+                        } catch (exeption) {
+                          isErr = true;
+                          err = exeption.toString();
+                        } finally {
+                          await notificationPlugin.showNotification(
+                              payload, isErr, err);
+                        }
                       }
                     } else {
                       // TODO: implementation needed

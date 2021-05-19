@@ -1,11 +1,10 @@
-import 'dart:isolate';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
 import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
@@ -24,6 +23,8 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
+import 'package:twake/utils/notify.dart';
+import 'package:open_file/open_file.dart';
 
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
@@ -48,14 +49,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   bool _hideShowAnswers;
   bool _shouldShowSender;
   Message _message;
-  ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-
-  static downloadingCallback(id, status, progress) {
-    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading");
-
-    sendPort.send([id, status, progress]);
-  }
 
   @override
   void initState() {
@@ -63,10 +57,18 @@ class _MessageTileState<T extends BaseChannelBloc>
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
-    IsolateNameServer.registerPortWithName(
-        _receivePort.sendPort, "downloading");
 
-    FlutterDownloader.registerCallback(downloadingCallback);
+    notificationPlugin.setOnNotificationClick(onNotificationClick);
+  }
+
+  onNotificationClick(String payloadPath) async {
+    //print('payloadPath $payloadPath');
+    if (Platform.isAndroid) {
+      OpenFile.open(payloadPath);
+    }
+    if (Platform.isIOS) {
+      OpenFile.open("$payloadPath");
+    }
   }
 
   @override
