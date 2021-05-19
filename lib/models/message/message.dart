@@ -28,6 +28,9 @@ class Message {
   final String? thumbnail;
   final String? draft;
 
+  @JsonKey(defaultValue: 1, name: 'is_read')
+  int _isRead = 1;
+
   int get hash {
     return this.id.hashCode +
         this.content.originalStr.hashCode +
@@ -41,6 +44,10 @@ class Message {
     }
     return '$firstname $lastname';
   }
+
+  bool get isRead => _isRead > 0;
+
+  set isRead(bool val) => _isRead = val ? 1 : 0;
 
   Message({
     required this.id,

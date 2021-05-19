@@ -58,7 +58,8 @@ CREATE TABLE message (
     firstname TEXT,
     lastname TEXT,
     thumbnail TEXT,
-    draft TEXT
+    draft TEXT,
+    is_read INT DEFAULT 1
 );
 CREATE INDEX message_channel_idx ON message(channel_id);
 CREATE INDEX message_thread_idx ON message(thread_id);
