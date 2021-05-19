@@ -133,9 +133,10 @@ class GradientBottomNavigationBar extends StatefulWidget {
         assert(backgroundColorStart != null),
         assert(backgroundColorEnd != null),
         assert(
-        items.every((BottomNavigationBarItem item) => item.title != null) ==
-            true,
-        'Every item must have a non-null title',),
+          items.every((BottomNavigationBarItem item) => item.title != null) ==
+              true,
+          'Every item must have a non-null title',
+        ),
         assert(0 <= currentIndex && currentIndex < items.length),
         assert(iconSize != null),
         type = type ??
@@ -192,16 +193,16 @@ class GradientBottomNavigationBar extends StatefulWidget {
 // to go into a flex container.
 class _BottomNavigationTile extends StatelessWidget {
   const _BottomNavigationTile(
-      this.type,
-      this.item,
-      this.animation,
-      this.iconSize, {
-        this.onTap,
-        this.colorTween,
-        this.flex,
-        this.selected = false,
-        this.indexLabel,
-      }) : assert(selected != null);
+    this.type,
+    this.item,
+    this.animation,
+    this.iconSize, {
+    this.onTap,
+    this.colorTween,
+    this.flex,
+    this.selected = false,
+    this.indexLabel,
+  }) : assert(selected != null);
 
   final BottomNavigationBarType type;
   final BottomNavigationBarItem item;
@@ -340,7 +341,7 @@ class _BottomNavigationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.min,
-                (children: <Widget?>[
+                children: (<Widget?>[
                   _buildIcon(),
                   label,
                 ]) as List<Widget>,
@@ -369,7 +370,7 @@ class _GradientBottomNavigationBarState
   Color? _backgroundColor;
 
   static final Animatable<double> _flexTween =
-  Tween<double>(begin: 1.0, end: 1.5);
+      Tween<double>(begin: 1.0, end: 1.5);
 
   void _resetState() {
     for (AnimationController controller in _controllers) controller.dispose();
@@ -377,14 +378,14 @@ class _GradientBottomNavigationBarState
     _circles.clear();
 
     _controllers =
-    List<AnimationController>.generate(widget.items.length, (int index) {
+        List<AnimationController>.generate(widget.items.length, (int index) {
       return AnimationController(
         duration: kThemeAnimationDuration,
         vsync: this,
       )..addListener(_rebuild);
     });
     _animations =
-    List<CurvedAnimation>.generate(widget.items.length, (int index) {
+        List<CurvedAnimation>.generate(widget.items.length, (int index) {
       return CurvedAnimation(
         parent: _controllers[index],
         curve: Curves.fastOutSlowIn,
@@ -427,22 +428,22 @@ class _GradientBottomNavigationBarState
           color: widget.items[index].backgroundColor!,
           vsync: this,
         )..controller.addStatusListener(
-              (AnimationStatus status) {
-            switch (status) {
-              case AnimationStatus.completed:
-                setState(() {
-                  final _Circle circle = _circles.removeFirst();
-                  _backgroundColor = circle.color;
-                  circle.dispose();
-                });
-                break;
-              case AnimationStatus.dismissed:
-              case AnimationStatus.forward:
-              case AnimationStatus.reverse:
-                break;
-            }
-          },
-        ),
+            (AnimationStatus status) {
+              switch (status) {
+                case AnimationStatus.completed:
+                  setState(() {
+                    final _Circle circle = _circles.removeFirst();
+                    _backgroundColor = circle.color;
+                    circle.dispose();
+                  });
+                  break;
+                case AnimationStatus.dismissed:
+                case AnimationStatus.forward:
+                case AnimationStatus.reverse:
+                  break;
+              }
+            },
+          ),
       );
     }
   }
@@ -475,7 +476,7 @@ class _GradientBottomNavigationBarState
 
   List<Widget> _createTiles() {
     final MaterialLocalizations localizations =
-    MaterialLocalizations.of(context);
+        MaterialLocalizations.of(context);
     assert(localizations != null);
     final List<Widget> children = <Widget>[];
     switch (widget.type) {
@@ -553,7 +554,7 @@ class _GradientBottomNavigationBarState
 
     // Labels apply up to _bottomMargin padding. Remainder is media padding.
     final double additionalBottomPadding =
-    math.max(MediaQuery.of(context).padding.bottom - _kBottomMargin, 0.0);
+        math.max(MediaQuery.of(context).padding.bottom - _kBottomMargin, 0.0);
 
     return Semantics(
       container: true,
@@ -583,7 +584,7 @@ class _GradientBottomNavigationBarState
           ConstrainedBox(
             constraints: BoxConstraints(
                 minHeight:
-                kBottomNavigationBarHeight + additionalBottomPadding),
+                    kBottomNavigationBarHeight + additionalBottomPadding),
             child: Stack(
               children: <Widget>[
                 Positioned.fill(
@@ -622,7 +623,7 @@ class _Circle {
     required this.index,
     required this.color,
     required TickerProvider vsync,
-  })  : assert(state != null),
+  })   : assert(state != null),
         assert(index != null),
         assert(color != null) {
     controller = AnimationController(
@@ -654,11 +655,11 @@ class _Circle {
     final double allWeights = weightSum(state._animations);
     // These weights sum to the start edge of the indexed item.
     final double leadingWeights =
-    weightSum(state._animations.sublist(0, index));
+        weightSum(state._animations.sublist(0, index));
 
     // Add half of its flex value in order to get to the center.
     return (leadingWeights +
-        state._evaluateFlex(state._animations[index]) / 2.0) /
+            state._evaluateFlex(state._animations[index]) / 2.0) /
         allWeights;
   }
 
@@ -672,7 +673,7 @@ class _RadialPainter extends CustomPainter {
   _RadialPainter({
     required this.circles,
     required this.textDirection,
-  })  : assert(circles != null),
+  })   : assert(circles != null),
         assert(textDirection != null);
 
   final List<_Circle> circles;
@@ -714,7 +715,7 @@ class _RadialPainter extends CustomPainter {
           break;
       }
       final Offset center =
-      Offset(leftFraction * size.width, size.height / 2.0);
+          Offset(leftFraction * size.width, size.height / 2.0);
       final Tween<double> radiusTween = Tween<double>(
         begin: 0.0,
         end: _maxRadius(center, size),

@@ -102,6 +102,7 @@ class StorageService {
 }
 
 enum Table {
+  authentication,
   userAccount,
   company,
   workspace,
@@ -113,6 +114,8 @@ enum Table {
 extension TableExtension on Table {
   String get name {
     switch (this) {
+      case Table.authentication:
+        return 'authentication';
       case Table.userAccount:
         return 'user_account';
       case Table.company:

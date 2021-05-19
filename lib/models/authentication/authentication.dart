@@ -11,6 +11,13 @@ class Authentication extends BaseModel {
   final int expiration;
   final int refreshExpiration;
 
+  Authentication({
+    required this.token,
+    required this.refreshToken,
+    required this.expiration,
+    required this.refreshExpiration,
+  });
+
   factory Authentication.fromJson(Map<String, dynamic> json) =>
       _$AuthenticationFromJson(json);
 

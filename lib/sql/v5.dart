@@ -1,3 +1,12 @@
+const String CREATE_AUTHENTICATION_V5 = '''
+CREATE TABLE authentication (
+    token TEXT NOT NULL,
+    refresh_token TEXT NOT NULL,
+    expiration INT NOT NULL,
+    refresh_expiration INT NOT NULL,
+)
+''';
+
 const String CREATE_COMPANY_V5 = '''
 CREATE TABLE company (
     id TEXT PRIMARY KEY,
@@ -98,6 +107,7 @@ CREATE TABLE globals (
 ''';
 
 const DDL_V5 = [
+  CREATE_AUTHENTICATION_V5,
   CREATE_USER_ACCOUNT_V5,
   CREATE_COMPANY_V5,
   CREATE_WORKSPACE_V5,

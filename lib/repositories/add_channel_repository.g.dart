@@ -17,7 +17,8 @@ AddChannelRepository _$AddChannelRepositoryFromJson(Map<String, dynamic> json) {
     description: json['description'] as String?,
     channelGroup: json['channel_group'] as String?,
     def: json['default'] as bool?,
-    members: (json['members'] as List?)?.map((e) => e as String)?.toList(),
+    members:
+        (json['members'] as List<dynamic>?)?.map((e) => e as String?).toList(),
   );
 }
 

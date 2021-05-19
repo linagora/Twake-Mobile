@@ -20,10 +20,11 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     reactions: (json['reactions'] as List<dynamic>)
         .map((e) => Reaction.fromJson(e as Map<String, dynamic>))
         .toList(),
-    firstName: json['first_name'] as String?,
-    lastName: json['last_name'] as String?,
+    firstname: json['firstname'] as String?,
+    lastname: json['lastname'] as String?,
     thumbnail: json['thumbnail'] as String?,
-  );
+    draft: json['draft'] as String?,
+  )..isRead = json['is_read'] as bool;
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -37,7 +38,9 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'content': instance.content,
       'reactions': instance.reactions,
       'username': instance.username,
-      'first_name': instance.firstName,
-      'last_name': instance.lastName,
+      'firstname': instance.firstname,
+      'lastname': instance.lastname,
       'thumbnail': instance.thumbnail,
+      'draft': instance.draft,
+      'is_read': instance.isRead,
     };
