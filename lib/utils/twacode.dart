@@ -960,6 +960,7 @@ class TwacodeRenderer {
               getStyle(type),
             ),
           );
+
           final widget = Container(
             margin: EdgeInsets.all(4),
             padding: EdgeInsets.all(3),
@@ -1033,17 +1034,10 @@ class TwacodeRenderer {
                           borderRadius: BorderRadius.all(Radius.circular(8)))
                       : Icon(
                           Icons.insert_drive_file_rounded,
-                          color: Colors.white,
+                          color: (parentStyle.color == Colors.white)
+                              ? Color(0xff8e8e93)
+                              : Color(0xffffffff).withOpacity(0.58),
                         ),
-
-                  // TODO: implementation needed to show progres
-                  /*CircularProgressIndicator(
-                          backgroundColor: Colors.blueGrey,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.lightBlue),
-                          value: progres.toDouble(),*/
-
-                  // ),
                   width: 40,
                   height: 40,
                 ),
