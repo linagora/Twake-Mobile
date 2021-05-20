@@ -82,7 +82,7 @@ class NotificationPlugin {
     var iosChannelSpecifics = IOSNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
         android: androidChannelSpecifics, iOS: iosChannelSpecifics);
-
+    
     await flutterLocalNotificationsPlugin.show(
       0,
       isErr ? ' downloading failed' : payload['title'],
