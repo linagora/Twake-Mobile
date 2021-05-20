@@ -954,13 +954,22 @@ class TwacodeRenderer {
               : s > KB
                   ? '${(s / KB).toStringAsFixed(2)} KB'
                   : '$s B';
+          final TextStyle textColor = (parentStyle.color == Colors.white)
+              ? TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                  color: Color(0xfff6f6f6))
+              : TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                  color: Color(0xff004dff),
+                );
           text = TextSpan(
             text: t['metadata']['name'],
             style: parentStyle.merge(
-              getStyle(type),
+              textColor,
             ),
           );
-
           final widget = Container(
             margin: EdgeInsets.all(4),
             padding: EdgeInsets.all(3),
@@ -1032,11 +1041,16 @@ class TwacodeRenderer {
                           child: Image.network(
                               Api.host + t['metadata']['preview']),
                           borderRadius: BorderRadius.all(Radius.circular(8)))
-                      : Icon(
-                          Icons.insert_drive_file_rounded,
-                          color: (parentStyle.color == Colors.white)
-                              ? Color(0xff8e8e93)
-                              : Color(0xffffffff).withOpacity(0.58),
+                      : CircleAvatar(
+                          child: Icon(
+                            Icons.insert_drive_file_rounded,
+                            color: (parentStyle.color == Colors.white)
+                                ? Color(0xfff6f6f6)
+                                : Color(0xff004dff),
+                          ),
+                          backgroundColor: (parentStyle.color == Colors.white)
+                              ? Color(0xfff6f6f6).withOpacity(0.12)
+                              : Color(0xff004dff).withOpacity(0.08),
                         ),
                   width: 40,
                   height: 40,
@@ -1051,16 +1065,17 @@ class TwacodeRenderer {
                       text: text,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
+
                       //softWrap: true,
                     ),
                     Text(
                       size,
                       textAlign: TextAlign.end,
                       style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.italic,
-                          color: Color(0xff8e8e93)),
+                          fontSize: 13.0,
+                          color: (parentStyle.color == Colors.white)
+                              ? Color(0xfff6f6f6).withOpacity(0.58)
+                              : Color(0xff8e8e93)),
                     ),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.start,
