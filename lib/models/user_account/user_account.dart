@@ -15,7 +15,7 @@ class UserAccount extends BaseModel {
   final String? consoleId;
   final String? statusIcon;
   final String? status;
-  final String language;
+  final String? language;
 
   UserAccount({
     required this.id,
@@ -27,7 +27,7 @@ class UserAccount extends BaseModel {
     this.consoleId,
     this.status,
     this.statusIcon,
-    required this.language,
+    this.language,
   });
 
   factory UserAccount.fromJson({

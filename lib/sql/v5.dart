@@ -83,6 +83,8 @@ CREATE TABLE user_account (
     lastname TEXT,
     thumbnail TEXT,
     console_id TEXT,
+    status_icon TEXT,
+    status TEXT,
     language TEXT
 );
 CREATE INDEX user_email_idx ON user(email);
