@@ -26,8 +26,9 @@ class Globals extends BaseModel {
   @JsonKey(defaultValue: Tabs.Channels)
   Tabs tabs;
 
-  String jwtoken;
-  String fcmtoken;
+  // JWToken
+  String token;
+  String fcmToken;
   String userId;
 
   // Make sure to call the factory constructor before accessing instance
@@ -39,8 +40,8 @@ class Globals extends BaseModel {
     required String host,
     required ChannelsType channelsType,
     required Tabs tabs,
-    required String jwtoken,
-    required String fcmtoken,
+    required String token,
+    required String fcmToken,
     required String userId,
     String? companyId,
     String? workspaceId,
@@ -51,8 +52,8 @@ class Globals extends BaseModel {
       host: host,
       channelsType: channelsType,
       tabs: tabs,
-      jwtoken: jwtoken,
-      fcmtoken: fcmtoken,
+      token: token,
+      fcmToken: fcmToken,
       userId: userId,
       companyId: companyId,
       workspaceId: workspaceId,
@@ -66,8 +67,8 @@ class Globals extends BaseModel {
     required this.host,
     required this.channelsType,
     required this.tabs,
-    required this.jwtoken,
-    required this.fcmtoken,
+    required this.token,
+    required this.fcmToken,
     required this.userId,
     this.companyId,
     this.workspaceId,

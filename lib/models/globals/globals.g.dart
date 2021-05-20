@@ -13,8 +13,8 @@ Globals _$GlobalsFromJson(Map<String, dynamic> json) {
         _$enumDecodeNullable(_$ChannelsTypeEnumMap, json['channels_type']) ??
             ChannelsType.Commons,
     tabs: _$enumDecodeNullable(_$TabsEnumMap, json['tabs']) ?? Tabs.Channels,
-    jwtoken: json['jwtoken'] as String,
-    fcmtoken: json['fcmtoken'] as String,
+    token: json['token'] as String,
+    fcmToken: json['fcm_token'] as String,
     userId: json['user_id'] as String,
     companyId: json['company_id'] as String?,
     workspaceId: json['workspace_id'] as String?,
@@ -31,8 +31,8 @@ Map<String, dynamic> _$GlobalsToJson(Globals instance) => <String, dynamic>{
       'thread_id': instance.threadId,
       'channels_type': _$ChannelsTypeEnumMap[instance.channelsType],
       'tabs': _$TabsEnumMap[instance.tabs],
-      'jwtoken': instance.jwtoken,
-      'fcmtoken': instance.fcmtoken,
+      'token': instance.token,
+      'fcm_token': instance.fcmToken,
       'user_id': instance.userId,
     };
 

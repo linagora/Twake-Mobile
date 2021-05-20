@@ -1,10 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 part 'company.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Company {
+class Company extends BaseModel {
   static const COMPOSITE_FIELDS = ['permissions'];
 
   final String id;

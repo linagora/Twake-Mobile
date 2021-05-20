@@ -101,8 +101,8 @@ CREATE TABLE globals (
     tabs TEXT NOT NULL,
     channel_id TEXT,
     thread_id TEXT,
-    jwtoken TEXT NOT NULL,
-    fcmtoken TEXT NOT NULL
+    token TEXT NOT NULL,
+    fcm_token TEXT NOT NULL
 );
 ''';
 

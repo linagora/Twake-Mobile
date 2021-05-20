@@ -1,11 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 part 'channel.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class Channel {
+class Channel extends BaseModel {
   static const COMPOSITE_FIELDS = ['members', 'visibility', 'permissions'];
 
   final String id;
@@ -36,21 +37,20 @@ class Channel {
 
   bool get hasUnread => userLastAccess < lastActivity;
 
-  Channel({
-    required this.id,
-    required this.name,
-    this.icon,
-    this.description,
-    required this.companyId,
-    required this.workspaceId,
-    required this.membersCount,
-    required this.members,
-    required this.visibility,
-    required this.lastActivity,
-    required this.userLastAccess,
-    this.draft,
-    required this.permissions
-  });
+  Channel(
+      {required this.id,
+      required this.name,
+      this.icon,
+      this.description,
+      required this.companyId,
+      required this.workspaceId,
+      required this.membersCount,
+      required this.members,
+      required this.visibility,
+      required this.lastActivity,
+      required this.userLastAccess,
+      this.draft,
+      required this.permissions});
 
   factory Channel.fromJson({
     required Map<String, dynamic> json,

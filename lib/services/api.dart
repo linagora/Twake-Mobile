@@ -24,7 +24,7 @@ class ApiService {
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
       options.baseUrl = Globals.instance.host;
       if (!Endpoint.isPublic(options.path)) return;
-      final token = Globals.instance.jwtoken;
+      final token = Globals.instance.token;
       options.headers['Authorization'] = 'Bearer $token';
       handler.next(options);
     }
@@ -39,9 +39,10 @@ class ApiService {
           ));
           break;
         case DioErrorType.connectTimeout:
+        case DioErrorType.receiveTimeout:
           // log timeout event to sentry, for further investigaion
           Sentry.captureMessage(
-            'Connection to API timed out\n'
+            'Request to API timed out\n'
             'method: ${error.requestOptions.method}\n'
             'endpoint: ${error.requestOptions.path}\n'
             'params: ${error.requestOptions.queryParameters}\n'
