@@ -1,55 +1,66 @@
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
-import 'package:twake/models/user.dart';
-import 'package:twake/models/workspace.dart';
-import 'package:twake/repositories/collection_repository.dart';
+import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/user_account/user_account.dart';
+import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
-class WorkspacesRepository extends CollectionRepository<Workspace> {
-  final _api = Api();
-  final _storage = Storage();
+class WorkspacesRepository {
+  final _api = ApiService.instance;
+  final _storage = StorageService.instance;
 
-  Future<void> fetchMembers({bool forceFromApi: false}) async {
-    if (!forceFromApi) {
-      final count = (await _storage.customQuery(
-        'SELECT count(*) as count FROM user2workspace',
-        filters: [
-          ['workspace_id', '=', this.selected!.id]
-        ],
-      ))[0]['count'];
-      // Logger().e("REQUEST: $count");
-      if (count > 0) return;
-    }
-    final List tmembers = await (this._api.get(Endpoint.workspaceMembers,
-        params: {
-          'workspace_id': this.selected!.id,
-          'company_id': ProfileBloc.selectedCompanyId
-        }) as FutureOr<List<dynamic>>);
-    List<User> members = [];
-    for (var tm in tmembers) {
-      members.add(User.fromJson(tm));
-    }
-
-    await _storage.batchStore(
-      items: members.map((m) => m.toJson()),
-      type: StorageType.User,
+  Future<List<UserAccount>> getMembersList({String? workspaceId}) async {
+    final List<Map<String, Object?>> members = await this._api.get(
+      endpoint: Endpoint.workspaceMembers,
+      queryParameters: {
+        'workspace_id': workspaceId ?? Globals.instance.workspaceId,
+        'company_id': Globals.instance.companyId
+      },
     );
+    final List<UserAccount> users = [];
+    for (final m in members) {
+      users.add(UserAccount.fromJson(json: m));
+    }
+    this._storage.multiInsert(table: Table.userAccount, data: users);
 
-    await _storage.batchStore(
-      items: members
-          .map((m) => {'user_id': m.id, 'workspace_id': this.selected!.id}),
-      type: StorageType.User2Workspace,
-    );
-    Logger().w('Workspace members ${members.length} are saved!');
+    return users;
   }
 
-  WorkspacesRepository(List<Workspace?>? items, String? apiEndpoint)
-      : super(
-          items: items,
-          apiEndpoint: apiEndpoint,
-        );
+  Stream<List<Workspace>> getWorkspaces({String? companyId}) async* {
+    final localResult = await this._storage.select(
+      table: Table.workspace,
+      where: 'company_id = ?',
+      whereArgs: [companyId],
+    );
+    var workspaces =
+        localResult.map((entry) => Workspace.fromJson(json: entry)).toList();
+    yield workspaces;
 
-  factory WorkspacesRepository.fromCollection(
-      CollectionRepository<Workspace> repository) {
-    return WorkspacesRepository(repository.items, repository.apiEndpoint);
+    // TODO check internet connection here if absent return
+
+    final remoteResult = await this._api.get(
+      endpoint: Endpoint.workspaces,
+      queryParameters: {'company_id': companyId ?? Globals.instance.companyId},
+    );
+    workspaces = remoteResult
+        .map((entry) => Workspace.fromJson(
+              json: entry,
+              jsonify: false,
+            ))
+        .toList();
+    yield workspaces;
+  }
+
+  Future<Workspace> createWorkspace(
+      {String? companyId, required String name, List<String>? members}) async {
+    final creationResult = await this._api.post(
+      endpoint: Endpoint.workspaces,
+      data: {
+        'company_id': companyId ?? Globals.instance.companyId,
+        'name': name,
+        'members': members
+      },
+    );
+
+    final workspace = Workspace.fromJson(json: creationResult, jsonify: false);
+    return workspace;
   }
 }

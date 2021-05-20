@@ -9,9 +9,24 @@ import 'package:twake/sql/migrations.dart';
 const String _DATABASE_FILE = 'twakesql.db';
 
 class StorageService {
-  static late Database _db;
+  static late final StorageService _service;
+  late Database _db;
   final _logger = Logger();
 
+  factory StorageService({required reset}) {
+    if (reset) {
+      _service = StorageService._();
+    }
+    return _service;
+  }
+
+  static StorageService get instance {
+    return _service;
+  }
+
+  StorageService._();
+
+  // Must be called before accessing instance!
   Future<void> init() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, _DATABASE_FILE);
@@ -57,7 +72,7 @@ class StorageService {
   }
 
   // This function can be used both for inserts and updates
-  static Future<void> insert({
+  Future<void> insert({
     required Table table,
     required BaseModel data,
   }) async {
@@ -69,7 +84,7 @@ class StorageService {
   }
 
   // This function can be used both for inserts and updates
-  static Future<void> multiInsert({
+  Future<void> multiInsert({
     required Table table,
     required List<BaseModel> data,
   }) async {
@@ -84,7 +99,7 @@ class StorageService {
     await batch.commit(noResult: true);
   }
 
-  static Future<List<Map<String, Object?>>> select({
+  Future<List<Map<String, Object?>>> select({
     required Table table,
     List<String>? columns,
     String? where,
@@ -95,8 +110,35 @@ class StorageService {
       final actual = whereArgs.length;
       assert(expected == actual);
     }
-    final result = await _db.query(table.name,
-        columns: columns, where: where, whereArgs: whereArgs);
+    final result = await _db.query(
+      table.name,
+      columns: columns,
+      where: where,
+      whereArgs: whereArgs,
+    );
+    return result;
+  }
+
+  Future<Map<String, Object?>> first({
+    required Table table,
+    List<String>? columns,
+    String? where,
+    List<dynamic>? whereArgs,
+  }) async {
+    final result = await select(
+      table: table,
+      columns: columns,
+      where: where,
+      whereArgs: whereArgs,
+    );
+    return result.length > 0 ? result[0] : const {};
+  }
+
+  Future<List<Map<String, Object?>>> rawSelect({
+    required String sql,
+    List<dynamic>? args,
+  }) async {
+    final result = await _db.rawQuery(sql, args);
     return result;
   }
 }

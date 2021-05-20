@@ -17,7 +17,8 @@ UserAccount _$UserAccountFromJson(Map<String, dynamic> json) {
     consoleId: json['console_id'] as String?,
     status: json['status'] as String?,
     statusIcon: json['status_icon'] as String?,
-    language: json['language'] as String,
+    language: json['language'] as String?,
+    lastActivity: json['last_activity'] as int,
   );
 }
 
@@ -33,4 +34,5 @@ Map<String, dynamic> _$UserAccountToJson(UserAccount instance) =>
       'status_icon': instance.statusIcon,
       'status': instance.status,
       'language': instance.language,
+      'last_activity': instance.lastActivity,
     };

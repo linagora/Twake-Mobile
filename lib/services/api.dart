@@ -4,13 +4,17 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class ApiService {
-  static ApiService? _service;
+  static late ApiService _service;
   late final Dio _dio;
 
-  ApiService? get instance {
-    if (_service == null) {
+  factory ApiService({required reset}) {
+    if (reset) {
       _service = ApiService._();
     }
+    return _service;
+  }
+
+  static ApiService get instance {
     return _service;
   }
 
