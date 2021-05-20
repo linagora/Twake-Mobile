@@ -85,7 +85,8 @@ CREATE TABLE user_account (
     console_id TEXT,
     status_icon TEXT,
     status TEXT,
-    language TEXT
+    language TEXT,
+    last_activity INT NOT NULL
 );
 CREATE INDEX user_email_idx ON user(email);
 CREATE INDEX user_username_idx ON user(username);
