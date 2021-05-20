@@ -964,8 +964,31 @@ class TwacodeRenderer {
                   fontWeight: FontWeight.normal,
                   color: Color(0xff004dff),
                 );
+          //String text1 = t['metadata']['name'];
+          /*  text = TextSpan(
+           text: text1.lenght > 8
+                ? t['metadata']['name']
+                    .substring(0, t['metadata']['name'].lenght - 8)
+                : t['metadata']['name'].lenght,
+            style: parentStyle.merge(
+              textColor,
+            ),
+          );*/
+          TextSpan text2;
           text = TextSpan(
-            text: t['metadata']['name'],
+            text: t['metadata']['name'].length > 8
+                ? t['metadata']['name']
+                    .substring(0, t['metadata']['name'].length - 8)
+                : t['metadata']['name'],
+            style: parentStyle.merge(
+              textColor,
+            ),
+          );
+          text2 = TextSpan(
+            text: t['metadata']['name'].length > 8
+                ? t['metadata']['name']
+                    .substring(t['metadata']['name'].length - 8)
+                : '',
             style: parentStyle.merge(
               textColor,
             ),
@@ -1061,13 +1084,55 @@ class TwacodeRenderer {
                 // fit: FlexFit.tight,
                 child: Column(
                   children: [
-                    RichText(
-                      text: text,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                    //   Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
 
-                      //softWrap: true,
+                    Container(
+                      child: Row(
+                        children: [
+                          RichText(
+                            text: text,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            //softWrap: true,
+                          ),
+                          RichText(
+                            text: text2,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            //softWrap: true,
+                          ),
+                          Expanded(child: Container())
+                        ],
+                      ),
                     ),
+                    /*   Row(
+                      children: <Widget>[
+                        Spacer(),
+                        Expanded(
+                          child: Text(
+                            t['metadata']['name'].length > 8
+                                ? t['metadata']['name'].substring(
+                                    0, t['metadata']['name'].length - 8)
+                                : t['metadata']['name'],
+                            maxLines: 1,
+                            // textAlign: TextAlign.end,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            t['metadata']['name'].length > 8
+                                ? t['metadata']['name']
+                                    .substring(t['metadata']['name'].length - 8)
+                                : '',
+                            maxLines: 1,
+                            //  textAlign: TextAlign.start,
+                          ),
+                        ),
+                        Spacer(),
+                      ],
+                    ),*/
+                    //   ]),
                     Text(
                       size,
                       textAlign: TextAlign.end,
