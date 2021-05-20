@@ -362,4 +362,19 @@ class _MessageTileState<T extends BaseChannelBloc>
       );
     }
   }
+
+  Widget buildProgressTest() {
+    if (_progress == 1) {
+      return Icon(
+        Icons.arrow_circle_down_rounded,
+        color: Colors.grey,
+      );
+    } else {
+      return CircularProgressIndicator(
+        value: _progress,
+        valueColor: AlwaysStoppedAnimation(Colors.white70),
+        backgroundColor: Colors.grey,
+      );
+    }
+  }
 }
