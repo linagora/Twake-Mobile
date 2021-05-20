@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:twake/services/api.dart';
+import 'package:twake/services/api_service.dart';
 import 'package:twake/services/service_bundle.dart';
 
 const _EMOJIS_STORE_KEY = 'emojis';
@@ -8,7 +8,7 @@ const _EMOJIS_STORE_KEY = 'emojis';
 class Emojis {
   static Map<dynamic, dynamic>? _emojimap = {};
 
-  static final _api = Api();
+  static final _api = ApiService.instance;
   static final _storage = Storage();
 
   static Future<void> load() async {
@@ -18,7 +18,8 @@ class Emojis {
       fields: _storage.settingsField != null ? [_storage.settingsField] : null,
     );
     if (map == null) {
-      map = await (_api.get(Endpoint.emojis) as FutureOr<Map<String, dynamic>?>);
+      map =
+          await (_api.get(Endpoint.emojis) as FutureOr<Map<String, dynamic>?>);
       await _storage.store(
         item: {
           'id': _EMOJIS_STORE_KEY,

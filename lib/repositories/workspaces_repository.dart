@@ -7,6 +7,8 @@ class WorkspacesRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
 
+  WorkspacesRepository();
+
   Future<List<UserAccount>> getMembersList({String? workspaceId}) async {
     final List<Map<String, Object?>> members = await this._api.get(
       endpoint: Endpoint.workspaceMembers,
