@@ -965,7 +965,7 @@ class TwacodeRenderer {
                   color: Color(0xff004dff),
                 );
           final TextSpan textEnd = TextSpan(
-            text: t['metadata']['name'].length > 20
+            text: t['metadata']['name'].length > 25
                 ? t['metadata']['name']
                     .substring(t['metadata']['name'].length - 15)
                 : '',
@@ -974,8 +974,8 @@ class TwacodeRenderer {
             ),
           );
           text = TextSpan(
-            text: t['metadata']['name'].length > 20
-                ? t['metadata']['name'].substring(0, 15) + '...'
+            text: t['metadata']['name'].length > 25
+                ? t['metadata']['name'].substring(0, 20) + '...'
                 : t['metadata']['name'],
             style: parentStyle.merge(
               textColor,
@@ -1076,7 +1076,6 @@ class TwacodeRenderer {
                       children: [
                         RichText(
                           text: text,
-                          overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           //softWrap: true,
                         ),
