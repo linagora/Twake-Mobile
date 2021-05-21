@@ -1,9 +1,9 @@
+import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/user_account/user_account.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
-
 
 class AccountRepository {
   final _api = ApiService.instance;
@@ -11,25 +11,37 @@ class AccountRepository {
 
   AccountRepository();
 
-  Future<UserAccount> getAccount() async {
-    final Map<String, Object?> accountMap =
-        await this._api.get(endpoint: Endpoint.account);
-    final account = UserAccount.fromJson(json: accountMap);
-    this._storage.insert(table: Table.userAccount, data: account);
-    return account;
+  Stream<List<UserAccount>> fetchAccounts({
+    required String consoleId,
+  }) async* {
+    if (consoleId.isEmpty) {
+      print('Accounts fetch failed: console_id is empty');
+
+    } else {
+      final localMaps = await _storage.select(
+        table: Table.userAccount,
+        where: 'console_id = ?',
+        whereArgs: [consoleId],
+      );
+      var accounts = localMaps.map((entry) => UserAccount.fromJson(json: entry)).toList();
+      yield accounts;
+
+      // TODO: check internet connection here if absent return
+
+      final remoteMaps = await _api.get(
+        endpoint: Endpoint.account,
+        queryParameters: {'console_id': consoleId},
+      );
+      accounts = remoteMaps
+          .map((entry) => UserAccount.fromJson(
+        json: entry,
+        jsonify: false,
+      )).toList();
+      _storage.multiInsert(table: Table.userAccount, data: accounts);
+      yield accounts;
+    }
   }
 
-  // required this.id,
-  // required this.email,
-  // this.firstname,
-  // this.lastname,
-  // required this.username,
-  // this.thumbnail,
-  // this.consoleId,
-  // this.status,
-  // this.statusIcon,
-  // this.language,
-  // required this.lastActivity,
   Future<UserAccount> updateAccount({
     String firstName = '',
     String lastName = '',
@@ -40,7 +52,6 @@ class AccountRepository {
     String language = '',
     String oldPassword = '',
     String? newPassword = '',
-    bool shouldUpdateCache = false,
   }) async {
     final _accountMap = <String, dynamic>{};
 
@@ -71,7 +82,12 @@ class AccountRepository {
         'new': newPassword,
       };
     }
-    if (shouldUpdateCache) _save();
+    final patchResult = await _api.patch(
+      endpoint: Endpoint.account,
+      data: _accountMap,
+    );
+    final account = UserAccount.fromJson(json: patchResult, jsonify: false);
+    return account;
   }
 
   Stream<List<Workspace>> getWorkspaces({String? companyId}) async* {
@@ -84,7 +100,7 @@ class AccountRepository {
         localResult.map((entry) => Workspace.fromJson(json: entry)).toList();
     yield workspaces;
 
-    // TODO check internet connection here if absent return
+    // TODO: check internet connection here if absent return
 
     final remoteResult = await this._api.get(
       endpoint: Endpoint.workspaces,
