@@ -33,8 +33,10 @@ class AuthenticationRepository {
     return true;
   }
 
-  Future<Authentication?> authenticate(
-      {required String username, required String password}) async {
+  Future<bool> authenticate({
+    required String username,
+    required String password,
+  }) async {
     Map<String, dynamic> authenticationResult = {};
     try {
       authenticationResult = await _api.post(
@@ -48,7 +50,7 @@ class AuthenticationRepository {
         },
       );
     } catch (_) {
-      return null;
+      return false;
     }
 
     final authentication = Authentication.fromJson(authenticationResult);
@@ -57,7 +59,7 @@ class AuthenticationRepository {
     _storage.insert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
 
-    return authentication;
+    return true;
   }
 
   Future<Authentication> prolongAuthentication(
@@ -89,6 +91,16 @@ class AuthenticationRepository {
     return authentication;
   }
 
+  Future<void> logout() async {
+    if (Globals.instance.isNetworkConnected) {
+      await _api.post(endpoint: Endpoint.logout, data: {
+        'fcm_token': Globals.instance.fcmToken,
+      });
+    }
+
+    await _storage.truncateAll();
+  }
+
   Expiration hasExpired(Authentication authentication) {
     final now = DateTime.now().millisecondsSinceEpoch;
     final expired = authentication.expiration > now;
@@ -99,18 +111,21 @@ class AuthenticationRepository {
     return Expiration.Valid;
   }
 
-  void startTokenValidator() {
+  void startTokenValidator() async {
     if (_validatorRunning) return;
-    _tokenValidityCheck();
+
+    final result = await _storage.first(table: Table.authentication);
+    if (result.isEmpty) return;
+
+    var authentication = Authentication.fromJson(result);
+    _tokenValidityCheck(authentication);
   }
 
-  Future<void> _tokenValidityCheck() async {
+  Future<void> _tokenValidityCheck(Authentication authentication) async {
     if (!Globals.instance.isNetworkConnected) {
       _validatorRunning = false;
       return;
     }
-    final result = await _storage.first(table: Table.authentication);
-    var authentication = Authentication.fromJson(result);
 
     final now = DateTime.now().millisecondsSinceEpoch;
     final needToProlong = authentication.expiration - now <
@@ -118,7 +133,10 @@ class AuthenticationRepository {
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }
-    Future.delayed(Duration(minutes: 5), () => _tokenValidityCheck());
+    Future.delayed(
+      Duration(minutes: 5),
+      () => _tokenValidityCheck(authentication),
+    );
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
