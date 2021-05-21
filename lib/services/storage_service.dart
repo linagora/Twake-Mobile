@@ -141,6 +141,18 @@ class StorageService {
     final result = await _db.rawQuery(sql, args);
     return result;
   }
+
+  Future<void> truncate({required Table table}) async {
+    await _db.delete(table.name);
+  }
+
+  Future<void> truncateAll() async {
+    final batch = _db.batch();
+    for (final table in Table.values) {
+      batch.delete(table.name);
+    }
+    await batch.commit(noResult: true);
+  }
 }
 
 enum Table {

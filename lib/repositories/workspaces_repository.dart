@@ -11,11 +11,12 @@ class WorkspacesRepository {
   final _workspaceStreamController = StreamController<List<Workspace>>();
 
   // register to this stream to get workspace updates;
-  Stream<List<Workspace>> get workSpaceStream => _workspaceStreamController.stream;
+  Stream<List<Workspace>> get workspaceStream =>
+      _workspaceStreamController.stream;
 
   WorkspacesRepository();
 
-  Future<List<Account>> getMembersList({String? workspaceId}) async {
+  Future<List<Account>> fetchMembers({String? workspaceId}) async {
     final List<Map<String, Object?>> members = await this._api.get(
       endpoint: Endpoint.workspaceMembers,
       queryParameters: {
@@ -32,7 +33,7 @@ class WorkspacesRepository {
     return users;
   }
 
-  void getWorkspaces({String? companyId}) async {
+  void fetch({String? companyId}) async {
     final localResult = await this._storage.select(
       table: Table.workspace,
       where: 'company_id = ?',

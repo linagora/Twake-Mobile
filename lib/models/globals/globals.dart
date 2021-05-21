@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
+
 import 'channels_type.dart';
 import 'tabs.dart';
 
@@ -82,6 +87,11 @@ class Globals extends BaseModel {
     save();
   }
 
+  @JsonKey(ignore: true)
+  late bool isNetworkConnected;
+  @JsonKey(ignore: true)
+  final connection = StreamController<Connection>();
+
   // Make sure to call the factory constructor before accessing instance
   static Globals get instance {
     return _globals;
@@ -102,7 +112,7 @@ class Globals extends BaseModel {
     if (host.endsWith('/')) {
       host = host.substring(0, host.length - 1);
     }
-    if (!host.startsWith('https')) {
+    if (!host.startsWith('http')) {
       host = 'https://$host';
     }
     _globals = Globals._(
@@ -117,6 +127,7 @@ class Globals extends BaseModel {
       channelId: channelId,
       threadId: threadId,
     );
+
     return _globals;
   }
 
@@ -131,7 +142,35 @@ class Globals extends BaseModel {
     this.workspaceId,
     this.channelId,
     this.threadId,
-  });
+  }) {
+    // set up connection listener
+    void onConnectionChange(ConnectivityResult state) {
+      switch (state) {
+        case ConnectivityResult.mobile:
+        case ConnectivityResult.wifi:
+          InternetAddress.lookup(host).then((addresses) {
+            if (!isNetworkConnected) {
+              isNetworkConnected = true;
+              connection.add(Connection.connected);
+            }
+          }).onError((e, _) {
+            Logger().e('Coudn\'t connect to host:\n$e');
+            if (isNetworkConnected) {
+              isNetworkConnected = false;
+              connection.add(Connection.disconnected);
+            }
+          });
+          break;
+        case ConnectivityResult.none:
+          if (isNetworkConnected) {
+            isNetworkConnected = false;
+            connection.add(Connection.disconnected);
+          }
+      }
+    }
+
+    Connectivity().onConnectivityChanged.listen(onConnectionChange);
+  }
 
   Future<void> save() async {
     await StorageService.instance.insert(table: Table.globals, data: this);
@@ -142,4 +181,10 @@ class Globals extends BaseModel {
 
   @override
   Map<String, dynamic> toJson({stringify: true}) => _$GlobalsToJson(this);
+
+  void closeStream() async {
+    await connection.close();
+  }
 }
+
+enum Connection { connected, disconnected }
