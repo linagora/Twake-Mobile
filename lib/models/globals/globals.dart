@@ -90,7 +90,8 @@ class Globals extends BaseModel {
   @JsonKey(ignore: true)
   late bool isNetworkConnected;
   @JsonKey(ignore: true)
-  final connection = StreamController<Connection>();
+  final _connection = StreamController<Connection>();
+  Stream<Connection> get connection => _connection.stream;
 
   // Make sure to call the factory constructor before accessing instance
   static Globals get instance {
@@ -151,20 +152,20 @@ class Globals extends BaseModel {
           InternetAddress.lookup(host).then((addresses) {
             if (!isNetworkConnected) {
               isNetworkConnected = true;
-              connection.add(Connection.connected);
+              _connection.sink.add(Connection.connected);
             }
           }).onError((e, _) {
             Logger().e('Coudn\'t connect to host:\n$e');
             if (isNetworkConnected) {
               isNetworkConnected = false;
-              connection.add(Connection.disconnected);
+              _connection.sink.add(Connection.disconnected);
             }
           });
           break;
         case ConnectivityResult.none:
           if (isNetworkConnected) {
             isNetworkConnected = false;
-            connection.add(Connection.disconnected);
+            _connection.sink.add(Connection.disconnected);
           }
       }
     }
@@ -183,7 +184,7 @@ class Globals extends BaseModel {
   Map<String, dynamic> toJson({stringify: true}) => _$GlobalsToJson(this);
 
   void closeStream() async {
-    await connection.close();
+    await _connection.close();
   }
 }
 

@@ -43,7 +43,7 @@ class WorkspacesRepository {
         localResult.map((entry) => Workspace.fromJson(json: entry)).toList();
     _workspaceStreamController.sink.add(workspaces);
 
-    // TODO check internet connection here if absent return
+    if (!Globals.instance.isNetworkConnected) return;
 
     final remoteResult = await this._api.get(
       endpoint: Endpoint.workspaces,
