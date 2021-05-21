@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/workspace/workspace.dart';
@@ -6,6 +8,10 @@ import 'package:twake/services/service_bundle.dart';
 class WorkspacesRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
+  final _workspaceStreamController = StreamController<List<Workspace>>();
+
+  // register to this stream to get workspace updates;
+  Stream<List<Workspace>> get workSpaceStream => _workspaceStreamController.stream;
 
   WorkspacesRepository();
 
@@ -26,7 +32,7 @@ class WorkspacesRepository {
     return users;
   }
 
-  Stream<List<Workspace>> getWorkspaces({String? companyId}) async* {
+  void getWorkspaces({String? companyId}) async {
     final localResult = await this._storage.select(
       table: Table.workspace,
       where: 'company_id = ?',
@@ -34,7 +40,7 @@ class WorkspacesRepository {
     );
     var workspaces =
         localResult.map((entry) => Workspace.fromJson(json: entry)).toList();
-    yield workspaces;
+    _workspaceStreamController.sink.add(workspaces);
 
     // TODO check internet connection here if absent return
 
@@ -48,7 +54,7 @@ class WorkspacesRepository {
               jsonify: false,
             ))
         .toList();
-    yield workspaces;
+    _workspaceStreamController.sink.add(workspaces);
   }
 
   Future<Workspace> createWorkspace(
@@ -64,5 +70,9 @@ class WorkspacesRepository {
 
     final workspace = Workspace.fromJson(json: creationResult, jsonify: false);
     return workspace;
+  }
+
+  void closeStream() async {
+    await _workspaceStreamController.close();
   }
 }
