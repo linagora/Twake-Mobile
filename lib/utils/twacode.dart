@@ -964,35 +964,24 @@ class TwacodeRenderer {
                   fontWeight: FontWeight.normal,
                   color: Color(0xff004dff),
                 );
-          //String text1 = t['metadata']['name'];
-          /*  text = TextSpan(
-           text: text1.lenght > 8
+          final TextSpan textEnd = TextSpan(
+            text: t['metadata']['name'].length > 20
                 ? t['metadata']['name']
-                    .substring(0, t['metadata']['name'].lenght - 8)
-                : t['metadata']['name'].lenght,
-            style: parentStyle.merge(
-              textColor,
-            ),
-          );*/
-          TextSpan text2;
-          text = TextSpan(
-            text: t['metadata']['name'].length > 8
-                ? t['metadata']['name']
-                    .substring(0, t['metadata']['name'].length - 8)
-                : t['metadata']['name'],
-            style: parentStyle.merge(
-              textColor,
-            ),
-          );
-          text2 = TextSpan(
-            text: t['metadata']['name'].length > 8
-                ? t['metadata']['name']
-                    .substring(t['metadata']['name'].length - 8)
+                    .substring(t['metadata']['name'].length - 15)
                 : '',
             style: parentStyle.merge(
               textColor,
             ),
           );
+          text = TextSpan(
+            text: t['metadata']['name'].length > 20
+                ? t['metadata']['name'].substring(0, 15) + '...'
+                : t['metadata']['name'],
+            style: parentStyle.merge(
+              textColor,
+            ),
+          );
+
           final widget = Container(
             margin: EdgeInsets.all(4),
             padding: EdgeInsets.all(3),
@@ -1081,58 +1070,26 @@ class TwacodeRenderer {
               ),
               SizedBox(width: 10),
               Flexible(
-                // fit: FlexFit.tight,
                 child: Column(
                   children: [
-                    //   Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
-
-                    Container(
-                      child: Row(
-                        children: [
-                          RichText(
-                            text: text,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            //softWrap: true,
-                          ),
-                          RichText(
-                            text: text2,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            //softWrap: true,
-                          ),
-                          Expanded(child: Container())
-                        ],
-                      ),
-                    ),
-                    /*   Row(
-                      children: <Widget>[
-                        Spacer(),
-                        Expanded(
-                          child: Text(
-                            t['metadata']['name'].length > 8
-                                ? t['metadata']['name'].substring(
-                                    0, t['metadata']['name'].length - 8)
-                                : t['metadata']['name'],
-                            maxLines: 1,
-                            // textAlign: TextAlign.end,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                    Row(
+                      children: [
+                        RichText(
+                          text: text,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          //softWrap: true,
                         ),
                         Expanded(
-                          child: Text(
-                            t['metadata']['name'].length > 8
-                                ? t['metadata']['name']
-                                    .substring(t['metadata']['name'].length - 8)
-                                : '',
+                          child: RichText(
+                            text: textEnd,
                             maxLines: 1,
-                            //  textAlign: TextAlign.start,
+                            //softWrap: true,
                           ),
                         ),
                         Spacer(),
                       ],
-                    ),*/
-                    //   ]),
+                    ),
                     Text(
                       size,
                       textAlign: TextAlign.end,
