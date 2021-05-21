@@ -16,7 +16,7 @@ class Company extends BaseModel {
 
   final int totalMembers;
 
-  int? selectedWorkspace;
+  String? selectedWorkspace;
 
   List<String> permissions;
 

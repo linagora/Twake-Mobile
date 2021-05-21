@@ -59,7 +59,7 @@ class AccountCubit extends HydratedCubit<AccountState> {
     // final languageTitle = currentLanguage.title;
 
     emit(AccountLoadSuccess(
-      userName: accountRepository.,
+      userName: accountRepository.userName,
       firstName: accountRepository!.firstName!.value,
       lastName: accountRepository!.lastName!.value,
       picture: accountRepository!.picture!.value,

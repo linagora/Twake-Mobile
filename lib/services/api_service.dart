@@ -6,6 +6,7 @@ import 'package:twake/services/service_bundle.dart';
 class ApiService {
   static late ApiService _service;
   late final Dio _dio;
+  static const _PROXY_PREFIX = '/internal/mobile';
 
   factory ApiService({required reset}) {
     if (reset) {
@@ -26,8 +27,11 @@ class ApiService {
     ));
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-      options.baseUrl = Globals.instance.host;
-      if (!Endpoint.isPublic(options.path)) return;
+      options.baseUrl = Globals.instance.host + _PROXY_PREFIX;
+      if (!Endpoint.isPublic(options.path)) {
+        handler.next(options);
+        return;
+      }
       final token = Globals.instance.token;
       options.headers['Authorization'] = 'Bearer $token';
       handler.next(options);

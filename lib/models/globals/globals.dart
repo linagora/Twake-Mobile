@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'channels_type.dart';
 import 'tabs.dart';
 
@@ -13,23 +14,73 @@ class Globals extends BaseModel {
   static late Globals _globals;
 
   String host;
+
   String? companyId;
+  // Use this setter to set the value, otherwise it will not persist
+  set companyIdSet(String val) {
+    companyId = val;
+    save();
+  }
+
   String? workspaceId;
+  // Use this setter to set the value, otherwise it will not persist
+  set workspaceIdSet(String val) {
+    workspaceId = val;
+    save();
+  }
+
   String? channelId;
+  // Use this setter to set the value, otherwise it will not persist
+  set channelIdSet(String val) {
+    channelId = val;
+    save();
+  }
+
   String? threadId;
+  set threadIdSet(String val) {
+    threadId = val;
+    save();
+  }
 
   // type of the channels selected in main chats view: commons (public/private) or directs
   @JsonKey(defaultValue: ChannelsType.Commons)
   ChannelsType channelsType;
+  // Use this setter to set the value, otherwise it will not persist
+  set channelsTypeSet(ChannelsType val) {
+    channelsType = val;
+    save();
+  }
 
   // tab which is currently selected in lower part of the app screen
   @JsonKey(defaultValue: Tabs.Channels)
   Tabs tabs;
+  // Use this setter to set the value, otherwise it will not persist
+  set tabsSet(Tabs val) {
+    tabs = val;
+    save();
+  }
 
   // JWToken
-  String token;
+  String? token;
+  // Use this setter to set the value, otherwise it will not persist
+  set tokenSet(String val) {
+    token = val;
+    save();
+  }
+
   String fcmToken;
+  // Use this setter to set the value, otherwise it will not persist
+  set fcmTokenSet(String val) {
+    fcmToken = val;
+    save();
+  }
+
   String userId;
+  // Use this setter to set the value, otherwise it will not persist
+  set userIdSet(String val) {
+    userId = val;
+    save();
+  }
 
   // Make sure to call the factory constructor before accessing instance
   static Globals get instance {
@@ -40,7 +91,7 @@ class Globals extends BaseModel {
     required String host,
     required ChannelsType channelsType,
     required Tabs tabs,
-    required String token,
+    String? token,
     required String fcmToken,
     required String userId,
     String? companyId,
@@ -48,6 +99,12 @@ class Globals extends BaseModel {
     String? channelId,
     String? threadId,
   }) {
+    if (host.endsWith('/')) {
+      host = host.substring(0, host.length - 1);
+    }
+    if (!host.startsWith('https')) {
+      host = 'https://$host';
+    }
     _globals = Globals._(
       host: host,
       channelsType: channelsType,
@@ -67,7 +124,7 @@ class Globals extends BaseModel {
     required this.host,
     required this.channelsType,
     required this.tabs,
-    required this.token,
+    this.token,
     required this.fcmToken,
     required this.userId,
     this.companyId,
@@ -75,6 +132,10 @@ class Globals extends BaseModel {
     this.channelId,
     this.threadId,
   });
+
+  Future<void> save() async {
+    await StorageService.instance.insert(table: Table.globals, data: this);
+  }
 
   factory Globals.fromJson(Map<String, dynamic> json) =>
       _$GlobalsFromJson(json);

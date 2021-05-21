@@ -14,7 +14,7 @@ Company _$CompanyFromJson(Map<String, dynamic> json) {
     permissions:
         (json['permissions'] as List<dynamic>).map((e) => e as String).toList(),
     logo: json['logo'] as String?,
-    selectedWorkspace: json['selected_workspace'] as int?,
+    selectedWorkspace: json['selected_workspace'] as String?,
   );
 }
 
