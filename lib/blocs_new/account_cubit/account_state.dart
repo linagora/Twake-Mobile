@@ -26,7 +26,6 @@ class AccountLoadSuccess extends AccountState {
   final String? lastName;
   final String? picture;
   final String? language;
-  final List<LanguageOption>? availableLanguages;
 
   const AccountLoadSuccess({
     this.userName,
@@ -34,7 +33,6 @@ class AccountLoadSuccess extends AccountState {
     this.lastName,
     this.picture,
     this.language,
-    this.availableLanguages,
   });
 
   @override
@@ -44,7 +42,6 @@ class AccountLoadSuccess extends AccountState {
     lastName,
     picture,
     language,
-    availableLanguages,
   ];
 }
 

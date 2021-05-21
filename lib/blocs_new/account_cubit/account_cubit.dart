@@ -51,20 +51,19 @@ class AccountCubit extends HydratedCubit<AccountState> {
   Future<void> fetch({bool fromNetwork = true}) async {
     emit(AccountLoadInProgress());
 
-    if (fromNetwork) await accountRepository!.reload();
+    // if (fromNetwork) await accountRepository!.fetchAccounts(consoleId: consoleId);
 
-    final availableLanguages =
-        accountRepository!.language!.options ?? <LanguageOption>[];
-    final currentLanguage = accountRepository!.selectedLanguage();
-    final languageTitle = currentLanguage.title;
+    // final availableLanguages =
+    //     accountRepository!.language!.options ?? <LanguageOption>[];
+    // final currentLanguage = accountRepository!.selectedLanguage();
+    // final languageTitle = currentLanguage.title;
 
     emit(AccountLoadSuccess(
-      userName: accountRepository!.userName!.value,
+      userName: accountRepository.,
       firstName: accountRepository!.firstName!.value,
       lastName: accountRepository!.lastName!.value,
       picture: accountRepository!.picture!.value,
       language: languageTitle,
-      availableLanguages: availableLanguages,
     ));
   }
 

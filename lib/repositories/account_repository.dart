@@ -94,4 +94,23 @@ class AccountRepository {
 
     return account;
   }
+
+  LanguageOption selectedLanguage() {
+    final lang = language!.options
+        .firstWhere((option) => option.value == language!.value, orElse: () {
+      _logger.e(
+          'No matching languages found in options for code: ${language!.value}');
+      return LanguageOption(value: language!.value, title: '');
+    });
+    return lang;
+  }
+
+  String? languageCodeFromTitle(String title) {
+    final lang = language!.options.firstWhere((option) => option.title == title,
+        orElse: () {
+      _logger.e('No matching languages found in options for title: $title');
+      return LanguageOption(value: '', title: title);
+    });
+    return lang.value;
+  }
 }

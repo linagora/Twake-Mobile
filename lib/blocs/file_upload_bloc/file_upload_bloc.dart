@@ -2,14 +2,14 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_event.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_state.dart';
-import 'package:twake/repositories/file_upload_repository.dart';
+import 'package:twake/repositories/file_repository.dart';
 import 'package:twake/services/endpoints.dart';
 
 export 'package:twake/blocs/file_upload_bloc/file_upload_event.dart';
 export 'package:twake/blocs/file_upload_bloc/file_upload_state.dart';
 
 class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
-  final FileUploadRepository repository = FileUploadRepository();
+  final FileRepository repository = FileRepository();
 
   FileUploadBloc() : super(NothingToUpload());
 
@@ -49,7 +49,7 @@ class FileUploadBloc extends Bloc<FileUploadEvent, FileUploadState> {
       yield FileUploadCancelled();
     } else if (event is FinishUpload) {
       print('Yielding state FILE UPLOADED');
-      yield FileUploaded(this.repository.files);
+      // yield FileUploaded(this.repository.files);
     } else if (event is ErrorUpload) {
       yield FileUploadFailed(
         event.reason,
