@@ -2,18 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
-import 'package:twake/models/language_option.dart';
 import 'package:twake/repositories/account_repository.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/extensions.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/utils/image_processor.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'account_state.dart';
 
@@ -22,7 +19,7 @@ enum AccountFlowStage {
   edit,
 }
 
-class AccountCubit extends Cubit<AccountState> {
+class AccountCubit extends HydratedCubit<AccountState> {
   final AccountRepository? accountRepository;
   final FileUploadBloc? fileUploadBloc;
   late StreamSubscription _fileUploadSubscription;
@@ -190,5 +187,17 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> close() async {
     await _fileUploadSubscription.cancel();
     return super.close();
+  }
+
+  @override
+  AccountState? fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    throw UnimplementedError();
+  }
+
+  @override
+  Map<String, dynamic>? toJson(AccountState state) {
+    // TODO: implement toJson
+    throw UnimplementedError();
   }
 }
