@@ -80,7 +80,7 @@ class Globals extends BaseModel {
     save();
   }
 
-  String userId;
+  String? userId;
   // Use this setter to set the value, otherwise it will not persist
   set userIdSet(String val) {
     userId = val;
@@ -104,7 +104,7 @@ class Globals extends BaseModel {
     required Tabs tabs,
     String? token,
     required String fcmToken,
-    required String userId,
+    String? userId,
     String? companyId,
     String? workspaceId,
     String? channelId,
@@ -138,7 +138,7 @@ class Globals extends BaseModel {
     required this.tabs,
     this.token,
     required this.fcmToken,
-    required this.userId,
+    this.userId,
     this.companyId,
     this.workspaceId,
     this.channelId,
@@ -175,6 +175,15 @@ class Globals extends BaseModel {
 
   Future<void> save() async {
     await StorageService.instance.insert(table: Table.globals, data: this);
+  }
+
+  void reset() {
+    companyId = null;
+    workspaceId = null;
+    channelId = null;
+    threadId = null;
+    token = null;
+    userId = null;
   }
 
   factory Globals.fromJson(Map<String, dynamic> json) =>

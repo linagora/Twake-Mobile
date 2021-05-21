@@ -98,6 +98,8 @@ class AuthenticationRepository {
       });
     }
 
+    Globals.instance.reset();
+
     await _storage.truncateAll();
   }
 
@@ -114,18 +116,21 @@ class AuthenticationRepository {
   void startTokenValidator() async {
     if (_validatorRunning) return;
 
-    final result = await _storage.first(table: Table.authentication);
-    if (result.isEmpty) return;
-
-    var authentication = Authentication.fromJson(result);
-    _tokenValidityCheck(authentication);
+    _tokenValidityCheck();
   }
 
-  Future<void> _tokenValidityCheck(Authentication authentication) async {
+  Future<void> _tokenValidityCheck() async {
     if (!Globals.instance.isNetworkConnected) {
       _validatorRunning = false;
       return;
     }
+    final result = await _storage.first(table: Table.authentication);
+    if (result.isEmpty) {
+      _validatorRunning = false;
+      return;
+    }
+
+    var authentication = Authentication.fromJson(result);
 
     final now = DateTime.now().millisecondsSinceEpoch;
     final needToProlong = authentication.expiration - now <
@@ -133,10 +138,7 @@ class AuthenticationRepository {
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }
-    Future.delayed(
-      Duration(minutes: 5),
-      () => _tokenValidityCheck(authentication),
-    );
+    Future.delayed(Duration(minutes: 5), () => _tokenValidityCheck());
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
