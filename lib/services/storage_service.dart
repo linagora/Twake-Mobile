@@ -86,7 +86,7 @@ class StorageService {
   // This function can be used both for inserts and updates
   Future<void> multiInsert({
     required Table table,
-    required List<BaseModel> data,
+    required Iterable<BaseModel> data,
   }) async {
     final batch = _db.batch();
     for (final item in data) {
