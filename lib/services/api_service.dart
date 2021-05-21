@@ -22,7 +22,7 @@ class ApiService {
     this._dio = Dio(BaseOptions(
       contentType: 'application/json',
       connectTimeout: 15 * 1000, // 15 seconds to connect
-      receiveTimeout: 30 * 1000, // 30 seconds to recieve data
+      receiveTimeout: 30 * 1000, // 30 seconds to receive data
     ));
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -44,7 +44,7 @@ class ApiService {
           break;
         case DioErrorType.connectTimeout:
         case DioErrorType.receiveTimeout:
-          // log timeout event to sentry, for further investigaion
+          // log timeout event to sentry, for further investigation
           Sentry.captureMessage(
             'Request to API timed out\n'
             'method: ${error.requestOptions.method}\n'
@@ -57,7 +57,7 @@ class ApiService {
         case DioErrorType.response:
           final sc = error.response?.statusCode;
           if (sc! >= 500) {
-            // send all server side error to sentry, for further investigaion
+            // send all server side error to sentry, for further investigation
             Sentry.captureException(
               error,
               stackTrace: 'method: ${error.requestOptions.method}\n'

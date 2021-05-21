@@ -1,7 +1,6 @@
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/user_account/user_account.dart';
-import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
 
@@ -15,29 +14,34 @@ class AccountRepository {
     required String consoleId,
   }) async* {
     if (consoleId.isEmpty) {
+      // TODO: this case should be carefully handled
       print('Accounts fetch failed: console_id is empty');
-
     } else {
-      final localMaps = await _storage.select(
+      final localResults = await _storage.select(
         table: Table.userAccount,
         where: 'console_id = ?',
         whereArgs: [consoleId],
       );
-      var accounts = localMaps.map((entry) => UserAccount.fromJson(json: entry)).toList();
+      var accounts = localResults
+          .map((entry) => UserAccount.fromJson(json: entry))
+          .toList();
       yield accounts;
 
       // TODO: check internet connection here if absent return
 
-      final remoteMaps = await _api.get(
+      final remoteResults = await _api.get(
         endpoint: Endpoint.account,
         queryParameters: {'console_id': consoleId},
       );
-      accounts = remoteMaps
+      accounts = remoteResults
           .map((entry) => UserAccount.fromJson(
-        json: entry,
-        jsonify: false,
-      )).toList();
+                json: entry,
+                jsonify: false,
+              ))
+          .toList();
+
       _storage.multiInsert(table: Table.userAccount, data: accounts);
+
       yield accounts;
     }
   }
@@ -53,7 +57,7 @@ class AccountRepository {
     String oldPassword = '',
     String? newPassword = '',
   }) async {
-    final _accountMap = <String, dynamic>{};
+    final _accountMap = <String, Object?>{};
 
     if (firstName.isNotReallyEmpty) {
       _accountMap['firstname'] = firstName;
@@ -87,46 +91,9 @@ class AccountRepository {
       data: _accountMap,
     );
     final account = UserAccount.fromJson(json: patchResult, jsonify: false);
+
+    _storage.insert(table: Table.userAccount, data: account);
+
     return account;
-  }
-
-  Stream<List<Workspace>> getWorkspaces({String? companyId}) async* {
-    final localResult = await this._storage.select(
-      table: Table.workspace,
-      where: 'company_id = ?',
-      whereArgs: [companyId],
-    );
-    var workspaces =
-        localResult.map((entry) => Workspace.fromJson(json: entry)).toList();
-    yield workspaces;
-
-    // TODO: check internet connection here if absent return
-
-    final remoteResult = await this._api.get(
-      endpoint: Endpoint.workspaces,
-      queryParameters: {'company_id': companyId ?? Globals.instance.companyId},
-    );
-    workspaces = remoteResult
-        .map((entry) => Workspace.fromJson(
-              json: entry,
-              jsonify: false,
-            ))
-        .toList();
-    yield workspaces;
-  }
-
-  Future<Workspace> createWorkspace(
-      {String? companyId, required String name, List<String>? members}) async {
-    final creationResult = await this._api.post(
-      endpoint: Endpoint.workspaces,
-      data: {
-        'company_id': companyId ?? Globals.instance.companyId,
-        'name': name,
-        'members': members
-      },
-    );
-
-    final workspace = Workspace.fromJson(json: creationResult, jsonify: false);
-    return workspace;
   }
 }
