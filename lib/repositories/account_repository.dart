@@ -1,5 +1,3 @@
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/user_account/user_account.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
