@@ -145,7 +145,7 @@ class StorageService {
 
 enum Table {
   authentication,
-  userAccount,
+  account,
   company,
   workspace,
   channel,
@@ -158,8 +158,8 @@ extension TableExtension on Table {
     switch (this) {
       case Table.authentication:
         return 'authentication';
-      case Table.userAccount:
-        return 'user_account';
+      case Table.account:
+        return 'account';
       case Table.company:
         return 'company';
       case Table.workspace:

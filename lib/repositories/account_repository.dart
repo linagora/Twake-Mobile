@@ -1,4 +1,4 @@
-import 'package:twake/models/user_account/user_account.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
 
@@ -8,7 +8,7 @@ class AccountRepository {
 
   AccountRepository();
 
-  Stream<List<UserAccount>> fetchAccounts({
+  Stream<List<Account>> fetchAccounts({
     required String consoleId,
   }) async* {
     if (consoleId.isEmpty) {
@@ -16,12 +16,12 @@ class AccountRepository {
       print('Accounts fetch failed: console_id is empty');
     } else {
       final localResults = await _storage.select(
-        table: Table.userAccount,
+        table: Table.account,
         where: 'console_id = ?',
         whereArgs: [consoleId],
       );
       var accounts = localResults
-          .map((entry) => UserAccount.fromJson(json: entry))
+          .map((entry) => Account.fromJson(json: entry))
           .toList();
       yield accounts;
 
@@ -32,19 +32,19 @@ class AccountRepository {
         queryParameters: {'console_id': consoleId},
       );
       accounts = remoteResults
-          .map((entry) => UserAccount.fromJson(
+          .map((entry) => Account.fromJson(
                 json: entry,
                 jsonify: false,
               ))
           .toList();
 
-      _storage.multiInsert(table: Table.userAccount, data: accounts);
+      _storage.multiInsert(table: Table.account, data: accounts);
 
       yield accounts;
     }
   }
 
-  Future<UserAccount> updateAccount({
+  Future<Account> updateAccount({
     String firstName = '',
     String lastName = '',
     String userName = '',
@@ -88,29 +88,29 @@ class AccountRepository {
       endpoint: Endpoint.account,
       data: _accountMap,
     );
-    final account = UserAccount.fromJson(json: patchResult, jsonify: false);
+    final account = Account.fromJson(json: patchResult, jsonify: false);
 
-    _storage.insert(table: Table.userAccount, data: account);
+    _storage.insert(table: Table.account, data: account);
 
     return account;
   }
 
-  LanguageOption selectedLanguage() {
-    final lang = language!.options
-        .firstWhere((option) => option.value == language!.value, orElse: () {
-      _logger.e(
-          'No matching languages found in options for code: ${language!.value}');
-      return LanguageOption(value: language!.value, title: '');
-    });
-    return lang;
-  }
-
-  String? languageCodeFromTitle(String title) {
-    final lang = language!.options.firstWhere((option) => option.title == title,
-        orElse: () {
-      _logger.e('No matching languages found in options for title: $title');
-      return LanguageOption(value: '', title: title);
-    });
-    return lang.value;
-  }
+  // LanguageOption selectedLanguage() {
+  //   final lang = language!.options
+  //       .firstWhere((option) => option.value == language!.value, orElse: () {
+  //     _logger.e(
+  //         'No matching languages found in options for code: ${language!.value}');
+  //     return LanguageOption(value: language!.value, title: '');
+  //   });
+  //   return lang;
+  // }
+  //
+  // String? languageCodeFromTitle(String title) {
+  //   final lang = language!.options.firstWhere((option) => option.title == title,
+  //       orElse: () {
+  //     _logger.e('No matching languages found in options for title: $title');
+  //     return LanguageOption(value: '', title: title);
+  //   });
+  //   return lang.value;
+  // }
 }

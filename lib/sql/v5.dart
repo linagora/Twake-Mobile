@@ -74,8 +74,8 @@ CREATE INDEX message_channel_idx ON message(channel_id);
 CREATE INDEX message_thread_idx ON message(thread_id);
 ''';
 
-const String CREATE_USER_ACCOUNT_V5 = '''
-CREATE TABLE user_account (
+const String CREATE_ACCOUNT_V5 = '''
+CREATE TABLE account (
     id TEXT PRIMARY KEY,
     email TEXT NOT NULL,
     username TEXT NOT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE globals (
 
 const DDL_V5 = [
   CREATE_AUTHENTICATION_V5,
-  CREATE_USER_ACCOUNT_V5,
+  CREATE_ACCOUNT_V5,
   CREATE_COMPANY_V5,
   CREATE_WORKSPACE_V5,
   CREATE_CHANNEL_V5,

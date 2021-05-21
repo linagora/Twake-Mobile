@@ -1,5 +1,5 @@
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/user_account/user_account.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -9,7 +9,7 @@ class WorkspacesRepository {
 
   WorkspacesRepository();
 
-  Future<List<UserAccount>> getMembersList({String? workspaceId}) async {
+  Future<List<Account>> getMembersList({String? workspaceId}) async {
     final List<Map<String, Object?>> members = await this._api.get(
       endpoint: Endpoint.workspaceMembers,
       queryParameters: {
@@ -17,11 +17,11 @@ class WorkspacesRepository {
         'company_id': Globals.instance.companyId
       },
     );
-    final List<UserAccount> users = [];
+    final List<Account> users = [];
     for (final m in members) {
-      users.add(UserAccount.fromJson(json: m));
+      users.add(Account.fromJson(json: m));
     }
-    this._storage.multiInsert(table: Table.userAccount, data: users);
+    this._storage.multiInsert(table: Table.account, data: users);
 
     return users;
   }

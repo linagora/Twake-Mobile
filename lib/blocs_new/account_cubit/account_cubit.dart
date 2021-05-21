@@ -83,22 +83,21 @@ class AccountCubit extends HydratedCubit<AccountState> {
       oldPassword: oldPassword,
       newPassword: newPassword,
     ));
-    final languageCode =
-    (languageTitle != null && languageTitle.isNotReallyEmpty)
-        ? accountRepository!.languageCodeFromTitle(languageTitle)
-        : '';
-    accountRepository!.update(
-      newFirstName: firstName,
-      newLastName: lastName,
-      newLanguage: languageCode ?? '',
+    final languageCode = '';
+    // (languageTitle != null && languageTitle.isNotReallyEmpty)
+    //     ? accountRepository!.languageCodeFromTitle(languageTitle)
+    //     : '';
+    accountRepository!.updateAccount(
+      firstName: firstName,
+      lastName: lastName,
+      language: languageCode ?? '',
       oldPassword: oldPassword,
       newPassword: newPassword,
-      shouldUpdateCache: shouldUpdateCache,
     );
     emit(AccountUpdateSuccess(
-      firstName: accountRepository!.firstName!.value,
-      lastName: accountRepository!.lastName!.value,
-      language: accountRepository!.selectedLanguage().title,
+      firstName: firstName,
+      lastName: lastName,
+      // language: accountRepository!.selectedLanguage().title,
       oldPassword: oldPassword,
       newPassword: newPassword,
     ));
