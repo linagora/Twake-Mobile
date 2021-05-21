@@ -15,7 +15,7 @@ Globals _$GlobalsFromJson(Map<String, dynamic> json) {
     tabs: _$enumDecodeNullable(_$TabsEnumMap, json['tabs']) ?? Tabs.Channels,
     token: json['token'] as String?,
     fcmToken: json['fcm_token'] as String,
-    userId: json['user_id'] as String,
+    userId: json['user_id'] as String?,
     companyId: json['company_id'] as String?,
     workspaceId: json['workspace_id'] as String?,
     channelId: json['channel_id'] as String?,

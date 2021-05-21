@@ -100,8 +100,8 @@ class Globals extends BaseModel {
 
   factory Globals({
     required String host,
-    required ChannelsType channelsType,
-    required Tabs tabs,
+    ChannelsType channelsType: ChannelsType.Commons,
+    Tabs tabs: Tabs.Channels,
     String? token,
     required String fcmToken,
     String? userId,
