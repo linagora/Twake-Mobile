@@ -19,7 +19,6 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     _companies = companies;
     emit(CompaniesLoadSuccess(
       companies: companies,
-      selectedCompanyId: Globals.instance.companyId,
     ));
   }
 
@@ -31,7 +30,6 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     Globals.instance.companyIdSet = companyId;
     final newState = CompaniesLoadSuccess(
       companies: _companies,
-      selectedCompanyId: companyId,
     );
     emit(newState);
   }

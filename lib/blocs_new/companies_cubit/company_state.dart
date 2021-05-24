@@ -7,19 +7,17 @@ abstract class CompaniesState extends Equatable {
 
 class CompaniesInitial extends CompaniesState {
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
 class CompaniesLoadSuccess extends CompaniesState {
   final List<Company> companies;
-  final String? selectedCompanyId;
 
   const CompaniesLoadSuccess({
     required this.companies,
-    this.selectedCompanyId
   });
   @override
-  List<Object?> get props => [companies];
+  List<Object> get props => [companies];
 }
 
 class CompaniesLoading extends CompaniesState {

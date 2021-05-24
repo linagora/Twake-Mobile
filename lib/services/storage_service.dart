@@ -104,6 +104,7 @@ class StorageService {
     List<String>? columns,
     String? where,
     List<dynamic>? whereArgs,
+    int? limit,
   }) async {
     if (where != null && whereArgs != null) {
       final expected = where.split('?').length;
@@ -115,6 +116,7 @@ class StorageService {
       columns: columns,
       where: where,
       whereArgs: whereArgs,
+      limit: limit,
     );
     return result;
   }
