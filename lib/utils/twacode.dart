@@ -981,7 +981,7 @@ class TwacodeRenderer {
               textColor,
             ),
           );
-
+          //   print(t['metadata']['preview']);
           final widget = Container(
             margin: EdgeInsets.all(4),
             padding: EdgeInsets.all(3),
@@ -1050,12 +1050,11 @@ class TwacodeRenderer {
                 child: SizedBox(
                   child: t['metadata']['preview'] != null
                       ? ClipRRect(
-                          child: Image.network(
-                              Api.host + t['metadata']['preview']),
+                          child: Image.network(t['metadata']['preview']),
                           borderRadius: BorderRadius.all(Radius.circular(8)))
                       : CircleAvatar(
                           child: Icon(
-                            Icons.insert_drive_file_rounded,
+                            Icons.cloud_download_rounded,
                             color: (parentStyle.color == Colors.white)
                                 ? Color(0xfff6f6f6)
                                 : Color(0xff004dff),

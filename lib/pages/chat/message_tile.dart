@@ -246,74 +246,106 @@ class _MessageTileState<T extends BaseChannelBloc>
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (!_isMyMessage)
-                                    Text(
-                                      messageState.sender ?? '',
-                                      style: TextStyle(
-                                        fontSize: 11.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xff444444),
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  SizedBox(height: _isMyMessage ? 0.0 : 4.0),
-                                  Stack(children: <Widget>[
-                                    progressVisible
-                                        ? Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: <Widget>[buildProgress()])
-                                        : SizedBox.shrink(),
-                                    TwacodeRenderer(
-                                      //  progress: _progress,
-                                      onReceiveProgress: _onReceiveProgress,
-                                      twacode: messageState.content,
-                                      parentStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: _isMyMessage
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ).message
-                                  ]),
-
-                                  // Normally we use SizedBox here,
-                                  // but it will cut the bottom of emojis
-                                  // in last line of the messsage.
-                                  Container(
-                                    color: Colors.transparent,
-                                    width: 10.0,
-                                    height: 5.0,
-                                  ),
-                                  Wrap(
-                                    runSpacing: Dim.heightMultiplier,
-                                    crossAxisAlignment:
-                                        WrapCrossAlignment.center,
-                                    textDirection: TextDirection.ltr,
-                                    children: [
-                                      ...messageState.reactions.map((r) {
-                                        return Reaction(
-                                          r['name'],
-                                          r['count'],
-                                          T == DirectsBloc ? 'direct' : null,
-                                        );
-                                      }),
-                                      if (messageState.responsesCount > 0 &&
-                                          messageState.threadId == null &&
-                                          !_hideShowAnswers)
-                                        Text(
-                                          'See all answers (${messageState.responsesCount})',
-                                          style: StylesConfig.miniPurple,
+                              child: Stack(children: <Widget>[
+                                progressVisible
+                                    ? Expanded(
+                                        child: Column(
+                                          children: [
+                                            Spacer(),
+                                            Container(
+                                              alignment: Alignment.bottomCenter,
+                                              color: Colors.black,
+                                              child: Container(
+                                                color: Colors.green,
+                                                width: 15,
+                                                height: 15,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                      )
+                                    // buildProgress(
+                                    //        _isMyMessage)
+                                    : SizedBox.shrink(),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (!_isMyMessage)
+                                      Text(
+                                        messageState.sender ?? '',
+                                        style: TextStyle(
+                                          fontSize: 11.0,
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xff444444),
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    SizedBox(height: _isMyMessage ? 0.0 : 4.0),
+                                    Stack(children: <Widget>[
+                                      progressVisible
+                                          ? Container(
+                                              alignment: Alignment.bottomCenter,
+                                              color: Colors.black,
+                                              height: 10,
+                                              width: 10,
+                                              child: Container(
+                                                color: Colors.green,
+                                                width: 5,
+                                                height: 5,
+                                              ),
+                                            )
+
+                                          // buildProgress(
+                                          //        _isMyMessage)
+                                          : SizedBox.shrink(),
+                                      TwacodeRenderer(
+                                        //  progress: _progress,
+                                        onReceiveProgress: _onReceiveProgress,
+                                        twacode: messageState.content,
+                                        parentStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: _isMyMessage
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ).message
+                                    ]),
+
+                                    // Normally we use SizedBox here,
+                                    // but it will cut the bottom of emojis
+                                    // in last line of the messsage.
+                                    Container(
+                                      color: Colors.transparent,
+                                      width: 10.0,
+                                      height: 5.0,
+                                    ),
+                                    Wrap(
+                                      runSpacing: Dim.heightMultiplier,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      textDirection: TextDirection.ltr,
+                                      children: [
+                                        ...messageState.reactions.map((r) {
+                                          return Reaction(
+                                            r['name'],
+                                            r['count'],
+                                            T == DirectsBloc ? 'direct' : null,
+                                          );
+                                        }),
+                                        if (messageState.responsesCount > 0 &&
+                                            messageState.threadId == null &&
+                                            !_hideShowAnswers)
+                                          Text(
+                                            'See all answers (${messageState.responsesCount})',
+                                            style: StylesConfig.miniPurple,
+                                          ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ]),
                             ),
                             SizedBox(width: 10.0),
                             Text(
@@ -348,11 +380,20 @@ class _MessageTileState<T extends BaseChannelBloc>
     );
   }
 
-  Widget buildProgress() {
+  Widget buildProgress(bool _isMyMessage) {
     if (_progress == 1) {
-      return Icon(
-        Icons.arrow_circle_down_rounded,
-        color: Colors.grey,
+      return SizedBox(
+        child: CircleAvatar(
+          child: Icon(
+            Icons.insert_drive_file_rounded,
+            color: _isMyMessage ? Color(0xfff6f6f6) : Color(0xff004dff),
+          ),
+          backgroundColor: _isMyMessage
+              ? Color(0xfff6f6f6).withOpacity(0.12)
+              : Color(0xff004dff).withOpacity(0.08),
+        ),
+        width: 40,
+        height: 40,
       );
     } else {
       return CircularProgressIndicator(
@@ -363,11 +404,16 @@ class _MessageTileState<T extends BaseChannelBloc>
     }
   }
 
-  Widget buildProgressTest() {
+  Widget buildProgressTest(bool _isMyMessage) {
     if (_progress == 1) {
-      return Icon(
-        Icons.arrow_circle_down_rounded,
-        color: Colors.grey,
+      return CircleAvatar(
+        child: Icon(
+          Icons.insert_drive_file_rounded,
+          color: _isMyMessage ? Color(0xfff6f6f6) : Color(0xff004dff),
+        ),
+        backgroundColor: _isMyMessage
+            ? Color(0xfff6f6f6).withOpacity(0.12)
+            : Color(0xff004dff).withOpacity(0.08),
       );
     } else {
       return CircularProgressIndicator(
