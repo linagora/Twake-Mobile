@@ -16,7 +16,7 @@ class MessagesRepository {
   Stream<List<Message>> fetch({
     String? companyId,
     String? workspaceId,
-    String? channelId,
+    required String channelId,
     String? threadId,
   }) async* {
     final localResult = await this._storage.select(
@@ -36,7 +36,7 @@ class MessagesRepository {
     final Map<String, dynamic> queryParameters = {
       'company_id': companyId ?? Globals.instance.companyId,
       'workspace_id': workspaceId ?? Globals.instance.workspaceId,
-      'channel_id': channelId ?? Globals.instance.channelId,
+      'channel_id': channelId,
       'thread_id': threadId,
       'limit': _LIST_SIZE,
     };
@@ -58,6 +58,8 @@ class MessagesRepository {
             ))
         .toList();
 
+    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
+
     yield messages;
   }
 
@@ -70,7 +72,11 @@ class MessagesRepository {
     final localResult = await this._storage.select(
           table: Table.message,
           where: 'channel_id = ? AND thread_id = ? AND creation_date < ?',
-          whereArgs: [channelId, threadId, beforeDate],
+          whereArgs: [
+            channelId ?? Globals.instance.channelId,
+            threadId,
+            beforeDate,
+          ],
           limit: _LIST_SIZE,
         );
     var messages =
@@ -99,6 +105,8 @@ class MessagesRepository {
               jsonify: false,
             ))
         .toList();
+
+    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
 
     return messages;
   }
@@ -180,7 +188,23 @@ class MessagesRepository {
     return message;
   }
 
-  Future<void> delete() async {
-    // TODO implement message deletion
+  Future<void> delete({required String messageId, String? threadId}) async {
+    // Deleting should be disallowed without active internet connection
+    if (!Globals.instance.isNetworkConnected) return;
+
+    await _storage.delete(
+      table: Table.message,
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
+
+    final data = {
+      'company_id': Globals.instance.companyId,
+      'workspace_id': Globals.instance.workspaceId,
+      'channel_id': Globals.instance.channelId,
+      'message_id': messageId,
+      'thread_id': threadId,
+    };
+    await _api.delete(endpoint: Endpoint.messages, data: data);
   }
 }

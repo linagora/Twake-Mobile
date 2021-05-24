@@ -1,7 +1,7 @@
 import 'package:twake/models/company/company.dart';
 
 class CompanyRepository {
-  Future<List<Company>> fetchCompanies() async {
-    // todo
+  Future<List<Company>> fetch() async {
+    // TODO
   }
 }

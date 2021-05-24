@@ -136,6 +136,14 @@ class StorageService {
     return result.length > 0 ? result[0] : const {};
   }
 
+  Future<void> delete({
+    required Table table,
+    String? where,
+    List<dynamic>? whereArgs,
+  }) async {
+    await _db.delete(table.name, where: where, whereArgs: whereArgs);
+  }
+
   Future<List<Map<String, Object?>>> rawSelect({
     required String sql,
     List<dynamic>? args,

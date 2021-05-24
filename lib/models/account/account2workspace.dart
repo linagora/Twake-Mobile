@@ -8,7 +8,7 @@ class Account2Workspace extends BaseModel {
   final String userId;
   final String workspaceId;
 
-  const Account2Workspace({required this.userId, required this.workspaceId});
+  Account2Workspace({required this.userId, required this.workspaceId});
 
   factory Account2Workspace.fromJson({required Map<String, dynamic> json}) =>
       _$Account2WorkspaceFromJson(json);
