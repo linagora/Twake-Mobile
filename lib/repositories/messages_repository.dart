@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -31,6 +32,7 @@ class MessagesRepository {
     yield messages;
 
     if (!Globals.instance.isNetworkConnected) return;
+
     final Map<String, dynamic> queryParameters = {
       'company_id': companyId ?? Globals.instance.companyId,
       'workspace_id': workspaceId ?? Globals.instance.workspaceId,
@@ -99,5 +101,86 @@ class MessagesRepository {
         .toList();
 
     return messages;
+  }
+
+  Stream<Message> send({
+    required String channelId,
+    required List<dynamic> prepared,
+    String? originalStr,
+    String? threadId,
+  }) async* {
+    if (!Globals.instance.isNetworkConnected) return;
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final fakeId = now.toString(); // Unique ID
+
+    final result = await _storage.first(
+      table: Table.account,
+      where: 'id = ?',
+      whereArgs: [Globals.instance.userId],
+    );
+
+    Account currentUser = Account.fromJson(json: result);
+
+    Message message = Message(
+      id: fakeId,
+      threadId: threadId,
+      channelId: channelId,
+      userId: Globals.instance.userId!,
+      creationDate: now,
+      modificationDate: now,
+      responsesCount: 0,
+      content: MessageContent(originalStr: originalStr, prepared: prepared),
+      username: currentUser.username,
+      firstname: currentUser.firstname,
+      lastname: currentUser.lastname,
+      reactions: [],
+    );
+
+    yield message;
+    final data = {
+      'company_id': Globals.instance.companyId,
+      'workspace_id': Globals.instance.workspaceId,
+      'channel_id': channelId,
+      'thread_id': threadId,
+      'original_str': originalStr,
+      'prepared': prepared,
+    };
+
+    final remoteResult =
+        await _api.post(endpoint: Endpoint.messages, data: data);
+
+    message = Message.fromJson(json: remoteResult, jsonify: false);
+
+    _storage.insert(table: Table.message, data: message);
+
+    yield message;
+  }
+
+  Future<Message> edit({required Message message}) async {
+    // Editing should be disallowed without active internet connection
+    if (!Globals.instance.isNetworkConnected) return message;
+
+    final data = {
+      'company_id': Globals.instance.companyId,
+      'workspace_id': Globals.instance.workspaceId,
+      'channel_id': message.channelId,
+      'thread_id': message.threadId,
+      'original_str': message.content.originalStr,
+      'prepared': message.content.prepared,
+    };
+
+    final remoteResult =
+        await _api.put(endpoint: Endpoint.messages, data: data);
+
+    message = Message.fromJson(json: remoteResult, jsonify: false);
+
+    _storage.insert(table: Table.message, data: message);
+
+    return message;
+  }
+
+  Future<void> delete() async {
+    // TODO implement message deletion
   }
 }

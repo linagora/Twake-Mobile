@@ -5,6 +5,9 @@ import 'package:twake/utils/json.dart' as jsn;
 import 'message_content.dart';
 import 'reaction.dart';
 
+export 'message_content.dart';
+export 'reaction.dart';
+
 part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
