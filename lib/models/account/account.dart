@@ -2,6 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
+export 'account2workspace.dart';
+
 part 'account.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)

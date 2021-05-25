@@ -94,6 +94,13 @@ CREATE INDEX user_firstname_idx ON message(firstname);
 CREATE INDEX user_lastname_idx ON message(lastname);
 ''';
 
+const String CREATE_ACCOUNT2WORKSPACE_V5 = '''
+CREATE TABLE account2workspace (
+    user_id TEXT,
+    workspace_id TEXT
+);
+''';
+
 const String CREATE_GLOBALS_V5 = '''
 CREATE TABLE globals (
     user_id TEXT PRIMARY KEY,
@@ -112,6 +119,7 @@ CREATE TABLE globals (
 const DDL_V5 = [
   CREATE_AUTHENTICATION_V5,
   CREATE_ACCOUNT_V5,
+  CREATE_ACCOUNT2WORKSPACE_V5,
   CREATE_COMPANY_V5,
   CREATE_WORKSPACE_V5,
   CREATE_CHANNEL_V5,

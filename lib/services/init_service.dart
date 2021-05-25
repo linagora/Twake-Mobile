@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/company/company.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -48,7 +49,7 @@ class InitService {
         endpoint: Endpoint.directs,
         queryParameters: {'company_id': company.id},
       );
-      directs.followedBy(remoteResult.map(
+      directs = directs.followedBy(remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false),
       ));
     }
@@ -62,6 +63,8 @@ class InitService {
     );
 
     Iterable<Channel> channels = Iterable.empty();
+    Iterable<Account> accounts = Iterable.empty();
+    Iterable<Account2Workspace> accounts2workspaces = Iterable.empty();
     for (final workspace in workspaces) {
       // 4. For each workspace fetch channel
       remoteResult = await _apiService.get(
@@ -71,15 +74,39 @@ class InitService {
           'workspace_id': workspace.id,
         },
       );
-      channels.followedBy(remoteResult.map(
+      channels = channels.followedBy(remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false),
       ));
-      // 5. TODO for each workspace fetch members
+      // 5. For each workspace fetch members
+      remoteResult = await _apiService.get(
+        endpoint: Endpoint.workspaceMembers,
+        queryParameters: {
+          'company_id': workspace.companyId,
+          'workspace_id': workspace.id,
+        },
+      );
+      accounts = accounts.followedBy(remoteResult.map(
+        (i) => Account.fromJson(json: i),
+      ));
+      // Create links between accounts and workspaces
+      accounts2workspaces = accounts2workspaces.followedBy(remoteResult.map(
+        (i) => Account2Workspace(
+          userId: i['id'],
+          workspaceId: workspace.id,
+        ),
+      ));
     }
     await _storageService.multiInsert(
       table: Table.channel,
       data: directs,
     );
+
+    await _storageService.multiInsert(table: Table.account, data: accounts);
+    await _storageService.multiInsert(
+      table: Table.account2workspace,
+      data: accounts2workspaces,
+    );
+
     // 6. For each channel/direct fetch messages (last 50 will do, default)
     Iterable<Message> messages = Iterable.empty();
     for (final channel in channels.followedBy(directs)) {
@@ -91,7 +118,7 @@ class InitService {
           'channel_id': channel.id,
         },
       );
-      messages.followedBy(remoteResult.map(
+      messages = messages.followedBy(remoteResult.map(
         (i) => Message.fromJson(json: i, jsonify: false),
       ));
     }
