@@ -13,10 +13,15 @@ class MessagesInitial extends MessagesState {
 }
 
 class MessagesLoadSuccess extends MessagesState {
+  final Message? parentMessage; // used in threads
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
 
-  const MessagesLoadSuccess({required this.messages, required this.hash});
+  const MessagesLoadSuccess({
+    required this.messages,
+    required this.hash,
+    this.parentMessage,
+  });
 
   @override
   List<Object?> get props => [hash];

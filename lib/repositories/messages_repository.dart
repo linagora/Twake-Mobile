@@ -49,16 +49,27 @@ class MessagesRepository {
       queryParameters['after_date'] = messages.last.modificationDate;
     }
 
-    final remoteResult = await this._api.get(
+    final List<dynamic> remoteResult = await this._api.get(
           endpoint: Endpoint.messages,
           queryParameters: queryParameters,
         );
-    messages = remoteResult
-        .map((entry) => Message.fromJson(
-              json: entry,
-              jsonify: false,
-            ))
-        .toList();
+    var remoteMessages = remoteResult.map((entry) => Message.fromJson(
+          json: entry,
+          jsonify: false,
+        ));
+
+    _storage.multiInsert(table: Table.message, data: remoteMessages);
+
+    // API returns top level messages intermixed with thread level messages
+    // so we need to filter here
+    remoteMessages = remoteMessages
+        .where((m) => m.channelId == channelId && m.threadId == threadId);
+
+    if (messages.isNotEmpty) {
+      messages.addAll(remoteMessages);
+    } else {
+      messages = remoteMessages.toList();
+    }
 
     messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
 
@@ -97,15 +108,22 @@ class MessagesRepository {
       'before_message_id': beforeMessageId,
     };
 
-    final remoteResult = await this._api.get(
+    final List<dynamic> remoteResult = await this._api.get(
           endpoint: Endpoint.messages,
           queryParameters: queryParameters,
         );
-    messages = remoteResult
-        .map((entry) => Message.fromJson(
-              json: entry,
-              jsonify: false,
-            ))
+
+    var remoteMessages = remoteResult.map((entry) => Message.fromJson(
+          json: entry,
+          jsonify: false,
+        ));
+
+    _storage.multiInsert(table: Table.message, data: remoteMessages);
+
+    // API returns top level messages intermixed with thread level messages
+    // so we need to filter here
+    messages = remoteMessages
+        .where((m) => m.channelId == channelId && m.threadId == threadId)
         .toList();
 
     messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));

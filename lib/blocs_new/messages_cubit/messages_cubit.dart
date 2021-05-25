@@ -149,3 +149,11 @@ class BaseMessagesCubit extends Cubit<MessagesState> {
     _repository.delete(messageId: message.id, threadId: message.threadId);
   }
 }
+
+class ChannelMessagesCubit extends BaseMessagesCubit {
+  // channel specific logic goes here
+}
+
+class ThreadMessagesCubit extends BaseMessagesCubit {
+  // thread specific logic goes here
+}
