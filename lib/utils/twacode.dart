@@ -707,7 +707,8 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render({required List<dynamic> twacode, TextStyle? parentStyle}) {
+  List<InlineSpan> render(
+      {required List<dynamic> twacode, TextStyle? parentStyle}) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -965,7 +966,8 @@ class TwacodeRenderer {
                       if (Platform.isAndroid) {
                         //   print(Api.host);
 
-                        final dir = await (getExternalStorageDirectory() as FutureOr<Directory>);
+                        final dir = await (getExternalStorageDirectory()
+                            as FutureOr<Directory>);
 
                         await FlutterDownloader.enqueue(
                             url: Api.host! + t['metadata']['download'],

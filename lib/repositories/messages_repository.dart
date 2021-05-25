@@ -5,6 +5,8 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/service_bundle.dart';
 
+export 'package:twake/models/message/message.dart';
+
 const _LIST_SIZE = 30;
 
 class MessagesRepository {
