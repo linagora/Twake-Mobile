@@ -54,6 +54,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   Message _message;
   double _progress = 0;
   CancelToken cancelToken = CancelToken();
+  // String fileType;
 
   @override
   void initState() {
@@ -83,10 +84,11 @@ class _MessageTileState<T extends BaseChannelBloc>
     //print('payloadPath $payloadPath');
     if (Platform.isAndroid) {
       OpenFile.open(payloadPath);
-      print(lookupMimeType(payloadPath));
+      // fileType = lookupMimeType(payloadPath);
     }
     if (Platform.isIOS) {
       OpenFile.open("$payloadPath");
+      //  fileType = lookupMimeType(payloadPath);
     }
   }
 
@@ -384,7 +386,8 @@ class _MessageTileState<T extends BaseChannelBloc>
 
   Widget buildProgress(bool _isMyMessage) {
     if (_progress == 1) {
-      return SizedBox(
+      return //fileType != "mp3"
+          SizedBox(
         child: CircleAvatar(
           child: Icon(
             Icons.insert_drive_file_rounded,
