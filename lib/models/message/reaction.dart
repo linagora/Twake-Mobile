@@ -6,9 +6,9 @@ part 'reaction.g.dart';
 class Reaction {
   final String name;
   final List<String> users;
-  final int count;
+  int count;
 
-  const Reaction({
+  Reaction({
     required this.name,
     required this.users,
     required this.count,

@@ -208,6 +208,30 @@ class MessagesRepository {
     return message;
   }
 
+  Future<Message> react({
+    required Message message,
+    required String reaction,
+  }) async {
+    // Reactions should be disallowed without active internet connection
+    if (!Globals.instance.isNetworkConnected) return message;
+
+    final data = {
+      'company_id': Globals.instance.companyId,
+      'workspace_id': Globals.instance.workspaceId,
+      'channel_id': message.channelId,
+      'thread_id': message.threadId,
+      'message_id': message.id,
+      'reaction': reaction,
+    };
+
+    // Might add some extra checks
+    await _api.post(endpoint: Endpoint.reactions, data: data);
+
+    _storage.insert(table: Table.message, data: message);
+
+    return message;
+  }
+
   Future<void> delete({required String messageId, String? threadId}) async {
     // Deleting should be disallowed without active internet connection
     if (!Globals.instance.isNetworkConnected) return;

@@ -135,6 +135,51 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _repository.edit(message: message);
   }
 
+  Future<void> react({
+    required Message message,
+    required String reaction,
+  }) async {
+    final rx = message.reactions;
+    final present = rx.any((r) => r.name == reaction);
+    final reacted = rx.firstWhere(
+      (r) => r.name == reaction,
+      orElse: () => Reaction(
+        name: reaction,
+        users: [Globals.instance.userId!],
+        count: 1,
+      ),
+    );
+    final userId = Globals.instance.userId!;
+    if (present) {
+      if (reacted.users.contains(userId)) {
+        reacted.users.remove(userId);
+      } else {
+        reacted.users.add(userId);
+      }
+      reacted.count = reacted.users.length;
+    } else {
+      rx.add(reacted);
+    }
+
+    rx.where((r) => r.name != reaction).forEach((r) => r.users.remove(userId));
+
+    rx.removeWhere((r) => r.users.isEmpty);
+
+    if (this.state is! MessagesLoadSuccess) return;
+
+    final messages = (this.state as MessagesLoadSuccess).messages;
+
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      // hash should be different from current state, as reactions were modified
+      hash: messages.fold(0, (acc, m) => acc + m.hash),
+    ));
+
+    // As usual, we can try except here to roll back reactions if
+    // API request fails
+    _repository.react(message: message, reaction: reaction);
+  }
+
   Future<void> delete({required Message message}) async {
     if (this.state is! MessagesLoadSuccess) return;
 
