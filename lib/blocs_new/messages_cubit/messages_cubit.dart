@@ -78,6 +78,7 @@ class BaseMessagesCubit extends Cubit<MessagesState> {
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
+    final hash = (this.state as MessagesLoadSuccess).hash;
 
     await for (final message in sendStream) {
       // user might have changed screen, so make sure we are still in
@@ -89,7 +90,7 @@ class BaseMessagesCubit extends Cubit<MessagesState> {
 
       emit(MessagesLoadSuccess(
         messages: modifiedList,
-        hash: modifiedList.fold(0, (acc, m) => acc + m.hash),
+        hash: hash + message.hash,
       ));
     }
   }
@@ -98,5 +99,53 @@ class BaseMessagesCubit extends Cubit<MessagesState> {
     required Message message,
     required String editedText,
     List<File> newAttachments: const [],
-  }) async {}
+    String? threadId,
+  }) async {
+    final prepared = TwacodeParser(editedText).message;
+    if (newAttachments.isNotEmpty) {
+      final oldPrepared = message.content.prepared;
+      final content = newAttachments.map((f) => f.toMap()).toList();
+      Map<String, dynamic> nop = {};
+      if (oldPrepared.last['type'] == 'nop') {
+        // if it already has attachments, then merge them
+        nop = oldPrepared.last;
+        nop['content'] = nop['content'] + content;
+      } else {
+        // else create new attachments
+        nop['type'] = 'nop';
+        nop['content'] = content;
+      }
+      prepared.add(nop);
+    }
+    if (this.state is! MessagesLoadSuccess) return;
+
+    final messages = (this.state as MessagesLoadSuccess).messages;
+
+    message.content =
+        MessageContent(originalStr: editedText, prepared: prepared);
+    // It's assumed that the message argument is also contained in
+    // the messages list of the current state
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      // hash should be different from current state because we changed the text of message
+      hash: messages.fold(0, (acc, m) => acc + m.hash),
+    ));
+    // here we can use try except to revert the message to original state
+    // if the request to API failed for some reason
+    _repository.edit(message: message);
+  }
+
+  Future<void> delete({required Message message}) async {
+    if (this.state is! MessagesLoadSuccess) return;
+
+    final messages = (this.state as MessagesLoadSuccess).messages;
+    final hash = (this.state as MessagesLoadSuccess).hash;
+    messages.removeWhere((m) => m.id == message.id);
+
+    emit(MessagesLoadSuccess(messages: messages, hash: hash - message.hash));
+
+    // Again, here we can use try except to undelete the message
+    // if the request to API failed for some reason
+    _repository.delete(messageId: message.id, threadId: message.threadId);
+  }
 }

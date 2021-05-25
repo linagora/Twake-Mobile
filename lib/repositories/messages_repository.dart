@@ -194,12 +194,6 @@ class MessagesRepository {
     // Deleting should be disallowed without active internet connection
     if (!Globals.instance.isNetworkConnected) return;
 
-    await _storage.delete(
-      table: Table.message,
-      where: 'id = ?',
-      whereArgs: [messageId],
-    );
-
     final data = {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId,
@@ -208,5 +202,12 @@ class MessagesRepository {
       'thread_id': threadId,
     };
     await _api.delete(endpoint: Endpoint.messages, data: data);
+
+    // Only delete message from local store if API request was successful
+    await _storage.delete(
+      table: Table.message,
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
   }
 }
