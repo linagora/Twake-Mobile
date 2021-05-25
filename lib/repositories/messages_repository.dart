@@ -228,4 +228,16 @@ class MessagesRepository {
       whereArgs: [messageId],
     );
   }
+
+  Future<Message> getMessageLocal(String messageId) async {
+    final result = await _storage.first(
+      table: Table.message,
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
+
+    final message = Message.fromJson(json: result);
+
+    return message;
+  }
 }

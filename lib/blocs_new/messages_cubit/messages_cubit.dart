@@ -7,7 +7,7 @@ import 'package:twake/utils/twacode.dart';
 
 export 'messages_state.dart';
 
-class BaseMessagesCubit extends Cubit<MessagesState> {
+abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
 
   BaseMessagesCubit({MessagesRepository? repository})
@@ -147,6 +147,21 @@ class BaseMessagesCubit extends Cubit<MessagesState> {
     // Again, here we can use try except to undelete the message
     // if the request to API failed for some reason
     _repository.delete(messageId: message.id, threadId: message.threadId);
+  }
+
+  void selectThread(Message message) {
+    Globals.instance.threadIdSet = message.id;
+  }
+
+  void clearSelectedThread() {
+    Globals.instance.threadIdSet = null;
+  }
+
+  Future<Message> get selectedThread async {
+    final message =
+        await _repository.getMessageLocal(Globals.instance.threadId!);
+
+    return message;
   }
 }
 

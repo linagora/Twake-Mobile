@@ -29,20 +29,20 @@ class Globals extends BaseModel {
 
   String? workspaceId;
   // Use this setter to set the value, otherwise it will not persist
-  set workspaceIdSet(String val) {
+  set workspaceIdSet(String? val) {
     workspaceId = val;
     save();
   }
 
   String? channelId;
   // Use this setter to set the value, otherwise it will not persist
-  set channelIdSet(String val) {
+  set channelIdSet(String? val) {
     channelId = val;
     save();
   }
 
   String? threadId;
-  set threadIdSet(String val) {
+  set threadIdSet(String? val) {
     threadId = val;
     save();
   }
