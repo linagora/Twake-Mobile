@@ -67,6 +67,31 @@ class Notifications {
     });
   }
 
+  Future<void> showNotification(
+      Map<String, String> payload, bool isErr, String err) async {
+    var androidChannelSpecifics = AndroidNotificationDetails(
+      'CHANNEL_ID',
+      'CHANNEL_NAME',
+      "CHANNEL_DESCRIPTION",
+      importance: Importance.max,
+      priority: Priority.high,
+      playSound: true,
+      timeoutAfter: 5000,
+      styleInformation: DefaultStyleInformation(true, true),
+    );
+    var iosChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+        android: androidChannelSpecifics, iOS: iosChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      isErr ? ' downloading failed' : payload['title'],
+      payload['body'], //null
+      platformChannelSpecifics,
+      payload: payload['payload'], //null
+    );
+  }
+
   Future<dynamic> onMessage(RemoteMessage rmessage) async {
     Map<String, dynamic> message = rmessage.data;
     logger.d('GOT MESSAGE FROM FIREBASE: $message, ${rmessage.toString()}');

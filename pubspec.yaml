@@ -63,6 +63,7 @@ dependencies:
   flutter_downloader: ^1.6.0
   permission_handler: ^7.0.0
   file_picker: ^3.0.1
+  mime: ^1.0.0
   open_file: ^3.2.1
   image: ^3.0.2
   

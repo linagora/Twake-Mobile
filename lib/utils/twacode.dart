@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
+import 'package:twake/services/notifications.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -573,6 +574,8 @@ class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans;
   Function onReceiveProgress;
+  CancelToken _cancelToken = CancelToken();
+  //Notifications notificationPlugin = Notifications();
 
   TwacodeRenderer(
       {this.twacode, TextStyle parentStyle, this.onReceiveProgress}) {
@@ -1008,6 +1011,7 @@ class TwacodeRenderer {
                         try {
                           await dio.download(
                               Api.host + t['metadata']['download'], dir2,
+                              cancelToken: _cancelToken,
                               onReceiveProgress: onReceiveProgress);
                         } catch (exeption) {
                           isErr = true;
@@ -1033,6 +1037,7 @@ class TwacodeRenderer {
                         try {
                           await dio.download(
                               Api.host + t['metadata']['download'], dir2,
+                              cancelToken: _cancelToken,
                               onReceiveProgress: onReceiveProgress);
                         } catch (exeption) {
                           isErr = true;

@@ -3,7 +3,10 @@ import 'dart:ui';
 
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:mime/mime.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
 import 'package:twake/blocs/directs_bloc/directs_bloc.dart';
@@ -24,7 +27,6 @@ import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 import 'package:twake/utils/notify.dart';
-import 'package:open_file/open_file.dart';
 
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
@@ -51,6 +53,7 @@ class _MessageTileState<T extends BaseChannelBloc>
   bool progressVisible = false;
   Message _message;
   double _progress = 0;
+  CancelToken cancelToken = CancelToken();
 
   @override
   void initState() {
@@ -80,6 +83,7 @@ class _MessageTileState<T extends BaseChannelBloc>
     //print('payloadPath $payloadPath');
     if (Platform.isAndroid) {
       OpenFile.open(payloadPath);
+      print(lookupMimeType(payloadPath));
     }
     if (Platform.isIOS) {
       OpenFile.open("$payloadPath");
@@ -261,7 +265,6 @@ class _MessageTileState<T extends BaseChannelBloc>
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   SizedBox(height: _isMyMessage ? 0.0 : 4.0),
-
                                   Stack(children: <Widget>[
                                     TwacodeRenderer(
                                       //  progress: _progress,
@@ -395,29 +398,38 @@ class _MessageTileState<T extends BaseChannelBloc>
         height: 40,
       );
     } else {
-      return SizedBox(
-        child: Stack(
-          children: <Widget>[
-            CircleAvatar(
-                child: Icon(
-                  Icons.cancel_outlined,
-                  color: _isMyMessage ? Color(0xfff6f6f6) : Color(0xff004dffC),
+      return InkWell(
+          child: SizedBox(
+            child: Stack(
+              children: <Widget>[
+                /*        CircleAvatar(
+                      child: Icon(
+                        Icons.cancel_outlined,
+                        color: _isMyMessage
+                            ? Color(0xfff6f6f6)
+                            : Color(0xff004dffC),
+                      ),
+                      backgroundColor: _isMyMessage
+                          ? Color(0xff004dff).withOpacity(0.08)
+                          : Color(0xfff6f6f6).withOpacity(0.12)),  */
+                CircularProgressIndicator(
+                  value: _progress,
+                  valueColor: AlwaysStoppedAnimation(
+                    _isMyMessage ? Color(0xfff6f6f6) : Color(0xff004dff),
+                  ),
+                  backgroundColor: Colors.grey,
                 ),
-                backgroundColor: _isMyMessage
-                    ? Color(0xff004dff).withOpacity(0.08)
-                    : Color(0xfff6f6f6).withOpacity(0.12)),
-            CircularProgressIndicator(
-              value: _progress,
-              valueColor: AlwaysStoppedAnimation(
-                _isMyMessage ? Color(0xfff6f6f6) : Color(0xff004dff),
-              ),
-              backgroundColor: Colors.grey,
+              ],
             ),
-          ],
-        ),
-        width: 40,
-        height: 40,
-      );
+            width: 40,
+            height: 40,
+          ),
+          onTap: () {
+            //    if (_progress != 0) {
+            //     cancelToken.cancel();
+            //      progressVisible = false;
+            //  }
+          });
     }
   }
 }
