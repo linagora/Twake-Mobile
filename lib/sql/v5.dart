@@ -70,6 +70,8 @@ CREATE TABLE message (
     draft TEXT,
     is_read INT DEFAULT 1
 );
+
+CREATE INDEX message_user_idx ON message(user_id);
 CREATE INDEX message_channel_idx ON message(channel_id);
 CREATE INDEX message_thread_idx ON message(thread_id);
 ''';
@@ -90,8 +92,8 @@ CREATE TABLE account (
 );
 CREATE INDEX user_email_idx ON user(email);
 CREATE INDEX user_username_idx ON user(username);
-CREATE INDEX user_firstname_idx ON message(firstname);
-CREATE INDEX user_lastname_idx ON message(lastname);
+CREATE INDEX user_firstname_idx ON user(firstname);
+CREATE INDEX user_lastname_idx ON user(lastname);
 ''';
 
 const String CREATE_ACCOUNT2WORKSPACE_V5 = '''
