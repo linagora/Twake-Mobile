@@ -54,6 +54,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       onLaunchCallback: onLaunchCallback,
       shouldNotify: shouldNotify,
     );
+
     socket = IO.io(
       authBloc!.repository.socketIOHost,
       IO.OptionBuilder()
@@ -212,13 +213,16 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     } else if (event is ThreadMessageEvent) {
       yield ThreadMessageNotification(event.data);
     } else if (event is ChannelMessageSocketEvent) {
-      yield ChannelMessageArrived(event.data as SocketMessageUpdateNotification);
+      yield ChannelMessageArrived(
+          event.data as SocketMessageUpdateNotification);
     } else if (event is DirectMessageSocketEvent) {
       yield DirectMessageArrived(event.data as SocketMessageUpdateNotification);
     } else if (event is ChannelThreadSocketEvent) {
-      yield ChannelThreadMessageArrived(event.data as SocketMessageUpdateNotification);
+      yield ChannelThreadMessageArrived(
+          event.data as SocketMessageUpdateNotification);
     } else if (event is DirectThreadSocketEvent) {
-      yield DirectThreadMessageArrived(event.data as SocketMessageUpdateNotification);
+      yield DirectThreadMessageArrived(
+          event.data as SocketMessageUpdateNotification);
     } else if (event is ThreadMessageDeletedEvent) {
       yield ThreadMessageDeleted(event.data as SocketMessageUpdateNotification);
     } else if (event is MessageDeletedEvent) {
@@ -354,23 +358,28 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         break;
 
       case SocketEventType.ChannelMessage:
-        this.add(ChannelMessageSocketEvent(data as SocketMessageUpdateNotification));
+        this.add(
+            ChannelMessageSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.DirectMessage:
-        this.add(DirectMessageSocketEvent(data as SocketMessageUpdateNotification));
+        this.add(
+            DirectMessageSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.ChannelThreadMessage:
-        this.add(ChannelThreadSocketEvent(data as SocketMessageUpdateNotification));
+        this.add(
+            ChannelThreadSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.DirectThreadMessage:
-        this.add(DirectThreadSocketEvent(data as SocketMessageUpdateNotification));
+        this.add(
+            DirectThreadSocketEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.ThreadMessageDeleted:
-        this.add(ThreadMessageDeletedEvent(data as SocketMessageUpdateNotification));
+        this.add(
+            ThreadMessageDeletedEvent(data as SocketMessageUpdateNotification));
         break;
 
       case SocketEventType.MessageDeleted:
