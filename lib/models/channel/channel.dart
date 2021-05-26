@@ -5,7 +5,7 @@ import 'package:twake/utils/json.dart' as jsn;
 
 part 'channel.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Channel extends BaseModel {
   static const COMPOSITE_FIELDS = ['members', 'permissions'];
 

@@ -10,7 +10,7 @@ export 'reaction.dart';
 
 part 'message.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
   static const COMPOSITE_FIELDS = ['content', 'reactions'];
 

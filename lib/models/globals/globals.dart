@@ -14,7 +14,7 @@ export 'tabs.dart';
 
 part 'globals.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Globals extends BaseModel {
   static late Globals _globals;
 
