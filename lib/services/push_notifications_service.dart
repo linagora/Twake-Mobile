@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:twake/models/push_notification/firebase_notification.dart';
+import 'package:twake/models/push_notification/local_notification.dart';
 
 export 'package:twake/models/push_notification/firebase_notification.dart';
 
@@ -10,6 +12,11 @@ class PushNotificationsService {
   static late PushNotificationsService _service;
   late final FirebaseMessaging _firebase;
   late final FlutterLocalNotificationsPlugin _notificationsPlugin;
+  final StreamController<LocalNotification> _localNotificationClickStream =
+      StreamController();
+
+  // TODO: may be we should persist it between app launches
+  int _idCounter = 0; // for showing local notifications
 
   factory PushNotificationsService({required bool reset}) {
     if (reset) {
@@ -36,12 +43,11 @@ class PushNotificationsService {
       ),
     );
 
-    // BIG TODO: Figure out how to get access to
-    // user clicks on local notifications without resorting to callbacks
-    // on initialize method of the plugin
-
     // Initialize the local notifications plugin with above settings
-    _notificationsPlugin.initialize(initSettings);
+    _notificationsPlugin.initialize(
+      initSettings,
+      onSelectNotification: _onLocalNotificationSelect,
+    );
   }
 
   static PushNotificationsService get instance => _service;
@@ -73,9 +79,13 @@ class PushNotificationsService {
     return FirebaseMessaging.onMessageOpenedApp.map(_transform);
   }
 
+  // Returns a stream of events when user clicks on local notifications
+  Stream<LocalNotification> get localNotifications =>
+      _localNotificationClickStream.stream;
+
   // Should be called to check whether the app was started up
   // (from terminated state) via user click on notification
-  Future<FirebaseMessage?> get checkForNotificationClick async {
+  Future<FirebaseMessage?> get checkRemoteNotificationClick async {
     final remoteMessage = await _firebase.getInitialMessage();
 
     if (remoteMessage == null) return null;
@@ -83,16 +93,59 @@ class PushNotificationsService {
     return FirebaseMessage.fromRemote(remoteMessage: remoteMessage);
   }
 
-  void showLocal() {
-    // logic for showing any kind of local notification
+  Future<LocalNotification?> get checkLocalNotificationClick async {
+    final details =
+        await _notificationsPlugin.getNotificationAppLaunchDetails();
+
+    // Not null guaranteed
+    if (!details!.didNotificationLaunchApp) return null;
+
+    final payload = details.payload;
+    if (payload != null) {
+      return LocalNotification.fromEncodedString(string: payload);
+    }
+
+    return null;
   }
+
+  // Delivers local notification, and returns its ID
+  int showLocal({
+    required String title,
+    required String body,
+    String? payload,
+  }) {
+    _idCounter += 1;
+
+    const android = const AndroidNotificationDetails('Twake', 'Twake', 'Twake');
+    const details = NotificationDetails(android: android);
+
+    _notificationsPlugin.show(
+      _idCounter,
+      title,
+      body,
+      details,
+      payload: payload,
+    );
+
+    return _idCounter;
+  }
+
+  Future<void> cancelLocal({required int id}) =>
+      _notificationsPlugin.cancel(id);
 
   FirebaseMessage _transform(RemoteMessage msg) {
     return FirebaseMessage.fromRemote(remoteMessage: msg);
   }
-}
 
-class PendingNotifications {
-  final List<int> _ids = [];
-  PendingNotifications();
+  Future<void> _onLocalNotificationSelect(String? payload) async {
+    if (payload == null) return;
+
+    final notification = LocalNotification.fromEncodedString(string: payload);
+
+    _localNotificationClickStream.sink.add(notification);
+  }
+
+  Future<void> dispose() async {
+    await _localNotificationClickStream.close();
+  }
 }
