@@ -47,9 +47,14 @@ class EditChannelCubit extends Cubit<EditChannelState> {
     bool? automaticallyAddNew,
   }) {
     repository!.channelId = channelId;
-    repository!.icon = (icon != null && icon.isNotReallyEmpty) ? icon : repository!.icon;
-    repository!.name = (name != null && name.isNotReallyEmpty) ? name : repository!.name;
-    repository!.description = (description != null && description.isNotReallyEmpty) ? description : repository!.description;
+    repository!.icon =
+        (icon != null && icon.isNotReallyEmpty) ? icon : repository!.icon;
+    repository!.name =
+        (name != null && name.isNotReallyEmpty) ? name : repository!.name;
+    repository!.description =
+        (description != null && description.isNotReallyEmpty)
+            ? description
+            : repository!.description;
     repository!.def = automaticallyAddNew ?? repository!.def ?? true;
 
     var newRepo = EditChannelRepository(
