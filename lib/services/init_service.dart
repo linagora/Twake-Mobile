@@ -12,6 +12,8 @@ class InitService {
   static late final _storageService;
 
   static Future<void> preAuthenticationInit() async {
+    _storageService = StorageService(reset: true);
+
     final globals = await _storageService.first(table: Table.globals);
     if (globals.isNotEmpty) {
       Globals.fromJson(globals);
@@ -23,7 +25,6 @@ class InitService {
     SocketIOService(reset: true);
     PushNotificationsService(reset: true);
     _apiService = ApiService(reset: true);
-    _storageService = StorageService(reset: true);
   }
 
   // should only be called once after successful authentication/login

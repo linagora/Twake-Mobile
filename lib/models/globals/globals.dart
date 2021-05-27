@@ -190,8 +190,10 @@ class Globals extends BaseModel {
     userId = null;
   }
 
-  factory Globals.fromJson(Map<String, dynamic> json) =>
-      _$GlobalsFromJson(json);
+  factory Globals.fromJson(Map<String, dynamic> json) {
+    _globals = _$GlobalsFromJson(json);
+    return _globals;
+  }
 
   @override
   Map<String, dynamic> toJson({stringify: true}) => _$GlobalsToJson(this);
