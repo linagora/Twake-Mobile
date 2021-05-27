@@ -4,6 +4,8 @@ import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/message/message_summary.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
+export 'channel_visibility.dart';
+
 part 'channel.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
@@ -21,9 +23,6 @@ class Channel extends BaseModel {
   final String companyId;
 
   final String workspaceId;
-
-  @JsonKey(defaultValue: 1)
-  final int membersCount;
 
   final List<String> members;
 
@@ -47,6 +46,8 @@ class Channel extends BaseModel {
     return hash;
   }
 
+  int get membersCount => members.length;
+
   Channel({
     required this.id,
     required this.name,
@@ -54,7 +55,6 @@ class Channel extends BaseModel {
     this.description,
     required this.companyId,
     required this.workspaceId,
-    this.membersCount: 1,
     this.lastMessage,
     required this.members,
     required this.visibility,
@@ -75,6 +75,31 @@ class Channel extends BaseModel {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
     return _$ChannelFromJson(json);
+  }
+
+  Channel copyWith({
+    String? name,
+    String? icon,
+    String? description,
+    ChannelVisibility? visibility,
+  }) {
+    final copy = Channel(
+      id: id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      description: description ?? this.description,
+      companyId: companyId,
+      workspaceId: workspaceId,
+      members: members,
+      visibility: visibility ?? this.visibility,
+      lastActivity: lastActivity,
+      lastMessage: lastMessage,
+      userLastAccess: userLastAccess,
+      draft: draft,
+      permissions: permissions,
+    );
+
+    return copy;
   }
 
   @override

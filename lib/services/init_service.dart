@@ -8,13 +8,10 @@ import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class InitService {
-  static final _apiService = ApiService(reset: true);
-  static final _storageService = StorageService(reset: true);
+  static late final _apiService;
+  static late final _storageService;
 
   static Future<void> preAuthenticationInit() async {
-    SocketIOService(reset: true);
-    PushNotificationsService(reset: true);
-
     final globals = await _storageService.first(table: Table.globals);
     if (globals.isNotEmpty) {
       Globals.fromJson(globals);
@@ -22,6 +19,11 @@ class InitService {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
       Globals(host: 'https://chat.twake.app', fcmToken: fcmToken);
     }
+
+    SocketIOService(reset: true);
+    PushNotificationsService(reset: true);
+    _apiService = ApiService(reset: true);
+    _storageService = StorageService(reset: true);
   }
 
   // should only be called once after successful authentication/login
