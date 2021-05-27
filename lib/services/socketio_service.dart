@@ -11,7 +11,8 @@ class SocketIOService {
   static late SocketIOService _service;
   late final IO.Socket _socket;
   final _logger = Logger();
-  Map<String, dynamic> _rooms = {};
+
+  bool _healthCheckRunning = false;
 
   StreamController<SocketIOResource> _resourceStream = StreamController();
   StreamController<SocketIOEvent> _eventStream = StreamController();
@@ -45,7 +46,6 @@ class SocketIOService {
 
     _socket.on(IOEvent.authenticated, (_) {
       _logger.v('Successfully authenticated on Socket IO channel');
-      subscribe();
     });
 
     _socket.on(
@@ -60,29 +60,26 @@ class SocketIOService {
     _socket.onError((e) => _logger.e('Error on Socket IO channel:\n$e'));
 
     _socket.onDisconnect((_) => _logger.w('Socket IO connection was aborted'));
+
+    _socket.connect();
+
+    // set up health check for sockeio connection
+    Future.delayed(Duration(seconds: 3), _checkConnectionHealth);
+    Globals.instance.connection.listen((state) {
+      if (state == Connection.connected && _healthCheckRunning) {
+        _checkConnectionHealth();
+      }
+    });
   }
 
   static SocketIOService get instance => _service;
 
-  void subscribe() async {
-    final queryParameters = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId
-    };
-    _rooms = await ApiService.instance.get(
-      endpoint: Endpoint.notificationRooms,
-      queryParameters: queryParameters,
-    );
-
-    for (final r in _rooms.keys) {
-      _socket.emit(IOEvent.join, {'name': r, 'token': 'twake'});
-    }
+  void subscribe({required String room}) async {
+    _socket.emit(IOEvent.join, {'name': room, 'token': 'twake'});
   }
 
-  void unsubscribe() {
-    for (final r in _rooms.keys) {
-      _socket.emit(IOEvent.leave, {'name': r, 'token': 'twake'});
-    }
+  void unsubscribe({required String room}) {
+    _socket.emit(IOEvent.leave, {'name': room, 'token': 'twake'});
   }
 
   void _handleEvent(data) {
@@ -93,6 +90,26 @@ class SocketIOService {
   void _handleResource(data) {
     final resource = SocketIOResource.fromJson(json: data);
     _resourceStream.sink.add(resource);
+  }
+
+  void _checkConnectionHealth() async {
+    if (_healthCheckRunning) return;
+
+    final glob = Globals.instance;
+    if (!glob.isNetworkConnected || glob.token == null) {
+      _healthCheckRunning = false;
+      return;
+    }
+
+    _healthCheckRunning = true;
+
+    if (!_socket.connected) {
+      _socket.connect();
+    }
+    // wait for 5 sec and rerun the check and rerun
+    Future.delayed(Duration(seconds: 5)).then((_) {
+      _checkConnectionHealth();
+    });
   }
 
   Future<void> dispose() async {

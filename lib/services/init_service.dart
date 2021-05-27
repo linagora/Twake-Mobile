@@ -12,6 +12,9 @@ class InitService {
   static final _storageService = StorageService(reset: true);
 
   static Future<void> preAuthenticationInit() async {
+    SocketIOService(reset: true);
+    PushNotificationsService(reset: true);
+
     final globals = await _storageService.first(table: Table.globals);
     if (globals.isNotEmpty) {
       Globals.fromJson(globals);

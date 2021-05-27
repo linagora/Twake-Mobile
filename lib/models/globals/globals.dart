@@ -19,6 +19,10 @@ class Globals extends BaseModel {
   static late Globals _globals;
 
   String host;
+  set hostSet(String val) {
+    host = val;
+    save();
+  }
 
   String? companyId;
   // Use this setter to set the value, otherwise it will not persist
