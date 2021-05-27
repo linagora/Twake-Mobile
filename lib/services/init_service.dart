@@ -8,11 +8,12 @@ import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class InitService {
-  static late final _apiService;
-  static late final _storageService;
+  static late final ApiService _apiService;
+  static late final StorageService _storageService;
 
   static Future<void> preAuthenticationInit() async {
     _storageService = StorageService(reset: true);
+    await _storageService.init();
 
     final globals = await _storageService.first(table: Table.globals);
     if (globals.isNotEmpty) {
