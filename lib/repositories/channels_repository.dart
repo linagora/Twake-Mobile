@@ -2,12 +2,12 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 
-abstract class BaseChannelsRepository {
+class ChannelsRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
   final String endpoint;
 
-  BaseChannelsRepository({this.endpoint: Endpoint.channels});
+  ChannelsRepository({this.endpoint: Endpoint.channels});
 
   Stream<List<Channel>> fetch({
     String? companyId,

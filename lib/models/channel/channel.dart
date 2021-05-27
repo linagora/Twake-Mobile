@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
+import 'package:twake/models/message/message_summary.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 part 'channel.g.dart';
@@ -30,29 +31,38 @@ class Channel extends BaseModel {
 
   final int lastActivity;
 
+  final MessageSummary? lastMessage;
+
   @JsonKey(defaultValue: 0)
   final int userLastAccess;
 
   final String? draft;
 
-  List<String> permissions;
+  final List<String> permissions;
 
   bool get hasUnread => userLastAccess < lastActivity;
 
-  Channel(
-      {required this.id,
-      required this.name,
-      this.icon,
-      this.description,
-      required this.companyId,
-      required this.workspaceId,
-      this.membersCount: 1,
-      required this.members,
-      required this.visibility,
-      required this.lastActivity,
-      this.userLastAccess: 0,
-      this.draft,
-      required this.permissions});
+  int get hash {
+    final int hash = name.hashCode + icon.hashCode + lastActivity;
+    return hash;
+  }
+
+  Channel({
+    required this.id,
+    required this.name,
+    this.icon,
+    this.description,
+    required this.companyId,
+    required this.workspaceId,
+    this.membersCount: 1,
+    this.lastMessage,
+    required this.members,
+    required this.visibility,
+    required this.lastActivity,
+    this.userLastAccess: 0,
+    this.draft,
+    required this.permissions,
+  });
 
   factory Channel.fromJson({
     required Map<String, dynamic> json,

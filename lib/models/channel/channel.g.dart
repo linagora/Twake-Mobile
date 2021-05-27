@@ -15,6 +15,9 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     companyId: json['company_id'] as String,
     workspaceId: json['workspace_id'] as String,
     membersCount: json['members_count'] as int? ?? 1,
+    lastMessage: json['last_message'] == null
+        ? null
+        : MessageSummary.fromJson(json['last_message'] as Map<String, dynamic>),
     members:
         (json['members'] as List<dynamic>).map((e) => e as String).toList(),
     visibility: _$enumDecode(_$ChannelVisibilityEnumMap, json['visibility']),
@@ -37,6 +40,7 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'members': instance.members,
       'visibility': _$ChannelVisibilityEnumMap[instance.visibility],
       'last_activity': instance.lastActivity,
+      'last_message': instance.lastMessage?.toJson(),
       'user_last_access': instance.userLastAccess,
       'draft': instance.draft,
       'permissions': instance.permissions,
