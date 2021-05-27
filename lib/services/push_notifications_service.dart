@@ -15,7 +15,6 @@ class PushNotificationsService {
   final StreamController<LocalNotification> _localNotificationClickStream =
       StreamController();
 
-  // TODO: may be we should persist it between app launches
   int _idCounter = 0; // for showing local notifications
 
   factory PushNotificationsService({required bool reset}) {

@@ -14,12 +14,12 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     description: json['description'] as String?,
     companyId: json['company_id'] as String,
     workspaceId: json['workspace_id'] as String,
-    membersCount: json['members_count'] as int,
+    membersCount: json['members_count'] as int? ?? 1,
     members:
         (json['members'] as List<dynamic>).map((e) => e as String).toList(),
     visibility: _$enumDecode(_$ChannelVisibilityEnumMap, json['visibility']),
     lastActivity: json['last_activity'] as int,
-    userLastAccess: json['user_last_access'] as int,
+    userLastAccess: json['user_last_access'] as int? ?? 0,
     draft: json['draft'] as String?,
     permissions:
         (json['permissions'] as List<dynamic>).map((e) => e as String).toList(),

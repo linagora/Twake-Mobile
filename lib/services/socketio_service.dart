@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/socketio/socketio_event.dart';
+import 'package:twake/models/socketio/socketio_resource.dart';
 
 import 'service_bundle.dart';
 
@@ -8,6 +12,12 @@ class SocketIOService {
   late final IO.Socket _socket;
   final _logger = Logger();
   Map<String, dynamic> _rooms = {};
+
+  StreamController<SocketIOResource> _resourceStream = StreamController();
+  StreamController<SocketIOEvent> _eventStream = StreamController();
+
+  Stream<SocketIOEvent> get eventStream => _eventStream.stream;
+  Stream<SocketIOResource> get resourceStream => _resourceStream.stream;
 
   factory SocketIOService({required bool reset}) {
     if (reset) {
@@ -35,7 +45,7 @@ class SocketIOService {
 
     _socket.on(IOEvent.authenticated, (_) {
       _logger.v('Successfully authenticated on Socket IO channel');
-      _subscribe();
+      subscribe();
     });
 
     _socket.on(
@@ -54,7 +64,7 @@ class SocketIOService {
 
   static SocketIOService get instance => _service;
 
-  void _subscribe() async {
+  void subscribe() async {
     final queryParameters = {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId
@@ -69,18 +79,25 @@ class SocketIOService {
     }
   }
 
-  void _unsubscribe() {
+  void unsubscribe() {
     for (final r in _rooms.keys) {
       _socket.emit(IOEvent.leave, {'name': r, 'token': 'twake'});
     }
   }
 
   void _handleEvent(data) {
-    // convert the data and emit new event to stream
+    final event = SocketIOEvent.fromJson(json: data);
+    _eventStream.sink.add(event);
   }
 
   void _handleResource(data) {
-    // convert the data and emit new event to stream
+    final resource = SocketIOResource.fromJson(json: data);
+    _resourceStream.sink.add(resource);
+  }
+
+  Future<void> dispose() async {
+    await _eventStream.close();
+    await _resourceStream.close();
   }
 }
 

@@ -21,6 +21,7 @@ class Channel extends BaseModel {
 
   final String workspaceId;
 
+  @JsonKey(defaultValue: 1)
   final int membersCount;
 
   final List<String> members;
@@ -29,6 +30,7 @@ class Channel extends BaseModel {
 
   final int lastActivity;
 
+  @JsonKey(defaultValue: 0)
   final int userLastAccess;
 
   final String? draft;
@@ -44,11 +46,11 @@ class Channel extends BaseModel {
       this.description,
       required this.companyId,
       required this.workspaceId,
-      required this.membersCount,
+      this.membersCount: 1,
       required this.members,
       required this.visibility,
       required this.lastActivity,
-      required this.userLastAccess,
+      this.userLastAccess: 0,
       this.draft,
       required this.permissions});
 
