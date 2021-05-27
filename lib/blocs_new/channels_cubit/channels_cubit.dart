@@ -64,7 +64,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
-    channels.insert(0, channel);
+    // Check whether the returned channel did not exist before
+    if (!channels.any((c) => c.id == channel.id)) channels.add(channel);
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
       selected: channel,
@@ -80,6 +82,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     String? description,
     ChannelVisibility? visibility,
   }) async {
+    int oldHash = channel.hash;
+
     channel = channel.copyWith(
       name: name,
       icon: icon,
@@ -87,8 +91,31 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       visibility: visibility,
     );
 
-    await _repository.edit(channel: channel);
+    try {
+      channel = await _repository.edit(channel: channel);
+    } catch (e) {
+      Logger().e('Error occured during channel update:\n$e');
+      return false;
+    }
 
+    final channels = (state as ChannelsLoadedSuccess).channels;
+    final hash = (state as ChannelsLoadedSuccess).hash;
+
+    int index = channels.indexWhere((c) => c.id == channel.id);
+
+    channels[index] = channel;
+
+    emit(ChannelsLoadedSuccess(
+      channels: channels,
+      selected: channel,
+      hash: hash + channel.hash - oldHash,
+    ));
+
+    return true;
+  }
+
+  Future<bool> delete() async {
+    // TODO implement delete method
     return true;
   }
 }

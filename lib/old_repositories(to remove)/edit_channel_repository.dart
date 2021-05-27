@@ -66,9 +66,12 @@ class EditChannelRepository {
     final body = this.toJson();
 
     _logger.d('Channel editing request body: $body');
+
     Map<String, dynamic>? resp;
+
     try {
-      resp = await (_api.put(Endpoint.channels, body: body) as FutureOr<Map<String, dynamic>?>);
+      resp = await (_api.put(Endpoint.channels, body: body)
+          as FutureOr<Map<String, dynamic>?>);
     } catch (error) {
       _logger.e('Error while trying to edit a channel:\n${error.message}');
       return false;
@@ -90,7 +93,8 @@ class EditChannelRepository {
     _logger.d('Channel deletion request body: $body');
     Map<String, dynamic>? resp;
     try {
-      resp = await (_api.delete(Endpoint.channels, body: body) as FutureOr<Map<String, dynamic>?>);
+      resp = await (_api.delete(Endpoint.channels, body: body)
+          as FutureOr<Map<String, dynamic>?>);
     } catch (error) {
       _logger.e('Error while trying to delete a channel:\n${error.message}');
       return false;
