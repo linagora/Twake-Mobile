@@ -21,12 +21,12 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async* {
-    final localResult = await this._storage.select(
-          table: Table.message,
-          where: 'channel_id = ? AND thread_id = ?',
-          whereArgs: [channelId, threadId],
-          limit: _LIST_SIZE,
-        );
+    final localResult = await _storage.select(
+      table: Table.message,
+      where: 'channel_id = ? AND thread_id = ?',
+      whereArgs: [channelId, threadId],
+      limit: _LIST_SIZE,
+    );
     var messages =
         localResult.map((entry) => Message.fromJson(json: entry)).toList();
 
@@ -49,10 +49,10 @@ class MessagesRepository {
       queryParameters['after_date'] = messages.last.modificationDate;
     }
 
-    final List<dynamic> remoteResult = await this._api.get(
-          endpoint: Endpoint.messages,
-          queryParameters: queryParameters,
-        );
+    final List<dynamic> remoteResult = await _api.get(
+      endpoint: Endpoint.messages,
+      queryParameters: queryParameters,
+    );
     var remoteMessages = remoteResult.map((entry) => Message.fromJson(
           json: entry,
           jsonify: false,
@@ -82,16 +82,16 @@ class MessagesRepository {
     required String beforeMessageId,
     required int beforeDate,
   }) async {
-    final localResult = await this._storage.select(
-          table: Table.message,
-          where: 'channel_id = ? AND thread_id = ? AND creation_date < ?',
-          whereArgs: [
-            channelId ?? Globals.instance.channelId,
-            threadId,
-            beforeDate,
-          ],
-          limit: _LIST_SIZE,
-        );
+    final localResult = await _storage.select(
+      table: Table.message,
+      where: 'channel_id = ? AND thread_id = ? AND creation_date < ?',
+      whereArgs: [
+        channelId ?? Globals.instance.channelId,
+        threadId,
+        beforeDate,
+      ],
+      limit: _LIST_SIZE,
+    );
     var messages =
         localResult.map((entry) => Message.fromJson(json: entry)).toList();
 
@@ -108,10 +108,10 @@ class MessagesRepository {
       'before_message_id': beforeMessageId,
     };
 
-    final List<dynamic> remoteResult = await this._api.get(
-          endpoint: Endpoint.messages,
-          queryParameters: queryParameters,
-        );
+    final List<dynamic> remoteResult = await _api.get(
+      endpoint: Endpoint.messages,
+      queryParameters: queryParameters,
+    );
 
     var remoteMessages = remoteResult.map((entry) => Message.fromJson(
           json: entry,
