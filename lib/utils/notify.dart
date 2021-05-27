@@ -76,7 +76,7 @@ class NotificationPlugin {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      timeoutAfter: 5000,
+      timeoutAfter: 500,
       styleInformation: DefaultStyleInformation(true, true),
     );
     var iosChannelSpecifics = IOSNotificationDetails();

@@ -55,13 +55,18 @@ class _MessageTileState<T extends BaseChannelBloc>
   double _progress = 0;
   CancelToken cancelToken = CancelToken();
   // String fileType;
-
+  Size wdgtHieght;
+  final GlobalKey _wdgtKey = GlobalKey();
+  double h = 1;
   @override
   void initState() {
     super.initState();
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
+
     _message = widget.message;
+    WidgetsBinding.instance
+        .addPersistentFrameCallback((_) => getSizeAndPosition());
 
     notificationPlugin.setOnNotificationClick(onNotificationClick);
   }
@@ -80,7 +85,7 @@ class _MessageTileState<T extends BaseChannelBloc>
     }
   }
 
-  onNotificationClick(String payloadPath) async {
+  Future<void> onNotificationClick(String payloadPath) async {
     //print('payloadPath $payloadPath');
     if (Platform.isAndroid) {
       OpenFile.open(payloadPath);
@@ -90,6 +95,15 @@ class _MessageTileState<T extends BaseChannelBloc>
       OpenFile.open("$payloadPath");
       //  fileType = lookupMimeType(payloadPath);
     }
+  }
+
+  getSizeAndPosition() async {
+    // Future.delayed(Duration(seconds: 1));
+    RenderBox _rdrBox = _wdgtKey.currentContext.findRenderObject();
+    wdgtHieght = _rdrBox.size;
+    setState(() {
+      h = _rdrBox.size.height;
+    });
   }
 
   void _onReceiveProgress(int received, int total) {
@@ -143,6 +157,7 @@ class _MessageTileState<T extends BaseChannelBloc>
       child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
         builder: (context, messageState) {
           if (messageState is MessageReady) {
+            getSizeAndPosition();
             bool _isMyMessage = messageState.userId == ProfileBloc.userId;
             return InkWell(
               onLongPress: () {
@@ -268,40 +283,45 @@ class _MessageTileState<T extends BaseChannelBloc>
                                     ),
                                   SizedBox(height: _isMyMessage ? 0.0 : 4.0),
                                   Stack(children: <Widget>[
-                                    TwacodeRenderer(
-                                      //  progress: _progress,
-                                      onReceiveProgress: _onReceiveProgress,
-                                      twacode: messageState.content,
-                                      parentStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: _isMyMessage
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ).message,
+                                    Container(
+                                      key: _wdgtKey,
+                                      child: TwacodeRenderer(
+                                        //  progress: _progress,
+                                        onReceiveProgress: _onReceiveProgress,
+                                        twacode: messageState.content,
+                                        parentStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: _isMyMessage
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ).message,
+                                    ),
                                     progressVisible
-                                        ? Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 20,
-                                              ),
-                                              Container(
-                                                margin: EdgeInsets.all(6),
-                                                padding: EdgeInsets.all(6),
-                                                height: 40,
-                                                width: 40,
-                                                color: _isMyMessage
-                                                    ? Color(0xff004dff)
-                                                    : Color(0xfff6f6f6),
-                                              ),
-                                            ],
+                                        ? Container(
+                                            margin: EdgeInsets.all(16),
+                                            padding: EdgeInsets.only(top: h),
+                                            height: 40,
+                                            width: 40,
+                                            color: _isMyMessage
+                                                ? Color(0xff004dff)
+                                                : Color(0xfff6f6f6),
                                           )
-                                        : SizedBox.shrink(),
+                                        : Container(
+                                            margin: EdgeInsets.all(20),
+                                            padding: EdgeInsets.all(20),
+                                            height: 40,
+                                            width: 40,
+                                            color: _isMyMessage
+                                                ? Colors.green
+                                                : Colors.green,
+                                          ),
                                     progressVisible
                                         ? Column(
                                             children: [
                                               SizedBox(
+                                                //height: h - 10,
                                                 height: 20,
                                               ),
                                               Container(
@@ -348,24 +368,22 @@ class _MessageTileState<T extends BaseChannelBloc>
                               ),
                             ),
                             SizedBox(width: 10.0),
-                            Positioned(
-                              left: 100,
-                              child: Text(
-                                messageState.threadId != null ||
-                                        _hideShowAnswers
-                                    ? DateFormatter.getVerboseDateTime(
-                                        messageState.creationDate)
-                                    : DateFormatter.getVerboseTime(
-                                        messageState.creationDate),
-                                textAlign: TextAlign.end,
-                                style: TextStyle(
-                                  fontSize: 11.0,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.italic,
-                                  color: _isMyMessage
-                                      ? Color(0xffffffff).withOpacity(0.58)
-                                      : Color(0xff8e8e93),
-                                ),
+                            Text('${h}'),
+                            SizedBox(width: h / 4),
+                            Text(
+                              messageState.threadId != null || _hideShowAnswers
+                                  ? DateFormatter.getVerboseDateTime(
+                                      messageState.creationDate)
+                                  : DateFormatter.getVerboseTime(
+                                      messageState.creationDate),
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                fontSize: 11.0,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.italic,
+                                color: _isMyMessage
+                                    ? Color(0xffffffff).withOpacity(0.58)
+                                    : Color(0xff8e8e93),
                               ),
                             ),
                           ],
