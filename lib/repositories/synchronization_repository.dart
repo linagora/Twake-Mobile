@@ -7,7 +7,6 @@ class SynchronizationRepository {
   final _storage = StorageService.instance;
   final _notifications = PushNotificationsService.instance;
   final _socketio = SocketIOService.instance;
-  List<SocketIORoom> _rooms = [];
 
   Future<List<SocketIORoom>> get sockeIORooms async {
     final queryParameters = {

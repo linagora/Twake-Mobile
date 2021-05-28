@@ -1,9 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 
+part 'socketio_room.g.dart';
+
 @JsonSerializable(fieldRename: FieldRename.snake)
 class SocketIORoom {
   final String key;
-  final String type;
+  final RoomType type;
   final String id;
 
   const SocketIORoom({
@@ -19,4 +21,17 @@ class SocketIORoom {
   Map<String, dynamic> toJson() {
     return _$SocketIORoomToJson(this);
   }
+}
+
+enum RoomType {
+  @JsonValue('channel')
+  channel,
+  @JsonValue('direct')
+  direct,
+  @JsonValue('channels_list')
+  channelsList,
+  @JsonValue('directs_list')
+  directs_list,
+  @JsonValue('notifications')
+  notifications,
 }

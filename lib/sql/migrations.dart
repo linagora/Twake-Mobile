@@ -10,12 +10,6 @@ import 'v5.dart';
 const CURRENT_MIGRATION = DDL_V5;
 const DBVER = 5;
 
-Future<void> dbUpgrade({
-  required Database db,
-  required int version,
-  required String dbPath,
-}) async {
-  if (version < 5) {
-    await deleteDatabase(dbPath);
-  }
+Future<void> dbUpgrade({required Database db, required int version}) async {
+  // Do necessary schema changes here
 }
