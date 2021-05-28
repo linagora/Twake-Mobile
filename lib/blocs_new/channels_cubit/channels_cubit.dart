@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs_new/channels_cubit/channels_state.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
@@ -114,8 +115,57 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     return true;
   }
 
-  Future<bool> delete() async {
-    // TODO implement delete method
+  Future<bool> delete({required Channel channel}) async {
+    try {
+      await _repository.delete(channel: channel);
+    } catch (e) {
+      Logger().e('Error occured during channel removal:\n$e');
+      return false;
+    }
+
+    final channels = (state as ChannelsLoadedSuccess).channels;
+    final hash = (state as ChannelsLoadedSuccess).hash;
+
+    channels.removeWhere((c) => c.id == channel.id);
+    emit(ChannelsLoadedSuccess(
+      channels: channels,
+      selected: null,
+      hash: hash - channel.hash,
+    ));
+
+    return true;
+  }
+
+  Future<List<Account>> fetchMembers({required Channel channel}) async {
+    final members = _repository.fetchMembers(channel: channel);
+
+    return members;
+  }
+
+  Future<bool> addMembers({
+    required Channel channel,
+    required List<String> usersToAdd,
+  }) async {
+    final oldHash = channel.hash;
+
+    try {
+      channel = await _repository.addMembers(
+        channel: channel,
+        usersToAdd: usersToAdd,
+      );
+    } catch (e) {
+      Logger().e('Error occured while adding members to channel:\n$e');
+      return false;
+    }
+    final channels = (state as ChannelsLoadedSuccess).channels;
+    final hash = (state as ChannelsLoadedSuccess).hash;
+
+    emit(ChannelsLoadedSuccess(
+      channels: channels,
+      selected: channel,
+      hash: hash - oldHash + channel.hash,
+    ));
+
     return true;
   }
 }

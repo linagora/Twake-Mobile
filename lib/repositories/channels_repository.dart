@@ -1,3 +1,4 @@
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -81,8 +82,6 @@ class ChannelsRepository {
   Future<void> delete({required Channel channel}) async {
     final data = channel.toJson();
 
-    data['channel_id'] = channel.id;
-
     await _api.delete(endpoint: endpoint, data: data);
 
     _storage.delete(
@@ -90,5 +89,40 @@ class ChannelsRepository {
       where: 'id = ?',
       whereArgs: [channel.id],
     );
+  }
+
+  Future<List<Account>> fetchMembers({required Channel channel}) async {
+    final List<Account> members = [];
+    for (final m in channel.members) {
+      final member = await _storage.first(
+        table: Table.account,
+        where: 'id = ?',
+        whereArgs: [m],
+      );
+
+      members.add(Account.fromJson(json: member));
+    }
+
+    return members;
+  }
+
+  Future<Channel> addMembers({
+    required Channel channel,
+    required List<String> usersToAdd,
+  }) async {
+    final Map<String, dynamic> data = {
+      'company_id': channel.companyId,
+      'workspace_id': channel.workspaceId,
+      'id': channel.id,
+      'members': usersToAdd,
+    };
+
+    await _api.post(endpoint: Endpoint.channelMembers, data: data);
+
+    channel.members.addAll(usersToAdd);
+
+    _storage.insert(table: Table.channel, data: channel);
+
+    return channel;
   }
 }

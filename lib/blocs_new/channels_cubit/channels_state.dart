@@ -24,9 +24,12 @@ class ChannelsLoadedSuccess extends ChannelsState {
   final Channel? selected;
   final int hash;
 
-  const ChannelsLoadedSuccess(
-      {required this.channels, required this.hash, this.selected});
+  const ChannelsLoadedSuccess({
+    required this.channels,
+    required this.hash,
+    this.selected,
+  });
 
   @override
-  List<Object?> get props => [hash];
+  List<Object?> get props => [hash, selected];
 }

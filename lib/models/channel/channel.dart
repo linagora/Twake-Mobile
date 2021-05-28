@@ -42,7 +42,8 @@ class Channel extends BaseModel {
   bool get hasUnread => userLastAccess < lastActivity;
 
   int get hash {
-    final int hash = name.hashCode + icon.hashCode + lastActivity;
+    final int hash =
+        name.hashCode + icon.hashCode + lastActivity + members.length;
     return hash;
   }
 
