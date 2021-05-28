@@ -8,7 +8,10 @@ class SocketIORoom {
   final RoomType type;
   final String id;
 
-  const SocketIORoom({
+  @JsonKey(ignore: true)
+  bool subscribed = false;
+
+  SocketIORoom({
     required this.key,
     required this.type,
     required this.id,
@@ -31,7 +34,7 @@ enum RoomType {
   @JsonValue('channels_list')
   channelsList,
   @JsonValue('directs_list')
-  directs_list,
+  directsList,
   @JsonValue('notifications')
   notifications,
 }

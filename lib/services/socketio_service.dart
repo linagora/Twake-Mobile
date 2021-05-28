@@ -7,15 +7,19 @@ import 'package:twake/models/socketio/socketio_resource.dart';
 
 import 'service_bundle.dart';
 
+export 'package:twake/models/socketio/socketio_event.dart';
+export 'package:twake/models/socketio/socketio_resource.dart';
+
 class SocketIOService {
   static late SocketIOService _service;
   late final IO.Socket _socket;
-  final _logger = Logger();
 
   bool _healthCheckRunning = false;
 
-  StreamController<SocketIOResource> _resourceStream = StreamController();
-  StreamController<SocketIOEvent> _eventStream = StreamController();
+  StreamController<SocketIOResource> _resourceStream =
+      StreamController.broadcast();
+
+  StreamController<SocketIOEvent> _eventStream = StreamController.broadcast();
 
   Stream<SocketIOEvent> get eventStream => _eventStream.stream;
   Stream<SocketIOResource> get resourceStream => _resourceStream.stream;
@@ -39,27 +43,27 @@ class SocketIOService {
 
     // Set up all the event handlers
     _socket.onConnect((_) {
-      _logger.v('Socket IO connection estabilished');
+      Logger().v('Socket IO connection estabilished');
 
       _socket.emit(IOEvent.authenticate, {'token': Globals.instance.token});
     });
 
     _socket.on(IOEvent.authenticated, (_) {
-      _logger.v('Successfully authenticated on Socket IO channel');
+      Logger().v('Successfully authenticated on Socket IO channel');
     });
 
     _socket.on(
       IOEvent.join_error,
-      (e) => _logger.e('Error joining the room:\n$e'),
+      (e) => Logger().e('Error joining the room:\n$e'),
     );
 
     _socket.on(IOEvent.event, _handleEvent);
 
     _socket.on(IOEvent.resource, _handleResource);
 
-    _socket.onError((e) => _logger.e('Error on Socket IO channel:\n$e'));
+    _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
 
-    _socket.onDisconnect((_) => _logger.w('Socket IO connection was aborted'));
+    _socket.onDisconnect((_) => Logger().w('Socket IO connection was aborted'));
 
     _socket.connect();
 

@@ -51,6 +51,6 @@ const _$RoomTypeEnumMap = {
   RoomType.channel: 'channel',
   RoomType.direct: 'direct',
   RoomType.channelsList: 'channels_list',
-  RoomType.directs_list: 'directs_list',
+  RoomType.directsList: 'directs_list',
   RoomType.notifications: 'notifications',
 };
