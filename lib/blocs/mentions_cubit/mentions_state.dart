@@ -1,23 +1,22 @@
-import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/user.dart';
+import 'package:twake/models/account/account.dart';
 
 abstract class MentionState extends Equatable {
   const MentionState();
 }
 
-class MentionsEmpty extends MentionState {
-  const MentionsEmpty();
+class MentionsInitial extends MentionState {
+  const MentionsInitial();
 
   @override
   List<Object> get props => [];
 }
 
-class MentionableUsersLoaded extends MentionState {
-  final List<User> users;
+class MentionsLoadSuccess extends MentionState {
+  final List<Account> accounts;
 
-  const MentionableUsersLoaded({required this.users});
+  const MentionsLoadSuccess({required this.accounts});
 
   @override
-  List<Object> get props => [users];
+  List<Object> get props => [accounts];
 }

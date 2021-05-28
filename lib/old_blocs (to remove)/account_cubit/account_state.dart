@@ -26,6 +26,7 @@ class AccountLoadSuccess extends AccountState {
   final String? lastName;
   final String? picture;
   final String? language;
+  final List<LanguageOption>? availableLanguages;
 
   const AccountLoadSuccess({
     this.userName,
@@ -33,16 +34,18 @@ class AccountLoadSuccess extends AccountState {
     this.lastName,
     this.picture,
     this.language,
+    this.availableLanguages,
   });
 
   @override
   List<Object?> get props => [
-    userName,
-    firstName,
-    lastName,
-    picture,
-    language,
-  ];
+        userName,
+        firstName,
+        lastName,
+        picture,
+        language,
+        availableLanguages,
+      ];
 }
 
 class AccountLoadFailure extends AccountState {
@@ -71,12 +74,12 @@ class AccountUpdateInProgress extends AccountState {
 
   @override
   List<Object?> get props => [
-    firstName,
-    lastName,
-    language,
-    oldPassword,
-    newPassword,
-  ];
+        firstName,
+        lastName,
+        language,
+        oldPassword,
+        newPassword,
+      ];
 }
 
 class AccountUpdateSuccess extends AccountState {
@@ -96,12 +99,12 @@ class AccountUpdateSuccess extends AccountState {
 
   @override
   List<Object?> get props => [
-    firstName,
-    lastName,
-    language,
-    oldPassword,
-    newPassword,
-  ];
+        firstName,
+        lastName,
+        language,
+        oldPassword,
+        newPassword,
+      ];
 }
 
 class AccountSaveInProgress extends AccountState {
@@ -124,10 +127,10 @@ class AccountSaveSuccess extends AccountState {
 
   @override
   List<Object?> get props => [
-    firstName,
-    lastName,
-    language,
-  ];
+        firstName,
+        lastName,
+        language,
+      ];
 }
 
 class AccountSaveFailure extends AccountState {
