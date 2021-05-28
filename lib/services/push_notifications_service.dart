@@ -15,8 +15,6 @@ class PushNotificationsService {
   final StreamController<LocalNotification> _localNotificationClickStream =
       StreamController();
 
-  int _idCounter = 0; // for showing local notifications
-
   factory PushNotificationsService({required bool reset}) {
     if (reset) {
       _service = PushNotificationsService._();
@@ -96,7 +94,7 @@ class PushNotificationsService {
     final details =
         await _notificationsPlugin.getNotificationAppLaunchDetails();
 
-    // Not null guaranteed
+    // Not null guaranteed on android and iOS
     if (!details!.didNotificationLaunchApp) return null;
 
     final payload = details.payload;
@@ -113,20 +111,19 @@ class PushNotificationsService {
     required String body,
     String? payload,
   }) {
-    _idCounter += 1;
-
     const android = const AndroidNotificationDetails('Twake', 'Twake', 'Twake');
     const details = NotificationDetails(android: android);
+    final id = DateTime.now().millisecondsSinceEpoch;
 
     _notificationsPlugin.show(
-      _idCounter,
+      id,
       title,
       body,
       details,
       payload: payload,
     );
 
-    return _idCounter;
+    return id;
   }
 
   Future<void> cancelLocal({required int id}) =>
