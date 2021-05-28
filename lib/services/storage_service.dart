@@ -136,6 +136,21 @@ class StorageService {
     return result.length > 0 ? result[0] : const {};
   }
 
+  Future<void> update({
+    required Table table,
+    required Map<String, dynamic> values,
+    String? where,
+    List<dynamic>? whereArgs,
+  }) async {
+    await _db.update(
+      table.name,
+      values,
+      where: where,
+      whereArgs: whereArgs,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
   Future<void> delete({
     required Table table,
     String? where,
