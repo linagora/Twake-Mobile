@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+/* import 'package:equatable/equatable.dart';
 import 'package:twake/models/channel/channel.dart';
 
 abstract class ChannelsState extends Equatable {
@@ -33,3 +33,4 @@ class ChannelsLoadedSuccess extends ChannelsState {
   @override
   List<Object?> get props => [hash, selected];
 }
+ */

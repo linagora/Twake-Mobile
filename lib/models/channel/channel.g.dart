@@ -1,4 +1,4 @@
-/* // GENERATED CODE - DO NOT MODIFY BY HAND
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'channel.dart';
 
@@ -14,9 +14,7 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     description: json['description'] as String?,
     companyId: json['company_id'] as String,
     workspaceId: json['workspace_id'] as String,
-    lastMessage: json['last_message'] == null
-        ? null
-        : MessageSummary.fromJson(json['last_message'] as Map<String, dynamic>),
+    membersCount: json['members_count'] as int? ?? 1,
     members:
         (json['members'] as List<dynamic>).map((e) => e as String).toList(),
     visibility: _$enumDecode(_$ChannelVisibilityEnumMap, json['visibility']),
@@ -35,6 +33,7 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'description': instance.description,
       'company_id': instance.companyId,
       'workspace_id': instance.workspaceId,
+      'members_count': instance.membersCount,
       'members': instance.members,
       'visibility': _$ChannelVisibilityEnumMap[instance.visibility],
       'last_activity': instance.lastActivity,
@@ -74,4 +73,3 @@ const _$ChannelVisibilityEnumMap = {
   ChannelVisibility.Private: 'private',
   ChannelVisibility.Direct: 'direct',
 };
- */

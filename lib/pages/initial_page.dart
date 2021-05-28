@@ -21,7 +21,9 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    // final authenticationCubit = BlocProvider.of<AuthenticationCubit>(context);
+    final authenticationCubit = BlocProvider.of<AuthenticationCubit>(context);
+    final mentionsState = BlocProvider.of<AuthenticationCubit>(context).state;
+    print(mentionsState);
   }
 
   Widget buildSplashScreen() {

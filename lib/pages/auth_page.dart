@@ -6,8 +6,6 @@ import 'package:twake/widgets/common/no_internet_snackbar.dart';
 import 'package:twake/pages/server_configuration.dart';
 
 class AuthPage extends StatefulWidget {
-  static const route = '/auth';
-
   @override
   _AuthPageState createState() => _AuthPageState();
 }

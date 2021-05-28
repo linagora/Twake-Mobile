@@ -47,6 +47,7 @@ class StorageService {
 
     void onCreate(Database db, int version) async {
       for (var ddl in CURRENT_MIGRATION) {
+        print(ddl);
         await db.execute(ddl);
       }
     }

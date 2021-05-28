@@ -40,7 +40,7 @@ class TwakeMobileApp extends StatelessWidget {
             title: 'Twake',
             home: BlocProvider<AuthenticationCubit>(
               create: (BuildContext context) => AuthenticationCubit(),
-              //   lazy: false,
+              lazy: false,
               child: InitialPage(),
             ),
           );
