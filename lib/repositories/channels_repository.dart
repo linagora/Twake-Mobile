@@ -125,4 +125,23 @@ class ChannelsRepository {
 
     return channel;
   }
+
+  Future<Channel> removeMembers({
+    required Channel channel,
+    required List<String> usersToRemove,
+  }) async {
+    final Map<String, dynamic> data = {
+      'company_id': channel.companyId,
+      'workspace_id': channel.workspaceId,
+      'id': channel.id,
+      'members': usersToRemove,
+    };
+    await _api.delete(endpoint: Endpoint.channelMembers, data: data);
+
+    channel.members.removeWhere((c) => usersToRemove.contains(c));
+
+    _storage.insert(table: Table.channel, data: channel);
+
+    return channel;
+  }
 }

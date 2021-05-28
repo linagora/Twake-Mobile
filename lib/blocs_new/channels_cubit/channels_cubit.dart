@@ -168,6 +168,33 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
     return true;
   }
+
+  Future<bool> removeMembers({
+    required Channel channel,
+    required List<String> usersToRemove,
+  }) async {
+    final oldHash = channel.hash;
+
+    try {
+      channel = await _repository.removeMembers(
+        channel: channel,
+        usersToRemove: usersToRemove,
+      );
+    } catch (e) {
+      Logger().e('Error occured while removing members from channel:\n$e');
+      return false;
+    }
+    final channels = (state as ChannelsLoadedSuccess).channels;
+    final hash = (state as ChannelsLoadedSuccess).hash;
+
+    emit(ChannelsLoadedSuccess(
+      channels: channels,
+      selected: channel,
+      hash: hash - oldHash + channel.hash,
+    ));
+
+    return true;
+  }
 }
 
 class ChannelsCubit extends BaseChannelsCubit {
