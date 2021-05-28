@@ -1,4 +1,4 @@
-import 'dart:convert';
+/* import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -186,3 +186,4 @@ enum Target {
   MacOS,
   Windows,
 }
+ */

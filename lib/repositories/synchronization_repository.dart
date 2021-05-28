@@ -1,4 +1,4 @@
-import 'package:twake/services/service_bundle.dart';
+/* import 'package:twake/services/service_bundle.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/socketio/socketio_room.dart';
 
@@ -24,3 +24,4 @@ class SynchronizationRepository {
     return rooms.toList();
   }
 }
+ */

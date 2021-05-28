@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
-import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/auth/auth_form.dart';
 import 'package:twake/widgets/common/no_internet_snackbar.dart';
@@ -29,19 +26,7 @@ class _AuthPageState extends State<AuthPage> {
           _index = 1;
         }),
       ),
-      ServerConfiguration(
-        onCancel: () => setState(() {
-          _index = 0;
-        }),
-        onConfirm: () => setState(() {
-          _index = 0;
-        }),
-      ),
     ];
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      context.read<ConfigurationCubit>().load();
-    });
   }
 
   @override
@@ -77,7 +62,7 @@ class _AuthPageState extends State<AuthPage> {
               ),
             ),
           ),
-          BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
+          /*  BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
             listener: connectionListener,
             child: BlocBuilder<AuthBloc, AuthState>(
                 buildWhen: (_, current) =>
@@ -93,7 +78,7 @@ class _AuthPageState extends State<AuthPage> {
                     children: _widgets,
                   );
                 }),
-          ),
+          ),*/
         ],
       ),
     );

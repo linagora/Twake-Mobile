@@ -918,7 +918,7 @@ class TwacodeRenderer {
         } else if (type == TType.Emoji) {
           spans.add(
             TextSpan(
-              text: Emojis.getByName(t['content']),
+              text: t['content'],
               style: getStyle(TType.LineBreak),
             ),
           );
@@ -966,19 +966,10 @@ class TwacodeRenderer {
                       if (Platform.isAndroid) {
                         //   print(Api.host);
 
-                        final dir = await (getExternalStorageDirectory()
-                            as FutureOr<Directory>);
-
-                        await FlutterDownloader.enqueue(
-                            url: Api.host! + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
                       } else if (Platform.isIOS) {
                         final dir = await getApplicationSupportDirectory();
                         await FlutterDownloader.enqueue(
-                            url: Api.host! + t['metadata']['download'],
+                            url: t['metadata']['download'],
                             savedDir: dir.path,
                             // fileName: "Test", //auto
                             showNotification: true,

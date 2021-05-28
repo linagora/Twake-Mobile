@@ -1,4 +1,4 @@
-import 'package:twake/models/member.dart';
+/* import 'package:twake/models/member.dart';
 import 'package:twake/models/user.dart';
 
 extension StringExtension on String {
@@ -18,3 +18,4 @@ extension UsersListExtension on List<User> {
     }
   }
 }
+ */

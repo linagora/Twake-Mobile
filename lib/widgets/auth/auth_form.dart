@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
+////import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
+//import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 // import 'package:twake/utils/navigation.dart';
@@ -44,11 +44,11 @@ class _AuthFormState extends State<AuthForm> {
     super.initState();
     _usernameController.addListener(onUsernameSaved);
     _passwordController.addListener(onPasswordSaved);
-    final AuthState state = BlocProvider.of<AuthBloc>(context).state;
+    /* final AuthState state = BlocProvider.of<AuthBloc>(context).state;
     if (state is Unauthenticated) {
       _usernameController.text = state.username!;
       _passwordController.text = state.password!;
-    }
+    }*/
   }
 
   @override
@@ -75,12 +75,12 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void onSubmit() {
-    BlocProvider.of<AuthBloc>(context).add(
+    /* BlocProvider.of<AuthBloc>(context).add(
       Authenticate(
         _username,
         _password,
       ),
-    );
+    );*/
   }
 
   @override
@@ -117,24 +117,24 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                 ),
                 Spacer(),
-                _AuthTextForm(
+                /*   _AuthTextForm(
                   label: 'Email',
                   validator: validateUsername,
                   // onSaved: onUsernameSaved,
                   controller: _usernameController,
                   focusNode: _usernameFocusNode,
-                ),
+                ),*/
                 SizedBox(height: Dim.hm3),
-                _AuthTextForm(
+                /*   _AuthTextForm(
                   label: 'Password',
                   obscured: true,
                   validator: validatePassword,
                   // onSaved: onPasswordSaved,
                   controller: _passwordController,
                   focusNode: _passwordFocusNode,
-                ),
+                ),*/
                 SizedBox(height: Dim.heightMultiplier),
-                BlocBuilder<AuthBloc, AuthState>(
+                /*   BlocBuilder<AuthBloc, AuthState>(
                   buildWhen: (_, current) =>
                       current is WrongCredentials ||
                       current is AuthenticationError,
@@ -178,11 +178,11 @@ class _AuthFormState extends State<AuthForm> {
                       ],
                     );
                   },
-                ),
+                ),*/
                 Spacer(),
                 SizedBox(
                   width: double.infinity,
-                  child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                  /*child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
                     builder: (context, state) => RaisedButton(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -204,7 +204,7 @@ class _AuthFormState extends State<AuthForm> {
                           ? () => onSubmit()
                           : null,
                     ),
-                  ),
+                  ),*/
                 ),
                 Spacer(),
                 Align(
@@ -229,7 +229,7 @@ class _AuthFormState extends State<AuthForm> {
                               style: StylesConfig.miniPurple
                                   .copyWith(color: Colors.black87),
                             ),
-                            BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                            /*   BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
                               builder: (context, state) => FlatButton(
                                 onPressed: state is cb.ConnectionLost
                                     ? null
@@ -245,7 +245,7 @@ class _AuthFormState extends State<AuthForm> {
                                       : StylesConfig.miniPurple,
                                 ),
                               ),
-                            ),
+                            ),*/
                           ],
                         ),
                       ],

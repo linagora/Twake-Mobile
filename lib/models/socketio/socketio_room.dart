@@ -1,4 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
+/* import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class SocketIORoom {
@@ -20,3 +20,4 @@ class SocketIORoom {
     return _$SocketIORoomToJson(this);
   }
 }
+ */

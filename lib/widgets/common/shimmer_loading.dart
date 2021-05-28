@@ -1,4 +1,4 @@
-import 'dart:ui';
+/* import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -156,3 +156,4 @@ class _ShimmerFilter extends RenderProxyBox {
   double _offset({required double start, required double end, required double percent}) =>
       start + (end - start) * percent;
 }
+ */

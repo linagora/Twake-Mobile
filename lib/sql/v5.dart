@@ -42,6 +42,7 @@ CREATE TABLE channel (
     last_activity INT DEFAULT 0,
     user_last_access INT DEFAULT 0,
     visibility TEXT DEFAULT "public",
+    members_count INT DEFAULT 0,
     members TEXT DEFAULT "[]",
     last_message TEXT,
     permissions TEXT DEFAULT "[]",

@@ -1,4 +1,4 @@
-part of 'account_cubit.dart';
+/* part of 'account_cubit.dart';
 
 abstract class AccountState extends Equatable {
   const AccountState();
@@ -213,3 +213,4 @@ class AccountFlowStageUpdateFailure extends AccountState {
   @override
   List<Object?> get props => [message];
 }
+ */
