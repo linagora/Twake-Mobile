@@ -1,6 +1,6 @@
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
-import 'package:twake/utils/extensions.dart';
 
 class AccountRepository {
   final _api = ApiService.instance;
@@ -8,109 +8,54 @@ class AccountRepository {
 
   AccountRepository();
 
-  Stream<List<Account>> fetchAccounts({
-    required String consoleId,
-  }) async* {
-    if (consoleId.isEmpty) {
-      // TODO: this case should be carefully handled
-      print('Accounts fetch failed: console_id is empty');
-    } else {
-      final localResults = await _storage.select(
-        table: Table.account,
-        where: 'console_id = ?',
-        whereArgs: [consoleId],
-      );
-      var accounts = localResults
-          .map((entry) => Account.fromJson(json: entry))
-          .toList();
-      yield accounts;
-
-      // TODO: check internet connection here if absent return
-
-      final remoteResults = await _api.get(
-        endpoint: Endpoint.account,
-        queryParameters: {'console_id': consoleId},
-      );
-      accounts = remoteResults
-          .map((entry) => Account.fromJson(
-                json: entry,
-                jsonify: false,
-              ))
-          .toList();
-
-      _storage.multiInsert(table: Table.account, data: accounts);
-
-      yield accounts;
-    }
-  }
-
-  Future<Account> updateAccount({
-    String firstName = '',
-    String lastName = '',
-    String userName = '',
-    String consoleId = '',
-    String status = '',
-    String statusIcon = '',
-    String language = '',
-    String oldPassword = '',
-    String? newPassword = '',
-  }) async {
-    final _accountMap = <String, Object?>{};
-
-    if (firstName.isNotReallyEmpty) {
-      _accountMap['firstname'] = firstName;
-    }
-    if (lastName.isNotReallyEmpty) {
-      _accountMap['lastname'] = lastName;
-    }
-    if (userName.isNotReallyEmpty) {
-      _accountMap['username'] = userName;
-    }
-    if (consoleId.isNotReallyEmpty) {
-      _accountMap['console_id'] = consoleId;
-    }
-    if (status.isNotReallyEmpty) {
-      _accountMap['status'] = status;
-    }
-    if (statusIcon.isNotReallyEmpty) {
-      _accountMap['status_icon'] = statusIcon;
-    }
-    if (language.isNotReallyEmpty) {
-      _accountMap['language'] = language;
-    }
-    if (oldPassword.isNotReallyEmpty && newPassword!.isNotReallyEmpty) {
-      _accountMap['password'] = {
-        'old': oldPassword,
-        'new': newPassword,
-      };
-    }
-    final patchResult = await _api.patch(
-      endpoint: Endpoint.account,
-      data: _accountMap,
+  Stream<Account> fetch({required String userId}) async* {
+    final localResult = await _storage.first(
+      table: Table.account,
+      where: 'id = ?',
+      whereArgs: [userId],
     );
-    final account = Account.fromJson(json: patchResult, jsonify: false);
+
+    if (localResult.isNotEmpty) {
+      yield Account.fromJson(json: localResult);
+    }
+
+    if (!Globals.instance.isNetworkConnected) return;
+
+    final remoteResult = await _api.get(
+      endpoint: Endpoint.account,
+      queryParameters: {'id': userId},
+    );
+
+    var account = Account.fromJson(json: remoteResult);
 
     _storage.insert(table: Table.account, data: account);
 
-    return account;
+    yield account;
   }
 
-  // LanguageOption selectedLanguage() {
-  //   final lang = language!.options
-  //       .firstWhere((option) => option.value == language!.value, orElse: () {
-  //     _logger.e(
-  //         'No matching languages found in options for code: ${language!.value}');
-  //     return LanguageOption(value: language!.value, title: '');
-  //   });
-  //   return lang;
-  // }
-  //
-  // String? languageCodeFromTitle(String title) {
-  //   final lang = language!.options.firstWhere((option) => option.title == title,
-  //       orElse: () {
-  //     _logger.e('No matching languages found in options for title: $title');
-  //     return LanguageOption(value: '', title: title);
-  //   });
-  //   return lang.value;
-  // }
+  Future<Account> edit({
+    String? firstname,
+    String? lastname,
+    required String username,
+    String? status,
+    String? statusIcon,
+    String? language,
+    String? oldPassword,
+    String? newPassword,
+  }) async {
+    final _ = {
+      'firstname': firstname,
+      'lastname': lastname,
+      'username': username,
+      'status': status,
+      'status_icon': statusIcon,
+      'language': language,
+      'password': {
+        'old': oldPassword,
+        'new': newPassword,
+      },
+    };
+
+    throw Exception('Moved to Twake console for a while');
+  }
 }
