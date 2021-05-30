@@ -7,7 +7,6 @@ CREATE TABLE authentication (
     refresh_expiration INT NOT NULL,
 )
 ''';
-
 const String CREATE_COMPANY_V5 = '''
 CREATE TABLE company (
     id TEXT PRIMARY KEY,
@@ -18,7 +17,6 @@ CREATE TABLE company (
     permissions TEXT DEFAULT "[]"
 )
 ''';
-
 const String CREATE_WORKSPACE_V5 = '''
 CREATE TABLE workspace (
     id TEXT PRIMARY KEY,

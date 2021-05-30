@@ -9,6 +9,7 @@ import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/routes.dart';
 import 'package:twake/pages/web_auth_page.dart';
 import 'package:twake/services/init_service.dart';
+import 'package:twake/widgets/auth/auth_form.dart';
 import 'package:twake/widgets/common/network_status_bar.dart';
 
 class InitialPage extends StatefulWidget {
@@ -21,9 +22,9 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    final authenticationCubit = BlocProvider.of<AuthenticationCubit>(context);
-    final mentionsState = BlocProvider.of<AuthenticationCubit>(context).state;
-    print(mentionsState);
+    // final authenticationCubit = BlocProvider.of<AuthenticationCubit>(context);
+    //  final authenticationCubitState = BlocProvider.of<AuthenticationCubit>(context).state;
+    //  print(authenticationCubitState);
   }
 
   Widget buildSplashScreen() {
@@ -55,7 +56,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             // buildSplashScreen();
           }
           if (state is AuthenticationInitial) {
-            return Text("Initial"); //AuthPage();
+            return Text("Initial");
+            //  AuthForm();
           }
           if (state is AuthenticationSuccess) {
             return Text("Authenticated");

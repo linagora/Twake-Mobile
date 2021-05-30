@@ -30,21 +30,14 @@ void main() async {
 class TwakeMobileApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => OrientationBuilder(
-        builder: (context, orientation) {
-          Dim.init(constraints, orientation);
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            theme: StylesConfig.lightTheme,
-            title: 'Twake',
-            home: BlocProvider<AuthenticationCubit>(
-              create: (BuildContext context) => AuthenticationCubit(),
-              lazy: false,
-              child: InitialPage(),
-            ),
-          );
-        },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: StylesConfig.lightTheme,
+      title: 'Twake',
+      home: BlocProvider<AuthenticationCubit>(
+        create: (BuildContext context) => AuthenticationCubit(),
+        // lazy: false,
+        child: InitialPage(),
       ),
     );
   }

@@ -92,9 +92,9 @@ class Globals extends BaseModel {
   }
 
   @JsonKey(ignore: true)
-  late bool isNetworkConnected;
+   bool isNetworkConnected = true;
   @JsonKey(ignore: true)
-  final _connection = StreamController<Connection>();
+  final _connection = StreamController<Connection>.broadcast();
   Stream<Connection> get connection => _connection.stream;
 
   // Make sure to call the factory constructor before accessing instance
