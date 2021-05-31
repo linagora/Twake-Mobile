@@ -46,8 +46,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       password: password,
     );
 
-    if (!success) emit(AuthenticationFailure());
-    emit(AuthenticationSuccess());
+    if (!success) {
+      emit(AuthenticationFailure());
+    } else {
+      emit(AuthenticationSuccess());
+    }
   }
 
   void logout() {

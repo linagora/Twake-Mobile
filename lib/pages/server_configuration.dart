@@ -1,12 +1,6 @@
-/* import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
-import 'package:twake/blocs/configuration_cubit/configuration_state.dart';
-
-// import 'package:twake/services/api.dart';
-import 'package:twake/utils/extensions.dart';
 
 class ServerConfiguration extends StatefulWidget {
   final Function? onCancel;
@@ -35,18 +29,18 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   void _connect() async {
     FocusScope.of(context).requestFocus(FocusNode());
     var host = _controller.text;
-    if (host.isNotReallyEmpty) {
-      context.read<AuthBloc>().add(ValidateHost(_controller.text));
-    }
-    // Api.host = host;
-    // Apply changes to AuthBloc flow.
-    // await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
-    // BlocProvider.of<AuthBloc>(context).setUpWebView(true);
+    // if (host.isNotReallyEmpty) {
+    //  context.read<AuthBloc>().add(ValidateHost(_controller.text));
   }
+  // Api.host = host;
+  // Apply changes to AuthBloc flow.
+  // await BlocProvider.of<AuthBloc>(context).repository.getAuthMode();
+  // BlocProvider.of<AuthBloc>(context).setUpWebView(true);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return (Text('Globals hostSet)')); // implement hostSet Globals
+    /* return Scaffold(
       appBar: AppBar(
         leading: CloseButton(
           onPressed: widget.onCancel as void Function()?,
@@ -229,7 +223,6 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
           ),
         ),
       ),
-    );
+    );*/
   }
 }
- */
