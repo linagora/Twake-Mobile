@@ -3,12 +3,15 @@ import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/messages_repository.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/twacode.dart';
 
 export 'messages_state.dart';
 
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
+
+  final _socketIOEventStream = SocketIOService.instance.eventStream;
 
   BaseMessagesCubit({MessagesRepository? repository})
       : super(MessagesInitial()) {
@@ -203,17 +206,22 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<Message> get selectedThread async {
-    final message =
-        await _repository.getMessageLocal(Globals.instance.threadId!);
+    final message = await _repository.getMessageLocal(
+      messageId: Globals.instance.threadId!,
+    );
 
     return message;
   }
 }
 
 class ChannelMessagesCubit extends BaseMessagesCubit {
-  // channel specific logic goes here
+  @override
+  final _socketIOEventStream =
+      SynchronizationService.instance.socketIOChannelMessageStream;
 }
 
 class ThreadMessagesCubit extends BaseMessagesCubit {
-  // thread specific logic goes here
+  @override
+  final _socketIOEventStream =
+      SynchronizationService.instance.socketIOThreadMessageStream;
 }

@@ -44,6 +44,17 @@ class SynchronizationService {
             r.resource['workspace_id'] != 'direct';
       });
 
+  Stream<SocketIOEvent> get socketIOChannelMessageStream =>
+      _socketio.eventStream.where((e) {
+        return e.data.threadId.isEmpty || e.data.threadId == e.data.messageId;
+      });
+
+  Stream<SocketIOEvent> get socketIOThreadMessageStream =>
+      _socketio.eventStream.where((e) {
+        return e.data.threadId.isNotEmpty &&
+            e.data.threadId != e.data.messageId;
+      });
+
   Future<List<SocketIORoom>> get socketIORooms async {
     final queryParameters = {
       'company_id': Globals.instance.companyId,

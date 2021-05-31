@@ -21,20 +21,63 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async* {
+    var messages = await fetchLocal(channelId: channelId, threadId: threadId);
+
+    yield messages;
+
+    if (!Globals.instance.isNetworkConnected) return;
+
+    // If messages are present in local storage, just request messages
+    // after the last one, via after_date query param
+    int? afterDate;
+    if (messages.isNotEmpty) {
+      afterDate = messages.last.modificationDate;
+    }
+
+    final remoteMessages = await fetchRemote(
+      companyId: companyId,
+      workspaceId: workspaceId,
+      channelId: channelId,
+      threadId: threadId,
+      afterDate: afterDate,
+    );
+
+    if (messages.isNotEmpty) {
+      messages.addAll(remoteMessages);
+    } else {
+      messages = remoteMessages;
+    }
+
+    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
+
+    yield messages;
+  }
+
+  Future<List<Message>> fetchLocal({
+    required String channelId,
+    String? threadId,
+  }) async {
     final localResult = await _storage.select(
       table: Table.message,
       where: 'channel_id = ? AND thread_id = ?',
       whereArgs: [channelId, threadId],
       limit: _LIST_SIZE,
     );
-    var messages =
+    final messages =
         localResult.map((entry) => Message.fromJson(json: entry)).toList();
 
     messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
-    yield messages;
 
-    if (!Globals.instance.isNetworkConnected) return;
+    return messages;
+  }
 
+  Future<List<Message>> fetchRemote({
+    String? companyId,
+    String? workspaceId,
+    required String channelId,
+    String? threadId,
+    int? afterDate,
+  }) async {
     final Map<String, dynamic> queryParameters = {
       'company_id': companyId ?? Globals.instance.companyId,
       'workspace_id': workspaceId ?? Globals.instance.workspaceId,
@@ -43,11 +86,7 @@ class MessagesRepository {
       'limit': _LIST_SIZE,
     };
 
-    // If messages are present in local storage, just request messages
-    // after the last one
-    if (messages.isNotEmpty) {
-      queryParameters['after_date'] = messages.last.modificationDate;
-    }
+    if (afterDate != null) queryParameters['after_date'] = afterDate;
 
     final List<dynamic> remoteResult = await _api.get(
       endpoint: Endpoint.messages,
@@ -65,15 +104,7 @@ class MessagesRepository {
     remoteMessages = remoteMessages
         .where((m) => m.channelId == channelId && m.threadId == threadId);
 
-    if (messages.isNotEmpty) {
-      messages.addAll(remoteMessages);
-    } else {
-      messages = remoteMessages.toList();
-    }
-
-    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
-
-    yield messages;
+    return remoteMessages.toList();
   }
 
   Future<List<Message>> fetchBefore({
@@ -253,7 +284,7 @@ class MessagesRepository {
     );
   }
 
-  Future<Message> getMessageLocal(String messageId) async {
+  Future<Message> getMessageLocal({required String messageId}) async {
     final result = await _storage.first(
       table: Table.message,
       where: 'id = ?',
@@ -261,6 +292,31 @@ class MessagesRepository {
     );
 
     final message = Message.fromJson(json: result);
+
+    return message;
+  }
+
+  Future<Message> getMessageRemote({
+    required String messageId,
+    String? channelId,
+    String? threadId,
+  }) async {
+    final Map<String, dynamic> queryParameters = {
+      'company_id': Globals.instance.companyId,
+      'workspace_id': Globals.instance.workspaceId,
+      'channel_id': channelId ?? Globals.instance.channelId,
+      'message_id': messageId,
+      'thread_id': threadId,
+    };
+
+    final List<dynamic> remoteResult = await _api.get(
+      endpoint: Endpoint.messages,
+      queryParameters: queryParameters,
+    );
+
+    final message = Message.fromJson(json: remoteResult.first);
+
+    _storage.insert(table: Table.message, data: message);
 
     return message;
   }
