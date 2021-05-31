@@ -47,7 +47,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       password: password,
     );
 
-    if (!success) emit(AuthenticationFailure());
+    if (!success) {
+      emit(AuthenticationFailure(
+        username: username,
+        password: password,
+      ));
+      return;
+    }
     emit(AuthenticationSuccess());
 
     _repository.startTokenValidator();

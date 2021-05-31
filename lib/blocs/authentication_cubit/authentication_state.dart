@@ -26,10 +26,15 @@ class AuthenticationSuccess extends AuthenticationState {
 }
 
 class AuthenticationFailure extends AuthenticationState {
-  const AuthenticationFailure();
+  final String username;
+  final String password;
+  const AuthenticationFailure({
+    required this.username,
+    required this.password,
+  });
 
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [username, password];
 }
 
 class AuthenticationInProgress extends AuthenticationState {
