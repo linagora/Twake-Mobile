@@ -7,13 +7,14 @@ import 'package:twake/models/push_notification/firebase_notification.dart';
 import 'package:twake/models/push_notification/local_notification.dart';
 
 export 'package:twake/models/push_notification/firebase_notification.dart';
+export 'package:twake/models/push_notification/local_notification.dart';
 
 class PushNotificationsService {
   static late PushNotificationsService _service;
   late final FirebaseMessaging _firebase;
   late final FlutterLocalNotificationsPlugin _notificationsPlugin;
   final StreamController<LocalNotification> _localNotificationClickStream =
-      StreamController();
+      StreamController.broadcast();
 
   factory PushNotificationsService({required bool reset}) {
     if (reset) {

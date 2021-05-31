@@ -45,6 +45,10 @@ class NavigatorService {
     required this.threadMessagesCubit,
   }) {
     _navigatorKey = GlobalKey<NavigatorState>();
+
+    // Run the notification click listeners
+    listenToLocals();
+    listenToRemote();
   }
 
   static NavigatorService get instance => _service;
@@ -52,18 +56,50 @@ class NavigatorService {
   Future<void> navigateOnNotificationLaunch() async {
     final local = await _pushNotifications.checkLocalNotificationClick;
     if (local != null) {
-      final payload = NotificationPayload.fromJson(json: local.payload);
-      // TODO navigate to required messages page
+      final data = NotificationPayload.fromJson(json: local.payload);
+      navigate(
+        companyId: data.companyId,
+        workspaceId: data.workspaceId,
+        channelId: data.channelId,
+        threadId: data.threadId,
+      );
       return;
     }
     final remote = await _pushNotifications.checkRemoteNotificationClick;
     if (remote != null) {
-      // TODO navigate to required messages page
+      final data = remote.payload;
+      navigate(
+        companyId: data.companyId,
+        workspaceId: data.workspaceId,
+        channelId: data.channelId,
+        threadId: data.threadId,
+      );
     }
   }
 
   void listenToLocals() async {
-    await for (final local in _pushNotifications.localNotifications) {}
+    await for (final local in _pushNotifications.localNotifications) {
+      if (local.type != LocalNotificationType.message) continue;
+      final data = NotificationPayload.fromJson(json: local.payload);
+      navigate(
+        companyId: data.companyId,
+        workspaceId: data.workspaceId,
+        channelId: data.channelId,
+        threadId: data.threadId,
+      );
+    }
+  }
+
+  void listenToRemote() async {
+    await for (final remote in _pushNotifications.notificationClickStream) {
+      final data = remote.payload;
+      navigate(
+        companyId: data.companyId,
+        workspaceId: data.workspaceId,
+        channelId: data.channelId,
+        threadId: data.threadId,
+      );
+    }
   }
 
   void navigate({
