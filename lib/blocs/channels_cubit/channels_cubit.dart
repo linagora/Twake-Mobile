@@ -204,7 +204,10 @@ class ChannelsCubit extends BaseChannelsCubit {
       : super(repository: repository ?? ChannelsRepository()) {}
 
   @override
-  void listenToSocketIOChanges() async {}
+  void listenToSocketIOChanges(
+      {required Stream<SocketIOResource> stream}) async {
+    await for (final r in stream) {}
+  }
 }
 
 class DirectsCubit extends BaseChannelsCubit {
