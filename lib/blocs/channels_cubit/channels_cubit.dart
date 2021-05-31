@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs_new/channels_cubit/channels_state.dart';
+import 'package:twake/blocs/channels_cubit/channels_state.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -7,7 +7,7 @@ import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
 export 'package:twake/models/channel/channel.dart';
-export 'package:twake/blocs_new/channels_cubit/channels_state.dart';
+export 'package:twake/blocs/channels_cubit/channels_state.dart';
 
 abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   final ChannelsRepository _repository;

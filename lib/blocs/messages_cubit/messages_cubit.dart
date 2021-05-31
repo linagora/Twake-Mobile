@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs_new/messages_cubit/messages_state.dart';
+import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/messages_repository.dart';
