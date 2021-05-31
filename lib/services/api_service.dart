@@ -8,16 +8,14 @@ class ApiService {
   late final Dio _dio;
   static const _PROXY_PREFIX = '/internal/mobile';
 
-  factory ApiService({required reset}) {
+  factory ApiService({required bool reset}) {
     if (reset) {
       _service = ApiService._();
     }
     return _service;
   }
 
-  static ApiService get instance {
-    return _service;
-  }
+  static ApiService get instance => _service;
 
   ApiService._() {
     this._dio = Dio(BaseOptions(

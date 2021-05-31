@@ -3,21 +3,22 @@ import 'package:twake/models/socketio/socketio_room.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class SynchronizationService {
-  static SynchronizationService? _synchronization;
+  static late SynchronizationService _service;
   final _api = ApiService.instance;
-
-  // Singleton pattern
-  factory SynchronizationService() {
-    if (_synchronization == null) {
-      _synchronization = SynchronizationService._();
-    }
-    return _synchronization!;
-  }
-
-  SynchronizationService._();
 
   final _socketio = SocketIOService.instance;
   List<SocketIORoom> _subRooms = [];
+
+  factory SynchronizationService({required bool reset}) {
+    if (reset) {
+      _service = SynchronizationService._();
+    }
+    return _service;
+  }
+
+  static SynchronizationService get instance => _service;
+
+  SynchronizationService._();
 
   Future<List<SocketIORoom>> get socketIORooms async {
     final queryParameters = {
@@ -39,7 +40,7 @@ class SynchronizationService {
 
     // Unsubscribe from previous workspace
     for (final room in _subRooms.where((r) => wsRooms.contains(r.type))) {
-      _socketio.subscribe(room: room.key);
+      _socketio.unsubscribe(room: room.key);
     }
     // Request rooms for new workspace
     _subRooms = await socketIORooms;
