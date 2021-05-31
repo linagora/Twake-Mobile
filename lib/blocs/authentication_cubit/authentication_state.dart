@@ -43,3 +43,17 @@ class AuthenticationInProgress extends AuthenticationState {
   @override
   List<Object?> get props => [];
 }
+
+class PostAuthenticationSyncInProgress extends AuthenticationState {
+  const PostAuthenticationSyncInProgress();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class PostAuthenticationSyncFailed extends AuthenticationState {
+  const PostAuthenticationSyncFailed();
+
+  @override
+  List<Object?> get props => [];
+}

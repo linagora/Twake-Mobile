@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/authentication_repository.dart';
+import 'package:twake/services/service_bundle.dart';
 
 part 'authentication_state.dart';
 
@@ -54,6 +55,16 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       ));
       return;
     }
+    emit(PostAuthenticationSyncInProgress());
+
+    try {
+      await InitService.syncData();
+    } catch (e) {
+      Logger().e('Error occured during initial data sync:\n$e');
+      emit(PostAuthenticationSyncFailed());
+      return;
+    }
+
     emit(AuthenticationSuccess());
 
     _repository.startTokenValidator();
