@@ -16,13 +16,25 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     final streamCompanies = repository.fetch();
 
     await for (var companies in streamCompanies) {
-      emit(CompaniesLoadSuccess(
-        companies: companies,
-      ));
+      Company? selected;
+
+      if (Globals.instance.companyId != null) {
+        selected =
+            companies.firstWhere((c) => c.id == Globals.instance.companyId);
+      }
+
+      emit(CompaniesLoadSuccess(companies: companies, selected: selected));
     }
   }
 
-  void selectCompany(String companyId) {
+  void selectCompany({required String companyId}) {
     Globals.instance.companyIdSet = companyId;
+    final companies = (state as CompaniesLoadSuccess).companies;
+    final selected = companies.firstWhere((c) => c.id == companyId);
+
+    emit(CompaniesLoadSuccess(
+      companies: companies,
+      selected: selected,
+    ));
   }
 }

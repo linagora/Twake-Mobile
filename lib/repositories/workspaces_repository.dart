@@ -70,6 +70,9 @@ class WorkspacesRepository {
     );
 
     final workspace = Workspace.fromJson(json: creationResult, jsonify: false);
+
+    _storage.insert(table: Table.workspace, data: workspace);
+
     return workspace;
   }
 }

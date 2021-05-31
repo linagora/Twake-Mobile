@@ -3,7 +3,6 @@ import 'package:twake/models/account/account.dart';
 import 'package:twake/models/workspace/workspace.dart';
 
 abstract class WorkspaceState extends Equatable {
-
   const WorkspaceState();
 
   @override
@@ -11,7 +10,6 @@ abstract class WorkspaceState extends Equatable {
 }
 
 class WorkspacesInitial extends WorkspaceState {
-
   const WorkspacesInitial();
 
   @override
@@ -19,7 +17,6 @@ class WorkspacesInitial extends WorkspaceState {
 }
 
 class WorkspacesLoadInProgress extends WorkspaceState {
-
   const WorkspacesLoadInProgress();
 
   @override
@@ -34,10 +31,4 @@ class WorkspacesLoadSuccess extends WorkspaceState {
 
   @override
   List<Object?> get props => super.props;
-}
-
-class WorkspacesCreated extends WorkspaceState {
-  final Workspace createdWorkspace;
-
-  WorkspacesCreated(this.createdWorkspace);
 }

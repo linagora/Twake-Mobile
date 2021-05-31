@@ -195,11 +195,16 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
     return true;
   }
+
+  void listenToSocketIOChanges();
 }
 
 class ChannelsCubit extends BaseChannelsCubit {
   ChannelsCubit({ChannelsRepository? repository})
-      : super(repository: repository ?? ChannelsRepository());
+      : super(repository: repository ?? ChannelsRepository()) {}
+
+  @override
+  void listenToSocketIOChanges() async {}
 }
 
 class DirectsCubit extends BaseChannelsCubit {
@@ -209,4 +214,9 @@ class DirectsCubit extends BaseChannelsCubit {
               ? ChannelsRepository(endpoint: Endpoint.directs)
               : repository,
         );
+
+  @override
+  void listenToSocketIOChanges() {
+    // TODO: implement listenToSocketIOChanges
+  }
 }

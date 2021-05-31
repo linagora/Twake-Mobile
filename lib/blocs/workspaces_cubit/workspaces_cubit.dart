@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/workspaces_cubit/workspace_state.dart';
 import 'package:twake/models/account/account.dart';
@@ -24,11 +23,17 @@ class WorkspacesCubit extends Cubit<WorkspaceState> {
       {String? companyId, required String name, List<String>? members}) async {
     final workspace = await _workspacesRepository.createWorkspace(
         companyId: companyId, name: name, members: members);
-    emit(WorkspacesCreated(workspace));
+
+    final workspaces = (state as WorkspacesLoadSuccess).workspaces;
+
+    workspaces.add(workspace);
+
+    emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: workspace));
   }
 
   Future<List<Account>> fetchMembers({String? workspaceId}) async {
-    final members = await _workspacesRepository.fetchMembers(workspaceId: workspaceId);
+    final members =
+        await _workspacesRepository.fetchMembers(workspaceId: workspaceId);
     return members;
   }
 
