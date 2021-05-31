@@ -12,6 +12,9 @@ export 'package:twake/blocs/channels_cubit/channels_state.dart';
 abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   final ChannelsRepository _repository;
 
+  final _socketIOChannelStream = SocketIOService.instance.resourceStream;
+  final _socketIOActivityStream = SocketIOService.instance.resourceStream;
+
   BaseChannelsCubit({required ChannelsRepository repository})
       : _repository = repository,
         super(ChannelsInitial());
@@ -196,30 +199,135 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     return true;
   }
 
-  void listenToSocketIOChanges();
-}
+  void listenToActivityChanges() async {
+    await for (final change in _socketIOActivityStream) {
+      if (state is! ChannelsLoadedSuccess) continue;
+      final channels = (state as ChannelsLoadedSuccess).channels;
+      var hash = (state as ChannelsLoadedSuccess).hash;
+      final selected = (state as ChannelsLoadedSuccess).selected;
 
-class ChannelsCubit extends BaseChannelsCubit {
-  ChannelsCubit({ChannelsRepository? repository})
-      : super(repository: repository ?? ChannelsRepository()) {}
+      switch (change.action) {
+        case ResourceAction.saved:
+        case ResourceAction.updated:
+          // Extract manually all the required data
+          String id = change.resource['id'];
+          int lastActivity = change.resource['last_activity'];
+          MessageSummary lastMessage =
+              MessageSummary.fromJson(change.resource['last_message']);
 
-  @override
-  void listenToSocketIOChanges(
-      {required Stream<SocketIOResource> stream}) async {
-    await for (final r in stream) {}
+          final index = channels.indexWhere((c) => c.id == id);
+
+          final changed = channels[index].copyWith(
+            lastMessage: lastMessage,
+            lastActivity: lastActivity,
+          );
+
+          hash = hash - channels[index].hash + changed.hash;
+
+          channels[index] = changed;
+
+          channels.sort((c1, c2) => c2.lastActivity.compareTo(c1.lastActivity));
+
+          emit(ChannelsLoadedSuccess(
+            channels: channels,
+            hash: hash,
+            selected: selected,
+          ));
+
+          break;
+
+        default:
+          throw Exception('Impossible action on channel activity!');
+      }
+    }
+  }
+
+  void listentToChannelChanges() async {
+    await for (final change in _socketIOChannelStream) {
+      if (state is! ChannelsLoadedSuccess) continue;
+      var selected = (state as ChannelsLoadedSuccess).selected;
+      final channels = (state as ChannelsLoadedSuccess).channels;
+      switch (change.action) {
+        case ResourceAction.saved:
+        case ResourceAction.updated:
+          final rchannels = await _repository.fetchRemote(
+            companyId: Globals.instance.companyId!,
+            workspaceId: Globals.instance.workspaceId!,
+          );
+
+          if (selected != null) {
+            selected = rchannels.firstWhere((c) => c.id == selected!.id);
+          }
+
+          emit(ChannelsLoadedSuccess(
+            channels: rchannels,
+            hash: channels.fold(0, (acc, c) => acc + c.hash),
+            selected: selected,
+          ));
+          break;
+        case ResourceAction.deleted:
+          // fill up required fields with dummy data
+          change.resource['name'] = '';
+          change.resource['permissions'] = const [];
+
+          final deleted =
+              Channel.fromJson(json: change.resource, jsonify: false);
+
+          _repository.delete(
+            channel: deleted,
+            syncRemote: false,
+          );
+
+          channels.removeWhere((c) => c.id == deleted.id);
+
+          emit(ChannelsLoadedSuccess(
+            channels: channels,
+            hash: channels.fold(0, (acc, c) => acc + c.hash),
+            selected: selected,
+          ));
+      }
+    }
   }
 }
 
+class ChannelsCubit extends BaseChannelsCubit {
+  @override
+  final _socketIOChannelStream =
+      SocketIOService.instance.resourceStream.where((r) {
+    return r.type == ResourceType.channel &&
+        r.resource['workspace_id'] != 'direct';
+  });
+
+  @override
+  final _socketIOActivityStream =
+      SocketIOService.instance.resourceStream.where((r) {
+    return r.type == ResourceType.channelActivity &&
+        r.resource['workspace_id'] != 'direct';
+  });
+
+  ChannelsCubit({ChannelsRepository? repository})
+      : super(repository: repository ?? ChannelsRepository());
+}
+
 class DirectsCubit extends BaseChannelsCubit {
+  @override
+  final _socketIOChannelStream =
+      SocketIOService.instance.resourceStream.where((r) {
+    return r.type == ResourceType.channel &&
+        r.resource['workspace_id'] == 'direct';
+  });
+
+  @override
+  final _socketIOActivityStream =
+      SocketIOService.instance.resourceStream.where((r) {
+    return r.type == ResourceType.channelActivity &&
+        r.resource['workspace_id'] == 'direct';
+  });
+
   DirectsCubit({ChannelsRepository? repository})
       : super(
           repository: repository == null
               ? ChannelsRepository(endpoint: Endpoint.directs)
               : repository,
         );
-
-  @override
-  void listenToSocketIOChanges() {
-    // TODO: implement listenToSocketIOChanges
-  }
 }

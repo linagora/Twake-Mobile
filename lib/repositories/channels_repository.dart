@@ -16,6 +16,28 @@ class ChannelsRepository {
   }) async* {
     if (companyId == null) companyId = Globals.instance.companyId;
 
+    final lchannels =
+        await fetchLocal(companyId: companyId!, workspaceId: workspaceId);
+
+    yield lchannels;
+
+    if (!Globals.instance.isNetworkConnected) return;
+
+    final rchannels =
+        await fetchRemote(companyId: companyId, workspaceId: workspaceId);
+
+    if (rchannels.length != lchannels.length) {
+      await _storage.truncate(table: Table.channel);
+    }
+    _storage.multiInsert(table: Table.channel, data: rchannels);
+
+    yield rchannels;
+  }
+
+  Future<List<Channel>> fetchLocal({
+    required String companyId,
+    required String workspaceId,
+  }) async {
     final localResult = await this._storage.select(
       table: Table.channel,
       where: 'company_id = ? AND workspace_id = ?',
@@ -26,10 +48,14 @@ class ChannelsRepository {
         localResult.map((entry) => Channel.fromJson(json: entry)).toList();
 
     channels.sort((c1, c2) => c2.lastActivity.compareTo(c1.lastActivity));
-    yield channels;
 
-    if (!Globals.instance.isNetworkConnected) return;
+    return channels;
+  }
 
+  Future<List<Channel>> fetchRemote({
+    required String companyId,
+    required String workspaceId,
+  }) async {
     final queryParameters = {
       'company_id': companyId,
       'workspace_id': workspaceId
@@ -40,17 +66,13 @@ class ChannelsRepository {
       queryParameters: queryParameters,
     );
 
-    if (remoteResult.length != channels.length) {
-      await _storage.truncate(table: Table.channel);
-    }
-
-    channels = remoteResult
+    var channels = remoteResult
         .map((entry) => Channel.fromJson(json: entry, jsonify: false))
         .toList();
 
-    _storage.multiInsert(table: Table.channel, data: channels);
+    channels.sort((c1, c2) => c2.lastActivity.compareTo(c1.lastActivity));
 
-    yield channels;
+    return channels;
   }
 
   Future<Channel> create({required Channel channel}) async {
@@ -79,10 +101,10 @@ class ChannelsRepository {
     return edited;
   }
 
-  Future<void> delete({required Channel channel}) async {
+  Future<void> delete({required Channel channel, bool syncRemote: true}) async {
     final data = channel.toJson();
 
-    await _api.delete(endpoint: endpoint, data: data);
+    if (syncRemote) await _api.delete(endpoint: endpoint, data: data);
 
     _storage.delete(
       table: Table.channel,

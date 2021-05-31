@@ -5,6 +5,7 @@ import 'package:twake/models/message/message_summary.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 export 'channel_visibility.dart';
+export 'package:twake/models/message/message_summary.dart';
 
 part 'channel.g.dart';
 
@@ -83,6 +84,8 @@ class Channel extends BaseModel {
     String? icon,
     String? description,
     ChannelVisibility? visibility,
+    int? lastActivity,
+    MessageSummary? lastMessage,
   }) {
     final copy = Channel(
       id: id,
@@ -93,8 +96,8 @@ class Channel extends BaseModel {
       workspaceId: workspaceId,
       members: members,
       visibility: visibility ?? this.visibility,
-      lastActivity: lastActivity,
-      lastMessage: lastMessage,
+      lastActivity: lastActivity ?? this.lastActivity,
+      lastMessage: lastMessage ?? this.lastMessage,
       userLastAccess: userLastAccess,
       draft: draft,
       permissions: permissions,

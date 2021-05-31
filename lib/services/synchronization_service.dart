@@ -35,7 +35,7 @@ class SynchronizationService {
     return rooms.toList();
   }
 
-  Future<Stream<SocketIOResource>> subscribeForChannels() async {
+  Future<void> subscribeForChannels() async {
     const wsRooms = const [RoomType.channelsList, RoomType.directsList];
 
     // Unsubscribe from previous workspace
@@ -49,11 +49,6 @@ class SynchronizationService {
     for (final room in _subRooms.where((r) => wsRooms.contains(r.type))) {
       _socketio.subscribe(room: room.key);
     }
-
-    return _socketio.resourceStream.where((r) {
-      return r.type == ResourceType.channel ||
-          r.type == ResourceType.channelActivity;
-    });
   }
 
   Future<Stream<SocketIOResource>> subscribeToBadges() async {
@@ -61,15 +56,13 @@ class SynchronizationService {
     return _socketio.resourceStream;
   }
 
-  Stream<SocketIOEvent> subscribeToMessages({required String channelId}) {
-    const chRooms = const [RoomType.channel, RoomType.direct];
-
+  void subscribeToMessages({required String channelId}) {
     if (Globals.instance.isNetworkConnected)
       throw Exception('Shoud not be called with no active connection');
 
     // Unsubscribe from previous channels
     _subRooms.forEach((r) {
-      if (chRooms.contains(r.type) && r.subscribed && r.id != channelId) {
+      if (r.subscribed || r.id != channelId) {
         _socketio.unsubscribe(room: r.key);
         r.subscribed = false;
       }
@@ -83,7 +76,5 @@ class SynchronizationService {
     // Subscribe, to new channel
     _socketio.subscribe(room: channelRoom.key);
     channelRoom.subscribed = true;
-
-    return _socketio.eventStream;
   }
 }
