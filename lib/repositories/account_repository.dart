@@ -8,29 +8,42 @@ class AccountRepository {
 
   AccountRepository();
 
-  Stream<Account> fetch({required String userId}) async* {
+  // userId can be null for current app user on first login
+  Stream<Account> fetch({String? userId}) async* {
+    Account account;
+    if (userId != null) {
+      account = await localFetch(userId: userId);
+      yield account;
+    }
+
+    if (!Globals.instance.isNetworkConnected) return;
+
+    account = await remoteFetch(userId: userId);
+
+    yield account;
+  }
+
+  Future<Account> localFetch({required String userId}) async {
     final localResult = await _storage.first(
       table: Table.account,
       where: 'id = ?',
       whereArgs: [userId],
     );
 
-    if (localResult.isNotEmpty) {
-      yield Account.fromJson(json: localResult);
-    }
+    return Account.fromJson(json: localResult);
+  }
 
-    if (!Globals.instance.isNetworkConnected) return;
-
+  Future<Account> remoteFetch({String? userId}) async {
     final remoteResult = await _api.get(
       endpoint: Endpoint.account,
       queryParameters: {'id': userId},
     );
 
-    var account = Account.fromJson(json: remoteResult);
+    final account = Account.fromJson(json: remoteResult);
 
     _storage.insert(table: Table.account, data: account);
 
-    yield account;
+    return account;
   }
 
   Future<Account> edit({
@@ -57,5 +70,17 @@ class AccountRepository {
     };
 
     throw Exception('Moved to Twake console for a while');
+  }
+
+  Future<void> currentSet() async {
+    final remoteResult = await _api.get(
+      endpoint: Endpoint.account,
+    );
+
+    var account = Account.fromJson(json: remoteResult);
+
+    _storage.insert(table: Table.account, data: account);
+
+    Globals.instance.userIdSet = account.id;
   }
 }

@@ -1,201 +1,39 @@
 import 'dart:async';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/services.dart';
-import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/models/account/account.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/account_repository.dart';
-import 'package:twake/services/endpoints.dart';
-import 'package:twake/utils/extensions.dart';
-import 'package:twake/utils/image_processor.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'account_state.dart';
 
-enum AccountFlowStage {
-  info,
-  edit,
-}
+class AccountCubit extends Cubit<AccountState> {
+  late final AccountRepository _repository;
 
-class AccountCubit extends HydratedCubit<AccountState> {
-  final AccountRepository? accountRepository;
-  final FileUploadBloc? fileUploadBloc;
-  late StreamSubscription _fileUploadSubscription;
+  AccountCubit({AccountRepository? repository}) : super(AccountInitial()) {
+    if (repository == null) {
+      repository = AccountRepository();
+    }
+    _repository = repository;
 
-  AccountCubit(this.accountRepository, {this.fileUploadBloc})
-      : super(AccountInitial(stage: AccountFlowStage.info)) {
-    // Listening for FileUploadBloc event
-    _fileUploadSubscription = fileUploadBloc!.listen((state) {
-      print('File upload state: $state');
-
-      if (state is FileUploaded) {
-        final files = state.files;
-        if (files.length > 0) {
-          final file = files.first;
-          final link = file.file;
-          emit(AccountPictureUploadSuccess(link: link));
-        } else {
-          emit(AccountPictureUploadFailure());
-        }
-        fileUploadBloc!.add(ClearUploads());
-      }
-      if (state is FileUploadFailed) {
-        final reason = state.reason;
-        emit(AccountPictureUploadFailure(message: reason));
-      }
-    });
+    _repository.currentSet();
   }
 
-  Future<void> fetch({bool fromNetwork = true}) async {
+  Future<void> fetch({String? userId}) async {
     emit(AccountLoadInProgress());
 
-    // if (fromNetwork) await accountRepository!.fetchAccounts(consoleId: consoleId);
+    if (userId == null && Globals.instance.userId != null)
+      userId = Globals.instance.userId;
 
-    // final availableLanguages =
-    //     accountRepository!.language!.options ?? <LanguageOption>[];
-    // final currentLanguage = accountRepository!.selectedLanguage();
-    // final languageTitle = currentLanguage.title;
-
-    emit(AccountLoadSuccess(
-      userName: accountRepository.userName,
-      firstName: accountRepository!.firstName!.value,
-      lastName: accountRepository!.lastName!.value,
-      picture: accountRepository!.picture!.value,
-      language: languageTitle,
-    ));
-  }
-
-  void updateInfo({
-    // In the local storage :)
-    required String firstName,
-    required String lastName,
-    String? languageTitle,
-    required String oldPassword,
-    String? newPassword,
-    bool shouldUpdateCache = false,
-  }) async {
-    emit(AccountUpdateInProgress(
-      firstName: firstName,
-      lastName: lastName,
-      language: languageTitle,
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    ));
-    final languageCode = '';
-    // (languageTitle != null && languageTitle.isNotReallyEmpty)
-    //     ? accountRepository!.languageCodeFromTitle(languageTitle)
-    //     : '';
-    accountRepository!.updateAccount(
-      firstName: firstName,
-      lastName: lastName,
-      language: languageCode ?? '',
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    );
-    emit(AccountUpdateSuccess(
-      firstName: firstName,
-      lastName: lastName,
-      // language: accountRepository!.selectedLanguage().title,
-      oldPassword: oldPassword,
-      newPassword: newPassword,
-    ));
-  }
-
-  Future<void> saveInfo() async {
-    emit(AccountSaveInProgress());
-    final result = await accountRepository!.patch();
-    if (result is AccountRepository) {
-      final firstName = result.firstName!.value;
-      final lastName = result.lastName!.value;
-      final language = result.language!.value;
-      emit(AccountSaveSuccess(
-        firstName: firstName,
-        lastName: lastName,
-        language: language,
-      ));
-    } else {
-      emit(AccountSaveFailure());
+    await for (var account in _repository.fetch(userId: userId)) {
+      emit(AccountLoadSuccess(account: account, hash: account.hash));
     }
   }
 
-  Future<void> updateImage() async {
-    // For local update.
-    emit(AccountPictureUpdateInProgress());
+  Future<Account> fetchStateless({required String userId}) async {
+    final account = await _repository.localFetch(userId: userId);
 
-    // For picker failure cases.
-    final fallbackImage = accountRepository!.picture!.value;
-
-    List<PlatformFile>? files;
-    try {
-      files = (await FilePicker.platform.pickFiles(
-        type: FileType.image,
-        withData: true,
-        withReadStream: true,
-      ))
-          ?.files;
-
-      if (files != null && files.length > 0) {
-        final imageFile = files.first;
-        final path = imageFile.path!;
-        print('Source path: $path');
-        print('Source size: ${imageFile.size}');
-        final file = File(path);
-        final imageBytes = await processFile(file);
-
-        final sizeSize = Uint8List.fromList(imageBytes).elementSizeInBytes;
-        print('Reduced to: $sizeSize');
-        emit(AccountPictureUpdateSuccess(imageBytes));
-      } else {
-        emit(AccountPictureUpdateFailure(
-          message: 'No files selected',
-          fallbackImage: fallbackImage,
-        ));
-      }
-    } on PlatformException catch (e) {
-      final message = "Unsupported operation" + e.toString();
-      print(message);
-      emit(AccountPictureUpdateFailure(
-        message: message,
-        fallbackImage: fallbackImage,
-      ));
-    } catch (e) {
-      print(e);
-      emit(AccountPictureUpdateFailure(
-        message: e.toString(),
-        fallbackImage: fallbackImage,
-      ));
-    }
-  }
-
-  Future<void> uploadImage(List<int> bytes) async {
-    emit(AccountPictureUploadInProgress());
-    fileUploadBloc!.add(StartUpload(
-      bytes: bytes,
-      endpoint: Endpoint.accountPicture,
-    ));
-  }
-
-  void updateAccountFlowStage(AccountFlowStage stage) {
-    emit(AccountFlowStageUpdateSuccess(stage: stage));
-  }
-
-  @override
-  Future<void> close() async {
-    await _fileUploadSubscription.cancel();
-    return super.close();
-  }
-
-  @override
-  AccountState? fromJson(Map<String, dynamic> json) {
-    // TODO: implement fromJson
-    throw UnimplementedError();
-  }
-
-  @override
-  Map<String, dynamic>? toJson(AccountState state) {
-    // TODO: implement toJson
-    throw UnimplementedError();
+    return account;
   }
 }

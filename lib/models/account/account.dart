@@ -34,6 +34,15 @@ class Account extends BaseModel {
     required this.lastActivity,
   });
 
+  int get hash =>
+      id.hashCode +
+      email.hashCode +
+      firstname.hashCode +
+      lastname.hashCode +
+      username.hashCode +
+      thumbnail.hashCode +
+      status.hashCode;
+
   factory Account.fromJson({
     required Map<String, dynamic> json,
     // for future use, in case if composite fields are added
