@@ -78,6 +78,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         prepared: prepared,
         originalStr: originalStr,
         threadId: threadId);
+
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
@@ -211,6 +212,17 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     );
 
     return message;
+  }
+
+  void listenToMessageChanges() async {
+    await for (final change in _socketIOEventStream) {
+      switch (change.data.action) {
+        case IOEventAction.remove:
+        case IOEventAction.update:
+          // TODO: handle those events
+          break;
+      }
+    }
   }
 }
 

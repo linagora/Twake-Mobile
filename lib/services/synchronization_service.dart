@@ -95,14 +95,8 @@ class SynchronizationService {
     if (Globals.instance.isNetworkConnected)
       throw Exception('Shoud not be called with no active connection');
 
-    // Unsubscribe from previous channels
-    _subRooms.forEach((r) {
-      if (r.subscribed || r.id != channelId) {
-        _socketio.unsubscribe(room: r.key);
-        r.subscribed = false;
-      }
-    });
-
+    // Unsubscribe just in case
+    unsubscribeFromMessages(channelId: channelId);
     // Make sure that channel rooms has been fetched before,
     // or you'll get Bad state
     final channelRoom = _subRooms
@@ -111,5 +105,12 @@ class SynchronizationService {
     // Subscribe, to new channel
     _socketio.subscribe(room: channelRoom.key);
     channelRoom.subscribed = true;
+  }
+
+  void unsubscribeFromMessages({required String channelId}) {
+    final room = _subRooms.firstWhere((r) => r.id == channelId);
+
+    _socketio.unsubscribe(room: room.key);
+    room.subscribed = false;
   }
 }

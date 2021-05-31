@@ -203,6 +203,36 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     return true;
   }
 
+  void selectChannel({required Channel channel}) {
+    Globals.instance.channelIdSet = channel.id;
+
+    final channels = (state as ChannelsLoadedSuccess).channels;
+    final hash = (state as ChannelsLoadedSuccess).hash;
+
+    SynchronizationService.instance.subscribeToMessages(channelId: channel.id);
+
+    emit(ChannelsLoadedSuccess(
+      channels: channels,
+      selected: channel,
+      hash: hash,
+    ));
+  }
+
+  void clearSelection({required Channel channel}) {
+    Globals.instance.channelIdSet = null;
+
+    final channels = (state as ChannelsLoadedSuccess).channels;
+    final hash = (state as ChannelsLoadedSuccess).hash;
+
+    SynchronizationService.instance
+        .unsubscribeFromMessages(channelId: channel.id);
+
+    emit(ChannelsLoadedSuccess(
+      channels: channels,
+      hash: hash,
+    ));
+  }
+
   void listenToActivityChanges() async {
     await for (final change in _socketIOActivityStream) {
       if (state is! ChannelsLoadedSuccess) continue;

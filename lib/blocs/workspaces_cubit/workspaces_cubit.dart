@@ -46,7 +46,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     return members;
   }
 
-  void changeWorkspace({required Workspace workspace}) {
+  void selectWorkspace({required Workspace workspace}) {
     Globals.instance.workspaceIdSet = workspace.id;
 
     // Subscribe to socketIO updates
