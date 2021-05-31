@@ -117,22 +117,22 @@ class _AuthFormState extends State<AuthForm> {
                   ),
                 ),
                 Spacer(),
-                /*   _AuthTextForm(
+                _AuthTextForm(
                   label: 'Email',
-                  validator: validateUsername,
+                  // validator: validateUsername,
                   // onSaved: onUsernameSaved,
                   controller: _usernameController,
                   focusNode: _usernameFocusNode,
-                ),*/
+                ),
                 SizedBox(height: Dim.hm3),
-                /*   _AuthTextForm(
+                _AuthTextForm(
                   label: 'Password',
                   obscured: true,
-                  validator: validatePassword,
+                  //validator: validatePassword,
                   // onSaved: onPasswordSaved,
                   controller: _passwordController,
                   focusNode: _passwordFocusNode,
-                ),*/
+                ),
                 SizedBox(height: Dim.heightMultiplier),
                 /*   BlocBuilder<AuthBloc, AuthState>(
                   buildWhen: (_, current) =>
@@ -179,10 +179,10 @@ class _AuthFormState extends State<AuthForm> {
                     );
                   },
                 ),*/
-                Spacer(),
-                SizedBox(
-                  width: double.infinity,
-                  /*child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
+                // Spacer(),
+                //    SizedBox(
+                //    width: double.infinity,
+                /*child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
                     builder: (context, state) => RaisedButton(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -205,8 +205,8 @@ class _AuthFormState extends State<AuthForm> {
                           : null,
                     ),
                   ),*/
-                ),
-                Spacer(),
+                //   ),
+                //  Spacer(),
                 Align(
                   alignment: Alignment.center,
                   child: FittedBox(

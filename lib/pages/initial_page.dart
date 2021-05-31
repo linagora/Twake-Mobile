@@ -22,7 +22,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    // final authenticationCubit = BlocProvider.of<AuthenticationCubit>(context);
+
     //  final authenticationCubitState = BlocProvider.of<AuthenticationCubit>(context).state;
     //  print(authenticationCubitState);
   }
@@ -45,6 +45,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final authenticationCubit = BlocProvider.of<AuthenticationCubit>(context);
     if (!kDebugMode) Segment.screen(screenName: 'Initial screen');
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -56,11 +57,20 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             // buildSplashScreen();
           }
           if (state is AuthenticationInitial) {
-            return Text("Initial");
-            //  AuthForm();
+            return InkWell(
+              child: Center(
+                child: Text("Initial"),
+              ),
+              onTap: () {
+                authenticationCubit.authenticate(
+                    username: 'testbot', password: '12345678');
+              },
+            );
+            // AuthForm();
           }
           if (state is AuthenticationSuccess) {
-            return Text("Authenticated");
+            return Text("Authenticated",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40));
           } else {
             return buildSplashScreen();
           }
