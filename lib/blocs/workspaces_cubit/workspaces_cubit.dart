@@ -14,13 +14,21 @@ class WorkspacesCubit extends Cubit<WorkspaceState> {
     emit(WorkspacesLoadInProgress());
     final stream = _workspacesRepository.fetch(companyId: companyId);
 
-    await for (var list in stream) {
-      emit(WorkspacesLoadSuccess(workspaces: list));
+    await for (var workspaces in stream) {
+      Workspace? selected;
+      if (Globals.instance.companyId != null) {
+        selected =
+            workspaces.firstWhere((c) => c.id == Globals.instance.companyId);
+      }
+      emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
   }
 
-  Future<void> createWorkspace(
-      {String? companyId, required String name, List<String>? members}) async {
+  Future<void> createWorkspace({
+    String? companyId,
+    required String name,
+    List<String>? members,
+  }) async {
     final workspace = await _workspacesRepository.createWorkspace(
         companyId: companyId, name: name, members: members);
 
@@ -37,7 +45,11 @@ class WorkspacesCubit extends Cubit<WorkspaceState> {
     return members;
   }
 
-  void changeWorkspace(Workspace workspace) {
+  void changeWorkspace({required Workspace workspace}) {
     Globals.instance.workspaceIdSet = workspace.id;
+
+    final workspaces = (state as WorkspacesLoadSuccess).workspaces;
+
+    emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: workspace));
   }
 }

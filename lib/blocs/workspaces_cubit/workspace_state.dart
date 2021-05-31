@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/account/account.dart';
 import 'package:twake/models/workspace/workspace.dart';
 
 abstract class WorkspaceState extends Equatable {
