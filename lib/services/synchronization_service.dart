@@ -20,6 +20,30 @@ class SynchronizationService {
 
   SynchronizationService._();
 
+  Stream<SocketIOResource> get socketIODirectsStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.channel &&
+            r.resource['workspace_id'] == 'direct';
+      });
+
+  Stream<SocketIOResource> get socketIODirectsActivityStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.channelActivity &&
+            r.resource['workspace_id'] == 'direct';
+      });
+
+  Stream<SocketIOResource> get socketIOChannelsStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.channel &&
+            r.resource['workspace_id'] != 'direct';
+      });
+
+  Stream<SocketIOResource> get socketIOChannelsActivityStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.channelActivity &&
+            r.resource['workspace_id'] != 'direct';
+      });
+
   Future<List<SocketIORoom>> get socketIORooms async {
     final queryParameters = {
       'company_id': Globals.instance.companyId,

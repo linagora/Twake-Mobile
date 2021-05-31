@@ -28,8 +28,8 @@ class ChannelsRepository {
 
     if (rchannels.length != lchannels.length) {
       await _storage.truncate(table: Table.channel);
+      _storage.multiInsert(table: Table.channel, data: rchannels);
     }
-    _storage.multiInsert(table: Table.channel, data: rchannels);
 
     yield rchannels;
   }
@@ -69,6 +69,8 @@ class ChannelsRepository {
     var channels = remoteResult
         .map((entry) => Channel.fromJson(json: entry, jsonify: false))
         .toList();
+
+    _storage.multiInsert(table: Table.channel, data: channels);
 
     channels.sort((c1, c2) => c2.lastActivity.compareTo(c1.lastActivity));
 

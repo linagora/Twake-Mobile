@@ -31,22 +31,36 @@ class WorkspacesRepository {
   Stream<List<Workspace>> fetch({String? companyId}) async* {
     if (companyId == null) companyId = Globals.instance.companyId;
 
+    var workspaces = await fetchLocal(companyId: companyId!);
+    yield workspaces;
+
+    if (!Globals.instance.isNetworkConnected) return;
+
+    workspaces = await fetchRemote(companyId: companyId);
+
+    yield workspaces;
+  }
+
+  Future<List<Workspace>> fetchLocal({required String companyId}) async {
     final localResult = await this._storage.select(
       table: Table.workspace,
       where: 'company_id = ?',
       whereArgs: [companyId],
     );
-    var workspaces =
+
+    final workspaces =
         localResult.map((entry) => Workspace.fromJson(json: entry)).toList();
-    yield workspaces;
 
-    if (!Globals.instance.isNetworkConnected) return;
+    return workspaces;
+  }
 
+  Future<List<Workspace>> fetchRemote({required String companyId}) async {
     final remoteResult = await this._api.get(
       endpoint: Endpoint.workspaces,
-      queryParameters: {'company_id': companyId ?? Globals.instance.companyId},
+      queryParameters: {'company_id': companyId},
     );
-    workspaces = remoteResult
+
+    final workspaces = remoteResult
         .map((entry) => Workspace.fromJson(
               json: entry,
               jsonify: false,
@@ -55,7 +69,7 @@ class WorkspacesRepository {
 
     _storage.multiInsert(table: Table.workspace, data: workspaces);
 
-    yield workspaces;
+    return workspaces;
   }
 
   Future<Workspace> createWorkspace(

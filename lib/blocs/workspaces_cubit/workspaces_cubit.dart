@@ -1,11 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/workspaces_cubit/workspace_state.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/repositories/workspaces_repository.dart';
+import 'package:twake/services/service_bundle.dart';
 
-class WorkspacesCubit extends Cubit<WorkspaceState> {
+class WorkspacesCubit extends Cubit<WorkspacesState> {
   final WorkspacesRepository _workspacesRepository;
 
   WorkspacesCubit(this._workspacesRepository) : super(WorkspacesInitial());
@@ -47,6 +48,9 @@ class WorkspacesCubit extends Cubit<WorkspaceState> {
 
   void changeWorkspace({required Workspace workspace}) {
     Globals.instance.workspaceIdSet = workspace.id;
+
+    // Subscribe to socketIO updates
+    SynchronizationService.instance.subscribeForChannels();
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
 

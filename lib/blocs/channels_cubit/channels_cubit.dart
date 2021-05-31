@@ -17,7 +17,11 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   BaseChannelsCubit({required ChannelsRepository repository})
       : _repository = repository,
-        super(ChannelsInitial());
+        super(ChannelsInitial()) {
+    // Set up socketIO listeners
+    listenToActivityChanges();
+    listentToChannelChanges();
+  }
 
   void fetch({required String workspaceId}) async {
     emit(ChannelsLoadInProgress());
@@ -293,17 +297,11 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 class ChannelsCubit extends BaseChannelsCubit {
   @override
   final _socketIOChannelStream =
-      SocketIOService.instance.resourceStream.where((r) {
-    return r.type == ResourceType.channel &&
-        r.resource['workspace_id'] != 'direct';
-  });
+      SynchronizationService.instance.socketIOChannelsStream;
 
   @override
   final _socketIOActivityStream =
-      SocketIOService.instance.resourceStream.where((r) {
-    return r.type == ResourceType.channelActivity &&
-        r.resource['workspace_id'] != 'direct';
-  });
+      SynchronizationService.instance.socketIOChannelsActivityStream;
 
   ChannelsCubit({ChannelsRepository? repository})
       : super(repository: repository ?? ChannelsRepository());
@@ -312,17 +310,11 @@ class ChannelsCubit extends BaseChannelsCubit {
 class DirectsCubit extends BaseChannelsCubit {
   @override
   final _socketIOChannelStream =
-      SocketIOService.instance.resourceStream.where((r) {
-    return r.type == ResourceType.channel &&
-        r.resource['workspace_id'] == 'direct';
-  });
+      SynchronizationService.instance.socketIODirectsStream;
 
   @override
   final _socketIOActivityStream =
-      SocketIOService.instance.resourceStream.where((r) {
-    return r.type == ResourceType.channelActivity &&
-        r.resource['workspace_id'] == 'direct';
-  });
+      SynchronizationService.instance.socketIODirectsActivityStream;
 
   DirectsCubit({ChannelsRepository? repository})
       : super(
