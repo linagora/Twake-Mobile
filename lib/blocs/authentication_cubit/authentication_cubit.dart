@@ -34,6 +34,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     } else {
       emit(AuthenticationInitial());
     }
+    _repository.startTokenValidator();
   }
 
   void authenticate({
@@ -48,6 +49,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
     if (!success) emit(AuthenticationFailure());
     emit(AuthenticationSuccess());
+
+    _repository.startTokenValidator();
   }
 
   void logout() {
