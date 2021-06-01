@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'file.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class File {
   final String id;
   final String name;
@@ -10,7 +15,7 @@ class File {
     required this.name,
     required this.download,
     required this.size,
-    required this.preview,
+    this.preview,
   });
 
   Map<String, Object?> toMap() {
@@ -19,6 +24,7 @@ class File {
       "mode": "preview",
       "content": id,
       "metadata": {
+        // TODO add id in metadata from proxy
         "size": size,
         "name": name,
         "preview": preview,
@@ -26,4 +32,9 @@ class File {
       }
     };
   }
+
+  factory File.fromJson({required Map<String, dynamic> json}) =>
+      _$FileFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FileToJson(this);
 }

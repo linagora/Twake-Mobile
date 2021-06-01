@@ -134,6 +134,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     final hash = (state as ChannelsLoadedSuccess).hash;
 
     channels.removeWhere((c) => c.id == channel.id);
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
       selected: null,

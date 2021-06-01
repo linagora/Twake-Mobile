@@ -1,36 +1,38 @@
 import 'package:dio/dio.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class FileRepository {
-
   final _api = ApiService.instance;
-  final _storage = StorageService.instance;
-  final Logger _logger = Logger();
 
   final _files = <File>[];
 
-  // FileUploadRepository() {
-  //   print('FileUploadRepository initialization');
-  // }
+  FileRepository();
 
-  void upload({
-    required FormData payload,
-    String endpoint = Endpoint.fileUpload,
-    Function(Map<String, dynamic>? response)? onSuccess,
-    Function(String reason)? onError,
-    CancelToken? cancelToken,
-  }) {
-    print('Payload fields in upload request: ${payload.fields}');
-    // _api
-    //     .post(endpoint: endpoint, data: payload, cancelToken: cancelToken)
-    //     .then((r) {
-    //   _files.add(File.fromJson(r));
-    //   onSuccess!(r);
-    // }).onError((dynamic e, s) {
-    //   onError!(e.toString());
-    //   _logger.e("ERROR UPLOADING FILE:\n$e\n$s");
-    // });
+  Future<File> upload({
+    required String path,
+    String? name,
+    required CancelToken cancelToken,
+  }) async {
+    final multipartFile = await MultipartFile.fromFile(path, filename: name);
+    final formData = FormData.fromMap({
+      'file': multipartFile,
+      'company_id': Globals.instance.companyId,
+    });
+    final result = await _api.post(
+      endpoint: Endpoint.fileUpload,
+      data: formData,
+      cancelToken: cancelToken,
+    );
+
+    final file = File.fromJson(json: result);
+
+    return file;
+  }
+
+  Future<String> download({required File file}) async {
+    // TODO implement download
   }
 
   void clearFiles() {
