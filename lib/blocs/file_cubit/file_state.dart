@@ -34,12 +34,12 @@ class FileUploadFailed extends FileState {
 }
 
 class FileUploadSuccess extends FileState {
-  final File file;
+  final List<File> files;
 
-  FileUploadSuccess({required this.file});
+  FileUploadSuccess({required this.files});
 
   @override
-  List<Object?> get props => [file];
+  List<Object?> get props => [files];
 }
 
 class FileDownloadInProgress extends FileState {

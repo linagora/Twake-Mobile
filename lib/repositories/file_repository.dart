@@ -10,7 +10,7 @@ class FileRepository {
 
   FileRepository();
 
-  Future<File> upload({
+  Future<List<File>> upload({
     required String path,
     String? name,
     required CancelToken cancelToken,
@@ -28,7 +28,9 @@ class FileRepository {
 
     final file = File.fromJson(json: result);
 
-    return file;
+    _files.add(file);
+
+    return _files;
   }
 
   Future<String> download({required File file}) async {

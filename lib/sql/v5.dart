@@ -1,9 +1,9 @@
 const String CREATE_AUTHENTICATION_V5 = '''
 CREATE TABLE authentication (
-    token TEXT NOT NULL,
+    token TEXT PRIMARY KEY,
     refresh_token TEXT NOT NULL,
     expiration INT NOT NULL,
-    refresh_expiration INT NOT NULL,
+    refresh_expiration INT NOT NULL
 )
 ''';
 
