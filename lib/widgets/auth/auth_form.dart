@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
+import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart'
+    as a_cbt;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-// import 'package:twake/utils/navigation.dart';
 
 class AuthForm extends StatefulWidget {
   final Function? onConfigurationOpen;
@@ -44,11 +43,6 @@ class _AuthFormState extends State<AuthForm> {
     super.initState();
     _usernameController.addListener(onUsernameSaved);
     _passwordController.addListener(onPasswordSaved);
-    final AuthState state = BlocProvider.of<AuthBloc>(context).state;
-    if (state is Unauthenticated) {
-      _usernameController.text = state.username!;
-      _passwordController.text = state.password!;
-    }
   }
 
   @override
@@ -60,27 +54,24 @@ class _AuthFormState extends State<AuthForm> {
     super.dispose();
   }
 
-  String? validateUsername(String value) {
-    if (value.isEmpty) {
+  String? validateUsername(String? value) {
+    if (value!.isEmpty) {
       return 'Username cannot be empty';
     }
     return null;
   }
 
-  String? validatePassword(String value) {
-    if (value.isEmpty) {
+  String? validatePassword(String? value) {
+    if (value!.isEmpty) {
       return 'Password cannot be empty';
     }
     return null;
   }
 
   void onSubmit() {
-    BlocProvider.of<AuthBloc>(context).add(
-      Authenticate(
-        _username,
-        _password,
-      ),
-    );
+    final authenticationCubit =
+        BlocProvider.of<a_cbt.AuthenticationCubit>(context);
+    authenticationCubit.authenticate(username: _username, password: _password);
   }
 
   @override
@@ -120,7 +111,7 @@ class _AuthFormState extends State<AuthForm> {
                 _AuthTextForm(
                   label: 'Email',
                   validator: validateUsername,
-                  // onSaved: onUsernameSaved,
+                  //onSaved: onUsernameSaved,
                   controller: _usernameController,
                   focusNode: _usernameFocusNode,
                 ),
@@ -134,47 +125,19 @@ class _AuthFormState extends State<AuthForm> {
                   focusNode: _passwordFocusNode,
                 ),
                 SizedBox(height: Dim.heightMultiplier),
-                BlocBuilder<AuthBloc, AuthState>(
+                BlocBuilder<a_cbt.AuthenticationCubit,
+                    a_cbt.AuthenticationState>(
                   buildWhen: (_, current) =>
-                      current is WrongCredentials ||
-                      current is AuthenticationError,
+                      current is a_cbt.AuthenticationFailure,
                   builder: (ctx, state) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (state is WrongCredentials)
+                        if (state is a_cbt.AuthenticationFailure)
                           Text(
                             'Incorrect email or password',
                             style: TextStyle(color: Colors.red, fontSize: 13.0),
                           ),
-                        if (state is AuthenticationError)
-                          Text(
-                            'Server is unavailable',
-                            style: TextStyle(color: Colors.red, fontSize: 13.0),
-                          ),
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: BlocBuilder<cb.ConnectionBloc,
-                                cb.ConnectionState>(
-                              builder: (context, state) => TextButton(
-                                onPressed: state is cb.ConnectionLost
-                                    ? null
-                                    : () {
-                                        context
-                                            .read<AuthBloc>()
-                                            .add(ResetPassword());
-                                      },
-                                child: Text(
-                                  'Forgot password?',
-                                  style: state is cb.ConnectionLost
-                                      ? StylesConfig.disabled
-                                      : StylesConfig.miniPurple,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
                       ],
                     );
                   },
@@ -182,28 +145,24 @@ class _AuthFormState extends State<AuthForm> {
                 Spacer(),
                 SizedBox(
                   width: double.infinity,
-                  child: BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                    builder: (context, state) => RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Dim.wm4,
-                        vertical: Dim.tm2(decimal: -.2),
-                      ),
-                      color: Theme.of(context).accentColor,
-                      textColor: Colors.white,
-                      disabledColor: Color.fromRGBO(238, 238, 238, 1),
-                      child: Text(
-                        'Login',
-                        style: Theme.of(context).textTheme.button,
-                      ),
-                      onPressed: _username.isNotEmpty &&
-                              _password.isNotEmpty &&
-                              !(state is cb.ConnectionLost)
-                          ? () => onSubmit()
-                          : null,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
                     ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Dim.wm4,
+                      vertical: Dim.tm2(decimal: -.2),
+                    ),
+                    color: Theme.of(context).accentColor,
+                    textColor: Colors.white,
+                    disabledColor: Color.fromRGBO(238, 238, 238, 1),
+                    child: Text(
+                      'Login',
+                      style: Theme.of(context).textTheme.button,
+                    ),
+                    onPressed: _username.isNotEmpty && _password.isNotEmpty
+                        ? () => onSubmit()
+                        : null,
                   ),
                 ),
                 Spacer(),
@@ -229,22 +188,11 @@ class _AuthFormState extends State<AuthForm> {
                               style: StylesConfig.miniPurple
                                   .copyWith(color: Colors.black87),
                             ),
-                            BlocBuilder<cb.ConnectionBloc, cb.ConnectionState>(
-                              builder: (context, state) => FlatButton(
-                                onPressed: state is cb.ConnectionLost
-                                    ? null
-                                    : () {
-                                        context
-                                            .read<AuthBloc>()
-                                            .add(RegistrationInit());
-                                      },
-                                child: Text(
-                                  ' Sign up',
-                                  style: state is cb.ConnectionLost
-                                      ? StylesConfig.disabled
-                                      : StylesConfig.miniPurple,
-                                ),
-                              ),
+                            Text(
+                              ' Sign up',
+                              style:
+                                  //  StylesConfig.disabled
+                                  StylesConfig.miniPurple,
                             ),
                           ],
                         ),

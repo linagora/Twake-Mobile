@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/auth_bloc/auth_bloc.dart';
-import 'package:twake/blocs/configuration_cubit/configuration_cubit.dart';
-import 'package:twake/blocs/connection_bloc/connection_bloc.dart' as cb;
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/auth/auth_form.dart';
-import 'package:twake/widgets/common/no_internet_snackbar.dart';
+import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/server_configuration.dart';
 
 class AuthPage extends StatefulWidget {
-  static const route = '/auth';
-
   @override
   _AuthPageState createState() => _AuthPageState();
 }
@@ -24,10 +18,12 @@ class _AuthPageState extends State<AuthPage> {
     super.initState();
 
     _widgets = [
-      AuthForm(
-        onConfigurationOpen: () => setState(() {
-          _index = 1;
-        }),
+      Center(
+        child: AuthForm(
+          onConfigurationOpen: () => setState(() {
+            _index = 1;
+          }),
+        ),
       ),
       ServerConfiguration(
         onCancel: () => setState(() {
@@ -38,10 +34,6 @@ class _AuthPageState extends State<AuthPage> {
         }),
       ),
     ];
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      context.read<ConfigurationCubit>().load();
-    });
   }
 
   @override
@@ -77,22 +69,11 @@ class _AuthPageState extends State<AuthPage> {
               ),
             ),
           ),
-          BlocListener<cb.ConnectionBloc, cb.ConnectionState>(
-            listener: connectionListener,
-            child: BlocBuilder<AuthBloc, AuthState>(
-                buildWhen: (_, current) =>
-                    current is HostReset || current is HostValidated,
-                builder: (context, state) {
-                  if (state is HostReset) {
-                    _index = 1;
-                  }
-                  return IndexedStack(
-                    alignment: Alignment.bottomCenter,
-                    sizing: StackFit.expand,
-                    index: _index,
-                    children: _widgets,
-                  );
-                }),
+          IndexedStack(
+            alignment: Alignment.bottomCenter,
+            sizing: StackFit.expand,
+            index: _index,
+            children: _widgets,
           ),
         ],
       ),
