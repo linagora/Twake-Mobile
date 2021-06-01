@@ -39,7 +39,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return (Text('Globals hostSet)')); // implement hostSet Globals
+    return Center(
+        child: (Text('Globals hostSet)'))); // implement hostSet Globals
     /* return Scaffold(
       appBar: AppBar(
         leading: CloseButton(
