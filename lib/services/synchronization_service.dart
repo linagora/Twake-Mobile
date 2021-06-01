@@ -7,7 +7,10 @@ class SynchronizationService {
   final _api = ApiService.instance;
 
   final _socketio = SocketIOService.instance;
+  final _pushNotifications = PushNotificationsService.instance;
+
   List<SocketIORoom> _subRooms = [];
+  Map<String, List<int>> _localNotifications = {};
 
   factory SynchronizationService({required bool reset}) {
     if (reset) {
@@ -18,7 +21,38 @@ class SynchronizationService {
 
   static SynchronizationService get instance => _service;
 
-  SynchronizationService._();
+  SynchronizationService._() {
+    foregroundMessagesCheck();
+  }
+
+  Future<void> foregroundMessagesCheck() async {
+    final messagesStream = _pushNotifications.foregroundMessageStream;
+    await for (final message in messagesStream) {
+      final id = _pushNotifications.showLocal(
+        title: message.headers.title,
+        body: message.headers.body,
+        payload: LocalNotification(
+          type: LocalNotificationType.message,
+          payload: message.payload.toJson(),
+        ).stringified,
+      );
+      final notifications = _localNotifications.putIfAbsent(
+        message.payload.channelId,
+        () => [],
+      );
+      notifications.add(id);
+    }
+  }
+
+  void cancelNotificationsForChannel({required String channelId}) {
+    final notifications = _localNotifications[channelId];
+
+    if (notifications == null || notifications.isEmpty) return;
+
+    for (final n in notifications) {
+      _pushNotifications.cancelLocal(id: n);
+    }
+  }
 
   Stream<SocketIOResource> get socketIODirectsStream =>
       _socketio.resourceStream.where((r) {

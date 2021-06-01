@@ -44,4 +44,8 @@ class FileCubit extends Cubit<FileState> {
 
     emit(FileUploadSuccess(files: uploadedFiles));
   }
+
+  void download({required File file}) async {
+    // TODO: implement download functionality
+  }
 }

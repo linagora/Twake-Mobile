@@ -25,6 +25,8 @@ class LocalNotification {
   Map<String, dynamic> toJson() {
     return _$LocalNotificationToJson(this);
   }
+
+  String get stringified => jsonEncode(this.toJson());
 }
 
 enum LocalNotificationType {

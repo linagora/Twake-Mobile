@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -46,6 +48,8 @@ class NotificationPayload {
   Map<String, dynamic> toJson() {
     return _$NotificationPayloadToJson(this);
   }
+
+  String get stringified => jsonEncode(this.toJson());
 }
 
 class NotificationHeaders {
