@@ -218,8 +218,52 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     await for (final change in _socketIOEventStream) {
       switch (change.data.action) {
         case IOEventAction.remove:
+          _repository.removeMessageLocal(messageId: change.data.messageId);
+          if (state is MessagesLoadSuccess) {
+            final messages = (state as MessagesLoadSuccess).messages;
+            final hash = (state as MessagesLoadSuccess).hash;
+            final parentMessage = (state as MessagesLoadSuccess).parentMessage;
+            if (messages.first.channelId == change.channelId) {
+              messages.removeWhere((m) => m.id == change.data.messageId);
+              emit(MessagesLoadSuccess(
+                messages: messages,
+                hash: hash - 1, // we only need to update hash in someway
+                parentMessage: parentMessage,
+              ));
+            }
+          }
+          break;
         case IOEventAction.update:
-          // TODO: handle those events
+          final message = await _repository.getMessageRemote(
+            messageId: change.data.messageId,
+            channelId: change.channelId,
+            threadId: change.data.threadId,
+          );
+          if (state is MessagesLoadSuccess) {
+            final messages = (state as MessagesLoadSuccess).messages;
+            final hash = (state as MessagesLoadSuccess).hash;
+            final parentMessage = (state as MessagesLoadSuccess).parentMessage;
+            if (messages.first.channelId == change.channelId) {
+              // message is already present
+              if (messages.any((m) => m.id == message.id)) {
+                final index = messages.indexWhere((m) => m.id == message.id);
+                messages[index] = message;
+                emit(MessagesLoadSuccess(
+                  messages: messages,
+                  hash: hash + 1, // we only need to update hash in someway
+                  parentMessage: parentMessage,
+                ));
+              } else {
+                // new message has been created
+                messages.add(message);
+                emit(MessagesLoadSuccess(
+                  messages: messages,
+                  hash: hash + message.hash,
+                  parentMessage: parentMessage,
+                ));
+              }
+            }
+          }
           break;
       }
     }

@@ -320,4 +320,12 @@ class MessagesRepository {
 
     return message;
   }
+
+  Future<void> removeMessageLocal({required String messageId}) async {
+    _storage.delete(
+      table: Table.message,
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
+  }
 }
