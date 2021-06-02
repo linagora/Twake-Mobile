@@ -82,7 +82,6 @@ class InitService {
           'workspace_id': workspace.id,
         },
       );
-      print('CHANNELS:\n$remoteResult');
       channels = channels.followedBy(remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false),
       ));
