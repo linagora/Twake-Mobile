@@ -14,6 +14,7 @@ class Company extends BaseModel {
 
   final String? logo;
 
+  @JsonKey(defaultValue: 0)
   final int totalMembers;
 
   String? selectedWorkspace;

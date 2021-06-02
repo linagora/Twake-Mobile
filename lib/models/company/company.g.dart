@@ -10,7 +10,7 @@ Company _$CompanyFromJson(Map<String, dynamic> json) {
   return Company(
     id: json['id'] as String,
     name: json['name'] as String,
-    totalMembers: json['total_members'] as int,
+    totalMembers: json['total_members'] as int? ?? 0,
     permissions:
         (json['permissions'] as List<dynamic>).map((e) => e as String).toList(),
     logo: json['logo'] as String?,

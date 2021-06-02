@@ -26,7 +26,7 @@ class ApiService {
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
       options.baseUrl = Globals.instance.host + _PROXY_PREFIX;
-      if (!Endpoint.isPublic(options.path)) {
+      if (Endpoint.isPublic(options.path)) {
         handler.next(options);
         return;
       }
@@ -92,7 +92,7 @@ class ApiService {
           queryParameters: queryParameters,
           cancelToken: cancelToken,
         );
-    return r;
+    return r.data;
   }
 
   Future<dynamic> post({
@@ -107,7 +107,7 @@ class ApiService {
           onSendProgress: onSendProgress,
           cancelToken: cancelToken,
         );
-    return r;
+    return r.data;
   }
 
   Future<dynamic> put({
@@ -120,7 +120,7 @@ class ApiService {
           data: data,
           cancelToken: cancelToken,
         );
-    return r;
+    return r.data;
   }
 
   Future<dynamic> patch({
@@ -133,7 +133,7 @@ class ApiService {
           data: data,
           cancelToken: cancelToken,
         );
-    return r;
+    return r.data;
   }
 
   Future<dynamic> delete({
@@ -144,6 +144,6 @@ class ApiService {
           endpoint,
           data: data,
         );
-    return r;
+    return r.data;
   }
 }

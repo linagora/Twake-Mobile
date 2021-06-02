@@ -32,7 +32,7 @@ class InitService {
   // should only be called once after successful authentication/login
   static Future<void> syncData() async {
     // 1. Fetch all the companies and save them to local store
-    List<Map<String, dynamic>> remoteResult = await _apiService.get(
+    List<dynamic> remoteResult = await _apiService.get(
       endpoint: Endpoint.companies,
     );
     final companies = remoteResult.map(
@@ -82,6 +82,7 @@ class InitService {
           'workspace_id': workspace.id,
         },
       );
+      print('CHANNELS:\n$remoteResult');
       channels = channels.followedBy(remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false),
       ));

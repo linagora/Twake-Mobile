@@ -37,10 +37,10 @@ class AuthenticationRepository {
     required String username,
     required String password,
   }) async {
-    Map<String, dynamic> authenticationResult = {};
+    dynamic authenticationResult = {};
     try {
       authenticationResult = await _api.post(
-        endpoint: Endpoint.authorizationProlong,
+        endpoint: Endpoint.authorize,
         data: {
           'username': username,
           'password': password,
@@ -49,7 +49,8 @@ class AuthenticationRepository {
           'fcm_token': Globals.instance.fcmToken,
         },
       );
-    } catch (_) {
+    } catch (e) {
+      Logger().e('Error occured during authentication:\n$e');
       return false;
     }
 
@@ -65,7 +66,7 @@ class AuthenticationRepository {
   Future<Authentication> prolongAuthentication(
     Authentication authentication,
   ) async {
-    Map<String, dynamic> authenticationResult = {};
+    dynamic authenticationResult = {};
     try {
       authenticationResult = await _api.post(
         endpoint: Endpoint.authorizationProlong,

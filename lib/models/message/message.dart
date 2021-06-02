@@ -49,6 +49,7 @@ class Message extends BaseModel {
     return '$firstname $lastname';
   }
 
+  @JsonKey(ignore: true)
   bool get isRead => _isRead > 0;
 
   set isRead(bool val) => _isRead = val ? 1 : 0;
