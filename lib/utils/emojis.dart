@@ -7,7 +7,7 @@ const _EMOJIS_STORE_KEY = 'emojis';
 
 class Emojis {
   static Map<dynamic, dynamic>? _emojimap = {};
-
+/*
   static final _api = ApiService.instance;
   static final _storage = Storage();
 
@@ -32,7 +32,7 @@ class Emojis {
       _emojimap = jsonDecode(map[_storage.settingsField]);
     }
   }
-
+*/
   static String? getByName(String name) {
     name = name.replaceAll(':', '');
     return _emojimap![name];

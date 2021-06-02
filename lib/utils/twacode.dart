@@ -959,35 +959,7 @@ class TwacodeRenderer {
             child: Row(children: [
               InkWell(
                 onTap: () async {
-                  if (t['metadata']['download'] != null) {
-                    final permissionStatus = await Permission.storage.request();
-                    //print(t['metadata']['download']);
-                    if (permissionStatus.isGranted) {
-                      if (Platform.isAndroid) {
-                        //   print(Api.host);
-
-                        final dir = await (getExternalStorageDirectory()
-                            as FutureOr<Directory>);
-
-                        await FlutterDownloader.enqueue(
-                            url: Api.host! + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
-                      } else if (Platform.isIOS) {
-                        final dir = await getApplicationSupportDirectory();
-                        await FlutterDownloader.enqueue(
-                            url: Api.host! + t['metadata']['download'],
-                            savedDir: dir.path,
-                            // fileName: "Test", //auto
-                            showNotification: true,
-                            openFileFromNotification: true);
-                      }
-                    } else {
-                      // TODO: implementation needed
-                    }
-                  }
+                  // TODO: implementation needed, checkout filedownload branch
                 },
                 child: SizedBox(
                   child: t['metadata']['preview'] != null
@@ -997,15 +969,8 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
-                          // TODO: implementation needed to show progres
-                          /*CircularProgressIndicator(
-                          backgroundColor: Colors.blueGrey,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.lightBlue),
-                          value: progres.toDouble(),*/
+                          // TODO: implementation needed to show progres, checkout filedownload branch
                         ),
-
-                  // ),
                   width: 40,
                   height: 40,
                 ),

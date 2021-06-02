@@ -33,9 +33,9 @@ class FileRepository {
     return _files;
   }
 
-  Future<String> download({required File file}) async {
-    // TODO implement download
-  }
+  //Future<String> download({required File file}) async {
+  // TODO implement download
+  //}
 
   void clearFiles() {
     _files.clear();
