@@ -117,6 +117,14 @@ CREATE TABLE globals (
 );
 ''';
 
+const String CREATE_BADGE_V5 = '''
+CREATE TABLE badge (
+    type TEXT NOT NULL,
+    id TEXT PRIMARY KEY,
+    count INT DEFAULT 0
+);
+''';
+
 const DDL_V5 = [
   CREATE_AUTHENTICATION_V5,
   CREATE_ACCOUNT_V5,
@@ -126,4 +134,5 @@ const DDL_V5 = [
   CREATE_CHANNEL_V5,
   CREATE_MESSAGE_V5,
   CREATE_GLOBALS_V5,
+  CREATE_BADGE_V5,
 ];
