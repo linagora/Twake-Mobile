@@ -19,6 +19,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       repository = MessagesRepository();
     }
     _repository = repository;
+
+    listenToMessageChanges();
   }
 
   Future<void> fetch({required String channelId, String? threadId}) async {
@@ -214,7 +216,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     return message;
   }
 
-  void listenToMessageChanges() async {
+  Future<void> listenToMessageChanges() async {
     await for (final change in _socketIOEventStream) {
       switch (change.data.action) {
         case IOEventAction.remove:
