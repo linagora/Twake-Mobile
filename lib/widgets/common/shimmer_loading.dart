@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
 
 class ShimmerLoading extends StatefulWidget {
   const ShimmerLoading({
@@ -145,7 +144,7 @@ class _ShimmerFilter extends RenderProxyBox {
       final rect = Rect.fromLTWH(dx, dy, width, height);
 
       layer ??= ShaderMaskLayer();
-      layer
+      layer!
         ..shader = _gradient!.createShader(rect)
         ..maskRect = offset & size
         ..blendMode = BlendMode.srcIn;
