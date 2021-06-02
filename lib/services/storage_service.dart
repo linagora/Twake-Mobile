@@ -198,6 +198,7 @@ enum Table {
   channel,
   message,
   globals,
+  badge,
 }
 
 extension TableExtension on Table {
@@ -219,6 +220,8 @@ extension TableExtension on Table {
         return 'message';
       case Table.globals:
         return 'globals';
+      case Table.badge:
+        return 'badge';
     }
   }
 }
