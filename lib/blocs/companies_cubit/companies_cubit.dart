@@ -33,13 +33,13 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     }
   }
 
-  void selectCompany({required Company company}) {
-    Globals.instance.companyIdSet = company.id;
+  void selectCompany({required String companyId}) {
+    Globals.instance.companyIdSet = companyId;
     final companies = (state as CompaniesLoadSuccess).companies;
 
     emit(CompaniesLoadSuccess(
       companies: companies,
-      selected: company,
+      selected: companies.firstWhere((c) => c.id == companyId),
     ));
   }
 

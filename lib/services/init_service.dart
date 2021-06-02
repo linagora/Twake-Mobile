@@ -25,6 +25,7 @@ class InitService {
 
     SocketIOService(reset: true);
     PushNotificationsService(reset: true);
+    SynchronizationService(reset: true);
     _apiService = ApiService(reset: true);
   }
 

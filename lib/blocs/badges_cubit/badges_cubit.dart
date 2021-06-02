@@ -12,7 +12,7 @@ class BadgesCubit extends Cubit<BadgesState> {
     _repository = repository;
   }
 
-  void fetch() async {
+  Future<void> fetch() async {
     emit(BadgesLoadInProgress());
 
     final badgesStream = _repository.fetch();

@@ -3,7 +3,6 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class NavigatorService {
@@ -102,14 +101,30 @@ class NavigatorService {
     }
   }
 
-  void navigate({
+  Future<void> navigate({
     String? companyId,
     String? workspaceId,
     required String channelId,
     String? threadId,
   }) async {
-    if (companyId == null) companyId = Globals.instance.companyId!;
-    if (workspaceId == null) workspaceId = Globals.instance.workspaceId!;
-    // TODO figure out the navigation
+    if (companyId != null) {
+      companiesCubit.selectCompany(companyId: companyId);
+      await workspacesCubit.fetch(companyId: companyId);
+      await directsCubit.fetch(companyId: companyId, workspaceId: 'direct');
+    }
+    if (workspaceId != null) {
+      workspacesCubit.selectWorkspace(workspaceId: workspaceId);
+      await channelsCubit.fetch(workspaceId: workspaceId);
+    }
+
+    channelsCubit.selectChannel(channelId: channelId);
+
+    await channelMessagesCubit.fetch(channelId: channelId);
+
+    if (threadId != null) {
+      channelMessagesCubit.selectThread(messageId: threadId);
+      await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
+    }
+    // TODO: implement navigation
   }
 }

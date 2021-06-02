@@ -200,8 +200,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _repository.delete(messageId: message.id, threadId: message.threadId);
   }
 
-  void selectThread(Message message) {
-    Globals.instance.threadIdSet = message.id;
+  void selectThread({required String messageId}) {
+    Globals.instance.threadIdSet = messageId;
   }
 
   void clearSelectedThread() {

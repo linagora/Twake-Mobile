@@ -46,14 +46,17 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     return members;
   }
 
-  void selectWorkspace({required Workspace workspace}) {
-    Globals.instance.workspaceIdSet = workspace.id;
+  void selectWorkspace({required String workspaceId}) {
+    Globals.instance.workspaceIdSet = workspaceId;
 
     // Subscribe to socketIO updates
     SynchronizationService.instance.subscribeForChannels();
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
 
-    emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: workspace));
+    emit(WorkspacesLoadSuccess(
+      workspaces: workspaces,
+      selected: workspaces.firstWhere((w) => w.id == workspaceId),
+    ));
   }
 }

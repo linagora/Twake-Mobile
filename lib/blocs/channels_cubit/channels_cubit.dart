@@ -23,11 +23,11 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     listentToChannelChanges();
   }
 
-  void fetch({required String workspaceId}) async {
+  Future<void> fetch({String? companyId, required String workspaceId}) async {
     emit(ChannelsLoadInProgress());
 
     final channelsStream = _repository.fetch(
-      companyId: Globals.instance.companyId,
+      companyId: companyId ?? Globals.instance.companyId!,
       workspaceId: workspaceId,
     );
 
@@ -204,17 +204,15 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     return true;
   }
 
-  void selectChannel({required Channel channel}) {
-    Globals.instance.channelIdSet = channel.id;
+  void selectChannel({required String channelId}) {
+    Globals.instance.channelIdSet = channelId;
 
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
-    SynchronizationService.instance.subscribeToMessages(channelId: channel.id);
-
     emit(ChannelsLoadedSuccess(
       channels: channels,
-      selected: channel,
+      selected: channels.firstWhere((c) => c.id == channelId),
       hash: hash,
     ));
   }

@@ -11,13 +11,11 @@ class ChannelsRepository {
   ChannelsRepository({this.endpoint: Endpoint.channels});
 
   Stream<List<Channel>> fetch({
-    String? companyId,
+    required String companyId,
     required String workspaceId,
   }) async* {
-    if (companyId == null) companyId = Globals.instance.companyId;
-
     final lchannels =
-        await fetchLocal(companyId: companyId!, workspaceId: workspaceId);
+        await fetchLocal(companyId: companyId, workspaceId: workspaceId);
 
     yield lchannels;
 
