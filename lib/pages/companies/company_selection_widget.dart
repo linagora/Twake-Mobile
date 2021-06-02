@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:twake/config/image_path.dart';
+import 'package:twake/pages/workspaces_management/add_workspace_tile.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
-import 'package:twake/pages/workspaces_management/workspaces_management.dart';
 
 class CompanySelectionWidget extends StatelessWidget {
   const CompanySelectionWidget() : super();
@@ -11,7 +12,7 @@ class CompanySelectionWidget extends StatelessWidget {
       color: Colors.white,
       child: Column(
         children: [
-          AddWorkspaceTile(),
+          AddWorkspaceTile(title: 'Add a new company'),
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.only(
@@ -20,7 +21,7 @@ class CompanySelectionWidget extends StatelessWidget {
               itemCount: 20,
               itemBuilder: (context, index) {
                 return WorkspaceTile(
-                  image: 'assets/images/cancel.png',
+                  image: imagePathCancel,
                   title: '$index',
                   selected: index == 1,
                   subtitle: '',

@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
+import 'add_workspace_tile.dart';
 import 'workspace_title.dart';
 
 class WorkspacesManagement extends StatelessWidget {
@@ -32,8 +34,7 @@ class WorkspacesManagement extends StatelessWidget {
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
-                          icon: Image.asset('assets/images/cancel.png'),
-                          onPressed: () {}),
+                          icon: Image.asset(imagePathCancel), onPressed: () {}),
                     )
                   ],
                 ),
@@ -134,7 +135,7 @@ class WorkspacesManagement extends StatelessWidget {
                       itemCount: 20,
                       itemBuilder: (context, index) {
                         return WorkspaceTile(
-                          image: 'assets/images/cancel.png',
+                          image: imagePathCancel,
                           title: '$index',
                           selected: index == 1,
                           subtitle: '',
@@ -147,54 +148,6 @@ class WorkspacesManagement extends StatelessWidget {
             ),
           )
         ],
-      ),
-    );
-  }
-}
-
-class AddWorkspaceTile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: [
-            SizedBox(height: 8.0),
-            Row(
-              children: [
-                SizedBox(width: 16.0),
-                Container(
-                  width: 60.0,
-                  height: 60.0,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xfff5f5f5),
-                  ),
-                  child: Image.asset('assets/images/add.png'),
-                ),
-                SizedBox(width: 16.0),
-                Text(
-                  'Create a new workspace',
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8.0),
-            Divider(
-              thickness: 1.0,
-              height: 1.0,
-              color: Color(0xfff4f4f4),
-            ),
-          ],
-        ),
       ),
     );
   }
