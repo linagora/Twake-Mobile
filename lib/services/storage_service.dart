@@ -11,7 +11,6 @@ const String _DATABASE_FILE = 'twakesql.db';
 class StorageService {
   static late final StorageService _service;
   late Database _db;
-  final _logger = Logger();
 
   factory StorageService({required reset}) {
     if (reset) {
@@ -34,7 +33,7 @@ class StorageService {
     try {
       await Directory(databasesPath).create(recursive: true);
     } catch (e) {
-      _logger.wtf('Failed to create databases directory!\nError: $e');
+      Logger().wtf('Failed to create databases directory!\nError: $e');
       throw e;
     }
     if (await databaseExists(path)) {
@@ -64,11 +63,11 @@ class StorageService {
 
     void onOpen(Database db) async {
       final v = await db.getVersion();
-      _logger.d('Opened twake db v.$v');
+      Logger().d('Opened twake db v.$v');
     }
 
     void onUpgrade(db, oldVersion, newVersion) async {
-      _logger.d('Migration to twake db v.$newVersion from v.$oldVersion');
+      Logger().d('Migration to twake db v.$newVersion from v.$oldVersion');
       await dbUpgrade(db: db, version: oldVersion);
     }
 

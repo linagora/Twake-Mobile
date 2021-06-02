@@ -69,8 +69,9 @@ class SocketIOService {
 
     // set up health check for sockeio connection
     Future.delayed(Duration(seconds: 3), _checkConnectionHealth);
+
     Globals.instance.connection.listen((state) {
-      if (state == Connection.connected && _healthCheckRunning) {
+      if (state == Connection.connected && !_healthCheckRunning) {
         _checkConnectionHealth();
       }
     });
@@ -87,11 +88,13 @@ class SocketIOService {
   }
 
   void _handleEvent(data) {
+    Logger().e('GOT EVENT: $data');
     final event = SocketIOEvent.fromJson(json: data);
     _eventStream.sink.add(event);
   }
 
   void _handleResource(data) {
+    Logger().e('GOT RESOURCE: $data');
     final resource = SocketIOResource.fromJson(json: data);
     _resourceStream.sink.add(resource);
   }

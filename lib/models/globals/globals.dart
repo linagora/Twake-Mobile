@@ -19,9 +19,17 @@ class Globals extends BaseModel {
   static late Globals _globals;
 
   String host;
-  set hostSet(String val) {
+
+  Future<bool> hostSet(String val) async {
+    try {
+      await ApiService.instance.get(endpoint: Endpoint.version);
+    } catch (e) {
+      Logger().w('Host is invalid: $val');
+      return false;
+    }
     host = val;
     save();
+    return true;
   }
 
   String? companyId;
@@ -153,7 +161,7 @@ class Globals extends BaseModel {
       switch (state) {
         case ConnectivityResult.mobile:
         case ConnectivityResult.wifi:
-          InternetAddress.lookup(host).then((addresses) {
+          ApiService.instance.get(endpoint: Endpoint.version).then((_) {
             if (!isNetworkConnected) {
               isNetworkConnected = true;
               _connection.sink.add(Connection.connected);
