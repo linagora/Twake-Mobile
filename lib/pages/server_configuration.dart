@@ -1,6 +1,8 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/models/globals/globals.dart';
 
 class ServerConfiguration extends StatefulWidget {
   final Function? onCancel;
@@ -39,8 +41,13 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-        child: (Text('Globals hostSet'))); // implement hostSet Globals
+    return InkWell(
+        child: Center(child: (Text('Globals hostSet'))),
+        onTap: () async {
+          final String fcmToken =
+              (await FirebaseMessaging.instance.getToken())!;
+          Globals(host: 'https://chat.twake.app', fcmToken: fcmToken);
+        }); // implement hostSet Globals
     /* return Scaffold(
       appBar: AppBar(
         leading: CloseButton(

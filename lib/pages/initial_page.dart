@@ -53,8 +53,30 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             return AuthPage();
           }
           if (state is AuthenticationSuccess) {
-            return Text("Authenticated",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40));
+            return Center(
+              child: Column(
+                children: [
+                  Text("Authenticated",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 20), elevation: 5),
+                    onPressed: () {
+                      final authenticationCubit =
+                          BlocProvider.of<AuthenticationCubit>(context);
+                      authenticationCubit.logout();
+                    },
+                    child: const Text(
+                      'Logout',
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
           if (state is AuthenticationFailure) {
             return AuthPage();
