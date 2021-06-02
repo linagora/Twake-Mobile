@@ -25,8 +25,8 @@ class InitService {
 
     SocketIOService(reset: true);
     PushNotificationsService(reset: true);
-    SynchronizationService(reset: true);
     _apiService = ApiService(reset: true);
+    SynchronizationService(reset: true);
   }
 
   // should only be called once after successful authentication/login

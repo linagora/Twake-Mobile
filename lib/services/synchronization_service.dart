@@ -120,9 +120,11 @@ class SynchronizationService {
     }
   }
 
-  Future<Stream<SocketIOResource>> subscribeToBadges() async {
-    // TODO: implement subscription to badge updates
-    return _socketio.resourceStream;
+  Future<void> subscribeToBadges() async {
+    final badgesRoom =
+        _subRooms.firstWhere((r) => r.type == RoomType.notifications);
+
+    _socketio.subscribe(room: badgesRoom.key);
   }
 
   void subscribeToMessages({required String channelId}) {

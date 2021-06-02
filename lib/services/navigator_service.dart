@@ -8,7 +8,7 @@ import 'package:twake/services/service_bundle.dart';
 class NavigatorService {
   static late NavigatorService _service;
   final _pushNotifications = PushNotificationsService.instance;
-  late final _navigatorKey;
+  late final GlobalKey<NavigatorState> _navigatorKey;
   final CompaniesCubit companiesCubit;
   final WorkspacesCubit workspacesCubit;
   final ChannelsCubit channelsCubit;
@@ -111,9 +111,12 @@ class NavigatorService {
       companiesCubit.selectCompany(companyId: companyId);
       await workspacesCubit.fetch(companyId: companyId);
       await directsCubit.fetch(companyId: companyId, workspaceId: 'direct');
+      SynchronizationService.instance.subscribeToBadges();
     }
     if (workspaceId != null) {
       workspacesCubit.selectWorkspace(workspaceId: workspaceId);
+      companiesCubit.selectWorkpsace(workspaceId: workspaceId);
+
       await channelsCubit.fetch(workspaceId: workspaceId);
     }
 
@@ -126,5 +129,6 @@ class NavigatorService {
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
     // TODO: implement navigation
+    // _navigatorKey.currentState.push();
   }
 }

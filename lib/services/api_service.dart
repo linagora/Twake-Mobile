@@ -18,7 +18,7 @@ class ApiService {
   static ApiService get instance => _service;
 
   ApiService._() {
-    this._dio = Dio(BaseOptions(
+    _dio = Dio(BaseOptions(
       contentType: 'application/json',
       connectTimeout: 15 * 1000, // 15 seconds to connect
       receiveTimeout: 30 * 1000, // 30 seconds to receive data
