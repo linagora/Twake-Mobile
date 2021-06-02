@@ -37,14 +37,16 @@ class StorageService {
       _logger.wtf('Failed to create databases directory!\nError: $e');
       throw e;
     }
-    final oldDBVersion = await openReadOnlyDatabase(path).then((db) async {
-      final version = await db.getVersion();
-      db.close();
-      return version;
-    });
+    if (await databaseExists(path)) {
+      final oldDBVersion = await openReadOnlyDatabase(path).then((db) async {
+        final version = await db.getVersion();
+        db.close();
+        return version;
+      });
 
-    if (oldDBVersion < 5) {
-      await deleteDatabase(path);
+      if (oldDBVersion < 5) {
+        await deleteDatabase(path);
+      }
     }
 
     void onConfigure(Database db) async {

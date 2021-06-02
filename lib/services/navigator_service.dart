@@ -128,6 +128,7 @@ class NavigatorService {
       channelMessagesCubit.selectThread(messageId: threadId);
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
+
     // TODO: implement navigation
     // _navigatorKey.currentState.push();
   }
