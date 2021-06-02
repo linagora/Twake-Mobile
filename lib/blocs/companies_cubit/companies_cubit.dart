@@ -7,13 +7,19 @@ import 'package:twake/repositories/companies_repository.dart';
 import 'companies_state.dart';
 
 class CompaniesCubit extends Cubit<CompaniesState> {
-  final CompanyRepository repository;
+  late final CompaniesRepository _repository;
 
-  CompaniesCubit(this.repository) : super(CompaniesInitial());
+  CompaniesCubit({CompaniesRepository? repository})
+      : super(CompaniesInitial()) {
+    if (repository == null) {
+      repository = CompaniesRepository();
+    }
+    _repository = repository;
+  }
 
   Future<void> fetch() async {
     emit(CompaniesLoadInProgress());
-    final streamCompanies = repository.fetch();
+    final streamCompanies = _repository.fetch();
 
     await for (var companies in streamCompanies) {
       Company? selected;
@@ -35,5 +41,15 @@ class CompaniesCubit extends Cubit<CompaniesState> {
       companies: companies,
       selected: company,
     ));
+  }
+
+  void selectWorkpsace({required String workspaceId}) {
+    if (state is! CompaniesLoadSuccess) return;
+
+    final selected = (state as CompaniesLoadSuccess).selected!;
+
+    selected.selectedWorkspace = workspaceId;
+
+    _repository.saveOne(company: selected);
   }
 }
