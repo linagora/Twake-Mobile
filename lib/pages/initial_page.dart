@@ -4,7 +4,6 @@ import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
-import 'package:twake/services/init_service.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -39,12 +38,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: BlocConsumer<AuthenticationCubit, AuthenticationState>(
-        listener: (context, state) {
-          if (state is AuthenticationSuccess) {
-            InitService.syncData();
-          }
-        },
+      body: BlocBuilder<AuthenticationCubit, AuthenticationState>(
         builder: (ctx, state) {
           if (state is AuthenticationInProgress) {
             return buildSplashScreen();

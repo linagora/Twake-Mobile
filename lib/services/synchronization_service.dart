@@ -129,7 +129,9 @@ class SynchronizationService {
   }
 
   Future<void> subscribeToBadges() async {
-    if (!_subRooms.any((r) => r.type == RoomType.notifications)) return;
+    if (!_subRooms.any((r) => r.type == RoomType.notifications)) {
+      _subRooms = await socketIORooms;
+    }
 
     final badgesRoom =
         _subRooms.firstWhere((r) => r.type == RoomType.notifications);
