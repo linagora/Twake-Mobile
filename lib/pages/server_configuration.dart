@@ -2,7 +2,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/routing/app_router.dart';
 
 class ServerConfiguration extends StatefulWidget {
   final Function? onCancel;
@@ -33,7 +35,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     var host = _controller.text;
     bool valid = await Globals.instance.hostSet(host);
     if (valid) {
-      print('valid, go to the home screen');
+      widget.onConfirm!();
+      print(Globals.instance.host);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -53,9 +56,10 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: CloseButton(
-          onPressed: widget.onCancel as void Function()?,
-        ),
+        leading: CloseButton(onPressed: () {
+          widget.onCancel!();
+          print(Globals.instance.host);
+        }),
       ),
       body: SafeArea(
         child: GestureDetector(
@@ -133,6 +137,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     ),
                   ),
                 ),
+                Spacer(),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 40.0),
                   child: Text(
@@ -145,7 +150,6 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     ),
                   ),
                 ),
-                Spacer(),
                 Padding(
                   padding: EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
                   child: TextButton(

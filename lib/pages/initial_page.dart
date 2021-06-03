@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/auth_page.dart';
+import 'package:twake/pages/workspaces_management/workspaces_management.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -15,6 +17,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
+    //print(Globals.instance.host);
     //  final authenticationCubitState = BlocProvider.of<AuthenticationCubit>(context).state;
   }
 
@@ -47,7 +50,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             return AuthPage();
           }
           if (state is AuthenticationSuccess) {
-            return Center(
+            return //WorkspacesManagement();
+                Center(
               child: Column(
                 children: [
                   Text("Authenticated",
