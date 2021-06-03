@@ -117,7 +117,7 @@ class NavigatorService {
     }
     if (workspaceId != null) {
       workspacesCubit.selectWorkspace(workspaceId: workspaceId);
-      companiesCubit.selectWorkpsace(workspaceId: workspaceId);
+      companiesCubit.selectWorkspace(workspaceId: workspaceId);
 
       await channelsCubit.fetch(workspaceId: workspaceId);
     }

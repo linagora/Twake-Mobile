@@ -43,7 +43,7 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     ));
   }
 
-  void selectWorkpsace({required String workspaceId}) {
+  void selectWorkspace({required String workspaceId}) {
     if (state is! CompaniesLoadSuccess) return;
 
     final selected = (state as CompaniesLoadSuccess).selected!;
@@ -51,5 +51,12 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     selected.selectedWorkspace = workspaceId;
 
     _repository.saveOne(company: selected);
+  }
+
+  Company? getSelectedCompany() {
+    if (state is CompaniesLoadSuccess) {
+      return (state as CompaniesLoadSuccess).selected;
+    }
+    return null;
   }
 }
