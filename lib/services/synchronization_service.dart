@@ -23,6 +23,14 @@ class SynchronizationService {
 
   SynchronizationService._() {
     foregroundMessagesCheck();
+
+    // Set up auto resubscription in case of internet connection loss
+    Globals.instance.connection.listen((state) async {
+      if (state == Connection.connected && _subRooms.isNotEmpty) {
+        await subscribeForChannels();
+        await subscribeToBadges();
+      }
+    });
   }
 
   Future<void> foregroundMessagesCheck() async {
@@ -121,6 +129,8 @@ class SynchronizationService {
   }
 
   Future<void> subscribeToBadges() async {
+    if (!_subRooms.any((r) => r.type == RoomType.notifications)) return;
+
     final badgesRoom =
         _subRooms.firstWhere((r) => r.type == RoomType.notifications);
 
