@@ -129,6 +129,8 @@ class SynchronizationService {
   }
 
   Future<void> subscribeToBadges() async {
+    if (Globals.instance.token == null) return;
+
     if (!_subRooms.any((r) => r.type == RoomType.notifications)) {
       _subRooms = await socketIORooms;
     }
