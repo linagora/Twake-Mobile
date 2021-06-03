@@ -108,11 +108,11 @@ CREATE TABLE globals (
     host TEXT NOT NULL,
     company_id TEXT,
     workspace_id TEXT,
-    channels_type TEXT NOT NULL,
-    tabs TEXT NOT NULL,
+    channels_type TEXT DEFAULT "commons",
+    tabs TEXT DEFAULT "channels",
     channel_id TEXT,
     thread_id TEXT,
-    token TEXT NOT NULL,
+    token TEXT,
     fcm_token TEXT NOT NULL
 );
 ''';

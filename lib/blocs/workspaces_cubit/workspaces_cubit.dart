@@ -7,13 +7,21 @@ import 'package:twake/repositories/workspaces_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class WorkspacesCubit extends Cubit<WorkspacesState> {
-  final WorkspacesRepository _workspacesRepository;
+  late final WorkspacesRepository _repository;
 
-  WorkspacesCubit(this._workspacesRepository) : super(WorkspacesInitial());
+  WorkspacesCubit({WorkspacesRepository? repository})
+      : super(WorkspacesInitial()) {
+    if (repository == null) {
+      repository = WorkspacesRepository();
+    }
+    _repository = repository;
+
+    SynchronizationService.instance.subscribeToBadges();
+  }
 
   Future<void> fetch({String? companyId}) async {
     emit(WorkspacesLoadInProgress());
-    final stream = _workspacesRepository.fetch(companyId: companyId);
+    final stream = _repository.fetch(companyId: companyId);
 
     await for (var workspaces in stream) {
       Workspace? selected;
@@ -30,7 +38,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     required String name,
     List<String>? members,
   }) async {
-    final workspace = await _workspacesRepository.createWorkspace(
+    final workspace = await _repository.createWorkspace(
         companyId: companyId, name: name, members: members);
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
@@ -41,8 +49,8 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
   }
 
   Future<List<Account>> fetchMembers({String? workspaceId}) async {
-    final members =
-        await _workspacesRepository.fetchMembers(workspaceId: workspaceId);
+    final members = await _repository.fetchMembers(workspaceId: workspaceId);
+
     return members;
   }
 

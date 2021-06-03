@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -8,7 +7,6 @@ import 'package:twake/services/service_bundle.dart';
 class NavigatorService {
   static late NavigatorService _service;
   final _pushNotifications = PushNotificationsService.instance;
-  late final GlobalKey<NavigatorState> _navigatorKey;
   final CompaniesCubit companiesCubit;
   final WorkspacesCubit workspacesCubit;
   final ChannelsCubit channelsCubit;
@@ -43,16 +41,12 @@ class NavigatorService {
     required this.channelMessagesCubit,
     required this.threadMessagesCubit,
   }) {
-    _navigatorKey = GlobalKey<NavigatorState>();
-
     // Run the notification click listeners
     listenToLocals();
     listenToRemote();
   }
 
   static NavigatorService get instance => _service;
-
-  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
 
   Future<void> navigateOnNotificationLaunch() async {
     final local = await _pushNotifications.checkLocalNotificationClick;
