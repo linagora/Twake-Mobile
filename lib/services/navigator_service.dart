@@ -52,6 +52,8 @@ class NavigatorService {
 
   static NavigatorService get instance => _service;
 
+  GlobalKey<NavigatorState> get navigatorKey => _navigatorKey;
+
   Future<void> navigateOnNotificationLaunch() async {
     final local = await _pushNotifications.checkLocalNotificationClick;
     if (local != null) {
