@@ -21,13 +21,16 @@ class Globals extends BaseModel {
   String host;
 
   Future<bool> hostSet(String val) async {
+    final oldHost = host;
+
+    host = val;
     try {
       await ApiService.instance.get(endpoint: Endpoint.version);
     } catch (e) {
       Logger().w('Host is invalid: $val');
+      host = oldHost;
       return false;
     }
-    host = val;
     save();
     return true;
   }
