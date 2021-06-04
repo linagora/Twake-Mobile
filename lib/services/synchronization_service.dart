@@ -102,7 +102,7 @@ class SynchronizationService {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId
     };
-    final List<Map<String, dynamic>> result = await _api.get(
+    final List<dynamic> result = await _api.get(
       endpoint: Endpoint.notificationRooms,
       queryParameters: queryParameters,
     );

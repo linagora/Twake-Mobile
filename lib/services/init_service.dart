@@ -47,6 +47,10 @@ class InitService {
       (i) => Company.fromJson(json: i, jsonify: false),
     );
     await _storageService.multiInsert(table: Table.company, data: companies);
+    // Set company id in Globals if not set already
+    if (Globals.instance.companyId == null) {
+      Globals.instance.companyIdSet = companies.first.id;
+    }
 
     Iterable<Workspace> workspaces = Iterable.empty();
     Iterable<Channel> directs = Iterable.empty();
@@ -73,6 +77,10 @@ class InitService {
       table: Table.workspace,
       data: workspaces,
     );
+    // Set workspace id in Globals if not set already
+    if (Globals.instance.workspaceId == null) {
+      Globals.instance.workspaceId = workspaces.first.id;
+    }
     await _storageService.multiInsert(
       table: Table.channel,
       data: directs,
