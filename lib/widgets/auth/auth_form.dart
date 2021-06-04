@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart'
     as a_cbt;
+import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
@@ -43,6 +44,12 @@ class _AuthFormState extends State<AuthForm> {
     super.initState();
     _usernameController.addListener(onUsernameSaved);
     _passwordController.addListener(onPasswordSaved);
+    final stateAuthenticat = context.read<AuthenticationCubit>().state;
+    if (stateAuthenticat is AuthenticationFailure) {
+      _usernameController.text = stateAuthenticat.username;
+      _passwordController.text = stateAuthenticat.password;
+    }
+    // final authenticationCubitState = BlocProvider.of<AuthenticationCubit>(context).state;
   }
 
   @override
