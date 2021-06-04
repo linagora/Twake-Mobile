@@ -31,7 +31,15 @@ class InitService {
 
   // should only be called once after successful authentication/login
   static Future<void> syncData() async {
+    // 0. Fetch and save the user's id into Globals
+    final userData = await _apiService.get(endpoint: Endpoint.account);
+    final currentAccount = Account.fromJson(json: userData);
+    Globals.instance.userIdSet = currentAccount.id;
+
+    _storageService.insert(table: Table.account, data: currentAccount);
+
     // 1. Fetch all the companies and save them to local store
+
     List<dynamic> remoteResult = await _apiService.get(
       endpoint: Endpoint.companies,
     );

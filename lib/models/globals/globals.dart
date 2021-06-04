@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -189,7 +188,7 @@ class Globals extends BaseModel {
   }
 
   Future<void> save() async {
-    await StorageService.instance.insert(table: Table.globals, data: this);
+    await StorageService.instance.cleanInsert(table: Table.globals, data: this);
   }
 
   void reset() {

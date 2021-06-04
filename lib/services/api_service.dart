@@ -37,7 +37,7 @@ class ApiService {
 
     void onError(DioError error, ErrorInterceptorHandler handler) {
       Logger().e(
-          'Request error:\n$error\n${error.requestOptions.headers}\n${error.requestOptions.path}');
+          'Request error:\n$error\n${error.requestOptions.headers}\n${error.requestOptions.uri.host}\n${error.response!.data}\n${error.requestOptions.data}');
       switch (error.type) {
         case DioErrorType.cancel:
           // just successfully resolve request if user cancelled it

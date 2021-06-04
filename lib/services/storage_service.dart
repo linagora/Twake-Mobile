@@ -93,6 +93,18 @@ class StorageService {
     );
   }
 
+  // This function is used when we need a clean table to insert the data
+  Future<void> cleanInsert({
+    required Table table,
+    required BaseModel data,
+  }) async {
+    final batch = _db.batch();
+    batch.delete(table.name);
+    batch.insert(table.name, data.toJson());
+
+    await batch.commit(noResult: true);
+  }
+
   // This function can be used both for inserts and updates
   Future<void> multiInsert({
     required Table table,

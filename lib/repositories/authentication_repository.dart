@@ -43,8 +43,8 @@ class AuthenticationRepository {
       authenticationResult = await _api.post(
         endpoint: Endpoint.authorize,
         data: {
-          'username': username,
-          'password': password,
+          'username': username.trim(),
+          'password': password.trim(),
           'device': Platform.isAndroid ? 'android' : 'apple',
           'timezoneoffset': tzo,
           'fcm_token': Globals.instance.fcmToken,
@@ -58,7 +58,7 @@ class AuthenticationRepository {
     final authentication = Authentication.fromJson(authenticationResult);
 
     await _storage.truncate(table: Table.authentication);
-    _storage.insert(table: Table.authentication, data: authentication);
+    _storage.cleanInsert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
 
     return true;
@@ -87,7 +87,7 @@ class AuthenticationRepository {
     authentication = Authentication.fromJson(authenticationResult);
 
     await _storage.truncate(table: Table.authentication);
-    _storage.insert(table: Table.authentication, data: authentication);
+    _storage.cleanInsert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
 
     return authentication;
