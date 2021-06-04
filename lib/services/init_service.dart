@@ -20,7 +20,7 @@ class InitService {
       Globals.fromJson(globals);
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
-      Globals(host: 'http://138.68.108.184:3123/', fcmToken: fcmToken);
+      Globals(host: 'http://34.88.13.153:3123/', fcmToken: fcmToken);
     }
 
     SocketIOService(reset: true);
@@ -81,6 +81,7 @@ class InitService {
     if (Globals.instance.workspaceId == null) {
       Globals.instance.workspaceId = workspaces.first.id;
     }
+
     await _storageService.multiInsert(
       table: Table.channel,
       data: directs,
