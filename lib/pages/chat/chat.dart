@@ -1,27 +1,15 @@
-/*import 'package:flutter/material.dart';
+/* import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
-import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
-import 'package:twake/blocs/edit_channel_cubit/edit_channel_cubit.dart';
-import 'package:twake/blocs/edit_channel_cubit/edit_channel_state.dart';
-import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
-import 'package:twake/blocs/member_cubit/member_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
-import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
-import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/base_channel.dart';
-import 'package:twake/models/channel.dart';
-import 'package:twake/models/direct.dart';
 import 'package:twake/pages/chat/chat_header.dart';
-import 'package:twake/repositories/draft_repository.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'package:twake/utils/navigation.dart';
 import 'package:twake/utils/twacode.dart';
 
-class Chat<T extends BaseChannelBloc> extends StatelessWidget {
+class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? draft = '';
@@ -49,7 +37,7 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
             return GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                if (draftType != null) {
+                if (draftType != null) { 
                   if (draft!.isNotEmpty) {
                     context.read<DraftBloc>().add(
                           SaveDraft(
@@ -193,7 +181,8 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
                                   ? state.originalStr
                                   : draft,
                               onMessageSend: state is MessageEditing
-                                  ? state.onMessageEditComplete as dynamic Function(String, BuildContext)?
+                                  ? state.onMessageEditComplete as dynamic
+                                      Function(String, BuildContext)?
                                   : (content, context) async {
                                       content =
                                           await BlocProvider.of<MentionsCubit>(
@@ -276,13 +265,15 @@ class Chat<T extends BaseChannelBloc> extends StatelessWidget {
     );
   }
 
-  void _goEdit(BuildContext context, MessagesState state) async {
-    final params = await openEditChannel(context, state.parentChannel as Channel);
+  /*void _goEdit(BuildContext context, MessagesState state) async {
+    final params =
+        await openEditChannel(context, state.parentChannel as Channel);
     if (params != null && params.length > 0) {
       final editingState = params.first;
       if (editingState is EditChannelDeleted) {
         Navigator.of(context).maybePop();
       }
     }
-  }
-}*/
+  }*/
+}
+ */
