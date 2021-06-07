@@ -1,7 +1,8 @@
-/* import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/pages/chat/chat_header.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
@@ -14,7 +15,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   Widget build(BuildContext context) {
     String? draft = '';
     String? channelId;
-    DraftType? draftType;
+
 
     return Scaffold(
       appBar: AppBar(
@@ -22,7 +23,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         shadowColor: Colors.grey[300],
         toolbarHeight: 60.0,
         leadingWidth: 53.0,
-        leading: BlocBuilder<DraftBloc, DraftState>(
+        leading: /*BlocBuilder<DraftBloc, DraftState>(
           buildWhen: (_, current) =>
               current is DraftUpdated || current is DraftReset,
           builder: (context, state) {
@@ -33,10 +34,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             }
             if (state is DraftReset) {
               draft = '';
-            }
-            return GestureDetector(
+            }*/
+             GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () {
+              onTap: () {/*
                 if (draftType != null) { 
                   if (draft!.isNotEmpty) {
                     context.read<DraftBloc>().add(
@@ -53,7 +54,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   }
                   Navigator.of(context).pop();
                 }
-              },
+              */},
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Icon(
@@ -61,10 +62,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   color: Color(0xff004dff),
                 ),
               ),
-            );
-          },
+            ),
+         // },
         ),
-        title: BlocBuilder<MessagesBloc<T>, MessagesState>(
+        title: BlocBuilder<ThreadMessagesCubit, MessagesState>(
           builder: (_, state) {
             BaseChannel? parentChannel = T is Channel ? Channel() : Direct();
 
@@ -72,7 +73,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 state.parentChannel!.id == ProfileBloc.selectedChannelId) {
               parentChannel = state.parentChannel;
             }
-            return BlocBuilder<EditChannelCubit, EditChannelState>(
+            return BlocBuilder<ChannelsCubit, ChannelsState>(
               builder: (context, editState) {
                 var canEdit = false;
                 var memberId = '';
@@ -115,7 +116,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 }
 
                 return ChatHeader(
-                  isDirect: parentChannel is Direct,
+                  isDirect:parentChannel,
                   isPrivate: isPrivate,
                   userId: memberId,
                   name: parentChannel!.name,
@@ -127,7 +128,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             );
           },
         ),
-      ),
+      
       body: BlocBuilder<MessagesBloc<T>, MessagesState>(
         builder: (_, messagesState) {
           return BlocProvider<MessageEditBloc>(
@@ -265,7 +266,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     );
   }
 
-  /*void _goEdit(BuildContext context, MessagesState state) async {
+  void _goEdit(BuildContext context, MessagesState state) async {
     final params =
         await openEditChannel(context, state.parentChannel as Channel);
     if (params != null && params.length > 0) {
@@ -274,6 +275,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         Navigator.of(context).maybePop();
       }
     }
-  }*/
+  }
 }
- */
+ 

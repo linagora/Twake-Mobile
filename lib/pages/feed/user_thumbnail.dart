@@ -1,6 +1,7 @@
-/* import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/user_bloc/user_bloc.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
+
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/random_hex_color.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
@@ -23,13 +24,13 @@ class UserThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (userId != null && userId!.isNotReallyEmpty) {
-      return BlocProvider<UserBloc>(
-        create: (_) => UserBloc(userId),
-        child: BlocBuilder<UserBloc, UserState>(
+      return BlocProvider<AccountCubit>(
+        create: (_) => AccountCubit(),
+        child: BlocBuilder<AccountCubit, AccountState>(
           builder: (_, state) {
             String? thumbnailUrl;
-            if (state is UserReady) {
-              thumbnailUrl = state.thumbnail;
+            if (state is AccountLoadSuccess) {
+              thumbnailUrl = state.account.thumbnail;
               if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
                 return RoundedImage(
                   imageUrl: thumbnailUrl,
@@ -37,7 +38,7 @@ class UserThumbnail extends StatelessWidget {
                   height: size,
                 );
               } else {
-                return NamedAvatar(size: size, name: state.firstName);
+                return NamedAvatar(size: size, name: state.account.firstname);
               }
             } else {
               return RoundedShimmer(size: size);
@@ -118,4 +119,4 @@ class RoundedShimmer extends StatelessWidget {
     );
   }
 }
- */
+ 
