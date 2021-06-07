@@ -142,11 +142,11 @@ class WorkspacesManagement extends StatelessWidget {
               child: Column(
                 children: [
                   AddWorkspaceTile(),
-                  Expanded(
-                    child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                      builder: (context, workspacesState) {
-                        if (workspacesState is WorkspacesLoadSuccess) {
-                          return ListView.builder(
+                  BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                    builder: (context, workspacesState) {
+                      if (workspacesState is WorkspacesLoadSuccess) {
+                        return Expanded(
+                          child: ListView.builder(
                             padding: EdgeInsets.only(
                               bottom: MediaQuery.of(context).padding.bottom,
                             ),
@@ -164,11 +164,14 @@ class WorkspacesManagement extends StatelessWidget {
                                 subtitle: '',
                               );
                             },
-                          );
-                        }
-                        return CircularProgressIndicator();
-                      },
-                    ),
+                          ),
+                        );
+                      }
+                      return SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: CircularProgressIndicator());
+                    },
                   ),
                 ],
               ),
