@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart'
     as a_cbt;
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
 
 class AuthForm extends StatefulWidget {
   final Function? onConfigurationOpen;
@@ -44,10 +47,10 @@ class _AuthFormState extends State<AuthForm> {
     super.initState();
     _usernameController.addListener(onUsernameSaved);
     _passwordController.addListener(onPasswordSaved);
-    final stateAuthenticat = context.read<AuthenticationCubit>().state;
-    if (stateAuthenticat is AuthenticationFailure) {
-      _usernameController.text = stateAuthenticat.username;
-      _passwordController.text = stateAuthenticat.password;
+    final stateAuthenticate = Get.find<AuthenticationCubit>().state;
+    if (stateAuthenticate is AuthenticationFailure) {
+      _usernameController.text = stateAuthenticate.username;
+      _passwordController.text = stateAuthenticate.password;
     }
     // final authenticationCubitState = BlocProvider.of<AuthenticationCubit>(context).state;
   }
@@ -76,9 +79,7 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void onSubmit() {
-    final authenticationCubit =
-        BlocProvider.of<a_cbt.AuthenticationCubit>(context);
-    authenticationCubit.authenticate(username: _username, password: _password);
+    Get.find<AuthenticationCubit>().authenticate(username: _username, password: _password);
   }
 
   @override
@@ -134,6 +135,7 @@ class _AuthFormState extends State<AuthForm> {
                 SizedBox(height: Dim.heightMultiplier),
                 BlocBuilder<a_cbt.AuthenticationCubit,
                     a_cbt.AuthenticationState>(
+                  bloc: Get.find<AuthenticationCubit>(),
                   buildWhen: (_, current) =>
                       current is a_cbt.AuthenticationFailure,
                   builder: (ctx, state) {

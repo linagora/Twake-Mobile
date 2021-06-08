@@ -1,4 +1,4 @@
-/*import 'dart:isolate';
+import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:bubble/bubble.dart';
@@ -12,11 +12,13 @@ import 'package:twake/blocs/draft_bloc/draft_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/message_edit_bloc/message_edit_bloc.dart';
 import 'package:twake/blocs/messages_bloc/messages_bloc.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
 import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/repositories/draft_repository.dart';
@@ -118,13 +120,13 @@ class _MessageTileState<T extends BaseChannelBloc>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SingleMessageBloc>(
-      create: (_) => SingleMessageBloc(_message!),
+    return BlocProvider<ThreadMessagesCubit>(
+      create: (_) => ThreadMessagesCubit(),
       lazy: false,
-      child: BlocBuilder<SingleMessageBloc, SingleMessageState>(
+      child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
         builder: (context, messageState) {
-          if (messageState is MessageReady) {
-            bool _isMyMessage = messageState.userId == ProfileBloc.userId;
+          if (messageState is MessagesLoadSuccess) {
+            bool _isMyMessage = messageState. == Globals.instance.userId;
             return InkWell(
               onLongPress: () {
                 BlocProvider.of<MessageEditBloc>(context)
@@ -324,4 +326,4 @@ class _MessageTileState<T extends BaseChannelBloc>
       ),
     );
   }
-}*/
+}
