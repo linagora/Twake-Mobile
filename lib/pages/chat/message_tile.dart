@@ -126,7 +126,8 @@ class _MessageTileState<T extends BaseChannelBloc>
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
         builder: (context, messageState) {
           if (messageState is MessagesLoadSuccess) {
-            bool _isMyMessage = messageState. == Globals.instance.userId;
+            // bool _isMyMessage = messageState. == Globals.instance.userId;
+            bool _isMyMessage = true; // No idea what this supposed to mean
             return InkWell(
               onLongPress: () {
                 BlocProvider.of<MessageEditBloc>(context)

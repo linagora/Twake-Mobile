@@ -24,7 +24,6 @@ class File {
       "mode": "preview",
       "content": id,
       "metadata": {
-        // TODO add id in metadata from proxy
         "size": size,
         "name": name,
         "preview": preview,

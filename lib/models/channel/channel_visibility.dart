@@ -2,11 +2,11 @@ import 'package:json_annotation/json_annotation.dart';
 
 enum ChannelVisibility {
   @JsonValue('public')
-  Public,
+  public,
 
   @JsonValue('private')
-  Private,
+  private,
 
   @JsonValue('direct')
-  Direct,
+  direct,
 }

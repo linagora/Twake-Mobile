@@ -71,7 +71,7 @@ K _$enumDecode<K, V>(
 }
 
 const _$ChannelVisibilityEnumMap = {
-  ChannelVisibility.Public: 'public',
-  ChannelVisibility.Private: 'private',
-  ChannelVisibility.Direct: 'direct',
+  ChannelVisibility.public: 'public',
+  ChannelVisibility.private: 'private',
+  ChannelVisibility.direct: 'direct',
 };

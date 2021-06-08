@@ -11,8 +11,7 @@ Globals _$GlobalsFromJson(Map<String, dynamic> json) {
     host: json['host'] as String,
     channelsType:
         _$enumDecodeNullable(_$ChannelsTypeEnumMap, json['channels_type']) ??
-            ChannelsType.Commons,
-    tabs: _$enumDecodeNullable(_$TabsEnumMap, json['tabs']) ?? Tabs.Channels,
+            ChannelsType.commons,
     token: json['token'] as String?,
     fcmToken: json['fcm_token'] as String,
     userId: json['user_id'] as String?,
@@ -30,7 +29,6 @@ Map<String, dynamic> _$GlobalsToJson(Globals instance) => <String, dynamic>{
       'channel_id': instance.channelId,
       'thread_id': instance.threadId,
       'channels_type': _$ChannelsTypeEnumMap[instance.channelsType],
-      'tabs': _$TabsEnumMap[instance.tabs],
       'token': instance.token,
       'fcm_token': instance.fcmToken,
       'user_id': instance.userId,
@@ -74,11 +72,6 @@ K? _$enumDecodeNullable<K, V>(
 }
 
 const _$ChannelsTypeEnumMap = {
-  ChannelsType.Directs: 'directs',
-  ChannelsType.Commons: 'commons',
-};
-
-const _$TabsEnumMap = {
-  Tabs.Channels: 'channels',
-  Tabs.Profile: 'profile',
+  ChannelsType.directs: 'directs',
+  ChannelsType.commons: 'commons',
 };
