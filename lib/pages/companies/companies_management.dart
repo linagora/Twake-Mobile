@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/routing/app_router.dart';
 
 import 'company_setting_item_widget.dart';
 import 'company_tile.dart';
@@ -32,27 +37,34 @@ class CompaniesManagement extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
-                    icon: Image.asset(imagePathCancel), onPressed: () {}),
+                    icon: Image.asset(imagePathCancel), onPressed: () => popBack()),
               )
             ],
           ),
-          Row(
-            children: [
-              SizedBox(width: 16,),
-              ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                child: Container(
-                  color: Colors.redAccent,
-                  width: 60,
-                  height: 60,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Text('Linagora Rus Company. \nConsulting', style: TextStyle(fontWeight: FontWeight.bold),),
-              )
-            ],
-          ),
+          BlocBuilder<CompaniesCubit, CompaniesState>(
+              bloc: Get.find<CompaniesCubit>(),
+              builder: (context, companyState) {
+                if (companyState is CompaniesLoadSuccess) {
+                  return Row(
+                    children: [
+                      SizedBox(width: 16,),
+                      ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        child: Container(
+                          color: Colors.redAccent,
+                          width: 60,
+                          height: 60,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(companyState.selected?.name ?? '', style: TextStyle(fontWeight: FontWeight.bold),),
+                      )
+                    ],
+                  );
+                }
+                return SizedBox(width: 60, height: 60, child: CircularProgressIndicator(),);
+              }),
           SizedBox(height: 20,),
           SizedBox(
             height: 80,

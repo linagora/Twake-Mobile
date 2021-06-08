@@ -13,6 +13,7 @@ class RoundedImage extends StatelessWidget {
   final Uint8List? bytes;
   final double width;
   final double height;
+  final BorderRadius? borderRadius;
 
   RoundedImage({
     this.imageUrl = '',
@@ -20,15 +21,17 @@ class RoundedImage extends StatelessWidget {
     this.bytes,
     this.width = 30,
     this.height = 30,
+    this.borderRadius
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipOval(
+    return ClipRRect(
+      borderRadius: borderRadius ?? BorderRadius.circular(width /2),
       child: Container(
         width: width,
         height: height,
-        child: imageUrl!.isNotReallyEmpty
+        child: (imageUrl != null && imageUrl!.isNotReallyEmpty)
             ? CachedNetworkImage( // Loading from network.
                 fit: BoxFit.cover,
                 imageUrl: imageUrl!,
@@ -44,7 +47,7 @@ class RoundedImage extends StatelessWidget {
                   return _onErrorFallbackImg(width, height);
                 },
               )
-            : (assetPath!.isNotReallyEmpty // Try to load from local path.
+            : ((assetPath != null && assetPath!.isNotReallyEmpty) // Try to load from local path.
                 ? Image.asset(
                     assetPath!,
                     fit: BoxFit.cover,

@@ -25,7 +25,8 @@ class WorkspaceTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: SizedBox(
+      child: Container(
+        color: Colors.white,
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
@@ -34,6 +35,7 @@ class WorkspaceTile extends StatelessWidget {
               children: [
                 SizedBox(width: 16.0),
                 RoundedImage(
+                  borderRadius: BorderRadius.circular(10),
                   imageUrl: image,
                   width: 60.0,
                   height: 60.0,
