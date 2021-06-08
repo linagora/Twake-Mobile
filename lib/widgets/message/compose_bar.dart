@@ -1,10 +1,11 @@
- import 'package:file_picker/file_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/file_upload_bloc/file_upload_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 
 // const _categoryHeaderHeight = 40.0;
@@ -65,7 +66,7 @@ class _ComposeBar extends State<ComposeBar> {
     _controller.addListener(() {
       var text = _controller.text;
       if (_userMentionRegex.hasMatch(text)) {
-        BlocProvider.of<MentionsCubit>(context).fetchMentionableUsers(
+        Get.find<MentionsCubit>().fetch(
           searchTerm: text.split('@').last.trimRight(),
         );
         Future.delayed(const Duration(milliseconds: 100), () {
@@ -87,9 +88,11 @@ class _ComposeBar extends State<ComposeBar> {
     });
   }
 
+  // TODO get rid of _mentionsVisible since can use states of new MentionsCubit
   void mentionsVisible() async {
-    final MentionState mentionsState = BlocProvider.of<MentionsCubit>(context).state;
-    if (mentionsState is MentionableUsersLoaded) {
+    final MentionState mentionsState =
+        BlocProvider.of<MentionsCubit>(context).state;
+    if (mentionsState is MentionsLoadSuccess) {
       setState(() {
         _mentionsVisible = true;
       });
@@ -183,21 +186,27 @@ class _ComposeBar extends State<ComposeBar> {
     //  });
 
     _paths!.forEach((element) {
-      BlocProvider.of<FileUploadBloc>(context)
-          .add(StartUpload(path: element.path));
+      Get.find<FileCubit>().upload(path: element.path!);
     });
 
     setState(() {
       _fileNumber += _paths!.length;
     });
 
-    BlocProvider.of<FileUploadBloc>(context).listen((FileUploadState state) {
-      if (state is FileUploaded) {
+    /* Get.find<FileCubit>().stream.listen((state) {
+      if (state is FileUploadSuccess) {
         setState(() {
           _canSend = true;
         });
       }
-    });
+    });*/
+
+    final stateFileCubit = Get.find<FileCubit>().state;
+    if (stateFileCubit is FileUploadSuccess) {
+      setState(() {
+        _canSend = true;
+      });
+    }
   }
 
   void _fileNumClear() async {
@@ -213,11 +222,12 @@ class _ComposeBar extends State<ComposeBar> {
         children: [
           _mentionsVisible
               ? BlocBuilder<MentionsCubit, MentionState>(
+                  bloc: Get.find<MentionsCubit>(),
                   builder: (context, state) {
-                    if (state is MentionableUsersLoaded) {
+                    if (state is MentionsLoadSuccess) {
                       final List<Widget> _listW = [];
                       _listW.add(Divider(thickness: 1));
-                      for (int i = 0; i < state.users.length; i++) {
+                      for (int i = 0; i < state.accounts.length; i++) {
                         _listW.add(
                           InkWell(
                             child: Container(
@@ -233,7 +243,7 @@ class _ComposeBar extends State<ComposeBar> {
                                         BorderRadius.all(Radius.circular(30)),
                                     child: CircleAvatar(
                                       child: Image.network(
-                                        state.users[i].thumbnail!,
+                                        state.accounts[i].thumbnail!,
                                         fit: BoxFit.contain,
                                         loadingBuilder:
                                             (context, child, progress) {
@@ -253,13 +263,13 @@ class _ComposeBar extends State<ComposeBar> {
                                     width: 15,
                                   ),
                                   Text(
-                                    '${state.users[i].firstName} ',
+                                    '${state.accounts[i].firstname} ',
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w300),
                                   ),
                                   Text(
-                                    ' ${state.users[i].lastName}',
+                                    ' ${state.accounts[i].lastname}',
                                     style: TextStyle(
                                       fontSize: 16.0,
                                     ),
@@ -274,9 +284,9 @@ class _ComposeBar extends State<ComposeBar> {
                               ),
                             ),
                             onTap: () {
-                              BlocProvider.of<MentionsCubit>(context)
-                                  .clearMentions();
-                              mentionReplace(state.users[i].username);
+                              Get.find<MentionsCubit>().reset();
+
+                              mentionReplace(state.accounts[i].username);
                               setState(
                                 () {
                                   _mentionsVisible = false;
@@ -285,7 +295,7 @@ class _ComposeBar extends State<ComposeBar> {
                             },
                           ),
                         );
-                        if (i < state.users.length - 1) {
+                        if (i < state.accounts.length - 1) {
                           _listW.add(Divider(thickness: 1));
                         }
                       }
@@ -300,7 +310,7 @@ class _ComposeBar extends State<ComposeBar> {
                           ),
                         ),
                       );
-                    } else if (state is MentionsEmpty) {
+                    } else if (state is MentionsInitial) {
                       return Container();
                       //Text("Empty");
                     }
@@ -399,9 +409,10 @@ class _TextInputState extends State<TextInput> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(width: 14.0),
-          BlocBuilder<FileUploadBloc, FileUploadState>(
+          BlocBuilder<FileCubit, FileState>(
+            bloc:  Get.find<FileCubit>(),
             builder: (context, state) {
-              if (state is NothingToUpload) {
+              if (state is FileInitial) {
                 return IconButton(
                   constraints: BoxConstraints(
                     minHeight: 24.0,
@@ -412,16 +423,16 @@ class _TextInputState extends State<TextInput> {
                   onPressed: widget.openFileExplorer as void Function()?,
                   color: Color(0xff8a898e),
                 );
-              } else if (state is FileUploading) {
+              } else if (state is FileUploadInProgress) {
                 return CircularProgressIndicator();
-              } else if (state is FileUploaded) {
+              } else if (state is FileUploadSuccess) {
                 return InkWell(
                   child: CircleAvatar(
                     child: (Text('$_fileNumber')),
                     //  await fileNumClear;
                     backgroundColor: Colors.indigo[50],
                   ),
-                  onTap: widget.openFileExplorer as void Function()?,
+                  onTap: widget.openFileExplorer!(),
                 );
               }
               return CircleAvatar(
@@ -429,7 +440,7 @@ class _TextInputState extends State<TextInput> {
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(Icons.attachment),
-                  onPressed: widget.openFileExplorer as void Function()?,
+                  onPressed: widget.openFileExplorer!(),
                   color: Colors.black54,
                 ),
               );
@@ -508,7 +519,8 @@ class _TextInputState extends State<TextInput> {
           GestureDetector(
             onTap: widget.canSend!
                 ? () async {
-                    await widget.onMessageSend!(widget.controller!.text, context);
+                    await widget.onMessageSend!(
+                        widget.controller!.text, context);
                     widget.controller!.clear();
                     widget.fileNumClear!();
                   }
@@ -534,4 +546,3 @@ class _TextInputState extends State<TextInput> {
     );
   }
 }
- 

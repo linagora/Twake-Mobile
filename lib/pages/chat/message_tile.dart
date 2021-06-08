@@ -1,4 +1,4 @@
-import 'dart:isolate';
+/* import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:bubble/bubble.dart';
@@ -327,3 +327,4 @@ class _MessageTileState<T extends BaseChannelBloc>
     );
   }
 }
+ */
