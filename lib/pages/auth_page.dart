@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/widgets/auth/auth_form.dart';
 import 'package:twake/pages/server_configuration.dart';
-import 'package:twake/pages/server_configuration.dart';
 
 class AuthPage extends StatefulWidget {
   @override

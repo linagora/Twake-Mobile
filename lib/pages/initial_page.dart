@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/auth_page.dart';
-import 'package:twake/pages/workspaces_management/workspaces_management.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -42,6 +41,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: BlocBuilder<AuthenticationCubit, AuthenticationState>(
+        bloc: Get.find<AuthenticationCubit>(),
         builder: (ctx, state) {
           if (state is AuthenticationInProgress) {
             return buildSplashScreen();
@@ -63,11 +63,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         textStyle: const TextStyle(fontSize: 20), elevation: 5),
-                    onPressed: () {
-                      final authenticationCubit =
-                          BlocProvider.of<AuthenticationCubit>(context);
-                      authenticationCubit.logout();
-                    },
+                    onPressed: () => Get.find<AuthenticationCubit>().logout(),
                     child: const Text(
                       'Logout',
                     ),
