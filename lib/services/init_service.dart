@@ -20,7 +20,7 @@ class InitService {
       Globals.fromJson(globals);
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
-      Globals(host: 'http://34.88.13.153:3123/', fcmToken: fcmToken);
+      Globals(host: 'http://34.123.51.187:3123/', fcmToken: fcmToken);
     }
 
     SocketIOService(reset: true);
