@@ -12,10 +12,12 @@ class WorkspacesRepository {
   WorkspacesRepository();
 
   Future<List<Account>> fetchMembers({String? workspaceId}) async {
+    workspaceId = workspaceId ?? Globals.instance.workspaceId;
+
     final List<Map<String, Object?>> members = await this._api.get(
       endpoint: Endpoint.workspaceMembers,
       queryParameters: {
-        'workspace_id': workspaceId ?? Globals.instance.workspaceId,
+        'workspace_id': workspaceId,
         'company_id': Globals.instance.companyId
       },
     );
@@ -24,6 +26,15 @@ class WorkspacesRepository {
       users.add(Account.fromJson(json: m));
     }
     this._storage.multiInsert(table: Table.account, data: users);
+
+    this._storage.multiInsert(
+        table: Table.account2workspace,
+        data: users.map(
+          (u) => Account2Workspace(
+            userId: u.id,
+            workspaceId: workspaceId!,
+          ),
+        ));
 
     return users;
   }

@@ -25,9 +25,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
     await for (var workspaces in stream) {
       Workspace? selected;
-      if (Globals.instance.companyId != null) {
+      if (Globals.instance.workspaceId != null) {
         selected =
-            workspaces.firstWhere((c) => c.id == Globals.instance.companyId);
+            workspaces.firstWhere((w) => w.id == Globals.instance.workspaceId);
       }
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }

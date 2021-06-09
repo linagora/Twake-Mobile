@@ -16,8 +16,6 @@ class AccountCubit extends Cubit<AccountState> {
       repository = AccountRepository();
     }
     _repository = repository;
-
-    _repository.currentSet();
   }
 
   Future<void> fetch({String? userId}) async {

@@ -98,7 +98,8 @@ CREATE INDEX user_lastname_idx ON user(lastname);
 const String CREATE_ACCOUNT2WORKSPACE_V5 = '''
 CREATE TABLE account2workspace (
     user_id TEXT,
-    workspace_id TEXT
+    workspace_id TEXT,
+    UNIQUE(user_id, workspace_id)
 );
 ''';
 

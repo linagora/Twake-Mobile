@@ -3,9 +3,6 @@ import 'package:twake/models/workspace/workspace.dart';
 
 abstract class WorkspacesState extends Equatable {
   const WorkspacesState();
-
-  @override
-  List<Object?> get props => [];
 }
 
 class WorkspacesInitial extends WorkspacesState {
@@ -29,5 +26,5 @@ class WorkspacesLoadSuccess extends WorkspacesState {
   WorkspacesLoadSuccess({required this.workspaces, this.selected});
 
   @override
-  List<Object?> get props => super.props;
+  List<Object?> get props => [];
 }

@@ -4,13 +4,6 @@ abstract class AuthenticationState extends Equatable {
   const AuthenticationState();
 }
 
-class AuthenticationValidation extends AuthenticationState {
-  const AuthenticationValidation();
-
-  @override
-  List<Object?> get props => [];
-}
-
 class AuthenticationInitial extends AuthenticationState {
   const AuthenticationInitial();
 
