@@ -1,9 +1,12 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/file/file.dart';
 import 'package:twake/pages/chat/chat_header.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
@@ -15,46 +18,18 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   Widget build(BuildContext context) {
     String? draft = '';
     String? channelId;
-
-
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0.0,
         shadowColor: Colors.grey[300],
         toolbarHeight: 60.0,
         leadingWidth: 53.0,
-        leading: /*BlocBuilder<DraftBloc, DraftState>(
-          buildWhen: (_, current) =>
-              current is DraftUpdated || current is DraftReset,
-          builder: (context, state) {
-            if (state is DraftUpdated && state.type != DraftType.thread) {
-              channelId = state.id;
-              draft = state.draft;
-              draftType = state.type;
-            }
-            if (state is DraftReset) {
-              draft = '';
-            }*/
+        leading: 
              GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () {/*
-                if (draftType != null) { 
-                  if (draft!.isNotEmpty) {
-                    context.read<DraftBloc>().add(
-                          SaveDraft(
-                            id: channelId,
-                            type: draftType,
-                            draft: draft,
-                          ),
-                        );
-                  } else {
-                    context
-                        .read<DraftBloc>()
-                        .add(ResetDraft(id: channelId, type: draftType));
-                  }
-                  Navigator.of(context).pop();
-                }
-              */},
+              onTap: () {
+                  Navigator.of(context).pop();    
+              },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Icon(
@@ -63,77 +38,25 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 ),
               ),
             ),
-         // },
-        ),
-        title: BlocBuilder<ThreadMessagesCubit, MessagesState>(
-          builder: (_, state) {
-            BaseChannel? parentChannel = T is Channel ? Channel() : Direct();
-
-            if ((state is MessagesLoaded || state is MessagesEmpty) &&
-                state.parentChannel!.id == ProfileBloc.selectedChannelId) {
-              parentChannel = state.parentChannel;
-            }
-            return BlocBuilder<ChannelsCubit, ChannelsState>(
-              builder: (context, editState) {
+        title:
                 var canEdit = false;
                 var memberId = '';
                 String? icon = '';
                 var isPrivate = false;
                 int? membersCount = 0;
-
-                if (parentChannel is Channel) {
-                  isPrivate = parentChannel.visibility == 'private';
-                  icon = parentChannel.icon;
-                  membersCount = parentChannel.membersCount;
-
-                  // Possible permissions:
-                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
-                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                  final permissions = parentChannel.permissions!;
-
-                  if (permissions.contains('UPDATE_NAME') ||
-                      permissions.contains('UPDATE_DESCRIPTION') ||
-                      permissions.contains('ADD_MEMBER') ||
-                      permissions.contains('REMOVE_MEMBER') ||
-                      permissions.contains('UPDATE_PRIVACY') ||
-                      permissions.contains('DELETE_CHANNEL')) {
-                    canEdit = true;
-                  } else {
-                    canEdit = false;
-                  }
-                } else if (parentChannel is Direct &&
-                    parentChannel.members != null) {
-                  final userId = ProfileBloc.userId;
-                  memberId =
-                      parentChannel.members!.firstWhere((id) => id != userId);
-                }
-
-                if (editState is EditChannelSaved) {
-                  context
-                      .read<MemberCubit>()
-                      .fetchMembers(channelId: channelId);
-                }
-
-                return ChatHeader(
-                  isDirect:parentChannel,
+             
+                 ChatHeader(
+                  isDirect: false,// parentChannel is Direct,
                   isPrivate: isPrivate,
                   userId: memberId,
                   name: parentChannel!.name,
                   icon: icon,
                   membersCount: membersCount,
                   onTap: canEdit ? () => _goEdit(context, state) : null,
-                );
-              },
-            );
-          },
-        ),
-      
-      body: BlocBuilder<MessagesBloc<T>, MessagesState>(
-        builder: (_, messagesState) {
-          return BlocProvider<MessageEditBloc>(
-            create: (_) => MessageEditBloc(),
-            child: Container(
+                ), 
+      ),
+      body: 
+            Container(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -142,8 +65,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     height: 1.0,
                     color: Color(0xffEEEEEE),
                   ),
-                  if (messagesState is MoreMessagesLoading &&
-                      !(messagesState is ErrorLoadingMoreMessages))
                     SizedBox(
                       height: Dim.hm4,
                       width: Dim.hm4,
@@ -172,9 +93,9 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                         draftType = DraftType.direct;
                       }
 
-                      return BlocBuilder<MessageEditBloc, MessageEditState>(
+                      return BlocBuilder<ThreadMessagesCubit, MessagesState>(
+                        bloc: Get.find<ThreadMessagesCubit>(),
                         builder: (ctx, state) {
-                          return BlocProvider(
                             create: (BuildContext context) => FileUploadBloc(),
                             child: ComposeBar(
                               autofocus: state is MessageEditing,
@@ -184,61 +105,22 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                               onMessageSend: state is MessageEditing
                                   ? state.onMessageEditComplete as dynamic
                                       Function(String, BuildContext)?
-                                  : (content, context) async {
-                                      content =
-                                          await BlocProvider.of<MentionsCubit>(
-                                                  context)
-                                              .completeMentions(content);
-                                      List<dynamic> twacode =
-                                          TwacodeParser(content).message;
+                                  : (content) async {
+                                    
+                                final uploadState = Get.find<FileCubit>().state;
 
-                                      final FileUploadState uploadState =
-                                          BlocProvider.of<FileUploadBloc>(
-                                                  context)
-                                              .state;
-                                      if (uploadState is FileUploaded) {
-                                        if (twacode.isNotEmpty) {
-                                          twacode.add({
-                                            'start': '\n',
-                                            'end': '',
-                                            'content': [],
-                                          });
-                                        }
-                                        twacode.add(
-                                          {
-                                            "type": "nop",
-                                            "content":
-                                                uploadState.files.map((uf) {
-                                              return {
-                                                "type": "file",
-                                                "mode": "preview",
-                                                "content": uf.id,
-                                                "metadata": {
-                                                  "size": uf.size,
-                                                  "name": uf.filename,
-                                                  "preview": uf.preview,
-                                                  "download": uf.download
-                                                }
-                                              };
-                                            }).toList(),
-                                          },
-                                        );
+                                final List<File> attachments; 
+
+                                      if (uploadState is FileUploadSuccess) {
+                                         attachments =  uploadState.files;
+                                      // add check for messages chat type
+                                      Get.find<ThreadMessagesCubit>().send(originalStr: content, threadId: ,attachments: attachments);
+                                      Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: ,attachments: attachments)
                                       }
-
-                                      BlocProvider.of<MessagesBloc<T>>(context)
-                                          .add(
-                                        SendMessage(
-                                            content: content,
-                                            prepared: twacode),
-                                      );
-                                      BlocProvider.of<FileUploadBloc>(context)
-                                          .add(ClearUploads());
-                                      context.read<DraftBloc>().add(
-                                            ResetDraft(
-                                              id: channelId,
-                                              type: draftType,
-                                            ),
-                                          );
+                                      // add check for messages chat type
+                                      Get.find<ThreadMessagesCubit>().send(originalStr: content, threadId: );
+                                      Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: )
+                                     
                                     },
                               onTextUpdated: state is MessageEditing
                                   ? (text, ctx) {}
@@ -252,7 +134,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                                           );
                                     },
                             ),
-                          );
+                          
                         },
                       );
                     },
@@ -260,21 +142,14 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 ],
               ),
             ),
-          );
-        },
-      ),
     );
   }
-
-  void _goEdit(BuildContext context, MessagesState state) async {
-    final params =
-        await openEditChannel(context, state.parentChannel as Channel);
+  /*void _goEdit(BuildContext context, MessagesState state) async {
+    final params = await openEditChannel(context, state.parentChannel as Channel);
     if (params != null && params.length > 0) {
       final editingState = params.first;
       if (editingState is EditChannelDeleted) {
         Navigator.of(context).maybePop();
       }
-    }
+    }*/
   }
-}
- 
