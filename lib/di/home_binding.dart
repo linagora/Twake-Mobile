@@ -17,14 +17,13 @@ class HomeBinding implements Bindings {
     Get.put(ChannelMessagesCubit(), permanent: true);
     Get.put(ThreadMessagesCubit(), permanent: true);
 
-    Get.put(
-        NavigatorService(
-            companiesCubit: Get.find<CompaniesCubit>(),
-            workspacesCubit: Get.find<WorkspacesCubit>(),
-            channelsCubit: Get.find<ChannelsCubit>(),
-            directsCubit: Get.find<DirectsCubit>(),
-            channelMessagesCubit: Get.find<ChannelMessagesCubit>(),
-            threadMessagesCubit: Get.find<ThreadMessagesCubit>()),
-        permanent: true);
+    NavigatorService(
+      companiesCubit: Get.find<CompaniesCubit>(),
+      workspacesCubit: Get.find<WorkspacesCubit>(),
+      channelsCubit: Get.find<ChannelsCubit>(),
+      directsCubit: Get.find<DirectsCubit>(),
+      channelMessagesCubit: Get.find<ChannelMessagesCubit>(),
+      threadMessagesCubit: Get.find<ThreadMessagesCubit>(),
+    );
   }
 }
