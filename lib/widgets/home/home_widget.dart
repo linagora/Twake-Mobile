@@ -1,13 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/home/home_channel_list_widget.dart';
 
 import 'home_direct_list_widget.dart';
 
-class HomeWidget extends StatelessWidget {
+class HomeWidget extends StatefulWidget {
   const HomeWidget() : super();
+
+  @override
+  _HomeWidgetState createState() => _HomeWidgetState();
+}
+
+class _HomeWidgetState extends State<HomeWidget> {
+
+  @override
+  void initState() {
+    super.initState();
+    // todo fetch channel and direct list here
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +38,19 @@ class HomeWidget extends StatelessWidget {
                 Tab(text: 'Channels'),
                 Tab(text: 'Chats',),
               ],
+              isScrollable: true,
+              indicatorColor: Color(0xff004dff),
+              unselectedLabelColor: Color(0xff8e8e93),
+              unselectedLabelStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontStyle: FontStyle.normal,
+              ),
+              labelStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                fontStyle: FontStyle.normal,
+              ),
             ),
             title: _buildHeader(),
           ),
@@ -43,10 +73,28 @@ class HomeWidget extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: RoundedImage(
-                    width: 36,
-                    height: 36,
-                  ),
+                  child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                      bloc: Get.find<WorkspacesCubit>(),
+                      builder: (context, workspaceState) {
+                        if (workspaceState is WorkspacesLoadSuccess) {
+                          return GestureDetector(
+                            onTap: () {},
+                            child: Row(
+                              children: [
+                                RoundedImage(
+                                  borderRadius: BorderRadius.circular(10),
+                                  width: 36,
+                                  height: 36,
+                                  imageUrl: workspaceState.selected?.logo,
+                                ),
+                                SizedBox(width: 5,),
+                                Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black)
+                              ],
+                            ),
+                          );
+                        }
+                        return TwakeCircularProgressIndicator();
+                      }),
                 ),
                 Align(
                     alignment: Alignment.center,
@@ -77,6 +125,7 @@ class HomeSearchTextField extends StatelessWidget {
     return Container(
       height: 36,
       child: TextField(
+        cursorColor: Color(0xff004dff),
         style: TextStyle(
           color: Colors.black,
           fontSize: 17,

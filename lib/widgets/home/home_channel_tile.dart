@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 class HomeChannelTile extends StatelessWidget {
-  const HomeChannelTile() : super();
+  final String? title;
+  final String? name;
+  final String? content;
+  final String? imageUrl;
+  final int? dateTime;
+
+  const HomeChannelTile({this.title, this.name, this.content, this.imageUrl, this.dateTime}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +28,7 @@ class HomeChannelTile extends StatelessWidget {
                   child: RoundedImage(
                     width: 54,
                     height: 54,
+                    imageUrl: imageUrl,
                   ),
                 )
               ],
@@ -32,10 +39,11 @@ class HomeChannelTile extends StatelessWidget {
             Expanded(
               child: Column(
                 children: [
+                  SizedBox(height: 4,),
                   Row(
                     children: [
                       Expanded(
-                          child: Text("Entertainment",
+                          child: Text(title ?? '',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                               style: TextStyle(
@@ -44,7 +52,7 @@ class HomeChannelTile extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                                 fontStyle: FontStyle.normal,
                               ))),
-                      Text("15:47",
+                      Text('', // todo parse datetime
                           style: TextStyle(
                             color: Color(0xffc2c6cc),
                             fontSize: 13,
@@ -58,7 +66,7 @@ class HomeChannelTile extends StatelessWidget {
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Alexey Kondratiev',
+                    child: Text(name ?? 'This channel is empty',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: TextStyle(
@@ -73,7 +81,7 @@ class HomeChannelTile extends StatelessWidget {
                   ),
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Let’s schedule a team building',
+                    child: Text(content ?? '',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: TextStyle(
