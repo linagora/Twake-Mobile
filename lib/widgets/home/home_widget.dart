@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/home/home_channel_list_widget.dart';
@@ -19,11 +21,16 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-
   @override
   void initState() {
     super.initState();
-    // todo fetch channel and direct list here
+
+    Get.find<ChannelsCubit>().fetch(
+      workspaceId: Globals.instance.workspaceId!,
+      companyId: Globals.instance.companyId,
+    );
+    Get.find<DirectsCubit>()
+        .fetch(workspaceId: 'direct', companyId: Globals.instance.companyId);
   }
 
   @override
@@ -36,7 +43,9 @@ class _HomeWidgetState extends State<HomeWidget> {
             bottom: TabBar(
               tabs: [
                 Tab(text: 'Channels'),
-                Tab(text: 'Chats',),
+                Tab(
+                  text: 'Chats',
+                ),
               ],
               isScrollable: true,
               indicatorColor: Color(0xff004dff),
@@ -87,8 +96,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                                   height: 36,
                                   imageUrl: workspaceState.selected?.logo,
                                 ),
-                                SizedBox(width: 5,),
-                                Icon(Icons.keyboard_arrow_down_rounded, color: Colors.black)
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Icon(Icons.keyboard_arrow_down_rounded,
+                                    color: Colors.black)
                               ],
                             ),
                           );
