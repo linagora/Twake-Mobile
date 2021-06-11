@@ -11,6 +11,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
+import 'package:twake/pages/thread_page.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
@@ -70,21 +71,22 @@ class _MessageTileState extends State<MessageTile> {
   }
 
   void onReply(context, String? messageId, {bool autofocus: false}) {
-    /*  
-    TODO implement ThreadPage
+     
+   /*  TODO implement ThreadPage
+     
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
     BlocProvider.of<DraftBloc>(context)
-        .add(LoadDraft(id: _message!.id, type: DraftType.thread));
+        .add(LoadDraft(id: _message!.id, type: DraftType.thread));  */
 
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ThreadPage<T>(
+        builder: (context) => ThreadPage(
           autofocus: autofocus,
         ),
       ),
-    );\
+    );
     
-    */
+  
   }
   onCopy({required context, required text}) {
     FlutterClipboard.copy(text);

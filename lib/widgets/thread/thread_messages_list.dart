@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
+import 'package:twake/models/message/message.dart';
 import 'package:twake/widgets/message/message_tile.dart';
-import 'package:twake/models/message.dart';
 
 class ThreadMessagesList extends StatefulWidget {
   ThreadMessagesList();
@@ -14,81 +13,77 @@ class ThreadMessagesList extends StatefulWidget {
 }
 
 class _ThreadMessagesListState extends State<ThreadMessagesList> {
-  Widget buildThreadMessageColumn() {
-    return BlocBuilder<ThreadMessagesCubit, MessagesState>(
-        builder: (context, state) {
-      if (state is MessagesLoadSuccess) {
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Divider(
-              thickness: 1.0,
-              height: 1.0,
-              color: Color(0xffEEEEEE),
+  Widget buildThreadMessageColumn({Message? message}) {
+  final state = Get.find<ThreadMessagesCubit>().state;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Divider(
+          thickness: 1.0,
+          height: 1.0,
+          color: Color(0xffEEEEEE),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: MessageTile(
+            message: message,
+            hideShowAnswers: true,
+            key: ValueKey(message!.content.originalStr),
+          ),
+        ),
+        Divider(
+          thickness: 1.0,
+          height: 1.0,
+          color: Color(0xffEEEEEE),
+        ),
+        SizedBox(
+          height: 8.0,
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.0),
+          child: Text(
+            message.content.originalStr! + ' responses',
+            style: TextStyle(
+              fontSize: 12.0,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff92929C),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 12.0),
-              child: MessageTile(
-                message: state.threadMessage,
-                hideShowAnswers: true,
-                key: ValueKey(state.threadMessage!.key),
-              ),
-            ),
-            Divider(
-              thickness: 1.0,
-              height: 1.0,
-              color: Color(0xffEEEEEE),
-            ),
-            SizedBox(
-              height: 8.0,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
-              child: Text(
-                state.threadMessage!.respCountStr + ' responses',
-                style: TextStyle(
-                  fontSize: 12.0,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff92929C),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 8.0,
-            ),
-            Divider(
-              thickness: 1.0,
-              height: 1.0,
-              color: Color(0xffEEEEEE),
-            ),
-            SizedBox(
-              height: 12.0,
-            ),
-            if (state is MessagesLoaded)
-              MessageTile(
-                message: state.messages.last,
-                key: ValueKey(state.messages.last.key),
-              ),
-            if (state is MessagesEmpty)
-              Center(
+          ),
+        ),
+        SizedBox(
+          height: 8.0,
+        ),
+        Divider(
+          thickness: 1.0,
+          height: 1.0,
+          color: Color(0xffEEEEEE),
+        ),
+        SizedBox(
+          height: 12.0,
+        ),
+        if (state is MessagesLoadSuccess)
+          MessageTile(
+            message: state.messages.last,
+            key: ValueKey(state.messages.last),
+          ),
+        if (state is MessagesInitial)
+          Center(
+              /* to add the new state is needed 
                 child: Text(
                   state is ErrorLoadingMessages
                       ? 'Couldn\'t load messages, no connection'
                       : 'No responses yet',
-                ),
+                ),*/
               ),
-            if (state is MessagesLoading)
-              Align(
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(),
-              ),
-          ],
-        );
-      }
-      ;
-    });
+        if (state is MessagesLoadInProgress)
+          Align(
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          ),
+      ],
+    );
   }
 
   double? appBarHeight;
@@ -122,13 +117,15 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThreadsBloc, MessagesState>(
+    Message? message; // need to fix buildThreadMessageColumn
+    return BlocBuilder<ThreadMessagesCubit, MessagesState>(
+      bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
-        if (state is MessagesLoaded) {
+        if (state is MessagesLoadSuccess) {
           _messages = state.messages;
         }
         return Flexible(
-          child: state is MessagesLoaded
+          child: state is MessagesLoadSuccess
               ? ListView.builder(
                   controller: _controller,
                   physics: _physics,
@@ -137,16 +134,16 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   itemCount: _messages!.length,
                   itemBuilder: (context, i) {
                     if (i == _messages!.length - 1) {
-                      return buildThreadMessageColumn(state);
+                      return buildThreadMessageColumn(message:  _messages![i]);
                     } else {
-                      return MessageTile(
+                      return MessageTile( 
                         message: _messages![i],
-                        key: ValueKey(_messages![i]!.key),
+                        key: ValueKey(_messages![i]),
                       );
                     }
                   },
                 )
-              : SingleChildScrollView(child: buildThreadMessageColumn(state)),
+              : SingleChildScrollView(child: buildThreadMessageColumn()),
         );
       },
     );
