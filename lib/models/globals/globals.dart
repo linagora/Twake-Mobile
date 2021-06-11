@@ -6,10 +6,8 @@ import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
 
 import 'channels_type.dart';
-import 'tabs.dart';
 
 export 'channels_type.dart';
-export 'tabs.dart';
 
 part 'globals.g.dart';
 
@@ -62,20 +60,11 @@ class Globals extends BaseModel {
   }
 
   // type of the channels selected in main chats view: commons (public/private) or directs
-  @JsonKey(defaultValue: ChannelsType.Commons)
+  @JsonKey(defaultValue: ChannelsType.commons)
   ChannelsType channelsType;
   // Use this setter to set the value, otherwise it will not persist
   set channelsTypeSet(ChannelsType val) {
     channelsType = val;
-    save();
-  }
-
-  // tab which is currently selected in lower part of the app screen
-  @JsonKey(defaultValue: Tabs.Channels)
-  Tabs tabs;
-  // Use this setter to set the value, otherwise it will not persist
-  set tabsSet(Tabs val) {
-    tabs = val;
     save();
   }
 
@@ -103,6 +92,7 @@ class Globals extends BaseModel {
 
   @JsonKey(ignore: true)
   bool isNetworkConnected = true;
+
   @JsonKey(ignore: true)
   final _connection = StreamController<Connection>.broadcast();
   Stream<Connection> get connection => _connection.stream;
@@ -114,8 +104,7 @@ class Globals extends BaseModel {
 
   factory Globals({
     required String host,
-    ChannelsType channelsType: ChannelsType.Commons,
-    Tabs tabs: Tabs.Channels,
+    ChannelsType channelsType: ChannelsType.commons,
     String? token,
     required String fcmToken,
     String? userId,
@@ -133,7 +122,6 @@ class Globals extends BaseModel {
     _globals = Globals._(
       host: host,
       channelsType: channelsType,
-      tabs: tabs,
       token: token,
       fcmToken: fcmToken,
       userId: userId,
@@ -149,7 +137,6 @@ class Globals extends BaseModel {
   Globals._({
     required this.host,
     required this.channelsType,
-    required this.tabs,
     this.token,
     required this.fcmToken,
     this.userId,

@@ -27,6 +27,8 @@ class SynchronizationService {
     // Set up auto resubscription in case of internet connection loss
     Globals.instance.connection.listen((state) async {
       if (state == Connection.connected && _subRooms.isNotEmpty) {
+        // wait for the socketio service to authenticate first
+        await Future.delayed(Duration(seconds: 3));
         await subscribeForChannels();
         await subscribeToBadges();
       }
@@ -36,6 +38,10 @@ class SynchronizationService {
   Future<void> foregroundMessagesCheck() async {
     final messagesStream = _pushNotifications.foregroundMessageStream;
     await for (final message in messagesStream) {
+      // Don't show notifications in channels, that are already being viewed
+      if (message.payload.channelId == Globals.instance.channelId) continue;
+      if (message.payload.threadId == Globals.instance.threadId) continue;
+
       final id = _pushNotifications.showLocal(
         title: message.headers.title,
         body: message.headers.body,

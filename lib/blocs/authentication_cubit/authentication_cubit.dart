@@ -13,7 +13,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   late final StreamSubscription _networkSubscription;
 
   AuthenticationCubit({AuthenticationRepository? repository})
-      : super(AuthenticationValidation()) {
+      : super(AuthenticationInitial()) {
     if (repository == null) {
       repository = AuthenticationRepository();
     }
@@ -32,10 +32,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
     if (authenticated) {
       emit(AuthenticationSuccess());
+      _repository.startTokenValidator();
     } else {
       emit(AuthenticationInitial());
     }
-    _repository.startTokenValidator();
   }
 
   void authenticate({

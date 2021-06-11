@@ -128,11 +128,6 @@ class StorageService {
     List<dynamic>? whereArgs,
     int? limit,
   }) async {
-    if (where != null && whereArgs != null) {
-      final expected = where.split('?').length;
-      final actual = whereArgs.length;
-      assert(expected == actual);
-    }
     final result = await _db.query(
       table.name,
       columns: columns,

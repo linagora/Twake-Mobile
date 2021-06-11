@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
+import 'package:twake/widgets/home/home_widget.dart';
 
 class InitialPage extends StatefulWidget {
   @override
@@ -50,27 +51,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             return AuthPage();
           }
           if (state is AuthenticationSuccess) {
-            return //WorkspacesManagement();
-                Center(
-              child: Column(
-                children: [
-                  Text("Authenticated",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 20), elevation: 5),
-                    onPressed: () => Get.find<AuthenticationCubit>().logout(),
-                    child: const Text(
-                      'Logout',
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return HomeWidget();
           }
           if (state is AuthenticationFailure) {
             return AuthPage();
