@@ -9,9 +9,10 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-import 'package:twake/widgets/home/home_channel_list_widget.dart';
 
+import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
+import 'home_drawer_widget.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget() : super();
@@ -24,6 +25,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
     super.initState();
+
+    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
 
     Get.find<ChannelsCubit>().fetch(
       workspaceId: Globals.instance.workspaceId!,
@@ -38,7 +41,10 @@ class _HomeWidgetState extends State<HomeWidget> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+          drawer: HomeDrawerWidget(),
           appBar: AppBar(
+            leading: SizedBox.shrink(),
+            leadingWidth: 0,
             toolbarHeight: kToolbarHeight + 80,
             bottom: TabBar(
               tabs: [
@@ -87,7 +93,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                       builder: (context, workspaceState) {
                         if (workspaceState is WorkspacesLoadSuccess) {
                           return GestureDetector(
-                            onTap: () {},
+                            onTap: () => Scaffold.of(context).openDrawer(),
                             child: Row(
                               children: [
                                 RoundedImage(
