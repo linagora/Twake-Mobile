@@ -50,6 +50,10 @@ class Channel extends BaseModel {
 
   int get membersCount => members.length;
 
+  bool get isDirect => workspaceId == 'direct';
+
+  bool get isPrivate => visibility == ChannelVisibility.private;
+
   Channel({
     required this.id,
     required this.name,

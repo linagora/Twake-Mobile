@@ -2,16 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
-import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
-import 'package:twake/pages/chat/chat_header.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
@@ -22,6 +18,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   Widget build(BuildContext context) {
     final draft =
         (Get.find<T>().state as ChannelsLoadedSuccess).selected!.draft;
+    final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
 
     return Scaffold(
       appBar: AppBar(
@@ -42,64 +39,18 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             ),
           ),
         ),
-        //   title: BlocBuilder<MessagesBloc, MessagesState>(
-        //      BlocBuilder<EditChannelCubit, EditChannelState>(
-        //         builder: (context, editState) {
-        //           var canEdit = false;
-        //           var memberId = '';
-        //           String? icon = '';
-        //           var isPrivate = false;
-        //           int? membersCount = 0;
-        //
-        //           if (parentChannel is Channel) {
-        //             isPrivate = parentChannel.visibility == 'private';
-        //             icon = parentChannel.icon;
-        //             membersCount = parentChannel.membersCount;
-        //
-        //             // Possible permissions:
-        //             // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-        //             // 'ADD_MEMBER', 'REMOVE_MEMBER',
-        //             // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-        //             final permissions = parentChannel.permissions!;
-        //
-        //             if (permissions.contains('UPDATE_NAME') ||
-        //                 permissions.contains('UPDATE_DESCRIPTION') ||
-        //                 permissions.contains('ADD_MEMBER') ||
-        //                 permissions.contains('REMOVE_MEMBER') ||
-        //                 permissions.contains('UPDATE_PRIVACY') ||
-        //                 permissions.contains('DELETE_CHANNEL')) {
-        //               canEdit = true;
-        //             } else {
-        //               canEdit = false;
-        //             }
-        //           } else if (parentChannel is Direct &&
-        //               parentChannel.members != null) {
-        //             final userId = ProfileBloc.userId;
-        //             memberId =
-        //                 parentChannel.members!.firstWhere((id) => id != userId);
-        //           }
-        //
-        //           if (editState is EditChannelSaved) {
-        //             context
-        //                 .read<MemberCubit>()
-        //                 .fetchMembers(channelId: channelId);
-        //           }
-        //
-        //           return ChatHeader(
-        //             isDirect: parentChannel,
-        //             isPrivate: isPrivate,
-        //             userId: memberId,
-        //             name: parentChannel!.name,
-        //             icon: icon,
-        //             membersCount: membersCount,
-        //             onTap: canEdit ? () => _goEdit(context, state) : null,
-        //           );
-        //         },
-        //       );
-        //     },
-        //   ),
-        // ),
+        title: ChatHeader(
+            isDirect: channel.isDirect,
+            isPrivate: channel.isPrivate,
+            userId:
+                channel.members.first, // TODO: figure out why do we need this?
+            name: channel.name,
+            icon: channel.icon,
+            membersCount: channel.membersCount,
+            onTap: () {} // TODO: navigate to channel edit page
+            ),
       ),
+      // ),
       body: BlocBuilder<ChannelMessagesCubit, MessagesState>(
         builder: (_, messagesState) => Container(
           child: Column(
@@ -149,16 +100,5 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _goEdit(BuildContext context, MessagesState state) async {
-    final params =
-        await openEditChannel(context, state.parentChannel as Channel);
-    if (params != null && params.length > 0) {
-      final editingState = params.first;
-      if (editingState is EditChannelDeleted) {
-        Navigator.of(context).maybePop();
-      }
-    }
   }
 }
