@@ -1,8 +1,6 @@
-/*  import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
-import 'package:twake/blocs/profile_bloc/profile_bloc.dart';
-import 'package:twake/blocs/single_message_bloc/single_message_bloc.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 
 class MessageModalSheet extends StatefulWidget {
@@ -16,6 +14,7 @@ class MessageModalSheet extends StatefulWidget {
   final Function? onCopy;
   final bool isThread;
   final BuildContext? ctx;
+  final bool isMe;
 
   const MessageModalSheet({
     this.userId,
@@ -28,6 +27,7 @@ class MessageModalSheet extends StatefulWidget {
     this.onCopy,
     this.ctx,
     this.originalStr,
+    required this.isMe,
     Key? key,
   }) : super(key: key);
 
@@ -39,9 +39,9 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
   bool _emojiVisible = false;
 
   onEmojiSelected(String emojiCode) {
-    BlocProvider.of<SingleMessageBloc>(widget.ctx!)
-        .add(UpdateReaction(emojiCode: emojiCode));
-    FocusManager.instance.primaryFocus!.unfocus();
+    //BlocProvider.of<SingleMessageBloc>(widget.ctx!)
+    //    .add(UpdateReaction(emojiCode: emojiCode));
+    //  FocusManager.instance.primaryFocus!.unfocus();
   }
 
   void showEmojiBoard() async {
@@ -62,7 +62,8 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
+    //  final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
+
     return _emojiVisible
         ? buildEmojiBoard()
         : SafeArea(
@@ -78,7 +79,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                     height: 1.0,
                     color: Color(0xffEEEEEE),
                   ),
-                  if (isMe)
+                  if (widget.isMe)
                     ListTile(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
@@ -118,7 +119,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       height: 1.0,
                       color: Color(0xffEEEEEE),
                     ),
-                  if (isMe && widget.responsesCount == 0)
+                  if (widget.isMe && widget.responsesCount == 0)
                     ListTile(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
@@ -135,7 +136,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                         widget.onDelete!(context);
                       },
                     ),
-                  if (isMe && widget.responsesCount == 0)
+                  if (widget.isMe && widget.responsesCount == 0)
                     Divider(
                       thickness: 1.0,
                       height: 1.0,
@@ -218,5 +219,3 @@ class EmojiLine extends StatelessWidget {
     );
   }
 }
- 
- */
