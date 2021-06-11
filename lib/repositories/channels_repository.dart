@@ -166,4 +166,8 @@ class ChannelsRepository {
 
     return channel;
   }
+
+  Future<void> saveOne({required Channel channel}) async {
+    await _storage.insert(table: Table.channel, data: channel);
+  }
 }

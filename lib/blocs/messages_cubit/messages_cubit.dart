@@ -101,6 +101,19 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
+  void startEdit({required Message message}) {
+    if (state is! MessagesLoadSuccess) return;
+
+    final s = (state as MessagesLoadSuccess);
+
+    emit(MessageEditInProgress(
+      messages: s.messages,
+      hash: s.hash,
+      parentMessage: s.parentMessage,
+      message: message,
+    ));
+  }
+
   Future<void> edit({
     required Message message,
     required String editedText,

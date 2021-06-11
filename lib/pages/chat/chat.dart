@@ -1,4 +1,3 @@
-import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -18,12 +17,11 @@ import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
 import 'messages_grouped_list.dart';
 
-class Chat extends StatelessWidget {
+class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String? draft = '';
-    String? channelId;
-    DraftType? draftType;
+    final draft =
+        (Get.find<T>().state as ChannelsLoadedSuccess).selected!.draft;
 
     return Scaffold(
       appBar: AppBar(
@@ -31,166 +29,131 @@ class Chat extends StatelessWidget {
         shadowColor: Colors.grey[300],
         toolbarHeight: 60.0,
         leadingWidth: 53.0,
-        leading: BlocBuilder<DraftBloc, DraftState>(
-          buildWhen: (_, current) =>
-              current is DraftUpdated || current is DraftReset,
-          builder: (context, state) {
-            if (state is DraftUpdated && state.type != DraftType.thread) {
-              channelId = state.id;
-              draft = state.draft;
-              draftType = state.type;
-            }
-            if (state is DraftReset) {
-              draft = '';
-            }
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                if (draftType != null) {
-                  if (draft!.isNotEmpty) {
-                    context.read<DraftBloc>().add(
-                          SaveDraft(
-                            id: channelId,
-                            type: draftType,
-                            draft: draft,
-                          ),
-                        );
-                  } else {
-                    context
-                        .read<DraftBloc>()
-                        .add(ResetDraft(id: channelId, type: draftType));
-                  }
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Icon(
-                  Icons.arrow_back_ios,
-                  color: Color(0xff004dff),
-                ),
-              ),
-            );
+        leading: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.of(context).pop();
           },
-        ),
-        title: BlocBuilder<MessagesBloc, MessagesState>(
-           BlocBuilder<EditChannelCubit, EditChannelState>(
-              builder: (context, editState) {
-                var canEdit = false;
-                var memberId = '';
-                String? icon = '';
-                var isPrivate = false;
-                int? membersCount = 0;
-
-                if (parentChannel is Channel) {
-                  isPrivate = parentChannel.visibility == 'private';
-                  icon = parentChannel.icon;
-                  membersCount = parentChannel.membersCount;
-
-                  // Possible permissions:
-                  // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
-                  // 'ADD_MEMBER', 'REMOVE_MEMBER',
-                  // 'UPDATE_PRIVACY','DELETE_CHANNEL']
-                  final permissions = parentChannel.permissions!;
-
-                  if (permissions.contains('UPDATE_NAME') ||
-                      permissions.contains('UPDATE_DESCRIPTION') ||
-                      permissions.contains('ADD_MEMBER') ||
-                      permissions.contains('REMOVE_MEMBER') ||
-                      permissions.contains('UPDATE_PRIVACY') ||
-                      permissions.contains('DELETE_CHANNEL')) {
-                    canEdit = true;
-                  } else {
-                    canEdit = false;
-                  }
-                } else if (parentChannel is Direct &&
-                    parentChannel.members != null) {
-                  final userId = ProfileBloc.userId;
-                  memberId =
-                      parentChannel.members!.firstWhere((id) => id != userId);
-                }
-
-                if (editState is EditChannelSaved) {
-                  context
-                      .read<MemberCubit>()
-                      .fetchMembers(channelId: channelId);
-                }
-
-                return ChatHeader(
-                  isDirect: parentChannel,
-                  isPrivate: isPrivate,
-                  userId: memberId,
-                  name: parentChannel!.name,
-                  icon: icon,
-                  membersCount: membersCount,
-                  onTap: canEdit ? () => _goEdit(context, state) : null,
-                );
-              },
-            );
-          },
-        ),
-      ),
-      body: BlocBuilder<MessagesBloc, MessagesState>(
-        builder: (_, messagesState) {
-          return BlocProvider<MessageEditBloc>(
-            create: (_) => MessageEditBloc(),
-            child: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Divider(
-                    thickness: 1.0,
-                    height: 1.0,
-                    color: Color(0xffEEEEEE),
-                  ),
-                  if (messagesState is MoreMessagesLoading &&
-                      !(messagesState is ErrorLoadingMoreMessages))
-                    SizedBox(
-                      height: Dim.hm4,
-                      width: Dim.hm4,
-                      child: Padding(
-                        padding: EdgeInsets.all(Dim.widthMultiplier),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  MessagesGroupedList(),
-                  ComposeBar(
-                              autofocus: state is MessageEditing,
-                              initialText: state is MessageEditing
-                                  ? state.originalStr
-                                  : draft,
-                              onMessageSend: state is MessageEditing
-                                  ? state.onMessageEditComplete as dynamic Function(String, BuildContext)?
-                                  : (content, context) async {
-                  
-                                final uploadState = Get.find<FileCubit>().state;
-                                final List<File> attachments; 
-                                      if (uploadState is FileUploadSuccess) {
-                                         attachments =  uploadState.files;      
-                                      Get.find<ThreadMessagesCubit>().send(originalStr: content, threadId: ,attachments: attachments);
-                                      Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: ,attachments: attachments);
-                                      }  
-                                      Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: );                                                      
-                              onTextUpdated: 
-                                   (text, ctx) {}
-                                  },
-                         
-                          );
-                        },
-                     
-                    },
-                  ),
-                ],
-              ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Color(0xff004dff),
             ),
-          );
-        },
+          ),
+        ),
+        //   title: BlocBuilder<MessagesBloc, MessagesState>(
+        //      BlocBuilder<EditChannelCubit, EditChannelState>(
+        //         builder: (context, editState) {
+        //           var canEdit = false;
+        //           var memberId = '';
+        //           String? icon = '';
+        //           var isPrivate = false;
+        //           int? membersCount = 0;
+        //
+        //           if (parentChannel is Channel) {
+        //             isPrivate = parentChannel.visibility == 'private';
+        //             icon = parentChannel.icon;
+        //             membersCount = parentChannel.membersCount;
+        //
+        //             // Possible permissions:
+        //             // ['UPDATE_NAME', 'UPDATE_DESCRIPTION',
+        //             // 'ADD_MEMBER', 'REMOVE_MEMBER',
+        //             // 'UPDATE_PRIVACY','DELETE_CHANNEL']
+        //             final permissions = parentChannel.permissions!;
+        //
+        //             if (permissions.contains('UPDATE_NAME') ||
+        //                 permissions.contains('UPDATE_DESCRIPTION') ||
+        //                 permissions.contains('ADD_MEMBER') ||
+        //                 permissions.contains('REMOVE_MEMBER') ||
+        //                 permissions.contains('UPDATE_PRIVACY') ||
+        //                 permissions.contains('DELETE_CHANNEL')) {
+        //               canEdit = true;
+        //             } else {
+        //               canEdit = false;
+        //             }
+        //           } else if (parentChannel is Direct &&
+        //               parentChannel.members != null) {
+        //             final userId = ProfileBloc.userId;
+        //             memberId =
+        //                 parentChannel.members!.firstWhere((id) => id != userId);
+        //           }
+        //
+        //           if (editState is EditChannelSaved) {
+        //             context
+        //                 .read<MemberCubit>()
+        //                 .fetchMembers(channelId: channelId);
+        //           }
+        //
+        //           return ChatHeader(
+        //             isDirect: parentChannel,
+        //             isPrivate: isPrivate,
+        //             userId: memberId,
+        //             name: parentChannel!.name,
+        //             icon: icon,
+        //             membersCount: membersCount,
+        //             onTap: canEdit ? () => _goEdit(context, state) : null,
+        //           );
+        //         },
+        //       );
+        //     },
+        //   ),
+        // ),
+      ),
+      body: BlocBuilder<ChannelMessagesCubit, MessagesState>(
+        builder: (_, messagesState) => Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Divider(
+                thickness: 1.0,
+                height: 1.0,
+                color: Color(0xffEEEEEE),
+              ),
+              if (messagesState is MessagesBeforeLoadInProgress)
+                SizedBox(
+                  height: Dim.hm4,
+                  width: Dim.hm4,
+                  child: Padding(
+                    padding: EdgeInsets.all(Dim.widthMultiplier),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+              MessagesGroupedList(),
+              ComposeBar(
+                  autofocus: messagesState is MessageEditInProgress,
+                  initialText: (messagesState is MessageEditInProgress)
+                      ? messagesState.message.content.originalStr
+                      : draft,
+                  onMessageSend: (content, context) async {
+                    if (messagesState is MessageEditInProgress)
+                      Get.find<ChannelMessagesCubit>().edit(
+                          message: messagesState.message, editedText: content);
+                    else {
+                      final uploadState = Get.find<FileCubit>().state;
+                      List<File> attachments = const [];
+                      if (uploadState is FileUploadSuccess) {
+                        attachments = uploadState.files;
+                      }
+                      Get.find<ChannelMessagesCubit>()
+                          .send(originalStr: content, attachments: attachments);
+                    }
+                    // reset channels draft
+                    Get.find<T>().saveDraft(draft: null);
+                  },
+                  onTextUpdated: (text, ctx) {
+                    Get.find<T>().saveDraft(draft: text);
+                  }),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   void _goEdit(BuildContext context, MessagesState state) async {
-    final params = await openEditChannel(context, state.parentChannel as Channel);
+    final params =
+        await openEditChannel(context, state.parentChannel as Channel);
     if (params != null && params.length > 0) {
       final editingState = params.first;
       if (editingState is EditChannelDeleted) {

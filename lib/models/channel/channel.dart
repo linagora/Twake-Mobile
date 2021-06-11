@@ -36,7 +36,7 @@ class Channel extends BaseModel {
   @JsonKey(defaultValue: 0)
   final int userLastAccess;
 
-  final String? draft;
+  String? draft;
 
   final List<String> permissions;
 

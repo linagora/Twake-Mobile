@@ -204,6 +204,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     return true;
   }
 
+  void saveDraft({String? draft}) {
+    if (state is! ChannelsLoadedSuccess) return;
+    if ((state as ChannelsLoadedSuccess).selected == null) return;
+
+    final current = (state as ChannelsLoadedSuccess).selected!;
+
+    current.draft = draft;
+
+    _repository.saveOne(channel: current);
+  }
+
   void selectChannel({required String channelId}) {
     Globals.instance.channelIdSet = channelId;
 

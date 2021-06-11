@@ -14,12 +14,12 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
   final Function(String, BuildContext)? onMessageSend;
-  final Function(String?, BuildContext) onTextUpdated;
+  final Function(String, BuildContext) onTextUpdated;
   final String? initialText;
 
   ComposeBar({
     required this.onMessageSend,
-    required this.onTextUpdated, 
+    required this.onTextUpdated,
     this.autofocus = false,
     this.initialText = '',
   });
@@ -90,8 +90,7 @@ class _ComposeBar extends State<ComposeBar> {
 
   // TODO get rid of _mentionsVisible since can use states of new MentionsCubit
   void mentionsVisible() async {
-    final MentionState mentionsState =
-        Get.find<MentionsCubit>().state;
+    final MentionState mentionsState = Get.find<MentionsCubit>().state;
     if (mentionsState is MentionsLoadSuccess) {
       setState(() {
         _mentionsVisible = true;
@@ -410,7 +409,7 @@ class _TextInputState extends State<TextInput> {
         children: [
           SizedBox(width: 14.0),
           BlocBuilder<FileCubit, FileState>(
-            bloc:  Get.find<FileCubit>(),
+            bloc: Get.find<FileCubit>(),
             builder: (context, state) {
               if (state is FileInitial) {
                 return IconButton(

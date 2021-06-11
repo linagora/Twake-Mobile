@@ -27,6 +27,20 @@ class MessagesLoadSuccess extends MessagesState {
   List<Object?> get props => [hash];
 }
 
+class MessageEditInProgress extends MessagesLoadSuccess {
+  final Message message;
+
+  const MessageEditInProgress({
+    required this.message,
+    required List<Message> messages,
+    required int hash,
+    Message? parentMessage,
+  }) : super(messages: messages, hash: hash, parentMessage: parentMessage);
+
+  @override
+  List<Object?> get props => [message];
+}
+
 class MessagesLoadInProgress extends MessagesState {
   const MessagesLoadInProgress();
 
