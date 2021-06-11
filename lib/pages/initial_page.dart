@@ -5,7 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
-import 'package:twake/widgets/home/home_widget.dart';
+
+import 'home/home_widget.dart';
 
 class InitialPage extends StatefulWidget {
   @override

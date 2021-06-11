@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-import 'package:twake/widgets/home/home_channel_tile.dart';
+
+import 'home_channel_tile.dart';
 
 class HomeChannelListWidget extends StatelessWidget {
   const HomeChannelListWidget() : super();
