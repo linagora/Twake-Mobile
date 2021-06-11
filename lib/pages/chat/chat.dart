@@ -74,14 +74,7 @@ class Chat extends StatelessWidget {
           },
         ),
         title: BlocBuilder<MessagesBloc, MessagesState>(
-          builder: (_, state) {
-            BaseChannel? parentChannel = T is Channel ? Channel() : Direct();
-
-            if ((state is MessagesLoaded || state is MessagesEmpty) &&
-                state.parentChannel!.id == ProfileBloc.selectedChannelId) {
-              parentChannel = state.parentChannel;
-            }
-            return BlocBuilder<EditChannelCubit, EditChannelState>(
+           BlocBuilder<EditChannelCubit, EditChannelState>(
               builder: (context, editState) {
                 var canEdit = false;
                 var memberId = '';
@@ -161,30 +154,7 @@ class Chat extends StatelessWidget {
                       ),
                     ),
                   MessagesGroupedList(),
-                  BlocBuilder<DraftBloc, DraftState>(
-                    buildWhen: (_, current) =>
-                        current is DraftLoaded || current is DraftReset,
-                    builder: (_, state) {
-                      if (state is DraftLoaded &&
-                          state.type != DraftType.thread) {
-                        draft = state.draft;
-                        // print('DRAFT IS LOADED: $draft');
-                      } else if (state is DraftReset) {
-                        draft = '';
-                      }
-
-                      final channelId = messagesState.parentChannel!.id;
-                      if (messagesState.parentChannel is Channel) {
-                        draftType = DraftType.channel;
-                      } else if (messagesState.parentChannel is Direct) {
-                        draftType = DraftType.direct;
-                      }
-
-                      return BlocBuilder<MessageEditBloc, MessageEditState>(
-                        builder: (ctx, state) {
-                          return BlocProvider(
-                            create: (BuildContext context) => FileUploadBloc(),
-                            child: ComposeBar(
+                  ComposeBar(
                               autofocus: state is MessageEditing,
                               initialText: state is MessageEditing
                                   ? state.originalStr
@@ -192,63 +162,22 @@ class Chat extends StatelessWidget {
                               onMessageSend: state is MessageEditing
                                   ? state.onMessageEditComplete as dynamic Function(String, BuildContext)?
                                   : (content, context) async {
-                                      content =
-                                          await BlocProvider.of<MentionsCubit>(
-                                                  context)
-                                              .completeMentions(content);
-                                      List<dynamic> twacode =
-                                          TwacodeParser(content).message;
-
-                                      final FileUploadState uploadState =
-                                          BlocProvider.of<FileUploadBloc>(
-                                                  context)
-                                              .state;
-                                      if (uploadState is FileUploaded) {
-                                 
+                  
                                 final uploadState = Get.find<FileCubit>().state;
-
                                 final List<File> attachments; 
-
                                       if (uploadState is FileUploadSuccess) {
-                                         attachments =  uploadState.files;
-                                      // add check for messages chat type
+                                         attachments =  uploadState.files;      
                                       Get.find<ThreadMessagesCubit>().send(originalStr: content, threadId: ,attachments: attachments);
                                       Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: ,attachments: attachments);
-                                      }
-                                      // add check for messages chat type
-                                     // Get.find<ThreadMessagesCubit>().send(originalStr: content, threadId: );
-                                      Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: );
-
-                                      BlocProvider.of<MessagesBloc>(context)
-                                          .add(
-                                        SendMessage(
-                                            content: content,
-                                            prepared: twacode),
-                                      );
-                                      BlocProvider.of<FileUploadBloc>(context)
-                                          .add(ClearUploads());
-                                      context.read<DraftBloc>().add(
-                                            ResetDraft(
-                                              id: channelId,
-                                              type: draftType,
-                                            ),
-                                          );
-                                    }
-                              onTextUpdated: state is MessageEditing
-                                  ? (text, ctx) {}
-                                  : (text, ctx) {
-                                      context.read<DraftBloc>().add(
-                                            UpdateDraft(
-                                              id: channelId,
-                                              type: draftType,
-                                              draft: text,
-                                            ),
-                                          );
+                                      }  
+                                      Get.find<ChannelMessagesCubit>().send(originalStr: content,threadId: );                                                      
+                              onTextUpdated: 
+                                   (text, ctx) {}
                                   },
-                            ),
+                         
                           );
                         },
-                      );
+                     
                     },
                   ),
                 ],
