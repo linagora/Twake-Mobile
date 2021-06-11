@@ -13,7 +13,7 @@ class ThreadMessagesList extends StatefulWidget {
 }
 
 class _ThreadMessagesListState extends State<ThreadMessagesList> {
-  Widget buildThreadMessageColumn({ Message? message}) {
+  Widget buildThreadMessageColumn( Message message) {
   final state = Get.find<ThreadMessagesCubit>().state;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -30,7 +30,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
           child: MessageTile(
             message: message,
             hideShowAnswers: true,
-            key: ValueKey(message!.content.originalStr),
+            key: ValueKey(message.content.originalStr),
           ),
         ),
         Divider(
@@ -89,7 +89,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
   double? appBarHeight;
   List<Widget> widgets = [];
 
-  List<Message?>? _messages = <Message>[];
+  List<Message> _messages = <Message>[];
 
   var _controller = ScrollController();
   ScrollPhysics _physics = BouncingScrollPhysics();
@@ -121,7 +121,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
         if (state is MessagesLoadSuccess) {
-          final _messages = state.messages;
+           _messages = state.messages;
         }
         return Flexible(
           child: state is MessagesLoadSuccess
@@ -130,19 +130,19 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   physics: _physics,
                   reverse: true,
                   shrinkWrap: true,
-                  itemCount: _messages!.length,
+                  itemCount: _messages.length,
                   itemBuilder: (context, i) {
-                    if (i == _messages!.length - 1) {
-                      return buildThreadMessageColumn(message: _messages![i]);
+                    if (i == _messages.length - 1) {
+                      return buildThreadMessageColumn( _messages[i]);
                     } else {
                       return MessageTile( 
-                        message: _messages![i],
-                        key: ValueKey(_messages![i]),
+                        message: _messages[i],
+                        key: ValueKey(_messages[i]),
                       );
                     }
                   },
                 )
-              : SingleChildScrollView(child: buildThreadMessageColumn()),
+              : SingleChildScrollView(child: buildThreadMessageColumn( _messages[0])),
         );
       },
     );
