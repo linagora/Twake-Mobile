@@ -1,88 +1,94 @@
-/* import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/base_channel_bloc/base_channel_bloc.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/threads_bloc/threads_bloc.dart';
 import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/models/message.dart';
 
-class ThreadMessagesList<T extends BaseChannelBloc> extends StatefulWidget {
+class ThreadMessagesList extends StatefulWidget {
   ThreadMessagesList();
 
   @override
-  _ThreadMessagesListState<T> createState() => _ThreadMessagesListState<T>();
+  _ThreadMessagesListState createState() => _ThreadMessagesListState();
 }
 
-class _ThreadMessagesListState<T extends BaseChannelBloc>
-    extends State<ThreadMessagesList<T>> {
-  Widget buildThreadMessageColumn(MessagesState state) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Divider(
-          thickness: 1.0,
-          height: 1.0,
-          color: Color(0xffEEEEEE),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: MessageTile<T>(
-            message: state.threadMessage,
-            hideShowAnswers: true,
-            key: ValueKey(state.threadMessage!.key),
-          ),
-        ),
-        Divider(
-          thickness: 1.0,
-          height: 1.0,
-          color: Color(0xffEEEEEE),
-        ),
-        SizedBox(
-          height: 8.0,
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(
-            state.threadMessage!.respCountStr + ' responses',
-            style: TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.w400,
-              color: Color(0xff92929C),
+class _ThreadMessagesListState extends State<ThreadMessagesList> {
+  Widget buildThreadMessageColumn() {
+    return BlocBuilder<ThreadMessagesCubit, MessagesState>(
+        builder: (context, state) {
+      if (state is MessagesLoadSuccess) {
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Divider(
+              thickness: 1.0,
+              height: 1.0,
+              color: Color(0xffEEEEEE),
             ),
-          ),
-        ),
-        SizedBox(
-          height: 8.0,
-        ),
-        Divider(
-          thickness: 1.0,
-          height: 1.0,
-          color: Color(0xffEEEEEE),
-        ),
-        SizedBox(
-          height: 12.0,
-        ),
-        if (state is MessagesLoaded)
-          MessageTile<T>(
-            message: state.messages!.last,
-            key: ValueKey(state.messages!.last!.key),
-          ),
-        if (state is MessagesEmpty)
-          Center(
-            child: Text(
-              state is ErrorLoadingMessages
-                  ? 'Couldn\'t load messages, no connection'
-                  : 'No responses yet',
+            Padding(
+              padding: const EdgeInsets.only(top: 12.0),
+              child: MessageTile(
+                message: state.threadMessage,
+                hideShowAnswers: true,
+                key: ValueKey(state.threadMessage!.key),
+              ),
             ),
-          ),
-        if (state is MessagesLoading)
-          Align(
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(),
-          ),
-      ],
-    );
+            Divider(
+              thickness: 1.0,
+              height: 1.0,
+              color: Color(0xffEEEEEE),
+            ),
+            SizedBox(
+              height: 8.0,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                state.threadMessage!.respCountStr + ' responses',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff92929C),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 8.0,
+            ),
+            Divider(
+              thickness: 1.0,
+              height: 1.0,
+              color: Color(0xffEEEEEE),
+            ),
+            SizedBox(
+              height: 12.0,
+            ),
+            if (state is MessagesLoaded)
+              MessageTile(
+                message: state.messages.last,
+                key: ValueKey(state.messages.last.key),
+              ),
+            if (state is MessagesEmpty)
+              Center(
+                child: Text(
+                  state is ErrorLoadingMessages
+                      ? 'Couldn\'t load messages, no connection'
+                      : 'No responses yet',
+                ),
+              ),
+            if (state is MessagesLoading)
+              Align(
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(),
+              ),
+          ],
+        );
+      }
+      ;
+    });
   }
 
   double? appBarHeight;
@@ -116,7 +122,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThreadsBloc<T>, MessagesState>(
+    return BlocBuilder<ThreadsBloc, MessagesState>(
       builder: (ctx, state) {
         if (state is MessagesLoaded) {
           _messages = state.messages;
@@ -133,7 +139,7 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
                     if (i == _messages!.length - 1) {
                       return buildThreadMessageColumn(state);
                     } else {
-                      return MessageTile<T>(
+                      return MessageTile(
                         message: _messages![i],
                         key: ValueKey(_messages![i]!.key),
                       );
@@ -146,4 +152,3 @@ class _ThreadMessagesListState<T extends BaseChannelBloc>
     );
   }
 }
- */

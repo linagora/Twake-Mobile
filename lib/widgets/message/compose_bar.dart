@@ -19,7 +19,7 @@ class ComposeBar extends StatefulWidget {
 
   ComposeBar({
     required this.onMessageSend,
-    required this.onTextUpdated,
+    required this.onTextUpdated, 
     this.autofocus = false,
     this.initialText = '',
   });
@@ -91,7 +91,7 @@ class _ComposeBar extends State<ComposeBar> {
   // TODO get rid of _mentionsVisible since can use states of new MentionsCubit
   void mentionsVisible() async {
     final MentionState mentionsState =
-        BlocProvider.of<MentionsCubit>(context).state;
+        Get.find<MentionsCubit>().state;
     if (mentionsState is MentionsLoadSuccess) {
       setState(() {
         _mentionsVisible = true;
