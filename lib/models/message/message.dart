@@ -30,7 +30,7 @@ class Message extends BaseModel {
   final String? firstname;
   final String? lastname;
   final String? thumbnail;
-  final String? draft;
+  String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
   int _isRead = 1;

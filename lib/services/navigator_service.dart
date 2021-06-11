@@ -1,7 +1,9 @@
+import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class NavigatorService {
@@ -107,13 +109,13 @@ class NavigatorService {
       companiesCubit.selectCompany(companyId: companyId);
       await workspacesCubit.fetch(companyId: companyId);
       await directsCubit.fetch(companyId: companyId, workspaceId: 'direct');
-      SynchronizationService.instance.subscribeToBadges();
     }
-    if (workspaceId != null) {
+    if (workspaceId != null && workspaceId != 'direct') {
       workspacesCubit.selectWorkspace(workspaceId: workspaceId);
       companiesCubit.selectWorkspace(workspaceId: workspaceId);
 
       await channelsCubit.fetch(workspaceId: workspaceId);
+      SynchronizationService.instance.subscribeToBadges();
     }
 
     channelsCubit.selectChannel(channelId: channelId);
@@ -125,7 +127,6 @@ class NavigatorService {
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
 
-    // TODO: implement navigation
-    // _navigatorKey.currentState.push();
+    Get.toNamed(RoutePaths.channelMessages);
   }
 }

@@ -26,11 +26,19 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   Future<void> fetch({required String channelId, String? threadId}) async {
     emit(MessagesLoadInProgress());
     final stream = _repository.fetch(channelId: channelId, threadId: threadId);
+    Message? parentMessage;
+
+    threadId = threadId ?? Globals.instance.threadId;
+
+    if (threadId != null) {
+      parentMessage = await _repository.getMessageLocal(messageId: threadId);
+    }
 
     await for (var list in stream) {
       emit(MessagesLoadSuccess(
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
+        parentMessage: parentMessage,
       ));
     }
   }
@@ -41,9 +49,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     if (this.state is! MessagesLoadSuccess) return;
 
     final state = this.state as MessagesLoadSuccess;
+
     emit(MessagesBeforeLoadInProgress(
       messages: state.messages,
       hash: state.hash,
+      parentMessage: state.parentMessage,
     ));
 
     final beforeMessages = await _repository.fetchBefore(
@@ -57,6 +67,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final newState = MessagesLoadSuccess(
       messages: allMessages,
       hash: allMessages.fold(0, (acc, m) => acc + m.hash),
+      parentMessage: state.parentMessage,
     );
 
     emit(newState);
@@ -227,6 +238,17 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     );
 
     return message;
+  }
+
+  void saveDraft({String? draft}) {
+    if (state is! MessagesLoadSuccess) return;
+    if ((state as MessagesLoadSuccess).parentMessage == null) return;
+
+    final thread = (state as MessagesLoadSuccess).parentMessage!;
+
+    thread.draft = draft;
+
+    _repository.saveOne(message: thread);
   }
 
   Future<void> listenToMessageChanges() async {

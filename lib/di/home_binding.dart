@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
@@ -19,6 +20,7 @@ class HomeBinding implements Bindings {
     Get.put(DirectsCubit(), permanent: true);
     Get.put(ChannelMessagesCubit(), permanent: true);
     Get.put(ThreadMessagesCubit(), permanent: true);
+    Get.put(AccountCubit(), permanent: true);
 
     NavigatorService(
       companiesCubit: Get.find<CompaniesCubit>(),

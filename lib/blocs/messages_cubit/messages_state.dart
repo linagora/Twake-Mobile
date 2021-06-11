@@ -52,5 +52,6 @@ class MessagesBeforeLoadInProgress extends MessagesLoadSuccess {
   const MessagesBeforeLoadInProgress({
     required List<Message> messages,
     required int hash,
-  }) : super(messages: messages, hash: hash);
+    Message? parentMessage,
+  }) : super(messages: messages, hash: hash, parentMessage: parentMessage);
 }

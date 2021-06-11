@@ -14,10 +14,10 @@ class ImageAvatar extends StatelessWidget {
   final double height;
 
   ImageAvatar(
-      this.imageUrl, {
-        this.width = 30,
-        this.height = 30,
-      });
+    this.imageUrl, {
+    this.width = 30,
+    this.height = 30,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,27 +27,25 @@ class ImageAvatar extends StatelessWidget {
         Dim.widthMultiplier * 1.5,
       ),
       child: imageUrl == null || imageUrl!.isEmpty
-          ? onErrorFallbackImg(width ?? Dim.tm5(), height ?? Dim.tm5())
+          ? onErrorFallbackImg(width, height)
           : Container(
-        width: width,
-        height: height,
-        child: FadeInImage.assetNetwork(
-          placeholderErrorBuilder: (_, f, l) => onErrorFallbackImg(
-            width ?? Dim.tm5(),
-            height ?? Dim.tm5(),
-          ),
-          fit: BoxFit.cover,
-          image: imageUrl!,
-          width: width ?? Dim.tm5(),
-          height: height ?? Dim.tm5(),
-          placeholder: _FALLBACK_IMG,
-          // headers: {
-          // 'CONTENT-TYPE': mime,
-          // 'ACCEPT':
-          // 'image/png, image/jpeg, image/jpg, application/octet-stream'
-          // },
-        ),
-      ),
+              width: width,
+              height: height,
+              child: FadeInImage.assetNetwork(
+                placeholderErrorBuilder: (_, f, l) =>
+                    onErrorFallbackImg(width, height),
+                fit: BoxFit.cover,
+                image: imageUrl!,
+                width: width,
+                height: height,
+                placeholder: _FALLBACK_IMG,
+                // headers: {
+                // 'CONTENT-TYPE': mime,
+                // 'ACCEPT':
+                // 'image/png, image/jpeg, image/jpg, application/octet-stream'
+                // },
+              ),
+            ),
     );
   }
 }
