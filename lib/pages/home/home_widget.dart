@@ -26,6 +26,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   void initState() {
     super.initState();
 
+    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+
     Get.find<ChannelsCubit>().fetch(
       workspaceId: Globals.instance.workspaceId!,
       companyId: Globals.instance.companyId,
