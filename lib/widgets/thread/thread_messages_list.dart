@@ -13,7 +13,7 @@ class ThreadMessagesList extends StatefulWidget {
 }
 
 class _ThreadMessagesListState extends State<ThreadMessagesList> {
-  Widget buildThreadMessageColumn({Message? message}) {
+  Widget buildThreadMessageColumn({ Message? message}) {
   final state = Get.find<ThreadMessagesCubit>().state;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -117,12 +117,11 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
 
   @override
   Widget build(BuildContext context) {
-    Message? message; // need to fix buildThreadMessageColumn
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
         if (state is MessagesLoadSuccess) {
-          _messages = state.messages;
+          final _messages = state.messages;
         }
         return Flexible(
           child: state is MessagesLoadSuccess
@@ -134,7 +133,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   itemCount: _messages!.length,
                   itemBuilder: (context, i) {
                     if (i == _messages!.length - 1) {
-                      return buildThreadMessageColumn(message:  _messages![i]);
+                      return buildThreadMessageColumn(message: _messages![i]);
                     } else {
                       return MessageTile( 
                         message: _messages![i],
