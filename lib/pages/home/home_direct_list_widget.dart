@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 import 'home_channel_tile.dart';
@@ -30,6 +31,7 @@ class HomeDirectListWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final channel = directState.channels[index];
                 return HomeChannelTile(
+                  onHomeChannelTileClick: () => NavigatorService.instance.navigate(channelId: channel.id),
                   title: channel.name,
                   name: channel.lastMessage?.senderName,
                   content: channel.lastMessage?.text,

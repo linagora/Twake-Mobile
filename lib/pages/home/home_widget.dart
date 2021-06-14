@@ -32,8 +32,9 @@ class _HomeWidgetState extends State<HomeWidget> {
       workspaceId: Globals.instance.workspaceId!,
       companyId: Globals.instance.companyId,
     );
-    Get.find<DirectsCubit>()
-        .fetch(workspaceId: 'direct', companyId: Globals.instance.companyId);
+    Get.find<DirectsCubit>().fetch(
+        workspaceId: Globals.instance.workspaceId!,
+        companyId: Globals.instance.companyId);
   }
 
   @override
