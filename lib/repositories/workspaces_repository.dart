@@ -66,12 +66,12 @@ class WorkspacesRepository {
   }
 
   Future<List<Workspace>> fetchRemote({required String companyId}) async {
-    final remoteResult = await this._api.get(
+    final List<dynamic> remoteResult = await this._api.get(
       endpoint: Endpoint.workspaces,
       queryParameters: {'company_id': companyId},
     );
 
-    final workspaces = remoteResult
+    final List<Workspace> workspaces = remoteResult
         .map((entry) => Workspace.fromJson(
               json: entry,
               jsonify: false,

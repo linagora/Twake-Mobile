@@ -11,24 +11,40 @@ import 'package:twake/services/navigator_service.dart';
 class HomeBinding implements Bindings {
   @override
   void dependencies() {
-    Get.put(AuthenticationCubit(), permanent: true);
-    Get.put(WorkspacesCubit(), permanent: true);
-    Get.put(CompaniesCubit(), permanent: true);
+    final authenticationCubit = AuthenticationCubit();
+    Get.put(authenticationCubit, permanent: true);
 
-    Get.put(MentionsCubit(), permanent: true);
-    Get.put(ChannelsCubit(), permanent: true);
-    Get.put(DirectsCubit(), permanent: true);
-    Get.put(ChannelMessagesCubit(), permanent: true);
-    Get.put(ThreadMessagesCubit(), permanent: true);
-    Get.put(AccountCubit(), permanent: true);
+    final companiesCubit = CompaniesCubit();
+    Get.put(companiesCubit, permanent: true);
+
+    final workspacesCubit = WorkspacesCubit();
+    Get.put(workspacesCubit, permanent: true);
+
+    final mentionsCubit = MentionsCubit();
+    Get.put(mentionsCubit, permanent: true);
+
+    final channelsCubit = ChannelsCubit();
+    Get.put(channelsCubit, permanent: true);
+
+    final directsCubit = DirectsCubit();
+    Get.put(directsCubit, permanent: true);
+
+    final channelMessagesCubit = ChannelMessagesCubit();
+    Get.put(channelMessagesCubit, permanent: true);
+
+    final threadMessagesCubit = ThreadMessagesCubit();
+    Get.put(threadMessagesCubit, permanent: true);
+
+    final accountCubit = AccountCubit();
+    Get.put(accountCubit, permanent: true);
 
     NavigatorService(
-      companiesCubit: Get.find<CompaniesCubit>(),
-      workspacesCubit: Get.find<WorkspacesCubit>(),
-      channelsCubit: Get.find<ChannelsCubit>(),
-      directsCubit: Get.find<DirectsCubit>(),
-      channelMessagesCubit: Get.find<ChannelMessagesCubit>(),
-      threadMessagesCubit: Get.find<ThreadMessagesCubit>(),
+      companiesCubit: companiesCubit,
+      workspacesCubit: workspacesCubit,
+      channelsCubit: channelsCubit,
+      directsCubit: directsCubit,
+      channelMessagesCubit: channelMessagesCubit,
+      threadMessagesCubit: threadMessagesCubit,
     );
   }
 }

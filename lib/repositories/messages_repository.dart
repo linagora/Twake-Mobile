@@ -57,10 +57,16 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async {
+    var where = 'channel_id = ?';
+    if (threadId == null) {
+      where += ' AND thread_id = NULL';
+    } else {
+      where += ' AND thread_id = ?';
+    }
     final localResult = await _storage.select(
       table: Table.message,
-      where: 'channel_id = ? AND thread_id = ?',
-      whereArgs: [channelId, threadId],
+      where: where,
+      whereArgs: [channelId, if (threadId != null) threadId],
       limit: _LIST_SIZE,
     );
     final messages =
