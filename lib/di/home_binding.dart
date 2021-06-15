@@ -3,6 +3,7 @@ import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
@@ -22,6 +23,9 @@ class HomeBinding implements Bindings {
 
     final mentionsCubit = MentionsCubit();
     Get.put(mentionsCubit, permanent: true);
+
+    final fileCubit = FileCubit();
+    Get.put(fileCubit, permanent: true);
 
     final channelsCubit = ChannelsCubit();
     Get.put(channelsCubit, permanent: true);

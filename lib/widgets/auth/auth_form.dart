@@ -101,13 +101,7 @@ class _AuthFormState extends State<AuthForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
               children: [
-                FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Text(
-                    'Let\'s get started!',
-                    style: Theme.of(context).textTheme.headline1,
-                  ),
-                ),
+          
                 SizedBox(height: Dim.heightMultiplier),
                 Center(
                   child: Text(
