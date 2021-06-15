@@ -119,7 +119,7 @@ class _MessageTileState extends State<MessageTile> {
                           );*/
                   },
                   ctx: context,
-                  onDelete: (context) {
+                  onDelete: () {
                     /*
                         onDelete(
                           context,

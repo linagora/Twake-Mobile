@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -97,10 +95,6 @@ class _MessageTileState extends State<MessageTile> {
     );
   }
 
-  void onDelete(Message message) {
-    Get.find<ChannelMessagesCubit>().delete(message: message);
-  }
-
   @override
   Widget build(BuildContext context) {
     final messageState = Get.find<ChannelMessagesCubit>().state;
@@ -151,17 +145,9 @@ class _MessageTileState extends State<MessageTile> {
                         );*/
                 },
                 ctx: context,
-                onDelete: (context) {
-                  /*
-                        onDelete(
-                          context,
-                          RemoveMessage(
-                            channelId: _message!.channelId,
-                            messageId: messageState.id,
-                            threadId: messageState.threadId,
-                          ),
-                        );*/
+                onDelete: () {
                   Get.find<ChannelMessagesCubit>().delete(message: _message);
+                  Navigator.pop(context);
                 },
                 onCopy: () {
                   onCopy(context: context, text: _message.content.originalStr);

@@ -9,7 +9,7 @@ class MessageModalSheet extends StatefulWidget {
   final String? originalStr;
   final int? responsesCount;
   final void Function(BuildContext, String?, {bool? autofocus})? onReply;
-  final void Function(BuildContext)? onDelete;
+  final void Function()? onDelete;
   final Function? onEdit;
   final Function? onCopy;
   final bool isThread;
@@ -133,7 +133,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                         ),
                       ),
                       onTap: () {
-                        widget.onDelete!(context);
+                        widget.onDelete!();
                       },
                     ),
                   if (widget.isMe && widget.responsesCount == 0)
