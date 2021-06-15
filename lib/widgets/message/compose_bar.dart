@@ -48,8 +48,8 @@ class _ComposeBar extends State<ComposeBar> {
   void initState() {
     super.initState();
 
-    widget.onTextUpdated(widget.initialText!, context);
-    if (widget.initialText!.isNotReallyEmpty) {
+    widget.onTextUpdated(widget.initialText ?? '', context);
+    if (widget.initialText?.isNotReallyEmpty ?? false) {
       _controller.text = widget.initialText!; // possibly retrieved from cache.
       setState(() {
         _canSend = true;

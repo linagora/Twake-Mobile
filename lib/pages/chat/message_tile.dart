@@ -39,10 +39,10 @@ class _MessageTileState extends State<MessageTile> {
   late Message _message;
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-  static downloadingCallback(id, status, progress) {
-    SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
-    sendPort.send([id, status, progress]);
-  }
+  // static downloadingCallback(id, status, progress) {
+  // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
+  // sendPort.send([id, status, progress]);
+  // }
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _MessageTileState extends State<MessageTile> {
 
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
-    FlutterDownloader.registerCallback(downloadingCallback);
+    // FlutterDownloader.registerCallback(downloadingCallback);
   }
 
   @override
@@ -71,8 +71,7 @@ class _MessageTileState extends State<MessageTile> {
   }
 
   void onReply(context, String? messageId, {bool autofocus: false}) {
-     
-   /*  TODO implement ThreadPage
+    /*  TODO implement ThreadPage
      
     BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
     BlocProvider.of<DraftBloc>(context)
@@ -85,9 +84,8 @@ class _MessageTileState extends State<MessageTile> {
         ),
       ),
     );
-    
-  
   }
+
   onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
     Navigator.of(context).pop();

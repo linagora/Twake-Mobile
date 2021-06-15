@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:sticky_grouped_list/sticky_grouped_list.dart';
+// import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
@@ -59,7 +59,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           child: Expanded(
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
-              child: _buildStickyGroupedListView(context, state, messages),
+              child: _buildStickyGroupedListView(context, messages),
             ),
           ),
         );
@@ -68,31 +68,30 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   }
 
   Widget _buildStickyGroupedListView(
-      BuildContext context, MessagesState state, List<Message> messages) {
+    BuildContext context,
+    List<Message> messages,
+  ) {
     // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
+    print('MESSAGES: ${messages.length}');
 
-    return StickyGroupedListView<Message, DateTime>(
-      // initialScrollIndex: lastScrollPosition,
-      // itemScrollController: _groupedItemScrollController,
-      // itemPositionsListener: _itemPositionListener,
-      key: ValueKey(state is MessagesLoadSuccess ? state.messages.length : 0),
-      order: StickyGroupedListOrder.DESC,
+    return GroupedListView<Message, DateTime>(
+      key: ValueKey(messages.length),
+      order: GroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.only(bottom: 12.0),
       reverse: true,
       elements: messages,
-      groupBy: (Message? m) {
-        final DateTime dt =
-            DateTime.fromMillisecondsSinceEpoch(m!.creationDate);
+      groupBy: (Message m) {
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.creationDate);
         return DateTime(dt.year, dt.month, dt.day);
       },
       groupComparator: (DateTime value1, DateTime value2) =>
           value1.compareTo(value2),
-      itemComparator: (Message? m1, Message? m2) {
-        return m1!.creationDate.compareTo(m2!.creationDate);
+      itemComparator: (Message m1, Message m2) {
+        return m1.creationDate.compareTo(m2.creationDate);
       },
       separator: SizedBox(height: 12.0),
-      groupSeparatorBuilder: (Message? message) {
+      groupSeparatorBuilder: (DateTime dt) {
         return GestureDetector(
           onTap: () {
             FocusManager.instance.primaryFocus!.unfocus();
@@ -101,7 +100,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             height: 53.0,
             alignment: Alignment.center,
             child: Text(
-              DateFormatter.getVerboseDate(message!.creationDate),
+              DateFormatter.getVerboseDate(dt.millisecondsSinceEpoch),
               style: TextStyle(
                 fontSize: 11.0,
                 fontWeight: FontWeight.w500,
@@ -113,18 +112,9 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-        final shouldShowSender =
-            messages.reversed.toList()[index - 1].userId != message.userId;
-
         return MessageTile(
           message: message,
-          shouldShowSender: shouldShowSender,
-          key: ValueKey(
-            message.id +
-                message.responsesCount.toString() +
-                // message.reactions.map((r) => r['name']).join() +
-                (message.content.originalStr ?? ''),
-          ),
+          key: ValueKey(message.hash),
         );
       },
     );
