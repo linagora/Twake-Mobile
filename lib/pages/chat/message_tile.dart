@@ -99,10 +99,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
     );
   }
 
-  void onDelete(Message message) {
-    Get.find<ChannelMessagesCubit>().delete(message: message);
-  }
-
   @override
   Widget build(BuildContext context) {
     final messageState = Get.find<ChannelMessagesCubit>().state;
@@ -149,17 +145,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         );*/
                 },
                 ctx: context,
-                onDelete: (context) {
-                  /*
-                        onDelete(
-                          context,
-                          RemoveMessage(
-                            channelId: _message!.channelId,
-                            messageId: messageState.id,
-                            threadId: messageState.threadId,
-                          ),
-                        );*/
+                onDelete: () {
                   Get.find<ChannelMessagesCubit>().delete(message: _message);
+                  Navigator.pop(context);
                 },
                 onCopy: () {
                   onCopy(context: context, text: _message.content.originalStr);

@@ -8,7 +8,7 @@ import 'package:twake/models/message/message.dart';
 class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message message;
   final void Function(BuildContext, String?, {bool? autofocus})? onReply;
-  final void Function(BuildContext)? onDelete;
+  final void Function()? onDelete;
   final Function? onEdit;
   final Function? onCopy;
   final BuildContext? ctx;
@@ -125,7 +125,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                         ),
                       ),
                       onTap: () {
-                        widget.onDelete!(context);
+                        widget.onDelete!();
                       },
                     ),
                   if (widget.isMe && widget.message.responsesCount == 0)
