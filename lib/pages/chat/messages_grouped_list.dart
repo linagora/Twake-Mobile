@@ -16,7 +16,7 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
-  final _itemPositionListener = ItemPositionsListener.create();
+  // final _itemPositionListener = ItemPositionsListener.create();
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +69,12 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
   Widget _buildStickyGroupedListView(
       BuildContext context, MessagesState state, List<Message> messages) {
-    var lastScrollPosition = 0;
     // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
 
     return StickyGroupedListView<Message, DateTime>(
-      initialScrollIndex: lastScrollPosition,
+      // initialScrollIndex: lastScrollPosition,
       // itemScrollController: _groupedItemScrollController,
-      itemPositionsListener: _itemPositionListener,
+      // itemPositionsListener: _itemPositionListener,
       key: ValueKey(state is MessagesLoadSuccess ? state.messages.length : 0),
       order: StickyGroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
