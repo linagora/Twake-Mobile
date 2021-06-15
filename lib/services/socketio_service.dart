@@ -33,13 +33,14 @@ class SocketIOService {
 
   SocketIOService._() {
     final opts = IO.OptionBuilder()
+        .disableAutoConnect()
         .setReconnectionDelay(3000) // wait 3 secs before reconnect
         .setPath('/socket')
-        .enableAutoConnect()
         .enableReconnection()
         .setTransports(['websocket']).build();
 
-    _socket = IO.io(Globals.instance.host, opts);
+    // _socket = IO.io(Globals.instance.host, opts);
+    _socket = IO.io('http://34.123.51.187:8000', opts);
 
     // Set up all the event handlers
     _socket.onConnect((_) {
@@ -75,6 +76,8 @@ class SocketIOService {
         _checkConnectionHealth();
       }
     });
+
+    _socket.connect();
   }
 
   static SocketIOService get instance => _service;

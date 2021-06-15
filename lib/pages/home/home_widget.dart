@@ -106,7 +106,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                   borderRadius: BorderRadius.circular(10),
                                   width: 36,
                                   height: 36,
-                                  imageUrl: workspaceState.selected?.logo,
+                                  imageUrl: workspaceState.selected?.logo ?? '',
                                 ),
                                 SizedBox(
                                   width: 5,

@@ -145,6 +145,7 @@ class SynchronizationService {
         _subRooms.firstWhere((r) => r.type == RoomType.notifications);
 
     _socketio.subscribe(room: badgesRoom.key);
+    Logger().v('Subscribed to badges: ${badgesRoom.key}');
   }
 
   void subscribeToMessages({required String channelId}) {

@@ -40,7 +40,7 @@ class HomeChannelTile extends StatelessWidget {
                     child: RoundedImage(
                       width: 54,
                       height: 54,
-                      imageUrl: imageUrl,
+                      imageUrl: imageUrl ?? '',
                     ),
                   )
                 ],
@@ -51,7 +51,9 @@ class HomeChannelTile extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    SizedBox(height: 4,),
+                    SizedBox(
+                      height: 4,
+                    ),
                     Row(
                       children: [
                         Expanded(

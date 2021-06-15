@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 
@@ -48,7 +48,7 @@ class UserThumbnail extends StatelessWidget {
       );
     } else if (thumbnailUrl != null && thumbnailUrl!.isNotReallyEmpty) {
       return RoundedImage(
-        imageUrl: thumbnailUrl,
+        imageUrl: thumbnailUrl ?? '',
         width: size,
         height: size,
       );
@@ -119,4 +119,3 @@ class RoundedShimmer extends StatelessWidget {
     );
   }
 }
- 

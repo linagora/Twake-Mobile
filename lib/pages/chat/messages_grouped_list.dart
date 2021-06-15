@@ -72,7 +72,6 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
     List<Message> messages,
   ) {
     // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
-    print('MESSAGES: ${messages.length}');
 
     return GroupedListView<Message, DateTime>(
       key: ValueKey(messages.length),

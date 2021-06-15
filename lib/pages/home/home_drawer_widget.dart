@@ -38,7 +38,7 @@ class HomeDrawerWidget extends StatelessWidget {
                             child: RoundedImage(
                               width: 56,
                               height: 56,
-                              imageUrl: companyState.selected?.logo,
+                              imageUrl: companyState.selected?.logo ?? '',
                             )),
                         Positioned.fill(
                           left: 82,
@@ -129,7 +129,8 @@ class HomeDrawerWidget extends StatelessWidget {
                               logo: workSpace.logo,
                               isSelected:
                                   workSpace.id == workspaceState.selected?.id,
-                              onWorkspaceDrawerTileTap: () => _selectWorkspace(context, workSpace.id),
+                              onWorkspaceDrawerTileTap: () =>
+                                  _selectWorkspace(context, workSpace.id),
                             );
                           }),
                     );
@@ -174,7 +175,7 @@ class HomeDrawerWidget extends StatelessWidget {
                           return Row(
                             children: [
                               RoundedImage(
-                                imageUrl: accountState.account.thumbnail,
+                                imageUrl: accountState.account.thumbnail ?? '',
                                 width: 24,
                                 height: 24,
                               ),
@@ -211,8 +212,7 @@ class HomeDrawerWidget extends StatelessWidget {
   }
 
   void _selectWorkspace(BuildContext context, String workSpaceId) {
-    Get.find<WorkspacesCubit>()
-        .selectWorkspace(workspaceId: workSpaceId);
+    Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workSpaceId);
 
     Get.find<ChannelsCubit>().fetch(
       workspaceId: Globals.instance.workspaceId!,
@@ -264,12 +264,13 @@ class WorkspaceDrawerTile extends StatelessWidget {
                     decoration: BoxDecoration(
                         border: Border.all(
                           width: 3,
-                          color:
-                              isSelected ? Color(0xff004dff) : Colors.transparent,
+                          color: isSelected
+                              ? Color(0xff004dff)
+                              : Colors.transparent,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(14))),
                     child: RoundedImage(
-                      imageUrl: logo,
+                      imageUrl: logo ?? '',
                       width: 44,
                       height: 44,
                       borderRadius: BorderRadius.circular(10),
