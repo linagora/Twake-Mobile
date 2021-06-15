@@ -22,6 +22,7 @@ class _MessagesGroupedListState
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChannelMessagesCubit, MessagesState>(
+      bloc: Get.find<ChannelMessagesCubit>(),
       builder: (context, state) {
         List<Message> messages = <Message>[];
         final isDirect = true; //pass it from chat  state.parentChannel is Direct;

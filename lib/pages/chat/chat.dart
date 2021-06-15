@@ -8,6 +8,7 @@ import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
+import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
@@ -28,9 +29,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         leadingWidth: 53.0,
         leading: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+          onTap: () => popBack(),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Icon(
@@ -52,6 +51,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       ),
       // ),
       body: BlocBuilder<ChannelMessagesCubit, MessagesState>(
+        bloc: Get.find<ChannelMessagesCubit>(),
         builder: (_, messagesState) => Container(
           child: Column(
             mainAxisSize: MainAxisSize.min,
