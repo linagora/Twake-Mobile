@@ -26,5 +26,5 @@ class WorkspacesLoadSuccess extends WorkspacesState {
   WorkspacesLoadSuccess({required this.workspaces, this.selected});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [workspaces, selected];
 }

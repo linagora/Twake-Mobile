@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
@@ -26,6 +28,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   void initState() {
     super.initState();
 
+    Get.find<CompaniesCubit>().fetch();
     Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
 
     Get.find<ChannelsCubit>().fetch(
@@ -35,6 +38,8 @@ class _HomeWidgetState extends State<HomeWidget> {
     Get.find<DirectsCubit>().fetch(
         workspaceId: Globals.instance.workspaceId!,
         companyId: Globals.instance.companyId);
+
+    Get.find<AccountCubit>().fetch();
   }
 
   @override
