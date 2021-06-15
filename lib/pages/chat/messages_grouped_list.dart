@@ -15,8 +15,7 @@ class MessagesGroupedList extends StatefulWidget {
   State<StatefulWidget> createState() => _MessagesGroupedListState();
 }
 
-class _MessagesGroupedListState
-    extends State<MessagesGroupedList> {
+class _MessagesGroupedListState extends State<MessagesGroupedList> {
   final _itemPositionListener = ItemPositionsListener.create();
 
   @override
@@ -24,14 +23,14 @@ class _MessagesGroupedListState
     return BlocBuilder<ChannelMessagesCubit, MessagesState>(
       builder: (context, state) {
         List<Message> messages = <Message>[];
-        final isDirect = true; //pass it from chat  state.parentChannel is Direct;
+        final isDirect =
+            true; //pass it from chat  state.parentChannel is Direct;
 
         if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {
             return EmptyChatContainer(
-              isDirect: isDirect,
-              userName: 'Test'// pass it from chat 
-            );
+                isDirect: isDirect, userName: 'Test' // pass it from chat
+                );
           }
           messages = state.messages;
         } else if (state is MessagesBeforeLoadInProgress) {
@@ -70,37 +69,11 @@ class _MessagesGroupedListState
   Widget _buildStickyGroupedListView(
       BuildContext context, MessagesState state, List<Message> messages) {
     var lastScrollPosition = 0;
-    final _groupedItemScrollController = GroupedItemScrollController();
-    try {
-      if (state is MessagesLoadSuccess) {/*
-        if (state == MessagesBeforeLoadInProgress ) {
-          lastScrollPosition =
-              _itemPositionListener.itemPositions.value.last.index;
-        }  else if (state == MessageLoadedType.afterDelete) {
-          lastScrollPosition =
-              _itemPositionListener.itemPositions.value.first.index;
-        } else {
-          final ProfileState profileState = context.read<ProfileBloc>().state;
-          if (profileState is ProfileLoaded) {
-            final badge =
-                profileState.getBadgeForChannel(state.parentChannel!.id);
-            if (badge > 1) {
-              Future.delayed(Duration(milliseconds: 300), () {
-                _groupedItemScrollController.jumpTo(
-                    index:
-                        badge > messages.length ? messages.length - 1 : badge);
-              });
-            }
-          }
-        }*/
-      } 
-    } catch (exception) {
-      lastScrollPosition = 0;
-    }
+    // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
 
     return StickyGroupedListView<Message, DateTime>(
       initialScrollIndex: lastScrollPosition,
-      itemScrollController: _groupedItemScrollController,
+      // itemScrollController: _groupedItemScrollController,
       itemPositionsListener: _itemPositionListener,
       key: ValueKey(state is MessagesLoadSuccess ? state.messages.length : 0),
       order: StickyGroupedListOrder.DESC,
@@ -140,8 +113,8 @@ class _MessagesGroupedListState
         );
       },
       indexedItemBuilder: (_, message, index) {
-     
-        final shouldShowSender = messages.reversed.toList()[index - 1].userId != message.userId;
+        final shouldShowSender =
+            messages.reversed.toList()[index - 1].userId != message.userId;
 
         return MessageTile(
           message: message,
@@ -149,7 +122,7 @@ class _MessagesGroupedListState
           key: ValueKey(
             message.id +
                 message.responsesCount.toString() +
-               // message.reactions.map((r) => r['name']).join() +
+                // message.reactions.map((r) => r['name']).join() +
                 (message.content.originalStr ?? ''),
           ),
         );
