@@ -19,7 +19,7 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
       child: FittedBox(
         child: Container(
           margin: EdgeInsets.only(right: 8),
-          padding: EdgeInsets.all(5),
+          padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
             color: Color.fromRGBO(249, 247, 255, 1),
             border: Border.all(color: StylesConfig.accentColorRGB),

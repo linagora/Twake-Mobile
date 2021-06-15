@@ -1,47 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/models/message/message.dart';
 
-class MessageModalSheet extends StatefulWidget {
-  final String? userId;
-  final String? messageId;
-  final String? originalStr;
-  final int? responsesCount;
+class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
+  final Message message;
   final void Function(BuildContext, String?, {bool? autofocus})? onReply;
   final void Function(BuildContext)? onDelete;
   final Function? onEdit;
   final Function? onCopy;
-  final bool isThread;
   final BuildContext? ctx;
   final bool isMe;
 
   const MessageModalSheet({
-    this.userId,
-    this.messageId,
-    this.responsesCount,
-    this.isThread: false,
+    required this.message,
     this.onReply,
     this.onDelete,
     this.onEdit,
     this.onCopy,
     this.ctx,
-    this.originalStr,
     required this.isMe,
     Key? key,
   }) : super(key: key);
 
   @override
-  _MessageModalSheetState createState() => _MessageModalSheetState();
+  _MessageModalSheetState createState() => _MessageModalSheetState<T>();
 }
 
-class _MessageModalSheetState extends State<MessageModalSheet> {
+class _MessageModalSheetState<T extends BaseMessagesCubit>
+    extends State<MessageModalSheet> {
   bool _emojiVisible = false;
 
   onEmojiSelected(String emojiCode) {
-    //BlocProvider.of<SingleMessageBloc>(widget.ctx!)
-    //    .add(UpdateReaction(emojiCode: emojiCode));
-    //  FocusManager.instance.primaryFocus!.unfocus();
+    Get.find<T>().react(message: widget.message, reaction: emojiCode);
+    FocusManager.instance.primaryFocus!.unfocus();
   }
 
   void showEmojiBoard() async {
@@ -62,8 +56,6 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
 
   @override
   Widget build(BuildContext context) {
-    //  final bool isMe = BlocProvider.of<ProfileBloc>(context).isMe(widget.userId);
-
     return _emojiVisible
         ? buildEmojiBoard()
         : SafeArea(
@@ -94,7 +86,7 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       ),
                       onTap: widget.onEdit as void Function()?,
                     ),
-                  if (!widget.isThread)
+                  if (widget.message.threadId != null)
                     ListTile(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
@@ -109,17 +101,17 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
-                        widget.onReply!(context, widget.messageId,
+                        widget.onReply!(context, widget.message.id,
                             autofocus: true);
                       },
                     ),
-                  if (!widget.isThread)
+                  if (widget.message.threadId != null)
                     Divider(
                       thickness: 1.0,
                       height: 1.0,
                       color: Color(0xffEEEEEE),
                     ),
-                  if (widget.isMe && widget.responsesCount == 0)
+                  if (widget.isMe && widget.message.responsesCount == 0)
                     ListTile(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
@@ -136,13 +128,13 @@ class _MessageModalSheetState extends State<MessageModalSheet> {
                         widget.onDelete!(context);
                       },
                     ),
-                  if (widget.isMe && widget.responsesCount == 0)
+                  if (widget.isMe && widget.message.responsesCount == 0)
                     Divider(
                       thickness: 1.0,
                       height: 1.0,
                       color: Color(0xffEEEEEE),
                     ),
-                  widget.originalStr!.isEmpty
+                  widget.message.content.originalStr?.isEmpty ?? true
                       ? Container()
                       : ListTile(
                           contentPadding:

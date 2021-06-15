@@ -13,8 +13,8 @@ class ThreadMessagesList extends StatefulWidget {
 }
 
 class _ThreadMessagesListState extends State<ThreadMessagesList> {
-  Widget buildThreadMessageColumn( Message message) {
-  final state = Get.find<ThreadMessagesCubit>().state;
+  Widget buildThreadMessageColumn(Message message) {
+    final state = Get.find<ThreadMessagesCubit>().state;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,7 +27,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 12.0),
-          child: MessageTile(
+          child: MessageTile<ThreadMessagesCubit>(
             message: message,
             hideShowAnswers: true,
             key: ValueKey(message.content.originalStr),
@@ -64,7 +64,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
           height: 12.0,
         ),
         if (state is MessagesLoadSuccess)
-          MessageTile(
+          MessageTile<ThreadMessagesCubit>(
             message: state.messages.last,
             key: ValueKey(state.messages.last),
           ),
@@ -121,7 +121,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
         if (state is MessagesLoadSuccess) {
-           _messages = state.messages;
+          _messages = state.messages;
         }
         return Flexible(
           child: state is MessagesLoadSuccess
@@ -133,16 +133,17 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   itemCount: _messages.length,
                   itemBuilder: (context, i) {
                     if (i == _messages.length - 1) {
-                      return buildThreadMessageColumn( _messages[i]);
+                      return buildThreadMessageColumn(_messages[i]);
                     } else {
-                      return MessageTile( 
+                      return MessageTile<ThreadMessagesCubit>(
                         message: _messages[i],
                         key: ValueKey(_messages[i]),
                       );
                     }
                   },
                 )
-              : SingleChildScrollView(child: buildThreadMessageColumn( _messages[0])),
+              : SingleChildScrollView(
+                  child: buildThreadMessageColumn(_messages[0])),
         );
       },
     );

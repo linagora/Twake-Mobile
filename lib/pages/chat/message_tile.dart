@@ -115,12 +115,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
             context: context,
             isScrollControlled: true,
             builder: (_) {
-              return MessageModalSheet(
-                originalStr: _message.content.originalStr,
-                userId: _message.userId,
-                messageId: _message.id,
-                responsesCount: _message.responsesCount,
-                isThread: _message.threadId != null || _hideShowAnswers,
+              return MessageModalSheet<T>(
+                message: _message,
                 isMe: _isMyMessage,
                 //  onReply: onReply,
                 onEdit: () {
