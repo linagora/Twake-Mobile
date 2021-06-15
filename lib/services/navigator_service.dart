@@ -118,12 +118,21 @@ class NavigatorService {
       SynchronizationService.instance.subscribeToBadges();
     }
 
-    channelsCubit.selectChannel(channelId: channelId);
+    if (workspaceId != null && workspaceId == 'direct') {
+      directsCubit.selectChannel(channelId: channelId);
 
-    if (workspaceId != null && workspaceId == 'direct')
-      Get.toNamed(RoutePaths.directMessages);
-    else
-      Get.toNamed(RoutePaths.channelMessages);
+      Get.toNamed(RoutePaths.directMessages)?.then((_) {
+        channelMessagesCubit.reset();
+        directsCubit.clearSelection();
+      });
+    } else {
+      channelsCubit.selectChannel(channelId: channelId);
+
+      Get.toNamed(RoutePaths.channelMessages)?.then((_) {
+        channelMessagesCubit.reset();
+        channelsCubit.clearSelection();
+      });
+    }
 
     await channelMessagesCubit.fetch(channelId: channelId);
 

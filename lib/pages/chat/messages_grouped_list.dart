@@ -24,8 +24,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       bloc: Get.find<ChannelMessagesCubit>(),
       builder: (context, state) {
         List<Message> messages = <Message>[];
-        final isDirect =
-            true; //pass it from chat  state.parentChannel is Direct;
+        final isDirect = true; // pass it from chat
 
         if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {

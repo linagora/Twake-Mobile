@@ -228,14 +228,18 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     ));
   }
 
-  void clearSelection({required Channel channel}) {
+  void clearSelection() {
     Globals.instance.channelIdSet = null;
+
+    final selected = (state as ChannelsLoadedSuccess).selected;
+
+    if (selected == null) return;
 
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
     SynchronizationService.instance
-        .unsubscribeFromMessages(channelId: channel.id);
+        .unsubscribeFromMessages(channelId: selected.id);
 
     emit(ChannelsLoadedSuccess(
       channels: channels,

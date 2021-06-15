@@ -59,7 +59,7 @@ class MessagesRepository {
   }) async {
     var where = 'channel_id = ?';
     if (threadId == null) {
-      where += ' AND thread_id = NULL';
+      where += ' AND thread_id IS NULL';
     } else {
       where += ' AND thread_id = ?';
     }
@@ -119,13 +119,19 @@ class MessagesRepository {
     required String beforeMessageId,
     required int beforeDate,
   }) async {
+    var where = 'channel_id = ? AND creation_date < ?';
+    if (threadId == null) {
+      where += ' AND thread_id IS NULL';
+    } else {
+      where += ' AND thread_id = ?';
+    }
     final localResult = await _storage.select(
       table: Table.message,
-      where: 'channel_id = ? AND thread_id = ? AND creation_date < ?',
+      where: where,
       whereArgs: [
         channelId ?? Globals.instance.channelId,
-        threadId,
         beforeDate,
+        if (threadId != null) threadId,
       ],
       limit: _LIST_SIZE,
     );

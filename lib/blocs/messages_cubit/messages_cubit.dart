@@ -306,6 +306,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       }
     }
   }
+
+  void reset() {
+    emit(MessagesInitial());
+  }
 }
 
 class ChannelMessagesCubit extends BaseMessagesCubit {
