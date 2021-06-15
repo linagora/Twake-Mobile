@@ -7,7 +7,7 @@ import 'package:twake/models/message/message.dart';
 
 class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message message;
-  final void Function(BuildContext, String?, {bool? autofocus})? onReply;
+  final void Function(Message)? onReply;
   final void Function()? onDelete;
   final Function? onEdit;
   final Function? onCopy;
@@ -86,7 +86,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                       ),
                       onTap: widget.onEdit as void Function()?,
                     ),
-                  if (widget.message.threadId != null)
+                //  if (widget.message.threadId != null)
                     ListTile(
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 16.0),
@@ -101,8 +101,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                       ),
                       onTap: () {
                         Navigator.of(context).pop();
-                        widget.onReply!(context, widget.message.id,
-                            autofocus: true);
+                        widget.onReply!(widget.message);
                       },
                     ),
                   if (widget.message.threadId != null)
