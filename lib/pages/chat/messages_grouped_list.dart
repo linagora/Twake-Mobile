@@ -21,6 +21,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChannelMessagesCubit, MessagesState>(
+      bloc: Get.find<ChannelMessagesCubit>(),
       builder: (context, state) {
         List<Message> messages = <Message>[];
         final isDirect =

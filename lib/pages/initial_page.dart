@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
+import 'package:twake/config/dimensions_config.dart' show Dim;
 
 import 'home/home_widget.dart';
 
@@ -40,25 +41,32 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: BlocBuilder<AuthenticationCubit, AuthenticationState>(
-        bloc: Get.find<AuthenticationCubit>(),
-        builder: (ctx, state) {
-          if (state is AuthenticationInProgress) {
-            return buildSplashScreen();
-          }
-          if (state is AuthenticationInitial) {
-            return AuthPage();
-          }
-          if (state is AuthenticationSuccess) {
-            return HomeWidget();
-          }
-          if (state is AuthenticationFailure) {
-            return AuthPage();
-          } else {
-            return buildSplashScreen();
-          }
+    return LayoutBuilder(
+      builder: (context, constraints) => OrientationBuilder(
+        builder: (context, orientation) {
+          Dim.init(constraints, orientation);
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: BlocBuilder<AuthenticationCubit, AuthenticationState>(
+              bloc: Get.find<AuthenticationCubit>(),
+              builder: (ctx, state) {
+                if (state is AuthenticationInProgress) {
+                  return buildSplashScreen();
+                }
+                if (state is AuthenticationInitial) {
+                  return AuthPage();
+                }
+                if (state is AuthenticationSuccess) {
+                  return HomeWidget();
+                }
+                if (state is AuthenticationFailure) {
+                  return AuthPage();
+                } else {
+                  return buildSplashScreen();
+                }
+              },
+            ),
+          );
         },
       ),
     );
