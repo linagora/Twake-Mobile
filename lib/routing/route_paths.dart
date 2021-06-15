@@ -1,6 +1,5 @@
 class RoutePaths {
-  static const workspacesManagement = '/workspaces/management';
-  static const channelMessages = '/channel/messages';
-  static const directMessages = '/direct/messages';
-  static const messageThread = '/message/thread';
+  static const channelMessages = '/initial/channel/messages';
+  static const directMessages = '/initial/direct/messages';
+  static const messageThread = '/initial/message/thread';
 }
