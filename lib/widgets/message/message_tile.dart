@@ -115,7 +115,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           );*/
                   },
                   ctx: context,
-                  onDelete: (context) {
+                  onDelete: () {
                     /*
                         onDelete(
                           context,
