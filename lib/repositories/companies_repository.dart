@@ -34,7 +34,8 @@ class CompaniesRepository {
   }
 
   Future<List<Company>> fetchRemote() async {
-    final remoteResult = await this._api.get(endpoint: Endpoint.companies);
+    final List<dynamic> remoteResult =
+        await this._api.get(endpoint: Endpoint.companies);
 
     final companies = remoteResult
         .map((entry) => Company.fromJson(json: entry, jsonify: false))

@@ -120,13 +120,17 @@ class NavigatorService {
 
     channelsCubit.selectChannel(channelId: channelId);
 
+    if (workspaceId != null && workspaceId == 'direct')
+      Get.toNamed(RoutePaths.directMessages);
+    else
+      Get.toNamed(RoutePaths.channelMessages);
+
     await channelMessagesCubit.fetch(channelId: channelId);
 
     if (threadId != null) {
       channelMessagesCubit.selectThread(messageId: threadId);
+      Get.toNamed(RoutePaths.messageThread);
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
-
-    Get.toNamed(RoutePaths.channelMessages);
   }
 }

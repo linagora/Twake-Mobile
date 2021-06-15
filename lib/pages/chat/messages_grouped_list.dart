@@ -112,7 +112,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-        return MessageTile(
+        return MessageTile<ChannelMessagesCubit>(
           message: message,
           key: ValueKey(message.hash),
         );

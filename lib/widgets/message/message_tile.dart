@@ -1,6 +1,5 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -16,7 +15,7 @@ import 'package:twake/widgets/message/message_modal_sheet.dart';
 
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
-class MessageTile extends StatefulWidget {
+class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool hideShowAnswers;
   final Message message;
 
@@ -27,10 +26,11 @@ class MessageTile extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MessageTileState createState() => _MessageTileState();
+  _MessageTileState createState() => _MessageTileState<T>();
 }
 
-class _MessageTileState extends State<MessageTile> {
+class _MessageTileState<T extends BaseMessagesCubit>
+    extends State<MessageTile> {
   late bool _hideShowAnswers;
   late Message _message;
 
@@ -217,21 +217,19 @@ class _MessageTileState extends State<MessageTile> {
                       crossAxisAlignment: WrapCrossAlignment.center,
                       textDirection: TextDirection.ltr,
                       children: [
-                        /*
-                              ...messageState.reactions!.map((r) {
-                                return Reaction(
-                                  r['name'],
-                                  r['count'],
-                                  T == DirectsBloc ? 'direct' : null,
-                                );
-                              }),
-                              if (messageState.responsesCount! > 0 &&
-                                  messageState.threadId == null &&
-                                  !_hideShowAnswers)
-                                Text(
-                                  'See all answers (${messageState.responsesCount})',
-                                  style: StylesConfig.miniPurple,
-                                ),*/
+                        ..._message.reactions.map((r) {
+                          return Reaction<T>(
+                            message: _message,
+                            reaction: r,
+                          );
+                        }),
+                        if (_message.responsesCount > 0 &&
+                            _message.threadId == null &&
+                            !_hideShowAnswers)
+                          Text(
+                            'See all answers (${_message.responsesCount})',
+                            style: StylesConfig.miniPurple,
+                          ),
                       ],
                     ),
                   ],

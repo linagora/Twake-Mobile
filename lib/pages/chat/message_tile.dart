@@ -3,11 +3,10 @@ import 'dart:ui';
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
@@ -16,9 +15,11 @@ import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
+import 'package:twake/widgets/common/reaction.dart';
+
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
-class MessageTile extends StatefulWidget {
+class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool hideShowAnswers;
   final bool shouldShowSender;
   final Message message;
@@ -30,10 +31,11 @@ class MessageTile extends StatefulWidget {
     Key? key,
   }) : super(key: key);
   @override
-  _MessageTileState createState() => _MessageTileState();
+  _MessageTileState createState() => _MessageTileState<T>();
 }
 
-class _MessageTileState extends State<MessageTile> {
+class _MessageTileState<T extends BaseMessagesCubit>
+    extends State<MessageTile> {
   late bool _hideShowAnswers;
   late bool _shouldShowSender;
   late Message _message;
@@ -194,10 +196,7 @@ class _MessageTileState extends State<MessageTile> {
                 child: (!_isMyMessage && _shouldShowSender)
                     ? UserThumbnail(
                         thumbnailUrl: _message.thumbnail,
-                        userName:
-                            (_message.sender != null || _message.sender.isEmpty)
-                                ? ''
-                                : _message.sender,
+                        userName: _message.sender,
                         size: 24.0,
                       )
                     : SizedBox(width: 24.0, height: 24.0),
@@ -251,22 +250,19 @@ class _MessageTileState extends State<MessageTile> {
                               crossAxisAlignment: WrapCrossAlignment.center,
                               textDirection: TextDirection.ltr,
                               children: [
-                                //TODO add reactions
-                                /*   ...messageState.reactions!.map((r) {
-                                        return Reaction(
-                                          r['name'],
-                                          r['count'],
-                                          T == DirectsBloc ? 'direct' : null,
-                                        );
-                                      }),
-                                      if (messageState.responsesCount! > 0 &&
-                                          messageState.threadId == null &&
-                                          !_hideShowAnswers)
-                                        Text(
-                                          'See all answers (${messageState.responsesCount})',
-                                          style: StylesConfig.miniPurple,
-                                        ),
-                                  */
+                                ..._message.reactions.map((r) {
+                                  return Reaction<T>(
+                                    message: _message,
+                                    reaction: r,
+                                  );
+                                }),
+                                if (_message.responsesCount > 0 &&
+                                    _message.threadId == null &&
+                                    !_hideShowAnswers)
+                                  Text(
+                                    'See all answers (${_message.responsesCount})',
+                                    style: StylesConfig.miniPurple,
+                                  ),
                               ],
                             ),
                           ],
