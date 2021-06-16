@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/di/home_binding.dart';
 import 'package:twake/routing/route_pages.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/init_service.dart';
 
 void main() async {
@@ -16,7 +17,7 @@ void main() async {
     theme: StylesConfig.lightTheme,
     title: 'Twake',
     getPages: routePages,
-    initialRoute: '/initial',
+    initialRoute: RoutePaths.initial,
     initialBinding: HomeBinding(),
   ));
 }
