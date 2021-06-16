@@ -237,6 +237,7 @@ class MessagesRepository {
       'workspace_id': Globals.instance.workspaceId,
       'channel_id': message.channelId,
       'thread_id': message.threadId,
+      'message_id': message.id,
       'original_str': message.content.originalStr,
       'prepared': message.content.prepared,
     };
