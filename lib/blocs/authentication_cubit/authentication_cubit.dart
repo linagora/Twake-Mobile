@@ -60,7 +60,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       await InitService.syncData();
     } catch (e) {
-      Logger().e('Error occured during initial data sync:\n$e');
+      Logger().e('Error occurred during initial data sync:\n$e');
       emit(PostAuthenticationSyncFailed());
       return;
     }

@@ -12,22 +12,23 @@ class TwakeWebView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: Color(0xff3840f7),
-            ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Color(0xff3840f7),
           ),
         ),
-        body: SafeArea(
-          child: WebView(
-            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-            javascriptMode: JavascriptMode.unrestricted,
-            initialUrl: initUrl,
-          ),
-        ));
+      ),
+      body: SafeArea(
+        child: WebView(
+          initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: initUrl,
+        ),
+      ),
+    );
   }
 }

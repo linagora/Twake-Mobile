@@ -30,3 +30,14 @@ class AccountLoadSuccess extends AccountState {
   @override
   List<Object?> get props => [hash];
 }
+
+class AccountLoadFailure extends AccountState {
+  final String message;
+
+  const AccountLoadFailure({
+    required this.message,
+  });
+
+  @override
+  List<Object?> get props => [message];
+}

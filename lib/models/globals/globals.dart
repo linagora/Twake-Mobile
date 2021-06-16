@@ -156,7 +156,7 @@ class Globals extends BaseModel {
               _connection.sink.add(Connection.connected);
             }
           }).onError((e, _) {
-            Logger().e('Coudn\'t connect to host:\n$e');
+            Logger().e('Couldn\'t connect to host:\n$e');
             if (isNetworkConnected) {
               isNetworkConnected = false;
               _connection.sink.add(Connection.disconnected);

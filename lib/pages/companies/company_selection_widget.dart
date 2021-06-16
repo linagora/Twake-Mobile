@@ -40,7 +40,7 @@ class CompanySelectionWidget extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(10),
                                   width: 60,
                                   height: 60,
-                                  imageUrl: companyState.selected?.logo,
+                                  imageUrl: companyState.selected!.logo ?? '',
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(

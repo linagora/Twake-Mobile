@@ -5,7 +5,7 @@ import 'package:twake/blocs/companies_bloc/companies_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/sheet_bloc/sheet_bloc.dart';
 import 'package:twake/pages/feed/feed.dart';
-import 'package:twake/pages/profile/settings.dart';
+import 'package:twake/pages/profile/account_settings.dart';
 import 'package:twake/repositories/sheet_repository.dart';
 import 'package:twake/widgets/sheets/draggable_scrollable.dart';
 

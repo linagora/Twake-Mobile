@@ -21,14 +21,16 @@ class AccountCubit extends Cubit<AccountState> {
   Future<void> fetch({String? userId}) async {
     emit(AccountLoadInProgress());
 
-    if (userId == null && Globals.instance.userId != null)
+    if (userId == null && Globals.instance.userId != null) {
       userId = Globals.instance.userId;
+    }
 
     await for (var account in _repository.fetch(userId: userId)) {
       emit(AccountLoadSuccess(account: account, hash: account.hash));
     }
   }
 
+  // Fetch the user from local storage and return it, without updating cubit's state
   Future<Account> fetchStateless({required String userId}) async {
     final account = await _repository.localFetch(userId: userId);
 

@@ -9,7 +9,7 @@ import 'package:twake/blocs/workspaces_bloc/workspaces_bloc.dart';
 import 'package:twake/models/channel.dart';
 import 'package:twake/pages/edit_channel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/pages/profile/settings.dart';
+import 'package:twake/pages/profile/account_settings.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/twake_web_view.dart';

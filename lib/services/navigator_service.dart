@@ -1,14 +1,17 @@
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/pages/twake_web_view.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class NavigatorService {
   static late NavigatorService _service;
   final _pushNotifications = PushNotificationsService.instance;
+  final AccountCubit accountCubit;
   final CompaniesCubit companiesCubit;
   final WorkspacesCubit workspacesCubit;
   final ChannelsCubit channelsCubit;
@@ -17,6 +20,7 @@ class NavigatorService {
   final ThreadMessagesCubit threadMessagesCubit;
 
   factory NavigatorService({
+    required AccountCubit accountCubit,
     required CompaniesCubit companiesCubit,
     required WorkspacesCubit workspacesCubit,
     required ChannelsCubit channelsCubit,
@@ -25,6 +29,7 @@ class NavigatorService {
     required ThreadMessagesCubit threadMessagesCubit,
   }) {
     _service = NavigatorService._(
+      accountCubit: accountCubit,
       companiesCubit: companiesCubit,
       workspacesCubit: workspacesCubit,
       channelsCubit: channelsCubit,
@@ -36,6 +41,7 @@ class NavigatorService {
   }
 
   NavigatorService._({
+    required this.accountCubit,
     required this.companiesCubit,
     required this.workspacesCubit,
     required this.channelsCubit,
@@ -141,5 +147,14 @@ class NavigatorService {
       Get.toNamed(RoutePaths.messageThread);
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
+  }
+
+  Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
+    await accountCubit.fetch();
+    Get.toNamed(shouldShowInfo ? RoutePaths.accountInfo : RoutePaths.accountSettings);
+  }
+
+  void openTwakeWebView(String url) {
+    Get.to(TwakeWebView(url));
   }
 }

@@ -43,6 +43,7 @@ class HomeBinding implements Bindings {
     Get.put(accountCubit, permanent: true);
 
     NavigatorService(
+      accountCubit: accountCubit,
       companiesCubit: companiesCubit,
       workspacesCubit: workspacesCubit,
       channelsCubit: channelsCubit,
