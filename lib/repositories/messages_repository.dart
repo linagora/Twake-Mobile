@@ -342,6 +342,6 @@ class MessagesRepository {
   }
 
   Future<void> saveOne({required Message message}) async {
-    await _storage.insert(table: Table.channel, data: message);
+    await _storage.insert(table: Table.message, data: message);
   }
 }
