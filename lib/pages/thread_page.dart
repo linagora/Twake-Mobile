@@ -106,7 +106,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               initialText: (messagesState
                                       is MessageEditInProgress)
                                   ? messagesState.message.content.originalStr
-                                  : messagesState.parentMessage!.draft,
+                                  : '',
                               onMessageSend: (content, context) async {
                                 if (messagesState is MessageEditInProgress)
                                   Get.find<ThreadMessagesCubit>().edit(
