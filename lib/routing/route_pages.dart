@@ -24,7 +24,7 @@ final routePages = [
       ),
       GetPage(
         name: RoutePaths.messageThread.name,
-        page: () => ThreadPage<BaseChannelsCubit>(),
+        page: () => ThreadPage<ChannelsCubit>(),
         transition: Transition.native,
       ),
       GetPage(
