@@ -41,21 +41,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
     _message = widget.message;
   }
 
-  void onReply(context, String? messageId, {bool autofocus: false}) {
-    /*  TODO implement ThreadPage
-     
-    BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
-    BlocProvider.of<DraftBloc>(context)
-        .add(LoadDraft(id: _message!.id, type: DraftType.thread));  */
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ThreadPage(
-          autofocus: autofocus,
-        ),
-      ),
-    );
-  }
+  void onReply(context, String? messageId, {bool autofocus: false}) {}
 
   onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
@@ -89,47 +75,19 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   isMe: _isMyMessage,
                   //  onReply: onReply,
                   onEdit: () {
-                    /*
-                          Navigator.of(ctx).pop();
-                          // ignore: close_sinks
-                          final smbloc = ctx.read<SingleMessageBloc>();
-                          // ignore: close_sinks
-                          final mebloc = ctx.read<MessageEditBloc>();
-                          mebloc.add(
-                            EditMessage(
-                              originalStr: _message!.content!.originalStr ?? '',
-                              onMessageEditComplete: (text, context) {
-                                // smbloc gets closed if
-                                // listview disposes of message tile
-                                smbloc.add(
-                                  UpdateContent(
-                                    content: text,
-                                    workspaceId:
-                                        T == DirectsBloc ? 'direct' : null,
-                                  ),
-                                );
-                                mebloc.add(CancelMessageEdit());
-                                FocusManager.instance.primaryFocus!.unfocus();
-                              },
-                            ),
-                          );*/
+                    Get.find<ThreadMessagesCubit>()
+                        .startEdit(message: _message);
+                    Navigator.of(context).pop();
                   },
                   ctx: context,
                   onDelete: () {
-                    /*
-                        onDelete(
-                          context,
-                          RemoveMessage(
-                            channelId: _message!.channelId,
-                            messageId: messageState.id,
-                            threadId: messageState.threadId,
-                          ),
-                        );*/
-                    Get.find<ChannelMessagesCubit>().delete(message: _message);
+                    Get.find<ThreadMessagesCubit>().delete(message: _message);
+                    Navigator.pop(context);
                   },
                   onCopy: () {
                     onCopy(
                         context: context, text: _message.content.originalStr);
+                    Navigator.of(context).pop();
                   },
                 );
               });
