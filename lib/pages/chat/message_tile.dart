@@ -74,15 +74,15 @@ class _MessageTileState<T extends BaseMessagesCubit>
   }
 
   void onReply(Message message) {
-    NavigatorService.instance.navigate(channelId: message.channelId);
+    NavigatorService.instance
+        .navigate(channelId: message.channelId, threadId: message.id);
   }
 
   onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
-    Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(milliseconds: 1300),
+        duration: Duration(milliseconds: 1000),
         content: Text('Message has been copied to clipboard'),
       ),
     );
@@ -115,6 +115,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 },
                 onCopy: () {
                   onCopy(context: context, text: _message.content.originalStr);
+                  Navigator.of(context).pop();
                 },
               );
             },

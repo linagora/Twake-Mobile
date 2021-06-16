@@ -62,7 +62,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(milliseconds: 1300),
+        duration: Duration(milliseconds: 1000),
         content: Text('Message has been copied to clipboard'),
       ),
     );
