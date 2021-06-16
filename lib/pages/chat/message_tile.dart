@@ -11,6 +11,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
 import 'package:twake/pages/thread_page.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
@@ -72,20 +73,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
     }
   }
 
-  void onReply(context, String? messageId, {bool autofocus: false}) {
-    /*  TODO implement ThreadPage
-     
-    BlocProvider.of<MessagesBloc<T>>(context).add(SelectMessage(messageId));
-    BlocProvider.of<DraftBloc>(context)
-        .add(LoadDraft(id: _message!.id, type: DraftType.thread));  */
-
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ThreadPage(
-          autofocus: autofocus,
-        ),
-      ),
-    );
+  void onReply(Message message) {
+    NavigatorService.instance.navigate(channelId: message.channelId);
   }
 
   onCopy({required context, required text}) {
@@ -114,35 +103,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
               return MessageModalSheet<T>(
                 message: _message,
                 isMe: _isMyMessage,
-                //  onReply: onReply,
+                onReply: onReply,
                 onEdit: () {
-                  /*
-                        Get.find<ChannelMessagesCubit>().edit(message: message, editedText: editedText)
-                        Navigator.of(context).pop();
-                        // ignore: close_sinks
-                        final smbloc = context.read<SingleMessageBloc>();
-                        // ignore: close_sinks
-                        final mebloc = context.read<MessageEditBloc>();
-                        mebloc.add(
-                          EditMessage(
-                            originalStr: _message!.content.originalStr ?? '',
-                            onMessageEditComplete: (text, context) async {
-                              // smbloc gets closed if
-                              // listview disposes of message tile
-                              smbloc.add(
-                                UpdateContent(
-                                  content: await BlocProvider.of<MentionsCubit>(
-                                    context,
-                                  ).completeMentions(text),
-                                  workspaceId:
-                                      T == DirectsBloc ? 'direct' : null,
-                                ),
-                              );
-                              mebloc.add(CancelMessageEdit());
-                              FocusManager.instance.primaryFocus!.unfocus();
-                            },
-                          ),
-                        );*/
+                  Get.find<ChannelMessagesCubit>().startEdit(message: _message);
+                  Navigator.of(context).pop();
                 },
                 ctx: context,
                 onDelete: () {
@@ -161,7 +125,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
           if (_message.threadId == null &&
               _message.responsesCount != 0 &&
               !_hideShowAnswers) {
-            onReply(context, _message.id);
+            onReply(_message);
           }
         },
         child: Padding(

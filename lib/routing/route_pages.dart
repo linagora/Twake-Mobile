@@ -3,6 +3,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/pages/account/account_settings.dart';
 import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/initial_page.dart';
+import 'package:twake/pages/thread_page.dart';
 
 final routePages = [
   GetPage(
