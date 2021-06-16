@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/pages/account/account_info.dart';
 import 'package:twake/pages/account/account_settings.dart';
 import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/initial_page.dart';
@@ -21,13 +22,18 @@ final routePages = [
         transition: Transition.native,
       ),
       GetPage(
+        name: '/message/thread',
+        page: () => ThreadPage<BaseChannelsCubit>(),
+        transition: Transition.native,
+      ),
+      GetPage(
         name: '/account_settings',
         page: () => AccountSettings(),
         transition: Transition.native,
       ),
       GetPage(
         name: '/account_settings/account_info',
-        page: () => AccountSettings(),
+        page: () => AccountInfo(),
         transition: Transition.native,
       ),
     ],
