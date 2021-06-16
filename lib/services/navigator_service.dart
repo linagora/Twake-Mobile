@@ -127,14 +127,14 @@ class NavigatorService {
     if (workspaceId != null && workspaceId == 'direct') {
       directsCubit.selectChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.directMessages)?.then((_) {
+      Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
         channelMessagesCubit.reset();
         directsCubit.clearSelection();
       });
     } else {
       channelsCubit.selectChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.channelMessages)?.then((_) {
+      Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
         channelMessagesCubit.reset();
         channelsCubit.clearSelection();
       });
@@ -144,14 +144,14 @@ class NavigatorService {
 
     if (threadId != null) {
       channelMessagesCubit.selectThread(messageId: threadId);
-      Get.toNamed(RoutePaths.messageThread);
+      Get.toNamed(RoutePaths.messageThread.path);
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
   }
 
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
     await accountCubit.fetch();
-    Get.toNamed(shouldShowInfo ? RoutePaths.accountInfo : RoutePaths.accountSettings);
+    Get.toNamed(shouldShowInfo ? RoutePaths.accountInfo.path : RoutePaths.accountSettings.path);
   }
 
   void openTwakeWebView(String url) {

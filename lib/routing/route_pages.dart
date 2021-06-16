@@ -5,34 +5,35 @@ import 'package:twake/pages/account/account_settings.dart';
 import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/thread_page.dart';
+import 'package:twake/routing/route_paths.dart';
 
 final routePages = [
   GetPage(
-    name: '/initial',
+    name: RoutePaths.initial,
     page: () => InitialPage(),
     children: [
       GetPage(
-        name: '/channel/messages',
+        name: RoutePaths.channelMessages.name,
         page: () => Chat<ChannelsCubit>(),
         transition: Transition.native,
       ),
       GetPage(
-        name: '/direct/messages',
+        name: RoutePaths.directMessages.name,
         page: () => Chat<DirectsCubit>(),
         transition: Transition.native,
       ),
       GetPage(
-        name: '/message/thread',
+        name: RoutePaths.messageThread.name,
         page: () => ThreadPage<BaseChannelsCubit>(),
         transition: Transition.native,
       ),
       GetPage(
-        name: '/account_settings',
+        name: RoutePaths.accountSettings.name,
         page: () => AccountSettings(),
         transition: Transition.native,
       ),
       GetPage(
-        name: '/account_settings/account_info',
+        name: RoutePaths.accountInfo.name,
         page: () => AccountInfo(),
         transition: Transition.native,
       ),
