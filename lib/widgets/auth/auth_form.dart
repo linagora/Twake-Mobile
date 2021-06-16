@@ -79,7 +79,8 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void onSubmit() {
-    Get.find<AuthenticationCubit>().authenticate(username: _username, password: _password);
+    Get.find<AuthenticationCubit>()
+        .authenticate(username: _username, password: _password);
   }
 
   @override
@@ -101,7 +102,6 @@ class _AuthFormState extends State<AuthForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
               children: [
-          
                 SizedBox(height: Dim.heightMultiplier),
                 Center(
                   child: Text(
@@ -239,7 +239,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
     return TextFormField(
       autocorrect: widget.obscured ? false : true,
       enableSuggestions: widget.obscured ? false : true,
-      // style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
+      style: TextStyle(fontSize: Dim.tm2(decimal: 0.2)),
       obscureText: widget.obscured ? _obscured : false,
       validator: widget.validator,
       controller: widget.controller,
@@ -251,7 +251,7 @@ class __AuthTextFormState extends State<_AuthTextForm> {
         AutofillHints.email,
         AutofillHints.password,
       ],
-      style: Theme.of(context).textTheme.headline2,
+      // style: Theme.of(context).textTheme.headline2,
       decoration: InputDecoration(
         fillColor: Color.fromRGBO(239, 239, 245, 1),
         filled: true,

@@ -39,8 +39,7 @@ class SocketIOService {
         .enableReconnection()
         .setTransports(['websocket']).build();
 
-    // _socket = IO.io(Globals.instance.host, opts);
-    _socket = IO.io('http://34.123.51.187:8000', opts);
+    _socket = IO.io(Globals.instance.host, opts);
 
     // Set up all the event handlers
     _socket.onConnect((_) {

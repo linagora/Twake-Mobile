@@ -140,18 +140,22 @@ class NavigatorService {
       });
     }
 
-    await channelMessagesCubit.fetch(channelId: channelId);
+    channelMessagesCubit.fetch(channelId: channelId);
 
     if (threadId != null) {
       channelMessagesCubit.selectThread(messageId: threadId);
-      Get.toNamed(RoutePaths.messageThread);
+      Get.toNamed(RoutePaths.messageThread)?.then((_) {
+        channelMessagesCubit.clearSelectedThread();
+        threadMessagesCubit.reset();
+      });
       await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
     }
   }
 
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
     await accountCubit.fetch();
-    Get.toNamed(shouldShowInfo ? RoutePaths.accountInfo : RoutePaths.accountSettings);
+    Get.toNamed(
+        shouldShowInfo ? RoutePaths.accountInfo : RoutePaths.accountSettings);
   }
 
   void openTwakeWebView(String url) {
