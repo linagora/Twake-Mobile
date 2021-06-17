@@ -102,12 +102,22 @@ class _AuthFormState extends State<AuthForm> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
               children: [
+                SizedBox(
+                  height:Dim.wm9 ,
+                ),
+                FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text('Let\'s get started!',
+                      style: TextStyle(
+                          fontSize: Dim.wm9,
+                          color: Color.fromRGBO(131, 125, 255, 1))),
+                ),
                 SizedBox(height: Dim.heightMultiplier),
                 Center(
-                  child: Text(
-                    'Sign in to continue',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
+                  child: Text('Sign in to continue',
+                      style: TextStyle(
+                          fontSize: Dim.wm4,
+                          color: Color.fromRGBO(131, 125, 255, 1))),
                 ),
                 Spacer(),
                 _AuthTextForm(
@@ -159,10 +169,10 @@ class _AuthFormState extends State<AuthForm> {
                     color: Theme.of(context).accentColor,
                     textColor: Colors.white,
                     disabledColor: Color.fromRGBO(238, 238, 238, 1),
-                    child: Text(
-                      'Login',
-                      style: Theme.of(context).textTheme.button,
-                    ),
+                    child: Text('Login',
+                        style: TextStyle(
+                            fontSize: Dim.wm4,
+                            color: Colors.white)),
                     onPressed: _username.isNotEmpty && _password.isNotEmpty
                         ? () => onSubmit()
                         : null,

@@ -45,7 +45,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
   onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
-    Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: Duration(milliseconds: 1000),

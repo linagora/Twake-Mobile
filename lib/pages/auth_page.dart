@@ -57,15 +57,22 @@ class _AuthPageState extends State<AuthPage> {
               // show nothing
               : Container(),
           Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              margin: EdgeInsets.only(top: Dim.hm5),
-              width: Dim.widthPercent(20),
-              height: Dim.widthPercent(20),
-              child: Image.asset(
-                'assets/images/logo-white.png',
-                fit: BoxFit.cover,
-              ),
+            alignment: Alignment.center,
+            child: Column(
+              children: [
+                SizedBox(
+                  height: Dim.wm4,
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: Dim.hm5),
+                  width: Dim.widthPercent(20),
+                  height: Dim.widthPercent(20),
+                  child: Image.asset(
+                    'assets/images/logo-white.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
             ),
           ),
           IndexedStack(
