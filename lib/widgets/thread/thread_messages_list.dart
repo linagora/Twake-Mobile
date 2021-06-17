@@ -41,17 +41,18 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
         SizedBox(
           height: 8.0,
         ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Text(
-            message.content.originalStr! + ' responses',
-            style: TextStyle(
-              fontSize: 12.0,
-              fontWeight: FontWeight.w400,
-              color: Color(0xff92929C),
+        if (state is MessagesLoadSuccess)
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.0),
+            child: Text(
+              '${state.messages.length}' + ' responses',
+              style: TextStyle(
+                fontSize: 12.0,
+                fontWeight: FontWeight.w400,
+                color: Color(0xff92929C),
+              ),
             ),
           ),
-        ),
         SizedBox(
           height: 8.0,
         ),
@@ -64,19 +65,17 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
           height: 12.0,
         ),
         if (state is MessagesLoadSuccess)
-          MessageTile<ThreadMessagesCubit>(
-            message: state.messages.last,
-            key: ValueKey(state.messages.last),
-          ),
+          state.messages.length > 0
+              ? MessageTile<ThreadMessagesCubit>(
+                  message: state.messages.last,
+                  key: ValueKey(state.messages.last),
+                )
+              : Container(),
         if (state is MessagesInitial)
-          Center(
-              /* to add the new state is needed 
-                child: Text(
-                  state is ErrorLoadingMessages
-                      ? 'Couldn\'t load messages, no connection'
-                      : 'No responses yet',
-                ),*/
-              ),
+          Align(
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(),
+          ),
         if (state is MessagesLoadInProgress)
           Align(
             alignment: Alignment.center,
@@ -88,7 +87,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
 
   double? appBarHeight;
   List<Widget> widgets = [];
-
+  Message? parentMessage;
   List<Message> _messages = <Message>[];
 
   var _controller = ScrollController();
@@ -97,6 +96,12 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
   @override
   void initState() {
     super.initState();
+
+    final state = Get.find<ThreadMessagesCubit>().state;
+    if (state is MessagesLoadSuccess) {
+      _messages = state.messages;
+      parentMessage = state.parentMessage;
+    }
 
     _controller.addListener(() {
       // print(_controller.position.pixels);
@@ -124,7 +129,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
           _messages = state.messages;
         }
         return Flexible(
-          child: state is MessagesLoadSuccess
+          child: state is MessagesLoadSuccess && _messages.length != 0
               ? ListView.builder(
                   controller: _controller,
                   physics: _physics,
@@ -132,18 +137,20 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   shrinkWrap: true,
                   itemCount: _messages.length,
                   itemBuilder: (context, i) {
+                    //  print(i);
                     if (i == _messages.length - 1) {
-                      return buildThreadMessageColumn(_messages[i]);
+                      return buildThreadMessageColumn(parentMessage!);
                     } else {
                       return MessageTile<ThreadMessagesCubit>(
-                        message: _messages[i],
-                        key: ValueKey(_messages[i]),
+                        message: _messages[_messages.length - 1 - i],
+                        key: ValueKey(_messages.length - 1 - i),
                       );
                     }
                   },
                 )
               : SingleChildScrollView(
-                  child: buildThreadMessageColumn(_messages[0])),
+                  child: buildThreadMessageColumn(parentMessage!),
+                ),
         );
       },
     );

@@ -72,6 +72,10 @@ class _ComposeBar extends State<ComposeBar> {
         Future.delayed(const Duration(milliseconds: 100), () {
           mentionsVisible();
         });
+      } else {
+        setState(() {
+          _mentionsVisible = false;
+        });
       }
       // Update for cache handlers
       widget.onTextUpdated(text, context);
