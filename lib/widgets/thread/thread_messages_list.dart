@@ -67,7 +67,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
         if (state is MessagesLoadSuccess)
           state.messages.length > 0
               ? MessageTile<ThreadMessagesCubit>(
-                  message: state.messages.last,
+                  message: state.messages.first,
                   key: ValueKey(message.hash),
                 )
               : Container(),
