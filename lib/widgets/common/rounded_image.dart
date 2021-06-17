@@ -25,7 +25,7 @@ class RoundedImage extends StatelessWidget {
     this.borderRadius,
   }) : this.imageUrl = imageUrl.contains('http')
             ? imageUrl
-            : 'http://34.123.51.187:8000' + imageUrl;
+            : Globals.instance.host + imageUrl;
 
   @override
   Widget build(BuildContext context) {
