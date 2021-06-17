@@ -29,7 +29,11 @@ enum ResourceType {
   @JsonValue('channel_member')
   channelMember,
   @JsonValue('channel_activity')
-  channelActivity
+  channelActivity,
+  @JsonValue('user_notification_badges')
+  userNotificationBadges,
+  @JsonValue('notification:desktop')
+  notificationDesktop, // ignore this one for now
 }
 
 enum ResourceAction {
@@ -39,4 +43,6 @@ enum ResourceAction {
   saved,
   @JsonValue('deleted')
   deleted,
+  @JsonValue('event')
+  event, // ignore this one for now
 }

@@ -319,8 +319,9 @@ class MessagesRepository {
       'workspace_id': Globals.instance.workspaceId,
       'channel_id': channelId ?? Globals.instance.channelId,
       'message_id': messageId,
-      'thread_id': threadId,
     };
+
+    if (threadId?.isNotEmpty ?? false) queryParameters['thread_id'] = threadId;
 
     final List<dynamic> remoteResult = await _api.get(
       endpoint: Endpoint.messages,

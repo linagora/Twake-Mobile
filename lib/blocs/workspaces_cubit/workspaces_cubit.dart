@@ -16,7 +16,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     }
     _repository = repository;
 
-    SynchronizationService.instance.subscribeToBadges();
+    Future.delayed(
+      Duration(seconds: 1),
+      SynchronizationService.instance.subscribeToBadges,
+    );
   }
 
   Future<void> fetch({String? companyId}) async {

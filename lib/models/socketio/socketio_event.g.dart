@@ -23,7 +23,7 @@ MessageData _$MessageDataFromJson(Map<String, dynamic> json) {
   return MessageData(
     action: _$enumDecode(_$IOEventActionEnumMap, json['action']),
     messageId: json['message_id'] as String,
-    threadId: json['thread_id'] as String,
+    threadId: json['thread_id'] as String?,
   );
 }
 

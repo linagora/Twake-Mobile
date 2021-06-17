@@ -51,10 +51,13 @@ const _$ResourceActionEnumMap = {
   ResourceAction.updated: 'updated',
   ResourceAction.saved: 'saved',
   ResourceAction.deleted: 'deleted',
+  ResourceAction.event: 'event',
 };
 
 const _$ResourceTypeEnumMap = {
   ResourceType.channel: 'channel',
   ResourceType.channelMember: 'channel_member',
   ResourceType.channelActivity: 'channel_activity',
+  ResourceType.userNotificationBadges: 'user_notification_badges',
+  ResourceType.notificationDesktop: 'notification:desktop',
 };

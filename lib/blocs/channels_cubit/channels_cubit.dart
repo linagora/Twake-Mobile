@@ -216,8 +216,6 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   }
 
   void selectChannel({required String channelId}) {
-    Globals.instance.channelIdSet = channelId;
-
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -226,6 +224,10 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       selected: channels.firstWhere((c) => c.id == channelId),
       hash: hash,
     ));
+
+    Globals.instance.channelIdSet = channelId;
+
+    SynchronizationService.instance.subscribeToMessages(channelId: channelId);
   }
 
   void clearSelection() {

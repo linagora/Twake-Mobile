@@ -11,7 +11,7 @@ part 'channel.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Channel extends BaseModel {
-  static const COMPOSITE_FIELDS = ['members', 'permissions'];
+  static const COMPOSITE_FIELDS = ['members', 'permissions', 'last_message'];
 
   final String id;
 

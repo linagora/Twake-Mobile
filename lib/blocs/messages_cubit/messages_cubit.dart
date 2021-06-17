@@ -281,11 +281,13 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
             final parentMessage = (state as MessagesLoadSuccess).parentMessage;
-            if (messages.first.channelId == change.channelId) {
+            if (Globals.instance.channelId == change.channelId) {
               // message is already present
               if (messages.any((m) => m.id == message.id)) {
                 final index = messages.indexWhere((m) => m.id == message.id);
+
                 messages[index] = message;
+
                 emit(MessagesLoadSuccess(
                   messages: messages,
                   hash: hash + 1, // we only need to update hash in someway
@@ -294,11 +296,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
               } else {
                 // new message has been created
                 messages.add(message);
-                emit(MessagesLoadSuccess(
+                final newState = MessagesLoadSuccess(
                   messages: messages,
                   hash: hash + message.hash,
                   parentMessage: parentMessage,
-                ));
+                );
+                emit(newState);
               }
             }
           }

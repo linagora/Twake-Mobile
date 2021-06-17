@@ -94,14 +94,19 @@ class SynchronizationService {
 
   Stream<SocketIOEvent> get socketIOChannelMessageStream =>
       _socketio.eventStream.where((e) {
-        return e.data.threadId.isEmpty || e.data.threadId == e.data.messageId;
+        return (e.data.threadId?.isEmpty ?? true) ||
+            e.data.threadId == e.data.messageId;
       });
 
   Stream<SocketIOEvent> get socketIOThreadMessageStream =>
       _socketio.eventStream.where((e) {
-        return e.data.threadId.isNotEmpty &&
+        return (e.data.threadId?.isNotEmpty ?? false) &&
             e.data.threadId != e.data.messageId;
       });
+
+  Stream<SocketIOResource> get sockeIOBadgesUpdateStream =>
+      _socketio.resourceStream
+          .where((r) => r.type == ResourceType.userNotificationBadges);
 
   Future<List<SocketIORoom>> get socketIORooms async {
     final queryParameters = {
@@ -145,11 +150,10 @@ class SynchronizationService {
         _subRooms.firstWhere((r) => r.type == RoomType.notifications);
 
     _socketio.subscribe(room: badgesRoom.key);
-    Logger().v('Subscribed to badges: ${badgesRoom.key}');
   }
 
   void subscribeToMessages({required String channelId}) {
-    if (Globals.instance.isNetworkConnected)
+    if (!Globals.instance.isNetworkConnected)
       throw Exception('Shoud not be called with no active connection');
 
     // Unsubscribe just in case
@@ -165,6 +169,8 @@ class SynchronizationService {
   }
 
   void unsubscribeFromMessages({required String channelId}) {
+    if (!_subRooms.any((r) => r.id == channelId)) return;
+
     final room = _subRooms.firstWhere((r) => r.id == channelId);
 
     _socketio.unsubscribe(room: room.key);

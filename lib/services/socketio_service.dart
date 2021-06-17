@@ -20,7 +20,9 @@ class SocketIOService {
       StreamController.broadcast();
 
   StreamController<SocketIOEvent> _eventStream = StreamController.broadcast();
+  StreamController<bool> _reconnectionStream = StreamController.broadcast();
 
+  Stream<bool> get socketIOReconnectionStream => _reconnectionStream.stream;
   Stream<SocketIOEvent> get eventStream => _eventStream.stream;
   Stream<SocketIOResource> get resourceStream => _resourceStream.stream;
 
@@ -49,6 +51,7 @@ class SocketIOService {
     });
 
     _socket.on(IOEvent.authenticated, (_) {
+      _reconnectionStream.sink.add(true);
       Logger().v('Successfully authenticated on Socket IO channel');
     });
 
@@ -61,9 +64,17 @@ class SocketIOService {
 
     _socket.on(IOEvent.resource, _handleResource);
 
+    // _socket.on(
+    // IOEvent.join_success,
+    // (r) => Logger().v('successfully joined room $r'),
+    // );
+
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
 
-    _socket.onDisconnect((_) => Logger().w('Socket IO connection was aborted'));
+    _socket.onDisconnect((_) {
+      _reconnectionStream.sink.add(true);
+      Logger().w('Socket IO connection was aborted');
+    });
 
     _socket.connect();
 
@@ -90,13 +101,13 @@ class SocketIOService {
   }
 
   void _handleEvent(data) {
-    Logger().e('GOT EVENT: $data');
+    Logger().v('GOT EVENT: $data');
     final event = SocketIOEvent.fromJson(json: data);
     _eventStream.sink.add(event);
   }
 
   void _handleResource(data) {
-    Logger().e('GOT RESOURCE: $data');
+    Logger().v('GOT RESOURCE: $data');
     final resource = SocketIOResource.fromJson(json: data);
     _resourceStream.sink.add(resource);
   }

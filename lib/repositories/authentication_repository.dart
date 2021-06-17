@@ -22,6 +22,7 @@ class AuthenticationRepository {
         Globals.instance.tokenSet = authentication.token;
         break;
       case Expiration.Both:
+        logout();
         return false;
       case Expiration.Primary:
         Logger().d('NetworkConnected: ${Globals.instance.isNetworkConnected}');
@@ -134,13 +135,18 @@ class AuthenticationRepository {
 
     var authentication = Authentication.fromJson(result);
 
+    Logger().v(
+      'Token validity check, expires at: '
+      '${DateTime.fromMillisecondsSinceEpoch(authentication.expiration * 1000)}',
+    );
+
     final now = DateTime.now().millisecondsSinceEpoch;
     final needToProlong = authentication.expiration - now <
         10 * 60 * 1000; // less than 10 minutes to expiration
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }
-    Future.delayed(Duration(minutes: 5), () => _tokenValidityCheck());
+    Future.delayed(Duration(seconds: 30), () => _tokenValidityCheck());
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
