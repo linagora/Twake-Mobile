@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:logger/logger.dart';
 import 'package:twake/models/push_notification/firebase_notification.dart';
 import 'package:twake/models/push_notification/local_notification.dart';
 
@@ -114,7 +115,7 @@ class PushNotificationsService {
   }) {
     const android = const AndroidNotificationDetails('Twake', 'Twake', 'Twake');
     const details = NotificationDetails(android: android);
-    final id = DateTime.now().millisecondsSinceEpoch;
+    final int id = DateTime.now().millisecondsSinceEpoch % 0xFFFFFF;
 
     _notificationsPlugin.show(
       id,
@@ -131,6 +132,7 @@ class PushNotificationsService {
       _notificationsPlugin.cancel(id);
 
   FirebaseMessage _transform(RemoteMessage msg) {
+    Logger().v('Notifications received: ${msg.data}');
     return FirebaseMessage.fromRemote(remoteMessage: msg);
   }
 

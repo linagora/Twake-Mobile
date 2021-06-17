@@ -34,6 +34,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       }
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
+    SynchronizationService.instance.subscribeForChannels();
   }
 
   Future<void> createWorkspace({

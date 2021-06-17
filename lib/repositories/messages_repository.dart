@@ -98,6 +98,7 @@ class MessagesRepository {
       endpoint: Endpoint.messages,
       queryParameters: queryParameters,
     );
+
     var remoteMessages = remoteResult.map((entry) => Message.fromJson(
           json: entry,
           jsonify: false,
@@ -209,6 +210,7 @@ class MessagesRepository {
     );
 
     yield message;
+
     final data = {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId,

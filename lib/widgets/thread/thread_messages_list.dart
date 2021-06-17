@@ -30,7 +30,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
           child: MessageTile<ThreadMessagesCubit>(
             message: message,
             hideShowAnswers: true,
-            key: ValueKey(message.content.originalStr),
+            key: ValueKey(message.hash),
           ),
         ),
         Divider(
@@ -68,7 +68,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
           state.messages.length > 0
               ? MessageTile<ThreadMessagesCubit>(
                   message: state.messages.last,
-                  key: ValueKey(state.messages.last),
+                  key: ValueKey(message.hash),
                 )
               : Container(),
         if (state is MessagesInitial)
@@ -143,7 +143,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                     } else {
                       return MessageTile<ThreadMessagesCubit>(
                         message: _messages[_messages.length - 1 - i],
-                        key: ValueKey(_messages.length - 1 - i),
+                        key: ValueKey(_messages[_messages.length - 1 - i].hash),
                       );
                     }
                   },

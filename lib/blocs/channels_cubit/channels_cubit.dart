@@ -335,6 +335,10 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             hash: channels.fold(0, (acc, c) => acc + c.hash),
             selected: selected,
           ));
+          break;
+        case ResourceAction.event:
+          // ignore it for now
+          break;
       }
     }
   }

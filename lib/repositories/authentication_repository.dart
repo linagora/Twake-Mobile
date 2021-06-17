@@ -146,7 +146,7 @@ class AuthenticationRepository {
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }
-    Future.delayed(Duration(seconds: 30), () => _tokenValidityCheck());
+    Future.delayed(Duration(seconds: 120), () => _tokenValidityCheck());
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;

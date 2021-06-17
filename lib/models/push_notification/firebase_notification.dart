@@ -15,7 +15,8 @@ class FirebaseMessage {
   });
 
   FirebaseMessage.fromRemote({required RemoteMessage remoteMessage})
-      : payload = NotificationPayload.fromJson(json: remoteMessage.data),
+      : payload = NotificationPayload.fromJson(
+            json: jsonDecode(remoteMessage.data['notification_data'])),
         headers = NotificationHeaders.fromNotification(
           remote: remoteMessage.notification!,
         );

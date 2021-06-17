@@ -34,6 +34,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     if (authenticated) {
       emit(AuthenticationSuccess());
       _repository.startTokenValidator();
+      await NavigatorService.instance.navigateOnNotificationLaunch();
     } else {
       emit(AuthenticationInitial());
     }

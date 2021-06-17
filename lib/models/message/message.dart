@@ -80,7 +80,11 @@ class Message extends BaseModel {
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
-    return _$MessageFromJson(json);
+    try {
+      return _$MessageFromJson(json);
+    } catch (e) {
+      throw e;
+    }
   }
 
   @override

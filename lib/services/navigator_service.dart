@@ -113,6 +113,7 @@ class NavigatorService {
   }) async {
     if (companyId != null) {
       companiesCubit.selectCompany(companyId: companyId);
+
       await workspacesCubit.fetch(companyId: companyId);
       await directsCubit.fetch(companyId: companyId, workspaceId: 'direct');
     }
