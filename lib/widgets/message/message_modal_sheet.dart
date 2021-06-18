@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:emoji_keyboard_flutter/emoji_keyboard_flutter.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -35,20 +35,45 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
 
   onEmojiSelected(String emojiCode) {
     Get.find<T>().react(message: widget.message, reaction: emojiCode);
-    FocusManager.instance.primaryFocus!.unfocus();
+    Future.delayed(
+      Duration(milliseconds: 50),
+      FocusManager.instance.primaryFocus?.unfocus,
+    );
   }
 
-  void showEmojiBoard() async {
+  void toggleEmojiBoard() async {
     setState(() {
       _emojiVisible = !_emojiVisible;
     });
   }
 
   Widget buildEmojiBoard() {
-    return EmojiKeyboard(
-      bromotionController:
-          TextEditingController(), // TODO: figure out how to pass emoji
-      emojiKeyboardHeight: MediaQuery.of(context).size.height * 0.35,
+    return Container(
+      height: 250,
+      child: EmojiPicker(
+        onEmojiSelected: (cat, emoji) {
+          toggleEmojiBoard();
+          onEmojiSelected(emoji.emoji);
+        },
+        config: Config(
+          columns: 7,
+          emojiSizeMax: 32.0,
+          verticalSpacing: 0,
+          horizontalSpacing: 0,
+          initCategory: Category.RECENT,
+          bgColor: Color(0xFFF2F2F2),
+          indicatorColor: Colors.blue,
+          iconColor: Colors.grey,
+          iconColorSelected: Colors.blue,
+          progressIndicatorColor: Colors.blue,
+          showRecentsTab: true,
+          recentsLimit: 28,
+          noRecentsText: "No Recents",
+          noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
+          categoryIcons: const CategoryIcons(),
+          buttonMode: ButtonMode.MATERIAL,
+        ),
+      ),
     );
   }
 
@@ -62,8 +87,9 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   EmojiLine(
-                      onEmojiSelected: onEmojiSelected,
-                      showEmojiBoard: showEmojiBoard),
+                    onEmojiSelected: onEmojiSelected,
+                    showEmojiBoard: toggleEmojiBoard,
+                  ),
                   Divider(
                     thickness: 1.0,
                     height: 1.0,

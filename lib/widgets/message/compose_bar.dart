@@ -1,7 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:emoji_keyboard_flutter/emoji_keyboard_flutter.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/utils/extensions.dart';
@@ -127,7 +127,6 @@ class _ComposeBar extends State<ComposeBar> {
       _focusNode.unfocus();
       _forceLooseFocus = true;
     }
-    await Future.delayed(Duration(milliseconds: 150));
     setState(() {
       _emojiVisible = !_emojiVisible;
     });
@@ -334,11 +333,36 @@ class _ComposeBar extends State<ComposeBar> {
             fileNumber: _fileNumber,
             fileNumClear: _fileNumClear,
           ),
-          EmojiKeyboard(
-            bromotionController: _controller,
-            showEmojiKeyboard: _emojiVisible,
-            emojiKeyboardHeight: MediaQuery.of(context).size.height * 0.35,
-          ),
+          Offstage(
+            offstage: !_emojiVisible,
+            child: Container(
+              height: 250,
+              child: EmojiPicker(
+                onEmojiSelected: (cat, emoji) {
+                  _controller.text += emoji.emoji;
+                },
+                config: Config(
+                  columns: 7,
+                  emojiSizeMax: 32.0,
+                  verticalSpacing: 0,
+                  horizontalSpacing: 0,
+                  initCategory: Category.RECENT,
+                  bgColor: Color(0xFFF2F2F2),
+                  indicatorColor: Colors.blue,
+                  iconColor: Colors.grey,
+                  iconColorSelected: Colors.blue,
+                  progressIndicatorColor: Colors.blue,
+                  showRecentsTab: true,
+                  recentsLimit: 28,
+                  noRecentsText: "No Recents",
+                  noRecentsStyle:
+                      const TextStyle(fontSize: 20, color: Colors.black26),
+                  categoryIcons: const CategoryIcons(),
+                  buttonMode: ButtonMode.MATERIAL,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

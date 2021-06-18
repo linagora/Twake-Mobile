@@ -57,7 +57,7 @@ dependencies:
   bubble: ^1.2.1
   # flutter_emoji_keyboard:
   # git: https://github.com/bobs4462/emoji_keyboard.git
-  emoji_keyboard_flutter: ^1.1.0
+  emoji_picker_flutter: ^1.0.6
 
 
   flutter_local_notifications: ^6.0.0
