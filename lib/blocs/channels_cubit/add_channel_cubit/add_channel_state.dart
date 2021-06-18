@@ -2,7 +2,11 @@
 import 'package:equatable/equatable.dart';
 
 abstract class AddChannelState extends Equatable {
-  const AddChannelState();
+  final bool validToCreateChannel;
+  final bool showEmoijKeyboard;
+  final String emoijIcon;
+
+  const AddChannelState({this.validToCreateChannel = false, this.showEmoijKeyboard = false, this.emoijIcon = ''});
 }
 
 class AddChannelInitial extends AddChannelState {
@@ -12,19 +16,18 @@ class AddChannelInitial extends AddChannelState {
   List<Object?> get props => [];
 }
 
-class AddChannelValid extends AddChannelState{
-  const AddChannelValid();
+class AddChannelValidation extends AddChannelState {
+
+  const AddChannelValidation(
+      {
+        bool validToCreateChannel = false,
+        bool showEmoijKeyboard = false,
+        String emoijIcon = ''
+      })
+      : super(validToCreateChannel: validToCreateChannel, showEmoijKeyboard: showEmoijKeyboard, emoijIcon: emoijIcon);
 
   @override
-  List<Object?> get props => [];
-
-}
-
-class AddChannelInvalid extends AddChannelState{
-  const AddChannelInvalid();
-
-  @override
-  List<Object?> get props => [];
+  List<Object?> get props => [validToCreateChannel, showEmoijKeyboard, emoijIcon];
 }
 
 class AddChannelInProgress extends AddChannelState{

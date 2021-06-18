@@ -10,6 +10,7 @@ import 'package:twake/repositories/channels_repository.dart';
 class AddChannelCubit extends Cubit<AddChannelState> {
   late final ChannelsRepository _channelsRepository;
   late final ChannelsCubit _channelsCubit;
+  String _emoijIcon = '';
 
   ChannelVisibility _channelVisibility = ChannelVisibility.public;
   ChannelVisibility get channelVisibility => _channelVisibility;
@@ -22,12 +23,24 @@ class AddChannelCubit extends Cubit<AddChannelState> {
     _channelsCubit = channelsCubit;
   }
 
+  void showEmoijKeyBoard(bool isShow) {
+    emit(AddChannelValidation(validToCreateChannel: state.validToCreateChannel, showEmoijKeyboard: isShow));
+  }
+
+  void setEmoijIcon(String icon) {
+    print('icon is $icon');
+    _emoijIcon = icon;
+    emit(AddChannelValidation(
+        validToCreateChannel: state.validToCreateChannel,
+        showEmoijKeyboard: false,
+        emoijIcon: _emoijIcon));
+  }
+
   void validateAddChannelData({required String name}) {
-    if (name.isEmpty) {
-      emit(AddChannelInvalid());
-    } else {
-      emit(AddChannelValid());
-    }
+    emit(AddChannelValidation(
+        validToCreateChannel: name.isNotEmpty,
+        showEmoijKeyboard: state.showEmoijKeyboard,
+        emoijIcon: state.emoijIcon));
   }
 
   Future<void> create({
