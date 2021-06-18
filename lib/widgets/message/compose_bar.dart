@@ -1,7 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:emoji_keyboard_flutter/emoji_keyboard_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/utils/extensions.dart';
@@ -334,15 +334,11 @@ class _ComposeBar extends State<ComposeBar> {
             fileNumber: _fileNumber,
             fileNumClear: _fileNumClear,
           ),
-          if (_emojiVisible)
-            EmojiKeyboard(
-              onEmojiSelected: (emoji) {
-                _controller.text += emoji.text;
-                _scrollController
-                    .jumpTo(_scrollController.position.maxScrollExtent);
-              },
-              height: MediaQuery.of(context).size.height * 0.35,
-            ),
+          EmojiKeyboard(
+            bromotionController: _controller,
+            showEmojiKeyboard: _emojiVisible,
+            emojiKeyboardHeight: MediaQuery.of(context).size.height * 0.35,
+          ),
         ],
       ),
     );

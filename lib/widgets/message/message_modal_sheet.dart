@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_emoji_keyboard/flutter_emoji_keyboard.dart';
+import 'package:emoji_keyboard_flutter/emoji_keyboard_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -46,11 +46,9 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
 
   Widget buildEmojiBoard() {
     return EmojiKeyboard(
-      onEmojiSelected: (emoji) {
-        onEmojiSelected(emoji.text);
-        Navigator.of(context).pop();
-      },
-      height: MediaQuery.of(context).size.height * 0.35,
+      bromotionController:
+          TextEditingController(), // TODO: figure out how to pass emoji
+      emojiKeyboardHeight: MediaQuery.of(context).size.height * 0.35,
     );
   }
 
@@ -86,24 +84,24 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                       ),
                       onTap: widget.onEdit as void Function()?,
                     ),
-                //  if (widget.message.threadId != null)
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
-                      leading: Icon(Icons.reply_sharp),
-                      title: Text(
-                        'Reply',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff444444),
-                        ),
+                  //  if (widget.message.threadId != null)
+                  ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
+                    leading: Icon(Icons.reply_sharp),
+                    title: Text(
+                      'Reply',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff444444),
                       ),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        widget.onReply!(widget.message);
-                      },
                     ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      widget.onReply!(widget.message);
+                    },
+                  ),
                   if (widget.message.threadId != null)
                     Divider(
                       thickness: 1.0,
