@@ -25,48 +25,43 @@ class RoundedImage extends StatelessWidget {
     this.borderRadius,
   }) : this.imageUrl = imageUrl.contains('http')
             ? imageUrl
-            : Globals.instance.host + imageUrl;
+            : Globals.instance.host + "/$imageUrl";
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: borderRadius ?? BorderRadius.circular(width / 2),
+    return ClipOval(
       child: Container(
         width: width,
         height: height,
-        child: (imageUrl.isNotReallyEmpty)
-            ? CachedNetworkImage(
-                // Loading from network.
-                fit: BoxFit.cover,
-                imageUrl: imageUrl,
-                progressIndicatorBuilder: (context, url, downloadProgress) {
-                  return ShimmerLoading(
-                    isLoading: true,
-                    width: width,
-                    height: height,
-                    child: Container(),
-                  );
-                },
-                errorWidget: (context, url, error) {
-                  return _onErrorFallbackImg(width, height);
-                },
-              )
-            : ((assetPath.isNotReallyEmpty) // Try to load from local path.
-                ? Image.asset(
-                    assetPath,
-                    fit: BoxFit.cover,
-                    width: width,
-                    height: height,
-                  )
-                : Image.memory(
-                    // Try to load from bytes array.
-                    bytes ?? Uint8List(0),
-                    fit: BoxFit.cover,
-                    width: width,
-                    height: height,
-                  )),
-      ),
-    );
+        child: imageUrl.isNotReallyEmpty
+            ? CachedNetworkImage( // Loading from network.
+          fit: BoxFit.cover,
+          imageUrl: imageUrl,
+          progressIndicatorBuilder: (context, url, downloadProgress) {
+            return ShimmerLoading(
+              isLoading: true,
+              width: width,
+              height: height,
+              child: Container(),
+            );
+          },
+          errorWidget: (context, url, error) {
+            return _onErrorFallbackImg(width, height);
+          },
+        )
+            : assetPath.isNotReallyEmpty // Try to load from local path.
+            ? Image.asset(assetPath,
+          fit: BoxFit.cover,
+          width: width,
+          height: height,
+        )
+            : Image.memory( // Try to load from bytes array.
+          bytes ?? Uint8List(0),
+          fit: BoxFit.cover,
+          width: width,
+          height: height,
+        )),
+      );
   }
 }
 
