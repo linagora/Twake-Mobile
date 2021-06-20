@@ -9,6 +9,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
@@ -169,10 +170,14 @@ class HomeDrawerWidget extends StatelessWidget {
                     height: 20,
                   ),
                   BlocBuilder<AccountCubit, AccountState>(
-                      bloc: Get.find<AccountCubit>(),
-                      builder: (context, accountState) {
-                        if (accountState is AccountLoadSuccess) {
-                          return Row(
+                    bloc: Get.find<AccountCubit>(),
+                    builder: (context, accountState) {
+                      if (accountState is AccountLoadSuccess) {
+                        return GestureDetector(
+                          onTap: () =>
+                              NavigatorService.instance.navigateToAccount(),
+                          behavior: HitTestBehavior.opaque,
+                          child: Row(
                             children: [
                               RoundedImage(
                                 imageUrl: accountState.account.thumbnail ?? '',
@@ -198,10 +203,12 @@ class HomeDrawerWidget extends StatelessWidget {
                               ),
                               Expanded(child: SizedBox.shrink())
                             ],
-                          );
-                        }
-                        return SizedBox.shrink();
-                      })
+                          ),
+                        );
+                      }
+                      return SizedBox.shrink();
+                    },
+                  )
                 ],
               ),
             )
@@ -235,12 +242,12 @@ class WorkspaceDrawerTile extends StatelessWidget {
   final String? name;
   final OnWorkspaceDrawerTileTap? onWorkspaceDrawerTileTap;
 
-  const WorkspaceDrawerTile(
-      {required this.isSelected,
-      this.onWorkspaceDrawerTileTap,
-      this.logo,
-      this.name})
-      : super();
+  const WorkspaceDrawerTile({
+    required this.isSelected,
+    this.onWorkspaceDrawerTileTap,
+    this.logo,
+    this.name,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -251,40 +258,47 @@ class WorkspaceDrawerTile extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-                child: isSelected
-                    ? Image.asset(
-                        imageSelectedTile,
-                        width: 6,
-                        height: 44,
-                      )
-                    : SizedBox.shrink()),
-            Positioned(
-                left: 16,
-                child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 3,
-                          color: isSelected
-                              ? Color(0xff004dff)
-                              : Colors.transparent,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(14))),
-                    child: RoundedImage(
-                      imageUrl: logo ?? '',
-                      width: 44,
+              child: isSelected
+                  ? Image.asset(
+                      imageSelectedTile,
+                      width: 6,
                       height: 44,
-                      borderRadius: BorderRadius.circular(10),
-                    ))),
+                    )
+                  : SizedBox.shrink(),
+            ),
+            Positioned(
+              left: 16,
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 3,
+                    color: isSelected ? Color(0xff004dff) : Colors.transparent,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(14),
+                  ),
+                ),
+                child: RoundedImage(
+                  imageUrl: logo ?? '',
+                  width: 44,
+                  height: 44,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
             Positioned.fill(
-                left: 76,
-                top: 8,
-                child: Text(name ?? '',
-                    style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.normal,
-                    )))
+              left: 76,
+              top: 8,
+              child: Text(
+                name ?? '',
+                style: TextStyle(
+                  color: Color(0xff000000),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.normal,
+                ),
+              ),
+            )
           ],
         ),
       ),

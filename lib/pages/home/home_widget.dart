@@ -36,8 +36,9 @@ class _HomeWidgetState extends State<HomeWidget> {
       companyId: Globals.instance.companyId,
     );
     Get.find<DirectsCubit>().fetch(
-        workspaceId: Globals.instance.workspaceId!,
-        companyId: Globals.instance.companyId);
+      workspaceId: Globals.instance.workspaceId!,
+      companyId: Globals.instance.companyId,
+    );
 
     Get.find<AccountCubit>().fetch();
   }
@@ -95,38 +96,42 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                      bloc: Get.find<WorkspacesCubit>(),
-                      builder: (context, workspaceState) {
-                        if (workspaceState is WorkspacesLoadSuccess) {
-                          return GestureDetector(
-                            onTap: () => Scaffold.of(context).openDrawer(),
-                            child: Row(
-                              children: [
-                                RoundedImage(
-                                  borderRadius: BorderRadius.circular(10),
-                                  width: 36,
-                                  height: 36,
-                                  imageUrl: workspaceState.selected?.logo ?? '',
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Icon(Icons.keyboard_arrow_down_rounded,
-                                    color: Colors.black)
-                              ],
-                            ),
-                          );
-                        }
-                        return TwakeCircularProgressIndicator();
-                      }),
+                    bloc: Get.find<WorkspacesCubit>(),
+                    builder: (context, workspaceState) {
+                      if (workspaceState is WorkspacesLoadSuccess) {
+                        return GestureDetector(
+                          onTap: () => Scaffold.of(context).openDrawer(),
+                          child: Row(
+                            children: [
+                              RoundedImage(
+                                borderRadius: BorderRadius.circular(10),
+                                width: 36,
+                                height: 36,
+                                imageUrl: workspaceState.selected?.logo ?? '',
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: Colors.black,
+                              )
+                            ],
+                          ),
+                        );
+                      }
+                      return TwakeCircularProgressIndicator();
+                    },
+                  ),
                 ),
                 Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      imageTwakeHomeLogo,
-                      width: 63,
-                      height: 15,
-                    ))
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    imageTwakeHomeLogo,
+                    width: 63,
+                    height: 15,
+                  ),
+                )
               ],
             ),
           ),
@@ -157,26 +162,27 @@ class HomeSearchTextField extends StatelessWidget {
           fontStyle: FontStyle.normal,
         ),
         decoration: new InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
-            prefixIcon: Icon(Icons.search),
-            border: new OutlineInputBorder(
-              borderRadius: const BorderRadius.all(
-                const Radius.circular(10.0),
-              ),
-              borderSide: BorderSide(
-                width: 0,
-                style: BorderStyle.none,
-              ),
+          contentPadding: EdgeInsets.symmetric(vertical: 10),
+          prefixIcon: Icon(Icons.search),
+          border: new OutlineInputBorder(
+            borderRadius: const BorderRadius.all(
+              const Radius.circular(10.0),
             ),
-            filled: true,
-            hintStyle: TextStyle(
-              color: Color(0xff8e8e93),
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.normal,
+            borderSide: BorderSide(
+              width: 0,
+              style: BorderStyle.none,
             ),
-            hintText: "Search",
-            fillColor: Color(0xfff9f8f9)),
+          ),
+          filled: true,
+          hintStyle: TextStyle(
+            color: Color(0xff8e8e93),
+            fontSize: 17,
+            fontWeight: FontWeight.w400,
+            fontStyle: FontStyle.normal,
+          ),
+          hintText: "Search",
+          fillColor: Color(0xfff9f8f9),
+        ),
       ),
     );
   }
