@@ -13,6 +13,8 @@ class AccountSettings extends StatefulWidget {
 }
 
 class _AccountSettingsState extends State<AccountSettings> {
+  bool _canSave = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,8 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
+  void _save() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +54,7 @@ class _AccountSettingsState extends State<AccountSettings> {
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).padding.bottom + 44.0),
             child: Padding(
-              padding: EdgeInsets.fromLTRB(16.0, 42.0, 16.0, 36.0),
+              padding: EdgeInsets.fromLTRB(16.0, 22.0, 16.0, 36.0),
               child: BlocBuilder<AccountCubit, AccountState>(
                 bloc: Get.find<AccountCubit>(),
                 builder: (context, accountState) {
@@ -64,6 +68,41 @@ class _AccountSettingsState extends State<AccountSettings> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () =>
+                                  NavigatorService.instance.navigateBack(),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Color(0xff3840f7),
+                              ),
+                            ),
+                          ),
+                          // SizedBox(width: 24.0),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  color: _canSave
+                                      ? Color(0xff3840f7)
+                                      : Color(0xffa2a2a2),
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 32.0),
                       Text(
                         'Manage all your data in one place',
                         style: TextStyle(

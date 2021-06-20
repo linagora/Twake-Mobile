@@ -8,20 +8,20 @@ import 'package:twake/widgets/common/rounded_image.dart';
 
 class SelectableAvatar extends StatelessWidget {
   final double size;
-  final String? icon;
-  final String? userPic;
-  final String? localAsset;
-  final Uint8List? bytes;
-  final Function? onTap;
+  final String icon;
+  final String userPic;
+  final String localAsset;
+  final List<int> bytes;
+  final Function onTap;
 
   const SelectableAvatar({
     Key? key,
     this.size = 48.0,
-    this.icon,
-    this.userPic,
-    this.localAsset,
-    this.bytes,
-    this.onTap,
+    this.icon = '',
+    this.userPic = '',
+    this.localAsset = '',
+    required this.bytes,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -29,8 +29,7 @@ class SelectableAvatar extends StatelessWidget {
     final icon = this.icon;
     final userPic = this.userPic;
     final localAsset = this.localAsset;
-    final bytes = this.bytes;
-    final onTap = this.onTap;
+    final bytes = Uint8List.fromList(this.bytes);
 
     return GestureDetector(
       onTap: onTap as void Function()?, // ?? _getImage(),
@@ -38,7 +37,7 @@ class SelectableAvatar extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        child: (icon != null && icon.isNotReallyEmpty)
+        child: icon.isNotReallyEmpty
             ? Center(
           child: Text(
             icon,
@@ -46,9 +45,9 @@ class SelectableAvatar extends StatelessWidget {
           ),
         )
             : RoundedImage(
-          imageUrl: (userPic != null && userPic.isNotReallyEmpty) ? userPic : '',
+          imageUrl: userPic.isNotReallyEmpty ? userPic : '',
           assetPath:
-          localAsset!.isNotReallyEmpty
+          localAsset.isNotReallyEmpty
               ? localAsset
               : '',
           bytes: bytes,

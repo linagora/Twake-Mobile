@@ -3,25 +3,25 @@ import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rich_text_span.dart';
 
 class CupertinoWarning extends StatelessWidget {
-  final String? icon;
+  final String icon;
   final List<RichTextSpan>? title;
-  final String? confirmTitle;
-  final Function? confirmAction;
-  final String? cancelTitle;
+  final String confirmTitle;
+  final Function confirmAction;
+  final String cancelTitle;
 
   const CupertinoWarning({
     Key? key,
-    this.icon,
+    this.icon = '',
     this.title,
-    this.confirmTitle,
-    this.confirmAction,
-    this.cancelTitle,
+    this.confirmTitle = 'OK',
+    this.cancelTitle = 'CANCEL',
+    required this.confirmAction,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CupertinoActionSheet(
-      title: SelectableAvatar(icon: icon, size: 56.0),
+      title: SelectableAvatar(icon: icon, size: 56.0, bytes: [], onTap: confirmAction),
       message: RichText(
         textAlign: TextAlign.center,
         text: TextSpan(
@@ -39,7 +39,7 @@ class CupertinoWarning extends StatelessWidget {
         CupertinoActionSheetAction(
           onPressed: confirmAction as void Function(),
           child: Text(
-            confirmTitle!,
+            confirmTitle,
             maxLines: 1,
             textAlign: TextAlign.start,
             style: TextStyle(
@@ -53,7 +53,7 @@ class CupertinoWarning extends StatelessWidget {
       cancelButton: CupertinoActionSheetAction(
         onPressed: () => Navigator.of(context).pop(),
         child: Text(
-          cancelTitle!,
+          cancelTitle,
           maxLines: 1,
           textAlign: TextAlign.start,
           style: TextStyle(
