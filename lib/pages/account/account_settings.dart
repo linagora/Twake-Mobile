@@ -31,7 +31,7 @@ class _AccountSettingsState extends State<AccountSettings> {
           trailingActionTitle: 'Log out',
           trailingAction: () async {
             // BlocProvider.of<AuthBloc>(parentContext).add(ResetAuthentication());
-            Navigator.of(context).pop();
+            NavigatorService.instance.navigateBack(shouldLogout: true);
           },
         );
       },
@@ -84,7 +84,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                           color: Colors.black,
                         ),
                         hasArrow: true,
-                        onTap: () => NavigatorService.instance.navigateToAccount(),
+                        onTap: () => NavigatorService.instance
+                            .navigateToAccount(shouldShowInfo: true),
                       ),
                       SizedBox(height: 10.0),
                       Text(

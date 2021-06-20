@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/selectable_avatar.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
@@ -83,7 +84,7 @@ class _AccountInfoState extends State<AccountInfo> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           GestureDetector(
-                            onTap: () => Get.back(),
+                            onTap: () => NavigatorService.instance.navigateBack(),
                             child: Icon(
                               Icons.arrow_back_ios,
                               color: Color(0xff3840f7),
