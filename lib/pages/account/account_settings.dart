@@ -49,8 +49,7 @@ class _AccountSettingsState extends State<AccountSettings> {
       listenWhen: (_, current) => current is AuthenticationInitial,
       listener: (context, authenticationState) {
         if (authenticationState is AuthenticationInitial) {
-          if (mounted)
-            NavigatorService.instance.navigateBack(shouldLogout: true);
+          if (mounted) NavigatorService.instance.back(shouldLogout: true);
         }
       },
       child: Scaffold(
@@ -84,8 +83,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: GestureDetector(
-                                onTap: () =>
-                                    NavigatorService.instance.navigateBack(),
+                                onTap: () => NavigatorService.instance.back(),
                                 child: Icon(
                                   Icons.arrow_back_ios,
                                   color: Color(0xff3840f7),

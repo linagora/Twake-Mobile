@@ -5,7 +5,6 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
-
 class SelectableAvatar extends StatelessWidget {
   final double size;
   final String icon;
@@ -39,21 +38,18 @@ class SelectableAvatar extends StatelessWidget {
         height: size,
         child: icon.isNotReallyEmpty
             ? Center(
-          child: Text(
-            icon,
-            style: TextStyle(fontSize: Dim.tm3()),
-          ),
-        )
+                child: Text(
+                  icon,
+                  style: TextStyle(fontSize: Dim.tm3()),
+                ),
+              )
             : RoundedImage(
-          imageUrl: userPic.isNotReallyEmpty ? userPic : '',
-          assetPath:
-          localAsset.isNotReallyEmpty
-              ? localAsset
-              : '',
-          bytes: bytes,
-          width: size,
-          height: size,
-        ),
+                imageUrl: userPic.isNotReallyEmpty ? userPic : '',
+                assetPath: localAsset.isNotReallyEmpty ? localAsset : '',
+                bytes: bytes,
+                width: size,
+                height: size,
+              ),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/pages/auth_page.dart';
+import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/twake_web_view.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -165,10 +166,10 @@ class NavigatorService {
     Get.to(TwakeWebView(url));
   }
 
-  Future<void> navigateBack({bool shouldLogout = false}) async {
+  Future<void> back({bool shouldLogout = false}) async {
     if (shouldLogout) {
       Get.offAll(
-            () => AuthPage(),
+            () => InitialPage(),
         transition: Transition.leftToRight,
       );
     } else {

@@ -84,7 +84,7 @@ class _AccountInfoState extends State<AccountInfo> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             GestureDetector(
-                              onTap: () => NavigatorService.instance.navigateBack(),
+                              onTap: () => NavigatorService.instance.back(),
                               child: Icon(
                                 Icons.arrow_back_ios,
                                 color: Color(0xff3840f7),
