@@ -66,9 +66,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(PostAuthenticationSyncFailed());
       return;
     }
-
     emit(AuthenticationSuccess());
-
     _repository.startTokenValidator();
   }
 
