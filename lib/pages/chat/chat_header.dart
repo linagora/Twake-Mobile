@@ -9,8 +9,8 @@ class ChatHeader extends StatelessWidget {
   final bool isPrivate;
   final int? membersCount;
   final String? userId;
-  final String? icon;
-  final String? name;
+  final String icon;
+  final String name;
   final Function? onTap;
 
   const ChatHeader({
@@ -19,8 +19,8 @@ class ChatHeader extends StatelessWidget {
     this.isPrivate = false,
     this.userId,
     this.membersCount,
-    this.icon,
-    this.name,
+    this.icon = '',
+    this.name = '',
     this.onTap,
   }) : super(key: key);
 
@@ -39,7 +39,7 @@ class ChatHeader extends StatelessWidget {
           if (!isDirect)
             ShimmerLoading(
               key: ValueKey<String>('channel_icon'),
-              isLoading: icon == null || icon!.isEmpty,
+              isLoading: icon.isEmpty,
               width: 38.0,
               height: 38.0,
               child: ChannelThumbnail(
@@ -56,7 +56,7 @@ class ChatHeader extends StatelessWidget {
               children: [
                 ShimmerLoading(
                   key: ValueKey<String>('name'),
-                  isLoading: name == null,
+                  isLoading: name.isEmpty,
                   width: 60.0,
                   height: 10.0,
                   child: Text(

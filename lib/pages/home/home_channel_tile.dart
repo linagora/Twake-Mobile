@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/widgets/common/channel_thumbnail.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 typedef OnHomeChannelTileClick = void Function();
@@ -24,6 +25,7 @@ class HomeChannelTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onHomeChannelTileClick,
+      behavior: HitTestBehavior.opaque,
       child: Container(
         height: 76,
         child: Padding(
@@ -37,10 +39,10 @@ class HomeChannelTile extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: RoundedImage(
+                    child: ChannelThumbnail(
+                      icon: imageUrl ?? '',
                       width: 54,
                       height: 54,
-                      imageUrl: imageUrl ?? '',
                     ),
                   )
                 ],

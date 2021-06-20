@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/widgets/common/channel_thumbnail.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 typedef OnWorkspaceTileTap = void Function();
@@ -34,12 +35,7 @@ class WorkspaceTile extends StatelessWidget {
             Row(
               children: [
                 SizedBox(width: 16.0),
-                RoundedImage(
-                  borderRadius: BorderRadius.circular(10),
-                  imageUrl: image,
-                  width: 60.0,
-                  height: 60.0,
-                ),
+                ChannelThumbnail(icon: image),
                 SizedBox(width: 16.0),
                 Expanded(
                   child: Column(

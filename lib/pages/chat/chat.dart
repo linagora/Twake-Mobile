@@ -41,10 +41,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         title: ChatHeader(
             isDirect: channel.isDirect,
             isPrivate: channel.isPrivate,
-            userId:
-                channel.members.first, // TODO: figure out why do we need this?
+            userId: channel.members.first,
+            // TODO: figure out why do we need this?
             name: channel.name,
-            icon: channel.icon,
+            icon: channel.icon ?? '',
             membersCount: channel.membersCount,
             onTap: () {} // TODO: navigate to channel edit page
             ),
@@ -72,29 +72,30 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 ),
               MessagesGroupedList(),
               ComposeBar(
-                  autofocus: messagesState is MessageEditInProgress,
-                  initialText: (messagesState is MessageEditInProgress)
-                      ? messagesState.message.content.originalStr
-                      : draft,
-                  onMessageSend: (content, context) async {
-                    if (messagesState is MessageEditInProgress)
-                      Get.find<ChannelMessagesCubit>().edit(
-                          message: messagesState.message, editedText: content);
-                    else {
-                      final uploadState = Get.find<FileCubit>().state;
-                      List<File> attachments = const [];
-                      if (uploadState is FileUploadSuccess) {
-                        attachments = uploadState.files;
-                      }
-                      Get.find<ChannelMessagesCubit>()
-                          .send(originalStr: content, attachments: attachments);
+                autofocus: messagesState is MessageEditInProgress,
+                initialText: (messagesState is MessageEditInProgress)
+                    ? messagesState.message.content.originalStr
+                    : draft,
+                onMessageSend: (content, context) async {
+                  if (messagesState is MessageEditInProgress)
+                    Get.find<ChannelMessagesCubit>().edit(
+                        message: messagesState.message, editedText: content);
+                  else {
+                    final uploadState = Get.find<FileCubit>().state;
+                    List<File> attachments = const [];
+                    if (uploadState is FileUploadSuccess) {
+                      attachments = uploadState.files;
                     }
-                    // reset channels draft
-                    Get.find<T>().saveDraft(draft: null);
-                  },
-                  onTextUpdated: (text, ctx) {
-                    Get.find<T>().saveDraft(draft: text);
-                  }),
+                    Get.find<ChannelMessagesCubit>()
+                        .send(originalStr: content, attachments: attachments);
+                  }
+                  // reset channels draft
+                  Get.find<T>().saveDraft(draft: null);
+                },
+                onTextUpdated: (text, ctx) {
+                  Get.find<T>().saveDraft(draft: text);
+                },
+              ),
             ],
           ),
         ),

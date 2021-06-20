@@ -50,16 +50,17 @@ class NewChannelWidget extends StatelessWidget {
                     ),
                   ),
                   Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "New channel",
-                        style: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          fontStyle: FontStyle.normal,
-                        ),
-                      ))
+                    alignment: Alignment.center,
+                    child: Text(
+                      "New channel",
+                      style: TextStyle(
+                        color: Color(0xff000000),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        fontStyle: FontStyle.normal,
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -68,15 +69,15 @@ class NewChannelWidget extends StatelessWidget {
               height: 1,
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, top: 16, bottom: 8),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                    color: Colors.white,
                     border: Border.all(
                       color: Colors.white,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(12))
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(12))),
                 height: 80,
                 // color: Colors.white,
                 child: Padding(
@@ -100,14 +101,14 @@ class NewChannelWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 28, right: 28, bottom: 24),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Please provide a channel name and optional channel icon',
+                child: Text(
+                    'Please provide a channel name and optional channel icon',
                     style: TextStyle(
                       color: Color(0xff969ca4),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       fontStyle: FontStyle.normal,
-                    )
-                ),
+                    )),
               ),
             ),
             Padding(
@@ -118,11 +119,10 @@ class NewChannelWidget extends StatelessWidget {
                     border: Border.all(
                       color: Colors.white,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(12))
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(12))),
                 height: 48,
                 child: Align(
-                  alignment: Alignment.center,
+                    alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 14),
                       child: TextField(),
@@ -133,14 +133,14 @@ class NewChannelWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 28, right: 28, bottom: 24),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Please provide an optional decription for your channel',
+                child: Text(
+                    'Please provide an optional decription for your channel',
                     style: TextStyle(
                       color: Color(0xff969ca4),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       fontStyle: FontStyle.normal,
-                    )
-                ),
+                    )),
               ),
             ),
             Padding(
@@ -153,8 +153,7 @@ class NewChannelWidget extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       fontStyle: FontStyle.normal,
-                    )
-                ),
+                    )),
               ),
             ),
             Padding(
@@ -170,14 +169,14 @@ class NewChannelWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 28, right: 28, bottom: 24),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Public channels can be found by everyone, though private can only be joined by invitation',
+                child: Text(
+                    'Public channels can be found by everyone, though private can only be joined by invitation',
                     style: TextStyle(
                       color: Color(0xff969ca4),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       fontStyle: FontStyle.normal,
-                    )
-                ),
+                    )),
               ),
             ),
             Padding(
@@ -190,8 +189,7 @@ class NewChannelWidget extends StatelessWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       fontStyle: FontStyle.normal,
-                    )
-                ),
+                    )),
               ),
             ),
           ],
