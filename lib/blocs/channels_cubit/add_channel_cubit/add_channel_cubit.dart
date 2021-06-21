@@ -24,11 +24,10 @@ class AddChannelCubit extends Cubit<AddChannelState> {
   }
 
   void showEmoijKeyBoard(bool isShow) {
-    emit(AddChannelValidation(validToCreateChannel: state.validToCreateChannel, showEmoijKeyboard: isShow));
+    emit(AddChannelValidation(validToCreateChannel: state.validToCreateChannel, showEmoijKeyboard: isShow, emoijIcon: state.emoijIcon));
   }
 
   void setEmoijIcon(String icon) {
-    print('icon is $icon');
     _emoijIcon = icon;
     emit(AddChannelValidation(
         validToCreateChannel: state.validToCreateChannel,
@@ -45,16 +44,15 @@ class AddChannelCubit extends Cubit<AddChannelState> {
 
   Future<void> create({
     required String name,
-    String? icon,
     String? description,
   }) async {
-    emit(AddChannelInProgress());
+    emit(AddChannelInProgress(emoijIcon: state.emoijIcon));
 
     final now = DateTime.now().millisecondsSinceEpoch;
     var channel = Channel(
       id: now.toString(),
       name: name,
-      icon: icon,
+      icon: state.emoijIcon,
       description: description,
       companyId: Globals.instance.companyId!,
       workspaceId: Globals.instance.workspaceId!,

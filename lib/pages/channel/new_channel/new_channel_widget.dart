@@ -1,4 +1,4 @@
-import 'package:emoji_keyboard_flutter/emoji_keyboard_flutter.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,24 +22,11 @@ class NewChannelWidget extends StatefulWidget {
 class _NewChannelWidgetState extends State<NewChannelWidget> {
   final _nameEditingController = TextEditingController();
   final _descriptionEditingController = TextEditingController();
-  final _emoijEditingController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _emoijEditingController.addListener(() {
-      print('hello?');
-      if (_emoijEditingController.text.isNotEmpty) {
-        Get.find<AddChannelCubit>().setEmoijIcon(_emoijEditingController.text);
-      }
-    });
-  }
 
   @override
   void dispose() {
     _nameEditingController.dispose();
     _descriptionEditingController.dispose();
-    _emoijEditingController.dispose();
     super.dispose();
   }
 
@@ -70,9 +57,14 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   children: [
                     BlocListener<AddChannelCubit, AddChannelState>(
                       bloc: Get.find<AddChannelCubit>(),
+                      listenWhen: (previousState, currentState) {
+                        return currentState is AddChannelSuccess || currentState is AddChannelFailure;
+                      },
                       listener: (context, state) {
                         if (state is AddChannelSuccess) {
                           popBack();
+                        } else if (state is AddChannelFailure) {
+                          Get.find<AddChannelCubit>().validateAddChannelData(name: _nameEditingController.text);
                         }
                       },
                       child: SizedBox.shrink(),
@@ -104,7 +96,9 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               builder: (context, addChannelState) {
                                 return EnableButtonWidget(
                                     onEnableButtonWidgetClick: () =>
-                                        Get.find<AddChannelCubit>().create(name: _nameEditingController.text),
+                                        Get.find<AddChannelCubit>().create(
+                                            name: _nameEditingController.text,
+                                            description: _descriptionEditingController.text),
                                     text: 'Create',
                                     isEnable: (addChannelState is AddChannelValidation &&
                                             addChannelState.validToCreateChannel)
@@ -152,10 +146,18 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                 child: Container(
                                   child: Row(
                                     children: [
-                                      PickImageWidget(
-                                        onPickImageWidgetClick: () =>
-                                            Get.find<AddChannelCubit>().showEmoijKeyBoard(true),
-                                      ),
+                                      BlocBuilder<AddChannelCubit,
+                                              AddChannelState>(
+                                          bloc: Get.find<AddChannelCubit>(),
+                                          builder: (context, addChannelState) {
+                                            if (addChannelState.emoijIcon.isNotEmpty) {
+                                              return _buildSelectedChannelIcon(addChannelState.emoijIcon);
+                                            }
+                                            return PickImageWidget(
+                                              onPickImageWidgetClick: () =>
+                                                  Get.find<AddChannelCubit>().showEmoijKeyBoard(true),
+                                            );
+                                          }),
                                       SizedBox(
                                         width: 16,
                                       ),
@@ -289,7 +291,36 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                       bloc: Get.find<AddChannelCubit>(),
                         builder: (context, addChannelState) {
                           if (addChannelState is AddChannelValidation && addChannelState.showEmoijKeyboard) {
-                            return EmojiKeyboard(bromotionController: _emoijEditingController);
+                            return Container(
+                              height: 250,
+                              child: EmojiPicker(
+                                onEmojiSelected: (cat, emoji) {
+                                  Get.find<AddChannelCubit>().setEmoijIcon(emoji.emoji);
+                                  Future.delayed(
+                                    Duration(milliseconds: 50),
+                                    FocusManager.instance.primaryFocus?.unfocus,
+                                  );
+                                },
+                                config: Config(
+                                  columns: 7,
+                                  emojiSizeMax: 32.0,
+                                  verticalSpacing: 0,
+                                  horizontalSpacing: 0,
+                                  initCategory: Category.RECENT,
+                                  bgColor: Color(0xFFF2F2F2),
+                                  indicatorColor: Colors.blue,
+                                  iconColor: Colors.grey,
+                                  iconColorSelected: Colors.blue,
+                                  progressIndicatorColor: Colors.blue,
+                                  showRecentsTab: true,
+                                  recentsLimit: 28,
+                                  noRecentsText: "No Recents",
+                                  noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
+                                  categoryIcons: const CategoryIcons(),
+                                  buttonMode: ButtonMode.MATERIAL,
+                                ),
+                              ),
+                            );
                           }
                           return SizedBox.shrink();
                         })
@@ -300,6 +331,25 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSelectedChannelIcon(String emoij) {
+    return GestureDetector(
+      onTap: () => Get.find<AddChannelCubit>().showEmoijKeyBoard(true),
+      child: ClipOval(
+          child: Container(
+        width: 56,
+        height: 56,
+        color: Color(0xfff2f2f6),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            emoij,
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+      )),
     );
   }
 

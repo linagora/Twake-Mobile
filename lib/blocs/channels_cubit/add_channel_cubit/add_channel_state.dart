@@ -31,7 +31,8 @@ class AddChannelValidation extends AddChannelState {
 }
 
 class AddChannelInProgress extends AddChannelState{
-  const AddChannelInProgress();
+
+  const AddChannelInProgress({String emoijIcon = ''}) : super(emoijIcon: emoijIcon);
 
   @override
   List<Object?> get props => [];
