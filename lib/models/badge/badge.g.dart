@@ -50,4 +50,5 @@ const _$BadgeTypeEnumMap = {
   BadgeType.company: 'company',
   BadgeType.workspace: 'workspace',
   BadgeType.channel: 'channel',
+  BadgeType.none: 'none',
 };

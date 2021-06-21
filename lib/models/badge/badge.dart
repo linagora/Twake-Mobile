@@ -27,7 +27,7 @@ class Badge extends BaseModel {
   bool matches({required BadgeType type, required String id}) =>
       type == type && id == id && count > 0;
 
-  int get hash => type.hashCode + id.hashCode;
+  int get hash => type.hashCode + id.hashCode + count;
 }
 
 enum BadgeType {
