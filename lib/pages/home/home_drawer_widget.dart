@@ -10,7 +10,6 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
@@ -135,7 +134,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                   workSpace.id == workspaceState.selected?.id,
                               onWorkspaceDrawerTileTap: () =>
                                   _selectWorkspace(context, workSpace.id),
-                                  workSpaceid: workSpace.id,
+                              workSpaceid: workSpace.id,
                             );
                           }),
                     );
@@ -307,9 +306,10 @@ class WorkspaceDrawerTile extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-             BadgesCount(BadgeType.workspace, workSpaceid!),
-             SizedBox(width: 30,)
-             
+                  BadgesCount(type: BadgeType.workspace, id: workSpaceid!),
+                  SizedBox(
+                    width: 30,
+                  )
                 ],
               ),
             )

@@ -24,8 +24,9 @@ class Badge extends BaseModel {
     return _$BadgeToJson(this);
   }
 
-  bool matches({required BadgeType type, required String id}) =>
-      type == type && id == id && count > 0;
+  bool matches({required BadgeType type, required String id}) {
+    return this.type == type && this.id == id && this.count > 0;
+  }
 
   int get hash => type.hashCode + id.hashCode + count;
 }

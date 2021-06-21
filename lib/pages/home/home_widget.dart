@@ -60,12 +60,12 @@ class _HomeWidgetState extends State<HomeWidget> {
             toolbarHeight: kToolbarHeight + 80,
             bottom: TabBar(
               tabs: [
-                
                 Tab(
                   child: BadgesCount(
-                      BadgeType.workspace, Globals.instance.workspaceId!),
+                    type: BadgeType.workspace,
+                    id: Globals.instance.workspaceId!,
+                  ),
                 ),
-            
                 Tab(
                   text: 'Chats',
                 ),

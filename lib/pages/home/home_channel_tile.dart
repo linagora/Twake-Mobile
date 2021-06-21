@@ -2,28 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
 
 typedef OnHomeChannelTileClick = void Function();
 
 class HomeChannelTile extends StatelessWidget {
-  final String? title;
+  final String title;
   final String? name;
   final String? content;
   final String? imageUrl;
   final int? dateTime;
   final OnHomeChannelTileClick? onHomeChannelTileClick;
-  final String? channelid;
+  final String channelid;
 
-  const HomeChannelTile(
-      {this.title,
-      this.name,
-      this.content,
-      this.imageUrl,
-      this.dateTime,
-      this.onHomeChannelTileClick,
-      this.channelid})
-      : super();
+  const HomeChannelTile({
+    required this.title,
+    this.name,
+    this.content,
+    this.imageUrl,
+    this.dateTime,
+    this.onHomeChannelTileClick,
+    required this.channelid,
+  }) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -63,15 +62,18 @@ class HomeChannelTile extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                            child: Text(title ?? '',
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  fontStyle: FontStyle.normal,
-                                ))),
+                          child: Text(
+                            title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FontStyle.normal,
+                            ),
+                          ),
+                        ),
                         Text(
                           '', // todo parse datetime
                           style: TextStyle(
@@ -102,7 +104,11 @@ class HomeChannelTile extends StatelessWidget {
                             ),
                           ),
                           Spacer(),
-                          BadgesCount(BadgeType.channel, channelid!)
+                          BadgesCount(
+                            type: BadgeType.channel,
+                            id: channelid,
+                            key: ValueKey(channelid),
+                          )
                         ],
                       ),
                     ),
