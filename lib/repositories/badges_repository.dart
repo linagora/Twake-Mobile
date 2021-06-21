@@ -50,4 +50,8 @@ class BadgesRepository {
 
     return badges;
   }
+
+  Future<void> saveOne({required Badge badge}) async {
+    await _storage.insert(table: Table.badge, data: badge);
+  }
 }
