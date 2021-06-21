@@ -249,10 +249,18 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           Padding(
                             padding:
                             const EdgeInsets.only(bottom: 8.0, left: 16, right: 16),
-                            child: SelectableChannelTypeWidget(
-                              channelVisibility: Get.find<AddChannelCubit>().channelVisibility,
-                              onSelectableChannelTypeClick: (channelVisibility) =>
-                                  Get.find<AddChannelCubit>().setChannelVisibility(channelVisibility),
+                            child: BlocBuilder<AddChannelCubit, AddChannelState>(
+                              bloc: Get.find<AddChannelCubit>(),
+                              buildWhen: ( _, currentState) => currentState is AddChannelValidation,
+                              builder: (context, addChannelState) =>
+                                  SelectableChannelTypeWidget(
+                                channelVisibility: addChannelState.channelVisibility,
+                                onSelectableChannelTypeClick:
+                                    (channelVisibility) =>
+                                        Get.find<AddChannelCubit>()
+                                            .setChannelVisibility(
+                                                channelVisibility),
+                              ),
                             ),
                           ),
                           Padding(

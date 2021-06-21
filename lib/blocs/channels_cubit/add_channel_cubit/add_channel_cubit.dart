@@ -10,12 +10,14 @@ import 'package:twake/repositories/channels_repository.dart';
 class AddChannelCubit extends Cubit<AddChannelState> {
   late final ChannelsRepository _channelsRepository;
   late final ChannelsCubit _channelsCubit;
-  String _emoijIcon = '';
 
-  ChannelVisibility _channelVisibility = ChannelVisibility.public;
-  ChannelVisibility get channelVisibility => _channelVisibility;
-
-  void setChannelVisibility(ChannelVisibility channelVisibility) => _channelVisibility = channelVisibility;
+  void setChannelVisibility(ChannelVisibility channelVisibility) {
+    emit(AddChannelValidation(
+        validToCreateChannel: state.validToCreateChannel,
+        showEmoijKeyboard: state.showEmoijKeyboard,
+        emoijIcon: state.emoijIcon,
+        channelVisibility: channelVisibility));
+  }
 
   AddChannelCubit({required ChannelsRepository channelsRepository, required ChannelsCubit channelsCubit})
       : super(AddChannelInitial()) {
@@ -24,29 +26,34 @@ class AddChannelCubit extends Cubit<AddChannelState> {
   }
 
   void showEmoijKeyBoard(bool isShow) {
-    emit(AddChannelValidation(validToCreateChannel: state.validToCreateChannel, showEmoijKeyboard: isShow, emoijIcon: state.emoijIcon));
+    emit(AddChannelValidation(
+        validToCreateChannel: state.validToCreateChannel,
+        showEmoijKeyboard: isShow,
+        emoijIcon: state.emoijIcon,
+        channelVisibility: state.channelVisibility));
   }
 
   void setEmoijIcon(String icon) {
-    _emoijIcon = icon;
     emit(AddChannelValidation(
         validToCreateChannel: state.validToCreateChannel,
         showEmoijKeyboard: false,
-        emoijIcon: _emoijIcon));
+        emoijIcon: icon,
+        channelVisibility: state.channelVisibility));
   }
 
   void validateAddChannelData({required String name}) {
     emit(AddChannelValidation(
         validToCreateChannel: name.isNotEmpty,
         showEmoijKeyboard: state.showEmoijKeyboard,
-        emoijIcon: state.emoijIcon));
+        emoijIcon: state.emoijIcon,
+        channelVisibility: state.channelVisibility));
   }
 
   Future<void> create({
     required String name,
     String? description,
   }) async {
-    emit(AddChannelInProgress(emoijIcon: state.emoijIcon));
+    emit(AddChannelInProgress(emoijIcon: state.emoijIcon, channelVisibility: state.channelVisibility));
 
     final now = DateTime.now().millisecondsSinceEpoch;
     var channel = Channel(
@@ -58,7 +65,7 @@ class AddChannelCubit extends Cubit<AddChannelState> {
       workspaceId: Globals.instance.workspaceId!,
       members: const [],
       lastActivity: now,
-      visibility: _channelVisibility,
+      visibility: state.channelVisibility,
       permissions: const [],
     );
     try {

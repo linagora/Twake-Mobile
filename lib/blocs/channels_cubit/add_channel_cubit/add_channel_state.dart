@@ -1,12 +1,18 @@
 
 import 'package:equatable/equatable.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 
 abstract class AddChannelState extends Equatable {
   final bool validToCreateChannel;
   final bool showEmoijKeyboard;
   final String emoijIcon;
+  final ChannelVisibility channelVisibility;
 
-  const AddChannelState({this.validToCreateChannel = false, this.showEmoijKeyboard = false, this.emoijIcon = ''});
+  const AddChannelState(
+      {this.validToCreateChannel = false,
+      this.showEmoijKeyboard = false,
+      this.emoijIcon = '',
+      this.channelVisibility = ChannelVisibility.public});
 }
 
 class AddChannelInitial extends AddChannelState {
@@ -19,20 +25,27 @@ class AddChannelInitial extends AddChannelState {
 class AddChannelValidation extends AddChannelState {
 
   const AddChannelValidation(
-      {
-        bool validToCreateChannel = false,
-        bool showEmoijKeyboard = false,
-        String emoijIcon = ''
-      })
-      : super(validToCreateChannel: validToCreateChannel, showEmoijKeyboard: showEmoijKeyboard, emoijIcon: emoijIcon);
+      {bool validToCreateChannel = false,
+      bool showEmoijKeyboard = false,
+      String emoijIcon = '',
+      ChannelVisibility channelVisibility = ChannelVisibility.public})
+      : super(
+            validToCreateChannel: validToCreateChannel,
+            showEmoijKeyboard: showEmoijKeyboard,
+            emoijIcon: emoijIcon,
+            channelVisibility: channelVisibility);
 
   @override
-  List<Object?> get props => [validToCreateChannel, showEmoijKeyboard, emoijIcon];
+  List<Object?> get props =>
+      [validToCreateChannel, showEmoijKeyboard, emoijIcon, channelVisibility];
 }
 
 class AddChannelInProgress extends AddChannelState{
 
-  const AddChannelInProgress({String emoijIcon = ''}) : super(emoijIcon: emoijIcon);
+  const AddChannelInProgress(
+      {String emoijIcon = '',
+      ChannelVisibility channelVisibility = ChannelVisibility.public})
+      : super(emoijIcon: emoijIcon, channelVisibility: channelVisibility);
 
   @override
   List<Object?> get props => [];
