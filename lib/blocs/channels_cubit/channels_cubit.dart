@@ -44,9 +44,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     }
   }
 
-  void changeSelectedChannelAfterCreateSuccess({
-    required Channel channel
-  }) async {
+  void changeSelectedChannelAfterCreateSuccess(
+      {required Channel channel}) async {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -194,6 +193,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   void selectChannel({required String channelId}) {
     final channels = (state as ChannelsLoadedSuccess).channels;
+    Logger().v('Channels: ${channels.map((c) => c.id)}');
+    Logger().v('Selected: $channelId');
     final hash = (state as ChannelsLoadedSuccess).hash;
 
     final selected = channels.firstWhere((c) => c.id == channelId);

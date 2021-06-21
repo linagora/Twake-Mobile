@@ -31,14 +31,16 @@ class HomeChannelListWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final channel = channelState.channels[index];
                 return HomeChannelTile(
-                  onHomeChannelTileClick: () => NavigatorService.instance.navigate(channelId: channel.id),
+                  onHomeChannelTileClick: () =>
+                      NavigatorService.instance.navigate(
+                    channelId: channel.id,
+                  ),
                   title: channel.name,
                   name: channel.lastMessage?.senderName,
                   content: channel.lastMessage?.text,
                   imageUrl: channel.icon,
                   dateTime: channel.lastMessage?.date,
-                 channelid: channel.id,
-
+                  channelid: channel.id,
                 );
               },
             );

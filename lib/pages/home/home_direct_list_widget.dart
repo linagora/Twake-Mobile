@@ -31,7 +31,11 @@ class HomeDirectListWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final channel = directState.channels[index];
                 return HomeChannelTile(
-                  onHomeChannelTileClick: () => NavigatorService.instance.navigate(channelId: channel.id),
+                  onHomeChannelTileClick: () =>
+                      NavigatorService.instance.navigate(
+                    channelId: channel.id,
+                    workspaceId: channel.workspaceId,
+                  ),
                   title: channel.name,
                   name: channel.lastMessage?.senderName,
                   content: channel.lastMessage?.text,

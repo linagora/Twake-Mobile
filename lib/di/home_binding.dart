@@ -54,6 +54,7 @@ class HomeBinding implements Bindings {
       directsCubit: directsCubit,
       channelMessagesCubit: channelMessagesCubit,
       threadMessagesCubit: threadMessagesCubit,
+      badgesCubit: badgesCubit,
     );
   }
 }

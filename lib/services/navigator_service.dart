@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
-import 'package:twake/pages/auth_page.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/twake_web_view.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -20,6 +20,7 @@ class NavigatorService {
   final DirectsCubit directsCubit;
   final ChannelMessagesCubit channelMessagesCubit;
   final ThreadMessagesCubit threadMessagesCubit;
+  final BadgesCubit badgesCubit;
 
   factory NavigatorService({
     required AccountCubit accountCubit,
@@ -29,6 +30,7 @@ class NavigatorService {
     required DirectsCubit directsCubit,
     required ChannelMessagesCubit channelMessagesCubit,
     required ThreadMessagesCubit threadMessagesCubit,
+    required BadgesCubit badgesCubit,
   }) {
     _service = NavigatorService._(
       accountCubit: accountCubit,
@@ -38,6 +40,7 @@ class NavigatorService {
       directsCubit: directsCubit,
       channelMessagesCubit: channelMessagesCubit,
       threadMessagesCubit: threadMessagesCubit,
+      badgesCubit: badgesCubit,
     );
     return _service;
   }
@@ -50,6 +53,7 @@ class NavigatorService {
     required this.directsCubit,
     required this.channelMessagesCubit,
     required this.threadMessagesCubit,
+    required this.badgesCubit,
   }) {
     // Run the notification click listeners
     listenToLocals();
@@ -128,6 +132,8 @@ class NavigatorService {
     }
 
     if (workspaceId != null && workspaceId == 'direct') {
+      Logger().v('Workspace: $workspaceId');
+
       directsCubit.selectChannel(channelId: channelId);
 
       Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
@@ -141,6 +147,8 @@ class NavigatorService {
         channelMessagesCubit.reset();
         channelsCubit.clearSelection();
       });
+
+      badgesCubit.reset(channelId: channelId);
     }
 
     channelMessagesCubit.fetch(channelId: channelId);
@@ -169,7 +177,7 @@ class NavigatorService {
   Future<void> back({bool shouldLogout = false}) async {
     if (shouldLogout) {
       Get.offAll(
-            () => InitialPage(),
+        () => InitialPage(),
         transition: Transition.leftToRight,
       );
     } else {

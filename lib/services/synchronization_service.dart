@@ -160,8 +160,9 @@ class SynchronizationService {
     unsubscribeFromMessages(channelId: channelId);
     // Make sure that channel rooms has been fetched before,
     // or you'll get Bad state
-    final channelRoom = _subRooms
-        .firstWhere((r) => r.type == RoomType.channel && r.id == channelId);
+    final channelRoom = _subRooms.firstWhere((r) =>
+        const [RoomType.channel, RoomType.direct].contains(r.type) &&
+        r.id == channelId);
 
     // Subscribe, to new channel
     _socketio.subscribe(room: channelRoom.key);

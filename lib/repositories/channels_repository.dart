@@ -179,7 +179,7 @@ class ChannelsRepository {
       data: {
         'company_id': channel.companyId,
         'workspace_id': channel.workspaceId,
-        'channel_id': channel.id,
+        'id': channel.id,
       },
     );
   }

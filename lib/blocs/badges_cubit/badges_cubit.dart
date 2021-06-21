@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/badges_cubit/badges_state.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/badges_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -29,20 +29,23 @@ class BadgesCubit extends Cubit<BadgesState> {
     }
   }
 
-  Future<void> reset({required Channel channel}) async {
+  Future<void> reset({required String channelId}) async {
     if (state is! BadgesLoadSuccess) return;
 
     final badges = (state as BadgesLoadSuccess).badges;
 
     final channelBadge = badges.firstWhere(
-      (b) => b.matches(type: BadgeType.channel, id: channel.id),
+      (b) => b.matches(type: BadgeType.channel, id: channelId),
       orElse: () => Badge(type: BadgeType.none, id: ''),
     );
 
     if (channelBadge.type == BadgeType.none) return;
 
     final workspaceBadge = badges.firstWhere(
-      (b) => b.matches(type: BadgeType.workspace, id: channel.workspaceId),
+      (b) => b.matches(
+        type: BadgeType.workspace,
+        id: Globals.instance.workspaceId!,
+      ),
       orElse: () => Badge(type: BadgeType.none, id: ''),
     );
 
@@ -51,7 +54,10 @@ class BadgesCubit extends Cubit<BadgesState> {
     }
 
     final companyBadge = badges.firstWhere(
-      (b) => b.matches(type: BadgeType.workspace, id: channel.workspaceId),
+      (b) => b.matches(
+        type: BadgeType.workspace,
+        id: Globals.instance.companyId!,
+      ),
     );
 
     companyBadge.count -= channelBadge.count;
@@ -61,6 +67,11 @@ class BadgesCubit extends Cubit<BadgesState> {
     _repository.saveOne(badge: channelBadge);
     _repository.saveOne(badge: workspaceBadge);
     _repository.saveOne(badge: companyBadge);
+
+    emit(BadgesLoadSuccess(
+      badges: badges,
+      hash: badges.fold(0, (acc, b) => b.hash + acc),
+    ));
   }
 
   Future<void> listenToBadgeChanges() async {

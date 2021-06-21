@@ -27,12 +27,12 @@ class BadgesCount extends StatelessWidget {
           bloc: Get.find<BadgesCubit>(),
           builder: (ctx, state) {
             if (state is BadgesLoadSuccess) {
-              state.badges.forEach(
-                (badge) {
-                  if (badge.id == id && badge.type == badgeType)
-                    counter = badge.count;
-                },
-              );
+              for (final b in state.badges) {
+                if (b.matches(type: badgeType, id: id)) {
+                  counter = b.count;
+                  break;
+                }
+              }
             }
             return state is BadgesLoadSuccess && counter != 0
                 ? Container(
