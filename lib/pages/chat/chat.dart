@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -29,7 +30,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         leadingWidth: 53.0,
         leading: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => popBack(),
+          onTap: () {
+            popBack();
+            Get.find<BadgesCubit>().fetch();
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
             child: Icon(

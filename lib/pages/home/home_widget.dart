@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
@@ -41,6 +44,8 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
 
     Get.find<AccountCubit>().fetch();
+
+    Get.find<BadgesCubit>().fetch();
   }
 
   @override
@@ -55,7 +60,12 @@ class _HomeWidgetState extends State<HomeWidget> {
             toolbarHeight: kToolbarHeight + 80,
             bottom: TabBar(
               tabs: [
-                Tab(text: 'Channels'),
+                
+                Tab(
+                  child: BadgesCount(
+                      BadgeType.workspace, Globals.instance.workspaceId!),
+                ),
+            
                 Tab(
                   text: 'Chats',
                 ),
