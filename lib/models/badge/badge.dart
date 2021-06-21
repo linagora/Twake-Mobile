@@ -7,12 +7,12 @@ part 'badge.g.dart';
 class Badge extends BaseModel {
   final BadgeType type;
   final String id;
-  final int count;
+  int count;
 
-  const Badge({
+  Badge({
     required this.type,
     required this.id,
-    required this.count,
+    this.count: 0,
   });
 
   factory Badge.fromJson({required Map<String, dynamic> json}) {
@@ -37,4 +37,6 @@ enum BadgeType {
   workspace,
   @JsonValue('channel')
   channel,
+  @JsonValue('none')
+  none
 }

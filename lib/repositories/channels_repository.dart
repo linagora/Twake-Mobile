@@ -170,4 +170,17 @@ class ChannelsRepository {
   Future<void> saveOne({required Channel channel}) async {
     await _storage.insert(table: Table.channel, data: channel);
   }
+
+  Future<void> markChannelRead({required Channel channel}) async {
+    if (!Globals.instance.isNetworkConnected) return;
+
+    await _api.post(
+      endpoint: Endpoint.channelsRead,
+      data: {
+        'company_id': channel.companyId,
+        'workspace_id': channel.workspaceId,
+        'channel_id': channel.id,
+      },
+    );
+  }
 }

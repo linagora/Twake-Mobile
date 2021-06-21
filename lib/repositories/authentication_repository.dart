@@ -107,9 +107,9 @@ class AuthenticationRepository {
   }
 
   Expiration hasExpired(Authentication authentication) {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    final expired = authentication.expiration > now;
-    final refreshExpired = authentication.refreshExpiration > now;
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final expired = authentication.expiration < now;
+    final refreshExpired = authentication.refreshExpiration < now;
 
     if (refreshExpired) return Expiration.Both;
     if (expired) return Expiration.Primary;
@@ -140,9 +140,9 @@ class AuthenticationRepository {
       '${DateTime.fromMillisecondsSinceEpoch(authentication.expiration * 1000)}',
     );
 
-    final now = DateTime.now().millisecondsSinceEpoch;
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final needToProlong = authentication.expiration - now <
-        10 * 60 * 1000; // less than 10 minutes to expiration
+        10 * 60; // less than 10 minutes to expiration
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }

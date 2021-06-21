@@ -72,6 +72,7 @@ class _SelectableChannelTypeWidgetState extends State<SelectableChannelTypeWidge
               setState(() {
                 _selectedChannelVisibility = ChannelVisibility.private;
               });
+              widget.onSelectableChannelTypeClick(ChannelVisibility.private);
             },
             child: Container(
                 height: 48,

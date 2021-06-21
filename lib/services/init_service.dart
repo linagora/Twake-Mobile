@@ -79,7 +79,7 @@ class InitService {
     );
     // Set workspace id in Globals if not set already
     if (Globals.instance.workspaceId == null) {
-      Globals.instance.workspaceId = workspaces.first.id;
+      Globals.instance.workspaceIdSet = workspaces.first.id;
     }
 
     await _storageService.multiInsert(

@@ -31,7 +31,7 @@ class HomeChannelTile extends StatelessWidget {
       onTap: onHomeChannelTileClick,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        height: 76,
+        height: 78,
         child: Padding(
           padding: const EdgeInsets.only(top: 12),
           child: Row(

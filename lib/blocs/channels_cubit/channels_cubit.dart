@@ -44,31 +44,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     }
   }
 
-  Future<bool> create({
-    required String name,
-    String? icon,
-    String? description,
-    required ChannelVisibility visibility,
+  void changeSelectedChannelAfterCreateSuccess({
+    required Channel channel
   }) async {
-    final now = DateTime.now().millisecondsSinceEpoch;
-    var channel = Channel(
-      id: now.toString(),
-      name: name,
-      icon: icon,
-      description: description,
-      companyId: Globals.instance.companyId!,
-      workspaceId: Globals.instance.workspaceId!,
-      members: const [],
-      lastActivity: now,
-      visibility: visibility,
-      permissions: const [],
-    );
-    try {
-      channel = await _repository.create(channel: channel);
-    } catch (e) {
-      Logger().e('Error occured during channel creation:\n$e');
-      return false;
-    }
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -80,7 +58,6 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       selected: channel,
       hash: hash + channel.hash,
     ));
-    return true;
   }
 
   Future<bool> edit({
@@ -219,15 +196,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
+    final selected = channels.firstWhere((c) => c.id == channelId);
     emit(ChannelsLoadedSuccess(
       channels: channels,
-      selected: channels.firstWhere((c) => c.id == channelId),
+      selected: selected,
       hash: hash,
     ));
 
     Globals.instance.channelIdSet = channelId;
 
     SynchronizationService.instance.subscribeToMessages(channelId: channelId);
+    _repository.markChannelRead(channel: selected);
   }
 
   void clearSelection() {
