@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:twake/models/badge/badge.dart';
+import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
@@ -11,6 +13,7 @@ class HomeChannelTile extends StatelessWidget {
   final String? imageUrl;
   final int? dateTime;
   final OnHomeChannelTileClick? onHomeChannelTileClick;
+  final String? channelid;
 
   const HomeChannelTile(
       {this.title,
@@ -18,7 +21,8 @@ class HomeChannelTile extends StatelessWidget {
       this.content,
       this.imageUrl,
       this.dateTime,
-      this.onHomeChannelTileClick})
+      this.onHomeChannelTileClick,
+      this.channelid})
       : super();
 
   @override
@@ -44,7 +48,7 @@ class HomeChannelTile extends StatelessWidget {
                       width: 54,
                       height: 54,
                     ),
-                  )
+                  ),
                 ],
               ),
               SizedBox(
@@ -68,13 +72,15 @@ class HomeChannelTile extends StatelessWidget {
                                   fontWeight: FontWeight.w600,
                                   fontStyle: FontStyle.normal,
                                 ))),
-                        Text('', // todo parse datetime
-                            style: TextStyle(
-                              color: Color(0xffc2c6cc),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.normal,
-                            ))
+                        Text(
+                          '', // todo parse datetime
+                          style: TextStyle(
+                            color: Color(0xffc2c6cc),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        )
                       ],
                     ),
                     SizedBox(
@@ -82,30 +88,40 @@ class HomeChannelTile extends StatelessWidget {
                     ),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(name ?? 'This channel is empty',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(
-                            color: Color(0xb2000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          )),
+                      child: Row(
+                        children: [
+                          Text(
+                            name ?? 'This channel is empty',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: Color(0xb2000000),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                            ),
+                          ),
+                          Spacer(),
+                          BadgesCount(BadgeType.channel, channelid!)
+                        ],
+                      ),
                     ),
                     SizedBox(
                       height: 3,
                     ),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(content ?? '',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: TextStyle(
-                            color: Color(0x7f000000),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          )),
+                      child: Text(
+                        content ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: Color(0x7f000000),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
                     )
                   ],
                 ),

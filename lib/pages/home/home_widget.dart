@@ -9,6 +9,7 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
@@ -59,12 +60,12 @@ class _HomeWidgetState extends State<HomeWidget> {
             toolbarHeight: kToolbarHeight + 80,
             bottom: TabBar(
               tabs: [
-                /*
+                
                 Tab(
                   child: BadgesCount(
-                      BadgeType.channel, Globals.instance.companyId!),
-                ),*/
-                Tab(text: 'Channels'),
+                      BadgeType.workspace, Globals.instance.workspaceId!),
+                ),
+            
                 Tab(
                   text: 'Chats',
                 ),

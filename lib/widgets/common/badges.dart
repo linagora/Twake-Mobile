@@ -17,6 +17,7 @@ class BadgesCount extends StatelessWidget {
     int counter = 0;
     return Row(
       children: <Widget>[
+        //  badgeType == BadgeType.channel ? Text('Channels') : Text('Chats'),
         Text('Channels'),
         SizedBox(
           width: 5,
@@ -28,9 +29,8 @@ class BadgesCount extends StatelessWidget {
             if (state is BadgesLoadSuccess) {
               state.badges.forEach(
                 (badge) {
-                  badge.matches(type: badgeType, id: id)
-                      ? counter = badge.count
-                      : counter = 0;
+                  if (badge.id == id && badge.type == badgeType)
+                    counter = badge.count;
                 },
               );
             }

@@ -8,8 +8,11 @@ import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
@@ -132,6 +135,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                   workSpace.id == workspaceState.selected?.id,
                               onWorkspaceDrawerTileTap: () =>
                                   _selectWorkspace(context, workSpace.id),
+                                  workSpaceid: workSpace.id,
                             );
                           }),
                     );
@@ -241,12 +245,14 @@ class WorkspaceDrawerTile extends StatelessWidget {
   final String? logo;
   final String? name;
   final OnWorkspaceDrawerTileTap? onWorkspaceDrawerTileTap;
+  final String? workSpaceid;
 
   const WorkspaceDrawerTile({
     required this.isSelected,
     this.onWorkspaceDrawerTileTap,
     this.logo,
     this.name,
+    this.workSpaceid,
   }) : super();
 
   @override
@@ -289,14 +295,22 @@ class WorkspaceDrawerTile extends StatelessWidget {
             Positioned.fill(
               left: 76,
               top: 8,
-              child: Text(
-                name ?? '',
-                style: TextStyle(
-                  color: Color(0xff000000),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  fontStyle: FontStyle.normal,
-                ),
+              child: Row(
+                children: [
+                  Text(
+                    name ?? '',
+                    style: TextStyle(
+                      color: Color(0xff000000),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                  Spacer(),
+             BadgesCount(BadgeType.workspace, workSpaceid!),
+             SizedBox(width: 30,)
+             
+                ],
               ),
             )
           ],

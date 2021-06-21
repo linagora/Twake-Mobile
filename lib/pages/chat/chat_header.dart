@@ -60,7 +60,7 @@ class ChatHeader extends StatelessWidget {
                   width: 60.0,
                   height: 10.0,
                   child: Text(
-                    name ?? '',
+                    name,
                     style: TextStyle(
                       fontSize: 17.0,
                       fontWeight: FontWeight.w700,
