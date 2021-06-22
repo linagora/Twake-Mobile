@@ -11,6 +11,8 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -87,6 +89,15 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
             title: _buildHeader(),
           ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: FloatingActionButton(
+              onPressed: () => push(RoutePaths.newChannel.path),
+              backgroundColor: Color(0xff004dff),
+              child: Image.asset(imageAddChannel),
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
           body: TabBarView(
             children: [
               HomeChannelListWidget(),
