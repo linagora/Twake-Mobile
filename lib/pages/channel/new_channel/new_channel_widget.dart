@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_cubit.dart';
 import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_state.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
 import 'package:twake/widgets/common/pick_image_widget.dart';
 import 'package:twake/widgets/common/rounded_widget.dart';
@@ -291,6 +292,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                   )),
                             ),
                           ),
+                          _buildAddMemberRow()
                         ],
                       ),
                     )),
@@ -335,6 +337,41 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   ],
                 ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddMemberRow() {
+    return GestureDetector(
+      onTap: () => push(RoutePaths.addChannelMembers.path),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            height: 44,
+            color: Colors.white,
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Icon(
+                    Icons.add_circle,
+                    color: Color(0xff004dff),
+                    size: 24,
+                  ),
+                ),
+                Text("Add a member",
+                    style: TextStyle(
+                      color: Color(0xff004dff),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w400,
+                      fontStyle: FontStyle.normal,
+                    ))
+              ],
             ),
           ),
         ),

@@ -14,6 +14,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
+import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
@@ -149,51 +150,10 @@ class _HomeWidgetState extends State<HomeWidget> {
             color: Colors.white,
             height: 12,
           ),
-          HomeSearchTextField(),
+          TwakeSearchTextField(height: 36,),
         ],
       ),
     );
   }
 }
 
-class HomeSearchTextField extends StatelessWidget {
-  const HomeSearchTextField() : super();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 36,
-      child: TextField(
-        cursorColor: Color(0xff004dff),
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 17,
-          fontWeight: FontWeight.w400,
-          fontStyle: FontStyle.normal,
-        ),
-        decoration: new InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 10),
-          prefixIcon: Icon(Icons.search),
-          border: new OutlineInputBorder(
-            borderRadius: const BorderRadius.all(
-              const Radius.circular(10.0),
-            ),
-            borderSide: BorderSide(
-              width: 0,
-              style: BorderStyle.none,
-            ),
-          ),
-          filled: true,
-          hintStyle: TextStyle(
-            color: Color(0xff8e8e93),
-            fontSize: 17,
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ),
-          hintText: "Search",
-          fillColor: Color(0xfff9f8f9),
-        ),
-      ),
-    );
-  }
-}
