@@ -151,7 +151,7 @@ class NavigatorService {
 
     channelMessagesCubit.fetch(channelId: channelId);
 
-    if (threadId != null) {
+    if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
       Get.toNamed(RoutePaths.messageThread.path)?.then((_) {
         channelMessagesCubit.clearSelectedThread();
