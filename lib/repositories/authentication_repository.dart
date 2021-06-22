@@ -25,7 +25,6 @@ class AuthenticationRepository {
         logout();
         return false;
       case Expiration.Primary:
-        Logger().d('NetworkConnected: ${Globals.instance.isNetworkConnected}');
         if (!Globals.instance.isNetworkConnected) {
           Globals.instance.tokenSet = authentication.token;
           return true;

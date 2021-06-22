@@ -9,6 +9,8 @@ class SynchronizationService {
   final _socketio = SocketIOService.instance;
   final _pushNotifications = PushNotificationsService.instance;
 
+  String? subscribedChannelId;
+
   List<SocketIORoom> _subRooms = [];
   Map<String, List<int>> _localNotifications = {};
 
@@ -25,12 +27,15 @@ class SynchronizationService {
     foregroundMessagesCheck();
 
     // Set up auto resubscription in case of internet connection loss
-    Globals.instance.connection.listen((state) async {
-      if (state == Connection.connected && _subRooms.isNotEmpty) {
+    _socketio.socketIOReconnectionStream.listen((authenticated) async {
+      if (authenticated && _subRooms.isNotEmpty) {
         // wait for the socketio service to authenticate first
         await Future.delayed(Duration(seconds: 3));
         await subscribeForChannels();
         await subscribeToBadges();
+
+        if (subscribedChannelId != null)
+          subscribeToMessages(channelId: subscribedChannelId!);
       }
     });
   }
@@ -167,6 +172,8 @@ class SynchronizationService {
     // Subscribe, to new channel
     _socketio.subscribe(room: channelRoom.key);
     channelRoom.subscribed = true;
+
+    subscribedChannelId = channelId;
   }
 
   void unsubscribeFromMessages({required String channelId}) {
@@ -176,5 +183,7 @@ class SynchronizationService {
 
     _socketio.unsubscribe(room: room.key);
     room.subscribed = false;
+
+    subscribedChannelId = null;
   }
 }

@@ -132,8 +132,6 @@ class NavigatorService {
     }
 
     if (workspaceId != null && workspaceId == 'direct') {
-      Logger().v('Workspace: $workspaceId');
-
       directsCubit.selectChannel(channelId: channelId);
 
       Get.toNamed(RoutePaths.directMessages.path)?.then((_) {

@@ -193,11 +193,10 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   void selectChannel({required String channelId}) {
     final channels = (state as ChannelsLoadedSuccess).channels;
-    Logger().v('Channels: ${channels.map((c) => c.id)}');
-    Logger().v('Selected: $channelId');
     final hash = (state as ChannelsLoadedSuccess).hash;
 
     final selected = channels.firstWhere((c) => c.id == channelId);
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
       selected: selected,
@@ -207,6 +206,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     Globals.instance.channelIdSet = channelId;
 
     SynchronizationService.instance.subscribeToMessages(channelId: channelId);
+    SynchronizationService.instance
+        .cancelNotificationsForChannel(channelId: channelId);
+
     _repository.markChannelRead(channel: selected);
   }
 
