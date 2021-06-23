@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 
-void push(String routeName, {dynamic arguments}) {
-  Get.toNamed(routeName, arguments: arguments);
+Future<dynamic> push(String routeName, {dynamic arguments}) async {
+  return Get.toNamed(routeName, arguments: arguments);
 }
 
-void popBack() {
-  Get.back();
+void popBack({dynamic result}) {
+  Get.back(result: result);
 }
