@@ -101,10 +101,21 @@ class _HomeWidgetState extends State<HomeWidget> {
           floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
            */
 
-          body: TabBarView(
+          body: Stack(
             children: [
-              HomeChannelListWidget(),
-              HomeDirectListWidget(),
+              Positioned(
+                  child: Opacity(
+                      opacity: 0.22,
+                      child: Divider(
+                        height: 2,
+                        color: Color(0xffd8d8d8),
+                      ))),
+              TabBarView(
+                children: [
+                  HomeChannelListWidget(),
+                  HomeDirectListWidget(),
+                ],
+              )
             ],
           )),
     );
