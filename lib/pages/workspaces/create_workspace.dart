@@ -22,29 +22,14 @@ class WorkspaceForm extends StatefulWidget {
 class _WorkspaceFormState extends State<WorkspaceForm> {
   final _workspaceNameController = TextEditingController();
   final _workspaceNameFocusNode = FocusNode();
-  var _canCreate = false;
+
   late int _count;
   List<Map<String, dynamic>> membersList = [];
   List<String> members = [];
   @override
   void initState() {
     super.initState();
-
     _count = 0;
-
-    _workspaceNameController.addListener(() {
-      final workspaceName = _workspaceNameController.text;
-
-      if (workspaceName.isNotReallyEmpty && !_canCreate) {
-        setState(() {
-          _canCreate = true;
-        });
-      } else if (workspaceName.isReallyEmpty && _canCreate) {
-        setState(() {
-          _canCreate = false;
-        });
-      }
-    });
   }
 
   @override
@@ -110,13 +95,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
     members = [];
     membersList.forEach((map) {
       var _list = map.values.toList();
-
       members.add(_list[1]);
     });
-
-    setState(() {});
-    print(members);
-    //print(member);
   }
 
   @override
