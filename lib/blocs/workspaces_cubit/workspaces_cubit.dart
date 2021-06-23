@@ -34,7 +34,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       }
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
-    SynchronizationService.instance.subscribeForChannels();
+    // wait for authentication check before attempting to subscribe
+    Future.delayed(Duration(seconds: 7),
+        SynchronizationService.instance.subscribeForChannels);
   }
 
   Future<void> createWorkspace({

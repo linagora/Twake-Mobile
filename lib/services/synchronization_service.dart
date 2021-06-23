@@ -129,6 +129,8 @@ class SynchronizationService {
   }
 
   Future<void> subscribeForChannels() async {
+    if (Globals.instance.token == null) return;
+
     const wsRooms = const [RoomType.channelsList, RoomType.directsList];
 
     // Unsubscribe from previous workspace
