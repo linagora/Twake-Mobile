@@ -327,9 +327,73 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
   @override
   final _socketIOEventStream =
       SynchronizationService.instance.socketIOChannelMessageStream;
+
+  ChannelMessagesCubit({MessagesRepository? repository})
+      : super(repository: repository) {
+    listenToThreadChanges();
+  }
+
+  Future<void> listenToThreadChanges() async {
+    final threadsStream =
+        SynchronizationService.instance.socketIOThreadMessageStream;
+
+    await for (final change in threadsStream) {
+      print('GOT thread change');
+      switch (change.data.action) {
+        case IOEventAction.remove:
+          if (state is MessagesLoadSuccess) {
+            final messages = (state as MessagesLoadSuccess).messages;
+            final hash = (state as MessagesLoadSuccess).hash;
+
+            if (!messages.any((m) => m.id == change.data.threadId)) continue;
+
+            final message =
+                messages.firstWhere((m) => m.id == change.data.threadId);
+
+            final oldHash = message.hash;
+            message.responsesCount -= 1;
+
+            emit(MessagesLoadSuccess(
+              messages: messages,
+              hash: hash - oldHash + message.hash,
+            ));
+          }
+          break;
+        case IOEventAction.update:
+          if (state is MessagesLoadSuccess) {
+            final messages = (state as MessagesLoadSuccess).messages;
+            final hash = (state as MessagesLoadSuccess).hash;
+
+            if (!messages.any((m) => m.id == change.data.threadId)) continue;
+            print('FOUND THREAD');
+
+            final message = await _repository.getMessageRemote(
+              messageId: change.data.threadId!,
+              channelId: change.channelId,
+            );
+
+            final i = messages.indexWhere((m) => m.id == change.data.threadId);
+
+            messages[i] = message;
+
+            final newState = MessagesLoadSuccess(
+              messages: messages,
+              hash: hash + message.hash,
+            );
+            print('Will emit: ${state != newState}');
+
+            emit(newState);
+          }
+          break;
+      }
+    }
+  }
 }
 
 class ThreadMessagesCubit extends BaseMessagesCubit {
+  ThreadMessagesCubit({MessagesRepository? repository})
+      : super(repository: repository);
+
   @override
   final _socketIOEventStream =
       SynchronizationService.instance.socketIOThreadMessageStream;
