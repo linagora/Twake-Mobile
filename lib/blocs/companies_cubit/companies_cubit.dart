@@ -29,7 +29,6 @@ class CompaniesCubit extends Cubit<CompaniesState> {
         selected =
             companies.firstWhere((c) => c.id == Globals.instance.companyId);
       }
-
       emit(CompaniesLoadSuccess(companies: companies, selected: selected!));
     }
   }
@@ -39,21 +38,26 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     emit(CompaniesSwitchInProgress(selectedCompanyId: companyId));
 
     Globals.instance.companyIdSet = companyId;
-    var companies = <Company>[];
+    List<Company> companies;
 
-    if (state is CompaniesSuccessState) {
-      companies = (state as CompaniesSwitchSuccess).companies;
-    }
+    fetch();
 
-    if (companies.isEmpty) {
-      Logger().w('Error: companies list is empty.');
-    } else {
-      final selected = companies.firstWhere((c) => c.id == companyId, orElse: () {
-        Logger().e('Error: no corresponding company found.\nThe first available will be picked.');
-        return companies.first;
-      },);
-      emit(CompaniesSwitchSuccess(companies: companies, selected: selected));
-    }
+    //
+    // if (state is CompaniesSuccessState) {
+    //   companies = (state as CompaniesLoadSuccess).companies;
+    // }
+    //
+    // if (companies.isEmpty) {
+    //   Logger().w('Error: companies list is empty.');
+    // } else {
+    //   final selected = companies.firstWhere((c) => c.id == companyId, orElse: () {
+    //     Logger().e('Error: no corresponding company found.\nThe first available will be picked.');
+    //     return companies.first;
+    //   },);
+    //
+    //
+    //   // emit(CompaniesSwitchSuccess(companies: companies, selected: selected));
+    // }
   }
 
   void selectWorkspace({required String workspaceId}) {
