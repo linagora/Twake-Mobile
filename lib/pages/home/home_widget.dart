@@ -16,7 +16,6 @@ import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
@@ -89,6 +88,8 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
             title: _buildHeader(),
           ),
+
+          /* float button to create channel
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
             child: FloatingActionButton(
@@ -98,6 +99,8 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+           */
+
           body: TabBarView(
             children: [
               HomeChannelListWidget(),
@@ -152,6 +155,24 @@ class _HomeWidgetState extends State<HomeWidget> {
                     imageTwakeHomeLogo,
                     width: 63,
                     height: 15,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => push(RoutePaths.newChannel.path),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                            color: Color(0xfff9f8f9),
+                            width: 40,
+                            height: 40,
+                            child: Image.asset(
+                              imageAddChannel,
+                              width: 20,
+                              height: 20,
+                              color: Color(0xff004dff),
+                            ))),
                   ),
                 )
               ],
