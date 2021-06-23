@@ -21,201 +21,203 @@ class HomeDrawerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        color: Colors.white,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 32,
-            ),
-            Container(
-              height: 70,
-              child: BlocBuilder<CompaniesCubit, CompaniesState>(
-                bloc: Get.find<CompaniesCubit>(),
-                builder: (context, companyState) {
-                  if (companyState is CompaniesLoadSuccess) {
-                    return Stack(
-                      children: [
-                        Positioned(
-                            left: 16,
-                            child: RoundedImage(
-                              width: 56,
-                              height: 56,
-                              imageUrl: companyState.selected?.logo ?? '',
-                            )),
-                        Positioned.fill(
-                          left: 82,
-                          top: 12,
-                          child: Column(
-                            children: [
-                              Align(
-                                child: Text(companyState.selected?.name ?? '',
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      color: Color(0xff000000),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FontStyle.normal,
-                                    )),
-                                alignment: Alignment.topLeft,
-                              ),
-                              SizedBox(
-                                height: 4,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  NavigatorService.instance.showCompanies();
-                                },
-                                child: Row(
-                                  children: [
-                                    Text("Switch organisation",
-                                        style: TextStyle(
-                                          color: Color(0xff004dff),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle: FontStyle.normal,
-                                        )),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 2),
-                                      child: Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        size: 8,
-                                        color: Color(0xff004dff),
-                                      ),
-                                    ),
-                                    Expanded(child: SizedBox.shrink())
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      ],
-                    );
-                  }
-                  return TwakeCircularProgressIndicator();
-                },
+      child: SafeArea(
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 32,
               ),
-            ),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                child: Text(
-                  "WORKSPACES",
-                  style: TextStyle(
-                    color: Color(0x59000000),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    fontStyle: FontStyle.normal,
+              Container(
+                height: 70,
+                child: BlocBuilder<CompaniesCubit, CompaniesState>(
+                  bloc: Get.find<CompaniesCubit>(),
+                  builder: (context, companyState) {
+                    if (companyState is CompaniesLoadSuccess) {
+                      return Stack(
+                        children: [
+                          Positioned(
+                              left: 16,
+                              child: RoundedImage(
+                                width: 56,
+                                height: 56,
+                                imageUrl: companyState.selected?.logo ?? '',
+                              )),
+                          Positioned.fill(
+                            left: 82,
+                            top: 12,
+                            child: Column(
+                              children: [
+                                Align(
+                                  child: Text(companyState.selected?.name ?? '',
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        color: Color(0xff000000),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        fontStyle: FontStyle.normal,
+                                      )),
+                                  alignment: Alignment.topLeft,
+                                ),
+                                SizedBox(
+                                  height: 4,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    NavigatorService.instance.showCompanies();
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text("Switch organisation",
+                                          style: TextStyle(
+                                            color: Color(0xff004dff),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            fontStyle: FontStyle.normal,
+                                          )),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 2),
+                                        child: Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          size: 8,
+                                          color: Color(0xff004dff),
+                                        ),
+                                      ),
+                                      Expanded(child: SizedBox.shrink())
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      );
+                    }
+                    return TwakeCircularProgressIndicator();
+                  },
+                ),
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                  child: Text(
+                    "WORKSPACES",
+                    style: TextStyle(
+                      color: Color(0x59000000),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontStyle: FontStyle.normal,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Expanded(
-              child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                bloc: Get.find<WorkspacesCubit>(),
-                builder: (context, workspaceState) {
-                  if (workspaceState is WorkspacesLoadSuccess) {
-                    return MediaQuery.removePadding(
-                      context: context,
-                      removeTop: true,
-                      child: ListView.separated(
-                          separatorBuilder: (_, __) => SizedBox(height: 16),
-                          itemCount: workspaceState.workspaces.length,
-                          itemBuilder: (context, index) {
-                            final workSpace = workspaceState.workspaces[index];
-                            return WorkspaceDrawerTile(
-                              name: workSpace.name,
-                              logo: workSpace.logo,
-                              isSelected:
-                                  workSpace.id == workspaceState.selected?.id,
-                              onWorkspaceDrawerTileTap: () =>
-                                  _selectWorkspace(context, workSpace.id),
-                              workspaceId: workSpace.id,
-                            );
-                          }),
-                    );
-                  }
-                  return TwakeCircularProgressIndicator();
-                },
+              Expanded(
+                child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                  bloc: Get.find<WorkspacesCubit>(),
+                  builder: (context, workspaceState) {
+                    if (workspaceState is WorkspacesLoadSuccess) {
+                      return MediaQuery.removePadding(
+                        context: context,
+                        removeTop: true,
+                        child: ListView.separated(
+                            separatorBuilder: (_, __) => SizedBox(height: 16),
+                            itemCount: workspaceState.workspaces.length,
+                            itemBuilder: (context, index) {
+                              final workSpace = workspaceState.workspaces[index];
+                              return WorkspaceDrawerTile(
+                                name: workSpace.name,
+                                logo: workSpace.logo,
+                                isSelected:
+                                    workSpace.id == workspaceState.selected?.id,
+                                onWorkspaceDrawerTileTap: () =>
+                                    _selectWorkspace(context, workSpace.id),
+                                workspaceId: workSpace.id,
+                              );
+                            }),
+                      );
+                    }
+                    return TwakeCircularProgressIndicator();
+                  },
+                ),
               ),
-            ),
-            Divider(
-              color: Colors.grey,
-              height: 1,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.add_circle_sharp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      Text("Add a new workspace",
-                          style: TextStyle(
-                            color: Color(0xff000000),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          ))
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  BlocBuilder<AccountCubit, AccountState>(
-                    bloc: Get.find<AccountCubit>(),
-                    builder: (context, accountState) {
-                      if (accountState is AccountLoadSuccess) {
-                        return GestureDetector(
-                          onTap: () =>
-                              NavigatorService.instance.navigateToAccount(),
-                          behavior: HitTestBehavior.opaque,
-                          child: Row(
-                            children: [
-                              RoundedImage(
-                                imageUrl: accountState.account.thumbnail ?? '',
-                                width: 24,
-                                height: 24,
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                  '${accountState.account.firstname} ${accountState.account.lastname}',
-                                  style: TextStyle(
-                                    color: Color(0xff000000),
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                  )),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: Icon(Icons.arrow_forward_ios_sharp,
-                                    size: 10, color: Colors.black),
-                              ),
-                              Expanded(child: SizedBox.shrink())
-                            ],
-                          ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
-                  )
-                ],
+              Divider(
+                color: Colors.grey,
+                height: 1,
               ),
-            )
-          ],
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.add_circle_sharp,
+                          color: Colors.black,
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Text("Add a new workspace",
+                            style: TextStyle(
+                              color: Color(0xff000000),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.normal,
+                            ))
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    BlocBuilder<AccountCubit, AccountState>(
+                      bloc: Get.find<AccountCubit>(),
+                      builder: (context, accountState) {
+                        if (accountState is AccountLoadSuccess) {
+                          return GestureDetector(
+                            onTap: () =>
+                                NavigatorService.instance.navigateToAccount(),
+                            behavior: HitTestBehavior.opaque,
+                            child: Row(
+                              children: [
+                                RoundedImage(
+                                  imageUrl: accountState.account.thumbnail ?? '',
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                SizedBox(
+                                  width: 12,
+                                ),
+                                Text(
+                                    '${accountState.account.firstname} ${accountState.account.lastname}',
+                                    style: TextStyle(
+                                      color: Color(0xff000000),
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.normal,
+                                    )),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 2),
+                                  child: Icon(Icons.arrow_forward_ios_sharp,
+                                      size: 10, color: Colors.black),
+                                ),
+                                Expanded(child: SizedBox.shrink())
+                              ],
+                            ),
+                          );
+                        }
+                        return SizedBox.shrink();
+                      },
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
