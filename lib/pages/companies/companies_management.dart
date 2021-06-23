@@ -37,7 +37,9 @@ class CompaniesManagement extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
-                    icon: Image.asset(imagePathCancel), onPressed: () => popBack()),
+                  icon: Image.asset(imagePathCancel),
+                  onPressed: () => popBack(),
+                ),
               )
             ],
           ),
@@ -47,7 +49,9 @@ class CompaniesManagement extends StatelessWidget {
                 if (companyState is CompaniesLoadSuccess) {
                   return Row(
                     children: [
-                      SizedBox(width: 16,),
+                      SizedBox(
+                        width: 16,
+                      ),
                       ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         child: Container(
@@ -58,21 +62,32 @@ class CompaniesManagement extends StatelessWidget {
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Text(companyState.selected?.name ?? '', style: TextStyle(fontWeight: FontWeight.bold),),
+                        child: Text(
+                          companyState.selected?.name ?? '',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       )
                     ],
                   );
                 }
-                return SizedBox(width: 60, height: 60, child: CircularProgressIndicator(),);
+                return SizedBox(
+                  width: 60,
+                  height: 60,
+                  child: CircularProgressIndicator(),
+                );
               }),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           SizedBox(
             height: 80,
             child: Padding(
               padding: const EdgeInsets.only(left: 16),
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                separatorBuilder: (BuildContext context, int index) => SizedBox(width: 8,),
+                separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  width: 8,
+                ),
                 itemCount: 10,
                 itemBuilder: (context, int index) {
                   return CompanyTile(
@@ -89,9 +104,13 @@ class CompaniesManagement extends StatelessWidget {
             child: Column(
               children: [
                 CompanySettingItemWidget(),
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 CompanySettingItemWidget(),
-                SizedBox(height: 16,),
+                SizedBox(
+                  height: 16,
+                ),
                 CompanySettingItemWidget(),
               ],
             ),

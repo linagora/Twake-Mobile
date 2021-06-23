@@ -7,6 +7,7 @@ import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 class CompanySelectionWidget extends StatelessWidget {
@@ -79,23 +80,47 @@ class CompanySelectionWidget extends StatelessWidget {
             ),
             // AddWorkspaceTile(title: 'Add a new company'),
             Expanded(
-              child: BlocBuilder<CompaniesCubit, CompaniesState>(
+              child: BlocConsumer<CompaniesCubit, CompaniesState>(
                 bloc: Get.find<CompaniesCubit>(),
-                builder: (context, companyState) {
-                  if (companyState is CompaniesLoadSuccess) {
+                listenWhen: (_, current) =>
+                    current is CompaniesLoadFailure ||
+                    current is CompaniesSwitchFailure,
+                listener: (context, companiesState) {
+                  if (companiesState is CompaniesLoadFailure ||
+                      companiesState is CompaniesSwitchFailure) {
+                    NavigatorService.instance
+                        .showWarning(companiesState.);
+                  }
+                },
+                buildWhen: (_, current) =>
+                    current is CompaniesLoadInProgress ||
+                    current is CompaniesLoadSuccess ||
+                    current is CompaniesSwitchSuccess,
+                builder: (context, companiesState) {
+                  if (companiesState is CompaniesLoadInProgress) {
+                    return SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (companiesState is CompaniesLoadSuccess ||
+                      companiesState is CompaniesSwitchSuccess) {
+                    final companies = companiesState.companies;
+                    final selected = companiesState.selected;
+
                     return ListView.builder(
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).padding.bottom,
                       ),
-                      itemCount: companyState.companies.length,
+                      itemCount: companiesState.companies.length,
                       itemBuilder: (context, index) {
-                        final company = companyState.companies[index];
+                        final company = companies[index];
                         return WorkspaceTile(
                           onTap: () => Get.find<CompaniesCubit>()
                               .selectCompany(companyId: company.id),
                           image: company.logo ?? '',
                           title: company.name,
-                          selected: companyState.selected?.id == company.id,
+                          selected: selected?.id == company.id,
                           subtitle: '',
                         );
                       },

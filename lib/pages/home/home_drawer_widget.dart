@@ -26,9 +26,7 @@ class HomeDrawerWidget extends StatelessWidget {
           color: Colors.white,
           child: Column(
             children: [
-              SizedBox(
-                height: 32,
-              ),
+              SizedBox(height: 20),
               Container(
                 height: 70,
                 child: BlocBuilder<CompaniesCubit, CompaniesState>(
@@ -42,6 +40,7 @@ class HomeDrawerWidget extends StatelessWidget {
                               child: RoundedImage(
                                 width: 56,
                                 height: 56,
+                                borderRadius: 16.0,
                                 imageUrl: companyState.selected?.logo ?? '',
                               )),
                           Positioned.fill(

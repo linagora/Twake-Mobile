@@ -34,8 +34,14 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   void selectCompany({required String companyId}) {
+
+    emit(CompaniesSwitchInProgress(selectedCompanyId: companyId));
+
     Globals.instance.companyIdSet = companyId;
+
     final companies = (state as CompaniesLoadSuccess).companies;
+
+
 
     emit(CompaniesLoadSuccess(
       companies: companies,
