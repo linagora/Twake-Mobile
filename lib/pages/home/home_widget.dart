@@ -60,7 +60,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           appBar: AppBar(
             leading: SizedBox.shrink(),
             leadingWidth: 0,
-            toolbarHeight: kToolbarHeight + 80,
+            toolbarHeight: kToolbarHeight + 44,
             bottom: TabBar(
               tabs: [
                 Tab(
@@ -161,7 +161,6 @@ class _HomeWidgetState extends State<HomeWidget> {
             color: Colors.white,
             height: 12,
           ),
-          TwakeSearchTextField(height: 36,),
         ],
       ),
     );
