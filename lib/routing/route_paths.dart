@@ -6,6 +6,7 @@ class RoutePaths {
   static const messageThread = _RoutePathsType(initial, 'message/thread');
   static const accountSettings = _RoutePathsType(initial, 'account_settings');
   static const accountInfo = _RoutePathsType(initial, 'account_settings/account_info');
+  static const newWorkspace = _RoutePathsType(initial, 'newWorkspace');
 }
 
 class _RoutePathsType {

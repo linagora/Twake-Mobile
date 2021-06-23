@@ -9,17 +9,22 @@ class SheetTextField extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final int? maxLength;
-  final String Function(String?)? validator;
+  final String? Function(String?)? validator;
+  final bool isRounded;
+  final double borderRadius;
+  final TextInputType textInputType;
 
-  const SheetTextField({
-    required this.controller,
-    required this.focusNode,
-    required this.hint,
-    this.leadingAction,
-    this.trailingAction,
-    this.validator,
-    this.maxLength,
-  });
+  const SheetTextField(
+      {required this.controller,
+      required this.focusNode,
+      required this.hint,
+      this.leadingAction,
+      this.trailingAction,
+      this.validator,
+      this.maxLength,
+      this.isRounded = false,
+      this.borderRadius = 0,
+      this.textInputType = TextInputType.emailAddress});
 
   @override
   _SheetTextFieldState createState() => _SheetTextFieldState();
@@ -29,16 +34,21 @@ class _SheetTextFieldState extends State<SheetTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: widget.borderRadius != 0
+            ? BorderRadius.circular(widget.borderRadius)
+            : BorderRadius.zero,
+      ),
       padding: const EdgeInsets.only(left: 14.0, right: 7),
-      color: Colors.white,
       child: TextFormField(
-        inputFormatters:[
+        inputFormatters: [
           LengthLimitingTextInputFormatter(widget.maxLength),
         ],
         validator: widget.validator,
         controller: widget.controller,
         focusNode: widget.focusNode,
-        keyboardType: TextInputType.emailAddress,
+        keyboardType: widget.textInputType,
         style: TextStyle(
           fontSize: 17.0,
           fontWeight: FontWeight.w400,
