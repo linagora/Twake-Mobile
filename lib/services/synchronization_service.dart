@@ -159,12 +159,18 @@ class SynchronizationService {
     _socketio.subscribe(room: badgesRoom.key);
   }
 
-  void subscribeToMessages({required String channelId}) {
+  void subscribeToMessages({required String channelId}) async {
     if (!Globals.instance.isNetworkConnected)
       throw Exception('Shoud not be called with no active connection');
 
     // Unsubscribe just in case
     unsubscribeFromMessages(channelId: channelId);
+
+    // if the channel is not present, rerequest the list
+    if (!_subRooms.any((r) =>
+        const [RoomType.channel, RoomType.direct].contains(r.type) &&
+        r.id == channelId)) _subRooms = await socketIORooms;
+
     // Make sure that channel rooms has been fetched before,
     // or you'll get Bad state
     final channelRoom = _subRooms.firstWhere((r) =>

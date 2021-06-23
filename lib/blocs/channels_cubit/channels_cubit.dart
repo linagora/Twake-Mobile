@@ -243,11 +243,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         case ResourceAction.updated:
           // Extract manually all the required data
           String id = change.resource['id'];
-          int lastActivity = change.resource['last_activity'];
-          MessageSummary lastMessage =
-              MessageSummary.fromJson(change.resource['last_message']);
-
           final index = channels.indexWhere((c) => c.id == id);
+
+          if (index.isNegative) continue;
+
+          int lastActivity = change.resource['last_activity'];
+          MessageSummary? lastMessage;
+
+          if (change.resource['last_message'] != null) {
+            lastMessage =
+                MessageSummary.fromJson(change.resource['last_message']);
+          }
 
           final changed = channels[index].copyWith(
             lastMessage: lastMessage,
@@ -265,6 +271,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             hash: hash,
             selected: selected,
           ));
+
+          await SynchronizationService.instance.subscribeForChannels();
 
           break;
 
