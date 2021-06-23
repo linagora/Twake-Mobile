@@ -11,6 +11,8 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -57,7 +59,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           appBar: AppBar(
             leading: SizedBox.shrink(),
             leadingWidth: 0,
-            toolbarHeight: kToolbarHeight + 80,
+            toolbarHeight: kToolbarHeight + 44,
             bottom: TabBar(
               tabs: [
                 Tab(
@@ -86,10 +88,34 @@ class _HomeWidgetState extends State<HomeWidget> {
             ),
             title: _buildHeader(),
           ),
-          body: TabBarView(
+
+          /* float button to create channel
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: FloatingActionButton(
+              onPressed: () => push(RoutePaths.newChannel.path),
+              backgroundColor: Color(0xff004dff),
+              child: Image.asset(imageAddChannel),
+            ),
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+           */
+
+          body: Stack(
             children: [
-              HomeChannelListWidget(),
-              HomeDirectListWidget(),
+              Positioned(
+                  child: Opacity(
+                      opacity: 0.22,
+                      child: Divider(
+                        height: 2,
+                        color: Color(0xffd8d8d8),
+                      ))),
+              TabBarView(
+                children: [
+                  HomeChannelListWidget(),
+                  HomeDirectListWidget(),
+                ],
+              )
             ],
           )),
     );
@@ -141,6 +167,24 @@ class _HomeWidgetState extends State<HomeWidget> {
                     width: 63,
                     height: 15,
                   ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => push(RoutePaths.newChannel.path),
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                            color: Color(0xfff9f8f9),
+                            width: 40,
+                            height: 40,
+                            child: Image.asset(
+                              imageAddChannel,
+                              width: 20,
+                              height: 20,
+                              color: Color(0xff004dff),
+                            ))),
+                  ),
                 )
               ],
             ),
@@ -149,51 +193,9 @@ class _HomeWidgetState extends State<HomeWidget> {
             color: Colors.white,
             height: 12,
           ),
-          HomeSearchTextField(),
         ],
       ),
     );
   }
 }
 
-class HomeSearchTextField extends StatelessWidget {
-  const HomeSearchTextField() : super();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 36,
-      child: TextField(
-        cursorColor: Color(0xff004dff),
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 17,
-          fontWeight: FontWeight.w400,
-          fontStyle: FontStyle.normal,
-        ),
-        decoration: new InputDecoration(
-          contentPadding: EdgeInsets.symmetric(vertical: 10),
-          prefixIcon: Icon(Icons.search),
-          border: new OutlineInputBorder(
-            borderRadius: const BorderRadius.all(
-              const Radius.circular(10.0),
-            ),
-            borderSide: BorderSide(
-              width: 0,
-              style: BorderStyle.none,
-            ),
-          ),
-          filled: true,
-          hintStyle: TextStyle(
-            color: Color(0xff8e8e93),
-            fontSize: 17,
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ),
-          hintText: "Search",
-          fillColor: Color(0xfff9f8f9),
-        ),
-      ),
-    );
-  }
-}

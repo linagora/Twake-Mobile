@@ -72,7 +72,7 @@ class SocketIOService {
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
 
     _socket.onDisconnect((_) {
-      _reconnectionStream.sink.add(true);
+      _reconnectionStream.sink.add(false);
       Logger().w('Socket IO connection was aborted');
     });
 
@@ -135,6 +135,7 @@ class SocketIOService {
   Future<void> dispose() async {
     await _eventStream.close();
     await _resourceStream.close();
+    await _reconnectionStream.close();
   }
 }
 

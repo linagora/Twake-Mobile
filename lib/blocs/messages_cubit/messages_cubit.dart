@@ -14,6 +14,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
   final _socketIOEventStream = SocketIOService.instance.eventStream;
 
+  bool _sendInProgress = false;
+
   BaseMessagesCubit({MessagesRepository? repository})
       : super(MessagesInitial()) {
     if (repository == null) {
@@ -98,6 +100,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final messages = (this.state as MessagesLoadSuccess).messages;
     final hash = (this.state as MessagesLoadSuccess).hash;
 
+    _sendInProgress = true;
+
     await for (final message in sendStream) {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess
@@ -111,6 +115,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         hash: hash + message.hash,
       ));
     }
+
+    _sendInProgress = false;
   }
 
   void startEdit({required Message message}) {
@@ -277,6 +283,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
             channelId: change.channelId,
             threadId: change.data.threadId,
           );
+          if (message.userId == Globals.instance.userId && _sendInProgress)
+            continue;
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
