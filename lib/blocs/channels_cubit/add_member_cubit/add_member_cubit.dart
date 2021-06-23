@@ -9,12 +9,20 @@ class AddMemberCubit extends Cubit<AddMemberState> {
 
   AddMemberCubit({required this.workspacesCubit}) : super(AddMemberInitial());
 
-  void fetchAllMembers() async {
+  void fetchAllMembers({List<Account>? selectedMembers}) async {
+    if (selectedMembers != null) {
+      emit(AddMemberInFrequentlyContacted(
+        allMembers: state.allMembers,
+        selectedMembers: selectedMembers,
+        frequentlyContacted: state.frequentlyContacted,
+      ));
+    }
+
     List<Account> members = await workspacesCubit.fetchMembers();
     emit(AddMemberInFrequentlyContacted(
       allMembers: members,
-      selectedMembers: [],
-      frequentlyContacted: [],
+      selectedMembers: state.selectedMembers,
+      frequentlyContacted: state.frequentlyContacted,
     ));
   }
 
@@ -22,7 +30,7 @@ class AddMemberCubit extends Cubit<AddMemberState> {
     if (memberName.isReallyEmpty) {
       emit(AddMemberInFrequentlyContacted(
         allMembers: state.allMembers,
-        selectedMembers: [],
+        selectedMembers: state.selectedMembers,
         frequentlyContacted: state.frequentlyContacted,
       ));
       return;
@@ -51,10 +59,31 @@ class AddMemberCubit extends Cubit<AddMemberState> {
   }
 
   void selectMember(Account member) {
+    List<Account> newList = List.from(state.selectedMembers);
+    newList.add(member);
     emit(AddMemberInFrequentlyContacted(
       allMembers: state.allMembers,
-      selectedMembers: state.selectedMembers..add(member),
-      frequentlyContacted: [],
+      selectedMembers: newList,
+      frequentlyContacted: state.frequentlyContacted,
     ));
+  }
+
+  void removeMember(Account member) {
+    List<Account> newList = List.from(state.selectedMembers);
+    newList.removeWhere((element) => element.id == member.id);
+
+    if (state is AddMemberInFrequentlyContacted) {
+      emit(AddMemberInFrequentlyContacted(
+        allMembers: state.allMembers,
+        selectedMembers: newList,
+        frequentlyContacted: state.frequentlyContacted,
+      ));
+    } else {
+      emit(AddMemberInSearch(
+          allMembers: state.allMembers,
+          searchResults: state.searchResults,
+          selectedMembers: newList,
+          frequentlyContacted: state.frequentlyContacted));
+    }
   }
 }

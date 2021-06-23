@@ -27,7 +27,11 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
   @override
   void initState() {
     super.initState();
-    Get.find<AddMemberCubit>().fetchAllMembers();
+    final arguments = Get.arguments;
+    Get.find<AddMemberCubit>().fetchAllMembers(
+        selectedMembers: (arguments != null && arguments is List<Account>)
+            ? arguments
+            : null);
 
     _searchController.addListener(() {
       Get.find<AddMemberCubit>().searchMembers(_searchController.text);
@@ -75,10 +79,16 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           ),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: EnableButtonWidget(
-                                onEnableButtonWidgetClick: () => {},
-                                text: 'Add',
-                                isEnable: true),
+                            child: BlocBuilder<AddMemberCubit, AddMemberState>(
+                              bloc: Get.find<AddMemberCubit>(),
+                              builder: (ctx, addMemberState) {
+                                return EnableButtonWidget(
+                                    onEnableButtonWidgetClick: () {
+                                      popBack(result: addMemberState.selectedMembers);
+                                    },
+                                    text: 'Add',
+                                    isEnable: addMemberState.selectedMembers.isNotEmpty);
+                              },),
                           ),
                           Align(
                               alignment: Alignment.center,
@@ -112,6 +122,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                     ),
                     BlocBuilder<AddMemberCubit, AddMemberState>(
                         bloc: Get.find<AddMemberCubit>(),
+                        buildWhen: (_ , current) => current is AddMemberInSearch || current is AddMemberInFrequentlyContacted,
                         builder: (context, addMemberState) {
                           if (addMemberState.selectedMembers.isEmpty) {
                             return SizedBox.shrink();
@@ -129,7 +140,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                   final selectedUser = addMemberState.selectedMembers[index];
                                   return SelectedMemberTile(
                                     onSelectedMemberTileClick: () {
-                                      // todo
+                                      Get.find<AddMemberCubit>().removeMember(selectedUser);
                                     },
                                       memberName: '${selectedUser.firstname} ${selectedUser.lastname}');
                                 }),
@@ -140,7 +151,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                         builder: (ctx, addMemberState) {
                           return Padding(
                             padding: const EdgeInsets.only(
-                                top: 24, left: 16, bottom: 12),
+                                top: 14, left: 16, bottom: 12),
                             child: Align(
                               alignment: Alignment.centerLeft,
                               child: Text(addMemberState is AddMemberInSearch ? 'FOUND PEOPLE' : 'FREQUENTLY CONTACTED',
@@ -183,11 +194,17 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                       itemCount: users.length,
                                       itemBuilder: (context, index) {
                                         final user = users[index];
+                                        final isSelected = addMemberState.selectedMembers.contains(user);
                                         return FoundMemberTile(
                                           onFoundMemberTileClick: () {
-                                            // todo
+                                            if (isSelected) {
+                                              Get.find<AddMemberCubit>().removeMember(user);
+                                            } else {
+                                              Get.find<AddMemberCubit>().selectMember(user);
+                                              _searchController.text = '';
+                                            }
                                           },
-                                          isSelected: false,
+                                          isSelected: isSelected,
                                           imageUrl: user.thumbnail ?? '',
                                           name: '${user.firstname} ${user.lastname}',
                                         );
