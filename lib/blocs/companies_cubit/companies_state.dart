@@ -16,19 +16,6 @@ abstract class CompaniesFailureState extends CompaniesState {
   List<Object> get props => [message];
 }
 
-abstract class CompaniesSuccessState extends CompaniesState {
-  final List<Company> companies;
-  final Company selected;
-
-  const CompaniesSuccessState({
-    required this.companies,
-    required this.selected,
-  });
-
-  @override
-  List<Object> get props => [companies, selected];
-}
-
 class CompaniesInitial extends CompaniesState {
   const CompaniesInitial();
 
@@ -36,12 +23,11 @@ class CompaniesInitial extends CompaniesState {
   List<Object> get props => [];
 }
 
-class CompaniesLoadSuccess extends CompaniesSuccessState {
+class CompaniesLoadSuccess extends CompaniesState {
   final List<Company> companies;
   final Company selected;
 
-  const CompaniesLoadSuccess({required this.companies, required this.selected})
-      : super(companies: companies, selected: selected);
+  const CompaniesLoadSuccess({required this.companies, required this.selected});
 
   @override
   List<Object> get props => [companies, selected];
@@ -72,17 +58,15 @@ class CompaniesSwitchInProgress extends CompaniesState {
   List<Object> get props => [selectedCompanyId];
 }
 
-class CompaniesSwitchSuccess extends CompaniesSuccessState {
-  final List<Company> companies;
-  final Company selected;
+class CompaniesSwitchSuccess extends CompaniesState {
+  final String companyId;
 
   const CompaniesSwitchSuccess({
-    required this.companies,
-    required this.selected,
-  }) : super(companies: companies, selected: selected);
+    required this.companyId,
+  });
 
   @override
-  List<Object> get props => [selected, companies];
+  List<Object> get props => [companyId];
 }
 
 class CompaniesSwitchFailure extends CompaniesFailureState {

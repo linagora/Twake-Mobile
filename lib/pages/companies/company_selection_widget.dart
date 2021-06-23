@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -84,17 +86,20 @@ class CompanySelectionWidget extends StatelessWidget {
                 bloc: Get.find<CompaniesCubit>(),
                 listenWhen: (_, current) =>
                     current is CompaniesLoadFailure ||
-                    current is CompaniesSwitchFailure,
+                    current is CompaniesSwitchFailure ||
+                    current is CompaniesSwitchSuccess,
                 listener: (context, companiesState) {
-                  if (companiesState is CompaniesFailureState) {
-                    NavigatorService.instance
-                        .showWarning(companiesState.message);
+                  if (companiesState is CompaniesSwitchSuccess) {
+
+                    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+                    popBack();
+                    // NavigatorService.instance
+                    //     .showWarning(companiesState.message);
                   }
                 },
                 buildWhen: (_, current) =>
                     current is CompaniesLoadInProgress ||
-                    current is CompaniesLoadSuccess ||
-                    current is CompaniesSwitchSuccess,
+                    current is CompaniesLoadSuccess,
                 builder: (context, companiesState) {
                   if (companiesState is CompaniesLoadInProgress) {
                     return SizedBox(
@@ -102,7 +107,7 @@ class CompanySelectionWidget extends StatelessWidget {
                       height: 40,
                       child: CircularProgressIndicator(),
                     );
-                  } else if (companiesState is CompaniesSuccessState) {
+                  } else if (companiesState is CompaniesLoadSuccess) {
                     final companies = companiesState.companies;
                     final selected = companiesState.selected;
 

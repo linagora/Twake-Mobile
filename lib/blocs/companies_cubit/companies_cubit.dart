@@ -56,7 +56,7 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     //   },);
     //
     //
-    //   // emit(CompaniesSwitchSuccess(companies: companies, selected: selected));
+      emit(CompaniesSwitchSuccess(companyId: companyId));
     // }
   }
 
