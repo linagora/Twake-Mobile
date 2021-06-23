@@ -63,7 +63,7 @@ class CompaniesManagement extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8),
                         child: Text(
-                          companyState.selected?.name ?? '',
+                          companyState.selected.name,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       )

@@ -24,6 +24,9 @@ abstract class CompaniesSuccessState extends CompaniesState {
     required this.companies,
     required this.selected,
   });
+
+  @override
+  List<Object> get props => [companies, selected];
 }
 
 class CompaniesInitial extends CompaniesState {

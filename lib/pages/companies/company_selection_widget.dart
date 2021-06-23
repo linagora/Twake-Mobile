@@ -41,13 +41,13 @@ class CompanySelectionWidget extends StatelessWidget {
                                 borderRadius: 10.0,
                                 width: 60.0,
                                 height: 60.0,
-                                imageUrl: companyState.selected!.logo ?? '',
+                                imageUrl: companyState.selected.logo,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     top: 8, bottom: 40, left: 20, right: 20),
                                 child: Text(
-                                  companyState.selected?.name ?? '',
+                                  companyState.selected.name,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -86,10 +86,9 @@ class CompanySelectionWidget extends StatelessWidget {
                     current is CompaniesLoadFailure ||
                     current is CompaniesSwitchFailure,
                 listener: (context, companiesState) {
-                  if (companiesState is CompaniesLoadFailure ||
-                      companiesState is CompaniesSwitchFailure) {
+                  if (companiesState is CompaniesFailureState) {
                     NavigatorService.instance
-                        .showWarning(companiesState.);
+                        .showWarning(companiesState.message);
                   }
                 },
                 buildWhen: (_, current) =>
@@ -103,8 +102,7 @@ class CompanySelectionWidget extends StatelessWidget {
                       height: 40,
                       child: CircularProgressIndicator(),
                     );
-                  } else if (companiesState is CompaniesLoadSuccess ||
-                      companiesState is CompaniesSwitchSuccess) {
+                  } else if (companiesState is CompaniesSuccessState) {
                     final companies = companiesState.companies;
                     final selected = companiesState.selected;
 
@@ -120,7 +118,7 @@ class CompanySelectionWidget extends StatelessWidget {
                               .selectCompany(companyId: company.id),
                           image: company.logo ?? '',
                           title: company.name,
-                          selected: selected?.id == company.id,
+                          selected: selected.id == company.id,
                           subtitle: '',
                         );
                       },

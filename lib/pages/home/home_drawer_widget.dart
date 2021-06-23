@@ -41,7 +41,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                 width: 56,
                                 height: 56,
                                 borderRadius: 16.0,
-                                imageUrl: companyState.selected?.logo ?? '',
+                                imageUrl: companyState.selected.logo ?? '',
                               )),
                           Positioned.fill(
                             left: 82,
@@ -49,7 +49,7 @@ class HomeDrawerWidget extends StatelessWidget {
                             child: Column(
                               children: [
                                 Align(
-                                  child: Text(companyState.selected?.name ?? '',
+                                  child: Text(companyState.selected.name,
                                       maxLines: 2,
                                       style: TextStyle(
                                         color: Color(0xff000000),
