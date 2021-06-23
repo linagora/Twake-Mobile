@@ -10,6 +10,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
@@ -160,13 +161,18 @@ class HomeDrawerWidget extends StatelessWidget {
                       SizedBox(
                         width: 12,
                       ),
-                      Text("Add a new workspace",
+                      GestureDetector(
+                        child: Text(
+                          "Add a new workspace",
                           style: TextStyle(
                             color: Color(0xff000000),
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontStyle: FontStyle.normal,
-                          ))
+                          ),
+                        ),
+                        onTap: () => Get.toNamed(RoutePaths.newWorkspace.path),
+                      )
                     ],
                   ),
                   SizedBox(

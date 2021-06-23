@@ -20,7 +20,6 @@ class SheetTitleBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Color(0xfff7f7f7),
       height: 52,
       width: MediaQuery.of(context).size.width,
       padding: EdgeInsets.only(

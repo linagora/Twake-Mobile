@@ -1,6 +1,6 @@
 class RoutePaths {
   static const initial = 'initial/';
-
+  
   // channel
   static final channelMessages = _RoutePathsType(initial, 'channel/messages');
   static final newChannel = _RoutePathsType(initial, 'channel/new_channel');
@@ -13,6 +13,7 @@ class RoutePaths {
   // account
   static final accountSettings = _RoutePathsType(initial, 'account_settings');
   static final accountInfo = _RoutePathsType(initial, 'account_settings/account_info');
+
 }
 
 class _RoutePathsType {

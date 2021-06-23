@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 class HintLine extends StatelessWidget {
   final String text;
   final bool isLarge;
-
+  final FontWeight fontWeight;
   const HintLine({
     Key? key,
     required this.text,
     this.isLarge = false,
+    this.fontWeight = FontWeight.w400,
   }) : super(key: key);
 
   @override
@@ -19,8 +20,8 @@ class HintLine extends StatelessWidget {
         text,
         textAlign: TextAlign.start,
         style: TextStyle(
-          fontSize: isLarge ? 13.0 : 11.0,
-          fontWeight: FontWeight.w400,
+          fontSize: isLarge ? 13.0 : 12.0,
+          fontWeight: fontWeight,
           color: Colors.black.withOpacity(0.4),
         ),
       ),
