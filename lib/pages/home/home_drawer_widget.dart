@@ -64,7 +64,7 @@ class HomeDrawerWidget extends StatelessWidget {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  //todo switch organization
+                                  NavigatorService.instance.showCompanies();
                                 },
                                 child: Row(
                                   children: [
@@ -103,13 +103,15 @@ class HomeDrawerWidget extends StatelessWidget {
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                child: Text("WORKSPACES",
-                    style: TextStyle(
-                      color: Color(0x59000000),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      fontStyle: FontStyle.normal,
-                    )),
+                child: Text(
+                  "WORKSPACES",
+                  style: TextStyle(
+                    color: Color(0x59000000),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.normal,
+                  ),
+                ),
               ),
             ),
             Expanded(
@@ -121,9 +123,7 @@ class HomeDrawerWidget extends StatelessWidget {
                       context: context,
                       removeTop: true,
                       child: ListView.separated(
-                          separatorBuilder: (_, __) => SizedBox(
-                                height: 16,
-                              ),
+                          separatorBuilder: (_, __) => SizedBox(height: 16),
                           itemCount: workspaceState.workspaces.length,
                           itemBuilder: (context, index) {
                             final workSpace = workspaceState.workspaces[index];
@@ -134,7 +134,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                   workSpace.id == workspaceState.selected?.id,
                               onWorkspaceDrawerTileTap: () =>
                                   _selectWorkspace(context, workSpace.id),
-                              workSpaceid: workSpace.id,
+                              workspaceId: workSpace.id,
                             );
                           }),
                     );
@@ -244,77 +244,60 @@ class WorkspaceDrawerTile extends StatelessWidget {
   final String? logo;
   final String? name;
   final OnWorkspaceDrawerTileTap? onWorkspaceDrawerTileTap;
-  final String? workSpaceid;
+  final String? workspaceId;
 
   const WorkspaceDrawerTile({
     required this.isSelected,
     this.onWorkspaceDrawerTileTap,
     this.logo,
     this.name,
-    this.workSpaceid,
+    this.workspaceId,
   }) : super();
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onWorkspaceDrawerTileTap,
-      child: Container(
-        height: 50,
-        child: Stack(
-          children: [
-            Positioned(
-              child: isSelected
+      child: Column(
+        children: [
+          Row(
+            children: [
+              isSelected
                   ? Image.asset(
                       imageSelectedTile,
                       width: 6,
                       height: 44,
                     )
-                  : SizedBox.shrink(),
-            ),
-            Positioned(
-              left: 16,
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 3,
-                    color: isSelected ? Color(0xff004dff) : Colors.transparent,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(14),
-                  ),
-                ),
-                child: RoundedImage(
-                  imageUrl: logo ?? '',
-                  width: 44,
-                  height: 44,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-            Positioned.fill(
-              left: 76,
-              top: 8,
-              child: Row(
-                children: [
-                  Text(
-                    name ?? '',
-                    style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.normal,
+                  : SizedBox(
+                      width: 6,
+                      height: 44,
                     ),
-                  ),
-                  Spacer(),
-                  BadgesCount(type: BadgeType.workspace, id: workSpaceid!),
-                  SizedBox(
-                    width: 30,
-                  )
-                ],
+              SizedBox(width: 16.0),
+              RoundedImage(
+                imageUrl: logo ?? '',
+                width: 44,
+                height: 44,
+                isSelected: isSelected,
+                borderWidth: 2.0,
+                borderRadius: 12.0,
               ),
-            )
-          ],
-        ),
+              SizedBox(width: 16.0),
+              Expanded(
+                child: Text(
+                  name ?? '',
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.normal,
+                  ),
+                ),
+              ),
+              BadgesCount(type: BadgeType.workspace, id: workspaceId!),
+              SizedBox(width: 30),
+            ],
+          ),
+        ],
       ),
     );
   }
