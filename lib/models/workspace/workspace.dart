@@ -15,10 +15,11 @@ class Workspace extends BaseModel {
   String? logo;
 
   final String companyId;
-  
+
   @JsonKey(defaultValue: 0)
   int totalMembers;
 
+  @JsonKey(defaultValue: 0)
   int userLastAccess;
 
   List<String> permissions;
