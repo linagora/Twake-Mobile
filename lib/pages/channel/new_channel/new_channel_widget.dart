@@ -158,23 +158,34 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                               return _buildSelectedChannelIcon(addChannelState.emoijIcon);
                                             }
                                             return PickImageWidget(
-                                              onPickImageWidgetClick: () =>
-                                                  Get.find<AddChannelCubit>().showEmoijKeyBoard(true),
+                                              onPickImageWidgetClick: () {
+                                                FocusManager.instance.primaryFocus?.unfocus();
+                                                Get.find<AddChannelCubit>().showEmoijKeyBoard(true);
+                                              }
                                             );
                                           }),
                                       SizedBox(
                                         width: 16,
                                       ),
                                       Flexible(
-                                        child: TextFormField(
-                                          onChanged: (text) =>
-                                              Get.find<AddChannelCubit>()
-                                                  .validateAddChannelData(name: text),
-                                          controller: _nameEditingController,
-                                          cursorColor: Colors.black,
-                                          style: _getTextFieldTextStyle(),
-                                          decoration:
-                                          _getTextFieldDecoration('Channel name'),
+                                        child: Focus(
+                                          onFocusChange: (hasFocus) {
+                                            if (hasFocus) {
+                                              Get.find<AddChannelCubit>().showEmoijKeyBoard(false);
+                                            }
+                                          },
+                                          child: TextFormField(
+                                            onFieldSubmitted: (_) => FocusManager.instance.primaryFocus?.nextFocus(),
+                                            textInputAction: TextInputAction.next,
+                                            onChanged: (text) =>
+                                                Get.find<AddChannelCubit>()
+                                                    .validateAddChannelData(name: text),
+                                            controller: _nameEditingController,
+                                            cursorColor: Colors.black,
+                                            style: _getTextFieldTextStyle(),
+                                            decoration:
+                                            _getTextFieldDecoration('Channel name'),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -213,12 +224,19 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                   alignment: Alignment.center,
                                   child: Padding(
                                     padding: const EdgeInsets.only(left: 14),
-                                    child: TextFormField(
-                                        controller: _descriptionEditingController,
-                                        cursorColor: Colors.black,
-                                        style: _getTextFieldTextStyle(),
-                                        decoration: _getTextFieldDecoration(
-                                            'Channel description')),
+                                    child: Focus(
+                                      onFocusChange: (hasFocus) {
+                                        if (hasFocus) {
+                                          Get.find<AddChannelCubit>().showEmoijKeyBoard(false);
+                                        }
+                                      },
+                                      child: TextFormField(
+                                          controller: _descriptionEditingController,
+                                          cursorColor: Colors.black,
+                                          style: _getTextFieldTextStyle(),
+                                          decoration: _getTextFieldDecoration(
+                                              'Channel description')),
+                                    ),
                                   )),
                             ),
                           ),
