@@ -10,7 +10,6 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
@@ -127,7 +126,8 @@ class HomeDrawerWidget extends StatelessWidget {
                             separatorBuilder: (_, __) => SizedBox(height: 16),
                             itemCount: workspaceState.workspaces.length,
                             itemBuilder: (context, index) {
-                              final workSpace = workspaceState.workspaces[index];
+                              final workSpace =
+                                  workspaceState.workspaces[index];
                               return WorkspaceDrawerTile(
                                 name: workSpace.name,
                                 logo: workSpace.logo,
@@ -144,82 +144,9 @@ class HomeDrawerWidget extends StatelessWidget {
                   },
                 ),
               ),
-            ),
-            Divider(
-              color: Colors.grey,
-              height: 1,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.add_circle_sharp,
-                        color: Colors.black,
-                      ),
-                      SizedBox(
-                        width: 12,
-                      ),
-                      GestureDetector(
-                        child: Text(
-                          "Add a new workspace",
-                          style: TextStyle(
-                            color: Color(0xff000000),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          ),
-                        ),
-                        onTap: () => NavigatorService.instance.navigateToCreateWorkspace(),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  BlocBuilder<AccountCubit, AccountState>(
-                    bloc: Get.find<AccountCubit>(),
-                    builder: (context, accountState) {
-                      if (accountState is AccountLoadSuccess) {
-                        return GestureDetector(
-                          onTap: () =>
-                              NavigatorService.instance.navigateToAccount(),
-                          behavior: HitTestBehavior.opaque,
-                          child: Row(
-                            children: [
-                              RoundedImage(
-                                imageUrl: accountState.account.thumbnail ?? '',
-                                width: 24,
-                                height: 24,
-                              ),
-                              SizedBox(
-                                width: 12,
-                              ),
-                              Text(
-                                  '${accountState.account.firstname} ${accountState.account.lastname}',
-                                  style: TextStyle(
-                                    color: Color(0xff000000),
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                  )),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 2),
-                                child: Icon(Icons.arrow_forward_ios_sharp,
-                                    size: 10, color: Colors.black),
-                              ),
-                              Expanded(child: SizedBox.shrink())
-                            ],
-                          ),
-                        );
-                      }
-                      return SizedBox.shrink();
-                    },
-                  )
-                ],
+              Divider(
+                color: Colors.grey,
+                height: 1,
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
@@ -234,13 +161,18 @@ class HomeDrawerWidget extends StatelessWidget {
                         SizedBox(
                           width: 12,
                         ),
-                        Text("Add a new workspace",
+                        GestureDetector(
+                          child: Text(
+                            "Add a new workspace",
                             style: TextStyle(
                               color: Color(0xff000000),
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
-                            ))
+                            ),
+                          ),
+                          onTap: () => NavigatorService.instance.navigateToCreateWorkspace(),
+                        )
                       ],
                     ),
                     SizedBox(
@@ -257,7 +189,8 @@ class HomeDrawerWidget extends StatelessWidget {
                             child: Row(
                               children: [
                                 RoundedImage(
-                                  imageUrl: accountState.account.thumbnail ?? '',
+                                  imageUrl:
+                                      accountState.account.thumbnail ?? '',
                                   width: 24,
                                   height: 24,
                                 ),
