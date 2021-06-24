@@ -20,16 +20,17 @@ class WorkspaceForm extends StatefulWidget {
 }
 
 class _WorkspaceFormState extends State<WorkspaceForm> {
+  final _formKey = GlobalKey<FormState>();
+  // final _formKey1 = GlobalKey<FormState>();
   final _workspaceNameController = TextEditingController();
   final _workspaceNameFocusNode = FocusNode();
 
-  late int _count;
+  int _count = 0;
   List<Map<String, dynamic>> membersList = [];
   List<String> members = [];
   @override
   void initState() {
     super.initState();
-    _count = 0;
   }
 
   @override
@@ -75,18 +76,18 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
   }
 
   _onUpdate(int index, String text) {
-    int foundKey = -1;
+    int foundIndex = -1;
     for (var map in membersList) {
       if (map.containsKey("index")) {
         if (map["index"] == index) {
-          foundKey = index;
+          foundIndex = index;
           break;
         }
       }
     }
-    if (-1 != foundKey) {
+    if (-1 != foundIndex) {
       membersList.removeWhere((map) {
-        return map["index"] == foundKey;
+        return map["index"] == foundIndex;
       });
     }
 
@@ -110,28 +111,41 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               Container(
                 color: Colors.white,
                 child: SheetTitleBar(
-                    title: 'New Workspace',
-                    leadingTitle: 'Cancel',
-                    leadingAction: () {
-                      FocusScope.of(context).requestFocus(new FocusNode());
-                      popBack();
-                    },
-                    trailingTitle: 'Create',
-                    trailingAction: () async {
-                      final state = Get.find<WorkspacesCubit>().state;
-                      Get.find<WorkspacesCubit>().createWorkspace(
+                  title: 'New Workspace',
+                  leadingTitle: 'Cancel',
+                  leadingAction: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    popBack();
+                  },
+                  trailingTitle: 'Create',
+                  trailingAction: () async {
+                    if (_formKey.currentState!.validate()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Processing'),
+                        ),
+                      );
+
+                      await Get.find<WorkspacesCubit>().createWorkspace(
                           companyId: Globals.instance.companyId,
                           name: _workspaceNameController.text,
                           members: members);
+
+                      final state = Get.find<WorkspacesCubit>().state;
                       if (state is WorkspacesLoadSuccess) {
-                        Get.find<CompaniesCubit>().fetch();
-                        Get.find<WorkspacesCubit>()
-                            .fetch(companyId: Globals.instance.companyId);
-                        popBack();
+                        Get.find<WorkspacesCubit>().fetch();
+                        NavigatorService.instance.navigateTohomeWidget();
                       } else {
-                        // TODO  disp err
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'An error occurred while creating the workspace'),
+                          ),
+                        );
                       }
-                    }),
+                    }
+                  },
+                ),
               ),
               SizedBox(height: 16),
               Padding(
@@ -164,15 +178,23 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                           ),
                           Flexible(
                             child: Center(
-                              child: SheetTextField(
-                                hint: 'Workspace name',
-                                controller: _workspaceNameController,
-                                focusNode: _workspaceNameFocusNode,
-                                maxLength: 30,
-                                isRounded: true,
-                                borderRadius: 8,
-                                textInputType: TextInputType.text,
-                                validator: _validate,
+                              child: Form(
+                                key: _formKey,
+                                child: SheetTextField(
+                                  hint: 'Workspace name',
+                                  controller: _workspaceNameController,
+                                  focusNode: _workspaceNameFocusNode,
+                                  maxLength: 30,
+                                  isRounded: true,
+                                  borderRadius: 8,
+                                  textInputType: TextInputType.text,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Workspace name cannot be empty';
+                                    }
+                                    return null;
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -265,31 +287,34 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         ),
         child: Padding(
           padding: const EdgeInsets.only(top: 15),
-          child: TextFormField(
-            validator: _validate,
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
-            decoration: InputDecoration(
-              contentPadding: const EdgeInsets.all(10),
-              suffix: IconButton(
-                onPressed: () {}, //=> widget.controller.clear(),
-                iconSize: 15,
-                icon: Icon(CupertinoIcons.clear_thick_circled),
-                color: Color(0xffeeeeef),
+          child: Form(
+            //    key: _formKey1,
+            child: TextFormField(
+              //    validator: _validate,
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
               ),
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(
-                  width: 0.0,
-                  style: BorderStyle.none,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(10),
+                suffix: IconButton(
+                  onPressed: () {}, //=> widget.controller.clear(),
+                  iconSize: 15,
+                  icon: Icon(CupertinoIcons.clear_thick_circled),
+                  color: Color(0xffeeeeef),
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    width: 0.0,
+                    style: BorderStyle.none,
+                  ),
                 ),
               ),
+              onChanged: (text) {
+                _onUpdate(index, text);
+              },
             ),
-            onChanged: (text) {
-              _onUpdate(index, text);
-            },
           ),
         ),
       ),

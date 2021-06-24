@@ -171,7 +171,8 @@ class HomeDrawerWidget extends StatelessWidget {
                               fontStyle: FontStyle.normal,
                             ),
                           ),
-                          onTap: () => NavigatorService.instance.navigateToCreateWorkspace(),
+                          onTap: () => NavigatorService.instance
+                              .navigateToCreateWorkspace(),
                         )
                       ],
                     ),
