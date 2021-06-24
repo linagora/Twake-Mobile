@@ -28,10 +28,27 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
     await for (var workspaces in stream) {
       Workspace? selected;
-      if (Globals.instance.workspaceId != null) {
-        selected =
-            workspaces.firstWhere((w) => w.id == Globals.instance.workspaceId);
+      if (workspaces.isEmpty) {
+        Logger().w('Error: workspaces list is empty.');
+      } else {
+        if (Globals.instance.workspaceId != null) {
+          selected = workspaces.firstWhere(
+            (w) {
+              return w.id == Globals.instance.workspaceId;
+            },
+            orElse: () {
+              Logger().e(
+                  'Error: no corresponding workspace found.\nThe first available will be picked.');
+              return workspaces.first;
+            },
+          );
+        }
       }
+      // TODO: a lot.
+      // Along with entities encapsulation,
+      // something should be done with throwing nulls through all the layers.
+      // No time for heroes, but it would be better to fix this during Unit tests implementation,
+      // to avoid double work, at least in tests.
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
     // wait for authentication check before attempting to subscribe

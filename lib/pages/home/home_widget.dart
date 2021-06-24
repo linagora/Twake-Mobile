@@ -140,7 +140,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                           child: Row(
                             children: [
                               RoundedImage(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: 10.0,
                                 width: 36,
                                 height: 36,
                                 imageUrl: workspaceState.selected?.logo ?? '',
