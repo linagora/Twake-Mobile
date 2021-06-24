@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/companies_repository.dart';
 
@@ -28,25 +29,41 @@ class CompaniesCubit extends Cubit<CompaniesState> {
         selected =
             companies.firstWhere((c) => c.id == Globals.instance.companyId);
       }
-
-      emit(CompaniesLoadSuccess(companies: companies, selected: selected));
+      emit(CompaniesLoadSuccess(companies: companies, selected: selected!));
     }
   }
 
   void selectCompany({required String companyId}) {
-    Globals.instance.companyIdSet = companyId;
-    final companies = (state as CompaniesLoadSuccess).companies;
 
-    emit(CompaniesLoadSuccess(
-      companies: companies,
-      selected: companies.firstWhere((c) => c.id == companyId),
-    ));
+    emit(CompaniesSwitchInProgress(selectedCompanyId: companyId));
+
+    Globals.instance.companyIdSet = companyId;
+    List<Company> companies;
+
+    fetch();
+
+    //
+    // if (state is CompaniesSuccessState) {
+    //   companies = (state as CompaniesLoadSuccess).companies;
+    // }
+    //
+    // if (companies.isEmpty) {
+    //   Logger().w('Error: companies list is empty.');
+    // } else {
+    //   final selected = companies.firstWhere((c) => c.id == companyId, orElse: () {
+    //     Logger().e('Error: no corresponding company found.\nThe first available will be picked.');
+    //     return companies.first;
+    //   },);
+    //
+    //
+      emit(CompaniesSwitchSuccess(companyId: companyId));
+    // }
   }
 
   void selectWorkspace({required String workspaceId}) {
     if (state is! CompaniesLoadSuccess) return;
 
-    final selected = (state as CompaniesLoadSuccess).selected!;
+    final selected = (state as CompaniesLoadSuccess).selected;
 
     selected.selectedWorkspace = workspaceId;
 

@@ -21,10 +21,11 @@ class CompanySettingItemWidget extends StatelessWidget {
               child: Icon(Icons.settings),
             ),
             Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text('Setting item'),
-                )),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text('Setting item'),
+              ),
+            ),
             SizedBox(
               width: 20,
               height: 20,
@@ -33,7 +34,9 @@ class CompanySettingItemWidget extends StatelessWidget {
                 color: Colors.grey,
               ),
             ),
-            SizedBox(width: 8,)
+            SizedBox(
+              width: 8,
+            )
           ],
         ),
       ),

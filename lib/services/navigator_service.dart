@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
@@ -5,10 +7,13 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/pages/companies/companies_management.dart';
+import 'package:twake/pages/companies/company_selection_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/twake_web_view.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/widgets/common/warning_dialog.dart';
 
 class NavigatorService {
   static late NavigatorService _service;
@@ -181,5 +186,19 @@ class NavigatorService {
     } else {
       Get.back();
     }
+  }
+
+  Future<void> showCompanies() async {
+    Get.bottomSheet(CompanySelectionWidget());
+  }
+
+  Future<void> showWarning(String message) async {
+    Get.dialog(
+      WarningDialog(
+        title: 'Error\n$message',
+        trailingActionTitle: 'Close',
+        trailingAction: () => Get.back(),
+      ),
+    );
   }
 }
