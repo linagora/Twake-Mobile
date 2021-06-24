@@ -36,18 +36,18 @@ class CompanySelectionWidget extends StatelessWidget {
                       return Align(
                         alignment: Alignment.center,
                         child: Padding(
-                          padding: EdgeInsets.only(left: 16, top: 20),
+                          padding: EdgeInsets.only(left: 16, top: 24),
                           child: Column(
                             children: [
                               RoundedImage(
-                                borderRadius: 10.0,
-                                width: 60.0,
-                                height: 60.0,
+                                borderRadius: 12.0,
+                                width: 44.0,
+                                height: 44.0,
                                 imageUrl: companyState.selected.logo,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 8, bottom: 40, left: 20, right: 20),
+                                    top: 16, bottom: 40, left: 16, right: 16),
                                 child: Text(
                                   companyState.selected.name,
                                   textAlign: TextAlign.center,
@@ -112,6 +112,7 @@ class CompanySelectionWidget extends StatelessWidget {
                     final selected = companiesState.selected;
 
                     return ListView.builder(
+                      shrinkWrap: false,
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).padding.bottom,
                       ),

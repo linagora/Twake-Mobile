@@ -35,7 +35,13 @@ class WorkspaceTile extends StatelessWidget {
             Row(
               children: [
                 SizedBox(width: 16.0),
-                ChannelThumbnail(icon: image),
+                // ChannelThumbnail(icon: image),
+                RoundedImage(
+                  width: 56,
+                  height: 56,
+                  borderRadius: 16.0,
+                  imageUrl: image,
+                ),
                 SizedBox(width: 16.0),
                 Expanded(
                   child: Column(

@@ -32,13 +32,16 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
         Logger().w('Error: workspaces list is empty.');
       } else {
         if (Globals.instance.workspaceId != null) {
-          selected =
-              workspaces.firstWhere((w) {
-                return w.id == Globals.instance.workspaceId;
-              }, orElse: () {
-                Logger().e('Error: no corresponding workspace found.\nThe first available will be picked.');
-                return workspaces.first;
-              });
+          selected = workspaces.firstWhere(
+            (w) {
+              return w.id == Globals.instance.workspaceId;
+            },
+            orElse: () {
+              Logger().e(
+                  'Error: no corresponding workspace found.\nThe first available will be picked.');
+              return workspaces.first;
+            },
+          );
         }
       }
       // TODO: a lot.
