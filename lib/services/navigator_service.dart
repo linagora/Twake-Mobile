@@ -7,7 +7,6 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
-import 'package:twake/pages/companies/companies_management.dart';
 import 'package:twake/pages/companies/company_selection_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/twake_web_view.dart';
@@ -175,6 +174,11 @@ class NavigatorService {
 
   Future<void> navigateToCreateWorkspace() async {
     Get.toNamed(RoutePaths.createWorkspace.path);
+  }
+
+  Future<void> navigateTohomeWidget() async {
+    Get.find<WorkspacesCubit>().fetch();
+    Get.toNamed(RoutePaths.homeWidget.path);
   }
 
   void openTwakeWebView(String url) {

@@ -125,21 +125,16 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                           content: Text('Processing'),
                         ),
                       );
-                      Get.find<WorkspacesCubit>().createWorkspace(
+
+                      await Get.find<WorkspacesCubit>().createWorkspace(
                           companyId: Globals.instance.companyId,
                           name: _workspaceNameController.text,
                           members: members);
 
                       final state = Get.find<WorkspacesCubit>().state;
-                      Get.find<WorkspacesCubit>().createWorkspace(
-                        companyId: Globals.instance.companyId,
-                        name: _workspaceNameController.text,
-                      );
                       if (state is WorkspacesLoadSuccess) {
-                        Get.find<CompaniesCubit>().fetch();
-                        Get.find<WorkspacesCubit>()
-                            .fetch(companyId: Globals.instance.companyId);
-                        popBack();
+                        Get.find<WorkspacesCubit>().fetch();
+                        NavigatorService.instance.navigateTohomeWidget();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
