@@ -33,12 +33,14 @@ class RoundedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = borderRadius != 0 ? borderRadius : width / 2;
+
     return Container(
       width: width,
       height: height,
       margin: EdgeInsets.all(borderWidth / 2),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(radius),
         border: Border.all(
           style: BorderStyle.solid,
           width: borderWidth,
@@ -46,7 +48,7 @@ class RoundedImage extends StatelessWidget {
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius - 1),
+        borderRadius: BorderRadius.circular(radius - 1),
         child: Container(
           width: width - 2 * borderWidth,
           height: height - 2 * borderWidth,
