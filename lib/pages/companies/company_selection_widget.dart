@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
@@ -81,21 +82,8 @@ class CompanySelectionWidget extends StatelessWidget {
             ),
             // AddWorkspaceTile(title: 'Add a new company'),
             Expanded(
-              child: BlocConsumer<CompaniesCubit, CompaniesState>(
+              child: BlocBuilder<CompaniesCubit, CompaniesState>(
                 bloc: Get.find<CompaniesCubit>(),
-                listenWhen: (_, current) =>
-                    current is CompaniesLoadFailure ||
-                    current is CompaniesSwitchFailure ||
-                    current is CompaniesSwitchSuccess,
-                listener: (context, companiesState) {
-                  if (companiesState is CompaniesSwitchSuccess) {
-                    Get.find<WorkspacesCubit>()
-                        .fetch(companyId: Globals.instance.companyId);
-                    popBack();
-                    // NavigatorService.instance
-                    //     .showWarning(companiesState.message);
-                  }
-                },
                 buildWhen: (_, current) =>
                     current is CompaniesLoadInProgress ||
                     current is CompaniesLoadSuccess,
@@ -123,9 +111,21 @@ class CompanySelectionWidget extends StatelessWidget {
                             Get.find<CompaniesCubit>().selectCompany(
                               companyId: company.id,
                             );
+                            popBack();
+
                             Get.find<WorkspacesCubit>().fetch(
                               companyId: company.id,
                               selectedId: company.selectedWorkspace,
+                            );
+
+                            Get.find<ChannelsCubit>().fetch(
+                              workspaceId: Globals.instance.workspaceId!,
+                              companyId: company.id,
+                            );
+
+                            Get.find<DirectsCubit>().fetch(
+                              workspaceId: 'direct',
+                              companyId: company.id,
                             );
                           },
                           image: company.logo ?? '',

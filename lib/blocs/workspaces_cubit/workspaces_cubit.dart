@@ -38,10 +38,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
         selected = workspaces.first;
       }
 
+      Globals.instance.workspaceIdSet = selected.id;
+
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
-    Future.delayed(Duration(seconds: 3),
-        SynchronizationService.instance.subscribeForChannels);
   }
 
   Future<void> createWorkspace({

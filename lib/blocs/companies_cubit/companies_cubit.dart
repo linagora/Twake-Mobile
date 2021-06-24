@@ -33,25 +33,15 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   void selectCompany({required String companyId}) {
-    emit(CompaniesSwitchInProgress(selectedCompanyId: companyId));
-
     Globals.instance.companyIdSet = companyId;
 
-    // if (state is CompaniesSuccessState) {
-    //   companies = (state as CompaniesLoadSuccess).companies;
-    // }
-    //
-    // if (companies.isEmpty) {
-    //   Logger().w('Error: companies list is empty.');
-    // } else {
-    //   final selected = companies.firstWhere((c) => c.id == companyId, orElse: () {
-    //     Logger().e('Error: no corresponding company found.\nThe first available will be picked.');
-    //     return companies.first;
-    //   },);
-    //
-    //
-    emit(CompaniesSwitchSuccess(companyId: companyId));
-    // }
+    if (state is! CompaniesLoadSuccess) return;
+
+    final companies = (state as CompaniesLoadSuccess).companies;
+
+    final selected = companies.firstWhere((c) => c.id == companyId);
+
+    emit(CompaniesLoadSuccess(companies: companies, selected: selected));
   }
 
   void selectWorkspace({required String workspaceId}) {

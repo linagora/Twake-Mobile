@@ -241,8 +241,9 @@ class HomeDrawerWidget extends StatelessWidget {
     );
 
     Get.find<DirectsCubit>().fetch(
-        workspaceId: Globals.instance.workspaceId!,
-        companyId: Globals.instance.companyId);
+      workspaceId: 'direct',
+      companyId: Globals.instance.companyId,
+    );
     // close drawer
     Navigator.of(context).pop();
   }
