@@ -37,6 +37,7 @@ class Message extends BaseModel {
   int get hash {
     return this.id.hashCode +
         this.content.originalStr.hashCode +
+        this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
   }

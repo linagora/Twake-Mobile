@@ -69,3 +69,7 @@ class Account extends BaseModel {
     return json;
   }
 }
+
+extension AccountExtension on Account {
+  String getFullName() => '${this.firstname ?? ''} ${this.lastname ?? ''}';
+}

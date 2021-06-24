@@ -14,17 +14,21 @@ class WorkspacesRepository {
   Future<List<Account>> fetchMembers({String? workspaceId}) async {
     workspaceId = workspaceId ?? Globals.instance.workspaceId;
 
-    final List<Map<String, Object?>> members = await this._api.get(
+    final List<dynamic> remoteResult = await this._api.get(
       endpoint: Endpoint.workspaceMembers,
       queryParameters: {
         'workspace_id': workspaceId,
         'company_id': Globals.instance.companyId
       },
     );
-    final List<Account> users = [];
-    for (final m in members) {
-      users.add(Account.fromJson(json: m));
-    }
+
+    final List<Account> users = remoteResult
+        .map((entry) => Account.fromJson(
+              json: entry,
+              jsonify: false,
+            ))
+        .toList();
+
     this._storage.multiInsert(table: Table.account, data: users);
 
     this._storage.multiInsert(

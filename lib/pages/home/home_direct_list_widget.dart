@@ -41,7 +41,7 @@ class HomeDirectListWidget extends StatelessWidget {
                   content: channel.lastMessage?.text,
                   imageUrl: channel.icon,
                   dateTime: channel.lastMessage?.date,
-                  channelid: channel.id,
+                  channelId: channel.id,
                 );
               },
             );

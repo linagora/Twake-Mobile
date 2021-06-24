@@ -9,6 +9,8 @@ class SynchronizationService {
   final _socketio = SocketIOService.instance;
   final _pushNotifications = PushNotificationsService.instance;
 
+  String? subscribedChannelId;
+
   List<SocketIORoom> _subRooms = [];
   Map<String, List<int>> _localNotifications = {};
 
@@ -25,12 +27,15 @@ class SynchronizationService {
     foregroundMessagesCheck();
 
     // Set up auto resubscription in case of internet connection loss
-    Globals.instance.connection.listen((state) async {
-      if (state == Connection.connected && _subRooms.isNotEmpty) {
+    _socketio.socketIOReconnectionStream.listen((authenticated) async {
+      if (authenticated && _subRooms.isNotEmpty) {
         // wait for the socketio service to authenticate first
         await Future.delayed(Duration(seconds: 3));
         await subscribeForChannels();
         await subscribeToBadges();
+
+        if (subscribedChannelId != null)
+          subscribeToMessages(channelId: subscribedChannelId!);
       }
     });
   }
@@ -124,6 +129,8 @@ class SynchronizationService {
   }
 
   Future<void> subscribeForChannels() async {
+    if (Globals.instance.token == null) return;
+
     const wsRooms = const [RoomType.channelsList, RoomType.directsList];
 
     // Unsubscribe from previous workspace
@@ -152,12 +159,18 @@ class SynchronizationService {
     _socketio.subscribe(room: badgesRoom.key);
   }
 
-  void subscribeToMessages({required String channelId}) {
+  void subscribeToMessages({required String channelId}) async {
     if (!Globals.instance.isNetworkConnected)
       throw Exception('Shoud not be called with no active connection');
 
     // Unsubscribe just in case
     unsubscribeFromMessages(channelId: channelId);
+
+    // if the channel is not present, rerequest the list
+    if (!_subRooms.any((r) =>
+        const [RoomType.channel, RoomType.direct].contains(r.type) &&
+        r.id == channelId)) _subRooms = await socketIORooms;
+
     // Make sure that channel rooms has been fetched before,
     // or you'll get Bad state
     final channelRoom = _subRooms.firstWhere((r) =>
@@ -167,6 +180,8 @@ class SynchronizationService {
     // Subscribe, to new channel
     _socketio.subscribe(room: channelRoom.key);
     channelRoom.subscribed = true;
+
+    subscribedChannelId = channelId;
   }
 
   void unsubscribeFromMessages({required String channelId}) {
@@ -176,5 +191,7 @@ class SynchronizationService {
 
     _socketio.unsubscribe(room: room.key);
     room.subscribed = false;
+
+    subscribedChannelId = null;
   }
 }

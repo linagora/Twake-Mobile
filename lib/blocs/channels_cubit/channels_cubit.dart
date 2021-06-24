@@ -193,11 +193,10 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   void selectChannel({required String channelId}) {
     final channels = (state as ChannelsLoadedSuccess).channels;
-    Logger().v('Channels: ${channels.map((c) => c.id)}');
-    Logger().v('Selected: $channelId');
     final hash = (state as ChannelsLoadedSuccess).hash;
 
     final selected = channels.firstWhere((c) => c.id == channelId);
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
       selected: selected,
@@ -207,6 +206,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     Globals.instance.channelIdSet = channelId;
 
     SynchronizationService.instance.subscribeToMessages(channelId: channelId);
+    SynchronizationService.instance
+        .cancelNotificationsForChannel(channelId: channelId);
+
     _repository.markChannelRead(channel: selected);
   }
 
@@ -241,11 +243,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         case ResourceAction.updated:
           // Extract manually all the required data
           String id = change.resource['id'];
-          int lastActivity = change.resource['last_activity'];
-          MessageSummary lastMessage =
-              MessageSummary.fromJson(change.resource['last_message']);
-
           final index = channels.indexWhere((c) => c.id == id);
+
+          if (index.isNegative) continue;
+
+          int lastActivity = change.resource['last_activity'];
+          MessageSummary? lastMessage;
+
+          if (change.resource['last_message'] != null) {
+            lastMessage =
+                MessageSummary.fromJson(change.resource['last_message']);
+          }
 
           final changed = channels[index].copyWith(
             lastMessage: lastMessage,
@@ -263,6 +271,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             hash: hash,
             selected: selected,
           ));
+
+          await SynchronizationService.instance.subscribeForChannels();
 
           break;
 

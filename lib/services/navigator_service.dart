@@ -137,8 +137,6 @@ class NavigatorService {
     }
 
     if (workspaceId != null && workspaceId == 'direct') {
-      Logger().v('Workspace: $workspaceId');
-
       directsCubit.selectChannel(channelId: channelId);
 
       Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
@@ -158,7 +156,7 @@ class NavigatorService {
 
     channelMessagesCubit.fetch(channelId: channelId);
 
-    if (threadId != null) {
+    if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
       Get.toNamed(RoutePaths.messageThread.path)?.then((_) {
         channelMessagesCubit.clearSelectedThread();
