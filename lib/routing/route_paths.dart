@@ -14,7 +14,7 @@ class RoutePaths {
   static final accountSettings = _RoutePathsType(initial, 'account_settings');
   static final accountInfo = _RoutePathsType(initial, 'account_settings/account_info');
 
-  static final createWorkspace = _RoutePathsType(initial, 'createWorkspace');
+  static final createWorkspace = _RoutePathsType(initial, 'create_workspace');
 }
 
 class _RoutePathsType {
