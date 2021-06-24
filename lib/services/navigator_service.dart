@@ -173,6 +173,10 @@ class NavigatorService {
         : RoutePaths.accountSettings.path);
   }
 
+  Future<void> navigateToCreateWorkspace() async {
+    Get.toNamed(RoutePaths.createWorkspace.path);
+  }
+
   void openTwakeWebView(String url) {
     Get.to(TwakeWebView(url));
   }

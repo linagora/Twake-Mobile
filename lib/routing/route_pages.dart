@@ -59,7 +59,7 @@ final routePages = [
         transition: Transition.native,
       ),
       GetPage(
-          name: RoutePaths.newWorkspace.name,
+          name: RoutePaths.createWorkspace.name,
           page: () => WorkspaceForm(),
           transition: Transition.native,
        //   binding: HomeBinding()
