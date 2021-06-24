@@ -9,7 +9,6 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 class CompanySelectionWidget extends StatelessWidget {
@@ -90,8 +89,8 @@ class CompanySelectionWidget extends StatelessWidget {
                     current is CompaniesSwitchSuccess,
                 listener: (context, companiesState) {
                   if (companiesState is CompaniesSwitchSuccess) {
-
-                    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+                    Get.find<WorkspacesCubit>()
+                        .fetch(companyId: Globals.instance.companyId);
                     popBack();
                     // NavigatorService.instance
                     //     .showWarning(companiesState.message);
@@ -120,8 +119,15 @@ class CompanySelectionWidget extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final company = companies[index];
                         return WorkspaceTile(
-                          onTap: () => Get.find<CompaniesCubit>()
-                              .selectCompany(companyId: company.id),
+                          onTap: () {
+                            Get.find<CompaniesCubit>().selectCompany(
+                              companyId: company.id,
+                            );
+                            Get.find<WorkspacesCubit>().fetch(
+                              companyId: company.id,
+                              selectedId: company.selectedWorkspace,
+                            );
+                          },
                           image: company.logo ?? '',
                           title: company.name,
                           selected: selected.id == company.id,

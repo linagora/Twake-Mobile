@@ -72,7 +72,8 @@ class CompaniesSwitchSuccess extends CompaniesState {
 class CompaniesSwitchFailure extends CompaniesFailureState {
   final String message;
 
-  const CompaniesSwitchFailure({required this.message}) : super(message: message);
+  const CompaniesSwitchFailure({required this.message})
+      : super(message: message);
 
   @override
   List<Object> get props => [message];

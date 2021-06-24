@@ -171,7 +171,8 @@ class HomeDrawerWidget extends StatelessWidget {
                               fontStyle: FontStyle.normal,
                             ),
                           ),
-                          onTap: () => NavigatorService.instance.navigateToCreateWorkspace(),
+                          onTap: () => NavigatorService.instance
+                              .navigateToCreateWorkspace(),
                         )
                       ],
                     ),
@@ -231,6 +232,8 @@ class HomeDrawerWidget extends StatelessWidget {
 
   void _selectWorkspace(BuildContext context, String workSpaceId) {
     Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workSpaceId);
+
+    Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workSpaceId);
 
     Get.find<ChannelsCubit>().fetch(
       workspaceId: Globals.instance.workspaceId!,

@@ -365,7 +365,6 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             final hash = (state as MessagesLoadSuccess).hash;
 
             if (!messages.any((m) => m.id == change.data.threadId)) continue;
-            print('FOUND THREAD');
 
             final message = await _repository.getMessageRemote(
               messageId: change.data.threadId!,
@@ -374,6 +373,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
             final i = messages.indexWhere((m) => m.id == change.data.threadId);
 
+            Logger().v('M: $message');
             messages[i] = message;
 
             final newState = MessagesLoadSuccess(

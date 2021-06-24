@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/companies_repository.dart';
 
@@ -34,15 +33,10 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   void selectCompany({required String companyId}) {
-
     emit(CompaniesSwitchInProgress(selectedCompanyId: companyId));
 
     Globals.instance.companyIdSet = companyId;
-    List<Company> companies;
 
-    fetch();
-
-    //
     // if (state is CompaniesSuccessState) {
     //   companies = (state as CompaniesLoadSuccess).companies;
     // }
@@ -56,7 +50,7 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     //   },);
     //
     //
-      emit(CompaniesSwitchSuccess(companyId: companyId));
+    emit(CompaniesSwitchSuccess(companyId: companyId));
     // }
   }
 
