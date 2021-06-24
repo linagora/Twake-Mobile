@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/companies_repository.dart';
 
@@ -34,30 +33,15 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   void selectCompany({required String companyId}) {
-
-    emit(CompaniesSwitchInProgress(selectedCompanyId: companyId));
-
     Globals.instance.companyIdSet = companyId;
-    List<Company> companies;
 
-    fetch();
+    if (state is! CompaniesLoadSuccess) return;
 
-    //
-    // if (state is CompaniesSuccessState) {
-    //   companies = (state as CompaniesLoadSuccess).companies;
-    // }
-    //
-    // if (companies.isEmpty) {
-    //   Logger().w('Error: companies list is empty.');
-    // } else {
-    //   final selected = companies.firstWhere((c) => c.id == companyId, orElse: () {
-    //     Logger().e('Error: no corresponding company found.\nThe first available will be picked.');
-    //     return companies.first;
-    //   },);
-    //
-    //
-      emit(CompaniesSwitchSuccess(companyId: companyId));
-    // }
+    final companies = (state as CompaniesLoadSuccess).companies;
+
+    final selected = companies.firstWhere((c) => c.id == companyId);
+
+    emit(CompaniesLoadSuccess(companies: companies, selected: selected));
   }
 
   void selectWorkspace({required String workspaceId}) {

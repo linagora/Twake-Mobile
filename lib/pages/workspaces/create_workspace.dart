@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
-import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
@@ -66,13 +62,6 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         );
       },
     );
-  }
-
-  String? _validate(String? value) {
-    if (value!.isEmpty) {
-      return 'This field cannot be empty';
-    }
-    return null;
   }
 
   _onUpdate(int index, String text) {

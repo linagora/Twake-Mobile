@@ -36,11 +36,14 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       if (this.state is ChannelsLoadedSuccess) {
         selected = (this.state as ChannelsLoadedSuccess).selected;
       }
-      emit(ChannelsLoadedSuccess(
+
+      final newState = ChannelsLoadedSuccess(
         channels: channels,
         selected: selected,
         hash: channels.fold(0, (acc, c) => acc + c.hash),
-      ));
+      );
+
+      emit(newState);
     }
   }
 

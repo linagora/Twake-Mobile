@@ -15,7 +15,7 @@ class CompaniesRepository {
 
     if (!Globals.instance.isNetworkConnected) return;
 
-    final rcompanies = await fetchRemote();
+    final rcompanies = await fetchRemote(localCopy: companies);
 
     if (rcompanies.length != companies.length) {
       await _storage.truncate(table: Table.company);
@@ -26,20 +26,34 @@ class CompaniesRepository {
   }
 
   Future<List<Company>> fetchLocal() async {
-    final localResult = await this._storage.select(table: Table.company);
+    final localResult = await _storage.select(table: Table.company);
     var companies =
         localResult.map((entry) => Company.fromJson(json: entry)).toList();
 
     return companies;
   }
 
-  Future<List<Company>> fetchRemote() async {
+  Future<List<Company>> fetchRemote({List<Company>? localCopy}) async {
     final List<dynamic> remoteResult =
         await this._api.get(endpoint: Endpoint.companies);
+
+    if (localCopy == null) {
+      final res = await _storage.select(table: Table.company);
+      localCopy = res.map((entry) => Company.fromJson(json: entry)).toList();
+    }
 
     final companies = remoteResult
         .map((entry) => Company.fromJson(json: entry, jsonify: false))
         .toList();
+
+    // Here we can resave local attributes before writing to storage
+
+    for (final c in localCopy) {
+      if (companies.any((co) => co.id == c.id)) {
+        final company = companies.firstWhere((co) => co.id == c.id);
+        company.selectedWorkspace = c.selectedWorkspace;
+      }
+    }
 
     _storage.multiInsert(table: Table.company, data: companies);
 

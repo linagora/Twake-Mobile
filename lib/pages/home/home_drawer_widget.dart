@@ -233,14 +233,17 @@ class HomeDrawerWidget extends StatelessWidget {
   void _selectWorkspace(BuildContext context, String workSpaceId) {
     Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workSpaceId);
 
+    Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workSpaceId);
+
     Get.find<ChannelsCubit>().fetch(
       workspaceId: Globals.instance.workspaceId!,
       companyId: Globals.instance.companyId,
     );
 
     Get.find<DirectsCubit>().fetch(
-        workspaceId: Globals.instance.workspaceId!,
-        companyId: Globals.instance.companyId);
+      workspaceId: 'direct',
+      companyId: Globals.instance.companyId,
+    );
     // close drawer
     Navigator.of(context).pop();
   }
