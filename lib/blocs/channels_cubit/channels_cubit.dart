@@ -43,7 +43,6 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         hash: channels.fold(0, (acc, c) => acc + c.hash),
       );
 
-      Logger().v('Will emit: ${newState != state}');
       emit(newState);
     }
   }

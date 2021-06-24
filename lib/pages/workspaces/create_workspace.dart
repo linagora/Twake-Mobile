@@ -124,7 +124,6 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                           name: _workspaceNameController.text,
                           members: members);
                       if (state is WorkspacesLoadSuccess) {
-                        Get.find<CompaniesCubit>().fetch();
                         Get.find<WorkspacesCubit>()
                             .fetch(companyId: Globals.instance.companyId);
                         popBack();

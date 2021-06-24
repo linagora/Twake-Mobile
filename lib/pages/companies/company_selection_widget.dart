@@ -17,8 +17,6 @@ class CompanySelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.find<CompaniesCubit>().fetch();
-
     return CupertinoPopupSurface(
       child: Container(
         color: Color(0xffefeef3),
@@ -107,13 +105,13 @@ class CompanySelectionWidget extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final company = companies[index];
                         return WorkspaceTile(
-                          onTap: () {
+                          onTap: () async {
                             Get.find<CompaniesCubit>().selectCompany(
                               companyId: company.id,
                             );
                             popBack();
 
-                            Get.find<WorkspacesCubit>().fetch(
+                            await Get.find<WorkspacesCubit>().fetch(
                               companyId: company.id,
                               selectedId: company.selectedWorkspace,
                             );

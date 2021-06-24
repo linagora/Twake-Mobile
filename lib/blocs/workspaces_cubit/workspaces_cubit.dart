@@ -31,8 +31,6 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       Workspace? selected;
 
       if (selectedId != null) {
-        Logger().v('selected ID: $selectedId');
-        Logger().v('WSS: ${workspaces.map((w) => w.id)}');
         selected = workspaces.firstWhere((w) => w.id == selectedId);
       } else {
         selected = workspaces.first;
