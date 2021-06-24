@@ -42,7 +42,7 @@ dependencies:
   lottie: ^1.0.1
   sqflite: ^2.0.0+3
   tuple: 2.0.0
-  flutter_segment: ^3.0.0
+  flutter_segment: ^3.1.0
   sentry_flutter: ^5.1.0
   firebase_core: ^1.0.2
   firebase_messaging: ^10.0.0
