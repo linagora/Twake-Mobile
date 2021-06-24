@@ -22,6 +22,7 @@ class Workspace extends BaseModel {
   @JsonKey(defaultValue: 0)
   int userLastAccess;
 
+  @JsonKey(defaultValue: [])
   List<String> permissions;
 
   Workspace({

@@ -111,6 +111,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                          duration: Duration(seconds: 2),
                           content: Text('Processing'),
                         ),
                       );

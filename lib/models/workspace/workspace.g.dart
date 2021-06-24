@@ -14,8 +14,10 @@ Workspace _$WorkspaceFromJson(Map<String, dynamic> json) {
     companyId: json['company_id'] as String,
     totalMembers: json['total_members'] as int? ?? 0,
     userLastAccess: json['user_last_access'] as int? ?? 0,
-    permissions:
-        (json['permissions'] as List<dynamic>).map((e) => e as String).toList(),
+    permissions: (json['permissions'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList() ??
+        [],
   );
 }
 
