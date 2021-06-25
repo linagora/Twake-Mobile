@@ -51,6 +51,7 @@ class BadgesCubit extends Cubit<BadgesState> {
 
     if (workspaceBadge.type == BadgeType.workspace) {
       workspaceBadge.count -= channelBadge.count;
+      _repository.saveOne(badge: workspaceBadge);
     }
 
     final companyBadge = badges.firstWhere(
@@ -58,15 +59,16 @@ class BadgesCubit extends Cubit<BadgesState> {
         type: BadgeType.workspace,
         id: Globals.instance.companyId!,
       ),
+      orElse: () => Badge(type: BadgeType.none, id: ''),
     );
 
-    companyBadge.count -= channelBadge.count;
+    if (companyBadge.type == BadgeType.company) {
+      companyBadge.count -= channelBadge.count;
+      _repository.saveOne(badge: companyBadge);
+    }
 
     channelBadge.count = 0;
-
     _repository.saveOne(badge: channelBadge);
-    _repository.saveOne(badge: workspaceBadge);
-    _repository.saveOne(badge: companyBadge);
 
     emit(BadgesLoadSuccess(
       badges: badges,
