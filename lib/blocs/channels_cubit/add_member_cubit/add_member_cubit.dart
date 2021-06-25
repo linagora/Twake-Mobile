@@ -48,6 +48,9 @@ class AddMemberCubit extends Cubit<AddMemberState> {
       if (member.lastname != null && member.lastname!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
+      if (member.email.toLowerCase().contains(searchKeyword)) {
+        return true;
+      }
       return false;
     }).toList();
 

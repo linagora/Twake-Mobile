@@ -21,7 +21,8 @@ class AccountCubit extends Cubit<AccountState> {
     _repository = repository;
   }
 
-  Future<void> fetch({String? userId, bool sendAnalyticAfterFetch = false}) async {
+  Future<void> fetch(
+      {String? userId, bool sendAnalyticAfterFetch = false}) async {
     emit(AccountLoadInProgress());
 
     if (userId == null && Globals.instance.userId != null) {

@@ -230,13 +230,11 @@ class HomeDrawerWidget extends StatelessWidget {
     );
   }
 
-  void _selectWorkspace(BuildContext context, String workSpaceId) {
-    Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workSpaceId);
-
-    Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workSpaceId);
+  void _selectWorkspace(BuildContext context, String workspaceId) {
+    Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workspaceId);
 
     Get.find<ChannelsCubit>().fetch(
-      workspaceId: Globals.instance.workspaceId!,
+      workspaceId: workspaceId,
       companyId: Globals.instance.companyId,
     );
 
@@ -244,6 +242,8 @@ class HomeDrawerWidget extends StatelessWidget {
       workspaceId: 'direct',
       companyId: Globals.instance.companyId,
     );
+
+    Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
     // close drawer
     Navigator.of(context).pop();
   }
