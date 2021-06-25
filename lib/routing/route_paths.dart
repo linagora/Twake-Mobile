@@ -3,7 +3,8 @@ class RoutePaths {
   
   // channel
   static final channelMessages = _RoutePathsType(initial, 'channel/messages');
-  static final newChannel = _RoutePathsType(initial, 'channel/new_channel');
+  static final newDirect = _RoutePathsType(initial, 'channel/new_direct');
+  static final newChannel = _RoutePathsType(newDirect.path, '/new_channel');
   static final addChannelMembers = _RoutePathsType(newChannel.path, '/add_members');
 
   // direct
