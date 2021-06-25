@@ -7,7 +7,7 @@ import 'package:twake/services/service_bundle.dart';
 
 export 'package:twake/models/message/message.dart';
 
-const _LIST_SIZE = 30;
+const _LIST_SIZE = 50;
 
 class MessagesRepository {
   final _api = ApiService.instance;
@@ -30,7 +30,7 @@ class MessagesRepository {
     // If messages are present in local storage, just request messages
     // after the last one, via after_date query param
     int? afterDate;
-    if (messages.isNotEmpty) {
+    if (messages.isNotEmpty && messages.length >= _LIST_SIZE) {
       afterDate = messages.last.modificationDate;
     }
 
@@ -42,7 +42,7 @@ class MessagesRepository {
       afterDate: afterDate,
     );
 
-    if (messages.isNotEmpty) {
+    if (messages.isNotEmpty && afterDate != null) {
       messages.addAll(remoteMessages);
     } else {
       messages = remoteMessages;
