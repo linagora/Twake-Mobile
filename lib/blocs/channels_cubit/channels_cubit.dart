@@ -33,6 +33,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
     await for (final channels in channelsStream) {
       Channel? selected;
+
       if (this.state is ChannelsLoadedSuccess) {
         selected = (this.state as ChannelsLoadedSuccess).selected;
       }

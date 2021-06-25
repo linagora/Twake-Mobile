@@ -123,7 +123,7 @@ class InitService {
     }
     await _storageService.multiInsert(
       table: Table.channel,
-      data: directs,
+      data: channels,
     );
 
     await _storageService.multiInsert(table: Table.account, data: accounts);
