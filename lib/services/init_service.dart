@@ -17,7 +17,9 @@ class InitService {
 
     final globals = await _storageService.first(table: Table.globals);
     if (globals.isNotEmpty) {
-      Globals.fromJson(globals);
+      final g = Globals.fromJson(globals);
+      g.channelIdSet = null;
+      g.threadIdSet = null;
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
       Globals(host: 'https://web.qa.twake.app', fcmToken: fcmToken);
