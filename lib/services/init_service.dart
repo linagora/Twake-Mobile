@@ -140,6 +140,8 @@ class InitService {
         queryParameters: {
           'company_id': channel.companyId,
           'workspace_id': channel.workspaceId,
+          // TODO remove fallback_ws_id after files are fixed
+          'fallback_ws_id': Globals.instance.workspaceId,
           'channel_id': channel.id,
         },
       );

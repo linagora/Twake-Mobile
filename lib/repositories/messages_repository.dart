@@ -87,6 +87,8 @@ class MessagesRepository {
     final Map<String, dynamic> queryParameters = {
       'company_id': companyId ?? Globals.instance.companyId,
       'workspace_id': workspaceId ?? Globals.instance.workspaceId,
+      // TODO remove fallback_ws_id after files are fixed
+      'fallback_ws_id': Globals.instance.workspaceId,
       'channel_id': channelId,
       'thread_id': threadId,
       'limit': _LIST_SIZE,
@@ -320,6 +322,8 @@ class MessagesRepository {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId,
       'channel_id': channelId ?? Globals.instance.channelId,
+      // TODO remove fallback_ws_id after files are fixed
+      'fallback_ws_id': Globals.instance.workspaceId,
       'message_id': messageId,
     };
 
