@@ -20,13 +20,18 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
   // final _formKey1 = GlobalKey<FormState>();
   final _workspaceNameController = TextEditingController();
   final _workspaceNameFocusNode = FocusNode();
-
+  bool _flag = true;
   int _count = 0;
   List<Map<String, dynamic>> membersList = [];
   List<String> members = [];
   @override
   void initState() {
     super.initState();
+    _workspaceNameFocusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    _flag = !_flag;
   }
 
   @override
@@ -138,71 +143,83 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                 ),
               ),
               SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Container(
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 15),
-                    child: Container(
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFFF5F5F5),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Icon(
-                                Icons.camera_alt_rounded,
-                                color: Color(0xFF969CA4),
-                              ),
-                              height: 44,
-                              width: 44,
+              MediaQuery.of(context).viewInsets.bottom == 0 ||
+                      _count < 2 ||
+                      _flag == false
+                  ? Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10, right: 10),
+                          child: Container(
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                            onTap: () async {},
-                          ),
-                          Flexible(
-                            child: Center(
-                              child: Form(
-                                key: _formKey,
-                                child: SheetTextField(
-                                  hint: 'Workspace name',
-                                  controller: _workspaceNameController,
-                                  focusNode: _workspaceNameFocusNode,
-                                  maxLength: 30,
-                                  isRounded: true,
-                                  borderRadius: 8,
-                                  textInputType: TextInputType.text,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Workspace name cannot be empty';
-                                    }
-                                    return null;
-                                  },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 15, right: 15),
+                              child: Container(
+                                child: Row(
+                                  children: [
+                                    GestureDetector(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFFF5F5F5),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: Icon(
+                                          Icons.camera_alt_rounded,
+                                          color: Color(0xFF969CA4),
+                                        ),
+                                        height: 44,
+                                        width: 44,
+                                      ),
+                                      onTap: () async {},
+                                    ),
+                                    Flexible(
+                                      child: Center(
+                                        child: Form(
+                                          key: _formKey,
+                                          child: SheetTextField(
+                                            hint: 'Workspace name',
+                                            controller:
+                                                _workspaceNameController,
+                                            focusNode: _workspaceNameFocusNode,
+                                            maxLength: 30,
+                                            isRounded: true,
+                                            borderRadius: 8,
+                                            textInputType: TextInputType.text,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Workspace name cannot be empty';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: HintLine(
-                  text:
-                      'Please provide a name for a new workspace and optional workspace icon',
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+                        ),
+                        SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: HintLine(
+                            text:
+                                'Please provide a name for a new workspace and optional workspace icon',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(),
               SizedBox(height: 40),
               HintLine(
                 text: 'ADD YOUR TEAM MEMBERS',
