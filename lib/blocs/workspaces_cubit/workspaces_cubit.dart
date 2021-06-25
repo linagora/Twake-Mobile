@@ -27,6 +27,8 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     emit(WorkspacesLoadInProgress());
     final stream = _repository.fetch(companyId: companyId);
 
+    selectedId = selectedId ?? Globals.instance.workspaceId;
+
     await for (var workspaces in stream) {
       Workspace? selected;
 
