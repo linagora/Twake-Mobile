@@ -171,7 +171,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    onTap: () => push(RoutePaths.newChannel.path),
+                    onTap: () => push(RoutePaths.newDirect.path),
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
