@@ -32,7 +32,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     await for (var workspaces in stream) {
       Workspace? selected;
 
-      if (selectedId != null) {
+      Logger().v(
+          'WORKSPACES: ${workspaces.map((w) => w.id)} SELECTED: $selectedId');
+      if (selectedId != null && workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
       } else {
         selected = workspaces.first;

@@ -173,6 +173,18 @@ class ChannelsRepository {
     await _storage.insert(table: Table.channel, data: channel);
   }
 
+  Future<Channel> getChannelLocal({required String channelId}) async {
+    final res = await _storage.first(
+      table: Table.channel,
+      where: 'id = ?',
+      whereArgs: [channelId],
+    );
+
+    final channel = Channel.fromJson(json: res);
+
+    return channel;
+  }
+
   Future<void> markChannelRead({required Channel channel}) async {
     if (!Globals.instance.isNetworkConnected) return;
 

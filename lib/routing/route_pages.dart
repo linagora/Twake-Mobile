@@ -14,7 +14,6 @@ import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
-import 'package:twake/widgets/sheets/add/workspace_info_form.dart';
 
 final routePages = [
   GetPage(
@@ -50,8 +49,13 @@ final routePages = [
         transition: Transition.native,
       ),
       GetPage(
-        name: RoutePaths.messageThread.name,
+        name: RoutePaths.channelMessageThread.name,
         page: () => ThreadPage<ChannelsCubit>(),
+        transition: Transition.native,
+      ),
+      GetPage(
+        name: RoutePaths.directMessageThread.name,
+        page: () => ThreadPage<DirectsCubit>(),
         transition: Transition.native,
       ),
       GetPage(

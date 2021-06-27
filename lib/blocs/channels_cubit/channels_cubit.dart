@@ -286,6 +286,12 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     }
   }
 
+  Future<Channel> getChannel({required String channelId}) async {
+    final channel = await _repository.getChannelLocal(channelId: channelId);
+
+    return channel;
+  }
+
   void listentToChannelChanges() async {
     await for (final change in _socketIOChannelStream) {
       if (state is! ChannelsLoadedSuccess) continue;
