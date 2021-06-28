@@ -5,9 +5,15 @@ part 'message_summary.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class MessageSummary {
   final int date;
+
+  @JsonKey(defaultValue: '0')
   final String sender;
+
+  @JsonKey(defaultValue: 'Guest')
   final String senderName;
+
   final String title;
+
   final String? text;
 
   const MessageSummary({

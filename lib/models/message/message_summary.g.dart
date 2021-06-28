@@ -9,8 +9,8 @@ part of 'message_summary.dart';
 MessageSummary _$MessageSummaryFromJson(Map<String, dynamic> json) {
   return MessageSummary(
     date: json['date'] as int,
-    sender: json['sender'] as String,
-    senderName: json['sender_name'] as String,
+    sender: json['sender'] as String? ?? '0',
+    senderName: json['sender_name'] as String? ?? 'Guest',
     title: json['title'] as String,
     text: json['text'] as String?,
   );
