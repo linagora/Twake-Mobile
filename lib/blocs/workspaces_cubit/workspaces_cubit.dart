@@ -27,10 +27,14 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     emit(WorkspacesLoadInProgress());
     final stream = _repository.fetch(companyId: companyId);
 
+    selectedId = selectedId ?? Globals.instance.workspaceId;
+
     await for (var workspaces in stream) {
       Workspace? selected;
 
-      if (selectedId != null) {
+      Logger().v(
+          'WORKSPACES: ${workspaces.map((w) => w.id)} SELECTED: $selectedId');
+      if (selectedId != null && workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
       } else {
         selected = workspaces.first;

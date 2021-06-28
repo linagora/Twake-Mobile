@@ -24,12 +24,14 @@ class ChannelsRepository {
     final rchannels =
         await fetchRemote(companyId: companyId, workspaceId: workspaceId);
 
-    if (rchannels.length != lchannels.length) {
-      await _storage.truncate(table: Table.channel);
-      _storage.multiInsert(table: Table.channel, data: rchannels);
-    }
-
     yield rchannels;
+
+    if (lchannels.length != rchannels.length) {
+      for (final localChannel in lchannels) {
+        if (!rchannels.any((c) => c.id == localChannel.id))
+          delete(channel: localChannel, syncRemote: false);
+      }
+    }
   }
 
   Future<List<Channel>> fetchLocal({
@@ -169,6 +171,18 @@ class ChannelsRepository {
 
   Future<void> saveOne({required Channel channel}) async {
     await _storage.insert(table: Table.channel, data: channel);
+  }
+
+  Future<Channel> getChannelLocal({required String channelId}) async {
+    final res = await _storage.first(
+      table: Table.channel,
+      where: 'id = ?',
+      whereArgs: [channelId],
+    );
+
+    final channel = Channel.fromJson(json: res);
+
+    return channel;
   }
 
   Future<void> markChannelRead({required Channel channel}) async {

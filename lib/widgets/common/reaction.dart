@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/models/message/reaction.dart' as rct;
 
@@ -18,28 +19,51 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
       },
       child: FittedBox(
         child: Container(
-          margin: EdgeInsets.only(right: 8),
-          padding: EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(249, 247, 255, 1),
-            border: Border.all(color: StylesConfig.accentColorRGB),
-            borderRadius: BorderRadius.circular(3),
+            // waiting for accurate colors in the upcoming design
+            color: message.userId == Globals.instance.userId
+                ? Colors.grey[350]
+                : Colors.white,
+            borderRadius: BorderRadius.circular(8),
           ),
-          child: Align(
-            alignment: Alignment.center,
-            child: RichText(
-              text: TextSpan(
-                style: Theme.of(context).textTheme.bodyText2,
-                children: [
-                  TextSpan(text: reaction.name),
-                  TextSpan(text: ' '),
-                  TextSpan(
-                    text: '${reaction.count}',
-                    style: StylesConfig.miniPurple,
-                  ),
-                ],
+          child: Row(
+            children: [
+              SizedBox(
+                width: 3,
               ),
-            ),
+              Text(
+                '${reaction.name}',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(
+                width: 3,
+              ),
+              Text(
+                '${reaction.count}',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(
+                width: 3,
+              ),
+              /* reaction.count > 1
+                          ? Text(
+                              '${reaction.count}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : Container(),*/
+            ],
           ),
         ),
       ),

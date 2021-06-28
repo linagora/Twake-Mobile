@@ -33,6 +33,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
     await for (final channels in channelsStream) {
       Channel? selected;
+
       if (this.state is ChannelsLoadedSuccess) {
         selected = (this.state as ChannelsLoadedSuccess).selected;
       }
@@ -283,6 +284,12 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
           throw Exception('Impossible action on channel activity!');
       }
     }
+  }
+
+  Future<Channel> getChannel({required String channelId}) async {
+    final channel = await _repository.getChannelLocal(channelId: channelId);
+
+    return channel;
   }
 
   void listentToChannelChanges() async {

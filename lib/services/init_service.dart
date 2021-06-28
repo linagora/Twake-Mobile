@@ -17,7 +17,9 @@ class InitService {
 
     final globals = await _storageService.first(table: Table.globals);
     if (globals.isNotEmpty) {
-      Globals.fromJson(globals);
+      final g = Globals.fromJson(globals);
+      g.channelIdSet = null;
+      g.threadIdSet = null;
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
       Globals(host: 'https://web.qa.twake.app', fcmToken: fcmToken);
@@ -123,7 +125,7 @@ class InitService {
     }
     await _storageService.multiInsert(
       table: Table.channel,
-      data: directs,
+      data: channels,
     );
 
     await _storageService.multiInsert(table: Table.account, data: accounts);
@@ -140,6 +142,8 @@ class InitService {
         queryParameters: {
           'company_id': channel.companyId,
           'workspace_id': channel.workspaceId,
+          // TODO remove fallback_ws_id after files are fixed
+          'fallback_ws_id': Globals.instance.workspaceId,
           'channel_id': channel.id,
         },
       );

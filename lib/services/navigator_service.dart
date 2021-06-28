@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
@@ -7,6 +5,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/companies/company_selection_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/twake_web_view.dart';
@@ -135,29 +134,37 @@ class NavigatorService {
       SynchronizationService.instance.subscribeToBadges();
     }
 
-    if (workspaceId != null && workspaceId == 'direct') {
-      directsCubit.selectChannel(channelId: channelId);
+    final channel = await directsCubit.getChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
-        channelMessagesCubit.reset();
-        directsCubit.clearSelection();
-      });
-    } else {
-      channelsCubit.selectChannel(channelId: channelId);
+    if (channelId != Globals.instance.channelId) {
+      if (channel.isDirect) {
+        directsCubit.selectChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
-        channelMessagesCubit.reset();
-        channelsCubit.clearSelection();
-      });
+        Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
+          channelMessagesCubit.reset();
+          directsCubit.clearSelection();
+        });
+      } else {
+        channelsCubit.selectChannel(channelId: channelId);
+
+        Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
+          channelMessagesCubit.reset();
+          channelsCubit.clearSelection();
+        });
+      }
+      channelMessagesCubit.fetch(channelId: channelId);
 
       badgesCubit.reset(channelId: channelId);
     }
 
-    channelMessagesCubit.fetch(channelId: channelId);
-
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
-      Get.toNamed(RoutePaths.messageThread.path)?.then((_) {
+
+      final path = channel.isDirect
+          ? RoutePaths.directMessageThread.path
+          : RoutePaths.channelMessageThread.path;
+
+      Get.toNamed(path)?.then((_) {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });

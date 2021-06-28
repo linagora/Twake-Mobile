@@ -10,7 +10,6 @@ import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/feed/user_thumbnail.dart';
-import 'package:twake/pages/thread_page.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';

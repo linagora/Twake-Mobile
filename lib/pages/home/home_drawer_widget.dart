@@ -152,17 +152,17 @@ class HomeDrawerWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.add_circle_sharp,
-                          color: Colors.black,
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        GestureDetector(
-                          child: Text(
+                    GestureDetector(
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.add_circle_sharp,
+                            color: Colors.black,
+                          ),
+                          SizedBox(
+                            width: 12,
+                          ),
+                          Text(
                             "Add a new workspace",
                             style: TextStyle(
                               color: Color(0xff000000),
@@ -171,10 +171,10 @@ class HomeDrawerWidget extends StatelessWidget {
                               fontStyle: FontStyle.normal,
                             ),
                           ),
-                          onTap: () => NavigatorService.instance
-                              .navigateToCreateWorkspace(),
-                        )
-                      ],
+                        ],
+                      ),
+                      onTap: () =>
+                          NavigatorService.instance.navigateToCreateWorkspace(),
                     ),
                     SizedBox(
                       height: 20,
@@ -230,13 +230,11 @@ class HomeDrawerWidget extends StatelessWidget {
     );
   }
 
-  void _selectWorkspace(BuildContext context, String workSpaceId) {
-    Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workSpaceId);
-
-    Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workSpaceId);
+  void _selectWorkspace(BuildContext context, String workspaceId) {
+    Get.find<WorkspacesCubit>().selectWorkspace(workspaceId: workspaceId);
 
     Get.find<ChannelsCubit>().fetch(
-      workspaceId: Globals.instance.workspaceId!,
+      workspaceId: workspaceId,
       companyId: Globals.instance.companyId,
     );
 
@@ -244,6 +242,8 @@ class HomeDrawerWidget extends StatelessWidget {
       workspaceId: 'direct',
       companyId: Globals.instance.companyId,
     );
+
+    Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
     // close drawer
     Navigator.of(context).pop();
   }

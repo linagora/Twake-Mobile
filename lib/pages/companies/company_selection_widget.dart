@@ -111,6 +111,10 @@ class CompanySelectionWidget extends StatelessWidget {
                             );
                             popBack();
 
+                            if (company.selectedWorkspace != null)
+                              Globals.instance.workspaceIdSet =
+                                  company.selectedWorkspace;
+
                             await Get.find<WorkspacesCubit>().fetch(
                               companyId: company.id,
                               selectedId: company.selectedWorkspace,
