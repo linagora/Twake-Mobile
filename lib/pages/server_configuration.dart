@@ -25,6 +25,12 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   final _controller = TextEditingController();
 
   @override
+  void initState() {
+    _controller.text = Globals.instance.host;
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -36,7 +42,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     bool valid = await Globals.instance.hostSet(host);
     if (valid) {
       widget.onConfirm!();
-      print(Globals.instance.host);
+      //   print(Globals.instance.host);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -58,7 +64,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       appBar: AppBar(
         leading: CloseButton(onPressed: () {
           widget.onCancel!();
-          print(Globals.instance.host);
+          // print(Globals.instance.host);
         }),
       ),
       body: SafeArea(
@@ -108,7 +114,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     ),
                     decoration: InputDecoration(
                       hintText: Globals.instance.host.isEmpty
-                          ? 'https://beta.twake.app'
+                          ? 'https://web.qa.twake.app'
                           : Globals.instance.host,
                       hintStyle: TextStyle(
                         fontSize: 17.0,
