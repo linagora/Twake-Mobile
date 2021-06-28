@@ -549,20 +549,12 @@ class _TextInputState extends State<TextInput> {
                   }
                 : null,
             child: Container(
-                padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-                child: Image.asset('assets/images/send.png')
-                // child: Transform(
-                //   alignment: Alignment.center,
-                //   transform: Matrix4.rotationZ(-3 / 4),
-                //   // rotate 45ish degree cc
-                //   child: Icon(
-                //     widget.canSend ? Icons.send : Icons.send_outlined,
-                //     color: widget.canSend
-                //         ? Theme.of(context).accentColor
-                //         : Colors.grey[400],
-                //   ),
-                // ),
-                ),
+              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+              child: Image.asset(
+                'assets/images/send.png',
+                color: widget.canSend! ? Color(0xFF004DFF) : Colors.grey[400],
+              ),
+            ),
           ),
         ],
       ),
