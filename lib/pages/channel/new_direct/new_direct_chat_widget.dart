@@ -10,7 +10,6 @@ import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
-import 'package:twake/models/account/account.dart';
 
 class NewDirectChatWidget extends StatefulWidget {
   const NewDirectChatWidget({Key? key}) : super(key: key);
@@ -133,14 +132,16 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                 padding: const EdgeInsets.only(top: 23.0, left: 16, bottom: 12),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('RECENT CHATS',
-                      style: TextStyle(
-                        color: Color(0x59000000),
-                        fontFamily: 'SFProText',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.normal,
-                      )),
+                  child: Text(
+                    'RECENT CHATS',
+                    style: TextStyle(
+                      color: Color(0x59000000),
+                      fontFamily: 'SFProText',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
                 ),
               ),
               BlocBuilder<NewDirectCubit, NewDirectState>(
@@ -148,7 +149,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                   builder: (context, newDirectState) {
                     if (newDirectState is NewDirectInProgress) {
                       return Container(
-                        height: 36,
+                          height: 36,
                           width: 36,
                           child: TwakeCircularProgressIndicator());
                     }
@@ -168,7 +169,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                             onRecentChatTileClick: () {
                               // todo
                             },
-                            name: member.getFullName(),
+                            name: member.fullName,
                             imageUrl: member.thumbnail ?? '',
                           );
                         },
@@ -185,8 +186,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.normal,
-                      )
-                  ),
+                      )),
                 ),
               ),
               Expanded(
@@ -195,7 +195,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                   builder: (context, newDirectState) {
                     if (newDirectState is NewDirectInProgress) {
                       return Align(
-                        alignment: Alignment.center,
+                          alignment: Alignment.center,
                           child: TwakeCircularProgressIndicator());
                     }
                     final members = newDirectState is NewDirectFoundMemberState
@@ -216,9 +216,10 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         return _FoundPeopleDirectTile(
                           onFoundPeopleDirectTileClick: () {
                             popBack();
-                            NavigatorService.instance.navigate(channelId: member.id);
+                            NavigatorService.instance
+                                .navigate(channelId: member.id);
                           },
-                          name: member.getFullName(),
+                          name: member.fullName,
                           imageUrl: member.thumbnail ?? '',
                         );
                       },
@@ -241,7 +242,12 @@ class _RecentChatTile extends StatelessWidget {
   final String imageUrl;
   final OnRecentChatTileClick? onRecentChatTileClick;
 
-  const _RecentChatTile({Key? key, this.onRecentChatTileClick, required this.name, required this.imageUrl}) : super(key: key);
+  const _RecentChatTile(
+      {Key? key,
+      this.onRecentChatTileClick,
+      required this.name,
+      required this.imageUrl})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -259,7 +265,7 @@ class _RecentChatTile extends StatelessWidget {
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
-                child: Text("Josh",
+                child: Text(name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -285,7 +291,10 @@ class _FoundPeopleDirectTile extends StatelessWidget {
   final OnFoundPeopleDirectTileClick? onFoundPeopleDirectTileClick;
 
   const _FoundPeopleDirectTile(
-      {Key? key, this.onFoundPeopleDirectTileClick, required this.name, required this.imageUrl})
+      {Key? key,
+      this.onFoundPeopleDirectTileClick,
+      required this.name,
+      required this.imageUrl})
       : super(key: key);
 
   @override

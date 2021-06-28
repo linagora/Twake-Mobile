@@ -11,18 +11,28 @@ class NewDirectCubit extends Cubit<NewDirectState> {
   final DirectsCubit directsCubit;
   final AccountCubit accountCubit;
 
-  NewDirectCubit({required this.workspacesCubit, required this.directsCubit, required this.accountCubit, }) : super(NewDirectInitial());
+  NewDirectCubit({
+    required this.workspacesCubit,
+    required this.directsCubit,
+    required this.accountCubit,
+  }) : super(NewDirectInitial());
 
   void fetchAllMember() async {
     emit(NewDirectInProgress());
 
     final members = await workspacesCubit.fetchMembers();
-    emit(NewDirectNormalState(members: members, recentChats: state.recentChats));
+    final recentChats = await _fetchRecentChats();
+
+    emit(NewDirectNormalState(
+      members: members,
+      recentChats: recentChats,
+    ));
   }
 
   void searchMembers(String memberName) {
     if (memberName.isReallyEmpty) {
-      emit(NewDirectNormalState(members: state.members, recentChats: state.recentChats));
+      emit(NewDirectNormalState(
+          members: state.members, recentChats: state.recentChats));
       return;
     }
     final searchKeyword = memberName.toLowerCase().trim();
@@ -32,10 +42,12 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       if (member.username.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.firstname != null && member.firstname!.toLowerCase().contains(searchKeyword)) {
+      if (member.firstname != null &&
+          member.firstname!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.lastname != null && member.lastname!.toLowerCase().contains(searchKeyword)) {
+      if (member.lastname != null &&
+          member.lastname!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
       if (member.email.toLowerCase().contains(searchKeyword)) {
@@ -55,8 +67,9 @@ class NewDirectCubit extends Cubit<NewDirectState> {
 
     if (directsCubit.state is ChannelsLoadedSuccess) {
       final directs = (directsCubit.state as ChannelsLoadedSuccess).channels;
-      for (final direct in directs) {
-        final account = await accountCubit.fetchStateless(userId: direct.id);
+      for (final direct in directs.where((d) => d.members.length < 2)) {
+        final account =
+            await accountCubit.fetchStateless(userId: direct.members.first);
         recentChats.add(account);
       }
     }

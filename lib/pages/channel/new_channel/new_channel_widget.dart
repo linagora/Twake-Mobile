@@ -11,10 +11,8 @@ import 'package:twake/pages/member/selected_member_tile.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
 import 'package:twake/widgets/common/pick_image_widget.dart';
-import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/pages/channel/selectable_channel_type_widget.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/models/account/account.dart';
 
 class NewChannelWidget extends StatefulWidget {
   const NewChannelWidget() : super();
@@ -52,13 +50,15 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                 BlocListener<AddChannelCubit, AddChannelState>(
                   bloc: Get.find<AddChannelCubit>(),
                   listenWhen: (previousState, currentState) {
-                    return currentState is AddChannelSuccess || currentState is AddChannelFailure;
+                    return currentState is AddChannelSuccess ||
+                        currentState is AddChannelFailure;
                   },
                   listener: (context, state) {
                     if (state is AddChannelSuccess) {
                       popBack();
                     } else if (state is AddChannelFailure) {
-                      Get.find<AddChannelCubit>().validateAddChannelData(name: _nameEditingController.text);
+                      Get.find<AddChannelCubit>().validateAddChannelData(
+                          name: _nameEditingController.text);
                     }
                   },
                   child: SizedBox.shrink(),
@@ -92,9 +92,11 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                 onEnableButtonWidgetClick: () =>
                                     Get.find<AddChannelCubit>().create(
                                         name: _nameEditingController.text,
-                                        description: _descriptionEditingController.text),
+                                        description:
+                                            _descriptionEditingController.text),
                                 text: 'Create',
-                                isEnable: (addChannelState is AddChannelValidation &&
+                                isEnable: (addChannelState
+                                            is AddChannelValidation &&
                                         addChannelState.validToCreateChannel)
                                     ? true
                                     : false);
@@ -119,7 +121,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   color: Color(0x1e000000),
                   height: 1,
                 ),
-                Expanded(child: SingleChildScrollView(
+                Expanded(
+                    child: SingleChildScrollView(
                   child: Column(
                     children: [
                       Padding(
@@ -131,7 +134,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               border: Border.all(
                                 color: Colors.white,
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(12))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
                           height: 80,
                           // color: Colors.white,
                           child: Padding(
@@ -140,19 +144,21 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                             child: Container(
                               child: Row(
                                 children: [
-                                  BlocBuilder<AddChannelCubit,
-                                          AddChannelState>(
+                                  BlocBuilder<AddChannelCubit, AddChannelState>(
                                       bloc: Get.find<AddChannelCubit>(),
                                       builder: (context, addChannelState) {
-                                        if (addChannelState.emoijIcon.isNotEmpty) {
-                                          return _buildSelectedChannelIcon(addChannelState.emoijIcon);
+                                        if (addChannelState
+                                            .emoijIcon.isNotEmpty) {
+                                          return _buildSelectedChannelIcon(
+                                              addChannelState.emoijIcon);
                                         }
                                         return PickImageWidget(
-                                          onPickImageWidgetClick: () {
-                                            FocusManager.instance.primaryFocus?.unfocus();
-                                            Get.find<AddChannelCubit>().showEmoijKeyBoard(true);
-                                          }
-                                        );
+                                            onPickImageWidgetClick: () {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                          Get.find<AddChannelCubit>()
+                                              .showEmoijKeyBoard(true);
+                                        });
                                       }),
                                   SizedBox(
                                     width: 16,
@@ -161,20 +167,24 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                     child: Focus(
                                       onFocusChange: (hasFocus) {
                                         if (hasFocus) {
-                                          Get.find<AddChannelCubit>().showEmoijKeyBoard(false);
+                                          Get.find<AddChannelCubit>()
+                                              .showEmoijKeyBoard(false);
                                         }
                                       },
                                       child: TextFormField(
-                                        onFieldSubmitted: (_) => FocusManager.instance.primaryFocus?.nextFocus(),
+                                        onFieldSubmitted: (_) => FocusManager
+                                            .instance.primaryFocus
+                                            ?.nextFocus(),
                                         textInputAction: TextInputAction.next,
                                         onChanged: (text) =>
                                             Get.find<AddChannelCubit>()
-                                                .validateAddChannelData(name: text),
+                                                .validateAddChannelData(
+                                                    name: text),
                                         controller: _nameEditingController,
                                         cursorColor: Colors.black,
                                         style: _getTextFieldTextStyle(),
-                                        decoration:
-                                        _getTextFieldDecoration('Channel name'),
+                                        decoration: _getTextFieldDecoration(
+                                            'Channel name'),
                                       ),
                                     ),
                                   ),
@@ -185,8 +195,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 28, right: 28, bottom: 24),
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -200,15 +210,16 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 8),
                         child: Container(
                           decoration: BoxDecoration(
                               color: Colors.white,
                               border: Border.all(
                                 color: Colors.white,
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(12))),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
                           height: 48,
                           child: Align(
                               alignment: Alignment.center,
@@ -217,7 +228,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                 child: Focus(
                                   onFocusChange: (hasFocus) {
                                     if (hasFocus) {
-                                      Get.find<AddChannelCubit>().showEmoijKeyBoard(false);
+                                      Get.find<AddChannelCubit>()
+                                          .showEmoijKeyBoard(false);
                                     }
                                   },
                                   child: TextFormField(
@@ -231,8 +243,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 28, right: 28, bottom: 24),
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -259,25 +271,25 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(bottom: 8.0, left: 16, right: 16),
+                        padding: const EdgeInsets.only(
+                            bottom: 8.0, left: 16, right: 16),
                         child: BlocBuilder<AddChannelCubit, AddChannelState>(
                           bloc: Get.find<AddChannelCubit>(),
-                          buildWhen: ( _, currentState) => currentState is AddChannelValidation,
+                          buildWhen: (_, currentState) =>
+                              currentState is AddChannelValidation,
                           builder: (context, addChannelState) =>
                               SelectableChannelTypeWidget(
-                            channelVisibility: addChannelState.channelVisibility,
-                            onSelectableChannelTypeClick:
-                                (channelVisibility) =>
-                                    Get.find<AddChannelCubit>()
-                                        .setChannelVisibility(
-                                            channelVisibility),
+                            channelVisibility:
+                                addChannelState.channelVisibility,
+                            onSelectableChannelTypeClick: (channelVisibility) =>
+                                Get.find<AddChannelCubit>()
+                                    .setChannelVisibility(channelVisibility),
                           ),
                         ),
                       ),
                       Padding(
-                        padding:
-                        const EdgeInsets.only(left: 28, right: 28, bottom: 24),
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -293,31 +305,34 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                       Padding(
                         padding: const EdgeInsets.only(left: 16, bottom: 12),
                         child: BlocBuilder<AddChannelCubit, AddChannelState>(
-                          bloc: Get.find<AddChannelCubit>(),
-                          builder: (context, addChannelState) {
-                            if (addChannelState.channelVisibility == ChannelVisibility.public) {
-                              return SizedBox.shrink();
-                            }
-                            return Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                        "INVITED MEMBERS (${addChannelState.selectedMembers.length})",
-                                        style: TextStyle(
-                                          color: Color(0xff969ca4),
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                          fontStyle: FontStyle.normal,
-                                        )),
-                                  );
-                                }),
+                            bloc: Get.find<AddChannelCubit>(),
+                            builder: (context, addChannelState) {
+                              if (addChannelState.channelVisibility ==
+                                  ChannelVisibility.public) {
+                                return SizedBox.shrink();
+                              }
+                              return Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    "INVITED MEMBERS (${addChannelState.selectedMembers.length})",
+                                    style: TextStyle(
+                                      color: Color(0xff969ca4),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      fontStyle: FontStyle.normal,
+                                    )),
+                              );
+                            }),
                       ),
                       _buildAddMemberRow(),
                       Padding(
-                        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 8),
                         child: BlocBuilder<AddChannelCubit, AddChannelState>(
                           bloc: Get.find<AddChannelCubit>(),
                           builder: (context, addChannelState) {
-                            if (addChannelState.channelVisibility == ChannelVisibility.public ||
+                            if (addChannelState.channelVisibility ==
+                                    ChannelVisibility.public ||
                                 addChannelState.selectedMembers.isEmpty) {
                               return SizedBox.shrink();
                             }
@@ -327,15 +342,16 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               separatorBuilder: (_, index) => SizedBox(
                                 height: 8,
                               ),
-                              itemCount:
-                                  addChannelState.selectedMembers.length,
+                              itemCount: addChannelState.selectedMembers.length,
                               itemBuilder: (context, index) {
-                                final member = addChannelState.selectedMembers[index];
+                                final member =
+                                    addChannelState.selectedMembers[index];
                                 return SelectedMemberTile(
                                     onSelectedMemberTileClick: () {
-                                      Get.find<AddChannelCubit>().removeSelectedMember(member);
+                                      Get.find<AddChannelCubit>()
+                                          .removeSelectedMember(member);
                                     },
-                                    memberName: '${member.getFullName()}');
+                                    memberName: '${member.fullName}');
                               },
                             );
                           },
@@ -347,12 +363,14 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                 BlocBuilder<AddChannelCubit, AddChannelState>(
                     bloc: Get.find<AddChannelCubit>(),
                     builder: (context, addChannelState) {
-                      if (addChannelState is AddChannelValidation && addChannelState.showEmoijKeyboard) {
+                      if (addChannelState is AddChannelValidation &&
+                          addChannelState.showEmoijKeyboard) {
                         return Container(
                           height: 250,
                           child: EmojiPicker(
                             onEmojiSelected: (cat, emoji) {
-                              Get.find<AddChannelCubit>().setEmoijIcon(emoji.emoji);
+                              Get.find<AddChannelCubit>()
+                                  .setEmoijIcon(emoji.emoji);
                               Future.delayed(
                                 Duration(milliseconds: 50),
                                 FocusManager.instance.primaryFocus?.unfocus,
@@ -372,7 +390,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               showRecentsTab: true,
                               recentsLimit: 28,
                               noRecentsText: "No Recents",
-                              noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
+                              noRecentsStyle: const TextStyle(
+                                  fontSize: 20, color: Colors.black26),
                               categoryIcons: const CategoryIcons(),
                               buttonMode: ButtonMode.MATERIAL,
                             ),
@@ -398,12 +417,16 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
           }
           return GestureDetector(
             onTap: () async {
-              final currentSelectedMembers = Get.find<AddChannelCubit>().state.selectedMembers;
+              final currentSelectedMembers =
+                  Get.find<AddChannelCubit>().state.selectedMembers;
               final selectedMembersResult = await push(
                   RoutePaths.addChannelMembers.path,
-                  arguments: currentSelectedMembers.isEmpty ? null : currentSelectedMembers);
+                  arguments: currentSelectedMembers.isEmpty
+                      ? null
+                      : currentSelectedMembers);
               if (selectedMembersResult != null) {
-                Get.find<AddChannelCubit>().addSelectedMembers(selectedMembersResult);
+                Get.find<AddChannelCubit>()
+                    .addSelectedMembers(selectedMembersResult);
               }
             },
             child: Padding(
@@ -458,21 +481,20 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
     );
   }
 
-  InputDecoration _getTextFieldDecoration(String hintText) =>
-      InputDecoration(
-          border: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          disabledBorder: InputBorder.none,
-          contentPadding: EdgeInsets.all(0),
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Color(0xffc8c8c8),
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ));
+  InputDecoration _getTextFieldDecoration(String hintText) => InputDecoration(
+      border: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      disabledBorder: InputBorder.none,
+      contentPadding: EdgeInsets.all(0),
+      hintText: hintText,
+      hintStyle: TextStyle(
+        color: Color(0xffc8c8c8),
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ));
 
   TextStyle _getTextFieldTextStyle() => const TextStyle(
         color: Colors.black,

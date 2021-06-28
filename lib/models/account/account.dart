@@ -43,6 +43,10 @@ class Account extends BaseModel {
       thumbnail.hashCode +
       status.hashCode;
 
+  String get fullName => firstname != null && firstname!.isNotEmpty
+      ? '$firstname $lastname'
+      : username;
+
   factory Account.fromJson({
     required Map<String, dynamic> json,
     // for future use, in case if composite fields are added
@@ -68,8 +72,4 @@ class Account extends BaseModel {
     }
     return json;
   }
-}
-
-extension AccountExtension on Account {
-  String getFullName() => '${this.firstname ?? ''} ${this.lastname ?? ''}';
 }
