@@ -13,6 +13,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/twake_button.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
@@ -268,7 +269,7 @@ class WorkspaceDrawerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return TwakeButton(
       onTap: onWorkspaceDrawerTileTap,
       child: Column(
         children: [

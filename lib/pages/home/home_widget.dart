@@ -137,22 +137,26 @@ class _HomeWidgetState extends State<HomeWidget> {
                       if (workspaceState is WorkspacesLoadSuccess) {
                         return GestureDetector(
                           onTap: () => Scaffold.of(context).openDrawer(),
-                          child: Row(
-                            children: [
-                              RoundedImage(
-                                borderRadius: 10.0,
-                                width: 36,
-                                height: 36,
-                                imageUrl: workspaceState.selected?.logo ?? '',
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: Colors.black,
-                              )
-                            ],
+                          child: Container(
+                            width: 75,
+                            child: Row(
+                              children: [
+                                RoundedImage(
+                                  borderRadius: 10.0,
+                                  width: 36,
+                                  height: 36,
+                                  imageUrl: workspaceState.selected?.logo ?? '',
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: Colors.black,
+                                  size: 24,
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       }
