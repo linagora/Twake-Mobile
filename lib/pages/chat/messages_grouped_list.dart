@@ -88,7 +88,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       itemComparator: (Message m1, Message m2) {
         return m1.creationDate.compareTo(m2.creationDate);
       },
-      separator: SizedBox(height: 12.0),
+      separator: SizedBox(height: 3.0),
       groupSeparatorBuilder: (DateTime dt) {
         return GestureDetector(
           onTap: () {

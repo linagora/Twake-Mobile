@@ -45,6 +45,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
   // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
   // sendPort.send([id, status, progress]);
   // }
+  Size wdgtHieght = Size(0, 0);
+  // use _wdgtKey in the Bubble
+  final GlobalKey _wdgtKey = GlobalKey();
+  double h = 1;
 
   @override
   void initState() {
@@ -56,6 +60,17 @@ class _MessageTileState<T extends BaseMessagesCubit>
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
     // FlutterDownloader.registerCallback(downloadingCallback);
+    WidgetsBinding.instance!
+        .addPersistentFrameCallback((_) => getSizeAndPosition());
+  }
+
+  getSizeAndPosition() async {
+  /*  //var  _rdrBox = _wdgtKey.currentContext!.findRenderObject();
+    RenderBox _rdrBox = _wdgtKey.currentContext.findRenderObject();
+    wdgtHieght = _rdrBox.size;
+    setState(() {
+      h = _rdrBox.size.height;
+    });*/
   }
 
   @override
@@ -151,90 +166,109 @@ class _MessageTileState<T extends BaseMessagesCubit>
               ),
               SizedBox(width: 6.0),
               Flexible(
-                child: Bubble(
-                  color: _isMyMessage ? Color(0xff004dff) : Color(0xfff6f6f6),
-                  elevation: 0,
-                  padding: BubbleEdges.fromLTRB(13.0, 12.0, 12.0, 8.0),
-                  radius: Radius.circular(18.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (!_isMyMessage)
-                              Text(
-                                _message.sender,
-                                style: TextStyle(
-                                  fontSize: 11.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff444444),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            SizedBox(height: _isMyMessage ? 0.0 : 4.0),
-                            TwacodeRenderer(
-                              twacode: _message.content.prepared,
-                              parentStyle: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w400,
-                                color:
-                                    _isMyMessage ? Colors.white : Colors.black,
-                              ),
-                            ).message,
-                            // Normally we use SizedBox here,
-                            // but it will cut the bottom of emojis
-                            // in last line of the messsage.
-                            Container(
-                              color: Colors.transparent,
-                              width: 10.0,
-                              height: 5.0,
-                            ),
-                            Wrap(
-                              runSpacing: Dim.heightMultiplier,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              textDirection: TextDirection.ltr,
+                child: Stack(
+                  // if use Alignment.bottomLeft will not go beyond the Bubble
+                 // alignment: Alignment.bottomLeft,
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    Bubble(
+                      color:
+                          _isMyMessage ? Color(0xff004dff) : Color(0xfff6f6f6),
+                      elevation: 0,
+                      padding: BubbleEdges.fromLTRB(13.0, 12.0, 12.0, 8.0),
+                      radius: Radius.circular(18.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                ..._message.reactions.map((r) {
-                                  return Reaction<T>(
-                                    message: _message,
-                                    reaction: r,
-                                  );
-                                }),
-                                if (_message.responsesCount > 0 &&
-                                    _message.threadId == null &&
-                                    !_hideShowAnswers)
+                                if (!_isMyMessage)
                                   Text(
-                                    'See all answers (${_message.responsesCount})',
-                                    style: StylesConfig.miniPurple,
+                                    _message.sender,
+                                    style: TextStyle(
+                                      fontSize: 11.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xff444444),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
+                                SizedBox(height: _isMyMessage ? 0.0 : 4.0),
+                                TwacodeRenderer(
+                                  twacode: _message.content.prepared,
+                                  parentStyle: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: _isMyMessage
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ).message,
+                                // Normally we use SizedBox here,
+                                // but it will cut the bottom of emojis
+                                // in last line of the messsage.
+                                Container(
+                                  color: Colors.transparent,
+                                  width: 10.0,
+                                  height: 5.0,
+                                ),
+                                Wrap(
+                                  runSpacing: Dim.heightMultiplier,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  textDirection: TextDirection.ltr,
+                                  children: [
+                                    if (_message.responsesCount > 0 &&
+                                        _message.threadId == null &&
+                                        !_hideShowAnswers)
+                                      Text(
+                                        'See all answers (${_message.responsesCount})',
+                                        style: StylesConfig.miniPurple,
+                                      ),
+                                  ],
+                                ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: 10.0),
+                          Text(
+                            _message.threadId != null || _hideShowAnswers
+                                ? DateFormatter.getVerboseDateTime(
+                                    _message.creationDate)
+                                : DateFormatter.getVerboseTime(
+                                    _message.creationDate),
+                            textAlign: TextAlign.end,
+                            style: TextStyle(
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w400,
+                              fontStyle: FontStyle.italic,
+                              color: _isMyMessage
+                                  ? Color(0xffffffff).withOpacity(0.58)
+                                  : Color(0xff8e8e93),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 10.0),
-                      Text(
-                        _message.threadId != null || _hideShowAnswers
-                            ? DateFormatter.getVerboseDateTime(
-                                _message.creationDate)
-                            : DateFormatter.getVerboseTime(
-                                _message.creationDate),
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.italic,
-                          color: _isMyMessage
-                              ? Color(0xffffffff).withOpacity(0.58)
-                              : Color(0xff8e8e93),
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10, top: 35),
+                      child: Wrap(
+                        runSpacing: Dim.heightMultiplier,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        textDirection: TextDirection.ltr,
+                        children: [
+                          ..._message.reactions.map((r) {
+                            return Reaction<T>(
+                              message: _message,
+                              reaction: r,
+                            );
+                          }),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
