@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:twake/routing/route_paths.dart';
 
 Future<dynamic> push(String routeName, {dynamic arguments}) async {
   return Get.toNamed(routeName, arguments: arguments);
@@ -6,4 +7,8 @@ Future<dynamic> push(String routeName, {dynamic arguments}) async {
 
 void popBack({dynamic result}) {
   Get.back(result: result);
+}
+
+void popToHome() {
+  Get.offAllNamed(RoutePaths.initial);
 }

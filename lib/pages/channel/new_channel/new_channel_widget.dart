@@ -55,7 +55,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   },
                   listener: (context, state) {
                     if (state is AddChannelSuccess) {
-                      popBack();
+                      popToHome();
                     } else if (state is AddChannelFailure) {
                       Get.find<AddChannelCubit>().validateAddChannelData(
                           name: _nameEditingController.text);
