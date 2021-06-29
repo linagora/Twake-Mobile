@@ -219,9 +219,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         final member = members[index];
                         return _FoundPeopleDirectTile(
                           onFoundPeopleDirectTileClick: () {
-                            popBack();
-                            NavigatorService.instance
-                                .navigate(channelId: member.id);
+                            Get.find<NewDirectCubit>().newDirect(member.id);
                           },
                           name: member.fullName,
                           imageUrl: member.thumbnail ?? '',

@@ -4,17 +4,22 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/repositories/channels_repository.dart';
+import 'package:twake/routing/app_router.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/extensions.dart';
 
 class NewDirectCubit extends Cubit<NewDirectState> {
   final WorkspacesCubit workspacesCubit;
   final DirectsCubit directsCubit;
   final AccountCubit accountCubit;
+  final ChannelsRepository channelsRepository;
 
   NewDirectCubit({
     required this.workspacesCubit,
     required this.directsCubit,
     required this.accountCubit,
+    required this.channelsRepository
   }) : super(NewDirectInitial());
 
   void fetchAllMember() async {
@@ -87,5 +92,12 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       }
     }
     return recentChats;
+  }
+
+  void newDirect(String member) async {
+    final channel = await channelsRepository.createDirect(member: member);
+    directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
+    popBack();
+    NavigatorService.instance.navigate(channelId: channel.id);
   }
 }
