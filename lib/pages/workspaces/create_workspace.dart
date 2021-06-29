@@ -116,8 +116,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          duration: Duration(seconds: 2),
-                          content: Text('Processing'),
+                          duration: Duration(seconds: 3),
+                          content: Text('Processing'), 
                         ),
                       );
 
@@ -128,8 +128,14 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
 
                       final state = Get.find<WorkspacesCubit>().state;
                       if (state is WorkspacesLoadSuccess) {
+                        Get.find<WorkspacesCubit>()
+                            .selectWorkspace(workspaceId: state.selected!.id);
                         Get.find<WorkspacesCubit>().fetch();
-                        NavigatorService.instance.navigateTohomeWidget();
+                        popBack();
+                        Navigator.of(context).pop();
+
+                        //  Get.find<WorkspacesCubit>().fetch();
+                        // NavigatorService.instance.navigateTohomeWidget();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
