@@ -304,6 +304,14 @@ class MessagesRepository {
     );
   }
 
+  Future<Message> getMessage({required String messageId}) async {
+    try {
+      return getMessageLocal(messageId: messageId);
+    } catch (_) {
+      return getMessageRemote(messageId: messageId);
+    }
+  }
+
   Future<Message> getMessageLocal({required String messageId}) async {
     final result = await _storage.first(
       table: Table.message,

@@ -34,7 +34,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     threadId = threadId ?? Globals.instance.threadId;
 
     if (threadId != null) {
-      parentMessage = await _repository.getMessageLocal(messageId: threadId);
+      parentMessage = await _repository.getMessage(messageId: threadId);
     }
 
     await for (var list in stream) {
@@ -240,7 +240,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<Message> get selectedThread async {
-    final message = await _repository.getMessageLocal(
+    final message = await _repository.getMessage(
       messageId: Globals.instance.threadId!,
     );
 
