@@ -20,8 +20,12 @@ class NewDirectCubit extends Cubit<NewDirectState> {
   void fetchAllMember() async {
     emit(NewDirectInProgress());
 
-    final workspaceMembers = await workspacesCubit.fetchMembers();
-    final recentChats = await _fetchRecentChats();
+    final result = await Future.wait(
+      [workspacesCubit.fetchMembers(), _fetchRecentChats()],
+    );
+
+    final workspaceMembers = result.first as List<Account>;
+    final recentChats = result.last as Map<String, Account>;
 
     final List<Account> members = [];
     final recentContacts = recentChats.values;
