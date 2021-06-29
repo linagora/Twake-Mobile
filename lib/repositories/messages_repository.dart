@@ -90,9 +90,10 @@ class MessagesRepository {
       // TODO remove fallback_ws_id after files are fixed
       'fallback_ws_id': Globals.instance.workspaceId,
       'channel_id': channelId,
-      'thread_id': threadId,
       'limit': _LIST_SIZE,
     };
+
+    if (threadId != null) queryParameters['thread_id'] = threadId;
 
     if (afterDate != null) queryParameters['after_date'] = afterDate;
 
@@ -248,6 +249,8 @@ class MessagesRepository {
 
     final remoteResult =
         await _api.put(endpoint: Endpoint.messages, data: data);
+
+    Logger().v('EDITED MESSAGE: $remoteResult');
 
     message = Message.fromJson(json: remoteResult, jsonify: false);
 
