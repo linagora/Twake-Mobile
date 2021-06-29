@@ -20,8 +20,17 @@ class NewDirectCubit extends Cubit<NewDirectState> {
   void fetchAllMember() async {
     emit(NewDirectInProgress());
 
-    final members = await workspacesCubit.fetchMembers();
+    final workspaceMembers = await workspacesCubit.fetchMembers();
     final recentChats = await _fetchRecentChats();
+
+    final List<Account> members = [];
+    final recentContacts = recentChats.values;
+
+    for (final m in workspaceMembers) {
+      if (!recentContacts.contains(m)) {
+        members.add(m);
+      }
+    }
 
     emit(NewDirectNormalState(
       members: members,
@@ -62,15 +71,15 @@ class NewDirectCubit extends Cubit<NewDirectState> {
         recentChats: state.recentChats));
   }
 
-  Future<List<Account>> _fetchRecentChats() async {
-    List<Account> recentChats = [];
+  Future<Map<String, Account>> _fetchRecentChats() async {
+    Map<String, Account> recentChats = {};
 
     if (directsCubit.state is ChannelsLoadedSuccess) {
       final directs = (directsCubit.state as ChannelsLoadedSuccess).channels;
       for (final direct in directs.where((d) => d.members.length < 2)) {
         final account =
             await accountCubit.fetchStateless(userId: direct.members.first);
-        recentChats.add(account);
+        recentChats[direct.id] = account;
       }
     }
     return recentChats;

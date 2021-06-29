@@ -156,7 +156,8 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                     if (newDirectState.recentChats.isEmpty) {
                       return SizedBox.shrink();
                     }
-
+                    final recentChats =
+                        newDirectState.recentChats.entries.toList();
                     return Container(
                       height: 80,
                       child: ListView.builder(
@@ -164,13 +165,16 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         scrollDirection: Axis.horizontal,
                         itemCount: newDirectState.recentChats.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final member = newDirectState.recentChats[index];
+                          final member = recentChats[index];
                           return _RecentChatTile(
                             onRecentChatTileClick: () {
-                              // todo
+                              popBack();
+                              NavigatorService.instance.navigate(
+                                channelId: member.key,
+                              ); // key is channelId
                             },
-                            name: member.fullName,
-                            imageUrl: member.thumbnail ?? '',
+                            name: member.value.fullName,
+                            imageUrl: member.value.thumbnail ?? '',
                           );
                         },
                       ),

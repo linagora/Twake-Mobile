@@ -2,11 +2,11 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/models/account/account.dart';
 
 abstract class NewDirectState with EquatableMixin {
-  final List<Account> recentChats;
+  final Map<String, Account> recentChats;
   final List<Account> members;
 
   const NewDirectState({
-    this.recentChats = const [],
+    this.recentChats = const {},
     this.members = const [],
   });
 
@@ -25,9 +25,10 @@ class NewDirectInProgress extends NewDirectState {
 }
 
 class NewDirectNormalState extends NewDirectState {
-  const NewDirectNormalState(
-      {required List<Account> members, required List<Account> recentChats})
-      : super(members: members, recentChats: recentChats);
+  const NewDirectNormalState({
+    required List<Account> members,
+    required Map<String, Account> recentChats,
+  }) : super(members: members, recentChats: recentChats);
 
   @override
   List<Object?> get props => super.props;
@@ -36,11 +37,11 @@ class NewDirectNormalState extends NewDirectState {
 class NewDirectFoundMemberState extends NewDirectState {
   final List<Account> foundMembers;
 
-  const NewDirectFoundMemberState(
-      {required this.foundMembers,
-      required List<Account> members,
-      required List<Account> recentChats})
-      : super(members: members, recentChats: recentChats);
+  const NewDirectFoundMemberState({
+    required this.foundMembers,
+    required List<Account> members,
+    required Map<String, Account> recentChats,
+  }) : super(members: members, recentChats: recentChats);
 
   @override
   List<Object?> get props => [foundMembers, ...super.props];
