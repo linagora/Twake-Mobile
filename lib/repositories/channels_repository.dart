@@ -90,16 +90,19 @@ class ChannelsRepository {
     return created;
   }
 
-  Future<Channel> createDirect({String? companyId, required String member}) async {
+  Future<Channel> createDirect(
+      {String? companyId, required String member}) async {
     final data = {
-      'company_id' : companyId ?? Globals.instance.companyId,
-      'member' : member
+      'company_id': companyId ?? Globals.instance.companyId,
+      'member': member
     };
 
     final result = await _api.post(
       endpoint: endpoint,
       data: data,
     );
+
+    Logger().v('Channel Direct: $result');
 
     final created = Channel.fromJson(json: result, jsonify: false);
 

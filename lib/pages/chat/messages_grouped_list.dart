@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 // import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -11,6 +12,10 @@ import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/dateformatter.dart';
 
 class MessagesGroupedList extends StatefulWidget {
+  final Channel parentChannel;
+
+  const MessagesGroupedList({required this.parentChannel});
+
   @override
   State<StatefulWidget> createState() => _MessagesGroupedListState();
 }
@@ -24,13 +29,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       bloc: Get.find<ChannelMessagesCubit>(),
       builder: (context, state) {
         List<Message> messages = <Message>[];
-        final isDirect = true; // pass it from chat
 
         if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {
             return EmptyChatContainer(
-                isDirect: isDirect, userName: 'Test' // pass it from chat
-                );
+              isDirect: widget.parentChannel.isDirect,
+              userName: widget.parentChannel.name,
+            );
           }
           messages = state.messages;
         } else if (state is MessagesBeforeLoadInProgress) {
