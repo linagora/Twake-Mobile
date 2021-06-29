@@ -90,6 +90,24 @@ class ChannelsRepository {
     return created;
   }
 
+  Future<Channel> createDirect({String? companyId, required String member}) async {
+    final data = {
+      'company_id' : companyId ?? Globals.instance.companyId,
+      'member' : member
+    };
+
+    final result = await _api.post(
+      endpoint: endpoint,
+      data: data,
+    );
+
+    final created = Channel.fromJson(json: result, jsonify: false);
+
+    _storage.insert(table: Table.channel, data: created);
+
+    return created;
+  }
+
   Future<Channel> edit({required Channel channel}) async {
     final result = await _api.put(
       endpoint: endpoint,
