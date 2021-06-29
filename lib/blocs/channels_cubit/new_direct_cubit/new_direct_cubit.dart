@@ -27,7 +27,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     final recentContacts = recentChats.values;
 
     for (final m in workspaceMembers) {
-      if (!recentContacts.contains(m)) {
+      if (!recentContacts.any((rc) => rc.id == m.id)) {
         members.add(m);
       }
     }

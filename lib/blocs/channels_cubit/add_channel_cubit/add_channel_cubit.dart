@@ -21,7 +21,9 @@ class AddChannelCubit extends Cubit<AddChannelState> {
         selectedMembers: state.selectedMembers));
   }
 
-  AddChannelCubit({required ChannelsRepository channelsRepository, required ChannelsCubit channelsCubit})
+  AddChannelCubit(
+      {required ChannelsRepository channelsRepository,
+      required ChannelsCubit channelsCubit})
       : super(AddChannelInitial()) {
     _channelsRepository = channelsRepository;
     _channelsCubit = channelsCubit;
@@ -59,9 +61,10 @@ class AddChannelCubit extends Cubit<AddChannelState> {
     String? description,
   }) async {
     emit(AddChannelInProgress(
-        emoijIcon: state.emoijIcon,
-        channelVisibility: state.channelVisibility,
-        selectedMembers: state.selectedMembers));
+      emoijIcon: state.emoijIcon,
+      channelVisibility: state.channelVisibility,
+      selectedMembers: state.selectedMembers,
+    ));
 
     final now = DateTime.now().millisecondsSinceEpoch;
     var channel = Channel(
