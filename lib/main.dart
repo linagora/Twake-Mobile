@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.instance.getToken().onError((e, _) async {
-    Logger().e('Error occured when requesting Firebase Messaging token\n$e');
+    Logger().e('Error occurred when requesting Firebase Messaging token\n$e');
   });
 
   await InitService.preAuthenticationInit();
