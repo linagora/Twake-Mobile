@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
@@ -23,6 +24,15 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     //  final authenticationCubitState = BlocProvider.of<AuthenticationCubit>(context).state;
   }
 
+  @override
+  dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    super.dispose();
+  }
+
+
   Widget buildSplashScreen() {
     return Scaffold(
       body: Center(
@@ -41,6 +51,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp, //ensures portrait at all times.
+      // you can override this if necessary
+    ]);
+
     return LayoutBuilder(
       builder: (context, constraints) => OrientationBuilder(
         builder: (context, orientation) {
