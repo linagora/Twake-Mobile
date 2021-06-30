@@ -21,49 +21,46 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             // waiting for accurate colors in the upcoming design
-            color: message.userId == Globals.instance.userId
-                ? Colors.grey[350]
-                : Colors.white,
-            borderRadius: BorderRadius.circular(8),
+              color: Color(0xFFF6F6F6),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white,width: 3)
           ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 3,
-              ),
-              Text(
-                '${reaction.name}',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Row(
+              children: [
+                Text(
+                  '${reaction.name}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              SizedBox(
-                width: 3,
-              ),
-              Text(
-                '${reaction.count}',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
+                SizedBox(
+                  width: 3,
                 ),
-              ),
-              SizedBox(
-                width: 3,
-              ),
-              /* reaction.count > 1
-                          ? Text(
-                              '${reaction.count}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.grey,
-                              ),
-                            )
-                          : Container(),*/
-            ],
+                Text(
+                  '${reaction.count}',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+
+                /* reaction.count > 1
+                            ? Text(
+                                '${reaction.count}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                              )
+                            : Container(),*/
+              ],
+            ),
           ),
         ),
       ),
