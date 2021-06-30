@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_cubit/channels_state.dart';
+import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -11,12 +12,13 @@ export 'package:twake/blocs/channels_cubit/channels_state.dart';
 
 abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   final ChannelsRepository _repository;
+  final MentionsCubit _mentionsCubit;
 
   final _socketIOChannelStream = SocketIOService.instance.resourceStream;
   final _socketIOActivityStream = SocketIOService.instance.resourceStream;
 
-  BaseChannelsCubit({required ChannelsRepository repository})
-      : _repository = repository,
+  BaseChannelsCubit({required ChannelsRepository repository, required MentionsCubit mentionsCubit})
+      : _repository = repository, _mentionsCubit = mentionsCubit,
         super(ChannelsInitial()) {
     // Set up socketIO listeners
     listenToActivityChanges();
@@ -36,6 +38,11 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
       if (this.state is ChannelsLoadedSuccess) {
         selected = (this.state as ChannelsLoadedSuccess).selected;
+      }
+
+      for (final c in channels) {
+        final contentWithMention = await _mentionsCubit.completeMentions(c.lastMessage?.text ?? '');
+        c.lastMessage?.displayContentWithMention = contentWithMention;
       }
 
       final newState = ChannelsLoadedSuccess(
@@ -353,8 +360,8 @@ class ChannelsCubit extends BaseChannelsCubit {
   final _socketIOActivityStream =
       SynchronizationService.instance.socketIOChannelsActivityStream;
 
-  ChannelsCubit({ChannelsRepository? repository})
-      : super(repository: repository ?? ChannelsRepository());
+  ChannelsCubit({ChannelsRepository? repository, required MentionsCubit mentionsCubit})
+      : super(repository: repository ?? ChannelsRepository(), mentionsCubit: mentionsCubit);
 }
 
 class DirectsCubit extends BaseChannelsCubit {
@@ -366,10 +373,11 @@ class DirectsCubit extends BaseChannelsCubit {
   final _socketIOActivityStream =
       SynchronizationService.instance.socketIODirectsActivityStream;
 
-  DirectsCubit({ChannelsRepository? repository})
+  DirectsCubit({ChannelsRepository? repository, required MentionsCubit mentionsCubit})
       : super(
           repository: repository == null
               ? ChannelsRepository(endpoint: Endpoint.directs)
               : repository,
+          mentionsCubit: mentionsCubit
         );
 }
