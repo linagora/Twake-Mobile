@@ -49,6 +49,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
   // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
   // sendPort.send([id, status, progress]);
   // }
+  Size wdgtHieght = Size(0, 0);
+  // use _wdgtKey in the Bubble
+  final GlobalKey _wdgtKey = GlobalKey();
+  double h = 1;
 
   @override
   void initState() {
@@ -60,7 +64,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
     // FlutterDownloader.registerCallback(downloadingCallback);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (mounted) {
         // setState(() {
         _width = context.size?.width ?? 0.0;
