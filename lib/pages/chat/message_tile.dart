@@ -142,30 +142,31 @@ class _MessageTileState<T extends BaseMessagesCubit>
             onReply(_message);
           }
         },
-        child: Container(
-          padding: const EdgeInsets.fromLTRB(6.0, 6.0, 12.0, 6.0),
-          color: Colors.blue,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: _isMyMessage
-                ? MainAxisAlignment.end
-                : MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: (!_isMyMessage && _shouldShowSender)
-                    ? UserThumbnail(
-                        thumbnailUrl: _message.thumbnail,
-                        userName: _message.sender,
-                        size: 24.0,
-                      )
-                    : SizedBox(width: 24.0, height: 24.0),
-              ),
-              SizedBox(width: 6.0),
-              Stack(
-                children: [
-                  Bubble(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: _isMyMessage
+              ? MainAxisAlignment.end
+              : MainAxisAlignment.start,
+          children: [
+            SizedBox(width: 6.0),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 5.0),
+              child: (!_isMyMessage && _shouldShowSender)
+                  ? UserThumbnail(
+                      thumbnailUrl: _message.thumbnail,
+                      userName: _message.sender,
+                      size: 24.0,
+                    )
+                  : SizedBox(width: 24.0, height: 24.0),
+            ),
+            SizedBox(width: 6.0),
+            Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  color: Colors.white,
+                  child: Bubble(
                     style: BubbleStyle(
                       nip: _isMyMessage
                           ? BubbleNip.rightBottom
@@ -174,7 +175,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       nipHeight: 20,
                       nipRadius: 0.0,
                       radius: Radius.circular(18.0),
-                      padding: BubbleEdges.fromLTRB(13.0, 12.0, 12.0, 8.0),
+                      padding: BubbleEdges.fromLTRB(13.0, 12.0, 12.0, 10.0),
                       elevation: 0,
                       color: _isMyMessage
                           ? Color(0xff004dff)
@@ -216,35 +217,36 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       ],
                     ),
                   ),
+                ),
 
-                  Positioned(
-                    left: 15.0,
-                    bottom: -5.0,
-                    child: Wrap(
-                      runSpacing: Dim.heightMultiplier,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      textDirection: TextDirection.ltr,
-                      children: [
-                        ..._message.reactions.map((r) {
-                          return Reaction<T>(
-                            message: _message,
-                            reaction: r,
-                          );
-                        }),
-                        if (_message.responsesCount > 0 &&
-                            _message.threadId == null &&
-                            !_hideShowAnswers)
-                          Text(
-                            'See all answers (${_message.responsesCount})',
-                            style: StylesConfig.miniPurple,
-                          ),
-                      ],
-                    ),
+                Positioned(
+                  left: 10.0,
+                  bottom: -1.0,
+                  child: Wrap(
+                    runSpacing: Dim.heightMultiplier,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    textDirection: TextDirection.ltr,
+                    children: [
+                      ..._message.reactions.map((r) {
+                        return Reaction<T>(
+                          message: _message,
+                          reaction: r,
+                        );
+                      }),
+                      if (_message.responsesCount > 0 &&
+                          _message.threadId == null &&
+                          !_hideShowAnswers)
+                        Text(
+                          'See all answers (${_message.responsesCount})',
+                          style: StylesConfig.miniPurple,
+                        ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            SizedBox(width: 26.0),
+          ],
         ),
       );
     } else {
