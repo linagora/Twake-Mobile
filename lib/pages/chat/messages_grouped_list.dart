@@ -72,9 +72,9 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   }
 
   Widget _buildStickyGroupedListView(
-    BuildContext context,
-    List<Message> messages,
-  ) {
+      BuildContext context,
+      List<Message> messages,
+      ) {
     // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
 
     return GroupedListView<Message, DateTime>(
