@@ -103,7 +103,7 @@ class HomeDrawerWidget extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                      const EdgeInsets.only(left: 16, top: 20, bottom: 12),
                   child: Text(
                     "WORKSPACES",
                     style: TextStyle(
@@ -123,8 +123,7 @@ class HomeDrawerWidget extends StatelessWidget {
                       return MediaQuery.removePadding(
                         context: context,
                         removeTop: true,
-                        child: ListView.separated(
-                            separatorBuilder: (_, __) => SizedBox(height: 16),
+                        child: ListView.builder(
                             itemCount: workspaceState.workspaces.length,
                             itemBuilder: (context, index) {
                               final workSpace =
@@ -271,46 +270,49 @@ class WorkspaceDrawerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return TwakeButton(
       onTap: onWorkspaceDrawerTileTap,
-      child: Column(
-        children: [
-          Row(
-            children: [
-              isSelected
-                  ? Image.asset(
-                      imageSelectedTile,
-                      width: 6,
-                      height: 44,
-                    )
-                  : SizedBox(
-                      width: 6,
-                      height: 44,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                isSelected
+                    ? Image.asset(
+                        imageSelectedTile,
+                        width: 6,
+                        height: 44,
+                      )
+                    : SizedBox(
+                        width: 6,
+                        height: 44,
+                      ),
+                SizedBox(width: 16.0),
+                RoundedImage(
+                  imageUrl: logo ?? '',
+                  width: 44,
+                  height: 44,
+                  isSelected: isSelected,
+                  borderWidth: 2.0,
+                  borderRadius: 12.0,
+                ),
+                SizedBox(width: 16.0),
+                Expanded(
+                  child: Text(
+                    name ?? '',
+                    style: TextStyle(
+                      color: Color(0xff000000),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.normal,
                     ),
-              SizedBox(width: 16.0),
-              RoundedImage(
-                imageUrl: logo ?? '',
-                width: 44,
-                height: 44,
-                isSelected: isSelected,
-                borderWidth: 2.0,
-                borderRadius: 12.0,
-              ),
-              SizedBox(width: 16.0),
-              Expanded(
-                child: Text(
-                  name ?? '',
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.normal,
                   ),
                 ),
-              ),
-              BadgesCount(type: BadgeType.workspace, id: workspaceId!),
-              SizedBox(width: 30),
-            ],
-          ),
-        ],
+                BadgesCount(type: BadgeType.workspace, id: workspaceId!),
+                SizedBox(width: 30),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
