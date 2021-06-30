@@ -16,12 +16,15 @@ class MessageSummary {
 
   final String? text;
 
-  const MessageSummary({
+  String? displayContentWithMention;
+
+  MessageSummary({
     required this.date,
     required this.sender,
     required this.senderName,
     required this.title,
     this.text,
+    this.displayContentWithMention
   });
 
   factory MessageSummary.fromJson(Map<String, dynamic> json) {

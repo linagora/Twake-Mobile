@@ -45,6 +45,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       companyId: Globals.instance.companyId,
     );
 
+
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
     Get.find<BadgesCubit>().fetch();
