@@ -28,10 +28,10 @@ class HomeBinding implements Bindings {
     final fileCubit = FileCubit();
     Get.put(fileCubit, permanent: true);
 
-    final channelsCubit = ChannelsCubit(mentionsCubit: mentionsCubit);
+    final channelsCubit = ChannelsCubit();
     Get.put(channelsCubit, permanent: true);
 
-    final directsCubit = DirectsCubit(mentionsCubit: mentionsCubit);
+    final directsCubit = DirectsCubit();
     Get.put(directsCubit, permanent: true);
 
     final channelMessagesCubit = ChannelMessagesCubit();

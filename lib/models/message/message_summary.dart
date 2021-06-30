@@ -16,7 +16,14 @@ class MessageSummary {
 
   final String? text;
 
-  String? displayContentWithMention;
+  static final _userMentionRegex = RegExp('@([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
+
+  String? get body {
+    return text?.replaceAllMapped(_userMentionRegex, (match) {
+      final end = text!.indexOf(':', match.start);
+      return text!.substring(match.start, end);
+    });
+  }
 
   MessageSummary({
     required this.date,
@@ -24,7 +31,6 @@ class MessageSummary {
     required this.senderName,
     required this.title,
     this.text,
-    this.displayContentWithMention
   });
 
   factory MessageSummary.fromJson(Map<String, dynamic> json) {

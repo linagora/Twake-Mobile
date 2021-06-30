@@ -1,17 +1,9 @@
-import 'dart:io';
-// import 'dart:isolate';
-//
-// import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:twake/services/service_bundle.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
 
@@ -938,7 +930,7 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
-          final s = int.parse(t['metadata']['size'].toString());
+          final s = int.parse((t['metadata']['size'] ?? '0').toString());
           InlineSpan text;
           const MB = 1024 * 1024;
           const KB = 1024;
@@ -958,9 +950,6 @@ class TwacodeRenderer {
             padding: EdgeInsets.all(3),
             child: Row(children: [
               InkWell(
-                onTap: () async {
-                  // TODO: implementation needed, checkout filedownload branch
-                },
                 child: SizedBox(
                   child: t['metadata']['preview'] != null
                       ? ClipRRect(
@@ -969,7 +958,6 @@ class TwacodeRenderer {
                       : CircleAvatar(
                           child: Icon(Icons.cloud_download),
                           backgroundColor: Colors.indigo[100],
-                          // TODO: implementation needed to show progres, checkout filedownload branch
                         ),
                   width: 40,
                   height: 40,

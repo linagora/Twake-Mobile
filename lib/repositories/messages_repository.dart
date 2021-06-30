@@ -8,6 +8,7 @@ import 'package:twake/services/service_bundle.dart';
 export 'package:twake/models/message/message.dart';
 
 const _LIST_SIZE = 50;
+const _THREAD_SIZE = 1000;
 
 class MessagesRepository {
   final _api = ApiService.instance;
@@ -30,7 +31,7 @@ class MessagesRepository {
     // If messages are present in local storage, just request messages
     // after the last one, via after_date query param
     int? afterDate;
-    if (messages.isNotEmpty && messages.length >= _LIST_SIZE) {
+    if (messages.isNotEmpty && threadId == null) {
       afterDate = messages.last.modificationDate;
     }
 
@@ -67,7 +68,7 @@ class MessagesRepository {
       table: Table.message,
       where: where,
       whereArgs: [channelId, if (threadId != null) threadId],
-      limit: _LIST_SIZE,
+      limit: threadId != null ? _THREAD_SIZE : _LIST_SIZE,
     );
     final messages =
         localResult.map((entry) => Message.fromJson(json: entry)).toList();
@@ -90,7 +91,7 @@ class MessagesRepository {
       // TODO remove fallback_ws_id after files are fixed
       'fallback_ws_id': Globals.instance.workspaceId,
       'channel_id': channelId,
-      'limit': _LIST_SIZE,
+      'limit': threadId != null ? _THREAD_SIZE : _LIST_SIZE,
     };
 
     if (threadId != null) queryParameters['thread_id'] = threadId;

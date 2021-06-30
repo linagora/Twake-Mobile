@@ -14,17 +14,18 @@ class AddChannelCubit extends Cubit<AddChannelState> {
 
   void setChannelVisibility(ChannelVisibility channelVisibility) {
     emit(AddChannelValidation(
-        validToCreateChannel: state.validToCreateChannel,
-        showEmoijKeyboard: state.showEmoijKeyboard,
-        emoijIcon: state.emoijIcon,
-        channelVisibility: channelVisibility,
-        selectedMembers: state.selectedMembers));
+      validToCreateChannel: state.validToCreateChannel,
+      showEmoijKeyboard: state.showEmoijKeyboard,
+      emoijIcon: state.emoijIcon,
+      channelVisibility: channelVisibility,
+      selectedMembers: state.selectedMembers,
+    ));
   }
 
-  AddChannelCubit(
-      {required ChannelsRepository channelsRepository,
-      required ChannelsCubit channelsCubit})
-      : super(AddChannelInitial()) {
+  AddChannelCubit({
+    required ChannelsRepository channelsRepository,
+    required ChannelsCubit channelsCubit,
+  }) : super(AddChannelInitial()) {
     _channelsRepository = channelsRepository;
     _channelsCubit = channelsCubit;
   }

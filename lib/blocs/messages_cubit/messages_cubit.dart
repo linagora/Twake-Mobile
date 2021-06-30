@@ -50,6 +50,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       // if user switched channel before the fetch method is complete, abort
       if (channelId != Globals.instance.channelId) break;
 
+      // if user switched thread before the fetch method is complete, abort
+      if (threadId != null && threadId != Globals.instance.threadId) break;
+
       emit(MessagesLoadSuccess(
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
