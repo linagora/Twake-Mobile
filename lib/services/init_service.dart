@@ -145,6 +145,7 @@ class InitService {
           // TODO remove fallback_ws_id after files are fixed
           'fallback_ws_id': Globals.instance.workspaceId,
           'channel_id': channel.id,
+          'limit': 100,
         },
       );
       messages = messages.followedBy(remoteResult.map(
