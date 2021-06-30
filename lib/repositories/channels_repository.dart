@@ -29,7 +29,8 @@ class ChannelsRepository {
     if (lchannels.length != rchannels.length) {
       for (final localChannel in lchannels) {
         if (!rchannels.any((c) => c.id == localChannel.id))
-          delete(channel: localChannel, syncRemote: false);
+          Logger().v('Deleting channel: ${localChannel.name}');
+        delete(channel: localChannel, syncRemote: false);
       }
     }
   }

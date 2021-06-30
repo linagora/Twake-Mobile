@@ -26,9 +26,18 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     listenToMessageChanges();
   }
 
-  Future<void> fetch({required String channelId, String? threadId}) async {
+  Future<void> fetch({
+    required String channelId,
+    String? threadId,
+    isDirect: false,
+  }) async {
     emit(MessagesLoadInProgress());
-    final stream = _repository.fetch(channelId: channelId, threadId: threadId);
+    final stream = _repository.fetch(
+      channelId: channelId,
+      threadId: threadId,
+      workspaceId: isDirect ? 'direct' : null,
+    );
+
     Message? parentMessage;
 
     threadId = threadId ?? Globals.instance.threadId;
@@ -38,6 +47,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
 
     await for (var list in stream) {
+      // if user switched channel before the fetch method is complete, abort
+      if (channelId != Globals.instance.channelId) break;
+
       emit(MessagesLoadSuccess(
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),

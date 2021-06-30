@@ -32,6 +32,10 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     );
 
     await for (final channels in channelsStream) {
+      // if user switched workspace before the fetch method is complete, abort
+      if (workspaceId != 'direct' &&
+          workspaceId != Globals.instance.workspaceId) break;
+
       Channel? selected;
 
       if (this.state is ChannelsLoadedSuccess) {
