@@ -551,7 +551,10 @@ class _TextInputState extends State<TextInput> {
             onTap: widget.canSend!
                 ? () async {
                     await widget.onMessageSend!(
-                        widget.controller!.text, context);
+                      await Get.find<MentionsCubit>()
+                          .completeMentions(widget.controller!.text),
+                      context,
+                    );
                     widget.controller!.clear();
                     widget.fileNumClear!();
                   }

@@ -20,7 +20,7 @@ class ApiService {
   ApiService._() {
     _dio = Dio(BaseOptions(
       contentType: 'application/json',
-      connectTimeout: 15 * 1000, // 15 seconds to connect
+      connectTimeout: 60 * 1000, // 60 seconds to connect
       receiveTimeout: 30 * 1000, // 30 seconds to receive data
     ));
 

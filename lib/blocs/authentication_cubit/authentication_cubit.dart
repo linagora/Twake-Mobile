@@ -57,17 +57,33 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       ));
       return;
     }
-    emit(PostAuthenticationSyncInProgress());
+    _repository.startTokenValidator();
+
+    emit(AuthenticationSuccess());
+
+    await syncData();
+  }
+
+  Future<void> syncData() async {
+    emit(PostAuthenticationSyncInProgress(progress: 0));
+
+    final start = DateTime.now();
+
+    final progress = InitService.syncData();
 
     try {
-      await InitService.syncData();
+      await for (final p in progress) {
+        emit(PostAuthenticationSyncInProgress(progress: p));
+      }
+
+      emit(PostAuthenticationSyncSuccess());
     } catch (e, stt) {
       Logger().e('Error occurred during initial data sync:\n$e\n$stt');
       emit(PostAuthenticationSyncFailed());
-      throw e;
     }
-    emit(AuthenticationSuccess());
-    _repository.startTokenValidator();
+
+    final end = DateTime.now();
+    Logger().v('SYNC TOOK: ${end.difference(start).inSeconds} sec');
   }
 
   void logout() {

@@ -41,9 +41,10 @@ class _HomeWidgetState extends State<HomeWidget> {
       companyId: Globals.instance.companyId,
     );
     Get.find<DirectsCubit>().fetch(
-      workspaceId: Globals.instance.workspaceId!,
+      workspaceId: 'direct',
       companyId: Globals.instance.companyId,
     );
+
 
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
@@ -202,4 +203,3 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 }
-

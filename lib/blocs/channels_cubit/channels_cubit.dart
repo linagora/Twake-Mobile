@@ -15,8 +15,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   final _socketIOChannelStream = SocketIOService.instance.resourceStream;
   final _socketIOActivityStream = SocketIOService.instance.resourceStream;
 
-  BaseChannelsCubit({required ChannelsRepository repository})
-      : _repository = repository,
+  BaseChannelsCubit({
+    required ChannelsRepository repository,
+  })  : _repository = repository,
         super(ChannelsInitial()) {
     // Set up socketIO listeners
     listenToActivityChanges();
@@ -32,6 +33,10 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     );
 
     await for (final channels in channelsStream) {
+      // if user switched workspace before the fetch method is complete, abort
+      if (workspaceId != 'direct' &&
+          workspaceId != Globals.instance.workspaceId) break;
+
       Channel? selected;
 
       if (this.state is ChannelsLoadedSuccess) {
@@ -368,8 +373,7 @@ class DirectsCubit extends BaseChannelsCubit {
 
   DirectsCubit({ChannelsRepository? repository})
       : super(
-          repository: repository == null
-              ? ChannelsRepository(endpoint: Endpoint.directs)
-              : repository,
-        );
+            repository: repository == null
+                ? ChannelsRepository(endpoint: Endpoint.directs)
+                : repository);
 }

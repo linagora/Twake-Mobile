@@ -16,7 +16,16 @@ class MessageSummary {
 
   final String? text;
 
-  const MessageSummary({
+  static final _userMentionRegex = RegExp('@([a-zA-z0-9._-]+):([a-zA-z0-9-]+)');
+
+  String? get body {
+    return text?.replaceAllMapped(_userMentionRegex, (match) {
+      final end = text!.indexOf(':', match.start);
+      return text!.substring(match.start, end);
+    });
+  }
+
+  MessageSummary({
     required this.date,
     required this.sender,
     required this.senderName,

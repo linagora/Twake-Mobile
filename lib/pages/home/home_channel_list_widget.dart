@@ -37,7 +37,7 @@ class HomeChannelListWidget extends StatelessWidget {
                   ),
                   title: channel.name,
                   name: channel.lastMessage?.senderName,
-                  content: channel.lastMessage?.text,
+                  content: channel.lastMessage?.body,
                   imageUrl: channel.icon,
                   dateTime: channel.lastMessage?.date,
                   channelId: channel.id,

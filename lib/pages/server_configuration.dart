@@ -44,6 +44,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       widget.onConfirm!();
       //   print(Globals.instance.host);
     } else {
+      //   print(Globals.instance.host);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -65,6 +66,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
         leading: CloseButton(onPressed: () {
           widget.onCancel!();
           // print(Globals.instance.host);
+          _controller.text = Globals.instance.host;
         }),
       ),
       body: SafeArea(
