@@ -35,16 +35,16 @@ class _HomeWidgetState extends State<HomeWidget> {
 
     Get.find<CompaniesCubit>().fetch();
     Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
-    Get.find<WorkspacesCubit>().fetchMembers().then((_) {
-      Get.find<ChannelsCubit>().fetch(
-        workspaceId: Globals.instance.workspaceId!,
-        companyId: Globals.instance.companyId,
-      );
-      Get.find<DirectsCubit>().fetch(
-        workspaceId: Globals.instance.workspaceId!,
-        companyId: Globals.instance.companyId,
-      );
-    });
+
+    Get.find<ChannelsCubit>().fetch(
+      workspaceId: Globals.instance.workspaceId!,
+      companyId: Globals.instance.companyId,
+    );
+    Get.find<DirectsCubit>().fetch(
+      workspaceId: 'direct',
+      companyId: Globals.instance.companyId,
+    );
+
 
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
@@ -203,4 +203,3 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 }
-

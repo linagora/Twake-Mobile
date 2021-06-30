@@ -15,3 +15,16 @@ extension StringExtension on String {
 //     }
 //   }
 // }
+
+extension ChunkExtension<T> on List<T> {
+  List<List<T>> chunks(int chunkSize) {
+    List<List<T>> chunks = [];
+    for (var i = 0; i < this.length; i += chunkSize) {
+      chunks.add(this.sublist(
+        i,
+        i + chunkSize > this.length ? this.length : i + chunkSize,
+      ));
+    }
+    return chunks;
+  }
+}

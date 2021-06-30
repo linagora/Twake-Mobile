@@ -30,6 +30,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     selectedId = selectedId ?? Globals.instance.workspaceId;
 
     await for (var workspaces in stream) {
+      // if user switched company before the fetch method is complete, abort
+      if (companyId != Globals.instance.companyId) break;
+
       Workspace? selected;
 
       if (selectedId != null && workspaces.any((w) => w.id == selectedId)) {

@@ -244,21 +244,29 @@ class _ComposeBar extends State<ComposeBar> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(30)),
                                     child: CircleAvatar(
-                                      child: Image.network(
-                                        state.accounts[i].thumbnail!,
-                                        fit: BoxFit.contain,
-                                        loadingBuilder:
-                                            (context, child, progress) {
-                                          return progress == null
-                                              ? child
-                                              : CircleAvatar(
+                                      child: state.accounts[i].thumbnail! == ""
+                                          ? CircleAvatar(
+                                              child: Icon(Icons.person,
+                                                  color: Colors.grey),
+                                              backgroundColor: Colors.blue[50],
+                                            )
+                                          : Image.network(
+                                              state.accounts[i].thumbnail!,
+                                              fit: BoxFit.contain,
+                                              loadingBuilder:
+                                                  (context, child, progress) {
+                                                if (progress == null) {
+                                                  return child;
+                                                }
+
+                                                return CircleAvatar(
                                                   child: Icon(Icons.person,
                                                       color: Colors.grey),
                                                   backgroundColor:
                                                       Colors.blue[50],
                                                 );
-                                        },
-                                      ),
+                                              },
+                                            ),
                                     ),
                                   ),
                                   SizedBox(

@@ -152,7 +152,11 @@ class NavigatorService {
           channelsCubit.clearSelection();
         });
       }
-      channelMessagesCubit.fetch(channelId: channelId);
+
+      channelMessagesCubit.fetch(
+        channelId: channelId,
+        isDirect: channel.isDirect,
+      );
 
       badgesCubit.reset(channelId: channelId);
     }
@@ -168,7 +172,12 @@ class NavigatorService {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
-      await threadMessagesCubit.fetch(channelId: channelId, threadId: threadId);
+
+      await threadMessagesCubit.fetch(
+        channelId: channelId,
+        threadId: threadId,
+        isDirect: channel.isDirect,
+      );
     }
   }
 

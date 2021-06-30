@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
@@ -116,20 +116,26 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          duration: Duration(seconds: 2),
+                          duration: Duration(seconds: 3),
                           content: Text('Processing'),
                         ),
                       );
 
                       await Get.find<WorkspacesCubit>().createWorkspace(
-                          companyId: Globals.instance.companyId,
-                          name: _workspaceNameController.text,
-                          members: members);
+                        companyId: Globals.instance.companyId,
+                        name: _workspaceNameController.text,
+                        members: members,
+                      );
 
                       final state = Get.find<WorkspacesCubit>().state;
                       if (state is WorkspacesLoadSuccess) {
-                        Get.find<WorkspacesCubit>().fetch();
-                        NavigatorService.instance.navigateTohomeWidget();
+                        Get.find<ChannelsCubit>()
+                            .fetch(workspaceId: state.selected!.id);
+                        popBack();
+                        Navigator.of(context).pop();
+
+                        //  Get.find<WorkspacesCubit>().fetch();
+                        // NavigatorService.instance.navigateTohomeWidget();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

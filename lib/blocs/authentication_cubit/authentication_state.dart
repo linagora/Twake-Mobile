@@ -44,9 +44,12 @@ class PostAuthenticationSyncInProgress extends AuthenticationState {
   List<Object?> get props => [];
 }
 
-class PostAuthenticationSyncFailed extends AuthenticationState {
-  const PostAuthenticationSyncFailed();
+class PostAuthenticationSyncFailed extends AuthenticationFailure {
+  const PostAuthenticationSyncFailed({
+    required String username,
+    required String password,
+  }) : super(username: username, password: password);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [username, password];
 }
