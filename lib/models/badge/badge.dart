@@ -26,7 +26,6 @@ class Badge extends BaseModel {
   }
 
   bool matches({required BadgeType type, required String id}) {
-    Logger().v('${this.toJson()}');
     return this.type == type && this.id == id && this.count > 0;
   }
 

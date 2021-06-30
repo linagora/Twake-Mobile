@@ -84,8 +84,6 @@ class BadgesCubit extends Cubit<BadgesState> {
     await for (final _ in badgeUpdateStream) {
       final badges = await _repository.fetchRemote();
 
-      Logger().v('BADGES FROM REMOTE: ${badges.map((b) => b.toJson())}');
-
       emit(BadgesLoadSuccess(
         badges: badges,
         hash: badges.fold(0, (acc, b) => b.hash + acc),

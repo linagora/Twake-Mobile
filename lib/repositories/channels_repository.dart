@@ -103,8 +103,6 @@ class ChannelsRepository {
       data: data,
     );
 
-    Logger().v('Channel Direct: $result');
-
     final created = Channel.fromJson(json: result, jsonify: false);
 
     _storage.insert(table: Table.channel, data: created);
