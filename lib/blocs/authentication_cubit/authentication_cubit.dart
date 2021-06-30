@@ -60,10 +60,16 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(PostAuthenticationSyncInProgress());
 
     try {
+      final start = DateTime.now();
       await InitService.syncData();
+      final end = DateTime.now();
+      Logger().v('SYNC TOOK: ${end.difference(start).inSeconds} sec');
     } catch (e, stt) {
       Logger().e('Error occurred during initial data sync:\n$e\n$stt');
-      emit(PostAuthenticationSyncFailed());
+      emit(PostAuthenticationSyncFailed(
+        username: username,
+        password: password,
+      ));
       throw e;
     }
     emit(AuthenticationSuccess());

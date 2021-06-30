@@ -6,6 +6,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/extensions.dart';
 
 class InitService {
   static late final ApiService _apiService;
@@ -34,13 +35,11 @@ class InitService {
   // should only be called once after successful authentication/login
   static Future<void> syncData() async {
     // 0. Fetch and save the user's id into Globals
-    final userData = await _apiService.get(endpoint: Endpoint.account);
-    final currentAccount = Account.fromJson(json: userData);
-    Globals.instance.userIdSet = currentAccount.id;
-
-    _storageService.insert(table: Table.account, data: currentAccount);
-
-    // 1. Fetch all the companies and save them to local store
+    _apiService.get(endpoint: Endpoint.account).then((userData) {
+      final currentAccount = Account.fromJson(json: userData);
+      Globals.instance.userIdSet = currentAccount.id;
+      _storageService.insert(table: Table.account, data: currentAccount);
+    });
 
     List<dynamic> remoteResult = await _apiService.get(
       endpoint: Endpoint.companies,
@@ -48,110 +47,135 @@ class InitService {
     final companies = remoteResult.map(
       (i) => Company.fromJson(json: i, jsonify: false),
     );
-    await _storageService.multiInsert(table: Table.company, data: companies);
+    _storageService.multiInsert(table: Table.company, data: companies);
     // Set company id in Globals if not set already
     if (Globals.instance.companyId == null) {
       Globals.instance.companyIdSet = companies.first.id;
     }
 
-    Iterable<Workspace> workspaces = Iterable.empty();
-    Iterable<Channel> directs = Iterable.empty();
-    for (final company in companies) {
+    final workspaceFutures = companies.map((c) async {
       // 2. For each company fetch workspaces
       remoteResult = await _apiService.get(
         endpoint: Endpoint.workspaces,
-        queryParameters: {'company_id': company.id},
+        queryParameters: {'company_id': c.id},
       );
-      workspaces = workspaces.followedBy(remoteResult.map(
+      final workspaces = remoteResult.map(
         (i) => Workspace.fromJson(json: i, jsonify: false),
-      ));
+      );
 
+      _storageService.multiInsert(
+        table: Table.workspace,
+        data: workspaces,
+      );
+      return workspaces;
+    });
+
+    final directFutures = companies.map((c) async {
       // 3. For each company fetch direct chats
       remoteResult = await _apiService.get(
         endpoint: Endpoint.directs,
-        queryParameters: {'company_id': company.id},
+        queryParameters: {'company_id': c.id},
       );
-      directs = directs.followedBy(remoteResult.map(
+      final directs = remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false),
-      ));
-    }
-    await _storageService.multiInsert(
-      table: Table.workspace,
-      data: workspaces,
-    );
+      );
+      _storageService.multiInsert(
+        table: Table.channel,
+        data: directs,
+      );
+      return directs;
+    });
+
+    final workspaces =
+        (await Future.wait(workspaceFutures)).reduce((a, b) => a.followedBy(b));
+
+    final directs =
+        (await Future.wait(directFutures)).reduce((a, b) => a.followedBy(b));
+
     // Set workspace id in Globals if not set already
     if (Globals.instance.workspaceId == null) {
       Globals.instance.workspaceIdSet = workspaces.first.id;
     }
 
-    await _storageService.multiInsert(
-      table: Table.channel,
-      data: directs,
-    );
-
-    Iterable<Channel> channels = Iterable.empty();
-    Iterable<Account> accounts = Iterable.empty();
-    Iterable<Account2Workspace> accounts2workspaces = Iterable.empty();
-    for (final workspace in workspaces) {
+    final channelFutures = workspaces.map((w) async {
       // 4. For each workspace fetch channel
       remoteResult = await _apiService.get(
         endpoint: Endpoint.channels,
         queryParameters: {
-          'company_id': workspace.companyId,
-          'workspace_id': workspace.id,
+          'company_id': w.companyId,
+          'workspace_id': w.id,
         },
       );
-      channels = channels.followedBy(remoteResult.map(
+      final channels = remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false),
-      ));
+      );
+
+      _storageService.multiInsert(
+        table: Table.channel,
+        data: channels,
+      );
+
+      return channels;
+    });
+
+    final accountFutures = workspaces.map((w) async {
       // 5. For each workspace fetch members
       remoteResult = await _apiService.get(
         endpoint: Endpoint.workspaceMembers,
         queryParameters: {
-          'company_id': workspace.companyId,
-          'workspace_id': workspace.id,
+          'company_id': w.companyId,
+          'workspace_id': w.id,
         },
       );
-      accounts = accounts.followedBy(remoteResult.map(
+      final accounts = remoteResult.map(
         (i) => Account.fromJson(json: i),
-      ));
+      );
       // Create links between accounts and workspaces
-      accounts2workspaces = accounts2workspaces.followedBy(remoteResult.map(
+      final accounts2workspaces = remoteResult.map(
         (i) => Account2Workspace(
           userId: i['id'],
-          workspaceId: workspace.id,
+          workspaceId: w.id,
         ),
-      ));
-    }
-    await _storageService.multiInsert(
-      table: Table.channel,
-      data: channels,
-    );
-
-    await _storageService.multiInsert(table: Table.account, data: accounts);
-    await _storageService.multiInsert(
-      table: Table.account2workspace,
-      data: accounts2workspaces,
-    );
-
-    // 6. For each channel/direct fetch messages (last 50 will do, default)
-    Iterable<Message> messages = Iterable.empty();
-    for (final channel in channels.followedBy(directs)) {
-      remoteResult = await _apiService.get(
-        endpoint: Endpoint.messages,
-        queryParameters: {
-          'company_id': channel.companyId,
-          'workspace_id': channel.workspaceId,
-          // TODO remove fallback_ws_id after files are fixed
-          'fallback_ws_id': Globals.instance.workspaceId,
-          'channel_id': channel.id,
-          'limit': 100,
-        },
       );
-      messages = messages.followedBy(remoteResult.map(
-        (i) => Message.fromJson(json: i, jsonify: false),
-      ));
-    }
-    await _storageService.multiInsert(table: Table.message, data: messages);
+
+      _storageService.multiInsert(table: Table.account, data: accounts);
+
+      _storageService.multiInsert(
+        table: Table.account2workspace,
+        data: accounts2workspaces,
+      );
+    });
+
+    final channels =
+        (await Future.wait(channelFutures)).reduce((a, b) => a.followedBy(b));
+
+    Future.wait(accountFutures);
+
+    // 6. For each channel/direct fetch messages (last 100 will do, default)
+    channels
+        .followedBy(directs)
+        .map((c) async {
+          remoteResult = await _apiService.get(
+            endpoint: Endpoint.messages,
+            queryParameters: {
+              'company_id': c.companyId,
+              'workspace_id': c.workspaceId,
+              // TODO remove fallback_ws_id after files are fixed
+              'fallback_ws_id': Globals.instance.workspaceId,
+              'channel_id': c.id,
+              'limit': 100,
+            },
+          );
+          final messages = remoteResult.map(
+            (i) => Message.fromJson(json: i, jsonify: false),
+          );
+
+          _storageService.multiInsert(table: Table.message, data: messages);
+        })
+        .toList()
+        .chunks(3)
+        .forEach((f) async {
+          await Future.wait(f);
+        });
   }
 }
