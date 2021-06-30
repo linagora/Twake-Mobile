@@ -34,7 +34,6 @@ class BadgesRepository {
   Future<List<Badge>> fetchRemote() async {
     final queryParameters = {
       'company_id': Globals.instance.companyId,
-      'all_companies': 'true',
     };
 
     final List remoteResult = await _api.get(

@@ -8,14 +8,14 @@ class AuthenticationInitial extends AuthenticationState {
   const AuthenticationInitial();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => const [];
 }
 
 class AuthenticationSuccess extends AuthenticationState {
   const AuthenticationSuccess();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => const [];
 }
 
 class AuthenticationFailure extends AuthenticationState {
@@ -34,22 +34,28 @@ class AuthenticationInProgress extends AuthenticationState {
   const AuthenticationInProgress();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => const [];
 }
 
 class PostAuthenticationSyncInProgress extends AuthenticationState {
-  const PostAuthenticationSyncInProgress();
+  final int progress;
+
+  const PostAuthenticationSyncInProgress({required this.progress});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [progress];
 }
 
-class PostAuthenticationSyncFailed extends AuthenticationFailure {
-  const PostAuthenticationSyncFailed({
-    required String username,
-    required String password,
-  }) : super(username: username, password: password);
+class PostAuthenticationSyncFailed extends AuthenticationState {
+  const PostAuthenticationSyncFailed();
 
   @override
-  List<Object?> get props => [username, password];
+  List<Object?> get props => const [];
+}
+
+class PostAuthenticationSyncSuccess extends AuthenticationState {
+  const PostAuthenticationSyncSuccess();
+
+  @override
+  List<Object?> get props => const [];
 }

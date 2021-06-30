@@ -16,7 +16,7 @@ class MessageSummary {
 
   final String? text;
 
-  static final _userMentionRegex = RegExp('@([a-zA-z0-9_]+):([a-zA-z0-9-]+)');
+  static final _userMentionRegex = RegExp('@([a-zA-z0-9._-]+):([a-zA-z0-9-]+)');
 
   String? get body {
     return text?.replaceAllMapped(_userMentionRegex, (match) {

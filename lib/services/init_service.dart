@@ -33,7 +33,8 @@ class InitService {
   }
 
   // should only be called once after successful authentication/login
-  static Future<void> syncData() async {
+  // yields numbers from 1 to 100 meaning percentage of completion
+  static Stream<int> syncData() async* {
     // 0. Fetch and save the user's id into Globals
     _apiService.get(endpoint: Endpoint.account).then((userData) {
       final currentAccount = Account.fromJson(json: userData);
@@ -41,9 +42,14 @@ class InitService {
       _storageService.insert(table: Table.account, data: currentAccount);
     });
 
+    yield 5;
+
     List<dynamic> remoteResult = await _apiService.get(
       endpoint: Endpoint.companies,
     );
+
+    yield 15;
+
     final companies = remoteResult.map(
       (i) => Company.fromJson(json: i, jsonify: false),
     );
@@ -89,8 +95,12 @@ class InitService {
     final workspaces =
         (await Future.wait(workspaceFutures)).reduce((a, b) => a.followedBy(b));
 
+    yield 35;
+
     final directs =
         (await Future.wait(directFutures)).reduce((a, b) => a.followedBy(b));
+
+    yield 70;
 
     // Set workspace id in Globals if not set already
     if (Globals.instance.workspaceId == null) {
@@ -149,6 +159,8 @@ class InitService {
     final channels =
         (await Future.wait(channelFutures)).reduce((a, b) => a.followedBy(b));
 
+    yield 95;
+
     Future.wait(accountFutures);
 
     // 6. For each channel/direct fetch messages (last 100 will do, default)
@@ -177,5 +189,6 @@ class InitService {
         .forEach((f) async {
           await Future.wait(f);
         });
+    yield 100;
   }
 }

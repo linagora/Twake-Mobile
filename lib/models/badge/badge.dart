@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/services/service_bundle.dart';
 
 part 'badge.g.dart';
 
@@ -25,6 +26,7 @@ class Badge extends BaseModel {
   }
 
   bool matches({required BadgeType type, required String id}) {
+    Logger().v('${this.toJson()}');
     return this.type == type && this.id == id && this.count > 0;
   }
 

@@ -32,7 +32,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     super.dispose();
   }
 
-
   Widget buildSplashScreen() {
     return Scaffold(
       body: Center(
@@ -67,14 +66,18 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
               builder: (ctx, state) {
                 if (state is AuthenticationInProgress) {
                   return buildSplashScreen();
-                }
-                if (state is AuthenticationInitial) {
+                } else if (state is AuthenticationInitial) {
                   return AuthPage();
-                }
-                if (state is AuthenticationSuccess) {
+                } else if (state is PostAuthenticationSyncInProgress) {
+                  // TODO show sync in progress screen
+                  return buildSplashScreen();
+                } else if (state is PostAuthenticationSyncFailed) {
+                  // TODO show sync failed screen
+                  return Container(child: Text('OOPS, sync failed'));
+                } else if (state is PostAuthenticationSyncSuccess ||
+                    state is AuthenticationSuccess) {
                   return HomeWidget();
-                }
-                if (state is AuthenticationFailure) {
+                } else if (state is AuthenticationFailure) {
                   return AuthPage();
                 } else {
                   return buildSplashScreen();
