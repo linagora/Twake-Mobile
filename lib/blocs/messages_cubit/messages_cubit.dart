@@ -388,7 +388,6 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
             final i = messages.indexWhere((m) => m.id == change.data.threadId);
 
-            Logger().v('M: ${message.toJson()}');
             messages[i] = message;
 
             final newState = MessagesLoadSuccess(

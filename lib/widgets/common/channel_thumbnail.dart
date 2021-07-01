@@ -6,6 +6,7 @@ class ChannelThumbnail extends StatelessWidget {
   final bool isPrivate;
   final double width;
   final double height;
+  final double iconSize;
 
   const ChannelThumbnail({
     Key? key,
@@ -13,6 +14,7 @@ class ChannelThumbnail extends StatelessWidget {
     this.isPrivate = false,
     this.width = 60.0,
     this.height = 60.0,
+    this.iconSize = 28.0,
   }) : super(key: key);
 
   @override
@@ -28,7 +30,12 @@ class ChannelThumbnail extends StatelessWidget {
             shape: BoxShape.circle,
             color: Color(0xfff5f5f5),
           ),
-          child: TextAvatar(icon),
+          child: TextAvatar(
+            icon,
+            fontSize: iconSize,
+            width: 50,
+            height: 50,
+          ),
         ),
         if (isPrivate) Image.asset('assets/images/private.png'),
       ],

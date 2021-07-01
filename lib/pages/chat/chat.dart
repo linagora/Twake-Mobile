@@ -51,7 +51,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             icon: channel.icon ?? '',
             membersCount: channel.membersCount,
             onTap: () {} // TODO: navigate to channel edit page
-            ),
+        ),
       ),
       // ),
       body: BlocBuilder<ChannelMessagesCubit, MessagesState>(

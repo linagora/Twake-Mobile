@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/models/badge/badge.dart';
+import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
 
@@ -47,6 +48,7 @@ class HomeChannelTile extends StatelessWidget {
                     child: ChannelThumbnail(
                       isPrivate: isPrivate,
                       icon: imageUrl ?? '',
+                      iconSize: 32.0,
                       width: 54,
                       height: 54,
                     ),
@@ -78,7 +80,7 @@ class HomeChannelTile extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '', // todo parse datetime
+                          DateFormatter.getVerboseTimeForHomeTile(dateTime),
                           style: TextStyle(
                             color: Color(0xffc2c6cc),
                             fontSize: 13,
