@@ -57,5 +57,44 @@ class DateFormatter {
         DateTime.fromMillisecondsSinceEpoch(timestamp).toLocal();
     return '${DateFormat('HH:mm').format(dateTime)}';
   }
+
+  static String getVerboseTimeForHomeTile(int? timestamp) {
+    if (timestamp == null || timestamp == 0) return '';
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    final localDT = dateTime.toLocal();
+
+    // if timestamp is less than a minute old return 'Now'
+    DateTime justNow = DateTime.now();
+    if (justNow.difference(localDT).abs() < Duration(minutes: 1)) {
+      return 'Now';
+    }
+
+    if (localDT.year == justNow.year) {
+      if (localDT.month == justNow.month) {
+        final firstDateOfWeek = _findFirstDateOfTheWeek(justNow);
+
+        if (localDT.day == justNow.day) {
+          // today
+          return DateFormat('HH:mm').format(localDT);
+        } else if (localDT.day > firstDateOfWeek.day) {
+          // display this week date name
+          return DateFormat('EEE').format(localDT);
+        } else {
+          // not this month
+          return '${DateFormat('d.MM').format(localDT)}';
+        }
+      } else {
+        // not this month
+        return '${DateFormat('d.MM').format(localDT)}';
+      }
+    }
+
+    // not this year
+    return '${DateFormat('d.MM.yy').format(localDT)}';
+  }
+
+  static DateTime _findFirstDateOfTheWeek(DateTime dateTime) {
+    return dateTime.subtract(Duration(days: dateTime.weekday - 1));
+  }
 }
 // TODO localize everything
