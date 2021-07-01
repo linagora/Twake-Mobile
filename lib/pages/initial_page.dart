@@ -7,6 +7,7 @@ import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/auth_page.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/pages/syncing_data.dart';
 
 import 'home/home_widget.dart';
 
@@ -69,11 +70,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 } else if (state is AuthenticationInitial) {
                   return AuthPage();
                 } else if (state is PostAuthenticationSyncInProgress) {
-                  // TODO show sync in progress screen
-                  return buildSplashScreen();
+                  return SyncingDataScreen(
+                    state.progress.toDouble(),
+                  );
                 } else if (state is PostAuthenticationSyncFailed) {
-                  // TODO show sync failed screen
-                  return Container(child: Text('OOPS, sync failed'));
+                  return SyncDataFailed();
                 } else if (state is PostAuthenticationSyncSuccess ||
                     state is AuthenticationSuccess) {
                   return HomeWidget();
