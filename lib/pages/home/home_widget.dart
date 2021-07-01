@@ -29,7 +29,7 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  final tabs = [HomeChannelListWidget(), HomeDirectListWidget()];
+  final _tabs = [HomeChannelListWidget(), HomeDirectListWidget()];
 
   @override
   void initState() {
@@ -114,9 +114,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 ),
               ),
             ),
-            TabBarView(
-              children: tabs,
-            )
+            TabBarView(children: _tabs),
           ],
         ),
       ),

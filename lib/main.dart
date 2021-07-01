@@ -21,7 +21,7 @@ void main() async {
   await InitService.preAuthenticationInit();
 
   runApp(RefreshConfiguration(
-    headerBuilder: () => PullToRefreshHeader(), // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
+    headerBuilder: () => PullToRefreshHeader(height: 100, padding: EdgeInsets.only(top: 22)), // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
     headerTriggerDistance: 80.0, // header trigger refresh trigger distance
     maxUnderScrollExtent: 0, // Maximum dragging range at the bottom
     enableScrollWhenRefreshCompleted: true, //This property is incompatible with PageView and TabBarView. If you need TabBarView to slide left and right, you need to set it to true.
