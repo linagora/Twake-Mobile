@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:auto_size_text/auto_size_text.dart';
 
 class TextAvatar extends StatelessWidget {
@@ -22,13 +21,11 @@ class TextAvatar extends StatelessWidget {
       height: height,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(
-          Dim.widthMultiplier * 0.5,
-        ),
+        borderRadius: BorderRadius.circular(width * 0.5),
       ),
       child: AutoSizeText(
         text!,
-        style: TextStyle(fontSize: fontSize ?? Dim.tm3()),
+        style: TextStyle(fontSize: fontSize),
       ),
     );
   }

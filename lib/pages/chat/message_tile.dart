@@ -9,7 +9,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/pages/feed/user_thumbnail.dart';
+import 'package:twake/widgets/common/user_thumbnail.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
@@ -185,7 +185,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         radius: Radius.circular(18.0),
                         elevation: 0,
                         color: _isMyMessage
-                            ? Color(0xff004dff)
+                            ? Color(0xff007AFF)
                             : Color(0xfff6f6f6),
                       ),
                       // borderUp: false,

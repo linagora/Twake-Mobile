@@ -47,6 +47,7 @@ class HomeChannelTile extends StatelessWidget {
                     child: ChannelThumbnail(
                       isPrivate: isPrivate,
                       icon: imageUrl ?? '',
+                      iconSize: 32.0,
                       width: 54,
                       height: 54,
                     ),
