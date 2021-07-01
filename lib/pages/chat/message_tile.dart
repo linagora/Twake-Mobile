@@ -9,7 +9,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/pages/feed/user_thumbnail.dart';
+import 'package:twake/widgets/common/user_thumbnail.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
@@ -30,6 +30,7 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
     this.shouldShowSender = true,
     Key? key,
   }) : super(key: key);
+
   @override
   _MessageTileState createState() => _MessageTileState<T>();
 }
@@ -41,10 +42,17 @@ class _MessageTileState<T extends BaseMessagesCubit>
   late Message _message;
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
+  double _width = 0.0;
+  double _height = 0.0;
+
   // static downloadingCallback(id, status, progress) {
   // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
   // sendPort.send([id, status, progress]);
   // }
+  Size wdgtHieght = Size(0, 0);
+  // use _wdgtKey in the Bubble
+  final GlobalKey _wdgtKey = GlobalKey();
+  double h = 1;
 
   @override
   void initState() {
@@ -56,6 +64,16 @@ class _MessageTileState<T extends BaseMessagesCubit>
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
     // FlutterDownloader.registerCallback(downloadingCallback);
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      if (mounted) {
+        // setState(() {
+        _width = context.size?.width ?? 0.0;
+        _height = context.size?.height ?? 0.0;
+        print('Width: $_width');
+        print('Height: $_height');
+        // });
+      }
+    });
   }
 
   @override
@@ -128,117 +146,151 @@ class _MessageTileState<T extends BaseMessagesCubit>
             onReply(_message);
           }
         },
-        child: Padding(
-          padding: const EdgeInsets.only(
-            left: 6.0,
-            right: 12.0,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment:
-                _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5.0),
-                child: (!_isMyMessage && _shouldShowSender)
-                    ? UserThumbnail(
-                        thumbnailUrl: _message.thumbnail,
-                        userName: _message.sender,
-                        size: 24.0,
-                      )
-                    : SizedBox(width: 24.0, height: 24.0),
-              ),
-              SizedBox(width: 6.0),
-              Flexible(
-                child: Bubble(
-                  color: _isMyMessage ? Color(0xff004dff) : Color(0xfff6f6f6),
-                  elevation: 0,
-                  padding: BubbleEdges.fromLTRB(13.0, 12.0, 12.0, 8.0),
-                  radius: Radius.circular(18.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (!_isMyMessage)
-                              Text(
-                                _message.sender,
-                                style: TextStyle(
-                                  fontSize: 11.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff444444),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            SizedBox(height: _isMyMessage ? 0.0 : 4.0),
-                            TwacodeRenderer(
-                              twacode: _message.content.prepared,
-                              parentStyle: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w400,
-                                color:
-                                    _isMyMessage ? Colors.white : Colors.black,
-                              ),
-                            ).message,
-                            // Normally we use SizedBox here,
-                            // but it will cut the bottom of emojis
-                            // in last line of the messsage.
-                            Container(
-                              color: Colors.transparent,
-                              width: 10.0,
-                              height: 5.0,
-                            ),
-                            Wrap(
-                              runSpacing: Dim.heightMultiplier,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              textDirection: TextDirection.ltr,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment:
+              _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+          children: [
+            SizedBox(width: 6.0),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 18.0),
+              child: (!_isMyMessage && _shouldShowSender)
+                  ? UserThumbnail(
+                      thumbnailUrl: _message.thumbnail,
+                      userName: _message.sender,
+                      size: 24.0,
+                    )
+                  : SizedBox(width: 24.0, height: 24.0),
+            ),
+            SizedBox(width: 6.0),
+            Flexible(
+              child: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    color: Colors.white,
+                    child: Bubble(
+                      style: BubbleStyle(
+                        nip: _isMyMessage
+                            ? (_shouldShowSender
+                                ? BubbleNip.rightTop
+                                : BubbleNip.rightBottom)
+                            : (_shouldShowSender
+                                ? BubbleNip.leftTop
+                                : BubbleNip.leftBottom),
+                        nipWidth: 0.01,
+                        nipHeight: 20,
+                        nipRadius: 0.0,
+                        radius: Radius.circular(18.0),
+                        elevation: 0,
+                        color: _isMyMessage
+                            ? Color(0xff007AFF)
+                            : Color(0xfff6f6f6),
+                      ),
+                      // borderUp: false,
+                      // borderWidth: 2.0,
+                      // borderColor: Colors.black,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                ..._message.reactions.map((r) {
-                                  return Reaction<T>(
-                                    message: _message,
-                                    reaction: r,
-                                  );
-                                }),
-                                if (_message.responsesCount > 0 &&
-                                    _message.threadId == null &&
-                                    !_hideShowAnswers)
-                                  Text(
-                                    'See all answers (${_message.responsesCount})',
-                                    style: StylesConfig.miniPurple,
+                                Flexible(
+                                  child: Container(
+                                    alignment: Alignment.topLeft,
+                                    child: TwacodeRenderer(
+                                      twacode: _message.content.prepared,
+                                      parentStyle: TextStyle(
+                                        fontSize: 15.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: _isMyMessage
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ).message,
                                   ),
+                                ),
+                                Container(
+                                  alignment: Alignment.bottomRight,
+                                  child: Text(
+                                    _message.threadId != null ||
+                                            _hideShowAnswers
+                                        ? DateFormatter.getVerboseDateTime(
+                                            _message.creationDate)
+                                        : DateFormatter.getVerboseTime(
+                                            _message.creationDate),
+                                    textAlign: TextAlign.end,
+                                    style: TextStyle(
+                                      fontSize: 11.0,
+                                      fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.italic,
+                                      color: _isMyMessage
+                                          ? Color(0xffffffff).withOpacity(0.58)
+                                          : Color(0xff8e8e93),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: 5.0),
+                          if (_message.responsesCount > 0 &&
+                              _message.threadId == null &&
+                              !_hideShowAnswers)
+                            Divider(
+                              height: 1.0,
+                              thickness: 1.0,
+                              color: Colors.white.withOpacity(0.19),
+                            ),
+                          if (_message.responsesCount > 0 &&
+                              _message.threadId == null &&
+                              !_hideShowAnswers)
+                            Container(
+                              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                              alignment: Alignment.bottomCenter,
+                              child: Text(
+                                'View ${_message.responsesCount} replies',
+                                style: TextStyle(
+                                  color: _isMyMessage
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
-                      SizedBox(width: 10.0),
-                      Text(
-                        _message.threadId != null || _hideShowAnswers
-                            ? DateFormatter.getVerboseDateTime(
-                                _message.creationDate)
-                            : DateFormatter.getVerboseTime(
-                                _message.creationDate),
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.italic,
-                          color: _isMyMessage
-                              ? Color(0xffffffff).withOpacity(0.58)
-                              : Color(0xff8e8e93),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                  Positioned(
+                    left: 17.0,
+                    bottom: -1.0,
+                    child: Wrap(
+                      runSpacing: Dim.heightMultiplier,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      textDirection: TextDirection.ltr,
+                      children: [
+                        ..._message.reactions.map((r) {
+                          return Reaction<T>(
+                            message: _message,
+                            reaction: r,
+                          );
+                        }),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            SizedBox(width: 26.0),
+          ],
         ),
       );
     } else {

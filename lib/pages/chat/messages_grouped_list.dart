@@ -72,9 +72,9 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   }
 
   Widget _buildStickyGroupedListView(
-    BuildContext context,
-    List<Message> messages,
-  ) {
+      BuildContext context,
+      List<Message> messages,
+      ) {
     // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
 
     return GroupedListView<Message, DateTime>(
@@ -93,7 +93,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       itemComparator: (Message m1, Message m2) {
         return m1.creationDate.compareTo(m2.creationDate);
       },
-      separator: SizedBox(height: 12.0),
+      separator: SizedBox(height: 3.0),
       groupSeparatorBuilder: (DateTime dt) {
         return GestureDetector(
           onTap: () {
