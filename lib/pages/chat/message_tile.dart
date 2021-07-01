@@ -116,6 +116,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
+          //  barrierColor: Colors.white30,
+            backgroundColor: Colors.transparent,
             builder: (_) {
               return MessageModalSheet<T>(
                 message: _message,
