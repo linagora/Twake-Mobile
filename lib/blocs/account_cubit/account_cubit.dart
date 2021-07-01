@@ -47,7 +47,13 @@ class AccountCubit extends Cubit<AccountState> {
 
   // Fetch the user from local storage and return it, without updating cubit's state
   Future<Account> fetchStateless({required String userId}) async {
-    final account = await _repository.localFetch(userId: userId);
+    Account account;
+    try {
+      account = await _repository.localFetch(userId: userId);
+    } catch (_) {
+      Logger().v('Unable to fetch user: $userId from local store');
+      account = await _repository.remoteFetch(userId: userId);
+    }
 
     return account;
   }
