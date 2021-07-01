@@ -18,7 +18,9 @@ class HomeChannelListWidget extends StatelessWidget {
     return Container(
       child: BlocBuilder<ChannelsCubit, ChannelsState>(
         bloc: _channelsCubit,
-        buildWhen: (_, currentState) => currentState is ChannelsLoadedSuccess,
+        buildWhen: (previousState, currentState) =>
+            previousState is ChannelsInitial ||
+            currentState is ChannelsLoadedSuccess,
         builder: (context, channelState) {
           if (channelState is ChannelsLoadedSuccess) {
             return SmartRefresher(
