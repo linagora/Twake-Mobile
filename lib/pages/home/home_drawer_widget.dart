@@ -137,20 +137,21 @@ class HomeDrawerWidget extends StatelessWidget {
                             _refreshController.refreshCompleted();
                           },
                           child: ListView.builder(
-                              itemCount: workspaceState.workspaces.length,
-                              itemBuilder: (context, index) {
-                                final workSpace =
-                                    workspaceState.workspaces[index];
-                                return WorkspaceDrawerTile(
-                                  name: workSpace.name,
-                                  logo: workSpace.logo,
-                                  isSelected: workSpace.id ==
-                                      workspaceState.selected?.id,
-                                  onWorkspaceDrawerTileTap: () =>
-                                      _selectWorkspace(context, workSpace.id),
-                                  workspaceId: workSpace.id,
-                                );
-                              }),
+                            itemCount: workspaceState.workspaces.length,
+                            itemBuilder: (context, index) {
+                              final workSpace =
+                                  workspaceState.workspaces[index];
+                              return WorkspaceDrawerTile(
+                                name: workSpace.name,
+                                logo: workSpace.logo,
+                                isSelected:
+                                    workSpace.id == workspaceState.selected?.id,
+                                onWorkspaceDrawerTileTap: () =>
+                                    _selectWorkspace(context, workSpace.id),
+                                workspaceId: workSpace.id,
+                              );
+                            },
+                          ),
                         ),
                       );
                     }
