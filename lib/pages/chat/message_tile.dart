@@ -64,13 +64,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
     // FlutterDownloader.registerCallback(downloadingCallback);
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (mounted) {
         // setState(() {
         _width = context.size?.width ?? 0.0;
         _height = context.size?.height ?? 0.0;
-        print('Width: $_width');
-        print('Height: $_height');
         // });
       }
     });

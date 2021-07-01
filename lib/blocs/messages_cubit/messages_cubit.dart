@@ -154,6 +154,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     String? threadId,
   }) async {
     final prepared = TwacodeParser(editedText).message;
+
     if (newAttachments.isNotEmpty) {
       final oldPrepared = message.content.prepared;
       final content = newAttachments.map((f) => f.toMap()).toList();
@@ -169,6 +170,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       }
       prepared.add(nop);
     }
+
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
