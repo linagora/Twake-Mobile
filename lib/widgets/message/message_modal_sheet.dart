@@ -243,10 +243,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     ),
                                   ),
                                 ),
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  widget.onReply!(widget.message);
-                                },
+                                onTap: widget.onEdit as void Function()?,
                               ),
                           ],
                         ),
