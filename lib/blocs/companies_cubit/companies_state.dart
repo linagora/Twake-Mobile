@@ -23,10 +23,3 @@ class CompaniesLoadSuccess extends CompaniesState {
   @override
   List<Object> get props => [companies, selected];
 }
-
-class CompaniesLoadInProgress extends CompaniesState {
-  const CompaniesLoadInProgress();
-
-  @override
-  List<Object> get props => [];
-}

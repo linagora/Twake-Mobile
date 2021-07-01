@@ -28,6 +28,9 @@ class CompanySelectionWidget extends StatelessWidget {
               children: [
                 BlocBuilder<CompaniesCubit, CompaniesState>(
                   bloc: _companiesCubit,
+                  buildWhen: (previousState, currentState) =>
+                      previousState is CompaniesInitial ||
+                      currentState is CompaniesLoadSuccess,
                   builder: (context, companyState) {
                     if (companyState is CompaniesLoadSuccess) {
                       return Align(

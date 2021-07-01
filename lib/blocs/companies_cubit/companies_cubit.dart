@@ -18,7 +18,6 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   }
 
   Future<void> fetch() async {
-    emit(CompaniesLoadInProgress());
     final streamCompanies = _repository.fetch();
 
     await for (var companies in streamCompanies) {
