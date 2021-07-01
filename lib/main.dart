@@ -2,12 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/di/home_binding.dart';
 import 'package:twake/routing/route_pages.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/init_service.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/widgets/common/pull_to_refresh_header.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,11 +20,20 @@ void main() async {
 
   await InitService.preAuthenticationInit();
 
-  runApp(GetMaterialApp(
-    theme: StylesConfig.lightTheme,
-    title: 'Twake',
-    getPages: routePages,
-    initialRoute: RoutePaths.initial,
-    initialBinding: HomeBinding(),
+  runApp(RefreshConfiguration(
+    headerBuilder: () => PullToRefreshHeader(height: 100, padding: EdgeInsets.only(top: 22)), // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
+    headerTriggerDistance: 80.0, // header trigger refresh trigger distance
+    maxUnderScrollExtent: 0, // Maximum dragging range at the bottom
+    enableScrollWhenRefreshCompleted: true, //This property is incompatible with PageView and TabBarView. If you need TabBarView to slide left and right, you need to set it to true.
+    enableLoadingWhenFailed : true, //In the case of load failure, users can still trigger more loads by gesture pull-up.
+    enableBallisticLoad: true, // trigger load more by BallisticScrollActivity
+
+    child: GetMaterialApp(
+      theme: StylesConfig.lightTheme,
+      title: 'Twake',
+      getPages: routePages,
+      initialRoute: RoutePaths.initial,
+      initialBinding: HomeBinding(),
+    ),
   ));
 }

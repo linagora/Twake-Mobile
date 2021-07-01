@@ -29,6 +29,8 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
+  final _tabs = [HomeChannelListWidget(), HomeDirectListWidget()];
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +47,6 @@ class _HomeWidgetState extends State<HomeWidget> {
       companyId: Globals.instance.companyId,
     );
 
-
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
     Get.find<BadgesCubit>().fetch();
@@ -56,41 +57,41 @@ class _HomeWidgetState extends State<HomeWidget> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-          drawer: HomeDrawerWidget(),
-          appBar: AppBar(
-            leading: SizedBox.shrink(),
-            leadingWidth: 0,
-            toolbarHeight: kToolbarHeight + 44,
-            bottom: TabBar(
-              tabs: [
-                Tab(
-                  child: BadgesCount(
-                    type: BadgeType.workspace,
-                    id: Globals.instance.workspaceId!,
-                  ),
+        drawer: HomeDrawerWidget(),
+        appBar: AppBar(
+          leading: SizedBox.shrink(),
+          leadingWidth: 0,
+          toolbarHeight: kToolbarHeight + 44,
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                child: BadgesCount(
+                  type: BadgeType.workspace,
+                  id: Globals.instance.workspaceId!,
                 ),
-                Tab(
-                  text: 'Chats',
-                ),
-              ],
-              isScrollable: true,
-              indicatorColor: Color(0xff004dff),
-              unselectedLabelColor: Color(0xff8e8e93),
-              unselectedLabelStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                fontStyle: FontStyle.normal,
               ),
-              labelStyle: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                fontStyle: FontStyle.normal,
+              Tab(
+                text: 'Chats',
               ),
+            ],
+            isScrollable: true,
+            indicatorColor: Color(0xff004dff),
+            unselectedLabelColor: Color(0xff8e8e93),
+            unselectedLabelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              fontStyle: FontStyle.normal,
             ),
-            title: _buildHeader(),
+            labelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              fontStyle: FontStyle.normal,
+            ),
           ),
+          title: _buildHeader(),
+        ),
 
-          /* float button to create channel
+        /* float button to create channel
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 12.0),
             child: FloatingActionButton(
@@ -102,23 +103,21 @@ class _HomeWidgetState extends State<HomeWidget> {
           floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
            */
 
-          body: Stack(
-            children: [
-              Positioned(
-                  child: Opacity(
-                      opacity: 0.22,
-                      child: Divider(
-                        height: 2,
-                        color: Color(0xffd8d8d8),
-                      ))),
-              TabBarView(
-                children: [
-                  HomeChannelListWidget(),
-                  HomeDirectListWidget(),
-                ],
-              )
-            ],
-          )),
+        body: Stack(
+          children: [
+            Positioned(
+              child: Opacity(
+                opacity: 0.22,
+                child: Divider(
+                  height: 2,
+                  color: Color(0xffd8d8d8),
+                ),
+              ),
+            ),
+            TabBarView(children: _tabs),
+          ],
+        ),
+      ),
     );
   }
 
@@ -178,17 +177,19 @@ class _HomeWidgetState extends State<HomeWidget> {
                   child: GestureDetector(
                     onTap: () => push(RoutePaths.newDirect.path),
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                            color: Color(0xfff9f8f9),
-                            width: 40,
-                            height: 40,
-                            child: Image.asset(
-                              imageAddChannel,
-                              width: 20,
-                              height: 20,
-                              color: Color(0xff004dff),
-                            ))),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        color: Color(0xfff9f8f9),
+                        width: 40,
+                        height: 40,
+                        child: Image.asset(
+                          imageAddChannel,
+                          width: 20,
+                          height: 20,
+                          color: Color(0xff004dff),
+                        ),
+                      ),
+                    ),
                   ),
                 )
               ],

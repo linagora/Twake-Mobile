@@ -5,7 +5,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/widgets/common/pull_to_refresh_header.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 import 'home_channel_tile.dart';
@@ -26,7 +25,6 @@ class HomeChannelListWidget extends StatelessWidget {
           if (channelState is ChannelsLoadedSuccess) {
             return SmartRefresher(
               controller: _refreshController,
-              header: PullToRefreshHeader(),
               onRefresh: () async {
                 await _channelsCubit.fetch(
                   workspaceId: Globals.instance.workspaceId!,

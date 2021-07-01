@@ -83,96 +83,179 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
         ? buildEmojiBoard()
         : SafeArea(
             child: Container(
+              height: MediaQuery.of(context).size.height * 0.45,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  EmojiLine(
-                    onEmojiSelected: onEmojiSelected,
-                    showEmojiBoard: toggleEmojiBoard,
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(22.0),
+                    ),
+                    child: EmojiLine(
+                      onEmojiSelected: onEmojiSelected,
+                      showEmojiBoard: toggleEmojiBoard,
+                    ),
                   ),
-                  Divider(
-                    thickness: 1.0,
-                    height: 1.0,
-                    color: Color(0xffEEEEEE),
-                  ),
-                  if (widget.isMe)
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
-                      leading: Icon(Icons.edit),
-                      title: Text(
-                        'Edit',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xff444444),
+                  Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF2F2F6),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(15),
+                        topLeft: Radius.circular(15),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 30,
                         ),
-                      ),
-                      onTap: widget.onEdit as void Function()?,
-                    ),
-                  //  if (widget.message.threadId != null)
-                  ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16.0),
-                    leading: Icon(Icons.reply_sharp),
-                    title: Text(
-                      'Reply',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xff444444),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      widget.onReply!(widget.message);
-                    },
-                  ),
-                  if (widget.message.threadId != null)
-                    Divider(
-                      thickness: 1.0,
-                      height: 1.0,
-                      color: Color(0xffEEEEEE),
-                    ),
-                  if (widget.isMe && widget.message.responsesCount == 0)
-                    ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
-                      leading: Icon(Icons.delete, color: Color(0xffFF5154)),
-                      title: Text(
-                        'Delete',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xffFF5154),
-                        ),
-                      ),
-                      onTap: () {
-                        widget.onDelete!();
-                      },
-                    ),
-                  if (widget.isMe && widget.message.responsesCount == 0)
-                    Divider(
-                      thickness: 1.0,
-                      height: 1.0,
-                      color: Color(0xffEEEEEE),
-                    ),
-                  widget.message.content.originalStr?.isEmpty ?? true
-                      ? Container()
-                      : ListTile(
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 16.0),
-                          leading: Icon(Icons.copy),
-                          title: Text(
-                            'Copy',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xff444444),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (widget.isMe &&
+                                widget.message.responsesCount == 0)
+                              GestureDetector(
+                                child: Container(
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.delete,
+                                            color: Color(0xffFF5154)),
+                                        Text(
+                                          'delete',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFFFF3347),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  widget.onDelete!();
+                                },
+                              ),
+                            SizedBox(
+                              width: 30,
                             ),
-                          ),
-                          onTap: widget.onCopy as void Function()?,
+                            widget.message.content.originalStr?.isEmpty ?? true
+                                ? Container()
+                                : GestureDetector(
+                                    child: Container(
+                                      width: 60,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(6.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              Icons.copy_outlined,
+                                              color: Color(0xFF004DFF),
+                                            ),
+                                            Text(
+                                              'Copy',
+                                              style: TextStyle(
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w500,
+                                                color: Color(0xFF004DFF),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      widget.onCopy!();
+                                    },
+                                  ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            GestureDetector(
+                              child: Container(
+                                width: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6.0),
+                                  child: Column(
+                                    children: [
+                                      Icon(Icons.reply_sharp,
+                                          color: Color(0xFF004DFF)),
+                                      Text(
+                                        'Reply',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF004DFF),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                widget.onReply!(widget.message);
+                              },
+                            ),
+                            SizedBox(
+                              width: 30,
+                            ),
+                            if (widget.isMe)
+                              GestureDetector(
+                                child: Container(
+                                  width: 60,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.edit,
+                                            color: Color(0xFF004DFF)),
+                                        Text(
+                                          'Edit',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: Color(0xFF004DFF),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  widget.onReply!(widget.message);
+                                },
+                              ),
+                          ],
                         ),
+                        SizedBox(
+                          height: 30,
+                        )
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -193,13 +276,13 @@ class EmojiLine extends StatelessWidget {
     '👍',
     '👌',
     '👋',
-    '🙏',
   ];
 
   @override
   Widget build(BuildContext context) {
     final fontSize = 27.0;
     return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,
         horizontal: 16.0, //Dim.wm2,
@@ -216,18 +299,27 @@ class EmojiLine extends StatelessWidget {
                   onEmojiSelected!(e);
                 },
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
+                  padding: const EdgeInsets.only(right: 2.0),
                   child: Text(
                     e,
                     style: TextStyle(fontSize: fontSize),
                   ),
                 ),
               )),
-          IconButton(
-            padding: EdgeInsets.zero,
-            icon: Icon(Icons.tag_faces),
-            onPressed: showEmojiBoard as void Function()?,
-            iconSize: fontSize + 3,
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFF6F6F6),
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: Icon(
+                Icons.more_horiz,
+                color: Color(0xFF99A2AD),
+              ),
+              onPressed: showEmojiBoard as void Function()?,
+              iconSize: fontSize + 3,
+            ),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
@@ -17,7 +18,8 @@ import 'package:twake/widgets/common/twake_button.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
-  const HomeDrawerWidget() : super();
+  final _refreshController = RefreshController();
+  final _workspacesCubit = Get.find<WorkspacesCubit>();
 
   @override
   Widget build(BuildContext context) {
@@ -102,8 +104,7 @@ class HomeDrawerWidget extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16, top: 20, bottom: 12),
+                  padding: const EdgeInsets.only(left: 16, top: 20, bottom: 12),
                   child: Text(
                     "WORKSPACES",
                     style: TextStyle(
@@ -117,27 +118,40 @@ class HomeDrawerWidget extends StatelessWidget {
               ),
               Expanded(
                 child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                  bloc: Get.find<WorkspacesCubit>(),
+                  bloc: _workspacesCubit,
+                  buildWhen: (previousState, currentState) =>
+                      previousState is WorkspacesInitial ||
+                      currentState is WorkspacesLoadSuccess,
                   builder: (context, workspaceState) {
                     if (workspaceState is WorkspacesLoadSuccess) {
                       return MediaQuery.removePadding(
                         context: context,
                         removeTop: true,
-                        child: ListView.builder(
-                            itemCount: workspaceState.workspaces.length,
-                            itemBuilder: (context, index) {
-                              final workSpace =
-                                  workspaceState.workspaces[index];
-                              return WorkspaceDrawerTile(
-                                name: workSpace.name,
-                                logo: workSpace.logo,
-                                isSelected:
-                                    workSpace.id == workspaceState.selected?.id,
-                                onWorkspaceDrawerTileTap: () =>
-                                    _selectWorkspace(context, workSpace.id),
-                                workspaceId: workSpace.id,
-                              );
-                            }),
+                        child: SmartRefresher(
+                          controller: _refreshController,
+                          onRefresh: () async {
+                            await _workspacesCubit.fetch(
+                              companyId: Globals.instance.companyId,
+                            );
+                            await Future.delayed(Duration(seconds: 1));
+                            _refreshController.refreshCompleted();
+                          },
+                          child: ListView.builder(
+                              itemCount: workspaceState.workspaces.length,
+                              itemBuilder: (context, index) {
+                                final workSpace =
+                                    workspaceState.workspaces[index];
+                                return WorkspaceDrawerTile(
+                                  name: workSpace.name,
+                                  logo: workSpace.logo,
+                                  isSelected: workSpace.id ==
+                                      workspaceState.selected?.id,
+                                  onWorkspaceDrawerTileTap: () =>
+                                      _selectWorkspace(context, workSpace.id),
+                                  workspaceId: workSpace.id,
+                                );
+                              }),
+                        ),
                       );
                     }
                     return TwakeCircularProgressIndicator();
