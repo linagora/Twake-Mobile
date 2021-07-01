@@ -29,10 +29,8 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
             children: [
               Container(
                 width: MediaQuery.of(context).size.width * 0.35,
-                child: FittedBox(
-                  child: Image.asset(
-                    'assets/images/data_sync.png',
-                  ),
+                child: Image.asset(
+                  'assets/images/data_sync.png',
                 ),
               ),
               SizedBox(
