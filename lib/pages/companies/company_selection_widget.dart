@@ -12,6 +12,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 class CompanySelectionWidget extends StatelessWidget {
   final _refreshController = RefreshController();
@@ -22,18 +23,23 @@ class CompanySelectionWidget extends StatelessWidget {
     return CupertinoPopupSurface(
       child: Container(
         color: Color(0xffefeef3),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                BlocBuilder<CompaniesCubit, CompaniesState>(
-                  bloc: _companiesCubit,
-                  buildWhen: (previousState, currentState) =>
-                      previousState is CompaniesInitial ||
-                      currentState is CompaniesLoadSuccess,
-                  builder: (context, companyState) {
-                    if (companyState is CompaniesLoadSuccess) {
-                      return Align(
+        child: BlocBuilder<CompaniesCubit, CompaniesState>(
+          bloc: _companiesCubit,
+          buildWhen: (previousState, currentState) =>
+              previousState is CompaniesInitial ||
+              currentState is CompaniesLoadSuccess,
+
+          builder: (context, companiesState) {
+            if (companiesState is CompaniesLoadSuccess) {
+
+              final companies = companiesState.companies;
+              final selected = companiesState.selected;
+
+              return Column(
+                children: [
+                  Stack(
+                    children: [
+                      Align(
                         alignment: Alignment.center,
                         child: Padding(
                           padding: EdgeInsets.only(left: 16, top: 24),
@@ -43,7 +49,7 @@ class CompanySelectionWidget extends StatelessWidget {
                                 borderRadius: 12.0,
                                 width: 44.0,
                                 height: 44.0,
-                                imageUrl: companyState.selected.logo,
+                                imageUrl: companiesState.selected.logo,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -53,7 +59,7 @@ class CompanySelectionWidget extends StatelessWidget {
                                   right: 16,
                                 ),
                                 child: Text(
-                                  companyState.selected.name,
+                                  companiesState.selected.name,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -64,46 +70,19 @@ class CompanySelectionWidget extends StatelessWidget {
                             ],
                           ),
                         ),
-                      );
-                    }
-                    return Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(),
                       ),
-                    );
-                  },
-                ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    icon: Image.asset(imagePathCancel),
-                    onPressed: () => popBack(),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                          icon: Image.asset(imagePathCancel),
+                          onPressed: () => popBack(),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
-            // AddWorkspaceTile(title: 'Add a new company'),
-            Expanded(
-              child: BlocBuilder<CompaniesCubit, CompaniesState>(
-                bloc: _companiesCubit,
-                buildWhen: (previousState, currentState) =>
-                    previousState is CompaniesInitial ||
-                    currentState is CompaniesLoadSuccess,
-                builder: (context, companiesState) {
-                  if (companiesState is CompaniesInitial) {
-                    return SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (companiesState is CompaniesLoadSuccess) {
-                    final companies = companiesState.companies;
-                    final selected = companiesState.selected;
-
-                    return SmartRefresher(
+                  // AddWorkspaceTile(title: 'Add a new company'),
+                  Expanded(
+                    child: SmartRefresher(
                       controller: _refreshController,
                       onRefresh: () async {
                         await _companiesCubit.fetch();
@@ -151,17 +130,14 @@ class CompanySelectionWidget extends StatelessWidget {
                           );
                         },
                       ),
-                    );
-                  }
-                  return SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: CircularProgressIndicator(),
-                  );
-                },
-              ),
-            ),
-          ],
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return TwakeCircularProgressIndicator(width: 40, height: 40);
+            }
+          },
         ),
       ),
     );
