@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
@@ -13,7 +14,8 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 class CompanySelectionWidget extends StatelessWidget {
-  const CompanySelectionWidget() : super();
+  final _refreshController = RefreshController();
+  final _companiesCubit = Get.find<CompaniesCubit>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,10 @@ class CompanySelectionWidget extends StatelessWidget {
         color: Color(0xffefeef3),
         child: Column(
           children: [
-            // SizedBox(
-            //   height: 100,
-            // ),
             Stack(
               children: [
                 BlocBuilder<CompaniesCubit, CompaniesState>(
-                  bloc: Get.find<CompaniesCubit>(),
+                  bloc: _companiesCubit,
                   builder: (context, companyState) {
                     if (companyState is CompaniesLoadSuccess) {
                       return Align(
@@ -45,13 +44,18 @@ class CompanySelectionWidget extends StatelessWidget {
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
-                                    top: 16, bottom: 40, left: 16, right: 16),
+                                  top: 16,
+                                  bottom: 40,
+                                  left: 16,
+                                  right: 16,
+                                ),
                                 child: Text(
                                   companyState.selected.name,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               )
                             ],
@@ -81,12 +85,12 @@ class CompanySelectionWidget extends StatelessWidget {
             // AddWorkspaceTile(title: 'Add a new company'),
             Expanded(
               child: BlocBuilder<CompaniesCubit, CompaniesState>(
-                bloc: Get.find<CompaniesCubit>(),
-                buildWhen: (_, current) =>
-                    current is CompaniesLoadInProgress ||
-                    current is CompaniesLoadSuccess,
+                bloc: _companiesCubit,
+                buildWhen: (previousState, currentState) =>
+                    previousState is CompaniesInitial ||
+                    currentState is CompaniesLoadSuccess,
                 builder: (context, companiesState) {
-                  if (companiesState is CompaniesLoadInProgress) {
+                  if (companiesState is CompaniesInitial) {
                     return SizedBox(
                       width: 40,
                       height: 40,
@@ -96,46 +100,54 @@ class CompanySelectionWidget extends StatelessWidget {
                     final companies = companiesState.companies;
                     final selected = companiesState.selected;
 
-                    return ListView.builder(
-                      shrinkWrap: false,
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).padding.bottom,
-                      ),
-                      itemCount: companiesState.companies.length,
-                      itemBuilder: (context, index) {
-                        final company = companies[index];
-                        return WorkspaceTile(
-                          onTap: () async {
-                            Get.find<CompaniesCubit>().selectCompany(
-                              companyId: company.id,
-                            );
-                            popBack();
-
-                            if (company.selectedWorkspace != null)
-                              Globals.instance.workspaceIdSet =
-                                  company.selectedWorkspace;
-
-                            await Get.find<WorkspacesCubit>().fetch(
-                              companyId: company.id,
-                              selectedId: company.selectedWorkspace,
-                            );
-
-                            Get.find<ChannelsCubit>().fetch(
-                              workspaceId: Globals.instance.workspaceId!,
-                              companyId: company.id,
-                            );
-
-                            Get.find<DirectsCubit>().fetch(
-                              workspaceId: 'direct',
-                              companyId: company.id,
-                            );
-                          },
-                          image: company.logo ?? '',
-                          title: company.name,
-                          selected: selected.id == company.id,
-                          subtitle: '',
-                        );
+                    return SmartRefresher(
+                      controller: _refreshController,
+                      onRefresh: () async {
+                        await _companiesCubit.fetch();
+                        await Future.delayed(Duration(seconds: 1));
+                        _refreshController.refreshCompleted();
                       },
+                      child: ListView.builder(
+                        shrinkWrap: false,
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).padding.bottom,
+                        ),
+                        itemCount: companiesState.companies.length,
+                        itemBuilder: (context, index) {
+                          final company = companies[index];
+                          return WorkspaceTile(
+                            onTap: () async {
+                              _companiesCubit.selectCompany(
+                                companyId: company.id,
+                              );
+                              popBack();
+
+                              if (company.selectedWorkspace != null)
+                                Globals.instance.workspaceIdSet =
+                                    company.selectedWorkspace;
+
+                              await Get.find<WorkspacesCubit>().fetch(
+                                companyId: company.id,
+                                selectedId: company.selectedWorkspace,
+                              );
+
+                              Get.find<ChannelsCubit>().fetch(
+                                workspaceId: Globals.instance.workspaceId!,
+                                companyId: company.id,
+                              );
+
+                              Get.find<DirectsCubit>().fetch(
+                                workspaceId: 'direct',
+                                companyId: company.id,
+                              );
+                            },
+                            image: company.logo ?? '',
+                            title: company.name,
+                            selected: selected.id == company.id,
+                            subtitle: '',
+                          );
+                        },
+                      ),
                     );
                   }
                   return SizedBox(
