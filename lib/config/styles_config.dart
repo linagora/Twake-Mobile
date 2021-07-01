@@ -30,7 +30,7 @@ class StylesConfig {
     ),
     // fontFamily: 'PT',
     primaryColorBrightness:
-        SchedulerBinding.instance?.window?.platformBrightness ??
+        SchedulerBinding.instance?.window.platformBrightness ??
             Brightness.light,
   );
 
@@ -45,7 +45,6 @@ class StylesConfig {
     bodyText2: _bodyText2,
     subtitle1: _subtitle1,
     subtitle2: _subtitle2,
-    button: _button,
   );
 
   static final TextStyle _headline6 = TextStyle(
@@ -78,11 +77,6 @@ class StylesConfig {
     color: subTitleTextColor,
     fontSize: Dim.tm2(decimal: -.5),
     fontWeight: FontWeight.w400,
-  );
-
-  static final TextStyle _button = TextStyle(
-    color: Colors.white,
-    fontSize: Dim.tm2(decimal: .7),
   );
 
   static final TextStyle _headline4 = TextStyle(
