@@ -56,7 +56,7 @@ class HomeDirectListWidget extends StatelessWidget {
                     name: channel.lastMessage?.senderName,
                     content: channel.lastMessage?.body,
                     imageUrl: channel.icon,
-                    dateTime: channel.lastMessage?.date,
+                    dateTime: channel.lastActivity,
                     channelId: channel.id,
                   );
                 },
