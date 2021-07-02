@@ -32,17 +32,8 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     final workspaceMembers = result.first as List<Account>;
     final recentChats = result.last as Map<String, Account>;
 
-    final List<Account> members = [];
-    final recentContacts = recentChats.values;
-
-    for (final m in workspaceMembers) {
-      if (!recentContacts.any((rc) => rc.id == m.id)) {
-        members.add(m);
-      }
-    }
-
     emit(NewDirectNormalState(
-      members: members,
+      members: workspaceMembers,
       recentChats: recentChats,
     ));
   }
@@ -94,10 +85,17 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     return recentChats;
   }
 
-  void newDirect(String member) async {
-    final channel = await channelsRepository.createDirect(member: member);
-    directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
-    popBack();
-    NavigatorService.instance.navigate(channelId: channel.id);
+  void newDirect(String memberId) async {
+    final recentKey = state.recentChats.keys.firstWhere(
+            (key) => state.recentChats[key]?.id == memberId,
+        orElse: () => '');
+    if (recentKey.isNotEmpty) {
+      NavigatorService.instance.navigate(channelId: recentKey);
+    } else {
+      final channel = await channelsRepository.createDirect(member: memberId);
+      directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
+      popBack();
+      NavigatorService.instance.navigate(channelId: channel.id);
+    }
   }
 }
