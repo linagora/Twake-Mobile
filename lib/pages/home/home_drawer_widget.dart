@@ -23,6 +23,11 @@ class HomeDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // refetch workspaces
+    _workspacesCubit.fetch(
+      companyId: Globals.instance.companyId,
+    );
+
     return Drawer(
       child: SafeArea(
         child: Container(
