@@ -98,6 +98,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
               Container(
                 height: 40,
                 child: GestureDetector(
+                  behavior:  HitTestBehavior.translucent,
                   onTap: () => push(RoutePaths.newChannel.path),
                   child: Row(
                     children: [
