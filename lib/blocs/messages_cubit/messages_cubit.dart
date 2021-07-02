@@ -53,6 +53,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       // if user switched thread before the fetch method is complete, abort
       if (threadId != null && threadId != Globals.instance.threadId) break;
 
+      Logger().v('Emitting messages for $channelId');
+
       emit(MessagesLoadSuccess(
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
@@ -62,6 +64,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<void> fetchBefore({
+    required String channelId,
     String? threadId,
   }) async {
     if (this.state is! MessagesLoadSuccess) return;
@@ -75,10 +78,14 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     ));
 
     final beforeMessages = await _repository.fetchBefore(
+      channelId: channelId,
       threadId: threadId,
       beforeMessageId: state.messages.first.id,
       beforeDate: state.messages.first.creationDate,
     );
+    // if user switched channel before the fetchBefore method is complete, abort
+    // and just ignore the result
+    if (channelId != Globals.instance.channelId) return;
 
     final allMessages = beforeMessages + state.messages;
 

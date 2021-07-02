@@ -119,7 +119,7 @@ class MessagesRepository {
   }
 
   Future<List<Message>> fetchBefore({
-    String? channelId,
+    required String channelId,
     String? threadId,
     required String beforeMessageId,
     required int beforeDate,
@@ -134,7 +134,7 @@ class MessagesRepository {
       table: Table.message,
       where: where,
       whereArgs: [
-        channelId ?? Globals.instance.channelId,
+        channelId,
         beforeDate,
         if (threadId != null) threadId,
       ],
@@ -150,7 +150,7 @@ class MessagesRepository {
     final queryParameters = {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId,
-      'channel_id': channelId ?? Globals.instance.channelId,
+      'channel_id': channelId,
       'thread_id': threadId,
       'limit': _LIST_SIZE,
       'before_message_id': beforeMessageId,

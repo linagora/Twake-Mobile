@@ -6,6 +6,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
@@ -56,7 +57,9 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo.metrics.pixels ==
                 scrollInfo.metrics.maxScrollExtent) {
-              Get.find<ChannelMessagesCubit>().fetchBefore();
+              Get.find<ChannelMessagesCubit>().fetchBefore(
+                channelId: Globals.instance.channelId!,
+              );
             }
             return true;
           },
@@ -72,9 +75,9 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   }
 
   Widget _buildStickyGroupedListView(
-      BuildContext context,
-      List<Message> messages,
-      ) {
+    BuildContext context,
+    List<Message> messages,
+  ) {
     // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
 
     return GroupedListView<Message, DateTime>(
