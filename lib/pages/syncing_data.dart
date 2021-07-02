@@ -44,7 +44,7 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
                     fontWeight: FontWeight.w900),
               ),
               Text(
-                'please, be paient 😊 😕',
+                'please, be patient 😊 😕',
                 style: TextStyle(
                     fontSize: 20,
                     color: Colors.black,
