@@ -7,6 +7,7 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
+import 'package:twake/utils/emojis.dart';
 
 class AddChannelCubit extends Cubit<AddChannelState> {
   late final ChannelsRepository _channelsRepository;
@@ -71,7 +72,7 @@ class AddChannelCubit extends Cubit<AddChannelState> {
     var channel = Channel(
       id: now.toString(),
       name: name,
-      icon: state.emoijIcon,
+      icon: state.emoijIcon.isEmpty ? Emojis.randomEmoij() : state.emoijIcon,
       description: description,
       companyId: Globals.instance.companyId!,
       workspaceId: Globals.instance.workspaceId!,

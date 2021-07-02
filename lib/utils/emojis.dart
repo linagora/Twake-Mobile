@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:twake/services/api_service.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -36,5 +37,12 @@ class Emojis {
   static String? getByName(String name) {
     name = name.replaceAll(':', '');
     return _emojimap![name];
+  }
+
+  static String randomEmoij() {
+    final randomList = [
+    '😍', '😳', '😂', '😁', '😉', '😌', '😏', '😄', '😃', '😀', '🤣', '😇', '😅', '🤣', '😜', '🤩', '🥳', '😎'
+    ];
+    return randomList[Random().nextInt(randomList.length)];
   }
 }
