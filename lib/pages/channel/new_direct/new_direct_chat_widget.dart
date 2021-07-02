@@ -98,6 +98,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
               Container(
                 height: 40,
                 child: GestureDetector(
+                  behavior:  HitTestBehavior.translucent,
                   onTap: () => push(RoutePaths.newChannel.path),
                   child: Row(
                     children: [
@@ -269,7 +270,8 @@ class _RecentChatTile extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 child: Text(name,
                     maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.clip,
                     style: TextStyle(
                       color: Color(0x59000000),
                       fontSize: 13,
