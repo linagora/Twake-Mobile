@@ -114,7 +114,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-          //  barrierColor: Colors.white30,
+            //  barrierColor: Colors.white30,
             backgroundColor: Colors.transparent,
             builder: (_) {
               return MessageModalSheet<T>(
@@ -289,7 +289,21 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 ],
               ),
             ),
-            SizedBox(width: 26.0),
+            SizedBox(width: 3.0),
+            _message.isDelivered && _isMyMessage
+                ? Column(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline_rounded,
+                        color: Color(0xFF004DFF),
+                      ),
+                      SizedBox(height: 18.0)
+                    ],
+                  )
+                : Container(),
+            _message.isDelivered && _isMyMessage
+                ? SizedBox(width: 10.0)
+                : SizedBox(width: 26.0)
           ],
         ),
       );
