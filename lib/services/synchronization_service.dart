@@ -106,7 +106,8 @@ class SynchronizationService {
   Stream<SocketIOEvent> get socketIOThreadMessageStream =>
       _socketio.eventStream.where((e) {
         return (e.data.threadId?.isNotEmpty ?? false) &&
-            e.data.threadId != e.data.messageId;
+            e.data.threadId != e.data.messageId &&
+            e.data.threadId == Globals.instance.threadId;
       });
 
   Stream<SocketIOResource> get sockeIOBadgesUpdateStream =>

@@ -45,9 +45,6 @@ class MessagesRepository {
       afterDate: afterDate,
     );
 
-    Logger().v('LAST LOCAL: ${messages.last.toJson()}');
-    Logger().v('LAST REMOTE: ${remoteMessages.last.toJson()}');
-
     if (messages.isNotEmpty && afterDate != null) {
       for (final m in remoteMessages) {
         final index = messages.indexWhere((lm) => lm.id == m.id);
