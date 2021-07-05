@@ -24,12 +24,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     listentToChannelChanges();
   }
 
-  Future<void> fetch({String? companyId, required String workspaceId}) async {
+  Future<void> fetch({
+    String? companyId,
+    required String workspaceId,
+    bool localOnly: false,
+  }) async {
     emit(ChannelsLoadInProgress());
 
     final channelsStream = _repository.fetch(
       companyId: companyId ?? Globals.instance.companyId!,
       workspaceId: workspaceId,
+      localOnly: localOnly,
     );
 
     await for (final channels in channelsStream) {

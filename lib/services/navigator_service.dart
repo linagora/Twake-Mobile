@@ -120,38 +120,45 @@ class NavigatorService {
     required String channelId,
     String? threadId,
   }) async {
-    if (companyId != null) {
+    if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
 
-      await workspacesCubit.fetch(companyId: companyId);
-      await directsCubit.fetch(companyId: companyId, workspaceId: 'direct');
+      workspacesCubit.fetch(companyId: companyId, localOnly: true);
+
+      await directsCubit.fetch(
+        companyId: companyId,
+        workspaceId: 'direct',
+        localOnly: true,
+      );
     }
-    if (workspaceId != null && workspaceId != 'direct') {
+
+    if (workspaceId != null &&
+        workspaceId != 'direct' &&
+        workspaceId != Globals.instance.workspaceId) {
       workspacesCubit.selectWorkspace(workspaceId: workspaceId);
       companiesCubit.selectWorkspace(workspaceId: workspaceId);
 
-      await channelsCubit.fetch(workspaceId: workspaceId);
+      await channelsCubit.fetch(workspaceId: workspaceId, localOnly: true);
+
       SynchronizationService.instance.subscribeToBadges();
     }
 
     final channel = await directsCubit.getChannel(channelId: channelId);
 
-    if (channelId != Globals.instance.channelId) {
-      if (channel.isDirect) {
-        directsCubit.selectChannel(channelId: channelId);
+    if (channel.isDirect) {
+      directsCubit.selectChannel(channelId: channelId);
 
-        Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
-          channelMessagesCubit.reset();
-          directsCubit.clearSelection();
-        });
-      } else {
-        channelsCubit.selectChannel(channelId: channelId);
+      Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
+        channelMessagesCubit.reset();
+        directsCubit.clearSelection();
+      });
+    } else {
+      channelsCubit.selectChannel(channelId: channelId);
 
-        Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
-          channelMessagesCubit.reset();
-          channelsCubit.clearSelection();
-        });
-      }
+      Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
+        channelMessagesCubit.reset();
+        channelsCubit.clearSelection();
+      });
 
       channelMessagesCubit.fetch(
         channelId: channelId,

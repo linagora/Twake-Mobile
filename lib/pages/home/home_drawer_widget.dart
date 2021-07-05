@@ -173,32 +173,31 @@ class HomeDrawerWidget extends StatelessWidget {
                 child: Column(
                   children: [
                     GestureDetector(
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.add_circle_sharp,
-                            color: Colors.black,
-                          ),
-                          SizedBox(
-                            width: 12,
-                          ),
-                          Text(
-                            "Add a new workspace",
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.add_circle_sharp,
+                              color: Colors.black,
                             ),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        // close drawer
-                        Navigator.of(context).pop();
-                        NavigatorService.instance.navigateToCreateWorkspace();
-                      }
-                    ),
+                            SizedBox(
+                              width: 12,
+                            ),
+                            Text(
+                              "Add a new workspace",
+                              style: TextStyle(
+                                color: Color(0xff000000),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          // close drawer
+                          Navigator.of(context).pop();
+                          NavigatorService.instance.navigateToCreateWorkspace();
+                        }),
                     SizedBox(
                       height: 20,
                     ),

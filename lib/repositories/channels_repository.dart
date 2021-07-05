@@ -13,13 +13,14 @@ class ChannelsRepository {
   Stream<List<Channel>> fetch({
     required String companyId,
     required String workspaceId,
+    bool localOnly: false,
   }) async* {
     final lchannels =
         await fetchLocal(companyId: companyId, workspaceId: workspaceId);
 
     yield lchannels;
 
-    if (!Globals.instance.isNetworkConnected) return;
+    if (!Globals.instance.isNetworkConnected || localOnly) return;
 
     final rchannels =
         await fetchRemote(companyId: companyId, workspaceId: workspaceId);

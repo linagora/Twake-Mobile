@@ -43,13 +43,17 @@ class WorkspacesRepository {
     return users;
   }
 
-  Stream<List<Workspace>> fetch({String? companyId}) async* {
+  Stream<List<Workspace>> fetch({
+    String? companyId,
+    bool localOnly: false,
+  }) async* {
     if (companyId == null) companyId = Globals.instance.companyId;
 
     var workspaces = await fetchLocal(companyId: companyId!);
+
     yield workspaces;
 
-    if (!Globals.instance.isNetworkConnected) return;
+    if (!Globals.instance.isNetworkConnected || localOnly) return;
 
     workspaces = await fetchRemote(companyId: companyId);
 

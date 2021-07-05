@@ -23,9 +23,17 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     );
   }
 
-  Future<void> fetch({String? companyId, String? selectedId}) async {
+  Future<void> fetch({
+    String? companyId,
+    String? selectedId,
+    bool localOnly: false,
+  }) async {
     emit(WorkspacesLoadInProgress());
-    final stream = _repository.fetch(companyId: companyId);
+
+    final stream = _repository.fetch(
+      companyId: companyId,
+      localOnly: localOnly,
+    );
 
     selectedId = selectedId ?? Globals.instance.workspaceId;
 
