@@ -193,8 +193,11 @@ class HomeDrawerWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      onTap: () =>
-                          NavigatorService.instance.navigateToCreateWorkspace(),
+                      onTap: () {
+                        // close drawer
+                        Navigator.of(context).pop();
+                        NavigatorService.instance.navigateToCreateWorkspace();
+                      }
                     ),
                     SizedBox(
                       height: 20,
@@ -204,8 +207,11 @@ class HomeDrawerWidget extends StatelessWidget {
                       builder: (context, accountState) {
                         if (accountState is AccountLoadSuccess) {
                           return GestureDetector(
-                            onTap: () =>
-                                NavigatorService.instance.navigateToAccount(),
+                            onTap: () {
+                              // close drawer
+                              Navigator.of(context).pop();
+                              NavigatorService.instance.navigateToAccount();
+                            },
                             behavior: HitTestBehavior.opaque,
                             child: Row(
                               children: [
