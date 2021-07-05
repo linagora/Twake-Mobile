@@ -126,6 +126,7 @@ class StorageService {
     List<String>? columns,
     String? where,
     List<dynamic>? whereArgs,
+    String? orderBy,
     int? limit,
   }) async {
     final result = await _db.query(
@@ -133,6 +134,7 @@ class StorageService {
       columns: columns,
       where: where,
       whereArgs: whereArgs,
+      orderBy: orderBy,
       limit: limit,
     );
     return result;

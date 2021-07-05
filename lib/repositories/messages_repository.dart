@@ -76,6 +76,7 @@ class MessagesRepository {
     final localResult = await _storage.select(
       table: Table.message,
       where: where,
+      orderBy: 'creation_date DESC',
       whereArgs: [channelId, if (threadId != null) threadId],
       limit: threadId != null ? _THREAD_SIZE : _LIST_SIZE,
     );
@@ -261,8 +262,6 @@ class MessagesRepository {
 
     final remoteResult =
         await _api.put(endpoint: Endpoint.messages, data: data);
-
-    Logger().v('EDITED MESSAGE: $remoteResult');
 
     message = Message.fromJson(json: remoteResult, jsonify: false);
 
