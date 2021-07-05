@@ -103,4 +103,10 @@ class Message extends BaseModel {
     }
     return json;
   }
+
+  Message recent(Message other) {
+    if (this.modificationDate > other.modificationDate) return this;
+
+    return other;
+  }
 }

@@ -32,7 +32,9 @@ class MessagesRepository {
     // after the last one, via after_date query param
     int? afterDate;
     if (messages.isNotEmpty && threadId == null) {
-      afterDate = messages.last.modificationDate;
+      afterDate = messages
+          .fold<Message>(messages.first, (a, b) => a.recent(b))
+          .modificationDate;
     }
 
     final remoteMessages = await fetchRemote(
@@ -43,8 +45,18 @@ class MessagesRepository {
       afterDate: afterDate,
     );
 
+    Logger().v('LAST LOCAL: ${messages.last.toJson()}');
+    Logger().v('LAST REMOTE: ${remoteMessages.last.toJson()}');
+
     if (messages.isNotEmpty && afterDate != null) {
-      messages.addAll(remoteMessages);
+      for (final m in remoteMessages) {
+        final index = messages.indexWhere((lm) => lm.id == m.id);
+        if (!index.isNegative) {
+          messages[index] = m;
+        } else {
+          messages.add(m);
+        }
+      }
     } else {
       messages = remoteMessages;
     }
