@@ -42,6 +42,8 @@ class Message extends BaseModel {
         this.content.originalStr.hashCode +
         this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
+        this._isDelivered +
+        this._isRead +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
   }
 
