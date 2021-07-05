@@ -474,7 +474,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
           alignment: Alignment.center,
           child: Text(
             emoij,
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 30),
           ),
         ),
       )),
