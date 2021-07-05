@@ -159,14 +159,14 @@ class NavigatorService {
         channelMessagesCubit.reset();
         channelsCubit.clearSelection();
       });
-
-      channelMessagesCubit.fetch(
-        channelId: channelId,
-        isDirect: channel.isDirect,
-      );
-
-      badgesCubit.reset(channelId: channelId);
     }
+
+    channelMessagesCubit.fetch(
+      channelId: channelId,
+      isDirect: channel.isDirect,
+    );
+
+    badgesCubit.reset(channelId: channelId);
 
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);

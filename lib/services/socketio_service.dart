@@ -64,10 +64,10 @@ class SocketIOService {
 
     _socket.on(IOEvent.resource, _handleResource);
 
-    // _socket.on(
-    // IOEvent.join_success,
-    // (r) => Logger().v('successfully joined room $r'),
-    // );
+    _socket.on(
+      IOEvent.join_success,
+      (r) => Logger().v('successfully joined room $r'),
+    );
 
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
 
