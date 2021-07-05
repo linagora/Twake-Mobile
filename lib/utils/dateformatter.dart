@@ -81,11 +81,11 @@ class DateFormatter {
           return DateFormat('EEE').format(localDT);
         } else {
           // not this month
-          return '${DateFormat('d.MM').format(localDT)}';
+          return '${DateFormat('d MMM').format(localDT)}';
         }
       } else {
         // not this month
-        return '${DateFormat('d.MM').format(localDT)}';
+        return '${DateFormat('d MMM').format(localDT)}';
       }
     }
 
