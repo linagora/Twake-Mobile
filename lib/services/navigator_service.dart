@@ -173,7 +173,7 @@ class NavigatorService {
         threadMessagesCubit.reset();
       });
 
-      await threadMessagesCubit.fetch(
+      threadMessagesCubit.fetch(
         channelId: channelId,
         threadId: threadId,
         isDirect: channel.isDirect,

@@ -34,6 +34,9 @@ class Message extends BaseModel {
   @JsonKey(defaultValue: 1, name: 'is_read')
   int _isRead = 1;
 
+  @JsonKey(defaultValue: 1, name: 'is_delivered')
+  int _isDelivered = 1;
+
   int get hash {
     return this.id.hashCode +
         this.content.originalStr.hashCode +
@@ -53,6 +56,11 @@ class Message extends BaseModel {
   bool get isRead => _isRead > 0;
 
   set isRead(bool val) => _isRead = val ? 1 : 0;
+
+  @JsonKey(ignore: true)
+  bool get isDelivered => _isDelivered > 0;
+
+  set isDelivered(bool val) => _isDelivered = val ? 1 : 0;
 
   Message({
     required this.id,

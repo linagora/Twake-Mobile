@@ -112,10 +112,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       prepared.add(nop);
     }
     final sendStream = _repository.send(
-        channelId: Globals.instance.channelId!,
-        prepared: prepared,
-        originalStr: originalStr,
-        threadId: threadId);
+      channelId: Globals.instance.channelId!,
+      prepared: prepared,
+      originalStr: originalStr,
+      threadId: threadId,
+    );
 
     if (this.state is! MessagesLoadSuccess) return;
 
@@ -128,6 +129,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess
       if (this.state is! MessagesLoadSuccess) return;
+
+      if (messages.first.channelId != Globals.instance.channelId) return;
 
       final modifiedList = messages.sublist(0); // clone the original list
       modifiedList.add(message);

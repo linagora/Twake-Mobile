@@ -213,6 +213,8 @@ class MessagesRepository {
       reactions: [],
     );
 
+    message.isDelivered = false;
+
     yield message;
 
     final data = {
