@@ -16,16 +16,16 @@ class HomeChannelTile extends StatelessWidget {
   final String channelId;
   final bool isPrivate;
 
-  const HomeChannelTile({
-    required this.title,
-    this.name,
-    this.content,
-    this.imageUrl,
-    this.dateTime,
-    this.onHomeChannelTileClick,
-    required this.channelId,
-    this.isPrivate = false
-  }) : super();
+  const HomeChannelTile(
+      {required this.title,
+      this.name,
+      this.content,
+      this.imageUrl,
+      this.dateTime,
+      this.onHomeChannelTileClick,
+      required this.channelId,
+      this.isPrivate = false})
+      : super();
 
   @override
   Widget build(BuildContext context) {

@@ -15,18 +15,18 @@ class NewDirectCubit extends Cubit<NewDirectState> {
   final AccountCubit accountCubit;
   final ChannelsRepository channelsRepository;
 
-  NewDirectCubit(
-      {required this.workspacesCubit,
-      required this.directsCubit,
-      required this.accountCubit,
-      required this.channelsRepository})
-      : super(NewDirectInitial());
+  NewDirectCubit({
+    required this.workspacesCubit,
+    required this.directsCubit,
+    required this.accountCubit,
+    required this.channelsRepository,
+  }) : super(NewDirectInitial());
 
   void fetchAllMember() async {
     emit(NewDirectInProgress());
 
     final result = await Future.wait(
-      [workspacesCubit.fetchMembers(), _fetchRecentChats()],
+      [workspacesCubit.fetchMembers(local: true), _fetchRecentChats()],
     );
 
     final workspaceMembers = result.first as List<Account>;
@@ -87,7 +87,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
 
   void newDirect(String memberId) async {
     final recentKey = state.recentChats.keys.firstWhere(
-            (key) => state.recentChats[key]?.id == memberId,
+        (key) => state.recentChats[key]?.id == memberId,
         orElse: () => '');
     if (recentKey.isNotEmpty) {
       NavigatorService.instance.navigate(channelId: recentKey);

@@ -70,8 +70,12 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: workspace));
   }
 
-  Future<List<Account>> fetchMembers({String? workspaceId}) async {
-    final members = await _repository.fetchMembers(workspaceId: workspaceId);
+  Future<List<Account>> fetchMembers(
+      {String? workspaceId, bool local: false}) async {
+    final members = await _repository.fetchMembers(
+      workspaceId: workspaceId,
+      local: local,
+    );
 
     return members;
   }

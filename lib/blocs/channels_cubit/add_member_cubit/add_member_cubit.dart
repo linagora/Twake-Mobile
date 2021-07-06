@@ -18,7 +18,7 @@ class AddMemberCubit extends Cubit<AddMemberState> {
       ));
     }
 
-    List<Account> members = await workspacesCubit.fetchMembers();
+    List<Account> members = await workspacesCubit.fetchMembers(local: true);
     emit(AddMemberInFrequentlyContacted(
       allMembers: members,
       selectedMembers: state.selectedMembers,
@@ -42,10 +42,12 @@ class AddMemberCubit extends Cubit<AddMemberState> {
       if (member.username.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.firstname != null && member.firstname!.toLowerCase().contains(searchKeyword)) {
+      if (member.firstname != null &&
+          member.firstname!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.lastname != null && member.lastname!.toLowerCase().contains(searchKeyword)) {
+      if (member.lastname != null &&
+          member.lastname!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
       if (member.email.toLowerCase().contains(searchKeyword)) {

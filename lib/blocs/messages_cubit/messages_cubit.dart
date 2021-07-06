@@ -129,7 +129,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       // messages view screen, and the state is MessagesLoadSuccess
       if (this.state is! MessagesLoadSuccess) return;
 
-      if (messages.first.channelId != Globals.instance.channelId) return;
+      if (message.channelId != Globals.instance.channelId) return;
 
       final modifiedList = messages.sublist(0); // clone the original list
       modifiedList.add(message);

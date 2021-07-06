@@ -18,7 +18,7 @@ class Message extends BaseModel {
   final String channelId;
   final String userId;
 
-  final int creationDate;
+  int creationDate;
   int modificationDate;
   int responsesCount;
 

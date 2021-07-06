@@ -240,6 +240,7 @@ class MessagesRepository {
         await _api.post(endpoint: Endpoint.messages, data: data);
 
     message = Message.fromJson(json: remoteResult, jsonify: false);
+    message.creationDate = now;
 
     _storage.insert(table: Table.message, data: message);
 

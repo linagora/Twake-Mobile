@@ -11,36 +11,50 @@ class WorkspacesRepository {
 
   WorkspacesRepository();
 
-  Future<List<Account>> fetchMembers({String? workspaceId}) async {
+  Future<List<Account>> fetchMembers({
+    String? workspaceId,
+    bool local: false,
+  }) async {
     workspaceId = workspaceId ?? Globals.instance.workspaceId;
 
-    final List<dynamic> remoteResult = await this._api.get(
-      endpoint: Endpoint.workspaceMembers,
-      queryParameters: {
-        'workspace_id': workspaceId,
-        'company_id': Globals.instance.companyId
-      },
-    );
+    if (local) {
+      final sql = '''
+        SELECT a.* FROM ${Table.account.name} AS a JOIN
+        ${Table.account2workspace.name} AS a2w ON a.id = a2w.user_id
+        WHERE a2w.workspace_id = ?''';
 
-    final List<Account> users = remoteResult
-        .map((entry) => Account.fromJson(
-              json: entry,
-              jsonify: false,
-            ))
-        .toList();
+      final local = await _storage.rawSelect(sql: sql, args: [workspaceId]);
 
-    this._storage.multiInsert(table: Table.account, data: users);
+      return local.map((i) => Account.fromJson(json: i)).toList();
+    } else {
+      final List<dynamic> remoteResult = await this._api.get(
+        endpoint: Endpoint.workspaceMembers,
+        queryParameters: {
+          'workspace_id': workspaceId,
+          'company_id': Globals.instance.companyId
+        },
+      );
 
-    this._storage.multiInsert(
-        table: Table.account2workspace,
-        data: users.map(
-          (u) => Account2Workspace(
-            userId: u.id,
-            workspaceId: workspaceId!,
-          ),
-        ));
+      final List<Account> users = remoteResult
+          .map((entry) => Account.fromJson(
+                json: entry,
+                jsonify: false,
+              ))
+          .toList();
 
-    return users;
+      this._storage.multiInsert(table: Table.account, data: users);
+
+      this._storage.multiInsert(
+          table: Table.account2workspace,
+          data: users.map(
+            (u) => Account2Workspace(
+              userId: u.id,
+              workspaceId: workspaceId!,
+            ),
+          ));
+
+      return users;
+    }
   }
 
   Stream<List<Workspace>> fetch({
