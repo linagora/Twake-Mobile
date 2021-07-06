@@ -10,6 +10,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
@@ -50,7 +51,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             name: channel.name,
             icon: channel.icon ?? '',
             membersCount: channel.membersCount,
-            onTap: () {} // TODO: navigate to channel edit page
+            onTap: () {
+              if (T == ChannelsCubit) {
+                NavigatorService.instance.navigateToChannelDetail();
+              }
+            }
         ),
       ),
       // ),
