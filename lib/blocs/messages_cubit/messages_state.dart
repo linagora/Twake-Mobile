@@ -27,6 +27,13 @@ class MessagesLoadSuccess extends MessagesState {
   List<Object?> get props => [hash];
 }
 
+class NoMessagesFound extends MessagesState {
+  const NoMessagesFound();
+
+  @override
+  List<Object?> get props => const [];
+}
+
 class MessageEditInProgress extends MessagesLoadSuccess {
   final Message message;
 
