@@ -157,7 +157,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
               padding: const EdgeInsets.only(bottom: 18.0),
               child: (!_isMyMessage && _shouldShowSender)
                   ? UserThumbnail(
-                      thumbnailUrl: _message.thumbnail,
+                      thumbnailUrl: _message.thumbnail ?? '',
                       userName: _message.sender,
                       size: 24.0,
                     )
