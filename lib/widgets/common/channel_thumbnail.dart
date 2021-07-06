@@ -38,12 +38,12 @@ class ChannelThumbnail extends StatelessWidget {
               ? TextAvatar(
                   icon,
                   fontSize: iconSize,
-                  width: 50,
-                  height: 50,
+                  width: (width * 85) / 100,
+                  height: (height * 85) / 100,
                 )
               : NamedAvatar(
                   name: name,
-                  size: 50,
+                  size: (width * 85) / 100,
                   borderRadius: width / 2,
                   fontColor: Colors.white,
                 ),

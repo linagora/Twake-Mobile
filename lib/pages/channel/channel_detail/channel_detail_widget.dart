@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/channel_thumbnail.dart';
 
 class ChannelDetailWidget extends StatelessWidget {
   const ChannelDetailWidget({Key? key}) : super(key: key);
@@ -38,9 +41,26 @@ class ChannelDetailWidget extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20.0),
-                      child: RoundedImage(
-                        width: 88,
-                        height: 88,
+                      child: BlocBuilder<ChannelsCubit, ChannelsState>(
+                        bloc: Get.find<ChannelsCubit>(),
+                        builder: (ctx, channelState) {
+                          Channel? selectedChannel =
+                              (channelState is ChannelsLoadedSuccess) ? channelState.selected : null;
+                          return ChannelThumbnail(
+                            isPrivate: selectedChannel != null
+                                ? selectedChannel.isPrivate
+                                : false,
+                            icon: (selectedChannel != null &&
+                                    selectedChannel.icon != null)
+                                ? selectedChannel.icon! : '',
+                            name: selectedChannel != null
+                                ? selectedChannel.name
+                                : '',
+                            iconSize: 50,
+                            width: 88,
+                            height: 88,
+                          );
+                        },
                       ),
                     ),
                   )
@@ -48,24 +68,37 @@ class ChannelDetailWidget extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 12.0, bottom: 6),
-                child: Text('Twake product team',
-                    style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      fontStyle: FontStyle.normal,
-                    )
+                child: BlocBuilder<ChannelsCubit, ChannelsState>(
+                  bloc: Get.find<ChannelsCubit>(),
+                  builder: (ctx, channelState) {
+                    return Text((channelState is ChannelsLoadedSuccess)
+                        ? channelState.selected?.name ?? '' : '',
+                        style: TextStyle(
+                          color: Color(0xff000000),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          fontStyle: FontStyle.normal,
+                        ));
+                  },
                 ),
               ),
-              Text('24 members',
-                  style: TextStyle(
-                    color: Color(0x59000000),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    fontStyle: FontStyle.normal,
-                  )
+
+              BlocBuilder<ChannelsCubit, ChannelsState>(
+                bloc: Get.find<ChannelsCubit>(),
+                builder: (ctx, channelState) {
+                  return Text((channelState is ChannelsLoadedSuccess)
+                      ? '${channelState.selected?.membersCount} members' : '',
+                      style: TextStyle(
+                        color: Color(0x59000000),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        fontStyle: FontStyle.normal,
+                      ));
+                },
               ),
-              SizedBox(height: 16,),
+              SizedBox(
+                height: 16,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -162,32 +195,38 @@ class ChannelDetailWidget extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(12))),
                 child: Column(
                   children: [
-                    Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 16.0, bottom: 16, left: 10, right: 20),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.black,
-                              size: 16,
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        // todo go to edit channel info
+                      },
+                      child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 16.0, bottom: 16, left: 10, right: 20),
+                              child: Icon(
+                                Icons.edit,
+                                color: Colors.black,
+                                size: 16,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Text('Edit channel info',
-                                style: TextStyle(
-                                  color: Color(0xff000000),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10.0, left: 4),
-                            child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
-                          )
-                        ],
-                      ),
+                            Expanded(
+                              child: Text('Edit channel info',
+                                  style: TextStyle(
+                                    color: Color(0xff000000),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                  )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0, left: 4),
+                              child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
+                            )
+                          ],
+                        ),
+                    ),
                     Divider(height: 1, color: Color(0x1e000000),),
                     Row(
                       children: [
@@ -232,13 +271,18 @@ class ChannelDetailWidget extends StatelessWidget {
                                 fontStyle: FontStyle.normal,
                               )),
                         ),
-                        Text('24',
-                            style: TextStyle(
-                              color: Color(0xff004dff),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            )
+                        BlocBuilder<ChannelsCubit, ChannelsState>(
+                          bloc: Get.find<ChannelsCubit>(),
+                          builder: (ctx, channelState) {
+                            return Text('${(channelState is ChannelsLoadedSuccess)
+                                ? channelState.selected?.membersCount : ''}',
+                                style: TextStyle(
+                                  color: Color(0xff004dff),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  fontStyle: FontStyle.normal,
+                                ));
+                          },
                         ),
                         Padding(
                           padding: const EdgeInsets.only(right: 10.0),
