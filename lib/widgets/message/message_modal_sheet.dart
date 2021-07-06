@@ -39,6 +39,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
       Duration(milliseconds: 50),
       FocusManager.instance.primaryFocus?.unfocus,
     );
+    Navigator.pop(context);
   }
 
   void toggleEmojiBoard() async {
