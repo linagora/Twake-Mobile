@@ -190,6 +190,7 @@ class MessagesRepository {
   }
 
   Stream<Message> send({
+    required String id,
     required String channelId,
     required List<dynamic> prepared,
     String? originalStr,
@@ -198,7 +199,6 @@ class MessagesRepository {
     if (!Globals.instance.isNetworkConnected) return;
 
     final now = DateTime.now().millisecondsSinceEpoch;
-    final fakeId = now.toString(); // Unique ID
 
     final result = await _storage.first(
       table: Table.account,
@@ -209,10 +209,10 @@ class MessagesRepository {
     Account currentUser = Account.fromJson(json: result);
 
     Message message = Message(
-      id: fakeId,
+      id: id,
       threadId: threadId,
       channelId: channelId,
-      userId: Globals.instance.userId!,
+      userId: currentUser.id,
       creationDate: now,
       modificationDate: now,
       responsesCount: 0,
@@ -241,6 +241,7 @@ class MessagesRepository {
 
     message = Message.fromJson(json: remoteResult, jsonify: false);
     message.creationDate = now;
+    message.modificationDate = now;
 
     _storage.insert(table: Table.message, data: message);
 

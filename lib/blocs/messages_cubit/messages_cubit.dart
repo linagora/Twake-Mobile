@@ -110,7 +110,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       };
       prepared.add(nop);
     }
+    final fakeId = DateTime.now().toString();
+
     final sendStream = _repository.send(
+      id: fakeId,
       channelId: Globals.instance.channelId!,
       prepared: prepared,
       originalStr: originalStr,
@@ -118,9 +121,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     );
 
     if (this.state is! MessagesLoadSuccess) return;
-
-    final messages = (this.state as MessagesLoadSuccess).messages;
-    final hash = (this.state as MessagesLoadSuccess).hash;
 
     _sendInProgress = true;
 
@@ -131,11 +131,19 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
       if (message.channelId != Globals.instance.channelId) return;
 
-      final modifiedList = messages.sublist(0); // clone the original list
-      modifiedList.add(message);
+      final messages = (this.state as MessagesLoadSuccess).messages;
+      final hash = (this.state as MessagesLoadSuccess).hash;
+
+      final index = messages.indexWhere((m) => m.id == fakeId);
+
+      if (index.isNegative) {
+        messages.add(message);
+      } else {
+        messages[index] = message;
+      }
 
       emit(MessagesLoadSuccess(
-        messages: modifiedList,
+        messages: messages,
         hash: hash + message.hash,
       ));
     }

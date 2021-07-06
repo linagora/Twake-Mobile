@@ -43,7 +43,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
       Workspace? selected;
 
-      if (selectedId != null && workspaces.any((w) => w.id == selectedId)) {
+      if (state is WorkspacesLoadSuccess) {
+        selected = (state as WorkspacesLoadSuccess).selected!;
+      } else if (selectedId != null &&
+          workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
       } else {
         selected = workspaces.first;
@@ -83,14 +86,13 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
   void selectWorkspace({required String workspaceId}) {
     Globals.instance.workspaceIdSet = workspaceId;
 
-    // Subscribe to socketIO updates
-    SynchronizationService.instance.subscribeForChannels();
-
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
 
     emit(WorkspacesLoadSuccess(
       workspaces: workspaces,
       selected: workspaces.firstWhere((w) => w.id == workspaceId),
     ));
+    // Subscribe to socketIO updates
+    SynchronizationService.instance.subscribeForChannels();
   }
 }
