@@ -33,7 +33,7 @@ class ChatHeader extends StatelessWidget {
         children: [
           if (isDirect)
             UserThumbnail(
-              userId: userId,
+              userId: userId ?? '',
               size: 38.0,
             ),
           if (!isDirect)

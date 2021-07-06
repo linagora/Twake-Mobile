@@ -16,6 +16,7 @@ import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
+import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
 
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
@@ -126,7 +127,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       child: Column(
         children: [
           Container(
-            height: 36,
+            height: 44,
             child: Stack(
               children: [
                 Align(
@@ -141,11 +142,11 @@ class _HomeWidgetState extends State<HomeWidget> {
                             width: 75,
                             child: Row(
                               children: [
-                                RoundedImage(
-                                  borderRadius: 10.0,
-                                  width: 36,
-                                  height: 36,
-                                  imageUrl: workspaceState.selected?.logo ?? '',
+                                WorkspaceThumbnail(
+                                  workspaceName:
+                                      workspaceState.selected?.name ?? '',
+                                  size: 44.0,
+                                  borderRadius: 12.0,
                                 ),
                                 SizedBox(
                                   width: 5,

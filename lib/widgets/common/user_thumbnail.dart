@@ -1,44 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
-
 import 'package:twake/utils/extensions.dart';
-import 'package:twake/utils/random_hex_color.dart';
+import 'package:twake/widgets/common/named_avatar.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
-import 'package:twake/widgets/common/shimmer_loading.dart';
+import 'package:twake/widgets/common/rounded_shimmer.dart';
 
 class UserThumbnail extends StatelessWidget {
-  final String? userId;
-  final String? thumbnailUrl;
-  final String? userName;
+  final String userId;
+  final String thumbnailUrl;
+  final String userName;
   final double size;
 
   const UserThumbnail({
     Key? key,
-    this.userId,
-    this.thumbnailUrl,
-    this.userName,
+    this.userId = '',
+    this.thumbnailUrl = '',
+    this.userName = '',
     this.size = 60.0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (userId != null && userId!.isNotReallyEmpty) {
+    if (userId.isNotReallyEmpty) {
       return BlocProvider<AccountCubit>(
         create: (_) => AccountCubit(),
         child: BlocBuilder<AccountCubit, AccountState>(
           builder: (_, state) {
-            String? thumbnailUrl;
+            var thumbUrl;
             if (state is AccountLoadSuccess) {
-              thumbnailUrl = state.account.thumbnail;
-              if (thumbnailUrl != null && thumbnailUrl.isNotReallyEmpty) {
+              thumbUrl = state.account.thumbnail ?? '';
+              if (thumbnailUrl.isNotReallyEmpty) {
                 return RoundedImage(
-                  imageUrl: thumbnailUrl,
+                  imageUrl: thumbUrl,
                   width: size,
                   height: size,
                 );
               } else {
-                return NamedAvatar(size: size, name: state.account.firstname);
+                var firstName = state.account.firstname ?? '';
+                return NamedAvatar(size: size, name: firstName);
               }
             } else {
               return RoundedShimmer(size: size);
@@ -46,76 +46,16 @@ class UserThumbnail extends StatelessWidget {
           },
         ),
       );
-    } else if (thumbnailUrl != null && thumbnailUrl!.isNotReallyEmpty) {
+    } else if (thumbnailUrl.isNotReallyEmpty) {
       return RoundedImage(
-        imageUrl: thumbnailUrl ?? '',
+        imageUrl: thumbnailUrl,
         width: size,
         height: size,
       );
-    } else if (userName != null && userName!.isNotReallyEmpty) {
+    } else if (userName.isNotReallyEmpty) {
       return NamedAvatar(size: size, name: userName);
     } else {
       return RoundedShimmer(size: size);
     }
-  }
-}
-
-class NamedAvatar extends StatelessWidget {
-  const NamedAvatar({
-    Key? key,
-    this.size = 60.0,
-    this.name = '',
-  }) : super(key: key);
-
-  final double size;
-  final String? name;
-
-  @override
-  Widget build(BuildContext context) {
-    String firstNameCharacter = '';
-    if (name!.isNotReallyEmpty) {
-      firstNameCharacter = name![0];
-    }
-
-    return CircleAvatar(
-      radius: size / 2,
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: randomGradient(),
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          firstNameCharacter,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class RoundedShimmer extends StatelessWidget {
-  const RoundedShimmer({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipOval(
-      child: ShimmerLoading(
-        isLoading: true,
-        width: size,
-        height: size,
-        child: SizedBox(),
-      ),
-    );
   }
 }

@@ -8,14 +8,11 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
-import 'package:twake/config/image_path.dart';
-import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
-import 'package:twake/widgets/common/twake_button.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
+import 'package:twake/widgets/workspace/workspace_drawer_tile.dart';
 
 class HomeDrawerWidget extends StatelessWidget {
   final _refreshController = RefreshController();
@@ -271,74 +268,5 @@ class HomeDrawerWidget extends StatelessWidget {
     Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
     // close drawer
     Navigator.of(context).pop();
-  }
-}
-
-typedef OnWorkspaceDrawerTileTap = void Function();
-
-class WorkspaceDrawerTile extends StatelessWidget {
-  final bool isSelected;
-  final String? logo;
-  final String? name;
-  final OnWorkspaceDrawerTileTap? onWorkspaceDrawerTileTap;
-  final String? workspaceId;
-
-  const WorkspaceDrawerTile({
-    required this.isSelected,
-    this.onWorkspaceDrawerTileTap,
-    this.logo,
-    this.name,
-    this.workspaceId,
-  }) : super();
-
-  @override
-  Widget build(BuildContext context) {
-    return TwakeButton(
-      onTap: onWorkspaceDrawerTileTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                isSelected
-                    ? Image.asset(
-                        imageSelectedTile,
-                        width: 6,
-                        height: 44,
-                      )
-                    : SizedBox(
-                        width: 6,
-                        height: 44,
-                      ),
-                SizedBox(width: 16.0),
-                RoundedImage(
-                  imageUrl: logo ?? '',
-                  width: 44,
-                  height: 44,
-                  isSelected: isSelected,
-                  borderWidth: 2.0,
-                  borderRadius: 12.0,
-                ),
-                SizedBox(width: 16.0),
-                Expanded(
-                  child: Text(
-                    name ?? '',
-                    style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.normal,
-                    ),
-                  ),
-                ),
-                BadgesCount(type: BadgeType.workspace, id: workspaceId!),
-                SizedBox(width: 30),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
