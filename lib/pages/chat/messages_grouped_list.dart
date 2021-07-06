@@ -33,9 +33,10 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
         if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {
-            return EmptyChatContainer(
-              isDirect: widget.parentChannel.isDirect,
-              userName: widget.parentChannel.name,
+            return Expanded(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
           messages = state.messages;
@@ -44,6 +45,11 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             child: Center(
               child: CircularProgressIndicator(),
             ),
+          );
+        } else if (state is NoMessagesFound) {
+          EmptyChatContainer(
+            isDirect: widget.parentChannel.isDirect,
+            userName: widget.parentChannel.name,
           );
         } else {
           return Expanded(
