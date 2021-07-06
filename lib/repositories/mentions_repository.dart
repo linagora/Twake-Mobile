@@ -4,7 +4,7 @@ import 'package:twake/services/service_bundle.dart';
 
 class MentionsRepository {
   final _storage = StorageService.instance;
-  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+(\s|$)');
+  final _userMentionRegex = RegExp(r'(?<=(^|\s))@[A-Za-z1-9._-]+(?=(\s|$))');
 
   MentionsRepository();
 
@@ -39,6 +39,7 @@ class MentionsRepository {
     final Set<String> usernames = matches.map((m) {
       return messageText.substring(m.start, m.end).split('@').last.trimRight();
     }).toSet();
+
     final placeholders = usernames.map((_) => '?').join(',');
 
     final result = await _storage.select(
