@@ -49,6 +49,7 @@ class HomeChannelTile extends StatelessWidget {
                       isPrivate: isPrivate,
                       icon: imageUrl ?? '',
                       iconSize: 32.0,
+                      name: title,
                       width: 54,
                       height: 54,
                     ),

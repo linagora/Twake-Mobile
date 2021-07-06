@@ -28,7 +28,10 @@ class NamedAvatar extends StatelessWidget {
 
       final splitWords = name.split(' ');
       if (splitWords.length > 1) {
-        charactersToShow = '$charactersToShow${splitWords[1][0].toUpperCase()}';
+        final secondWord = splitWords[1];
+        if (secondWord.isNotReallyEmpty) {
+          charactersToShow = '$charactersToShow${splitWords[1][0].toUpperCase()}';
+        }
       }
     }
 
@@ -52,14 +55,16 @@ class NamedAvatar extends StatelessWidget {
             ),
       padding: EdgeInsets.all(5.0),
       alignment: Alignment.center,
-      child: FittedBox(
-        child: Text(
-          charactersToShow,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-            color: fontColor,
+      child: SizedBox.expand(
+        child: FittedBox(
+          child: Text(
+            charactersToShow,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              color: fontColor,
+            ),
           ),
         ),
       ),
