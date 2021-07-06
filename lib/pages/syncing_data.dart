@@ -88,15 +88,6 @@ class SyncDataFailed extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 50,
-                height: 50,
-                child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Try again',
-                    )),
-              ),
-              Container(
                 width: MediaQuery.of(context).size.width * 0.35,
                 child: FittedBox(
                   child: Image.asset(
@@ -108,7 +99,7 @@ class SyncDataFailed extends StatelessWidget {
                 height: 30,
               ),
               Text(
-                'We have encountered an issue,',
+                'We have encountered an issue',
                 style: TextStyle(
                     fontSize: 20,
                     color: Colors.black,
