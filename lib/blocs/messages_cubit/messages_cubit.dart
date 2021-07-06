@@ -47,18 +47,25 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       parentMessage = await _repository.getMessage(messageId: threadId);
     }
 
+    List<Message> lastList = const [];
     await for (var list in stream) {
       // if user switched channel before the fetch method is complete, abort
-      if (channelId != Globals.instance.channelId) break;
+      if (channelId != Globals.instance.channelId) return;
 
       // if user switched thread before the fetch method is complete, abort
-      if (threadId != null && threadId != Globals.instance.threadId) break;
+      if (threadId != null && threadId != Globals.instance.threadId) return;
+
+      lastList = list;
 
       emit(MessagesLoadSuccess(
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
         parentMessage: parentMessage,
       ));
+    }
+
+    if (lastList.isEmpty) {
+      emit(NoMessagesFound());
     }
   }
 
@@ -372,7 +379,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
         SynchronizationService.instance.socketIOThreadMessageStream;
 
     await for (final change in threadsStream) {
-      print('GOT thread change');
+      Logger().v('GOT thread change');
       switch (change.data.action) {
         case IOEventAction.remove:
           if (state is MessagesLoadSuccess) {
@@ -428,6 +435,7 @@ class ThreadMessagesCubit extends BaseMessagesCubit {
       : super(repository: repository);
 
   @override
-  final _socketIOEventStream =
-      SynchronizationService.instance.socketIOThreadMessageStream;
+  final _socketIOEventStream = SynchronizationService
+      .instance.socketIOThreadMessageStream
+      .where((e) => e.data.threadId == Globals.instance.threadId);
 }

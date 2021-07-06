@@ -29,6 +29,7 @@ class SynchronizationService {
     // Set up auto resubscription in case of internet connection loss
     _socketio.socketIOReconnectionStream.listen((authenticated) async {
       if (authenticated && _subRooms.isNotEmpty) {
+        Logger().v('Resubscribing on socketio reconnect');
         // wait for the socketio service to authenticate first
         await Future.delayed(Duration(seconds: 3));
         await subscribeForChannels();
@@ -106,8 +107,7 @@ class SynchronizationService {
   Stream<SocketIOEvent> get socketIOThreadMessageStream =>
       _socketio.eventStream.where((e) {
         return (e.data.threadId?.isNotEmpty ?? false) &&
-            e.data.threadId != e.data.messageId &&
-            e.data.threadId == Globals.instance.threadId;
+            e.data.threadId != e.data.messageId;
       });
 
   Stream<SocketIOResource> get sockeIOBadgesUpdateStream =>
