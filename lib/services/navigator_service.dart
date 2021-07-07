@@ -189,7 +189,7 @@ class NavigatorService {
   }
 
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
-    await accountCubit.fetch();
+    accountCubit.fetch();
     Get.toNamed(shouldShowInfo
         ? RoutePaths.accountInfo.path
         : RoutePaths.accountSettings.path);
