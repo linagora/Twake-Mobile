@@ -103,6 +103,7 @@ flutter:
   assets:
     # animations
     - assets/animations/splash.json
+    - assets/animations/messages_loading.gif
     
     # images
     - assets/images/logo-white.png

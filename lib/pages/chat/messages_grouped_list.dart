@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
-// import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
@@ -33,32 +32,19 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
         if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {
-            return Expanded(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return MessagesLoadingAnimation();
           }
           messages = state.messages;
         } else if (state is MessagesBeforeLoadInProgress) {
-          return Expanded(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return MessagesLoadingAnimation();
         } else if (state is NoMessagesFound) {
           EmptyChatContainer(
             isDirect: widget.parentChannel.isDirect,
             userName: widget.parentChannel.name,
           );
         } else {
-          return Expanded(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return MessagesLoadingAnimation();
         }
-
         return NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo.metrics.pixels ==
