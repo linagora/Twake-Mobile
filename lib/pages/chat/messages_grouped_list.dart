@@ -22,8 +22,6 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
-  // final _itemPositionListener = ItemPositionsListener.create();
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChannelMessagesCubit, MessagesState>(
@@ -78,10 +76,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
     BuildContext context,
     List<Message> messages,
   ) {
-    // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
-
     return GroupedListView<Message, DateTime>(
-      key: ValueKey(messages.length),
+      key: PageStorageKey<String>('uniqueKey'),
       order: GroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.only(bottom: 12.0),
