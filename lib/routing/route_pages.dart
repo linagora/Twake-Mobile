@@ -2,10 +2,12 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/di/add_member_binding.dart';
 import 'package:twake/di/add_channel_binding.dart';
+import 'package:twake/di/edit_channel_binding.dart';
 import 'package:twake/di/new_direct_binding.dart';
 import 'package:twake/pages/account/account_info.dart';
 import 'package:twake/pages/account/account_settings.dart';
 import 'package:twake/pages/channel/channel_detail/channel_detail_widget.dart';
+import 'package:twake/pages/channel/edit_channel/edit_channel_widget.dart';
 import 'package:twake/pages/channel/new_channel/new_channel_widget.dart';
 import 'package:twake/pages/channel/new_direct/new_direct_chat_widget.dart';
 import 'package:twake/pages/chat/chat.dart';
@@ -30,6 +32,14 @@ final routePages = [
             name: RoutePaths.channelDetail.name,
             page: () => ChannelDetailWidget(),
             transition: Transition.native,
+            children: [
+              GetPage(
+                name: RoutePaths.editChannel.name,
+                page: () => EditChannelWidget(),
+                transition: Transition.native,
+                binding: EditChannelBinding()
+              ),
+            ]
           ),
         ]
       ),

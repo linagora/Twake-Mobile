@@ -33,13 +33,15 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
     extends State<MessageModalSheet> {
   bool _emojiVisible = false;
 
-  onEmojiSelected(String emojiCode) {
+  onEmojiSelected(String emojiCode, {bool popOut = false}) {
     Get.find<T>().react(message: widget.message, reaction: emojiCode);
     Future.delayed(
       Duration(milliseconds: 50),
       FocusManager.instance.primaryFocus?.unfocus,
     );
-    Navigator.pop(context);
+    if (popOut) {
+      Navigator.pop(context);
+    }
   }
 
   void toggleEmojiBoard() async {
@@ -54,7 +56,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
       child: EmojiPicker(
         onEmojiSelected: (cat, emoji) {
           toggleEmojiBoard();
-          onEmojiSelected(emoji.emoji);
+          onEmojiSelected(emoji.emoji, popOut: true);
         },
         config: Config(
           columns: 7,

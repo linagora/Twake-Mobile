@@ -38,6 +38,7 @@ class Channel extends BaseModel {
 
   String? draft;
 
+  @JsonKey(defaultValue: const [])
   final List<String> permissions;
 
   bool get hasUnread => userLastAccess < lastActivity;
