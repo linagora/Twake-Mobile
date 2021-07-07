@@ -208,6 +208,10 @@ class NavigatorService {
     Get.toNamed(RoutePaths.channelDetail.path);
   }
 
+  Future<void> navigateToEditChannel(Channel channel) async {
+    Get.toNamed(RoutePaths.editChannel.path, arguments: channel);
+  }
+
   void openTwakeWebView(String url) {
     Get.to(TwakeWebView(url));
   }

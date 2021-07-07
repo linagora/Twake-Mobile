@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
 
 class ChannelDetailWidget extends StatelessWidget {
@@ -198,7 +199,10 @@ class ChannelDetailWidget extends StatelessWidget {
                     GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        // todo go to edit channel info
+                        final currentState = Get.find<ChannelsCubit>().state;
+                        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
+                          NavigatorService.instance.navigateToEditChannel(currentState.selected!);
+                        }
                       },
                       child: Row(
                           children: [
