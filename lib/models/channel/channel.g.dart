@@ -23,8 +23,10 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     lastActivity: json['last_activity'] as int,
     userLastAccess: json['user_last_access'] as int? ?? 0,
     draft: json['draft'] as String?,
-    permissions:
-        (json['permissions'] as List<dynamic>).map((e) => e as String).toList(),
+    permissions: (json['permissions'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList() ??
+        [],
   );
 }
 
