@@ -79,3 +79,37 @@ class EmptyChatContainer extends StatelessWidget {
     );
   }
 }
+
+class MessagesLoadingAnimation extends StatelessWidget {
+  const MessagesLoadingAnimation({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Center(
+        child: Column(
+          children: [
+            SizedBox(height: 50,),
+            SizedBox(
+              height: 160,
+              width: 160,
+              child: Image.asset(
+                'assets/animations/messages_loading.gif',
+              ),
+            ),
+            Text(
+              'We are loading chat,',
+              style: TextStyle(
+                  fontSize: 20, color: Colors.black, fontWeight: FontWeight.w900),
+            ),
+            Text(
+              'please, be patient 😊😕',
+              style: TextStyle(
+                  fontSize: 20, color: Colors.black, fontWeight: FontWeight.w900),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
