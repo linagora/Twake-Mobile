@@ -22,8 +22,10 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
   final _workspaceNameFocusNode = FocusNode();
   bool _flag = true;
   int _count = 0;
-  List<Map<String, dynamic>> membersList = [];
-  List<String> members = [];
+  List<Map<String, dynamic>> _membersList = [];
+  List<String> _members = [];
+  List<TextEditingController> _controllers = [];
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +73,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
 
   _onUpdate(int index, String text) {
     int foundIndex = -1;
-    for (var map in membersList) {
+    for (var map in _membersList) {
       if (map.containsKey("index")) {
         if (map["index"] == index) {
           foundIndex = index;
@@ -80,17 +82,17 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       }
     }
     if (-1 != foundIndex) {
-      membersList.removeWhere((map) {
+      _membersList.removeWhere((map) {
         return map["index"] == foundIndex;
       });
     }
 
     Map<String, dynamic> member = {'index': index, 'text': text};
-    membersList.add(member);
-    members = [];
-    membersList.forEach((map) {
+    _membersList.add(member);
+    _members = [];
+    _membersList.forEach((map) {
       var _list = map.values.toList();
-      members.add(_list[1]);
+      _members.add(_list[1]);
     });
   }
 
@@ -124,7 +126,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                       await Get.find<WorkspacesCubit>().createWorkspace(
                         companyId: Globals.instance.companyId,
                         name: _workspaceNameController.text,
-                        members: members,
+                        members: _members,
                       );
 
                       final state = Get.find<WorkspacesCubit>().state;
@@ -149,95 +151,88 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                 ),
               ),
               SizedBox(height: 16),
-              MediaQuery.of(context).viewInsets.bottom == 0 ||
-                      _count < 2 ||
-                      _flag == false
-                  ? Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 10),
-                          child: Container(
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 15, right: 15),
-                              child: Container(
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFF5F5F5),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Icon(
-                                          Icons.camera_alt_rounded,
-                                          color: Color(0xFF969CA4),
-                                        ),
-                                        height: 44,
-                                        width: 44,
-                                      ),
-                                      onTap: () async {},
+              Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Container(
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15, right: 15),
+                        child: Container(
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF5F5F5),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: Color(0xFF969CA4),
+                                  ),
+                                  height: 44,
+                                  width: 44,
+                                ),
+                                onTap: () async {},
+                              ),
+                              Flexible(
+                                child: Center(
+                                  child: Form(
+                                    key: _formKey,
+                                    child: SheetTextField(
+                                      hint: 'Workspace name',
+                                      controller: _workspaceNameController,
+                                      focusNode: _workspaceNameFocusNode,
+                                      maxLength: 30,
+                                      isRounded: true,
+                                      borderRadius: 8,
+                                      textInputType: TextInputType.text,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Workspace name cannot be empty';
+                                        }
+                                        return null;
+                                      },
                                     ),
-                                    Flexible(
-                                      child: Center(
-                                        child: Form(
-                                          key: _formKey,
-                                          child: SheetTextField(
-                                            hint: 'Workspace name',
-                                            controller:
-                                                _workspaceNameController,
-                                            focusNode: _workspaceNameFocusNode,
-                                            maxLength: 30,
-                                            isRounded: true,
-                                            borderRadius: 8,
-                                            textInputType: TextInputType.text,
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Workspace name cannot be empty';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 8),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: HintLine(
-                            text:
-                                'Please provide a name for a new workspace and optional workspace icon',
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    )
-                  : Container(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: HintLine(
+                      text:
+                          'Please provide a name for a new workspace and optional workspace icon',
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: 40),
               HintLine(
                 text: 'ADD YOUR TEAM MEMBERS',
                 isLarge: true,
                 fontWeight: FontWeight.w500,
               ),
+              SizedBox(height: 10,),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: _count,
                   itemBuilder: (context, index) {
-                    return _textField(index);
+                    return _textField(index, _controllers[index]);
                   },
                 ),
               ),
@@ -282,13 +277,14 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       ),
       onTap: () async {
         setState(() {
+          _controllers.add(TextEditingController());
           _count < 5 ? _count++ : _invitationLimit();
         });
       },
     );
   }
 
-  Widget _textField(int index) {
+  Widget _textField(int index, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(left: 12, right: 12, top: 10, bottom: 10),
       child: Container(
@@ -303,6 +299,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           child: Form(
             //    key: _formKey1,
             child: TextFormField(
+              controller: controller,
               //    validator: _validate,
               style: TextStyle(
                 fontSize: 17.0,
@@ -312,7 +309,9 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(10),
                 suffix: IconButton(
-                  onPressed: () {}, //=> widget.controller.clear(),
+                  onPressed: () {
+                    controller.clear();
+                  },
                   iconSize: 15,
                   icon: Icon(CupertinoIcons.clear_thick_circled),
                   color: Color(0xffeeeeef),
