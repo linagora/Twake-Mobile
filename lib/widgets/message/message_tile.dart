@@ -65,33 +65,34 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
       return InkWell(
         onLongPress: () {
-          showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              //  barrierColor: Colors.white30,
-              backgroundColor: Colors.transparent,
-              builder: (_) {
-                return MessageModalSheet<T>(
-                  message: _message,
-                  isMe: _isMyMessage,
-                  //  onReply: onReply,
-                  onEdit: () {
-                    Get.find<ThreadMessagesCubit>()
-                        .startEdit(message: _message);
-                    Navigator.of(context).pop();
-                  },
-                  ctx: context,
-                  onDelete: () {
-                    Get.find<ThreadMessagesCubit>().delete(message: _message);
-                    Navigator.pop(context);
-                  },
-                  onCopy: () {
-                    onCopy(
-                        context: context, text: _message.content.originalStr);
-                    Navigator.of(context).pop();
-                  },
-                );
-              });
+          if (_message.isDelivered || _isMyMessage == false)
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                //  barrierColor: Colors.white30,
+                backgroundColor: Colors.transparent,
+                builder: (_) {
+                  return MessageModalSheet<T>(
+                    message: _message,
+                    isMe: _isMyMessage,
+                    //  onReply: onReply,
+                    onEdit: () {
+                      Get.find<ThreadMessagesCubit>()
+                          .startEdit(message: _message);
+                      Navigator.of(context).pop();
+                    },
+                    ctx: context,
+                    onDelete: () {
+                      Get.find<ThreadMessagesCubit>().delete(message: _message);
+                      Navigator.pop(context);
+                    },
+                    onCopy: () {
+                      onCopy(
+                          context: context, text: _message.content.originalStr);
+                      Navigator.of(context).pop();
+                    },
+                  );
+                });
         },
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();
@@ -190,6 +191,17 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   ],
                 ),
               ),
+              SizedBox(width: 5.0),
+              _message.isDelivered && _isMyMessage
+                  ? Column(
+                      children: [
+                        Icon(
+                          Icons.check_circle_outline_rounded,
+                          color: Color(0xFF004DFF),
+                        ),
+                      ],
+                    )
+                  : Container(),
             ],
           ),
         ),
