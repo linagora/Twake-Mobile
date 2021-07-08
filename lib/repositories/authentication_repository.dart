@@ -5,6 +5,7 @@ import 'package:twake/models/authentication/authentication.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 
 class AuthenticationRepository {
@@ -79,6 +80,8 @@ class AuthenticationRepository {
           endSessionEndpoint: 'https://auth.twake.app/oauth2/logout',
         ),
         scopes: ['openid', 'profile', 'email'],
+        preferEphemeralSession: true,
+        promptValues: ['none'],
       ),
     );
     if (tokenResponse == null) {
@@ -131,24 +134,24 @@ class AuthenticationRepository {
   }
 
   Future<void> logout() async {
-    final result = await _storage.first(table: Table.authentication);
-
-    final authentication = Authentication.fromJson(result);
-
     if (Globals.instance.isNetworkConnected) {
       _api.post(endpoint: Endpoint.logout, data: {
         'fcm_token': Globals.instance.fcmToken,
       });
     }
 
-    _appAuth.endSession(EndSessionRequest(
-      issuer: 'https://auth.twake.app',
-      serviceConfiguration: AuthorizationServiceConfiguration(
-        authorizationEndpoint: 'https://auth.twake.app/oauth2/authorize',
-        tokenEndpoint: 'https://auth.twake.app/oauth2/token',
-        endSessionEndpoint: 'https://auth.twake.app/oauth2/logout',
+    final result = await _storage.first(table: Table.authentication);
+
+    final authentication = Authentication.fromJson(result);
+
+    _appAuth.endSession(
+      EndSessionRequest(
+        postLogoutRedirectUrl: 'https://twakemobile.com',
+        idTokenHint: authentication.idToken,
+        allowInsecureConnections: true,
+        discoveryUrl: 'https://auth.twake.app/.well-known/openid-configuration',
       ),
-    ));
+    );
 
     Globals.instance.reset();
 
