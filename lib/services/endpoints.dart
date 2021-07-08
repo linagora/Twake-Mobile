@@ -49,6 +49,14 @@ class Endpoint {
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const fileUpload = '/media/upload';
 
+  // Core methods
+  // Obtain JWToken pair for Twake
+  static const token = '/ajax/users/console/token';
+
+  static const coreMethods = const [
+    token,
+  ];
+
   static const publicMethods = const [
     version,
     authorize,
@@ -59,5 +67,9 @@ class Endpoint {
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {
     return publicMethods.contains(method);
+  }
+
+  static bool isCore(String method) {
+    return coreMethods.contains(method);
   }
 }

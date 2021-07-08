@@ -28,7 +28,6 @@ CREATE TABLE workspace (
     total_members INT DEFAULT 0,
     permissions TEXT DEFAULT "[]"
 );
-CREATE INDEX workspace_company_idx ON workspace(company_id);
 ''';
 
 const String CREATE_CHANNEL_V5 = '''
@@ -47,8 +46,6 @@ CREATE TABLE channel (
     permissions TEXT DEFAULT "[]",
     draft TEXT
 );
-CREATE INDEX channel_workspace_idx ON channel(workspace_id);
-CREATE INDEX channel_company_idx ON channel(company_id);
 ''';
 
 const String CREATE_MESSAGE_V5 = '''
@@ -69,10 +66,6 @@ CREATE TABLE message (
     draft TEXT,
     is_read INT DEFAULT 1
 );
-
-CREATE INDEX message_user_idx ON message(user_id);
-CREATE INDEX message_channel_idx ON message(channel_id);
-CREATE INDEX message_thread_idx ON message(thread_id);
 ''';
 
 const String CREATE_ACCOUNT_V5 = '''
@@ -89,10 +82,6 @@ CREATE TABLE account (
     language TEXT,
     last_activity INT NOT NULL
 );
-CREATE INDEX user_email_idx ON user(email);
-CREATE INDEX user_username_idx ON user(username);
-CREATE INDEX user_firstname_idx ON user(firstname);
-CREATE INDEX user_lastname_idx ON user(lastname);
 ''';
 
 const String CREATE_ACCOUNT2WORKSPACE_V5 = '''

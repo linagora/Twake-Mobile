@@ -25,7 +25,9 @@ class ApiService {
     ));
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-      options.baseUrl = Globals.instance.host + _PROXY_PREFIX;
+      options.baseUrl = Globals.instance.host +
+          (Endpoint.isCore(options.path) ? '' : _PROXY_PREFIX);
+
       if (Endpoint.isPublic(options.path)) {
         handler.next(options);
         return;
