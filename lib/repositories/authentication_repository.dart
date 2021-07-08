@@ -141,9 +141,7 @@ class AuthenticationRepository {
       });
     }
 
-    await _appAuth.endSession(EndSessionRequest(
-      idTokenHint: authentication.idToken,
-      postLogoutRedirectUrl: 'twakemobile.com://',
+    _appAuth.endSession(EndSessionRequest(
       issuer: 'https://auth.twake.app',
       serviceConfiguration: AuthorizationServiceConfiguration(
         authorizationEndpoint: 'https://auth.twake.app/oauth2/authorize',
