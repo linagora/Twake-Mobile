@@ -5,6 +5,7 @@ class RoutePaths {
   static final channelMessages = _RoutePathsType(initial, 'channel/messages');
   static final channelDetail = _RoutePathsType(channelMessages.path, 'channel_detail');
   static final editChannel= _RoutePathsType(channelDetail.path, 'edit_channel');
+  static final channelSettings= _RoutePathsType(channelDetail.path, 'channel_settings');
   static final newDirect = _RoutePathsType(initial, 'channel/new_direct');
   static final newChannel = _RoutePathsType(newDirect.path, '/new_channel');
   static final addChannelMembers =
