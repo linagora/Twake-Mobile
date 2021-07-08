@@ -9,7 +9,9 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
@@ -106,9 +108,35 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-        return MessageTile<ChannelMessagesCubit>(
-          message: message,
-          key: ValueKey(message.hash),
+        return SwipeActionCell(
+          key: ObjectKey(messages[index]),
+          trailingActions: <SwipeAction>[
+            SwipeAction(
+                content: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 25,
+                      height: 25,
+                      child: Image.asset(
+                        'assets/images/reply.png',
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                  ],
+                ),
+                onTap: (CompletionHandler handler) async {
+                  NavigatorService.instance.navigate(
+                      channelId: message.channelId, threadId: message.id);
+                },
+                color: Colors.transparent),
+          ],
+          child: MessageTile<ChannelMessagesCubit>(
+            message: message,
+            key: ValueKey(message.hash),
+          ),
         );
       },
     );
