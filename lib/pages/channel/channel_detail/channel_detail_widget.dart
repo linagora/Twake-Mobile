@@ -232,31 +232,40 @@ class ChannelDetailWidget extends StatelessWidget {
                         ),
                     ),
                     Divider(height: 1, color: Color(0x1e000000),),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 16.0, bottom: 16, left: 10, right: 20),
-                          child: Icon(
-                            Icons.settings,
-                            color: Colors.black,
-                            size: 16,
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        final currentState = Get.find<ChannelsCubit>().state;
+                        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
+                          NavigatorService.instance.navigateToChannelSetting(currentState.selected!);
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 16.0, bottom: 16, left: 10, right: 20),
+                            child: Icon(
+                              Icons.settings,
+                              color: Colors.black,
+                              size: 16,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Text('Channel settings',
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10.0, left: 4),
-                          child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
-                        )
-                      ],
+                          Expanded(
+                            child: Text('Channel settings',
+                                style: TextStyle(
+                                  color: Color(0xff000000),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10.0, left: 4),
+                            child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
+                          )
+                        ],
+                      ),
                     ),
                     Divider(height: 1, color: Color(0x1e000000),),
                     Row(
