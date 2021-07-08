@@ -22,6 +22,10 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
   void initState() {
     super.initState();
     _currentChannel = Get.arguments;
+    if (_currentChannel != null) {
+      Get.find<ChannelSettingCubit>()
+          .setChannelVisibility(_currentChannel, _currentChannel!.visibility);
+    }
   }
 
   @override
