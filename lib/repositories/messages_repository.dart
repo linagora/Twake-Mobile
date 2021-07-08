@@ -358,6 +358,8 @@ class MessagesRepository {
       queryParameters: queryParameters,
     );
 
+    Logger().v('Remote message: $remoteResult');
+
     final message = Message.fromJson(json: remoteResult.first);
 
     _storage.insert(table: Table.message, data: message);

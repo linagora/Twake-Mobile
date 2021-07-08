@@ -4,6 +4,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:twake/models/authentication/authentication.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 
 class AuthenticationRepository {
   final _api = ApiService.instance;
@@ -62,6 +63,22 @@ class AuthenticationRepository {
     Globals.instance.tokenSet = authentication.token;
 
     return true;
+  }
+
+  Future<void> webviewAuthenticate() async {
+    FlutterAppAuth appAuth = FlutterAppAuth();
+    final AuthorizationTokenResponse? result =
+        await appAuth.authorizeAndExchangeCode(
+      AuthorizationTokenRequest(
+        'twake',
+        'twakemobile.com://oauthredirect',
+        discoveryUrl: 'https://auth.twake.app/.well-known/openid-configuration',
+        scopes: ['openid', 'profile', 'email'],
+        preferEphemeralSession: true,
+      ),
+    );
+
+    print('AUTH RESULT: ${result!.accessToken}');
   }
 
   Future<Authentication> prolongAuthentication(

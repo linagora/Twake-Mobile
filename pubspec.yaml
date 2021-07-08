@@ -55,9 +55,9 @@ dependencies:
   badges: ^2.0.1
   cached_network_image: ^3.0.0
   bubble: ^1.2.1
-  # flutter_emoji_keyboard:
-  # git: https://github.com/bobs4462/emoji_keyboard.git
   emoji_picker_flutter: ^1.0.6
+  flutter_appauth: ^1.0.0+1
+
 
 
   flutter_local_notifications: ^6.0.0

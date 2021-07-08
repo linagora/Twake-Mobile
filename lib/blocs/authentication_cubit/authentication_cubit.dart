@@ -28,6 +28,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void checkAuthentication() async {
+    // await _repository.webviewAuthenticate();
+
     emit(AuthenticationInProgress());
     final authenticated = await _repository.isAuthenticated();
 
