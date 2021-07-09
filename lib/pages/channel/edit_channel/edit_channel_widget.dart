@@ -40,7 +40,6 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f6),
       body: GestureDetector(
         onTap: () {
           // dismiss keyboard when tap outside
@@ -48,6 +47,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
           Get.find<EditChannelCubit>().showEmoijKeyBoard(false);
         },
         child: SafeArea(
+          bottom: false,
           child: Container(
             color: Color(0xfff2f2f6),
             child: Column(
