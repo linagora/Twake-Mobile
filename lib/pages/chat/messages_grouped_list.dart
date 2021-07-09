@@ -136,6 +136,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           child: MessageTile<ChannelMessagesCubit>(
             message: message,
             key: ValueKey(message.hash),
+            channel: widget.parentChannel,
           ),
         );
       },
