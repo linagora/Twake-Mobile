@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/widgets/common/user_thumbnail.dart';
@@ -23,9 +24,11 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool hideShowAnswers;
   final bool shouldShowSender;
   final Message message;
+  final Channel channel;
 
   MessageTile({
     required this.message,
+    required this.channel,
     this.hideShowAnswers = false,
     this.shouldShowSender = true,
     Key? key,
@@ -197,6 +200,24 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+                          !widget.channel.isDirect
+                              ? Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Text(
+                                    '${_message.username}',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: HSLColor.fromAHSL(
+                                              1,
+                                              _message.username.hashCode % 360,
+                                              0.9,
+                                              0.3)
+                                          .toColor(),
+                                    ),
+                                  ),
+                              )
+                              : Container(),
                           Padding(
                             padding: EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
                             child: Row(
