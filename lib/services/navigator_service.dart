@@ -149,18 +149,16 @@ class NavigatorService {
       directsCubit.selectChannel(channelId: channelId);
 
       Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
-        channelMessagesCubit.reset();
         directsCubit.clearSelection();
       });
     } else {
       channelsCubit.selectChannel(channelId: channelId);
 
       Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
-        channelMessagesCubit.reset();
         channelsCubit.clearSelection();
       });
     }
-
+    channelMessagesCubit.reset();
     channelMessagesCubit.fetch(
       channelId: channelId,
       isDirect: channel.isDirect,
@@ -212,6 +210,10 @@ class NavigatorService {
 
   Future<void> navigateToEditChannel(Channel channel) async {
     Get.toNamed(RoutePaths.editChannel.path, arguments: channel);
+  }
+
+  Future<void> navigateToChannelSetting(Channel channel) async {
+    Get.toNamed(RoutePaths.channelSettings.path, arguments: channel);
   }
 
   void openTwakeWebView(String url) {

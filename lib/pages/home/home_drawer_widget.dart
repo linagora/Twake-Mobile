@@ -73,7 +73,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                   },
                                   child: Row(
                                     children: [
-                                      Text("Switch organisation",
+                                      Text('Switch organisation',
                                           style: TextStyle(
                                             color: Color(0xff004dff),
                                             fontSize: 12,
@@ -108,7 +108,7 @@ class HomeDrawerWidget extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, top: 20, bottom: 12),
                   child: Text(
-                    "WORKSPACES",
+                    'WORKSPACES',
                     style: TextStyle(
                       color: Color(0x59000000),
                       fontSize: 13,
@@ -180,7 +180,7 @@ class HomeDrawerWidget extends StatelessWidget {
                               width: 12,
                             ),
                             Text(
-                              "Add a new workspace",
+                              'Add a new workspace',
                               style: TextStyle(
                                 color: Color(0xff000000),
                                 fontSize: 15,

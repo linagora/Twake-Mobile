@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
-// import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
@@ -10,7 +9,9 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
@@ -22,8 +23,6 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
-  // final _itemPositionListener = ItemPositionsListener.create();
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChannelMessagesCubit, MessagesState>(
@@ -33,26 +32,19 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
         if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {
-            return EmptyChatContainer(
-              isDirect: widget.parentChannel.isDirect,
-              userName: widget.parentChannel.name,
-            );
+            return MessagesLoadingAnimation();
           }
           messages = state.messages;
         } else if (state is MessagesBeforeLoadInProgress) {
-          return Expanded(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+          return MessagesLoadingAnimation();
+        } else if (state is NoMessagesFound) {
+          EmptyChatContainer(
+            isDirect: widget.parentChannel.isDirect,
+            userName: widget.parentChannel.name,
           );
         } else {
-          return Expanded(
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return MessagesLoadingAnimation();
         }
-
         return NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification scrollInfo) {
             if (scrollInfo.metrics.pixels ==
@@ -78,10 +70,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
     BuildContext context,
     List<Message> messages,
   ) {
-    // final _groupedItemScrollController = GroupedItemScrollController(); // TODO: reimplement scroll to necessary position
-
     return GroupedListView<Message, DateTime>(
-      key: ValueKey(messages.length),
+      key: PageStorageKey<String>('uniqueKey'),
       order: GroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.only(bottom: 12.0),
@@ -118,9 +108,35 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-        return MessageTile<ChannelMessagesCubit>(
-          message: message,
-          key: ValueKey(message.hash),
+        return SwipeActionCell(
+          key: ObjectKey(messages[index]),
+          trailingActions: <SwipeAction>[
+            SwipeAction(
+                content: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 25,
+                      height: 25,
+                      child: Image.asset(
+                        'assets/images/reply.png',
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                  ],
+                ),
+                onTap: (CompletionHandler handler) async {
+                  NavigatorService.instance.navigate(
+                      channelId: message.channelId, threadId: message.id);
+                },
+                color: Colors.transparent),
+          ],
+          child: MessageTile<ChannelMessagesCubit>(
+            message: message,
+            key: ValueKey(message.hash),
+          ),
         );
       },
     );

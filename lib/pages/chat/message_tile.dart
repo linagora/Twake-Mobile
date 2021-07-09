@@ -111,32 +111,35 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
       return InkWell(
         onLongPress: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            //  barrierColor: Colors.white30,
-            backgroundColor: Colors.transparent,
-            builder: (_) {
-              return MessageModalSheet<T>(
-                message: _message,
-                isMe: _isMyMessage,
-                onReply: onReply,
-                onEdit: () {
-                  Get.find<ChannelMessagesCubit>().startEdit(message: _message);
-                  Navigator.of(context).pop();
-                },
-                ctx: context,
-                onDelete: () {
-                  Get.find<ChannelMessagesCubit>().delete(message: _message);
-                  Navigator.pop(context);
-                },
-                onCopy: () {
-                  onCopy(context: context, text: _message.content.originalStr);
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          );
+          if (_message.isDelivered || _isMyMessage == false)
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              //  barrierColor: Colors.white30,
+              backgroundColor: Colors.transparent,
+              builder: (_) {
+                return MessageModalSheet<T>(
+                  message: _message,
+                  isMe: _isMyMessage,
+                  onReply: onReply,
+                  onEdit: () {
+                    Get.find<ChannelMessagesCubit>()
+                        .startEdit(message: _message);
+                    Navigator.of(context).pop();
+                  },
+                  ctx: context,
+                  onDelete: () {
+                    Get.find<ChannelMessagesCubit>().delete(message: _message);
+                    Navigator.pop(context);
+                  },
+                  onCopy: () {
+                    onCopy(
+                        context: context, text: _message.content.originalStr);
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+            );
         },
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();

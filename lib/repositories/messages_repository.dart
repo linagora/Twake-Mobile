@@ -148,6 +148,7 @@ class MessagesRepository {
         beforeDate,
         if (threadId != null) threadId,
       ],
+      orderBy: 'creation_date DESC',
       limit: _LIST_SIZE,
     );
     var messages =
