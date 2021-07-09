@@ -200,11 +200,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          !widget.channel.isDirect
+                          !widget.channel.isDirect && !_isMyMessage
                               ? Padding(
-                                padding: const EdgeInsets.all(6.0),
-                                child: Text(
-                                    '${_message.username}',
+                                  padding: const EdgeInsets.all(6.0),
+                                  child: Text(
+                                    '${_message.sender}',
                                     style: TextStyle(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
@@ -216,7 +216,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           .toColor(),
                                     ),
                                   ),
-                              )
+                                )
                               : Container(),
                           Padding(
                             padding: EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
