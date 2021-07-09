@@ -12,6 +12,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 class CompanySelectionWidget extends StatelessWidget {
@@ -20,7 +21,8 @@ class CompanySelectionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPopupSurface(
+    return RoundedWidget(
+      roundedTopOnly: true,
       child: Container(
         color: Color(0xffefeef3),
         child: BlocBuilder<CompaniesCubit, CompaniesState>(
