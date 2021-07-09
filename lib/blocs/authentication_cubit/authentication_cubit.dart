@@ -92,9 +92,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     Logger().v('SYNC TOOK: ${end.difference(start).inSeconds} sec');
   }
 
-  void logout() {
-    _repository.logout();
+  void logout() async {
+    await _repository.logout();
     emit(AuthenticationInitial());
+    checkAuthentication();
   }
 
   @override

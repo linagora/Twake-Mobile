@@ -144,14 +144,14 @@ class AuthenticationRepository {
 
     final authentication = Authentication.fromJson(result);
 
-    _appAuth.endSession(
-      EndSessionRequest(
-        postLogoutRedirectUrl: 'https://twakemobile.com',
-        idTokenHint: authentication.idToken,
-        allowInsecureConnections: true,
-        discoveryUrl: 'https://auth.twake.app/.well-known/openid-configuration',
-      ),
-    );
+    // _appAuth.endSession(
+    // EndSessionRequest(
+    // postLogoutRedirectUrl: 'https://twakemobile.com',
+    // idTokenHint: authentication.idToken,
+    // allowInsecureConnections: true,
+    // discoveryUrl: 'https://auth.twake.app/.well-known/openid-configuration',
+    // ),
+    // );
 
     Globals.instance.reset();
 
