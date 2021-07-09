@@ -38,7 +38,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         } else if (state is MessagesBeforeLoadInProgress) {
           return MessagesLoadingAnimation();
         } else if (state is NoMessagesFound) {
-          EmptyChatContainer(
+          return EmptyChatContainer(
             isDirect: widget.parentChannel.isDirect,
             userName: widget.parentChannel.name,
           );
