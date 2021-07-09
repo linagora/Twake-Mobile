@@ -268,40 +268,49 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                     ),
                     Divider(height: 1, color: Color(0x1e000000),),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 16.0, bottom: 16, left: 10, right: 20),
-                          child: Image.asset(imageGroupBlack, width: 16, height: 16,),
-                        ),
-                        Expanded(
-                          child: Text('Member management',
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )),
-                        ),
-                        BlocBuilder<ChannelsCubit, ChannelsState>(
-                          bloc: Get.find<ChannelsCubit>(),
-                          builder: (ctx, channelState) {
-                            return Text('${(channelState is ChannelsLoadedSuccess)
-                                ? channelState.selected?.membersCount : ''}',
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        final currentState = Get.find<ChannelsCubit>().state;
+                        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
+                          NavigatorService.instance.navigateToChannelMemberManagement(currentState.selected!);
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 16.0, bottom: 16, left: 10, right: 20),
+                            child: Image.asset(imageGroupBlack, width: 16, height: 16,),
+                          ),
+                          Expanded(
+                            child: Text('Member management',
                                 style: TextStyle(
-                                  color: Color(0xff004dff),
+                                  color: Color(0xff000000),
                                   fontSize: 15,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w400,
                                   fontStyle: FontStyle.normal,
-                                ));
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 10.0),
-                          child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
-                        )
-                      ],
+                                )),
+                          ),
+                          BlocBuilder<ChannelsCubit, ChannelsState>(
+                            bloc: Get.find<ChannelsCubit>(),
+                            builder: (ctx, channelState) {
+                              return Text('${(channelState is ChannelsLoadedSuccess)
+                                  ? channelState.selected?.membersCount : ''}',
+                                  style: TextStyle(
+                                    color: Color(0xff004dff),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    fontStyle: FontStyle.normal,
+                                  ));
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 10.0),
+                            child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
+                          )
+                        ],
+                      ),
                     )
                     ],
                   ),

@@ -31,13 +31,13 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f6),
       body: GestureDetector(
         onTap: () {
           // dismiss keyboard when tap outside
           FocusManager.instance.primaryFocus?.unfocus();
         },
         child: SafeArea(
+          bottom: false,
           child: Container(
             color: Color(0xfff2f2f6),
             child: Column(

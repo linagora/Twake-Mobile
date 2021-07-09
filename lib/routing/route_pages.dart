@@ -4,6 +4,7 @@ import 'package:twake/di/add_member_binding.dart';
 import 'package:twake/di/add_channel_binding.dart';
 import 'package:twake/di/channel_setting_binding.dart';
 import 'package:twake/di/edit_channel_binding.dart';
+import 'package:twake/di/member_management_binding.dart';
 import 'package:twake/di/new_direct_binding.dart';
 import 'package:twake/pages/account/account_info.dart';
 import 'package:twake/pages/account/account_settings.dart';
@@ -16,6 +17,7 @@ import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/home/home_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
+import 'package:twake/pages/member/member_management/member_management_widget.dart';
 import 'package:twake/pages/thread_page.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -46,6 +48,12 @@ final routePages = [
                   page: () => ChannelSettingsWidget(),
                   transition: Transition.native,
                   binding: ChannelSettingBinding()
+              ),
+              GetPage(
+                  name: RoutePaths.channelMemberManagement.name,
+                  page: () => MemberManagementWidget(),
+                  transition: Transition.native,
+                  binding: MemberManagementBinding()
               ),
             ]
           ),

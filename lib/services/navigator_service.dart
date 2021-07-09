@@ -210,6 +210,10 @@ class NavigatorService {
     Get.toNamed(RoutePaths.editChannel.path, arguments: channel);
   }
 
+  Future<void> navigateToChannelMemberManagement(Channel channel) async {
+    Get.toNamed(RoutePaths.channelMemberManagement.path, arguments: channel);
+  }
+
   Future<void> navigateToChannelSetting(Channel channel) async {
     Get.toNamed(RoutePaths.channelSettings.path, arguments: channel);
   }
