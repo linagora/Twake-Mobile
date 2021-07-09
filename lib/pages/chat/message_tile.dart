@@ -201,19 +201,22 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           !widget.channel.isDirect
-                              ? Text(
-                                  '${_message.username}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w700,
-                                    color: HSLColor.fromAHSL(
-                                            1,
-                                            _message.username.hashCode % 360,
-                                            0.9,
-                                            0.3)
-                                        .toColor(),
+                              ? Padding(
+                                padding: const EdgeInsets.all(6.0),
+                                child: Text(
+                                    '${_message.username}',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: HSLColor.fromAHSL(
+                                              1,
+                                              _message.username.hashCode % 360,
+                                              0.9,
+                                              0.3)
+                                          .toColor(),
+                                    ),
                                   ),
-                                )
+                              )
                               : Container(),
                           Padding(
                             padding: EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
