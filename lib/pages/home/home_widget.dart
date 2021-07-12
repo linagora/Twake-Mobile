@@ -13,6 +13,7 @@ import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
+import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -35,6 +36,8 @@ class _HomeWidgetState extends State<HomeWidget> {
   @override
   void initState() {
     super.initState();
+
+    PushNotificationsService.instance.requestPermission();
 
     Get.find<CompaniesCubit>().fetch();
     Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);

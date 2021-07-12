@@ -64,7 +64,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       ));
     }
 
-    if (lastList.isEmpty) {
+    if (lastList.isEmpty && threadId == null) {
       emit(NoMessagesFound());
     }
   }
