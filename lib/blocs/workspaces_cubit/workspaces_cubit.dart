@@ -35,6 +35,13 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       localOnly: localOnly,
     );
 
+    if (selectedId != null) {
+      Globals.instance.workspaceIdSet = selectedId;
+      SynchronizationService.instance.subscribeForChannels();
+    }
+
+    selectedId = selectedId ?? Globals.instance.workspaceId;
+
     await for (var workspaces in stream) {
       // if user switched company before the fetch method is complete, abort
       if (companyId != Globals.instance.companyId) break;
@@ -46,12 +53,11 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       } else if (selectedId != null &&
           workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
-        Globals.instance.workspaceIdSet = selectedId;
-        SynchronizationService.instance.subscribeForChannels();
       } else {
         selected = workspaces.first;
-        Globals.instance.workspaceIdSet = selected.id;
       }
+
+      Globals.instance.workspaceIdSet = selected.id;
 
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
