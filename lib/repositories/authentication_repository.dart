@@ -73,11 +73,11 @@ class AuthenticationRepository {
       AuthorizationTokenRequest(
         'twake',
         'twakemobile.com://oauthredirect',
-        issuer: 'https://auth.twake.app/',
+        issuer: 'https://auth.qa.twake.app/',
         serviceConfiguration: AuthorizationServiceConfiguration(
-          authorizationEndpoint: 'https://auth.twake.app/oauth2/authorize',
-          tokenEndpoint: 'https://auth.twake.app/oauth2/token',
-          endSessionEndpoint: 'https://auth.twake.app/oauth2/logout',
+          authorizationEndpoint: 'https://auth.qa.twake.app/oauth2/authorize',
+          tokenEndpoint: 'https://auth.qa.twake.app/oauth2/token',
+          endSessionEndpoint: 'https://auth.qa.twake.app/oauth2/logout',
         ),
         scopes: ['openid', 'profile', 'email'],
         preferEphemeralSession: true,
