@@ -17,10 +17,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     _repository = repository;
 
     // wait for authentication check before attempting to subscribe
-    Future.delayed(
-      Duration(seconds: 7),
-      SynchronizationService.instance.subscribeToBadges,
-    );
+    Future.delayed(Duration(seconds: 7), () {
+      SynchronizationService.instance.subscribeToBadges();
+      SynchronizationService.instance.subscribeForChannels();
+    });
   }
 
   Future<void> fetch({
@@ -35,8 +35,6 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       localOnly: localOnly,
     );
 
-    selectedId = selectedId ?? Globals.instance.workspaceId;
-
     await for (var workspaces in stream) {
       // if user switched company before the fetch method is complete, abort
       if (companyId != Globals.instance.companyId) break;
@@ -48,11 +46,12 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       } else if (selectedId != null &&
           workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
+        Globals.instance.workspaceIdSet = selectedId;
+        SynchronizationService.instance.subscribeForChannels();
       } else {
         selected = workspaces.first;
+        Globals.instance.workspaceIdSet = selected.id;
       }
-
-      Globals.instance.workspaceIdSet = selected.id;
 
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }

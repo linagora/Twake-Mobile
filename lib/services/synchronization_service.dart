@@ -129,6 +129,10 @@ class SynchronizationService {
     return rooms.toList();
   }
 
+  Future<void> refreshRooms() async {
+    _subRooms = await socketIORooms;
+  }
+
   Future<void> subscribeForChannels() async {
     if (Globals.instance.token == null) return;
 
@@ -139,7 +143,7 @@ class SynchronizationService {
       _socketio.unsubscribe(room: room.key);
     }
     // Request rooms for new workspace
-    _subRooms = await socketIORooms;
+    await refreshRooms();
 
     // Subscribe for new workspace
     for (final room in _subRooms.where((r) => wsRooms.contains(r.type))) {
@@ -151,7 +155,7 @@ class SynchronizationService {
     if (Globals.instance.token == null) return;
 
     if (!_subRooms.any((r) => r.type == RoomType.notifications)) {
-      _subRooms = await socketIORooms;
+      await refreshRooms();
     }
 
     final badgesRoom =
@@ -170,7 +174,7 @@ class SynchronizationService {
     // if the channel is not present, rerequest the list
     if (!_subRooms.any((r) =>
         const [RoomType.channel, RoomType.direct].contains(r.type) &&
-        r.id == channelId)) _subRooms = await socketIORooms;
+        r.id == channelId)) await refreshRooms();
 
     // Make sure that channel rooms has been fetched before,
     // or you'll get Bad state
