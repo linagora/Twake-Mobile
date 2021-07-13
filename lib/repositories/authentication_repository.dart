@@ -71,14 +71,10 @@ class AuthenticationRepository {
     final AuthorizationTokenResponse? tokenResponse =
         await _appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
-        'twake',
+        Globals.instance.clientId!,
         'twakemobile.com://oauthredirect',
-        issuer: 'https://auth.qa.twake.app/',
-        serviceConfiguration: AuthorizationServiceConfiguration(
-          authorizationEndpoint: 'https://auth.qa.twake.app/oauth2/authorize',
-          tokenEndpoint: 'https://auth.qa.twake.app/oauth2/token',
-          endSessionEndpoint: 'https://auth.qa.twake.app/oauth2/logout',
-        ),
+        discoveryUrl:
+            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
         scopes: ['openid', 'profile', 'email'],
         preferEphemeralSession: true,
         promptValues: ['none'],

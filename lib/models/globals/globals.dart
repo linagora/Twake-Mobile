@@ -18,14 +18,13 @@ class Globals extends BaseModel {
   String host;
 
   Future<bool> hostSet(String val) async {
-    final oldHost = host;
-
-    host = val;
     try {
-      await ApiService.instance.get(endpoint: Endpoint.version);
-    } catch (e) {
+      final info = await ApiService.instance.get(endpoint: Endpoint.info);
+      oidcAuthority = info['accounts']['console']['authority'];
+      clientId = info['accounts']['console']['client_id'];
+      host = val;
+    } catch (_) {
       Logger().w('Host is invalid: $val');
-      host = oldHost;
       return false;
     }
     save();
@@ -89,6 +88,10 @@ class Globals extends BaseModel {
     userId = val;
     save();
   }
+
+  String? clientId;
+
+  String? oidcAuthority;
 
   @JsonKey(ignore: true)
   bool isNetworkConnected = true;

@@ -23,7 +23,8 @@ class InitService {
       g.threadIdSet = null;
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
-      Globals(host: 'https://web.qa.twake.app', fcmToken: fcmToken);
+      final globals = Globals(host: '', fcmToken: fcmToken);
+      await globals.hostSet('https://beta.twake.app');
     }
 
     SocketIOService(reset: true);

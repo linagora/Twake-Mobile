@@ -2,7 +2,7 @@ class Endpoint {
   /// List of public methods
 
   // API Endpoint for getting API version info + auth method
-  static const version = '/';
+  static const info = '/internal/services/general/v1/server';
   // API Endpoint for authentication
   static const authorize = '/authorize';
   // API Endpoint for prolonging token
@@ -54,11 +54,11 @@ class Endpoint {
   static const token = '/ajax/users/console/token';
 
   static const coreMethods = const [
+    info,
     token,
   ];
 
   static const publicMethods = const [
-    version,
     authorize,
     authorizationProlong,
     init,

@@ -1,12 +1,15 @@
 const String ALTER_AUTHENTICATION_ADD_CONSOLE_TOKEN_V6 = '''
 ALTER TABLE authentication ADD COLUMN console_token TEXT;
 ''';
+
 const String ALTER_AUTHENTICATION_ADD_ID_TOKEN_V6 = '''
 ALTER TABLE authentication ADD COLUMN id_token TEXT;
 ''';
+
 const String ALTER_AUTHENTICATION_ADD_CONSOLE_REFRESH_V6 = '''
 ALTER TABLE authentication ADD COLUMN console_refresh TEXT;
 ''';
+
 const String ALTER_AUTHENTICATION_ADD_CONSOLE_EXPIRATION_V6 = '''
 ALTER TABLE authentication ADD COLUMN console_expiration int;
 ''';
@@ -49,6 +52,14 @@ CREATE INDEX user_firstname_idx ON account(firstname);
 
 const String CREATE_INDEX_ACCOUNT_LASTNAME_V6 = '''
 CREATE INDEX user_lastname_idx ON account(lastname);
+''';
+
+const String ALTER_GLOBALS_ADD_OIDC_V6 = '''
+ALTER TABLE globals ADD COLUMN oidc_authority TEXT;
+''';
+
+const String ALTER_GLOBALS_ADD_CLIENT_V6 = '''
+ALTER TABLE globals ADD COLUMN client_id TEXT;
 ''';
 
 const DDL_V6 = [
