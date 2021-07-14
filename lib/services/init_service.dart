@@ -16,21 +16,23 @@ class InitService {
     _storageService = StorageService(reset: true);
     await _storageService.init();
 
-    final globals = await _storageService.first(table: Table.globals);
-    if (globals.isNotEmpty) {
-      final g = Globals.fromJson(globals);
-      g.channelIdSet = null;
-      g.threadIdSet = null;
+    final g = await _storageService.first(table: Table.globals);
+    Globals globals;
+    if (g.isNotEmpty) {
+      globals = Globals.fromJson(g);
+      globals.channelIdSet = null;
+      globals.threadIdSet = null;
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
-      final globals = Globals(host: '', fcmToken: fcmToken);
-      await globals.hostSet('https://beta.twake.app');
+      globals = Globals(host: 'https://beta.twake.app', fcmToken: fcmToken);
     }
 
     SocketIOService(reset: true);
     PushNotificationsService(reset: true);
     _apiService = ApiService(reset: true);
     SynchronizationService(reset: true);
+    if (globals.oidcAuthority == null)
+      await globals.hostSet('https://web.qa.twake.app');
   }
 
   // should only be called once after successful authentication/login

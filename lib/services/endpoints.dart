@@ -62,7 +62,8 @@ class Endpoint {
     authorize,
     authorizationProlong,
     init,
-    emojis
+    emojis,
+    info,
   ];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {

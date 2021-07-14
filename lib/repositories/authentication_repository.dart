@@ -5,7 +5,6 @@ import 'package:twake/models/authentication/authentication.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
-import 'package:webview_cookie_manager/webview_cookie_manager.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 
 class AuthenticationRepository {
@@ -88,8 +87,6 @@ class AuthenticationRepository {
       data: {'access_token': tokenResponse.accessToken},
     );
 
-    Logger().v('TOKEN PAIR:$authenticationResult');
-
     final authentication = Authentication.fromJson(ApiDataTransformer.token(
       payload: authenticationResult,
       tokenResponse: tokenResponse,
@@ -136,18 +133,17 @@ class AuthenticationRepository {
       });
     }
 
-    final result = await _storage.first(table: Table.authentication);
+    // final result = await _storage.first(table: Table.authentication);
+//
+    // final authentication = Authentication.fromJson(result);
 
-    final authentication = Authentication.fromJson(result);
-
-    // _appAuth.endSession(
-    // EndSessionRequest(
-    // postLogoutRedirectUrl: 'https://twakemobile.com',
-    // idTokenHint: authentication.idToken,
-    // allowInsecureConnections: true,
-    // discoveryUrl: 'https://auth.twake.app/.well-known/openid-configuration',
-    // ),
-    // );
+    _appAuth.endSession(
+      EndSessionRequest(
+        allowInsecureConnections: true,
+        discoveryUrl:
+            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+      ),
+    );
 
     Globals.instance.reset();
 
