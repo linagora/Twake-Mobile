@@ -48,11 +48,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       } else if (selectedId != null &&
           workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
-      } else {
-        selected = workspaces.first;
       }
 
-      Globals.instance.workspaceIdSet = selected.id;
+      if (selected != null) Globals.instance.workspaceIdSet = selected.id;
 
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
