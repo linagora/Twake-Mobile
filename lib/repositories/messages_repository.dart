@@ -320,9 +320,9 @@ class MessagesRepository {
 
   Future<Message> getMessage({required String messageId}) async {
     try {
-      return getMessageLocal(messageId: messageId);
+      return await getMessageLocal(messageId: messageId);
     } catch (_) {
-      return getMessageRemote(messageId: messageId);
+      return await getMessageRemote(messageId: messageId);
     }
   }
 
