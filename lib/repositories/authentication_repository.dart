@@ -137,14 +137,14 @@ class AuthenticationRepository {
 //
     // final authentication = Authentication.fromJson(result);
 
-    _appAuth.endSession(
-      EndSessionRequest(
-        allowInsecureConnections: true,
-        discoveryUrl:
-            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-      ),
-    );
-
+    // _appAuth.endSession(
+    // EndSessionRequest(
+    // allowInsecureConnections: true,
+    // discoveryUrl:
+    // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+    // ),
+    // );
+//
     Globals.instance.reset();
 
     await _storage.truncateAll();

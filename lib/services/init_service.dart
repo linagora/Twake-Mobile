@@ -32,7 +32,7 @@ class InitService {
     _apiService = ApiService(reset: true);
     SynchronizationService(reset: true);
     if (globals.oidcAuthority == null)
-      await globals.hostSet('https://web.qa.twake.app');
+      await globals.hostSet('https://beta.twake.app');
   }
 
   // should only be called once after successful authentication/login
