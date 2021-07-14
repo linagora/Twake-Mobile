@@ -286,7 +286,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             selected: selected,
           ));
 
-          await SynchronizationService.instance.subscribeForChannels();
+          SynchronizationService.instance.refreshRooms();
 
           break;
 

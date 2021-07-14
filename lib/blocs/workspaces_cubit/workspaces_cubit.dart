@@ -17,10 +17,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     _repository = repository;
 
     // wait for authentication check before attempting to subscribe
-    Future.delayed(
-      Duration(seconds: 7),
-      SynchronizationService.instance.subscribeToBadges,
-    );
+    Future.delayed(Duration(seconds: 7), () {
+      SynchronizationService.instance.subscribeToBadges();
+      SynchronizationService.instance.subscribeForChannels();
+    });
   }
 
   Future<void> fetch({
@@ -34,6 +34,11 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       companyId: companyId,
       localOnly: localOnly,
     );
+
+    if (selectedId != null) {
+      Globals.instance.workspaceIdSet = selectedId;
+      SynchronizationService.instance.subscribeForChannels();
+    }
 
     selectedId = selectedId ?? Globals.instance.workspaceId;
 
