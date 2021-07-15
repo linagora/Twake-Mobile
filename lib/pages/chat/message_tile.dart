@@ -305,13 +305,15 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 ),
                               ),
                               SizedBox(height: 5.0),
-                              /*    if (_message.responsesCount > 0 &&
+                              /* if (_message.responsesCount > 0 &&
                                   _message.threadId == null &&
                                   !_hideShowAnswers)
                                 Divider(
                                   height: 1.0,
                                   thickness: 1.0,
-                                  color: Colors.white.withOpacity(0.19),
+                                  color: _isMyMessage
+                                      ? Colors.white.withOpacity(0.19)
+                                      : Color(0xFF979797).withOpacity(0.19),
                                 ),*/
                               if (_message.responsesCount > 0 &&
                                   _message.threadId == null &&
