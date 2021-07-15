@@ -118,12 +118,19 @@ class AuthenticationRepository {
       throw e;
     }
 
-    authentication = Authentication.fromJson(authenticationResult);
+    final freshAuthentication = Authentication.complementWithConsole(
+      json: authenticationResult,
+      other: authentication,
+    );
 
-    _storage.cleanInsert(table: Table.authentication, data: authentication);
-    Globals.instance.tokenSet = authentication.token;
+    _storage.cleanInsert(
+      table: Table.authentication,
+      data: freshAuthentication,
+    );
 
-    return authentication;
+    Globals.instance.tokenSet = freshAuthentication.token;
+
+    return freshAuthentication;
   }
 
   Future<void> logout() async {
@@ -134,12 +141,24 @@ class AuthenticationRepository {
     }
 
     // final result = await _storage.first(table: Table.authentication);
-//
     // final authentication = Authentication.fromJson(result);
-
-    // _appAuth.endSession(
+//
+    await _appAuth.authorize(
+      AuthorizationRequest(
+        Globals.instance.clientId!,
+        'twakemobile.com://oauthredirect',
+        scopes: ['openid', 'profile', 'email'],
+        serviceConfiguration: AuthorizationServiceConfiguration(
+          authorizationEndpoint: 'https://auth.twake.app/oauth2/logout',
+          tokenEndpoint: 'https://auth.twake.app/oauth2/token',
+        ),
+      ),
+    );
+    // await _appAuth.endSession(
     // EndSessionRequest(
     // allowInsecureConnections: true,
+    // postLogoutRedirectUrl: 'https://beta.twake.app/signout',
+    // idTokenHint: authentication.idToken,
     // discoveryUrl:
     // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
     // ),

@@ -30,6 +30,18 @@ class Authentication extends BaseModel {
     required this.consoleExpiration,
   });
 
+  static Authentication complementWithConsole({
+    required Map<String, dynamic> json,
+    required Authentication other,
+  }) {
+    json['console_token'] = other.consoleToken;
+    json['id_token'] = other.idToken;
+    json['console_refresh'] = other.consoleRefresh;
+    json['console_expiration'] = other.consoleExpiration;
+
+    return Authentication.fromJson(json);
+  }
+
   factory Authentication.fromJson(Map<String, dynamic> json) =>
       _$AuthenticationFromJson(json);
 
