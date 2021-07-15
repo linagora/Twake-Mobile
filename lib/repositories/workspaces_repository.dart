@@ -69,9 +69,21 @@ class WorkspacesRepository {
 
     if (!Globals.instance.isNetworkConnected || localOnly) return;
 
-    workspaces = await fetchRemote(companyId: companyId);
+    final rworkspaces = await fetchRemote(companyId: companyId);
 
     yield workspaces;
+
+    if (rworkspaces.length != workspaces.length) {
+      for (final w in workspaces) {
+        if (!rworkspaces.any((rw) => rw.id == w.id)) {
+          _storage.delete(
+            table: Table.workspace,
+            where: 'id = ?',
+            whereArgs: [w.id],
+          );
+        }
+      }
+    }
   }
 
   Future<List<Workspace>> fetchLocal({required String companyId}) async {
