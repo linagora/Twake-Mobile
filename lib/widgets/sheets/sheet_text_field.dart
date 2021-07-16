@@ -102,15 +102,16 @@ class _SheetTextFieldState extends State<SheetTextField> {
               : Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xffeeeeef),
+                    //  color: Color(0xffeeeeef),
                   ),
                   width: 30,
                   height: 20,
                   child: IconButton(
                     padding: EdgeInsets.all(0),
                     onPressed: () => widget.controller.clear(),
-                    iconSize: 15,
-                    icon: Icon(CupertinoIcons.clear),
+                    iconSize: 23,
+                    icon: Icon(CupertinoIcons.clear_thick_circled),
+                    color: Color(0xffeeeeef),
                   ),
                 ),
           border: UnderlineInputBorder(
