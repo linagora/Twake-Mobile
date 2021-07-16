@@ -107,193 +107,189 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                       topLeft: Radius.circular(15),
                     ),
                   ),
-                  child: Flexible(
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (widget.isMe &&
-                                widget.message.responsesCount == 0)
-                              GestureDetector(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 55,
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(16.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Column(
-                                          children: [
-                                            Icon(
-                                              Icons.delete,
-                                              color: Color(0xffFF5154),
-                                            ),
-                                          ],
-                                        ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (widget.isMe && widget.message.responsesCount == 0)
+                            GestureDetector(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 55,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.delete,
+                                            color: Color(0xffFF5154),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'delete',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFFFF3347),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  widget.onDelete!();
-                                },
-                              ),
-                            SizedBox(
-                              width: 30,
-                            ),
-                            widget.message.content.originalStr?.isEmpty ?? true
-                                ? Container()
-                                : GestureDetector(
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          width: 55,
-                                          height: 45,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(16.0),
-                                          ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Column(
-                                              children: [
-                                                Icon(
-                                                  Icons.copy_outlined,
-                                                  color: Color(0xFF004DFF),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 5,
-                                        ),
-                                        Text(
-                                          'Copy',
-                                          style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w500,
-                                            color: Color(0xFF004DFF),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    onTap: () {
-                                      widget.onCopy!();
-                                    },
                                   ),
-                            if (widget.message.threadId == null)
-                              SizedBox(
-                                width: 30,
-                              ),
-                            if (widget.message.threadId == null)
-                              GestureDetector(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 55,
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(16.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Column(
-                                          children: [
-                                            Icon(Icons.reply_sharp,
-                                                color: Color(0xFF004DFF)),
-                                          ],
-                                        ),
-                                      ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'delete',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFFFF3347),
                                     ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Reply',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF004DFF),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  widget.onReply!(widget.message);
-                                },
+                                  )
+                                ],
                               ),
+                              onTap: () {
+                                widget.onDelete!();
+                              },
+                            ),
+                          if (widget.isMe && widget.message.responsesCount == 0)
                             SizedBox(
                               width: 30,
                             ),
-                            if (widget.isMe)
-                              GestureDetector(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: 55,
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(16.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Column(
-                                          children: [
-                                            Icon(Icons.edit,
-                                                color: Color(0xFF004DFF)),
-                                          ],
+                          widget.message.content.originalStr?.isEmpty ?? true
+                              ? Container()
+                              : GestureDetector(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 55,
+                                        height: 45,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(16.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Column(
+                                            children: [
+                                              Icon(
+                                                Icons.copy_outlined,
+                                                color: Color(0xFF004DFF),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Edit',
-                                      style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF004DFF),
+                                      SizedBox(
+                                        height: 5,
                                       ),
-                                    )
-                                  ],
+                                      Text(
+                                        'Copy',
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: Color(0xFF004DFF),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    widget.onCopy!();
+                                  },
                                 ),
-                                onTap: widget.onEdit as void Function()?,
+                          if (widget.message.threadId == null)
+                            SizedBox(
+                              width: 30,
+                            ),
+                          if (widget.message.threadId == null)
+                            GestureDetector(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 55,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        children: [
+                                          Icon(Icons.reply_sharp,
+                                              color: Color(0xFF004DFF)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'Reply',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF004DFF),
+                                    ),
+                                  )
+                                ],
                               ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 30,
-                        )
-                      ],
-                    ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                widget.onReply!(widget.message);
+                              },
+                            ),
+                          if (widget.isMe)
+                            SizedBox(
+                              width: 30,
+                            ),
+                          if (widget.isMe)
+                            GestureDetector(
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: 55,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        children: [
+                                          Icon(Icons.edit,
+                                              color: Color(0xFF004DFF)),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    'Edit',
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xFF004DFF),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              onTap: widget.onEdit as void Function()?,
+                            ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 30,
+                      )
+                    ],
                   ),
                 ),
               ],
@@ -327,13 +323,13 @@ class EmojiLine extends StatelessWidget {
         horizontal: 16.0, //Dim.wm2,
       ),
       constraints: BoxConstraints(maxHeight: Dim.hm7),
-      child: Flexible(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          // mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ...EMOJISET.map((e) => InkWell(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ...EMOJISET.map((e) => Flexible(
+                child: InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
                     onEmojiSelected!(e);
@@ -345,24 +341,24 @@ class EmojiLine extends StatelessWidget {
                       style: TextStyle(fontSize: fontSize),
                     ),
                   ),
-                )),
-            Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFF6F6F6),
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                icon: Icon(
-                  Icons.more_horiz,
-                  color: Color(0xFF99A2AD),
                 ),
-                onPressed: showEmojiBoard as void Function()?,
-                iconSize: fontSize + 3,
-              ),
+              )),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFF6F6F6),
+              borderRadius: BorderRadius.circular(12.0),
             ),
-          ],
-        ),
+            child: IconButton(
+              padding: EdgeInsets.zero,
+              icon: Icon(
+                Icons.more_horiz,
+                color: Color(0xFF99A2AD),
+              ),
+              onPressed: showEmojiBoard as void Function()?,
+              iconSize: fontSize + 3,
+            ),
+          ),
+        ],
       ),
     );
   }
