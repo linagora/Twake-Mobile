@@ -7,8 +7,6 @@ class Endpoint {
   static const authorize = '/authorize';
   // API Endpoint for prolonging token
   static const authorizationProlong = '/authorization/prolong';
-  // API Endpoint for initializing some server required data
-  static const init = '/init';
   // API Endpoint for getting current supported emojis
   static const emojis = '/info/emoji';
 
@@ -18,8 +16,6 @@ class Endpoint {
   static const logout = '/logout';
   // API Endpoint for working with account data
   static const account = '/user';
-  // API Endpoint for for profile picture update
-  static const accountPicture = '/users/profile/picture';
   // API Endpoint for working with bots (applications)
   static const applications = '/companies/applications';
   // API Endpoint for working with user's companies
@@ -61,7 +57,6 @@ class Endpoint {
   static const publicMethods = const [
     authorize,
     authorizationProlong,
-    init,
     emojis,
     info,
   ];

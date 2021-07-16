@@ -30,37 +30,37 @@ class MessagesRepository {
 
     // If messages are present in local storage, just request messages
     // after the last one, via after_date query param
-    int? afterDate;
-    if (messages.isNotEmpty && threadId == null) {
-      afterDate = messages
-          .fold<Message>(messages.first, (a, b) => a.recent(b))
-          .modificationDate;
-    }
+    // TODO IMPLEMENT SIMILAR MECHANISM
+    // int? afterDate;
+    // if (messages.isNotEmpty && threadId == null) {
+    // afterDate = messages
+    // .fold<Message>(messages.first, (a, b) => a.recent(b))
+    // .modificationDate;
+    // }
 
     final remoteMessages = await fetchRemote(
       companyId: companyId,
       workspaceId: workspaceId,
       channelId: channelId,
       threadId: threadId,
-      afterDate: afterDate,
     );
 
-    if (messages.isNotEmpty && afterDate != null) {
-      for (final m in remoteMessages) {
-        final index = messages.indexWhere((lm) => lm.id == m.id);
-        if (!index.isNegative) {
-          messages[index] = m;
-        } else {
-          messages.add(m);
-        }
-      }
-    } else {
-      messages = remoteMessages;
-    }
+    // if (messages.isNotEmpty && afterDate != null) {
+    // for (final m in remoteMessages) {
+    // final index = messages.indexWhere((lm) => lm.id == m.id);
+    // if (!index.isNegative) {
+    // messages[index] = m;
+    // } else {
+    // messages.add(m);
+    // }
+    // }
+    // } else {
+    // messages = remoteMessages;
+    // }
+//
+    remoteMessages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
 
-    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
-
-    yield messages;
+    yield remoteMessages;
   }
 
   Future<List<Message>> fetchLocal({
@@ -93,7 +93,6 @@ class MessagesRepository {
     String? workspaceId,
     required String channelId,
     String? threadId,
-    int? afterDate,
   }) async {
     final Map<String, dynamic> queryParameters = {
       'company_id': companyId ?? Globals.instance.companyId,
@@ -106,7 +105,7 @@ class MessagesRepository {
 
     if (threadId != null) queryParameters['thread_id'] = threadId;
 
-    if (afterDate != null) queryParameters['after_date'] = afterDate;
+    // if (afterDate != null) queryParameters['after_date'] = afterDate;
 
     final List<dynamic> remoteResult = await _api.get(
       endpoint: Endpoint.messages,
