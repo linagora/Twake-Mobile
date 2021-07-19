@@ -2,13 +2,11 @@ class Endpoint {
   /// List of public methods
 
   // API Endpoint for getting API version info + auth method
-  static const version = '/';
+  static const info = '/internal/services/general/v1/server';
   // API Endpoint for authentication
   static const authorize = '/authorize';
   // API Endpoint for prolonging token
   static const authorizationProlong = '/authorization/prolong';
-  // API Endpoint for initializing some server required data
-  static const init = '/init';
   // API Endpoint for getting current supported emojis
   static const emojis = '/info/emoji';
 
@@ -17,17 +15,14 @@ class Endpoint {
   // API Endpoint for sending logout event to backend
   static const logout = '/logout';
   // API Endpoint for working with account data
-  static const account = '/user';
-  // API Endpoint for for profile picture update
-  static const accountPicture = '/users/profile/picture';
-  // API Endpoint for working with bots (applications)
-  static const applications = '/companies/applications';
+  static const account = '/internal/services/users/v1/users/%s';
   // API Endpoint for working with user's companies
-  static const companies = '/companies';
+  static const companies = '/internal/services/users/v1/users/%s/companies';
   // API Endpoint for working with user's companies
   static const badges = '/badges';
   // API Endpoint for working with user's workspaces in all companies
-  static const workspaces = '/workspaces';
+  static const workspaces =
+      '/internal/services/users/v1/companies/%s/workspaces';
   // API Endpoint for working with the members of workspace
   static const workspaceMembers = '/workspaces/members';
   // API Endpoint for working with user's channels in a workspace
@@ -49,15 +44,30 @@ class Endpoint {
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const fileUpload = '/media/upload';
 
+  // Core methods
+  // Obtain JWToken pair for Twake
+  static const token = '/ajax/users/console/token';
+
+  static const coreMethods = const [
+    account,
+    companies,
+    workspaces,
+    info,
+    token,
+  ];
+
   static const publicMethods = const [
-    version,
     authorize,
     authorizationProlong,
-    init,
-    emojis
+    emojis,
+    info,
   ];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {
     return publicMethods.contains(method);
+  }
+
+  static bool isCore(String method) {
+    return coreMethods.contains(method);
   }
 }

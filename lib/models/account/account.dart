@@ -51,6 +51,7 @@ class Account extends BaseModel {
     required Map<String, dynamic> json,
     // for future use, in case if composite fields are added
     bool jsonify: false,
+    bool transform: false,
   }) {
     // message retrieved from sqlite database will have
     // it's composite fields json string encoded, so there's a
