@@ -188,9 +188,11 @@ class NavigatorService {
 
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
     accountCubit.fetch();
-    Get.toNamed(shouldShowInfo
-        ? RoutePaths.accountInfo.path
-        : RoutePaths.accountSettings.path);
+    Get.toNamed(
+      shouldShowInfo
+          ? RoutePaths.accountInfo.path
+          : RoutePaths.accountSettings.path,
+    );
   }
 
   Future<void> navigateToCreateWorkspace() async {

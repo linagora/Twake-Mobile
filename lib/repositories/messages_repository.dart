@@ -45,9 +45,6 @@ class MessagesRepository {
       threadId: threadId,
     );
 
-    Logger()
-        .v('MESSAGES: ${messages.length}\nRMESSAGES: ${remoteMessages.length}');
-
     // if (messages.isNotEmpty && afterDate != null) {
     // for (final m in remoteMessages) {
     // final index = messages.indexWhere((lm) => lm.id == m.id);

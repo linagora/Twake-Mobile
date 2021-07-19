@@ -4,10 +4,13 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:twake/models/authentication/authentication.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 class AuthenticationRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
+  final _appAuth = FlutterAppAuth();
   bool _validatorRunning = false;
 
   AuthenticationRepository();
@@ -57,7 +60,38 @@ class AuthenticationRepository {
 
     final authentication = Authentication.fromJson(authenticationResult);
 
-    await _storage.truncate(table: Table.authentication);
+    _storage.cleanInsert(table: Table.authentication, data: authentication);
+    Globals.instance.tokenSet = authentication.token;
+
+    return true;
+  }
+
+  Future<bool> webviewAuthenticate() async {
+    final AuthorizationTokenResponse? tokenResponse =
+        await _appAuth.authorizeAndExchangeCode(
+      AuthorizationTokenRequest(
+        Globals.instance.clientId!,
+        'twakemobile.com://oauthredirect',
+        discoveryUrl:
+            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+        scopes: ['openid', 'profile', 'email'],
+        preferEphemeralSession: true,
+        promptValues: ['none'],
+      ),
+    );
+    if (tokenResponse == null) {
+      return false;
+    }
+    final authenticationResult = await _api.post(
+      endpoint: Endpoint.token,
+      data: {'access_token': tokenResponse.accessToken},
+    );
+
+    final authentication = Authentication.fromJson(ApiDataTransformer.token(
+      payload: authenticationResult,
+      tokenResponse: tokenResponse,
+    ));
+
     _storage.cleanInsert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
 
@@ -84,22 +118,52 @@ class AuthenticationRepository {
       throw e;
     }
 
-    authentication = Authentication.fromJson(authenticationResult);
+    final freshAuthentication = Authentication.complementWithConsole(
+      json: authenticationResult,
+      other: authentication,
+    );
 
-    await _storage.truncate(table: Table.authentication);
-    _storage.cleanInsert(table: Table.authentication, data: authentication);
-    Globals.instance.tokenSet = authentication.token;
+    _storage.cleanInsert(
+      table: Table.authentication,
+      data: freshAuthentication,
+    );
 
-    return authentication;
+    Globals.instance.tokenSet = freshAuthentication.token;
+
+    return freshAuthentication;
   }
 
   Future<void> logout() async {
     if (Globals.instance.isNetworkConnected) {
-      await _api.post(endpoint: Endpoint.logout, data: {
+      _api.post(endpoint: Endpoint.logout, data: {
         'fcm_token': Globals.instance.fcmToken,
       });
     }
 
+    // final result = await _storage.first(table: Table.authentication);
+    // final authentication = Authentication.fromJson(result);
+//
+    await _appAuth.authorize(
+      AuthorizationRequest(
+        Globals.instance.clientId!,
+        'twakemobile.com://oauthredirect',
+        scopes: ['openid', 'profile', 'email'],
+        serviceConfiguration: AuthorizationServiceConfiguration(
+          authorizationEndpoint: 'https://auth.twake.app/oauth2/logout',
+          tokenEndpoint: 'https://auth.twake.app/oauth2/token',
+        ),
+      ),
+    );
+    // await _appAuth.endSession(
+    // EndSessionRequest(
+    // allowInsecureConnections: true,
+    // postLogoutRedirectUrl: 'https://beta.twake.app/signout',
+    // idTokenHint: authentication.idToken,
+    // discoveryUrl:
+    // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+    // ),
+    // );
+//
     Globals.instance.reset();
 
     await _storage.truncateAll();

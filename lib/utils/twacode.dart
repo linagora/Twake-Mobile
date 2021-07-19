@@ -1012,8 +1012,8 @@ class TwacodeRenderer {
                   if (await canLaunch(t['url'] ?? t['content'])) {
                     await launch(
                       t['url'] ?? t['content'],
-                      forceSafariVC: false,
-                      forceWebView: false,
+                      forceSafariVC: true,
+                      forceWebView: true,
                     );
                   }
                 }));

@@ -29,14 +29,20 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void checkAuthentication() async {
     emit(AuthenticationInProgress());
-    final authenticated = await _repository.isAuthenticated();
+    bool authenticated = await _repository.isAuthenticated();
 
     if (authenticated) {
       emit(AuthenticationSuccess());
       _repository.startTokenValidator();
       await NavigatorService.instance.navigateOnNotificationLaunch();
     } else {
-      emit(AuthenticationInitial());
+      authenticated = await _repository.webviewAuthenticate();
+      if (authenticated) {
+        emit(AuthenticationSuccess());
+        await syncData();
+      } else {
+        emit(AuthenticationInitial());
+      }
     }
   }
 
@@ -86,9 +92,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     Logger().v('SYNC TOOK: ${end.difference(start).inSeconds} sec');
   }
 
-  void logout() {
-    _repository.logout();
+  void logout() async {
+    await _repository.logout();
     emit(AuthenticationInitial());
+    checkAuthentication();
   }
 
   @override

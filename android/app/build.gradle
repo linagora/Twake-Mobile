@@ -50,6 +50,9 @@ android {
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        manifestPlaceholders = [
+            'appAuthRedirectScheme': 'twakemobile.com'
+        ]
     }
 
     signingConfigs {
