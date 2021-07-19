@@ -13,12 +13,18 @@ class Account extends BaseModel {
   final String? firstname;
   final String? lastname;
   final String username;
+
+  @JsonKey(name: 'picture')
   final String? thumbnail;
+
+  @JsonKey(name: 'provider_id')
   final String? consoleId;
-  final String? statusIcon;
+
   final String? status;
   final String? language;
   final int lastActivity;
+  final bool isVerified;
+  final bool deleted;
 
   Account({
     required this.id,
@@ -29,9 +35,10 @@ class Account extends BaseModel {
     this.thumbnail,
     this.consoleId,
     this.status,
-    this.statusIcon,
     this.language,
     required this.lastActivity,
+    required this.isVerified,
+    required this.deleted,
   });
 
   int get hash =>

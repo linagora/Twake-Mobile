@@ -59,6 +59,7 @@ dependencies:
   # flutter_emoji_keyboard:
   # git: https://github.com/bobs4462/emoji_keyboard.git
   emoji_picker_flutter: ^1.0.6
+  flutter_appauth: ^2.0.0-dev.2
 
 
   flutter_local_notifications: ^6.0.0
