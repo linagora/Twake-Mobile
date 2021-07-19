@@ -70,6 +70,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
     BuildContext context,
     List<Message> messages,
   ) {
+    bool upBubbleSide = false;
+    bool downBubbleSide = false;
     return GroupedListView<Message, DateTime>(
       key: PageStorageKey<String>('uniqueKey'),
       order: GroupedListOrder.DESC,
@@ -86,7 +88,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       itemComparator: (Message m1, Message m2) {
         return m1.creationDate.compareTo(m2.creationDate);
       },
-      separator: SizedBox(height: 3.0),
+      separator: SizedBox(height: 1.0),
       groupSeparatorBuilder: (DateTime dt) {
         return GestureDetector(
           onTap: () {
@@ -108,6 +110,49 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
+        //conditions for determining the shape of the sides of the bubble
+
+        //if there is only one message in the chat
+        if (messages.length == 1) {
+          upBubbleSide = true;
+          downBubbleSide = true;
+        } else {
+          // boundary bubbles handling
+          if (index == 0 || index == messages.length - 1) {
+            if (index == 0) {
+              if (messages[messages.length - index - 1].userId !=
+                  messages[messages.length - index - 1 - 1].userId) {
+                upBubbleSide = true;
+              } else {
+                upBubbleSide = false;
+              }
+              downBubbleSide = true;
+            }
+            if (index == messages.length - 1) {
+              if (messages[messages.length - index - 1].userId !=
+                  messages[messages.length - index - 1 + 1].userId) {
+                downBubbleSide = true;
+              } else {
+                downBubbleSide = false;
+              }
+              upBubbleSide = true;
+            }
+          } else {
+            // processing of all basic bubbles in the chat except of boundary values
+            if (messages[messages.length - index - 1].userId !=
+                messages[messages.length - index - 1 + 1].userId) {
+              downBubbleSide = true;
+            } else {
+              downBubbleSide = false;
+            }
+            if (messages[messages.length - index - 1].userId !=
+                messages[messages.length - index - 1 - 1].userId) {
+              upBubbleSide = true;
+            } else {
+              upBubbleSide = false;
+            }
+          }
+        }
         return SwipeActionCell(
           key: ObjectKey(messages[index]),
           trailingActions: <SwipeAction>[
@@ -135,6 +180,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           ],
           child: MessageTile<ChannelMessagesCubit>(
             message: message,
+            upBubbleSide: upBubbleSide,
+            downBubbleSide: downBubbleSide,
             key: ValueKey(message.hash),
             channel: widget.parentChannel,
           ),
