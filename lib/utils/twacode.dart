@@ -562,12 +562,15 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic>? twacode;
   List<InlineSpan>? spans;
-
-  TwacodeRenderer({this.twacode, TextStyle? parentStyle}) {
+  TwacodeRenderer(
+      {this.twacode, TextStyle? parentStyle, double? userUniqueColor}) {
     if (parentStyle == null)
       parentStyle = getStyle(TType.Text).copyWith(color: Colors.black);
     this.twacode!.addAll(this.extractFiles(this.twacode!));
-    spans = render(twacode: this.twacode!, parentStyle: parentStyle);
+    spans = render(
+        twacode: this.twacode!,
+        parentStyle: parentStyle,
+        userUniqueColor: userUniqueColor);
   }
 
   // Files should only occur in the end of the twacode structure
@@ -597,7 +600,8 @@ class TwacodeRenderer {
     return files;
   }
 
-  TextStyle getStyle(TType? type) {
+  TextStyle getStyle(TType? type,
+      {TextStyle? parentStyle, double? userUniqueColor}) {
     TextStyle style;
     switch (type) {
       case TType.InlineCode:
@@ -650,7 +654,7 @@ class TwacodeRenderer {
 
       case TType.User:
         style = TextStyle(
-          color: Colors.lightBlue,
+          color: HSLColor.fromAHSL(1, userUniqueColor!, 0.9, 0.3).toColor(),
         );
         break;
 
@@ -662,7 +666,15 @@ class TwacodeRenderer {
         break;
 
       case TType.Url:
-        style = TextStyle(color: Colors.blue);
+        style = parentStyle == Colors.white
+            ? TextStyle(
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+              )
+            : TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+              );
         break;
 
       case TType.Attachment:
@@ -674,7 +686,15 @@ class TwacodeRenderer {
         break;
 
       case TType.Email:
-        style = TextStyle(color: Colors.purple);
+        style = parentStyle == Colors.white
+            ? TextStyle(
+                color: Colors.blue,
+                decoration: TextDecoration.underline,
+              )
+            : TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+              );
         break;
 
       case TType.Unknown:
@@ -700,7 +720,9 @@ class TwacodeRenderer {
   }
 
   List<InlineSpan> render(
-      {required List<dynamic> twacode, TextStyle? parentStyle}) {
+      {required List<dynamic> twacode,
+      TextStyle? parentStyle,
+      double? userUniqueColor}) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -715,7 +737,10 @@ class TwacodeRenderer {
           ),
         );
       } else if (twacode[i] is List) {
-        spans.addAll(render(twacode: twacode[i], parentStyle: parentStyle));
+        spans.addAll(render(
+            twacode: twacode[i],
+            parentStyle: parentStyle,
+            userUniqueColor: userUniqueColor));
       } else if (twacode[i] is Map) {
         final t = twacode[i];
         TType? type;
@@ -1061,7 +1086,8 @@ class TwacodeRenderer {
             TextSpan(
               text: content is String ? content : 'not supported',
               style: parentStyle!.merge(
-                getStyle(type),
+                getStyle(type,
+                    parentStyle: parentStyle, userUniqueColor: userUniqueColor),
               ),
             ),
           );
