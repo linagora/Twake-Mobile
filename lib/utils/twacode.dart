@@ -666,7 +666,7 @@ class TwacodeRenderer {
         break;
 
       case TType.Url:
-        style = parentStyle == Colors.white
+        style = parentStyle!.color == Colors.black
             ? TextStyle(
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
@@ -686,7 +686,7 @@ class TwacodeRenderer {
         break;
 
       case TType.Email:
-        style = parentStyle == Colors.white
+        style = parentStyle!.color == Colors.black
             ? TextStyle(
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
@@ -1030,7 +1030,7 @@ class TwacodeRenderer {
           spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
           spans.add(TextSpan(
-              style: getStyle(type),
+              style: getStyle(type, parentStyle: parentStyle),
               text: t['content'],
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {

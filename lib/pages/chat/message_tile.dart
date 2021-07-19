@@ -67,7 +67,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
     _hideShowAnswers = widget.hideShowAnswers;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
-    final int colorId = _message.username.hashCode % 360;
 
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
