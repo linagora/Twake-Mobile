@@ -25,10 +25,14 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool shouldShowSender;
   final Message message;
   final Channel channel;
+  final bool upBubbleSide;
+  final bool downBubbleSide;
 
   MessageTile({
     required this.message,
     required this.channel,
+    required this.upBubbleSide,
+    required this.downBubbleSide,
     this.hideShowAnswers = false,
     this.shouldShowSender = true,
     Key? key,
@@ -171,146 +175,188 @@ class _MessageTileState<T extends BaseMessagesCubit>
             ),
             SizedBox(width: 6.0),
             Flexible(
-              child: Stack(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    color: Colors.white,
-                    child: Bubble(
-                      style: BubbleStyle(
-                        nip: _isMyMessage
-                            ? (_shouldShowSender
-                                ? BubbleNip.rightTop
-                                : BubbleNip.rightBottom)
-                            : (_shouldShowSender
-                                ? BubbleNip.leftTop
-                                : BubbleNip.leftBottom),
-                        nipWidth: 0.01,
-                        nipHeight: 20,
-                        nipRadius: 0.0,
-                        radius: Radius.circular(18.0),
-                        elevation: 0,
-                        color: _isMyMessage
-                            ? Color(0xff007AFF)
-                            : Color(0xfff6f6f6),
-                      ),
-                      // borderUp: false,
-                      // borderWidth: 2.0,
-                      // borderColor: Colors.black,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          !widget.channel.isDirect && !_isMyMessage
-                              ? Padding(
-                                  padding: const EdgeInsets.all(6.0),
-                                  child: Text(
-                                    '${_message.sender}',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: HSLColor.fromAHSL(
-                                              1,
-                                              _message.username.hashCode % 360,
-                                              0.9,
-                                              0.3)
-                                          .toColor(),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  child: Container(
-                                    alignment: Alignment.topLeft,
-                                    child: TwacodeRenderer(
-                                      twacode: _message.content.prepared,
-                                      parentStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: _isMyMessage
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ).message,
-                                  ),
-                                ),
-                                Container(
-                                  alignment: Alignment.bottomRight,
-                                  child: Text(
-                                    _message.threadId != null ||
-                                            _hideShowAnswers
-                                        ? DateFormatter.getVerboseDateTime(
-                                            _message.creationDate)
-                                        : DateFormatter.getVerboseTime(
-                                            _message.creationDate),
-                                    textAlign: TextAlign.end,
-                                    style: TextStyle(
-                                      fontSize: 11.0,
-                                      fontWeight: FontWeight.w400,
-                                      fontStyle: FontStyle.italic,
-                                      color: _isMyMessage
-                                          ? Color(0xffffffff).withOpacity(0.58)
-                                          : Color(0xff8e8e93),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+              child: Container(
+                child: Stack(
+                  children: [
+                    Container(
+                      padding: _message.reactions.isEmpty
+                          ? const EdgeInsets.only(bottom: 1.0)
+                          : const EdgeInsets.only(bottom: 20.0),
+                      color: Colors.white,
+                      child: ClipRRect(
+                        borderRadius: _isMyMessage
+                            ? (widget.upBubbleSide && widget.downBubbleSide
+                                ? (BorderRadius.circular(18))
+                                : (widget.upBubbleSide || widget.downBubbleSide
+                                    ? (widget.upBubbleSide == true
+                                        ? (BorderRadius.only(
+                                            topRight: Radius.circular(18),
+                                            topLeft: Radius.circular(18),
+                                            bottomLeft: Radius.circular(18)))
+                                        : (BorderRadius.only(
+                                            bottomRight: Radius.circular(18),
+                                            topLeft: Radius.circular(18),
+                                            bottomLeft: Radius.circular(18))))
+                                    : (BorderRadius.only(
+                                        topLeft: Radius.circular(18),
+                                        bottomLeft: Radius.circular(18)))))
+                            : (widget.upBubbleSide && widget.downBubbleSide
+                                ? (BorderRadius.circular(18))
+                                : (widget.upBubbleSide || widget.downBubbleSide
+                                    ? (widget.upBubbleSide == true
+                                        ? (BorderRadius.only(
+                                            topLeft: Radius.circular(18),
+                                            topRight: Radius.circular(18),
+                                            bottomRight: Radius.circular(18)))
+                                        : (BorderRadius.only(
+                                            bottomLeft: Radius.circular(18),
+                                            topRight: Radius.circular(18),
+                                            bottomRight: Radius.circular(18))))
+                                    : (BorderRadius.only(
+                                        topRight: Radius.circular(18),
+                                        bottomRight: Radius.circular(18))))),
+                        child: Bubble(
+                          style: BubbleStyle(
+                            nip: BubbleNip.no,
+                            radius: Radius.circular(0),
+                            elevation: 0,
+                            color: _isMyMessage
+                                ? Color(0xff007AFF)
+                                : Color(0xfff6f6f6),
                           ),
-                          SizedBox(height: 5.0),
-                          if (_message.responsesCount > 0 &&
-                              _message.threadId == null &&
-                              !_hideShowAnswers)
-                            Divider(
-                              height: 1.0,
-                              thickness: 1.0,
-                              color: Colors.white.withOpacity(0.19),
-                            ),
-                          if (_message.responsesCount > 0 &&
-                              _message.threadId == null &&
-                              !_hideShowAnswers)
-                            Container(
-                              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                              alignment: Alignment.bottomCenter,
-                              child: Text(
-                                'View ${_message.responsesCount} replies',
-                                style: TextStyle(
-                                  color: _isMyMessage
-                                      ? Colors.white
-                                      : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
+                          child: Column(
+                            //crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (!widget.channel.isDirect && !_isMyMessage)
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(12, 6, 1, 1),
+                                    child: Text(
+                                      '${_message.sender}',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                        color: HSLColor.fromAHSL(
+                                                1,
+                                                _message.username.hashCode %
+                                                    360,
+                                                0.9,
+                                                0.3)
+                                            .toColor(),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              Padding(
+                                padding:
+                                    EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Container(
+                                        //alignment: Alignment.topLeft,
+                                        child: TwacodeRenderer(
+                                          twacode: _message.content.prepared,
+                                          parentStyle: TextStyle(
+                                            fontSize: 15.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: _isMyMessage
+                                                ? Colors.white
+                                                : Colors.black,
+                                          ),
+                                        ).message,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Align(
+                                      alignment: Alignment.topRight,
+                                      child: Container(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text(
+                                          _message.threadId != null ||
+                                                  _hideShowAnswers
+                                              ? DateFormatter
+                                                  .getVerboseDateTime(
+                                                      _message.creationDate)
+                                              : DateFormatter.getVerboseTime(
+                                                  _message.creationDate),
+                                          textAlign: TextAlign.end,
+                                          style: TextStyle(
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.italic,
+                                            color: _isMyMessage
+                                                ? Color(0xffffffff)
+                                                    .withOpacity(0.58)
+                                                : Color(0xff8e8e93),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
+                              SizedBox(height: 5.0),
+                              /* if (_message.responsesCount > 0 &&
+                                  _message.threadId == null &&
+                                  !_hideShowAnswers)
+                                Divider(
+                                  height: 1.0,
+                                  thickness: 1.0,
+                                  color: _isMyMessage
+                                      ? Colors.white.withOpacity(0.19)
+                                      : Color(0xFF979797).withOpacity(0.19),
+                                ),*/
+                              if (_message.responsesCount > 0 &&
+                                  _message.threadId == null &&
+                                  !_hideShowAnswers)
+                                Container(
+                                  padding:
+                                      EdgeInsets.only(top: 15.0, bottom: 15.0),
+                                  // alignment: Alignment.bottomCenter,
+                                  child: Text(
+                                    'View ${_message.responsesCount} replies',
+                                    style: TextStyle(
+                                      color: _isMyMessage
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 17.0,
+                      bottom: -1.0,
+                      child: Wrap(
+                        runSpacing: Dim.heightMultiplier,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        textDirection: TextDirection.ltr,
+                        children: [
+                          ..._message.reactions.map((r) {
+                            return Reaction<T>(
+                              message: _message,
+                              reaction: r,
+                            );
+                          }),
                         ],
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 17.0,
-                    bottom: -1.0,
-                    child: Wrap(
-                      runSpacing: Dim.heightMultiplier,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      textDirection: TextDirection.ltr,
-                      children: [
-                        ..._message.reactions.map((r) {
-                          return Reaction<T>(
-                            message: _message,
-                            reaction: r,
-                          );
-                        }),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             SizedBox(width: 3.0),

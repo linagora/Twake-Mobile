@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -131,13 +130,10 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
 
                       final state = Get.find<WorkspacesCubit>().state;
                       if (state is WorkspacesLoadSuccess) {
-                        Get.find<ChannelsCubit>()
-                            .fetch(workspaceId: state.selected!.id);
-                        popBack();
-                        Navigator.of(context).pop();
+                        Get.find<WorkspacesCubit>()
+                            .selectWorkspace(workspaceId: state.selected!.id);
 
-                        //  Get.find<WorkspacesCubit>().fetch();
-                        // NavigatorService.instance.navigateTohomeWidget();
+                        Navigator.of(context).pop();
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -226,7 +222,9 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                 isLarge: true,
                 fontWeight: FontWeight.w500,
               ),
-              SizedBox(height: 10,),
+              SizedBox(
+                height: 10,
+              ),
               Flexible(
                 child: ListView.builder(
                   shrinkWrap: true,
@@ -312,7 +310,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                   onPressed: () {
                     controller.clear();
                   },
-                  iconSize: 15,
+                  iconSize: 17,
                   icon: Icon(CupertinoIcons.clear_thick_circled),
                   color: Color(0xffeeeeef),
                 ),
