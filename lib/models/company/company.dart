@@ -31,7 +31,7 @@ class Company extends BaseModel {
 
   factory Company.fromJson({
     required Map<String, dynamic> json,
-    bool jsonify: true,
+    bool jsonify: false,
     bool tranform: false,
   }) {
     // need to adjust the json structure before trying to map it to model

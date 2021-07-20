@@ -107,7 +107,7 @@ class WorkspacesRepository {
     final List<Workspace> workspaces = remoteResult
         .map((entry) => Workspace.fromJson(
               json: entry,
-              jsonify: false,
+              transform: true,
             ))
         .toList();
 
@@ -125,7 +125,7 @@ class WorkspacesRepository {
       data: {'company_id': companyId, 'name': name, 'members': members},
     );
 
-    final workspace = Workspace.fromJson(json: creationResult, jsonify: false);
+    final workspace = Workspace.fromJson(json: creationResult, transform: true);
 
     _storage.insert(table: Table.workspace, data: workspace);
 

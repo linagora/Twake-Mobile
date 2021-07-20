@@ -55,7 +55,7 @@ class InitService {
     yield 15;
 
     final companies = remoteResult.map(
-      (i) => Company.fromJson(json: i, jsonify: false),
+      (i) => Company.fromJson(json: i, tranform: true),
     );
     _storageService.multiInsert(table: Table.company, data: companies);
     // Set company id in Globals if not set already
@@ -70,7 +70,7 @@ class InitService {
         key: 'resources',
       );
       final workspaces = remoteResult.map(
-        (i) => Workspace.fromJson(json: i, jsonify: false),
+        (i) => Workspace.fromJson(json: i, transform: true),
       );
 
       _storageService.multiInsert(

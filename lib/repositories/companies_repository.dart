@@ -44,7 +44,7 @@ class CompaniesRepository {
     }
 
     final companies = remoteResult
-        .map((entry) => Company.fromJson(json: entry, jsonify: false))
+        .map((entry) => Company.fromJson(json: entry, tranform: true))
         .toList();
 
     // Here we can resave local attributes before writing to storage
