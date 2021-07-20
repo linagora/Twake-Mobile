@@ -156,8 +156,10 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                               },
                             ),
                           if (widget.isMe && widget.message.responsesCount == 0)
-                            SizedBox(
-                              width: 30,
+                            Flexible(
+                              child: SizedBox(
+                                width: 30,
+                              ),
                             ),
                           widget.message.content.originalStr?.isEmpty ?? true
                               ? Container()
@@ -202,8 +204,10 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                   },
                                 ),
                           if (widget.message.threadId == null)
-                            SizedBox(
-                              width: 30,
+                            Flexible(
+                              child: SizedBox(
+                                width: 30,
+                              ),
                             ),
                           if (widget.message.threadId == null)
                             GestureDetector(
@@ -245,8 +249,10 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                               },
                             ),
                           if (widget.isMe)
-                            SizedBox(
-                              width: 30,
+                            Flexible(
+                              child: SizedBox(
+                                width: 30,
+                              ),
                             ),
                           if (widget.isMe)
                             GestureDetector(
@@ -336,9 +342,11 @@ class EmojiLine extends StatelessWidget {
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(right: 2.0),
-                    child: Text(
-                      e,
-                      style: TextStyle(fontSize: fontSize),
+                    child: FittedBox(
+                      child: Text(
+                        e,
+                        style: TextStyle(fontSize: fontSize),
+                      ),
                     ),
                   ),
                 ),

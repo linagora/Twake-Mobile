@@ -20,11 +20,10 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
       child: FittedBox(
         child: Container(
           decoration: BoxDecoration(
-            // waiting for accurate colors in the upcoming design
-            color: Color(0xFFF6F6F6),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.white,width: 3)
-          ),
+              // waiting for accurate colors in the upcoming design
+              color: Color(0xFFF6F6F6),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.white, width: 3)),
           child: Padding(
             padding: const EdgeInsets.all(2.0),
             child: Row(
