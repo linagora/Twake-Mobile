@@ -32,14 +32,14 @@ class InitService {
     _apiService = ApiService(reset: true);
     SynchronizationService(reset: true);
     if (globals.oidcAuthority == null)
-      await globals.hostSet('https://beta.twake.app');
+      await globals.hostSet('https://web.qa.twake.app');
   }
 
   // should only be called once after successful authentication/login
   // yields numbers from 1 to 100 meaning percentage of completion
   static Stream<int> syncData() async* {
     // 0. Fetch and save the user's id into Globals
-    _apiService.get(endpoint: Endpoint.account).then((userData) {
+    await _apiService.get(endpoint: Endpoint.account).then((userData) {
       final currentAccount = Account.fromJson(json: userData);
       Globals.instance.userIdSet = currentAccount.id;
       _storageService.insert(table: Table.account, data: currentAccount);
@@ -48,7 +48,8 @@ class InitService {
     yield 5;
 
     List<dynamic> remoteResult = await _apiService.get(
-      endpoint: Endpoint.companies,
+      endpoint: sprintf(Endpoint.companies, [Globals.instance.userId]),
+      key: 'resources',
     );
 
     yield 15;
@@ -65,8 +66,8 @@ class InitService {
     final workspaceFutures = companies.map((c) async {
       // 2. For each company fetch workspaces
       remoteResult = await _apiService.get(
-        endpoint: Endpoint.workspaces,
-        queryParameters: {'company_id': c.id},
+        endpoint: sprintf(Endpoint.workspaces, [c.id]),
+        key: 'resources',
       );
       final workspaces = remoteResult.map(
         (i) => Workspace.fromJson(json: i, jsonify: false),

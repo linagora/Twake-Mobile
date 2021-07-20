@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_member_cubit/add_member_cubit.dart';
@@ -9,7 +8,6 @@ import 'package:twake/models/account/account.dart';
 import 'package:twake/pages/member/found_member_tile.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
-import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'selected_member_tile.dart';
@@ -74,11 +72,14 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           builder: (ctx, addMemberState) {
                             return EnableButtonWidget(
                                 onEnableButtonWidgetClick: () {
-                                  popBack(result: addMemberState.selectedMembers);
+                                  popBack(
+                                      result: addMemberState.selectedMembers);
                                 },
                                 text: 'Add',
-                                isEnable: addMemberState.selectedMembers.isNotEmpty);
-                          },),
+                                isEnable:
+                                    addMemberState.selectedMembers.isNotEmpty);
+                          },
+                        ),
                       ),
                       Align(
                           alignment: Alignment.center,
@@ -112,7 +113,9 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                 ),
                 BlocBuilder<AddMemberCubit, AddMemberState>(
                     bloc: Get.find<AddMemberCubit>(),
-                    buildWhen: (_ , current) => current is AddMemberInSearch || current is AddMemberInFrequentlyContacted,
+                    buildWhen: (_, current) =>
+                        current is AddMemberInSearch ||
+                        current is AddMemberInFrequentlyContacted,
                     builder: (context, addMemberState) {
                       if (addMemberState.selectedMembers.isEmpty) {
                         return SizedBox.shrink();
@@ -123,16 +126,19 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             scrollDirection: Axis.horizontal,
                             separatorBuilder: (_, index) => SizedBox(
-                              width: 8,
-                            ),
+                                  width: 8,
+                                ),
                             itemCount: addMemberState.selectedMembers.length,
                             itemBuilder: (context, index) {
-                              final selectedUser = addMemberState.selectedMembers[index];
+                              final selectedUser =
+                                  addMemberState.selectedMembers[index];
                               return SelectedMemberTile(
-                                onSelectedMemberTileClick: () {
-                                  Get.find<AddMemberCubit>().removeMember(selectedUser);
-                                },
-                                  memberName: '${selectedUser.firstname} ${selectedUser.lastname}');
+                                  onSelectedMemberTileClick: () {
+                                    Get.find<AddMemberCubit>()
+                                        .removeMember(selectedUser);
+                                  },
+                                  memberName:
+                                      '${selectedUser.firstname} ${selectedUser.lastname}');
                             }),
                       );
                     }),
@@ -144,7 +150,10 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             top: 14, left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(addMemberState is AddMemberInSearch ? 'FOUND PEOPLE' : 'FREQUENTLY CONTACTED',
+                          child: Text(
+                              addMemberState is AddMemberInSearch
+                                  ? 'FOUND PEOPLE'
+                                  : 'FREQUENTLY CONTACTED',
                               style: TextStyle(
                                 color: Color(0x59000000),
                                 fontSize: 13,
@@ -157,8 +166,8 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                 Expanded(
                     child: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, bottom: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                     child: BlocBuilder<AddMemberCubit, AddMemberState>(
                       bloc: Get.find<AddMemberCubit>(),
                       builder: (context, addMemberState) {
@@ -184,19 +193,24 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                   itemCount: users.length,
                                   itemBuilder: (context, index) {
                                     final user = users[index];
-                                    final isSelected = addMemberState.selectedMembers.contains(user);
+                                    final isSelected = addMemberState
+                                        .selectedMembers
+                                        .contains(user);
                                     return FoundMemberTile(
                                       onFoundMemberTileClick: () {
                                         if (isSelected) {
-                                          Get.find<AddMemberCubit>().removeMember(user);
+                                          Get.find<AddMemberCubit>()
+                                              .removeMember(user);
                                         } else {
-                                          Get.find<AddMemberCubit>().selectMember(user);
+                                          Get.find<AddMemberCubit>()
+                                              .selectMember(user);
                                           _searchController.text = '';
                                         }
                                       },
                                       isSelected: isSelected,
-                                      imageUrl: user.thumbnail ?? '',
-                                      name: '${user.firstname} ${user.lastname}',
+                                      imageUrl: user.picture ?? '',
+                                      name:
+                                          '${user.firstname} ${user.lastname}',
                                     );
                                   })),
                         );

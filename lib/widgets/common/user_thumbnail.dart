@@ -29,7 +29,7 @@ class UserThumbnail extends StatelessWidget {
           builder: (_, state) {
             var thumbUrl;
             if (state is AccountLoadSuccess) {
-              thumbUrl = state.account.thumbnail ?? '';
+              thumbUrl = state.account.picture ?? '';
               if (thumbnailUrl.isNotReallyEmpty) {
                 return RoundedImage(
                   imageUrl: thumbUrl,

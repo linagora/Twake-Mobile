@@ -212,8 +212,7 @@ class HomeDrawerWidget extends StatelessWidget {
                             child: Row(
                               children: [
                                 RoundedImage(
-                                  imageUrl:
-                                      accountState.account.thumbnail ?? '',
+                                  imageUrl: accountState.account.picture ?? '',
                                   width: 24,
                                   height: 24,
                                 ),

@@ -7,15 +7,13 @@ class Endpoint {
   static const authorize = '/authorize';
   // API Endpoint for prolonging token
   static const authorizationProlong = '/authorization/prolong';
-  // API Endpoint for getting current supported emojis
-  static const emojis = '/info/emoji';
 
   /// List of internal methods, for authorized users only
 
   // API Endpoint for sending logout event to backend
   static const logout = '/logout';
   // API Endpoint for working with account data
-  static const account = '/internal/services/users/v1/users/%s';
+  static const account = '/user';
   // API Endpoint for working with user's companies
   static const companies = '/internal/services/users/v1/users/%s/companies';
   // API Endpoint for working with user's companies
@@ -37,8 +35,6 @@ class Endpoint {
   static const messages = '/messages';
   // API Endpoint for working with message reactions
   static const reactions = '/reactions';
-  // API Endpoint for searching users by name
-  static const usersSearch = '/users/search';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const notificationRooms = '/workspace/notifications';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
@@ -48,26 +44,35 @@ class Endpoint {
   // Obtain JWToken pair for Twake
   static const token = '/ajax/users/console/token';
 
-  static const coreMethods = const [
+  static const proxyMethods = const [
     account,
-    companies,
-    workspaces,
-    info,
-    token,
+    badges,
+    workspaceMembers,
+    channels,
+    channelsRead,
+    channelMembers,
+    directs,
+    messages,
+    reactions,
+    notificationRooms,
+    fileUpload,
+    logout,
+    authorize,
+    authorizationProlong,
   ];
 
   static const publicMethods = const [
     authorize,
     authorizationProlong,
-    emojis,
     info,
+    token,
   ];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {
     return publicMethods.contains(method);
   }
 
-  static bool isCore(String method) {
-    return coreMethods.contains(method);
+  static bool isProxy(String method) {
+    return proxyMethods.contains(method);
   }
 }

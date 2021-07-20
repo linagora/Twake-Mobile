@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
-import 'package:twake/utils/json.dart' as jsn;
+import 'package:twake/utils/api_data_transformer.dart';
 
 export 'account2workspace.dart';
 
@@ -14,17 +14,18 @@ class Account extends BaseModel {
   final String? lastname;
   final String username;
 
-  @JsonKey(name: 'picture')
-  final String? thumbnail;
+  final String? picture;
 
-  @JsonKey(name: 'provider_id')
-  final String? consoleId;
+  final String? providerId;
 
   final String? status;
   final String? language;
   final int lastActivity;
-  final bool isVerified;
-  final bool deleted;
+
+  @JsonKey(name: 'is_verified')
+  int _isVerified = 0;
+  @JsonKey(name: 'deleted')
+  int _deleted = 0;
 
   Account({
     required this.id,
@@ -32,13 +33,11 @@ class Account extends BaseModel {
     this.firstname,
     this.lastname,
     required this.username,
-    this.thumbnail,
-    this.consoleId,
+    this.picture,
+    this.providerId,
     this.status,
     this.language,
     required this.lastActivity,
-    required this.isVerified,
-    required this.deleted,
   });
 
   int get hash =>
@@ -47,12 +46,18 @@ class Account extends BaseModel {
       firstname.hashCode +
       lastname.hashCode +
       username.hashCode +
-      thumbnail.hashCode +
+      picture.hashCode +
       status.hashCode;
 
   String get fullName => firstname != null && firstname!.isNotEmpty
       ? '$firstname $lastname'
       : username;
+
+  @JsonKey(ignore: true)
+  bool get isVerified => _isVerified > 0;
+
+  @JsonKey(ignore: true)
+  bool get deleted => _deleted > 0;
 
   factory Account.fromJson({
     required Map<String, dynamic> json,
@@ -60,11 +65,8 @@ class Account extends BaseModel {
     bool jsonify: false,
     bool transform: false,
   }) {
-    // message retrieved from sqlite database will have
-    // it's composite fields json string encoded, so there's a
-    // need to decode them back
-    if (jsonify) {
-      json = jsn.jsonify(json: json, keys: const []);
+    if (transform) {
+      json = ApiDataTransformer.account(json: json);
     }
     return _$AccountFromJson(json);
   }
@@ -72,12 +74,6 @@ class Account extends BaseModel {
   @override
   Map<String, dynamic> toJson({stringify: false}) {
     var json = _$AccountToJson(this);
-    // message that is to be stored to sqlite database should have
-    // it's composite fields json string encoded, because sqlite doesn't support
-    // non primitive data types, so we need to encode those fields
-    if (stringify) {
-      json = jsn.stringify(json: json, keys: const []);
-    }
     return json;
   }
 }

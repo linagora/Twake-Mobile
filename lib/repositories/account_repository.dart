@@ -34,10 +34,8 @@ class AccountRepository {
   }
 
   Future<Account> remoteFetch({String? userId}) async {
-    final remoteResult = await _api.get(
-      endpoint: Endpoint.account,
-      queryParameters: {'id': userId},
-    );
+    final remoteResult =
+        await _api.get(endpoint: sprintf(Endpoint.account, [userId ?? 'me']));
 
     final account = Account.fromJson(json: remoteResult);
 

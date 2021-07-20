@@ -43,7 +43,7 @@ class StorageService {
         return version;
       });
 
-      if (oldDBVersion < 5) {
+      if (oldDBVersion < 6) {
         await deleteDatabase(path);
       }
     }

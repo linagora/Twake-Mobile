@@ -244,14 +244,14 @@ class _ComposeBar extends State<ComposeBar> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(30)),
                                     child: CircleAvatar(
-                                      child: state.accounts[i].thumbnail! == ""
+                                      child: state.accounts[i].picture! == ""
                                           ? CircleAvatar(
                                               child: Icon(Icons.person,
                                                   color: Colors.grey),
                                               backgroundColor: Colors.blue[50],
                                             )
                                           : Image.network(
-                                              state.accounts[i].thumbnail!,
+                                              state.accounts[i].picture!,
                                               fit: BoxFit.contain,
                                               loadingBuilder:
                                                   (context, child, progress) {

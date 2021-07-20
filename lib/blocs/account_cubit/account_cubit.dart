@@ -36,7 +36,7 @@ class AccountCubit extends Cubit<AccountState> {
       // tracking
       if (sendAnalyticAfterFetch && !isTracked && !kDebugMode) {
         isTracked = true;
-        Segment.identify(userId: account.consoleId ?? account.id).then((r) {
+        Segment.identify(userId: account.providerId ?? account.id).then((r) {
           Segment.track(eventName: 'twake-mobile:open_client');
         }).onError((e, s) {
           Logger().d('Error while send tracking info: $e');

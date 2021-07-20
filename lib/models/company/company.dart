@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/company/company_role.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 part 'company.g.dart';
 
@@ -15,7 +16,7 @@ class Company extends BaseModel {
   @JsonKey(defaultValue: 0)
   final int totalMembers;
 
-  CompanyRole role;
+  final CompanyRole role;
 
   String? selectedWorkspace;
 
@@ -31,19 +32,19 @@ class Company extends BaseModel {
   factory Company.fromJson({
     required Map<String, dynamic> json,
     bool jsonify: true,
+    bool tranform: false,
   }) {
-    // message retrieved from sqlite database will have
-    // it's composite fields json string encoded, so there's a
-    // need to decode them back, composite fields are absent for company model
+    // need to adjust the json structure before trying to map it to model
+    if (tranform) {
+      json = ApiDataTransformer.company(json: json);
+    }
+
     return _$CompanyFromJson(json);
   }
 
   @override
   Map<String, dynamic> toJson({stringify: true}) {
     var json = _$CompanyToJson(this);
-    // message that is to be stored to sqlite database should have
-    // it's composite fields json string encoded, because sqlite doesn't support
-    // non primitive data types, so we need to encode those fields, composite fields are absent for company model
     return json;
   }
 }

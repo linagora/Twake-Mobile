@@ -29,7 +29,7 @@ class StackedUserAvatars extends StatelessWidget {
             future: Get.find<AccountCubit>().fetchStateless(userId: userIds[i]),
             builder: (context, snapshot) => ImageAvatar(
                 snapshot.connectionState == ConnectionState.done
-                    ? (snapshot.data as Account).thumbnail
+                    ? (snapshot.data as Account).picture
                     : null),
           ),
         ),

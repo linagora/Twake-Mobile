@@ -33,4 +33,29 @@ class ApiDataTransformer {
 
     return json;
   }
+
+  static Map<String, dynamic> workspace({required Map<String, dynamic> json}) {
+    json['total_members'] = json['stats']['total_members'];
+
+    return json;
+  }
 }
+
+// {
+//   "id": "uuid",
+//   "company_id": "string", //Related to console "code"
+//   "name": "string",
+//   "logo": "string",
+//
+//   "default": boolean,
+//   "archived": boolean,
+//
+//   "stats": {
+//     "created_at": timestamp,
+//     "total_members": number,
+//     //Will be completed with Twake specific stats
+//   },
+//
+//   //If requested as a user
+//   "role": "admin" | "member",
+// }

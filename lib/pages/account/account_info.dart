@@ -60,9 +60,10 @@ class _AccountInfoState extends State<AccountInfo> {
               _userNameController.text = '@${accountState.account.username}';
               _firstNameController.text = accountState.account.firstname ?? '';
               _lastNameController.text = accountState.account.lastname ?? '';
-              _picture = accountState.account.thumbnail ?? '';
+              _picture = accountState.account.picture ?? '';
               _isLoading = false;
-            } else if (accountState is AccountLoadInProgress || accountState is AccountLoadFailure) {
+            } else if (accountState is AccountLoadInProgress ||
+                accountState is AccountLoadFailure) {
               _isLoading = true;
             }
 
@@ -78,7 +79,8 @@ class _AccountInfoState extends State<AccountInfo> {
                       maxWidth: MediaQuery.of(context).size.width,
                       maxHeight: 56.0,
                       child: Container(
-                        padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
+                        padding:
+                            const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 0.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,

@@ -76,7 +76,7 @@ CREATE TABLE account (
     firstname TEXT,
     lastname TEXT,
     thumbnail TEXT,
-    console_id TEXT,
+    provider_id TEXT,
     status_icon TEXT,
     status TEXT,
     language TEXT,

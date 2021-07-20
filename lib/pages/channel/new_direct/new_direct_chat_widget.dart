@@ -98,7 +98,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
               Container(
                 height: 40,
                 child: GestureDetector(
-                  behavior:  HitTestBehavior.translucent,
+                  behavior: HitTestBehavior.translucent,
                   onTap: () => push(RoutePaths.newChannel.path),
                   child: Row(
                     children: [
@@ -175,7 +175,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                               ); // key is channelId
                             },
                             name: member.value.fullName,
-                            imageUrl: member.value.thumbnail ?? '',
+                            imageUrl: member.value.picture ?? '',
                           );
                         },
                       ),
@@ -223,7 +223,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                             Get.find<NewDirectCubit>().newDirect(member.id);
                           },
                           name: member.fullName,
-                          imageUrl: member.thumbnail ?? '',
+                          imageUrl: member.picture ?? '',
                         );
                       },
                     );

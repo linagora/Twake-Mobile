@@ -1,4 +1,5 @@
 export 'package:logger/logger.dart';
+export 'package:sprintf/sprintf.dart';
 
 export 'package:twake/services/api_service.dart';
 export 'package:twake/services/storage_service.dart';

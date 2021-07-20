@@ -26,7 +26,7 @@ class ApiService {
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
       options.baseUrl = Globals.instance.host +
-          (Endpoint.isCore(options.path) ? '' : _PROXY_PREFIX);
+          (Endpoint.isProxy(options.path) ? _PROXY_PREFIX : '');
 
       if (Endpoint.isPublic(options.path)) {
         handler.next(options);
@@ -94,13 +94,14 @@ class ApiService {
     required String endpoint,
     Map<String, dynamic> queryParameters: const {},
     CancelToken? cancelToken,
+    String? key,
   }) async {
     final r = await this._dio.get(
           endpoint,
           queryParameters: queryParameters,
           cancelToken: cancelToken,
         );
-    return r.data;
+    return key != null ? r.data[key] : r.data;
   }
 
   Future<dynamic> post({

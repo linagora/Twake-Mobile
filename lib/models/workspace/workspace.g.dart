@@ -13,11 +13,7 @@ Workspace _$WorkspaceFromJson(Map<String, dynamic> json) {
     logo: json['logo'] as String?,
     companyId: json['company_id'] as String,
     totalMembers: json['total_members'] as int? ?? 0,
-    userLastAccess: json['user_last_access'] as int? ?? 0,
-    permissions: (json['permissions'] as List<dynamic>?)
-            ?.map((e) => e as String)
-            .toList() ??
-        [],
+    role: _$enumDecode(_$WorkspaceRoleEnumMap, json['role']),
   );
 }
 
@@ -27,6 +23,36 @@ Map<String, dynamic> _$WorkspaceToJson(Workspace instance) => <String, dynamic>{
       'logo': instance.logo,
       'company_id': instance.companyId,
       'total_members': instance.totalMembers,
-      'user_last_access': instance.userLastAccess,
-      'permissions': instance.permissions,
+      'role': _$WorkspaceRoleEnumMap[instance.role],
     };
+
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
+  }
+
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
+}
+
+const _$WorkspaceRoleEnumMap = {
+  WorkspaceRole.admin: 'admin',
+  WorkspaceRole.member: 'member',
+};

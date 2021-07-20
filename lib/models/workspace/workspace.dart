@@ -1,13 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
-import 'package:twake/utils/json.dart' as jsn;
+import 'package:twake/models/workspace/workspace_role.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 part 'workspace.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Workspace extends BaseModel {
-  static const COMPOSITE_FIELDS = ['permissions'];
-
   final String id;
 
   String name;
@@ -19,11 +18,7 @@ class Workspace extends BaseModel {
   @JsonKey(defaultValue: 0)
   int totalMembers;
 
-  @JsonKey(defaultValue: 0)
-  int userLastAccess;
-
-  @JsonKey(defaultValue: [])
-  List<String> permissions;
+  final WorkspaceRole role;
 
   Workspace({
     required this.id,
@@ -31,19 +26,17 @@ class Workspace extends BaseModel {
     this.logo,
     required this.companyId,
     required this.totalMembers,
-    required this.userLastAccess,
-    required this.permissions,
+    required this.role,
   });
 
   factory Workspace.fromJson({
     required Map<String, dynamic> json,
-    bool jsonify: true,
+    bool jsonify: false,
+    bool transform: false,
   }) {
-    // message retrieved from sqlite database will have
-    // it's composite fields json string encoded, so there's a
-    // need to decode them back
-    if (jsonify) {
-      json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
+    // need to adjust the json structure before trying to map it to model
+    if (transform) {
+      json = ApiDataTransformer.workspace(json: json);
     }
     return _$WorkspaceFromJson(json);
   }
@@ -51,12 +44,6 @@ class Workspace extends BaseModel {
   @override
   Map<String, dynamic> toJson({stringify: true}) {
     var json = _$WorkspaceToJson(this);
-    // message that is to be stored to sqlite database should have
-    // it's composite fields json string encoded, because sqlite doesn't support
-    // non primitive data types, so we need to encode those fields
-    if (stringify) {
-      json = jsn.stringify(json: json, keys: COMPOSITE_FIELDS);
-    }
     return json;
   }
 }
