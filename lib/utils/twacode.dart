@@ -19,8 +19,11 @@ class TwacodeParser {
   List<dynamic> get message => nodes.map((n) => n.transform()).toList();
 
   void parse(String? original) {
+    if (original == null) {
+      original = "";
+    }
     int start = 0;
-    for (int i = 0; i < original!.length - 1; i++) {
+    for (int i = 0; i < original.length - 1; i++) {
       // Bold text
       if (original[i] == Delim.star && original[i + 1] == Delim.star) {
         final index = this.doesCloseBold(i + 2);
