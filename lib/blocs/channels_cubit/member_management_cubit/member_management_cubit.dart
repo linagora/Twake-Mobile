@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/utils/extensions.dart';
 
 class MemberManagementCubit extends Cubit<MemberManagementState> {
@@ -15,6 +16,15 @@ class MemberManagementCubit extends Cubit<MemberManagementState> {
     final channelMembers = allMember.where((member) => ids.contains(member.id)).toList();
 
     emit(MemberManagementNormalState(allMembers: channelMembers));
+  }
+
+  void updateMemberList(List<Account> members) {
+    emit(MemberManagementNormalState(allMembers: members));
+  }
+
+  void newMembersAdded(List<Account> newMembers) {
+    final updatedList = List<Account>.from(state.allMembers)..addAll(newMembers);
+    emit(MemberManagementNormalState(allMembers: updatedList));
   }
 
   void searchMembers(String memberName) {

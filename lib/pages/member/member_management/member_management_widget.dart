@@ -4,8 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_cubit.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_state.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -130,34 +132,52 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                             color: Colors.white,
                             child: Column(
                               children: [
-                                Container(
-                                  height: 50,
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                                        child: RoundedWidget(
-                                          borderRadius: 17,
-                                          child: Container(
-                                            width: 34,
-                                            height: 34,
-                                            color: Color(0x14969ca4),
-                                            child: Icon(
-                                              Icons.add,
-                                              color: Color(0xff004dff),
-                                              size: 24,
+                                GestureDetector(
+                                  onTap: () async {
+                                    final currentSelectedMembers =
+                                        Get.find<MemberManagementCubit>().state.allMembers;
+                                    final selectedMembersResult = await push(
+                                        RoutePaths.addChannelMembers.path,
+                                        arguments: currentSelectedMembers.isEmpty
+                                            ? null
+                                            : currentSelectedMembers);
+                                        if (selectedMembersResult != null &&
+                                            selectedMembersResult is List<Account> &&
+                                            selectedMembersResult.isNotEmpty) {
+                                          Get.find<MemberManagementCubit>()
+                                              .newMembersAdded(selectedMembersResult);
+                                        }
+                                      },
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Container(
+                                    height: 50,
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                                          child: RoundedWidget(
+                                            borderRadius: 17,
+                                            child: Container(
+                                              width: 34,
+                                              height: 34,
+                                              color: Color(0x14969ca4),
+                                              child: Icon(
+                                                Icons.add,
+                                                color: Color(0xff004dff),
+                                                size: 24,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Text("Add a member",
-                                          style: TextStyle(
-                                            color: Color(0xff004dff),
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w400,
-                                            fontStyle: FontStyle.normal,
-                                          ))
-                                    ],
+                                        Text("Add a member",
+                                            style: TextStyle(
+                                              color: Color(0xff004dff),
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                            ))
+                                      ],
+                                    ),
                                   ),
                                 ),
                                 Padding(
