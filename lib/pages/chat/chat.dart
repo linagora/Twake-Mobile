@@ -84,116 +84,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   ),
                 ),
               MessagesGroupedList(parentChannel: channel),
-              BlocBuilder<ThreadMessagesCubit, MessagesState>(
-                  bloc: Get.find<ThreadMessagesCubit>(),
-                  builder: (ctx, state) {
-                    if (state is MessagesLoadSuccess) {
-                      final _message = state.parentMessage;
-                      // TODO: null check
-                      // if (_message == null) {
-                      //   _message =  ;
-                      // }
-                      return Column(
-                        children: [
-                          Divider(
-                            thickness: 1,
-                            height: 3,
-                            color: Color(0x1e000000),
-                          ),
-                          SizedBox(
-                            height: 2,
-                          ),
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 15,
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text("Reply to ",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: Colors.black)),
-                                      Text(
-                                        '${_message!.sender}',
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.black),
-                                      ),
-                                      //TODO do we need to use user's color or not?
-                                      /* Text(
-                                  '${_message.sender}',
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                    color: HSLColor.fromAHSL(
-                                            1,
-                                            _message.username.hashCode % 360,
-                                            0.9,
-                                            0.3)
-                                        .toColor(),
-                                  ),
-                                ),*/
-                                    ],
-                                  ),
-                                  ConstrainedBox(
-                                    constraints: BoxConstraints(
-                                        maxHeight:
-                                            MediaQuery.of(context).size.height *
-                                                0.3),
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Container(
-                                            height: 25,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            child: TwacodeRenderer(
-                                              twacode:
-                                                  _message.content.prepared,
-                                              parentStyle: TextStyle(
-                                                fontSize: 14.0,
-                                                //fontWeight: FontWeight.w400,
-                                                color: Color(0xFF818C99),
-                                              ),
-                                            ).message,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                              Spacer(),
-                              GestureDetector(
-                                child: IconButton(
-                                  onPressed: () {},
-                                  iconSize: 25,
-                                  icon:
-                                      Icon(CupertinoIcons.clear_thick_circled),
-                                  color: Colors.grey[300],
-                                ),
-                                onTap: () {},
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    } else
-                      return Container();
-                  }),
+              threadReply(context),
               ComposeBar(
                 autofocus: messagesState is MessageEditInProgress,
                 initialText: (messagesState is MessageEditInProgress)
@@ -237,6 +128,113 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget threadReply(BuildContext context) {
+    return BlocBuilder<ThreadMessagesCubit, MessagesState>(
+      bloc: Get.find<ThreadMessagesCubit>(),
+      builder: (ctx, state) {
+        if (state is MessagesLoadSuccess) {
+          final _message = state.parentMessage;
+          // TODO: add null check
+          // if (_message == null) {
+          //   _message =  ;
+          // }
+          return Column(
+            children: [
+              Divider(
+                thickness: 1,
+                height: 3,
+                color: Color(0x1e000000),
+              ),
+              SizedBox(
+                height: 2,
+              ),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 15,
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text("Reply to ",
+                              style:
+                                  TextStyle(fontSize: 15, color: Colors.black)),
+                          Text(
+                            '${_message!.sender}',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black),
+                          ),
+                          //TODO do we need to use user's color or not?
+                          /* Text(
+                                  '${_message.sender}',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w600,
+                                    color: HSLColor.fromAHSL(
+                                            1,
+                                            _message.username.hashCode % 360,
+                                            0.9,
+                                            0.3)
+                                        .toColor(),
+                                  ),
+                                ),*/
+                        ],
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                            maxHeight:
+                                MediaQuery.of(context).size.height * 0.15),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                child: TwacodeRenderer(
+                                  twacode: _message.content.prepared,
+                                  parentStyle: TextStyle(
+                                    fontSize: 14.0,
+                                    //fontWeight: FontWeight.w400,
+                                    color: Color(0xFF818C99),
+                                  ),
+                                ).message,
+                              ),
+                              SizedBox(
+                                height: 3,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Get.find<ThreadMessagesCubit>().reset();
+                    },
+                    iconSize: 25,
+                    icon: Icon(CupertinoIcons.clear_thick_circled),
+                    color: Colors.grey[300],
+                  ),
+                  SizedBox(
+                    width: 15,
+                  ),
+                ],
+              ),
+            ],
+          );
+        } else
+          return Container();
+      },
     );
   }
 }

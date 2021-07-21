@@ -175,6 +175,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
+                  //  Get.find<ThreadMessagesCubit>().reset();
+
                   NavigatorService.instance.navigate(
                       channelId: message.channelId,
                       threadId: message.id,
