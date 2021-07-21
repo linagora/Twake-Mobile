@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/edit_channel_cubit/edit_channel_state.dart';
+import 'package:twake/utils/extensions.dart';
 
 class EditChannelCubit extends Cubit<EditChannelState> {
   late final ChannelsCubit _channelsCubit;
@@ -27,7 +28,7 @@ class EditChannelCubit extends Cubit<EditChannelState> {
 
   void validateEditChannelData({required String name}) {
     emit(EditChannelValidation(
-        validToEditChannel: name.isNotEmpty,
+        validToEditChannel: name.isNotReallyEmpty,
         showEmoijKeyboard: state.showEmoijKeyboard,
         emoijIcon: state.emoijIcon));
   }
