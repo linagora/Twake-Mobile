@@ -190,10 +190,12 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 : (widget.upBubbleSide || widget.downBubbleSide
                                     ? (widget.upBubbleSide == true
                                         ? (BorderRadius.only(
+                                            bottomRight: Radius.circular(4),
                                             topRight: Radius.circular(18),
                                             topLeft: Radius.circular(18),
                                             bottomLeft: Radius.circular(18)))
                                         : (BorderRadius.only(
+                                            topRight: Radius.circular(4),
                                             bottomRight: Radius.circular(18),
                                             topLeft: Radius.circular(18),
                                             bottomLeft: Radius.circular(18))))
@@ -205,10 +207,12 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 : (widget.upBubbleSide || widget.downBubbleSide
                                     ? (widget.upBubbleSide == true
                                         ? (BorderRadius.only(
+                                            bottomLeft: Radius.circular(4),
                                             topLeft: Radius.circular(18),
                                             topRight: Radius.circular(18),
                                             bottomRight: Radius.circular(18)))
                                         : (BorderRadius.only(
+                                            topLeft: Radius.circular(4),
                                             bottomLeft: Radius.circular(18),
                                             topRight: Radius.circular(18),
                                             bottomRight: Radius.circular(18))))
