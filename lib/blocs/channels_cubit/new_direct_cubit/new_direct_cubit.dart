@@ -4,6 +4,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -29,7 +30,9 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       [workspacesCubit.fetchMembers(local: true), _fetchRecentChats()],
     );
 
-    final workspaceMembers = result.first as List<Account>;
+    final workspaceMembers = (result.first as List<Account>)
+        ..removeWhere((element) => element.id == Globals.instance.userId);
+
     final recentChats = result.last as Map<String, Account>;
 
     emit(NewDirectNormalState(
