@@ -13,7 +13,8 @@ Workspace _$WorkspaceFromJson(Map<String, dynamic> json) {
     logo: json['logo'] as String?,
     companyId: json['company_id'] as String,
     totalMembers: json['total_members'] as int? ?? 0,
-    role: _$enumDecode(_$WorkspaceRoleEnumMap, json['role']),
+    role: _$enumDecodeNullable(_$WorkspaceRoleEnumMap, json['role']) ??
+        WorkspaceRole.member,
   );
 }
 
@@ -52,7 +53,19 @@ K _$enumDecode<K, V>(
   ).key;
 }
 
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
+}
+
 const _$WorkspaceRoleEnumMap = {
   WorkspaceRole.admin: 'admin',
+  WorkspaceRole.moderator: 'moderator',
   WorkspaceRole.member: 'member',
 };

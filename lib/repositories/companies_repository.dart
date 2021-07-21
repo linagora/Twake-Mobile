@@ -36,6 +36,7 @@ class CompaniesRepository {
   Future<List<Company>> fetchRemote({List<Company>? localCopy}) async {
     final List<dynamic> remoteResult = await this._api.get(
           endpoint: sprintf(Endpoint.companies, [Globals.instance.userId]),
+          key: 'resources',
         );
 
     if (localCopy == null) {

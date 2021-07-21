@@ -102,6 +102,7 @@ class WorkspacesRepository {
   Future<List<Workspace>> fetchRemote({required String companyId}) async {
     final List<dynamic> remoteResult = await this._api.get(
           endpoint: sprintf(Endpoint.workspaces, [companyId]),
+          key: 'resources',
         );
 
     final List<Workspace> workspaces = remoteResult

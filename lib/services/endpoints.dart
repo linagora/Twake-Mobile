@@ -20,7 +20,7 @@ class Endpoint {
   static const badges = '/badges';
   // API Endpoint for working with user's workspaces in all companies
   static const workspaces =
-      '/internal/services/users/v1/companies/%s/workspaces';
+      '/internal/services/workspaces/v1/companies/%s/workspaces';
   // API Endpoint for working with the members of workspace
   static const workspaceMembers = '/workspaces/members';
   // API Endpoint for working with user's channels in a workspace

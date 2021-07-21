@@ -18,6 +18,7 @@ class Workspace extends BaseModel {
   @JsonKey(defaultValue: 0)
   int totalMembers;
 
+  @JsonKey(defaultValue: WorkspaceRole.member)
   final WorkspaceRole role;
 
   Workspace({
