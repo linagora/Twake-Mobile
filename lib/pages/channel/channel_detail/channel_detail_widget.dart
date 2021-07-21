@@ -29,15 +29,15 @@ class ChannelDetailWidget extends StatelessWidget {
                           color: Color(0xff004dff),
                         )),
                   ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.keyboard_control,
-                          color: Color(0xff004dff),
-                        )),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.topRight,
+                  //   child: IconButton(
+                  //       onPressed: () {},
+                  //       icon: Icon(
+                  //         Icons.keyboard_control,
+                  //         color: Color(0xff004dff),
+                  //       )),
+                  // ),
                   Align(
                     alignment: Alignment.center,
                     child: Padding(
@@ -83,7 +83,6 @@ class ChannelDetailWidget extends StatelessWidget {
                   },
                 ),
               ),
-
               BlocBuilder<ChannelsCubit, ChannelsState>(
                 bloc: Get.find<ChannelsCubit>(),
                 builder: (ctx, channelState) {
@@ -100,91 +99,91 @@ class ChannelDetailWidget extends StatelessWidget {
               SizedBox(
                 height: 16,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 70,
-                    child: Column(
-                      children: [
-                        Image.asset(imageAddMember, width: 46, height: 36,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text('Add members',
-                              style: TextStyle(
-                                color: Color(0xff004dff),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 80,
-                    height: 70,
-                    child: Column(
-                      children: [
-                        Image.asset(imageMessages, width: 46, height: 36,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text('Messages',
-                              style: TextStyle(
-                                color: Color(0xff004dff),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 80,
-                    height: 70,
-                    child: Column(
-                      children: [
-                        Image.asset(imageSearch, width: 46, height: 36,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text('Search',
-                              style: TextStyle(
-                                color: Color(0xff004dff),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 80,
-                    height: 70,
-                    child: Column(
-                      children: [
-                        Image.asset(imageNotificationSetting, width: 46, height: 36,),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text('Mute',
-                              style: TextStyle(
-                                color: Color(0xff004dff),
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //   children: [
+              //     Container(
+              //       width: 80,
+              //       height: 70,
+              //       child: Column(
+              //         children: [
+              //           Image.asset(imageAddMember, width: 46, height: 36,),
+              //           Padding(
+              //             padding: const EdgeInsets.only(top: 8.0),
+              //             child: Text('Add members',
+              //                 style: TextStyle(
+              //                   color: Color(0xff004dff),
+              //                   fontSize: 11,
+              //                   fontWeight: FontWeight.w400,
+              //                   fontStyle: FontStyle.normal,
+              //                 )
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //     Container(
+              //       width: 80,
+              //       height: 70,
+              //       child: Column(
+              //         children: [
+              //           Image.asset(imageMessages, width: 46, height: 36,),
+              //           Padding(
+              //             padding: const EdgeInsets.only(top: 8.0),
+              //             child: Text('Messages',
+              //                 style: TextStyle(
+              //                   color: Color(0xff004dff),
+              //                   fontSize: 11,
+              //                   fontWeight: FontWeight.w400,
+              //                   fontStyle: FontStyle.normal,
+              //                 )
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //     Container(
+              //       width: 80,
+              //       height: 70,
+              //       child: Column(
+              //         children: [
+              //           Image.asset(imageSearch, width: 46, height: 36,),
+              //           Padding(
+              //             padding: const EdgeInsets.only(top: 8.0),
+              //             child: Text('Search',
+              //                 style: TextStyle(
+              //                   color: Color(0xff004dff),
+              //                   fontSize: 11,
+              //                   fontWeight: FontWeight.w400,
+              //                   fontStyle: FontStyle.normal,
+              //                 )
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //     ),
+              //     Container(
+              //       width: 80,
+              //       height: 70,
+              //       child: Column(
+              //         children: [
+              //           Image.asset(imageNotificationSetting, width: 46, height: 36,),
+              //           Padding(
+              //             padding: const EdgeInsets.only(top: 8.0),
+              //             child: Text('Mute',
+              //                 style: TextStyle(
+              //                   color: Color(0xff004dff),
+              //                   fontSize: 11,
+              //                   fontWeight: FontWeight.w400,
+              //                   fontStyle: FontStyle.normal,
+              //                 )
+              //             ),
+              //           )
+              //         ],
+              //       ),
+              //     )
+              //   ],
+              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                 child: Container(

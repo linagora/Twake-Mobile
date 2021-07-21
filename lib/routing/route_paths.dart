@@ -3,14 +3,14 @@ class RoutePaths {
 
   // channel
   static final channelMessages = _RoutePathsType(initial, 'channel/messages');
-  static final channelDetail = _RoutePathsType(channelMessages.path, 'channel_detail');
-  static final editChannel= _RoutePathsType(channelDetail.path, 'edit_channel');
-  static final channelSettings= _RoutePathsType(channelDetail.path, 'channel_settings');
-  static final channelMemberManagement= _RoutePathsType(channelDetail.path, 'channel_member_management');
+  static final channelDetail = _RoutePathsType(channelMessages.path, '/channel_detail');
+  static final editChannel= _RoutePathsType(channelDetail.path, '/edit_channel');
+  static final channelSettings= _RoutePathsType(channelDetail.path, '/channel_settings');
+  static final channelMemberManagement= _RoutePathsType(channelDetail.path, '/channel_member_management');
+  static final addChannelMembers = _RoutePathsType(channelMemberManagement.path, '/add_channel_members');
   static final newDirect = _RoutePathsType(initial, 'channel/new_direct');
   static final newChannel = _RoutePathsType(newDirect.path, '/new_channel');
-  static final addChannelMembers =
-      _RoutePathsType(newChannel.path, '/add_members');
+  static final addAndEditChannelMembers = _RoutePathsType(newChannel.path, '/add_and_edit_channel_members');
 
   // direct
   static final directMessages = _RoutePathsType(initial, 'direct/messages');

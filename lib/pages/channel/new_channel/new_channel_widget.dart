@@ -420,7 +420,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
               final currentSelectedMembers =
                   Get.find<AddChannelCubit>().state.selectedMembers;
               final selectedMembersResult = await push(
-                  RoutePaths.addChannelMembers.path,
+                  RoutePaths.addAndEditChannelMembers.path,
                   arguments: currentSelectedMembers.isEmpty
                       ? null
                       : currentSelectedMembers);
