@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_member_cubit/add_member_cubit.dart';
 import 'package:twake/blocs/channels_cubit/add_member_cubit/add_member_state.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/pages/member/found_member_tile.dart';
 import 'package:twake/routing/app_router.dart';
@@ -12,8 +13,15 @@ import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'selected_member_tile.dart';
 
+enum AddAndEditMemberType { createChannel, addNewMember }
+
 class AddAndEditMemberWidget extends StatefulWidget {
-  const AddAndEditMemberWidget({Key? key}) : super(key: key);
+  final AddAndEditMemberType addAndEditMemberType;
+
+  const AddAndEditMemberWidget(
+      {Key? key,
+      this.addAndEditMemberType = AddAndEditMemberType.createChannel})
+      : super(key: key);
 
   @override
   _AddAndEditMemberWidgetState createState() => _AddAndEditMemberWidgetState();
@@ -71,13 +79,30 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           bloc: Get.find<AddMemberCubit>(),
                           builder: (ctx, addMemberState) {
                             return EnableButtonWidget(
-                                onEnableButtonWidgetClick: () {
-                                  popBack(
-                                      result: addMemberState.selectedMembers);
+                                onEnableButtonWidgetClick: () async {
+                                  if (widget.addAndEditMemberType ==
+                                      AddAndEditMemberType.createChannel) {
+                                    popBack(
+                                        result: addMemberState.selectedMembers);
+                                  } else {
+                                    final currentState =
+                                        Get.find<ChannelsCubit>().state;
+                                    if (currentState is ChannelsLoadedSuccess &&
+                                        currentState.selected != null) {
+                                      final results =
+                                          await Get.find<AddMemberCubit>()
+                                              .addMembersToChannel(
+                                                  currentState.selected!,
+                                                  addMemberState
+                                                      .selectedMembers);
+                                      popBack(result: results);
+                                    }
+                                  }
                                 },
                                 text: 'Add',
-                                isEnable:
-                                    addMemberState.selectedMembers.isNotEmpty);
+                                isEnable: addMemberState
+                                        .selectedMembers.isNotEmpty &&
+                                    !(addMemberState is AddMemberInProgress));
                           },
                         ),
                       ),
@@ -194,8 +219,10 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                   itemBuilder: (context, index) {
                                     final user = users[index];
                                     final isSelected = addMemberState
-                                        .selectedMembers
-                                        .contains(user);
+                                            .selectedMembers
+                                            .indexWhere((element) =>
+                                                element.id == user.id) !=
+                                        -1;
                                     return FoundMemberTile(
                                       onFoundMemberTileClick: () {
                                         if (isSelected) {

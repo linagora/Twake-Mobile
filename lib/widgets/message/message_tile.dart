@@ -153,12 +153,13 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     ),
                     SizedBox(height: 5.0),
                     TwacodeRenderer(
-                      twacode: _message.content.prepared,
-                      parentStyle: TextStyle(
+                      _message.content.prepared,
+                      TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w400,
                         color: Colors.black,
                       ),
+                      _message.username.hashCode % 360,
                     ).message,
                     // Normally we use SizedBox here,
                     // but it will cut the bottom of emojis

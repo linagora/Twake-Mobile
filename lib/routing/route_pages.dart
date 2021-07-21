@@ -28,37 +28,41 @@ final routePages = [
     page: () => InitialPage(),
     children: [
       GetPage(
-        name: RoutePaths.channelMessages.name,
-        page: () => Chat<ChannelsCubit>(),
-        transition: Transition.native,
-        children: [
-          GetPage(
-            name: RoutePaths.channelDetail.name,
-            page: () => ChannelDetailWidget(),
-            transition: Transition.native,
-            children: [
-              GetPage(
-                name: RoutePaths.editChannel.name,
-                page: () => EditChannelWidget(),
+          name: RoutePaths.channelMessages.name,
+          page: () => Chat<ChannelsCubit>(),
+          transition: Transition.native,
+          children: [
+            GetPage(
+                name: RoutePaths.channelDetail.name,
+                page: () => ChannelDetailWidget(),
                 transition: Transition.native,
-                binding: EditChannelBinding()
-              ),
-              GetPage(
-                  name: RoutePaths.channelSettings.name,
-                  page: () => ChannelSettingsWidget(),
-                  transition: Transition.native,
-                  binding: ChannelSettingBinding()
-              ),
-              GetPage(
-                  name: RoutePaths.channelMemberManagement.name,
-                  page: () => MemberManagementWidget(),
-                  transition: Transition.native,
-                  binding: MemberManagementBinding()
-              ),
-            ]
-          ),
-        ]
-      ),
+                children: [
+                  GetPage(
+                      name: RoutePaths.editChannel.name,
+                      page: () => EditChannelWidget(),
+                      transition: Transition.native,
+                      binding: EditChannelBinding()),
+                  GetPage(
+                      name: RoutePaths.channelSettings.name,
+                      page: () => ChannelSettingsWidget(),
+                      transition: Transition.native,
+                      binding: ChannelSettingBinding()),
+                  GetPage(
+                      name: RoutePaths.channelMemberManagement.name,
+                      page: () => MemberManagementWidget(),
+                      transition: Transition.native,
+                      binding: MemberManagementBinding(),
+                      children: [
+                        GetPage(
+                            name: RoutePaths.addChannelMembers.name,
+                            page: () => AddAndEditMemberWidget(
+                                  addAndEditMemberType: AddAndEditMemberType.addNewMember,
+                                ),
+                            transition: Transition.native,
+                            binding: AddMemberBinding())
+                      ]),
+                ]),
+          ]),
       GetPage(
           name: RoutePaths.newDirect.name,
           page: () => NewDirectChatWidget(),
@@ -71,7 +75,7 @@ final routePages = [
                 binding: AddChannelBinding(),
                 children: [
                   GetPage(
-                      name: RoutePaths.addChannelMembers.name,
+                      name: RoutePaths.addAndEditChannelMembers.name,
                       page: () => AddAndEditMemberWidget(),
                       transition: Transition.native,
                       binding: AddMemberBinding()),

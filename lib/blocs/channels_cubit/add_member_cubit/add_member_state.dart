@@ -58,3 +58,10 @@ class AddMemberInFrequentlyContacted extends AddMemberState {
   @override
   List<Object?> get props => super.props;
 }
+
+class AddMemberInProgress extends AddMemberState {
+  const AddMemberInProgress();
+
+  @override
+  List<Object?> get props => super.props;
+}
