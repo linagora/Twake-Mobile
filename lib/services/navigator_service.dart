@@ -187,25 +187,6 @@ class NavigatorService {
     }
   }
 
-  Future<void> swipeThreadReply(String channelId, String threadId) async {
-    final channel = await directsCubit.getChannel(channelId: channelId);
-
-    channelMessagesCubit.swipeThreadfetch(
-      channelId: channelId,
-      isDirect: channel.isDirect,
-    );
-
-    badgesCubit.reset(channelId: channelId);
-
-    channelMessagesCubit.selectThread(messageId: threadId);
-
-    threadMessagesCubit.swipeThreadfetch(
-      channelId: channelId,
-      threadId: threadId,
-      isDirect: channel.isDirect,
-    );
-  }
-
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
     accountCubit.fetch();
     Get.toNamed(shouldShowInfo

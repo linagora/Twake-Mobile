@@ -156,7 +156,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         return SwipeActionCell(
           key: ObjectKey(messages[index]),
           performsFirstActionWithFullSwipe: true,
-          fullSwipeFactor: 0.2,
+          fullSwipeFactor: 0.15,
           trailingActions: <SwipeAction>[
             SwipeAction(
                 content: Column(
@@ -175,20 +175,19 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
-                  /*   Get.find<ThreadMessagesCubit>().fetchThredInChat(
+                  final channel = await Get.find<DirectsCubit>().getChannel(
+                    channelId: message.channelId,
+                  );
+                  Get.find<ChannelMessagesCubit>()
+                      .selectThread(messageId: message.id);
+
+                  Get.find<ThreadMessagesCubit>().swipeThreadfetch(
                     channelId: message.channelId,
                     threadId: message.id,
-                  );*/
-                  /*   NavigatorService.instance.navigate(
-                    channelId: message.channelId,
-                    threadId: message.id,
-                    flag: true,
-                  );*/
-                  NavigatorService.instance
-                      .swipeThreadReply(message.channelId, message.id);
-                  setState(() {
-                    //  _buildStickyGroupedListView();
-                  });
+                    isDirect: channel.isDirect,
+                  );
+
+                  setState(() {});
                 },
                 color: Colors.transparent),
           ],

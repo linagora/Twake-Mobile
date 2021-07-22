@@ -39,6 +39,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           onTap: () {
             popBack();
             Get.find<BadgesCubit>().fetch();
+            Get.find<ThreadMessagesCubit>().reset();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),

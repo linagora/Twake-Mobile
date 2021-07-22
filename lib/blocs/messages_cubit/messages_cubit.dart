@@ -74,7 +74,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     String? threadId,
     isDirect: false,
   }) async {
-    // emit(MessagesInitial());
     final stream = _repository.fetch(
       channelId: channelId,
       threadId: threadId,
