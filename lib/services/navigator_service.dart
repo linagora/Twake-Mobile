@@ -114,12 +114,12 @@ class NavigatorService {
     }
   }
 
-  Future<void> navigate(
-      {String? companyId,
-      String? workspaceId,
-      required String channelId,
-      String? threadId,
-      bool? flag = false}) async {
+  Future<void> navigate({
+    String? companyId,
+    String? workspaceId,
+    required String channelId,
+    String? threadId,
+  }) async {
     if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
 
@@ -173,11 +173,10 @@ class NavigatorService {
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
 
-      if (flag == false)
-        Get.toNamed(path)?.then((_) {
-          channelMessagesCubit.clearSelectedThread();
-          threadMessagesCubit.reset();
-        });
+      Get.toNamed(path)?.then((_) {
+        channelMessagesCubit.clearSelectedThread();
+        threadMessagesCubit.reset();
+      });
 
       threadMessagesCubit.fetch(
         channelId: channelId,
