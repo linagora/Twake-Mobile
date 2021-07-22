@@ -181,7 +181,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     Container(
                       padding: _message.reactions.isEmpty
                           ? const EdgeInsets.only(bottom: 1.0)
-                          : const EdgeInsets.only(bottom: 20.0),
+                          : const EdgeInsets.only(bottom: 22.0),
                       color: Colors.white,
                       child: ClipRRect(
                         borderRadius: _isMyMessage
@@ -190,14 +190,18 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 : (widget.upBubbleSide || widget.downBubbleSide
                                     ? (widget.upBubbleSide == true
                                         ? (BorderRadius.only(
+                                            bottomRight: Radius.circular(4),
                                             topRight: Radius.circular(18),
                                             topLeft: Radius.circular(18),
                                             bottomLeft: Radius.circular(18)))
                                         : (BorderRadius.only(
+                                            topRight: Radius.circular(4),
                                             bottomRight: Radius.circular(18),
                                             topLeft: Radius.circular(18),
                                             bottomLeft: Radius.circular(18))))
                                     : (BorderRadius.only(
+                                        bottomRight: Radius.circular(4),
+                                        topRight: Radius.circular(4),
                                         topLeft: Radius.circular(18),
                                         bottomLeft: Radius.circular(18)))))
                             : (widget.upBubbleSide && widget.downBubbleSide
@@ -205,14 +209,18 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 : (widget.upBubbleSide || widget.downBubbleSide
                                     ? (widget.upBubbleSide == true
                                         ? (BorderRadius.only(
+                                            bottomLeft: Radius.circular(4),
                                             topLeft: Radius.circular(18),
                                             topRight: Radius.circular(18),
                                             bottomRight: Radius.circular(18)))
                                         : (BorderRadius.only(
+                                            topLeft: Radius.circular(4),
                                             bottomLeft: Radius.circular(18),
                                             topRight: Radius.circular(18),
                                             bottomRight: Radius.circular(18))))
                                     : (BorderRadius.only(
+                                        bottomLeft: Radius.circular(4),
+                                        topLeft: Radius.circular(4),
                                         topRight: Radius.circular(18),
                                         bottomRight: Radius.circular(18))))),
                         child: Bubble(
@@ -222,7 +230,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                             elevation: 0,
                             color: _isMyMessage
                                 ? Color(0xff007AFF)
-                                : Color(0xfff6f6f6),
+                                : Color(0xFFF0F1F5),
                           ),
                           child: Column(
                             //crossAxisAlignment: CrossAxisAlignment.stretch,
