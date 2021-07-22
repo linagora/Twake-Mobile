@@ -175,12 +175,20 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
-                  //  Get.find<ThreadMessagesCubit>().reset();
-
-                  NavigatorService.instance.navigate(
-                      channelId: message.channelId,
-                      threadId: message.id,
-                      flag: true);
+                  /*   Get.find<ThreadMessagesCubit>().fetchThredInChat(
+                    channelId: message.channelId,
+                    threadId: message.id,
+                  );*/
+                  /*   NavigatorService.instance.navigate(
+                    channelId: message.channelId,
+                    threadId: message.id,
+                    flag: true,
+                  );*/
+                  NavigatorService.instance
+                      .swipeThreadReply(message.channelId, message.id);
+                  setState(() {
+                    //  _buildStickyGroupedListView();
+                  });
                 },
                 color: Colors.transparent),
           ],
