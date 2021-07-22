@@ -29,7 +29,8 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
     super.initState();
     _currentChannel = Get.arguments;
     if (_currentChannel != null) {
-      Get.find<MemberManagementCubit>().getMembersFromIds(_currentChannel!.members);
+      Get.find<MemberManagementCubit>()
+          .getMembersFromIds(_currentChannel!.members);
     }
 
     _searchController.addListener(() {
@@ -91,7 +92,8 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                             top: 20, left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('CHANNEL MEMBERS (${memberManagementState.allMembers.length})',
+                          child: Text(
+                              'CHANNEL MEMBERS (${memberManagementState.allMembers.length})',
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 13,
@@ -110,107 +112,118 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                     backgroundColor: Color(0xfff9f8f9),
                   ),
                 ),
-
-
                 BlocBuilder<MemberManagementCubit, MemberManagementState>(
-                  bloc: Get.find<MemberManagementCubit>(),
+                    bloc: Get.find<MemberManagementCubit>(),
                     builder: (ctx, memberManagementState) {
-                  if (memberManagementState is MemberManagementInProgress) {
-                    return TwakeCircularProgressIndicator();
-                  }
-                  final members = memberManagementState is MemberManagementSearchState
+                      if (memberManagementState is MemberManagementInProgress) {
+                        return TwakeCircularProgressIndicator();
+                      }
+                      final members =
+                          memberManagementState is MemberManagementSearchState
                               ? memberManagementState.searchResults
                               : memberManagementState.allMembers;
 
-                  return Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: SingleChildScrollView(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            color: Colors.white,
-                            child: Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    final currentSelectedMembers =
-                                        Get.find<MemberManagementCubit>().state.allMembers;
-                                    final selectedMembersResult = await push(
-                                        RoutePaths.addChannelMembers.path,
-                                        arguments: currentSelectedMembers.isEmpty
-                                            ? null
-                                            : currentSelectedMembers);
+                      return Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: SingleChildScrollView(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                color: Colors.white,
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        final currentSelectedMembers =
+                                            Get.find<MemberManagementCubit>()
+                                                .state
+                                                .allMembers;
+                                        final selectedMembersResult = await push(
+                                            RoutePaths.addChannelMembers.path,
+                                            arguments:
+                                                currentSelectedMembers.isEmpty
+                                                    ? null
+                                                    : currentSelectedMembers);
                                         if (selectedMembersResult != null &&
-                                            selectedMembersResult is List<Account> &&
+                                            selectedMembersResult
+                                                is List<Account> &&
                                             selectedMembersResult.isNotEmpty) {
                                           Get.find<MemberManagementCubit>()
-                                              .newMembersAdded(selectedMembersResult);
+                                              .newMembersAdded(
+                                                  selectedMembersResult);
                                         }
                                       },
-                                  behavior: HitTestBehavior.opaque,
-                                  child: Container(
-                                    height: 50,
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                                          child: RoundedWidget(
-                                            borderRadius: 17,
-                                            child: Container(
-                                              width: 34,
-                                              height: 34,
-                                              color: Color(0x14969ca4),
-                                              child: Icon(
-                                                Icons.add,
-                                                color: Color(0xff004dff),
-                                                size: 24,
+                                      behavior: HitTestBehavior.opaque,
+                                      child: Container(
+                                        height: 50,
+                                        child: Row(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12),
+                                              child: RoundedWidget(
+                                                borderRadius: 17,
+                                                child: Container(
+                                                  width: 34,
+                                                  height: 34,
+                                                  color: Color(0x14969ca4),
+                                                  child: Icon(
+                                                    Icons.add,
+                                                    color: Color(0xff004dff),
+                                                    size: 24,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
+                                            Text("Add a member",
+                                                style: TextStyle(
+                                                  color: Color(0xff004dff),
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontStyle: FontStyle.normal,
+                                                ))
+                                          ],
                                         ),
-                                        Text("Add a member",
-                                            style: TextStyle(
-                                              color: Color(0xff004dff),
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400,
-                                              fontStyle: FontStyle.normal,
-                                            ))
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 46.0),
-                                  child: Divider(
-                                    color: Color(0x1e000000),
-                                    height: 1,
-                                  ),
-                                ),
-                                ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  separatorBuilder: (_, __) => Padding(
-                                    padding: const EdgeInsets.only(left: 46.0),
-                                    child: Divider(
-                                      color: Color(0x1e000000),
-                                      height: 1,
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 46.0),
+                                      child: Divider(
+                                        color: Color(0x1e000000),
+                                        height: 1,
+                                      ),
                                     ),
-                                  ),
-                                  itemCount: members.length,
-                                  itemBuilder: (ctx, index) {
-                                    final member = members[index];
-                                    return _MemberManagementTile(name: member.fullName, logo: member.thumbnail,);
-                                  },
+                                    ListView.separated(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      separatorBuilder: (_, __) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 46.0),
+                                        child: Divider(
+                                          color: Color(0x1e000000),
+                                          height: 1,
+                                        ),
+                                      ),
+                                      itemCount: members.length,
+                                      itemBuilder: (ctx, index) {
+                                        final member = members[index];
+                                        return _MemberManagementTile(
+                                          name: member.fullName,
+                                          logo: member.picture,
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                  );
-                })
+                      );
+                    })
               ],
             ),
           ),
@@ -224,7 +237,8 @@ class _MemberManagementTile extends StatelessWidget {
   final String name;
   final String? logo;
 
-  const _MemberManagementTile({Key? key, required this.name, this.logo}) : super(key: key);
+  const _MemberManagementTile({Key? key, required this.name, this.logo})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +249,7 @@ class _MemberManagementTile extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: RoundedImage(
-              imageUrl: logo,
+              imageUrl: logo ?? '',
               width: 34,
               height: 34,
             ),

@@ -30,10 +30,8 @@ class CompanySelectionWidget extends StatelessWidget {
           buildWhen: (previousState, currentState) =>
               previousState is CompaniesInitial ||
               currentState is CompaniesLoadSuccess,
-
           builder: (context, companiesState) {
             if (companiesState is CompaniesLoadSuccess) {
-
               final companies = companiesState.companies;
               final selected = companiesState.selected;
 
@@ -51,7 +49,7 @@ class CompanySelectionWidget extends StatelessWidget {
                                 borderRadius: 12.0,
                                 width: 44.0,
                                 height: 44.0,
-                                imageUrl: companiesState.selected.logo,
+                                imageUrl: companiesState.selected.logo ?? '',
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
