@@ -12,8 +12,6 @@ class Endpoint {
   static const logout = '/logout';
   // API Endpoint for working with user's companies
   static const badges = '/badges';
-  // API Endpoint for working with the members of workspace
-  static const workspaceMembers = '/workspaces/members';
   // API Endpoint for working with user's channels in a workspace
   static const channels = '/channels';
   // API Endpoint for marking the channel as read
@@ -45,10 +43,12 @@ class Endpoint {
   static const companies = '/internal/services/users/v1/users/%s/companies';
   // API Endpoint for registering or unregistering device
   static const device = '/internal/services/users/v1/devices';
+  // API Endpoint for working with the members of workspace
+  static const workspaceMembers =
+      '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users';
 
   static const proxyMethods = const [
     badges,
-    workspaceMembers,
     channels,
     channelsRead,
     channelMembers,

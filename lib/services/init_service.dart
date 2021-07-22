@@ -138,19 +138,16 @@ class InitService {
     final accountFutures = workspaces.map((w) async {
       // 5. For each workspace fetch members
       remoteResult = await _apiService.get(
-        endpoint: Endpoint.workspaceMembers,
-        queryParameters: {
-          'company_id': w.companyId,
-          'workspace_id': w.id,
-        },
+        endpoint: sprintf(Endpoint.workspaceMembers, [w.companyId, w.id]),
+        key: 'resources',
       );
       final accounts = remoteResult.map(
-        (i) => Account.fromJson(json: i),
+        (i) => Account.fromJson(json: i['user']),
       );
       // Create links between accounts and workspaces
       final accounts2workspaces = remoteResult.map(
         (i) => Account2Workspace(
-          userId: i['id'],
+          userId: i['user_id'],
           workspaceId: w.id,
         ),
       );

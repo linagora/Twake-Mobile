@@ -28,16 +28,16 @@ class WorkspacesRepository {
       return local.map((i) => Account.fromJson(json: i)).toList();
     } else {
       final List<dynamic> remoteResult = await this._api.get(
-        endpoint: Endpoint.workspaceMembers,
-        queryParameters: {
-          'workspace_id': workspaceId,
-          'company_id': Globals.instance.companyId
-        },
-      );
+            endpoint: sprintf(
+              Endpoint.workspaceMembers,
+              [Globals.instance.companyId, workspaceId],
+            ),
+            key: 'resources',
+          );
 
       final List<Account> users = remoteResult
           .map((entry) => Account.fromJson(
-                json: entry,
+                json: entry['user'],
               ))
           .toList();
 
