@@ -38,7 +38,6 @@ class WorkspacesRepository {
       final List<Account> users = remoteResult
           .map((entry) => Account.fromJson(
                 json: entry,
-                jsonify: false,
               ))
           .toList();
 

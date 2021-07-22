@@ -76,8 +76,8 @@ CREATE TABLE account (
     id TEXT PRIMARY KEY,
     email TEXT NOT NULL,
     username TEXT NOT NULL,
-    firstname TEXT,
-    lastname TEXT,
+    first_name TEXT,
+    last_name TEXT,
     picture TEXT,
     provider_id TEXT,
     status TEXT,
@@ -154,11 +154,11 @@ CREATE INDEX user_username_idx ON account(username);
 ''';
 
 const String CREATE_INDEX_ACCOUNT_FIRSTNAME_V6 = '''
-CREATE INDEX user_firstname_idx ON account(firstname);
+CREATE INDEX user_firstname_idx ON account(first_name);
 ''';
 
 const String CREATE_INDEX_ACCOUNT_LASTNAME_V6 = '''
-CREATE INDEX user_lastname_idx ON account(lastname);
+CREATE INDEX user_lastname_idx ON account(last_name);
 ''';
 
 const DDL_V6 = [

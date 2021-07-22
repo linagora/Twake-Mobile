@@ -86,6 +86,14 @@ class AuthenticationRepository {
       endpoint: Endpoint.token,
       data: {'access_token': tokenResponse.accessToken},
     );
+    // register device
+    _api.post(endpoint: Endpoint.device, data: {
+      'device': {
+        'type': 'FCM',
+        'value': Globals.instance.fcmToken,
+        'version': Globals.version,
+      }
+    });
 
     final authentication = Authentication.fromJson(ApiDataTransformer.token(
       payload: authenticationResult,

@@ -273,16 +273,10 @@ class _ComposeBar extends State<ComposeBar> {
                                     width: 15,
                                   ),
                                   Text(
-                                    '${state.accounts[i].firstname} ',
+                                    '${state.accounts[i].fullName} ',
                                     style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w300),
-                                  ),
-                                  Text(
-                                    ' ${state.accounts[i].lastname}',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                    ),
                                   ),
                                   Expanded(child: SizedBox()),
                                   Icon(

@@ -10,8 +10,8 @@ part 'account.g.dart';
 class Account extends BaseModel {
   final String id;
   final String email;
-  final String? firstname;
-  final String? lastname;
+  final String? firstName;
+  final String? lastName;
   final String username;
 
   final String? picture;
@@ -30,8 +30,8 @@ class Account extends BaseModel {
   Account({
     required this.id,
     required this.email,
-    this.firstname,
-    this.lastname,
+    this.firstName,
+    this.lastName,
     required this.username,
     this.picture,
     this.providerId,
@@ -43,14 +43,14 @@ class Account extends BaseModel {
   int get hash =>
       id.hashCode +
       email.hashCode +
-      firstname.hashCode +
-      lastname.hashCode +
+      firstName.hashCode +
+      lastName.hashCode +
       username.hashCode +
       picture.hashCode +
       status.hashCode;
 
-  String get fullName => firstname != null && firstname!.isNotEmpty
-      ? '$firstname $lastname'
+  String get fullName => firstName != null && firstName!.isNotEmpty
+      ? '$firstName $lastName'
       : username;
 
   @JsonKey(ignore: true)

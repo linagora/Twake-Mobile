@@ -9,7 +9,8 @@ class AddMemberCubit extends Cubit<AddMemberState> {
   final WorkspacesCubit workspacesCubit;
   final ChannelsCubit channelsCubit;
 
-  AddMemberCubit({required this.workspacesCubit, required this.channelsCubit}) : super(AddMemberInitial());
+  AddMemberCubit({required this.workspacesCubit, required this.channelsCubit})
+      : super(AddMemberInitial());
 
   void fetchAllMembers({List<Account>? selectedMembers}) async {
     List<Account> members = await workspacesCubit.fetchMembers(local: true);
@@ -36,12 +37,12 @@ class AddMemberCubit extends Cubit<AddMemberState> {
       if (member.username.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.firstname != null &&
-          member.firstname!.toLowerCase().contains(searchKeyword)) {
+      if (member.firstName != null &&
+          member.firstName!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.lastname != null &&
-          member.lastname!.toLowerCase().contains(searchKeyword)) {
+      if (member.lastName != null &&
+          member.lastName!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
       if (member.email.toLowerCase().contains(searchKeyword)) {
@@ -86,7 +87,8 @@ class AddMemberCubit extends Cubit<AddMemberState> {
     }
   }
 
-  Future<List<Account>> addMembersToChannel(Channel currentChannel, List<Account> newMembers) async {
+  Future<List<Account>> addMembersToChannel(
+      Channel currentChannel, List<Account> newMembers) async {
     emit(AddMemberInProgress());
 
     final currentSet = Set.from(currentChannel.members);
@@ -99,11 +101,12 @@ class AddMemberCubit extends Cubit<AddMemberState> {
     }
 
     final result = await channelsCubit.addMembers(
-        channel: currentChannel,
-        usersToAdd: idsToAdd);
+        channel: currentChannel, usersToAdd: idsToAdd);
 
     if (result) {
-      return newMembers.where((element) => idsToAdd.contains(element.id)).toList();
+      return newMembers
+          .where((element) => idsToAdd.contains(element.id))
+          .toList();
     }
     return <Account>[];
   }

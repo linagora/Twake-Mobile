@@ -25,6 +25,7 @@ class InitService {
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
       globals = Globals(host: 'https://beta.twake.app', fcmToken: fcmToken);
+      globals.save();
     }
 
     SocketIOService(reset: true);
@@ -39,8 +40,10 @@ class InitService {
   // yields numbers from 1 to 100 meaning percentage of completion
   static Stream<int> syncData() async* {
     // 0. Fetch and save the user's id into Globals
-    await _apiService.get(endpoint: Endpoint.account).then((userData) {
-      final currentAccount = Account.fromJson(json: userData);
+    await _apiService
+        .get(endpoint: sprintf(Endpoint.account, ['me']), key: 'resource')
+        .then((userData) {
+      final currentAccount = Account.fromJson(json: userData, transform: true);
       Globals.instance.userIdSet = currentAccount.id;
       _storageService.insert(table: Table.account, data: currentAccount);
     });

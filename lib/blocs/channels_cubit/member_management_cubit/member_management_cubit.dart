@@ -7,13 +7,15 @@ import 'package:twake/utils/extensions.dart';
 class MemberManagementCubit extends Cubit<MemberManagementState> {
   final WorkspacesCubit workspacesCubit;
 
-  MemberManagementCubit({required this.workspacesCubit}) : super(MemberManagementInitial());
+  MemberManagementCubit({required this.workspacesCubit})
+      : super(MemberManagementInitial());
 
   void getMembersFromIds(List<String> ids) async {
     emit(MemberManagementInProgress());
 
     final allMember = await workspacesCubit.fetchMembers(local: true);
-    final channelMembers = allMember.where((member) => ids.contains(member.id)).toList();
+    final channelMembers =
+        allMember.where((member) => ids.contains(member.id)).toList();
 
     emit(MemberManagementNormalState(allMembers: channelMembers));
   }
@@ -23,7 +25,8 @@ class MemberManagementCubit extends Cubit<MemberManagementState> {
   }
 
   void newMembersAdded(List<Account> newMembers) {
-    final updatedList = List<Account>.from(state.allMembers)..addAll(newMembers);
+    final updatedList = List<Account>.from(state.allMembers)
+      ..addAll(newMembers);
     emit(MemberManagementNormalState(allMembers: updatedList));
   }
 
@@ -39,12 +42,7 @@ class MemberManagementCubit extends Cubit<MemberManagementState> {
       if (member.username.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.firstname != null &&
-          member.firstname!.toLowerCase().contains(searchKeyword)) {
-        return true;
-      }
-      if (member.lastname != null &&
-          member.lastname!.toLowerCase().contains(searchKeyword)) {
+      if (member.fullName.toLowerCase().contains(searchKeyword)) {
         return true;
       }
       if (member.email.toLowerCase().contains(searchKeyword)) {
@@ -54,7 +52,6 @@ class MemberManagementCubit extends Cubit<MemberManagementState> {
     }).toList();
 
     emit(MemberManagementSearchState(
-        allMembers: state.allMembers,
-        searchResults: results));
+        allMembers: state.allMembers, searchResults: results));
   }
 }

@@ -100,6 +100,9 @@ class Globals extends BaseModel {
   bool isNetworkConnected = true;
 
   @JsonKey(ignore: true)
+  static const version = '3.0.4';
+
+  @JsonKey(ignore: true)
   final _connection = StreamController<Connection>.broadcast();
   Stream<Connection> get connection => _connection.stream;
 

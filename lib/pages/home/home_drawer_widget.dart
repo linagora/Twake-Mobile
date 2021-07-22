@@ -219,8 +219,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                 SizedBox(
                                   width: 12,
                                 ),
-                                Text(
-                                    '${accountState.account.firstname} ${accountState.account.lastname}',
+                                Text('${accountState.account.fullName}',
                                     style: TextStyle(
                                       color: Color(0xff000000),
                                       fontSize: 17,

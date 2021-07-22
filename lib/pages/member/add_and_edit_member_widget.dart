@@ -162,8 +162,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                     Get.find<AddMemberCubit>()
                                         .removeMember(selectedUser);
                                   },
-                                  memberName:
-                                      '${selectedUser.firstname} ${selectedUser.lastname}');
+                                  memberName: '{$selectedUser.fullName}');
                             }),
                       );
                     }),
@@ -236,8 +235,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                       },
                                       isSelected: isSelected,
                                       imageUrl: user.picture ?? '',
-                                      name:
-                                          '${user.firstname} ${user.lastname}',
+                                      name: '${user.fullName}',
                                     );
                                   })),
                         );

@@ -58,8 +58,8 @@ class _AccountInfoState extends State<AccountInfo> {
           builder: (context, accountState) {
             if (accountState is AccountLoadSuccess) {
               _userNameController.text = '@${accountState.account.username}';
-              _firstNameController.text = accountState.account.firstname ?? '';
-              _lastNameController.text = accountState.account.lastname ?? '';
+              _firstNameController.text = accountState.account.firstName ?? '';
+              _lastNameController.text = accountState.account.lastName ?? '';
               _picture = accountState.account.picture ?? '';
               _isLoading = false;
             } else if (accountState is AccountLoadInProgress ||

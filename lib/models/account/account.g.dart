@@ -10,8 +10,8 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
   return Account(
     id: json['id'] as String,
     email: json['email'] as String,
-    firstname: json['firstname'] as String?,
-    lastname: json['lastname'] as String?,
+    firstName: json['first_name'] as String?,
+    lastName: json['last_name'] as String?,
     username: json['username'] as String,
     picture: json['picture'] as String?,
     providerId: json['provider_id'] as String?,
@@ -24,8 +24,8 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'id': instance.id,
       'email': instance.email,
-      'firstname': instance.firstname,
-      'lastname': instance.lastname,
+      'first_name': instance.firstName,
+      'last_name': instance.lastName,
       'username': instance.username,
       'picture': instance.picture,
       'provider_id': instance.providerId,

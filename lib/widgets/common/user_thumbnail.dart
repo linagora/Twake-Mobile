@@ -37,8 +37,7 @@ class UserThumbnail extends StatelessWidget {
                   height: size,
                 );
               } else {
-                var firstName = state.account.firstname ?? '';
-                return NamedAvatar(size: size, name: firstName);
+                return NamedAvatar(size: size, name: state.account.fullName);
               }
             } else {
               return RoundedShimmer(size: size);

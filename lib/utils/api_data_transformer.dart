@@ -23,7 +23,7 @@ class ApiDataTransformer {
   }
 
   static Map<String, dynamic> account({required Map<String, dynamic> json}) {
-    json['language'] = json['preference']['local'];
+    json['language'] = json['preference']['locale'];
 
     return json;
   }

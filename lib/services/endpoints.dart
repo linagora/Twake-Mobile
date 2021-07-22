@@ -1,8 +1,6 @@
 class Endpoint {
   /// List of public methods
 
-  // API Endpoint for getting API version info + auth method
-  static const info = '/internal/services/general/v1/server';
   // API Endpoint for authentication
   static const authorize = '/authorize';
   // API Endpoint for prolonging token
@@ -12,15 +10,8 @@ class Endpoint {
 
   // API Endpoint for sending logout event to backend
   static const logout = '/logout';
-  // API Endpoint for working with account data
-  static const account = '/user';
-  // API Endpoint for working with user's companies
-  static const companies = '/internal/services/users/v1/users/%s/companies';
   // API Endpoint for working with user's companies
   static const badges = '/badges';
-  // API Endpoint for working with user's workspaces in all companies
-  static const workspaces =
-      '/internal/services/workspaces/v1/companies/%s/workspaces';
   // API Endpoint for working with the members of workspace
   static const workspaceMembers = '/workspaces/members';
   // API Endpoint for working with user's channels in a workspace
@@ -43,9 +34,19 @@ class Endpoint {
   // Core methods
   // Obtain JWToken pair for Twake
   static const token = '/ajax/users/console/token';
+  // API Endpoint for getting API version info + auth method
+  static const info = '/internal/services/general/v1/server';
+  // API Endpoint for working with user's workspaces in all companies
+  static const workspaces =
+      '/internal/services/workspaces/v1/companies/%s/workspaces';
+  // API Endpoint for working with account data
+  static const account = '/internal/services/users/v1/users/%s';
+  // API Endpoint for working with user's companies
+  static const companies = '/internal/services/users/v1/users/%s/companies';
+  // API Endpoint for registering or unregistering device
+  static const device = '/internal/services/users/v1/devices';
 
   static const proxyMethods = const [
-    account,
     badges,
     workspaceMembers,
     channels,

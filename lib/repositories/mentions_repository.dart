@@ -15,8 +15,8 @@ class MentionsRepository {
         ${Table.account2workspace.name} AS a2w ON a.id = a2w.user_id
         WHERE a2w.workspace_id = ? AND (
             a.username LIKE ? OR
-            a.firstname LIKE ? OR 
-            a.lastname LIKE ? OR
+            a.first_name LIKE ? OR 
+            a.last_name LIKE ? OR
             a.email LIKE ?
         )
     ''';

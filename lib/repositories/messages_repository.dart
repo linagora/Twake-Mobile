@@ -218,8 +218,8 @@ class MessagesRepository {
       responsesCount: 0,
       content: MessageContent(originalStr: originalStr, prepared: prepared),
       username: currentUser.username,
-      firstname: currentUser.firstname,
-      lastname: currentUser.lastname,
+      firstname: currentUser.firstName,
+      lastname: currentUser.lastName,
       reactions: [],
     );
 

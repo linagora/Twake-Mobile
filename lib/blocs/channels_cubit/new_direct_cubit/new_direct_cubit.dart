@@ -51,12 +51,12 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       if (member.username.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.firstname != null &&
-          member.firstname!.toLowerCase().contains(searchKeyword)) {
+      if (member.firstName != null &&
+          member.firstName!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
-      if (member.lastname != null &&
-          member.lastname!.toLowerCase().contains(searchKeyword)) {
+      if (member.lastName != null &&
+          member.lastName!.toLowerCase().contains(searchKeyword)) {
         return true;
       }
       if (member.email.toLowerCase().contains(searchKeyword)) {
