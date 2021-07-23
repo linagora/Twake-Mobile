@@ -181,8 +181,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   Get.find<ThreadMessagesCubit>().swipeReply(
                     message.id,
                   );
-
                   setState(() {});
+                  Get.find<ThreadMessagesCubit>().reset();
                 },
                 color: Colors.transparent),
           ],
