@@ -155,6 +155,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         }
         return SwipeActionCell(
           key: ObjectKey(messages[index]),
+          performsFirstActionWithFullSwipe: true,
+          fullSwipeFactor: 0.15,
           trailingActions: <SwipeAction>[
             SwipeAction(
                 content: Column(
@@ -173,8 +175,14 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
-                  NavigatorService.instance.navigate(
-                      channelId: message.channelId, threadId: message.id);
+                  Get.find<ChannelMessagesCubit>()
+                      .selectThread(messageId: message.id);
+
+                  Get.find<ThreadMessagesCubit>().swipeReply(
+                    message.id,
+                  );
+
+                  setState(() {});
                 },
                 color: Colors.transparent),
           ],
