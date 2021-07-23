@@ -88,7 +88,7 @@ class AuthenticationRepository {
     );
     // register device
     _api.post(endpoint: Endpoint.device, data: {
-      'device': {
+      'resource': {
         'type': 'FCM',
         'value': Globals.instance.fcmToken,
         'version': Globals.version,
