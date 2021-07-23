@@ -69,32 +69,18 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
-  Future<void> swipeThreadfetch({
-    required String channelId,
-    String? threadId,
-    isDirect: false,
-  }) async {
-    final stream = _repository.fetch(
-      channelId: channelId,
-      threadId: threadId,
-      workspaceId: isDirect ? 'direct' : null,
-    );
+  Future<void> swipeReply(
+    String threadId,
+  ) async {
+    Message parentMessage;
 
-    Message? parentMessage;
+    parentMessage = await _repository.getMessage(messageId: threadId);
 
-    threadId = threadId ?? Globals.instance.threadId;
-
-    if (threadId != null) {
-      parentMessage = await _repository.getMessage(messageId: threadId);
-    }
-
-    await for (var list in stream) {
-      emit(MessagesLoadSuccess(
-        messages: list,
-        hash: list.fold(0, (acc, m) => acc + m.hash),
-        parentMessage: parentMessage,
-      ));
-    }
+    emit(MessagesLoadSuccess(
+      messages: [],
+      hash: 0,
+      parentMessage: parentMessage,
+    ));
   }
 
   Future<void> fetchBefore({

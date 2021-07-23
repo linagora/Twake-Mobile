@@ -175,16 +175,11 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
-                  final channel = await Get.find<DirectsCubit>().getChannel(
-                    channelId: message.channelId,
-                  );
                   Get.find<ChannelMessagesCubit>()
                       .selectThread(messageId: message.id);
 
-                  Get.find<ThreadMessagesCubit>().swipeThreadfetch(
-                    channelId: message.channelId,
-                    threadId: message.id,
-                    isDirect: channel.isDirect,
+                  Get.find<ThreadMessagesCubit>().swipeReply(
+                    message.id,
                   );
 
                   setState(() {});
