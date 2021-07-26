@@ -41,7 +41,7 @@ class ApiDataTransformer {
   }
 
   static Map<String, dynamic> channel({required Map<String, dynamic> json}) {
-    if (json.containsKey('last_message') &&
+    if (json['last_message'] != null &&
         (json['last_message'] as Map<String, dynamic>).isEmpty) {
       json['last_message'] = null;
     }

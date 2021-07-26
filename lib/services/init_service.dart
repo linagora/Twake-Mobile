@@ -86,11 +86,12 @@ class InitService {
     final directFutures = companies.map((c) async {
       // 3. For each company fetch direct chats
       remoteResult = await _apiService.get(
-        endpoint: Endpoint.directs,
-        queryParameters: {'company_id': c.id},
+        endpoint: sprintf(Endpoint.channels, [c.id, 'direct']),
+        queryParameters: {'mine': 1},
+        key: 'resources',
       );
       final directs = remoteResult.map(
-        (i) => Channel.fromJson(json: i, jsonify: false),
+        (i) => Channel.fromJson(json: i, jsonify: false, transform: true),
       );
       _storageService.multiInsert(
         table: Table.channel,
@@ -117,14 +118,12 @@ class InitService {
     final channelFutures = workspaces.map((w) async {
       // 4. For each workspace fetch channel
       remoteResult = await _apiService.get(
-        endpoint: Endpoint.channels,
-        queryParameters: {
-          'company_id': w.companyId,
-          'workspace_id': w.id,
-        },
+        endpoint: sprintf(Endpoint.channels, [w.companyId, w.id]),
+        queryParameters: {'mine': 1},
+        key: 'resources',
       );
       final channels = remoteResult.map(
-        (i) => Channel.fromJson(json: i, jsonify: false),
+        (i) => Channel.fromJson(json: i, jsonify: false, transform: true),
       );
 
       _storageService.multiInsert(

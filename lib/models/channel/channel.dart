@@ -16,6 +16,7 @@ class Channel extends BaseModel {
 
   final String id;
 
+  @JsonKey(defaultValue: '')
   final String name;
 
   final String? icon;
