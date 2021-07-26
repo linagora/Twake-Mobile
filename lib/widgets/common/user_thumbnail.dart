@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/named_avatar.dart';
@@ -38,7 +39,12 @@ class UserThumbnail extends StatelessWidget {
                 );
               } else {
                 var firstName = state.account.firstname ?? '';
-                return NamedAvatar(size: size, name: firstName);
+                return NamedAvatar(
+                  size: size,
+                  name: firstName,
+                  username: userName,
+                  boxShape: BoxShape.circle,
+                );
               }
             } else {
               return RoundedShimmer(size: size);
@@ -53,7 +59,11 @@ class UserThumbnail extends StatelessWidget {
         height: size,
       );
     } else if (userName.isNotReallyEmpty) {
-      return NamedAvatar(size: size, name: userName);
+      return NamedAvatar(
+        size: size,
+        name: userName,
+        username: userName,
+      );
     } else {
       return RoundedShimmer(size: size);
     }
