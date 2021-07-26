@@ -139,8 +139,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       threadId: threadId,
     );
 
-    if (this.state is! MessagesLoadSuccess) return;
-
     _sendInProgress = true;
 
     await for (final message in sendStream) {
@@ -150,8 +148,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
       if (message.channelId != Globals.instance.channelId) return;
 
-      final messages = (this.state as MessagesLoadSuccess).messages;
-      final hash = (this.state as MessagesLoadSuccess).hash;
+      final messages = this.state is MessagesLoadSuccess
+          ? (this.state as MessagesLoadSuccess).messages
+          : const <Message>[];
+      final hash = this.state is MessagesLoadSuccess
+          ? (this.state as MessagesLoadSuccess).hash
+          : 0;
 
       final index = messages.indexWhere((m) => m.id == fakeId);
 

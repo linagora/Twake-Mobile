@@ -36,12 +36,29 @@ class Emojis {
 */
   static String? getByName(String name) {
     name = name.replaceAll(':', '');
-    return _emojimap![name];
+    return _emojimap![name] ?? name;
   }
 
   static String randomEmoij() {
     final randomList = [
-    '😍', '😳', '😂', '😁', '😉', '😌', '😏', '😄', '😃', '😀', '🤣', '😇', '😅', '🤣', '😜', '🤩', '🥳', '😎'
+      '😍',
+      '😳',
+      '😂',
+      '😁',
+      '😉',
+      '😌',
+      '😏',
+      '😄',
+      '😃',
+      '😀',
+      '🤣',
+      '😇',
+      '😅',
+      '🤣',
+      '😜',
+      '🤩',
+      '🥳',
+      '😎'
     ];
     return randomList[Random().nextInt(randomList.length)];
   }

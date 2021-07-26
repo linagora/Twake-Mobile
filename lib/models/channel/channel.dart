@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/message/message_summary.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 export 'channel_visibility.dart';
@@ -11,7 +12,7 @@ part 'channel.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Channel extends BaseModel {
-  static const COMPOSITE_FIELDS = ['members', 'permissions', 'last_message'];
+  static const COMPOSITE_FIELDS = ['members', 'last_message'];
 
   final String id;
 
@@ -74,10 +75,14 @@ class Channel extends BaseModel {
   factory Channel.fromJson({
     required Map<String, dynamic> json,
     bool jsonify: true,
+    bool transform: false,
   }) {
     // message retrieved from sqlite database will have
     // it's composite fields json string encoded, so there's a
     // need to decode them back
+    if (transform) {
+      json = ApiDataTransformer.channel(json: json);
+    }
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }

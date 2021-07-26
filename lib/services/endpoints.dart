@@ -12,14 +12,10 @@ class Endpoint {
   static const logout = '/logout';
   // API Endpoint for working with user's companies
   static const badges = '/badges';
-  // API Endpoint for working with user's channels in a workspace
-  static const channels = '/channels';
   // API Endpoint for marking the channel as read
   static const channelsRead = '/channels/read';
   // API Endpoint for working with the members of user's channels
   static const channelMembers = '/channels/members';
-  // API Endpoint for working with user's direct channels with other users
-  static const directs = '/direct';
   // API Endpoint for working with messages in a channel
   static const messages = '/messages';
   // API Endpoint for working with message reactions
@@ -46,13 +42,15 @@ class Endpoint {
   // API Endpoint for working with the members of workspace
   static const workspaceMembers =
       '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users';
+  // API Endpoint for working with user's channels in a workspace
+  static const channels =
+      '/internal/services/channels/v1/companies/%s/workspaces/%s/channels';
+  // API Endpoint for working with user's direct channels with other users
 
   static const proxyMethods = const [
     badges,
-    channels,
     channelsRead,
     channelMembers,
-    directs,
     messages,
     reactions,
     notificationRooms,

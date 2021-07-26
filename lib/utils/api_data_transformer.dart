@@ -39,23 +39,15 @@ class ApiDataTransformer {
 
     return json;
   }
-}
 
-// {
-//   "id": "uuid",
-//   "company_id": "string", //Related to console "code"
-//   "name": "string",
-//   "logo": "string",
-//
-//   "default": boolean,
-//   "archived": boolean,
-//
-//   "stats": {
-//     "created_at": timestamp,
-//     "total_members": number,
-//     //Will be completed with Twake specific stats
-//   },
-//
-//   //If requested as a user
-//   "role": "admin" | "member",
-// }
+  static Map<String, dynamic> channel({required Map<String, dynamic> json}) {
+    if (json.containsKey('last_message') &&
+        (json['last_message'] as Map<String, dynamic>).isEmpty) {
+      json['last_message'] = null;
+    }
+
+    json['user_last_access'] = json['user_member']['last_access'];
+
+    return json;
+  }
+}

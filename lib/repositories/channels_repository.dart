@@ -58,18 +58,20 @@ class ChannelsRepository {
     required String companyId,
     required String workspaceId,
   }) async {
-    final queryParameters = {
-      'company_id': companyId,
-      'workspace_id': workspaceId
-    };
+    final queryParameters = {'mine': 1};
 
     final List<dynamic> remoteResult = await _api.get(
-      endpoint: endpoint,
+      endpoint: sprintf(endpoint, [companyId, workspaceId]),
       queryParameters: queryParameters,
+      key: 'resources',
     );
 
     var channels = remoteResult
-        .map((entry) => Channel.fromJson(json: entry, jsonify: false))
+        .map((entry) => Channel.fromJson(
+              json: entry,
+              jsonify: false,
+              transform: true,
+            ))
         .toList();
 
     _storage.multiInsert(table: Table.channel, data: channels);
@@ -81,7 +83,7 @@ class ChannelsRepository {
 
   Future<Channel> create({required Channel channel}) async {
     final result = await _api.post(
-      endpoint: endpoint,
+      endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]),
       data: channel.toJson(stringify: false),
     );
 

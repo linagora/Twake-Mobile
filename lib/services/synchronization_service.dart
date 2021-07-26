@@ -11,6 +11,11 @@ class SynchronizationService {
 
   String? subscribedChannelId;
 
+  // TODO hardcode room templates and remove remote fetching
+  String _currentPublicChannels = '';
+  String _currentPrivateChannels = '';
+  String _currentDirectChannels = '';
+
   List<SocketIORoom> _subRooms = [];
   Map<String, List<int>> _localNotifications = {};
 

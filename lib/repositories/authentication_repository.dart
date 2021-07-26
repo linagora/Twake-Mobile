@@ -148,29 +148,18 @@ class AuthenticationRepository {
       });
     }
 
-    // final result = await _storage.first(table: Table.authentication);
-    // final authentication = Authentication.fromJson(result);
+    final result = await _storage.first(table: Table.authentication);
+    final authentication = Authentication.fromJson(result);
 //
-    await _appAuth.authorize(
-      AuthorizationRequest(
-        Globals.instance.clientId!,
-        'twakemobile.com://oauthredirect',
-        scopes: ['openid', 'profile', 'email'],
-        serviceConfiguration: AuthorizationServiceConfiguration(
-          authorizationEndpoint: 'https://auth.twake.app/oauth2/logout',
-          tokenEndpoint: 'https://auth.twake.app/oauth2/token',
-        ),
+    await _appAuth.endSession(
+      EndSessionRequest(
+        postLogoutRedirectUrl: 'twakemobile.com://oauthredirect/',
+        idTokenHint: authentication.idToken,
+        discoveryUrl:
+            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
       ),
     );
-    // await _appAuth.endSession(
-    // EndSessionRequest(
-    // allowInsecureConnections: true,
-    // postLogoutRedirectUrl: 'https://beta.twake.app/signout',
-    // idTokenHint: authentication.idToken,
-    // discoveryUrl:
-    // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-    // ),
-    // );
+    Logger().w('session ended');
 //
     Globals.instance.reset();
 

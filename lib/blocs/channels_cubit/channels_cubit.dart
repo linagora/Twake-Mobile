@@ -379,6 +379,6 @@ class DirectsCubit extends BaseChannelsCubit {
   DirectsCubit({ChannelsRepository? repository})
       : super(
             repository: repository == null
-                ? ChannelsRepository(endpoint: Endpoint.directs)
+                ? ChannelsRepository(endpoint: Endpoint.channels)
                 : repository);
 }

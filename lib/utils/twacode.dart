@@ -923,7 +923,8 @@ class TwacodeRenderer {
         } else if (type == TType.Emoji) {
           spans.add(
             TextSpan(
-              text: Emojis.getByName(t['content']),
+              // text: Emojis.getByName(t['content']),
+              text: t['content'],
               style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
             ),
           );
