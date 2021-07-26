@@ -83,9 +83,12 @@ class ChannelsRepository {
 
   Future<Channel> create({required Channel channel}) async {
     final result = await _api.post(
-      endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]),
-      data: channel.toJson(stringify: false),
-    );
+        endpoint:
+            sprintf(endpoint, [channel.companyId, channel.workspaceId]) + '/',
+        data: {
+          'options': {'members': channel.members},
+          'resource': channel.toJson(stringify: false),
+        });
 
     final created = Channel.fromJson(json: result, jsonify: false);
 
@@ -114,12 +117,14 @@ class ChannelsRepository {
   }
 
   Future<Channel> edit({required Channel channel}) async {
-    final result = await _api.put(
-      endpoint: endpoint,
+    final result = await _api.post(
+      endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]) +
+          '/${channel.id}',
       data: channel.toJson(stringify: false),
     );
 
-    final edited = Channel.fromJson(json: result, jsonify: false);
+    final edited =
+        Channel.fromJson(json: result, jsonify: false, transform: true);
 
     _storage.insert(table: Table.channel, data: edited);
 

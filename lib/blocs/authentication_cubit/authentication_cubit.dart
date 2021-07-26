@@ -39,6 +39,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       authenticated = await _repository.webviewAuthenticate();
       if (authenticated) {
         emit(AuthenticationSuccess());
+        _repository.startTokenValidator();
         await syncData();
       } else {
         emit(AuthenticationInitial());

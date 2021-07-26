@@ -48,6 +48,10 @@ class ApiDataTransformer {
 
     json['user_last_access'] = json['user_member']['last_access'];
 
+    json['role'] = json['owner'] == json['user_member']['user_id']
+        ? 'owner'
+        : json['user_member']['type'];
+
     return json;
   }
 }

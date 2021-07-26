@@ -109,6 +109,7 @@ class ApiService {
     required dynamic data,
     Function(int, int)? onSendProgress,
     CancelToken? cancelToken,
+    String? key,
   }) async {
     final r = await this._dio.post(
           endpoint,
@@ -116,20 +117,21 @@ class ApiService {
           onSendProgress: onSendProgress,
           cancelToken: cancelToken,
         );
-    return r.data;
+    return key == null ? r.data : r.data[key];
   }
 
   Future<dynamic> put({
     required String endpoint,
     required dynamic data,
     CancelToken? cancelToken,
+    String? key,
   }) async {
     final r = await this._dio.put(
           endpoint,
           data: data,
           cancelToken: cancelToken,
         );
-    return r.data;
+    return key == null ? r.data : r.data[key];
   }
 
   Future<dynamic> patch({

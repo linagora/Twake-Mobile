@@ -21,12 +21,9 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
         (json['members'] as List<dynamic>).map((e) => e as String).toList(),
     visibility: _$enumDecode(_$ChannelVisibilityEnumMap, json['visibility']),
     lastActivity: json['last_activity'] as int,
+    role: _$enumDecode(_$ChannelRoleEnumMap, json['role']),
     userLastAccess: json['user_last_access'] as int? ?? 0,
     draft: json['draft'] as String?,
-    permissions: (json['permissions'] as List<dynamic>?)
-            ?.map((e) => e as String)
-            .toList() ??
-        [],
   );
 }
 
@@ -43,7 +40,7 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'last_message': instance.lastMessage?.toJson(),
       'user_last_access': instance.userLastAccess,
       'draft': instance.draft,
-      'permissions': instance.permissions,
+      'role': _$ChannelRoleEnumMap[instance.role],
     };
 
 K _$enumDecode<K, V>(
@@ -76,4 +73,10 @@ const _$ChannelVisibilityEnumMap = {
   ChannelVisibility.public: 'public',
   ChannelVisibility.private: 'private',
   ChannelVisibility.direct: 'direct',
+};
+
+const _$ChannelRoleEnumMap = {
+  ChannelRole.owner: 'owner',
+  ChannelRole.member: 'member',
+  ChannelRole.guest: 'guest',
 };

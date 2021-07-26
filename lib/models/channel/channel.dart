@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/models/channel/channel_role.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/message/message_summary.dart';
 import 'package:twake/utils/api_data_transformer.dart';
@@ -40,8 +41,7 @@ class Channel extends BaseModel {
 
   String? draft;
 
-  @JsonKey(defaultValue: const [])
-  final List<String> permissions;
+  final ChannelRole role;
 
   bool get hasUnread => userLastAccess < lastActivity;
 
@@ -68,9 +68,9 @@ class Channel extends BaseModel {
     required this.members,
     required this.visibility,
     required this.lastActivity,
+    required this.role,
     this.userLastAccess: 0,
     this.draft,
-    required this.permissions,
   });
 
   factory Channel.fromJson({
@@ -97,6 +97,7 @@ class Channel extends BaseModel {
     ChannelVisibility? visibility,
     int? lastActivity,
     MessageSummary? lastMessage,
+    int? userLastAccess,
   }) {
     final copy = Channel(
       id: id,
@@ -109,9 +110,9 @@ class Channel extends BaseModel {
       visibility: visibility ?? this.visibility,
       lastActivity: lastActivity ?? this.lastActivity,
       lastMessage: lastMessage ?? this.lastMessage,
-      userLastAccess: userLastAccess,
+      role: this.role,
+      userLastAccess: userLastAccess ?? this.userLastAccess,
       draft: draft,
-      permissions: permissions,
     );
 
     return copy;
