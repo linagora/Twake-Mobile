@@ -3,25 +3,31 @@ import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/random_hex_color.dart';
 
 class NamedAvatar extends StatelessWidget {
-  const NamedAvatar({
-    Key? key,
-    this.size = 60.0,
-    this.name = '',
-    this.backgroundColor = Colors.transparent,
-    this.fontColor = Colors.black,
-    this.borderColor = Colors.transparent,
-    this.borderRadius = 0.0,
-  }) : super(key: key);
-
   final double size;
   final String name;
   final Color backgroundColor;
   final Color fontColor;
   final Color borderColor;
   final double borderRadius;
+  final String username;
+  final BoxShape boxShape;
+  const NamedAvatar({
+    Key? key,
+    this.size = 60.0,
+    this.name = '',
+    this.username = '',
+    this.backgroundColor = Colors.transparent,
+    this.fontColor = Colors.white,
+    this.borderColor = Colors.transparent,
+    this.borderRadius = 0.0,
+    this.boxShape = BoxShape.circle,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //   print(name);
+    //  print(name.hashCode % 360);
+    //  print((name.hashCode % 360 - 360).toDouble().abs());
     String charactersToShow = '';
     if (name.isNotReallyEmpty) {
       charactersToShow = name[0].toUpperCase();
@@ -30,7 +36,8 @@ class NamedAvatar extends StatelessWidget {
       if (splitWords.length > 1) {
         final secondWord = splitWords[1];
         if (secondWord.isNotReallyEmpty) {
-          charactersToShow = '$charactersToShow${splitWords[1][0].toUpperCase()}';
+          charactersToShow =
+              '$charactersToShow${splitWords[1][0].toUpperCase()}';
         }
       }
     }
@@ -40,18 +47,16 @@ class NamedAvatar extends StatelessWidget {
       height: size,
       decoration: backgroundColor != Colors.transparent
           ? BoxDecoration(
+              shape: boxShape,
               color: backgroundColor,
-              border: Border.all(width: 2.0, color: borderColor),
-              borderRadius: BorderRadius.all(
-                Radius.circular(borderRadius),
-              ),
             )
           : BoxDecoration(
-              border: Border.all(width: 2.0, color: borderColor),
-              borderRadius: BorderRadius.all(
-                Radius.circular(borderRadius),
-              ),
-              gradient: randomGradient(),
+              shape: boxShape,
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: userColors(),
+              ), // TODO: del old randomGradient()?,
             ),
       padding: EdgeInsets.all(5.0),
       alignment: Alignment.center,
@@ -61,7 +66,7 @@ class NamedAvatar extends StatelessWidget {
             charactersToShow,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 24.0,
+              fontSize: 26.0,
               fontWeight: FontWeight.bold,
               color: fontColor,
             ),
@@ -69,5 +74,20 @@ class NamedAvatar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Color> userColors() {
+    return [
+      username == ""
+          ? HSLColor.fromAHSL(1, name.hashCode % 360, 0.9, 0.7).toColor()
+          : HSLColor.fromAHSL(1, username.hashCode % 360, 0.9, 0.7).toColor(),
+      username == ""
+          ? HSLColor.fromAHSL(
+                  1, (name.hashCode % 360 - 60).toDouble().abs(), 0.9, 0.7)
+              .toColor()
+          : HSLColor.fromAHSL(
+                  1, (username.hashCode % 360 - 60).toDouble().abs(), 0.9, 0.7)
+              .toColor()
+    ];
   }
 }
