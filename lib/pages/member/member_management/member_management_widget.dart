@@ -30,7 +30,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
     _currentChannel = Get.arguments;
     if (_currentChannel != null) {
       Get.find<MemberManagementCubit>()
-          .getMembersFromIds(_currentChannel!.members);
+          .getMembersFromIds(channel: _currentChannel!);
     }
 
     _searchController.addListener(() {

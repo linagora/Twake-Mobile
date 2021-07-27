@@ -112,8 +112,6 @@ class ChannelsRepository {
       key: 'resource',
     );
 
-    Logger().w('CHANNEL AFTER EDIT: $result');
-
     final edited = Channel.fromJson(
       json: result,
       jsonify: false,
@@ -139,6 +137,19 @@ class ChannelsRepository {
 
   Future<List<Account>> fetchMembers({required Channel channel}) async {
     final List<Account> members = [];
+
+    if (channel.members.isEmpty) {
+      final List<dynamic> res = await _api.get(
+        endpoint: sprintf(
+          Endpoint.channelMembers,
+          [channel.companyId, channel.workspaceId, channel.id],
+        ),
+        queryParameters: {'limit': 1000},
+        key: 'resources',
+      );
+      channel.members.addAll(res.map((m) => m['user_id']));
+    }
+
     for (final m in channel.members) {
       final member = await _storage.first(
         table: Table.account,

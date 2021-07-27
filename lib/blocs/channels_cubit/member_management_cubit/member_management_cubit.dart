@@ -1,23 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_state.dart';
-import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/utils/extensions.dart';
 
 class MemberManagementCubit extends Cubit<MemberManagementState> {
-  final WorkspacesCubit workspacesCubit;
+  final ChannelsCubit channelsCubit;
 
-  MemberManagementCubit({required this.workspacesCubit})
+  MemberManagementCubit({required this.channelsCubit})
       : super(MemberManagementInitial());
 
-  void getMembersFromIds(List<String> ids) async {
+  void getMembersFromIds({required Channel channel}) async {
     emit(MemberManagementInProgress());
 
-    final allMember = await workspacesCubit.fetchMembers(local: true);
-    final channelMembers =
-        allMember.where((member) => ids.contains(member.id)).toList();
+    final members = await channelsCubit.fetchMembers(channel: channel);
 
-    emit(MemberManagementNormalState(allMembers: channelMembers));
+    emit(MemberManagementNormalState(allMembers: members));
   }
 
   void updateMemberList(List<Account> members) {
