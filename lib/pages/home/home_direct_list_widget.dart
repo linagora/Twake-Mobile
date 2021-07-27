@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-
 import 'home_channel_tile.dart';
 
 class HomeDirectListWidget extends StatelessWidget {
@@ -19,7 +19,7 @@ class HomeDirectListWidget extends StatelessWidget {
       child: BlocBuilder<DirectsCubit, ChannelsState>(
         bloc: _directsCubit,
         buildWhen: (previousState, currentState) =>
-        previousState is ChannelsInitial ||
+            previousState is ChannelsInitial ||
             currentState is ChannelsLoadedSuccess,
         builder: (context, directState) {
           if (directState is ChannelsLoadedSuccess) {
@@ -46,18 +46,44 @@ class HomeDirectListWidget extends StatelessWidget {
                 itemCount: directState.channels.length,
                 itemBuilder: (context, index) {
                   final channel = directState.channels[index];
-                  return HomeChannelTile(
-                    onHomeChannelTileClick: () =>
-                        NavigatorService.instance.navigate(
-                      channelId: channel.id,
-                      workspaceId: channel.workspaceId,
-                    ),
-                    title: channel.name,
-                    name: channel.lastMessage?.senderName,
-                    content: channel.lastMessage?.body,
-                    imageUrl: channel.icon,
-                    dateTime: channel.lastActivity,
-                    channelId: channel.id,
+
+                  return FutureBuilder(
+                    initialData: Account,
+                    future: Get.find<ChannelsCubit>()
+                        .fetchMembers(channel: channel)
+                        .then((value) => value.first),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return HomeChannelTile(
+                          onHomeChannelTileClick: () =>
+                              NavigatorService.instance.navigate(
+                            channelId: channel.id,
+                            workspaceId: channel.workspaceId,
+                          ),
+                          title: (snapshot.data as Account).fullName,
+                          name: channel.lastMessage?.senderName,
+                          content: channel.lastMessage?.body,
+                          imageUrl: (snapshot.data as Account).thumbnail,
+                          dateTime: channel.lastActivity,
+                          channelId: channel.id,
+                          isDirect: true,
+                        );
+                      }
+                      return HomeChannelTile(
+                        onHomeChannelTileClick: () =>
+                            NavigatorService.instance.navigate(
+                          channelId: channel.id,
+                          workspaceId: channel.workspaceId,
+                        ),
+                        title: "channel name",
+                        name: channel.lastMessage?.senderName,
+                        content: channel.lastMessage?.body,
+                        imageUrl: null,
+                        dateTime: channel.lastActivity,
+                        channelId: channel.id,
+                        isDirect: true,
+                      );
+                    },
                   );
                 },
               ),
