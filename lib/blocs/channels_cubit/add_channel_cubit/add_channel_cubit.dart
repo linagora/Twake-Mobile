@@ -4,6 +4,7 @@ import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_state.d
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
+import 'package:twake/models/channel/channel_role.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
@@ -79,7 +80,7 @@ class AddChannelCubit extends Cubit<AddChannelState> {
       members: state.selectedMembers.map((member) => member.id).toList(),
       lastActivity: now,
       visibility: state.channelVisibility,
-      permissions: const [],
+      role: ChannelRole.owner,
     );
     try {
       channel = await _channelsRepository.create(channel: channel);
