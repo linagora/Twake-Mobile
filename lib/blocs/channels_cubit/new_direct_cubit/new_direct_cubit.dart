@@ -4,6 +4,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/channel/channel_role.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/routing/app_router.dart';
@@ -31,7 +32,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     );
 
     final workspaceMembers = (result.first as List<Account>)
-        ..removeWhere((element) => element.id == Globals.instance.userId);
+      ..removeWhere((element) => element.id == Globals.instance.userId);
 
     final recentChats = result.last as Map<String, Account>;
 
@@ -95,7 +96,20 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     if (recentKey.isNotEmpty) {
       NavigatorService.instance.navigate(channelId: recentKey);
     } else {
-      final channel = await channelsRepository.createDirect(member: memberId);
+      final channel = await channelsRepository.create(
+        channel: Channel(
+          id: 'fake',
+          name: '',
+          icon: '',
+          description: '',
+          companyId: Globals.instance.companyId!,
+          workspaceId: 'direct',
+          members: [memberId, Globals.instance.userId!],
+          role: ChannelRole.owner,
+          visibility: ChannelVisibility.direct,
+          lastActivity: DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
       directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
       popBack();
       NavigatorService.instance.navigate(channelId: channel.id);

@@ -1,4 +1,5 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:twake/models/globals/globals.dart';
 
 class ApiDataTransformer {
   static Map<String, dynamic> token({
@@ -46,11 +47,16 @@ class ApiDataTransformer {
       json['last_message'] = null;
     }
 
-    json['user_last_access'] = json['user_member']['last_access'];
+    if (json['user_member'] != null) {
+      json['user_last_access'] = json['user_member']['last_access'];
 
-    json['role'] = json['owner'] == json['user_member']['user_id']
-        ? 'owner'
-        : json['user_member']['type'];
+      json['role'] = json['owner'] == json['user_member']['user_id']
+          ? 'owner'
+          : json['user_member']['type'];
+    } else {
+      json['role'] =
+          json['owner'] == Globals.instance.userId ? 'owner' : 'member';
+    }
 
     return json;
   }

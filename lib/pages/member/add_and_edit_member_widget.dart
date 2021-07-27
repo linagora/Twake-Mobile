@@ -162,7 +162,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                     Get.find<AddMemberCubit>()
                                         .removeMember(selectedUser);
                                   },
-                                  memberName: '{$selectedUser.fullName}');
+                                  memberName: '${selectedUser.fullName}');
                             }),
                       );
                     }),

@@ -83,33 +83,19 @@ class ChannelsRepository {
 
   Future<Channel> create({required Channel channel}) async {
     final result = await _api.post(
-        endpoint:
-            sprintf(endpoint, [channel.companyId, channel.workspaceId]) + '/',
-        data: {
-          'options': {'members': channel.members},
-          'resource': channel.toJson(stringify: false),
-        });
-
-    final created = Channel.fromJson(json: result, jsonify: false);
-
-    _storage.insert(table: Table.channel, data: created);
-
-    return created;
-  }
-
-  Future<Channel> createDirect(
-      {String? companyId, required String member}) async {
-    final data = {
-      'company_id': companyId ?? Globals.instance.companyId,
-      'member': member
-    };
-
-    final result = await _api.post(
-      endpoint: endpoint,
-      data: data,
+      endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]),
+      data: {
+        'options': {'members': channel.members},
+        'resource': channel.toJson(stringify: false)..remove('id'),
+      },
+      key: 'resource',
     );
 
-    final created = Channel.fromJson(json: result, jsonify: false);
+    final created = Channel.fromJson(
+      json: result,
+      jsonify: false,
+      transform: true,
+    );
 
     _storage.insert(table: Table.channel, data: created);
 
@@ -120,11 +106,19 @@ class ChannelsRepository {
     final result = await _api.post(
       endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]) +
           '/${channel.id}',
-      data: channel.toJson(stringify: false),
+      data: {
+        'resource': channel.toJson(stringify: false),
+      },
+      key: 'resource',
     );
 
-    final edited =
-        Channel.fromJson(json: result, jsonify: false, transform: true);
+    Logger().w('CHANNEL AFTER EDIT: $result');
+
+    final edited = Channel.fromJson(
+      json: result,
+      jsonify: false,
+      transform: true,
+    );
 
     _storage.insert(table: Table.channel, data: edited);
 
@@ -162,14 +156,27 @@ class ChannelsRepository {
     required Channel channel,
     required List<String> usersToAdd,
   }) async {
-    final Map<String, dynamic> data = {
-      'company_id': channel.companyId,
-      'workspace_id': channel.workspaceId,
-      'id': channel.id,
-      'members': usersToAdd,
-    };
+    final futures = usersToAdd.map((u) {
+      final Map<String, dynamic> data = {
+        'resource': {
+          'user_id': u,
+          'channel_id': channel.id,
+          'type': 'member',
+        },
+      };
+      return _api.post(
+        endpoint: sprintf(Endpoint.channelMembers,
+            [channel.companyId, channel.workspaceId, channel.id]),
+        data: data,
+      );
+    });
 
-    await _api.post(endpoint: Endpoint.channelMembers, data: data);
+    try {
+      await Future.wait(futures);
+    } catch (e, ss) {
+      Logger().e('ERROR during member addition:\n$e\n$ss');
+      return channel;
+    }
 
     channel.members.addAll(usersToAdd);
 
@@ -182,13 +189,27 @@ class ChannelsRepository {
     required Channel channel,
     required List<String> usersToRemove,
   }) async {
-    final Map<String, dynamic> data = {
-      'company_id': channel.companyId,
-      'workspace_id': channel.workspaceId,
-      'id': channel.id,
-      'members': usersToRemove,
-    };
-    await _api.delete(endpoint: Endpoint.channelMembers, data: data);
+    final futures = usersToRemove.map((u) {
+      final Map<String, dynamic> data = {
+        'resource': {
+          'user_id': u,
+          'channel_id': channel.id,
+          'type': 'member',
+        },
+      };
+      return _api.post(
+        endpoint: sprintf(Endpoint.channelMembers,
+            [channel.companyId, channel.workspaceId, channel.id]),
+        data: data,
+      );
+    });
+
+    try {
+      await Future.wait(futures);
+    } catch (e, ss) {
+      Logger().e('ERROR during member addition:\n$e\n$ss');
+      return channel;
+    }
 
     channel.members.removeWhere((c) => usersToRemove.contains(c));
 

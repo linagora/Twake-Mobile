@@ -52,7 +52,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         title: ChatHeader(
             isDirect: channel.isDirect,
             isPrivate: channel.isPrivate,
-            userId: channel.members.first,
+            userId: channel.members.isNotEmpty ? channel.members.first : null,
             // TODO: figure out why do we need this?
             name: channel.name,
             icon: channel.icon ?? '',
