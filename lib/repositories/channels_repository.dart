@@ -112,10 +112,15 @@ class ChannelsRepository {
       key: 'resource',
     );
 
-    final edited = Channel.fromJson(
+    var edited = Channel.fromJson(
       json: result,
       jsonify: false,
       transform: true,
+    );
+
+    edited = edited.copyWith(
+      lastMessage: channel.lastMessage,
+      userLastAccess: channel.userLastAccess,
     );
 
     _storage.insert(table: Table.channel, data: edited);
