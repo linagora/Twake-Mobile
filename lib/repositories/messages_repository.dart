@@ -8,7 +8,7 @@ import 'package:twake/services/service_bundle.dart';
 export 'package:twake/models/message/message.dart';
 
 const _LIST_SIZE = 50;
-const _THREAD_SIZE = 1000;
+// const _THREAD_SIZE = 1000;
 
 class MessagesRepository {
   final _api = ApiService.instance;
@@ -28,16 +28,6 @@ class MessagesRepository {
 
     if (!Globals.instance.isNetworkConnected) return;
 
-    // If messages are present in local storage, just request messages
-    // after the last one, via after_date query param
-    // TODO IMPLEMENT SIMILAR MECHANISM
-    // int? afterDate;
-    // if (messages.isNotEmpty && threadId == null) {
-    // afterDate = messages
-    // .fold<Message>(messages.first, (a, b) => a.recent(b))
-    // .modificationDate;
-    // }
-
     final remoteMessages = await fetchRemote(
       companyId: companyId,
       workspaceId: workspaceId,
@@ -45,20 +35,7 @@ class MessagesRepository {
       threadId: threadId,
     );
 
-    // if (messages.isNotEmpty && afterDate != null) {
-    // for (final m in remoteMessages) {
-    // final index = messages.indexWhere((lm) => lm.id == m.id);
-    // if (!index.isNegative) {
-    // messages[index] = m;
-    // } else {
-    // messages.add(m);
-    // }
-    // }
-    // } else {
-    // messages = remoteMessages;
-    // }
-//
-    remoteMessages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
+    remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     yield remoteMessages;
   }
@@ -67,23 +44,31 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async {
-    var where = 'channel_id = ?';
+    var sql = '''
+          SELECT m.*, a.username, a.first_name,
+            a.last_name,
+            a.picture
+          FROM ${Table.message.name} AS m JOIN
+              ${Table.account.name} AS a ON a.id = m.user_id
+              WHERE m.channel_id = ?''';
     if (threadId == null) {
-      where += ' AND thread_id IS NULL';
+      sql += ' AND m.thread_id = m.id';
     } else {
-      where += ' AND thread_id = ?';
+      sql += ' AND m.thread_id = ?';
     }
-    final localResult = await _storage.select(
-      table: Table.message,
-      where: where,
-      orderBy: 'creation_date DESC',
-      whereArgs: [channelId, if (threadId != null) threadId],
-      limit: threadId != null ? _THREAD_SIZE : _LIST_SIZE,
+    sql += ' ORDER BY created_at DESC';
+    final localResult = await _storage.rawSelect(
+      sql: sql,
+      args: [channelId, if (threadId != null) threadId],
     );
-    final messages =
-        localResult.map((entry) => Message.fromJson(json: entry)).toList();
+    final messages = localResult
+        .map((entry) => Message.fromJson(
+              json: entry,
+              channelId: channelId,
+            ))
+        .toList();
 
-    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
+    messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     return messages;
   }
@@ -94,81 +79,41 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async {
-    final Map<String, dynamic> queryParameters = {
-      'company_id': companyId ?? Globals.instance.companyId,
-      'workspace_id': workspaceId ?? Globals.instance.workspaceId,
-      // TODO remove fallback_ws_id after files are fixed
-      'fallback_ws_id': Globals.instance.workspaceId,
-      'channel_id': channelId,
-      'limit': threadId != null ? _THREAD_SIZE : _LIST_SIZE,
-    };
-
-    if (threadId != null) queryParameters['thread_id'] = threadId;
-
-    // if (afterDate != null) queryParameters['after_date'] = afterDate;
-
     final List<dynamic> remoteResult = await _api.get(
-      endpoint: Endpoint.messages,
-      queryParameters: queryParameters,
+      endpoint: sprintf(Endpoint.threads, [
+        companyId ?? Globals.instance.companyId,
+        workspaceId ?? Globals.instance.workspaceId,
+        channelId
+      ]),
+      key: 'resources',
     );
 
-    var remoteMessages = remoteResult.map((entry) => Message.fromJson(
-          json: entry,
-          jsonify: false,
-        ));
+    var remoteMessages = remoteResult
+        .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
+        .map((entry) => Message.fromJson(
+              json: entry,
+              channelId: channelId,
+              jsonify: false,
+              transform: true,
+            ));
 
     _storage.multiInsert(table: Table.message, data: remoteMessages);
 
-    // API returns top level messages intermixed with thread level messages
-    // so we need to filter here
-    remoteMessages = remoteMessages
-        .where((m) => m.channelId == channelId && m.threadId == threadId);
-
-    return remoteMessages.toList();
+    return await fetchLocal(channelId: channelId, threadId: threadId);
   }
 
   Future<List<Message>> fetchBefore({
     required String channelId,
     String? threadId,
     required String beforeMessageId,
-    required int beforeDate,
   }) async {
-    var where = 'channel_id = ? AND creation_date < ?';
-    if (threadId == null) {
-      where += ' AND thread_id IS NULL';
-    } else {
-      where += ' AND thread_id = ?';
-    }
-    final localResult = await _storage.select(
-      table: Table.message,
-      where: where,
-      whereArgs: [
-        channelId,
-        beforeDate,
-        if (threadId != null) threadId,
-      ],
-      orderBy: 'creation_date DESC',
-      limit: _LIST_SIZE,
-    );
-    var messages =
-        localResult.map((entry) => Message.fromJson(json: entry)).toList();
-
-    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
-
-    if (messages.isNotEmpty) return messages;
-
-    final queryParameters = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId,
-      'channel_id': channelId,
-      'thread_id': threadId,
-      'limit': _LIST_SIZE,
-      'before_message_id': beforeMessageId,
-    };
-
     final List<dynamic> remoteResult = await _api.get(
-      endpoint: Endpoint.messages,
-      queryParameters: queryParameters,
+      endpoint: sprintf(Endpoint.threads, [
+        Globals.instance.companyId,
+        Globals.instance.workspaceId,
+        channelId
+      ]),
+      queryParameters: {},
     );
 
     var remoteMessages = remoteResult.map((entry) => Message.fromJson(
@@ -184,7 +129,7 @@ class MessagesRepository {
         .where((m) => m.channelId == channelId && m.threadId == threadId)
         .toList();
 
-    messages.sort((m1, m2) => m1.creationDate.compareTo(m2.creationDate));
+    messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     return messages;
   }
@@ -194,7 +139,7 @@ class MessagesRepository {
     required String channelId,
     required List<dynamic> prepared,
     String? originalStr,
-    String? threadId,
+    required String threadId,
   }) async* {
     if (!Globals.instance.isNetworkConnected) return;
 
@@ -213,13 +158,14 @@ class MessagesRepository {
       threadId: threadId,
       channelId: channelId,
       userId: currentUser.id,
-      creationDate: now,
-      modificationDate: now,
+      createdAt: now,
+      updatedAt: now,
       responsesCount: 0,
-      content: MessageContent(originalStr: originalStr, prepared: prepared),
+      text: originalStr ?? '',
+      blocks: [],
       username: currentUser.username,
-      firstname: currentUser.firstName,
-      lastname: currentUser.lastName,
+      firstName: currentUser.firstName,
+      lastName: currentUser.lastName,
       reactions: [],
     );
 
@@ -237,11 +183,11 @@ class MessagesRepository {
     };
 
     final remoteResult =
-        await _api.post(endpoint: Endpoint.messages, data: data);
+        await _api.post(endpoint: Endpoint.threads, data: data);
 
     message = Message.fromJson(json: remoteResult, jsonify: false);
-    message.creationDate = now;
-    message.modificationDate = now;
+    message.createdAt = now;
+    message.updatedAt = now;
 
     _storage.insert(table: Table.message, data: message);
 
@@ -262,8 +208,7 @@ class MessagesRepository {
       'prepared': message.content.prepared,
     };
 
-    final remoteResult =
-        await _api.put(endpoint: Endpoint.messages, data: data);
+    final remoteResult = await _api.put(endpoint: Endpoint.threads, data: data);
 
     message = Message.fromJson(json: remoteResult, jsonify: false);
 
@@ -307,7 +252,7 @@ class MessagesRepository {
       'message_id': messageId,
       'thread_id': threadId,
     };
-    await _api.delete(endpoint: Endpoint.messages, data: data);
+    await _api.delete(endpoint: Endpoint.threads, data: data);
 
     // Only delete message from local store if API request was successful
     await _storage.delete(
@@ -346,7 +291,6 @@ class MessagesRepository {
       'company_id': Globals.instance.companyId,
       'workspace_id': Globals.instance.workspaceId,
       'channel_id': channelId ?? Globals.instance.channelId,
-      // TODO remove fallback_ws_id after files are fixed
       'fallback_ws_id': Globals.instance.workspaceId,
       'message_id': messageId,
     };
@@ -354,7 +298,7 @@ class MessagesRepository {
     if (threadId?.isNotEmpty ?? false) queryParameters['thread_id'] = threadId;
 
     final List<dynamic> remoteResult = await _api.get(
-      endpoint: Endpoint.messages,
+      endpoint: Endpoint.threads,
       queryParameters: queryParameters,
     );
 

@@ -14,8 +14,6 @@ class Endpoint {
   static const badges = '/badges';
   // API Endpoint for marking the channel as read
   static const channelsRead = '/channels/read';
-  // API Endpoint for working with messages in a channel
-  static const messages = '/messages';
   // API Endpoint for working with message reactions
   static const reactions = '/reactions';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
@@ -46,11 +44,17 @@ class Endpoint {
   // API Endpoint for working with the members of user's channels
   static const channelMembers =
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/members';
+  // API Endpoint for working with threads in a channel
+  static const threads =
+      '/internal/services/messages/v1/companies/%s/workspaces/%s/channels/%s/feed';
+  // API Endpoint for working with messages inside threads
+  static const threadMessages = '/companies/%s/threads/%s/messages';
+  // API Endpoint for creating threads
+  static const threadsPost = '/companies/%s/threads';
 
   static const proxyMethods = const [
     badges,
     channelsRead,
-    messages,
     reactions,
     notificationRooms,
     fileUpload,

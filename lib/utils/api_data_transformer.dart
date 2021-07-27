@@ -60,4 +60,12 @@ class ApiDataTransformer {
 
     return json;
   }
+
+  static Map<String, dynamic> message(
+      {required Map<String, dynamic> json, required String channelId}) {
+    json['responses_count'] = json['stats']['replies'];
+    json['channel_id'] = channelId;
+
+    return json;
+  }
 }

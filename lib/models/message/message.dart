@@ -1,34 +1,39 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
-import 'message_content.dart';
 import 'reaction.dart';
-
-export 'message_content.dart';
 
 part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
-  static const COMPOSITE_FIELDS = ['content', 'reactions'];
+  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'lastReplies'];
 
   final String id;
-  final String? threadId;
+  final String threadId;
   final String channelId;
   final String userId;
 
-  int creationDate;
-  int modificationDate;
+  int createdAt;
+  int updatedAt;
   int responsesCount;
 
-  MessageContent content;
+  @JsonKey(defaultValue: '')
+  String text;
+
+  List<Map<String, dynamic>> blocks;
+
   List<Reaction> reactions;
 
-  final String username;
-  final String? firstname;
-  final String? lastname;
-  final String? thumbnail;
+  List<Message>? lastReplies;
+
+  final String? username;
+  final String? firstName;
+  final String? lastName;
+  final String? picture;
+
   String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
@@ -39,7 +44,7 @@ class Message extends BaseModel {
 
   int get hash {
     return this.id.hashCode +
-        this.content.originalStr.hashCode +
+        this.text.hashCode +
         this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
         this._isDelivered +
@@ -48,10 +53,10 @@ class Message extends BaseModel {
   }
 
   String get sender {
-    if (this.firstname == null || this.lastname == null) {
-      return this.username;
+    if (this.firstName == null || this.lastName == null) {
+      return this.username!;
     }
-    return '$firstname $lastname';
+    return '$lastName $lastName';
   }
 
   @JsonKey(ignore: true)
@@ -66,24 +71,27 @@ class Message extends BaseModel {
 
   Message({
     required this.id,
-    this.threadId,
+    required this.threadId,
     required this.channelId,
     required this.userId,
-    required this.creationDate,
-    required this.modificationDate,
+    required this.createdAt,
+    required this.updatedAt,
     required this.responsesCount,
     required this.username,
-    required this.content,
+    required this.text,
+    required this.blocks,
     required this.reactions,
-    this.firstname,
-    this.lastname,
-    this.thumbnail,
+    this.firstName,
+    this.lastName,
+    this.picture,
     this.draft,
   });
 
   factory Message.fromJson({
     required Map<String, dynamic> json,
+    required String channelId,
     bool jsonify: true,
+    bool transform: false,
   }) {
     // message retrieved from sqlite database will have
     // it's composite fields json string encoded, so there's a
@@ -91,12 +99,19 @@ class Message extends BaseModel {
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
+    if (transform) {
+      json = ApiDataTransformer.message(json: json, channelId: channelId);
+    }
     return _$MessageFromJson(json);
   }
 
   @override
   Map<String, dynamic> toJson({stringify: true}) {
     var json = _$MessageToJson(this);
+    json.remove('username');
+    json.remove('last_name');
+    json.remove('first_name');
+    json.remove('picture');
     // message that is to be stored to sqlite database should have
     // it's composite fields json string encoded, because sqlite doesn't support
     // non primitive data types, so we need to encode those fields
@@ -107,7 +122,7 @@ class Message extends BaseModel {
   }
 
   Message recent(Message other) {
-    if (this.modificationDate > other.modificationDate) return this;
+    if (this.updatedAt > other.updatedAt) return this;
 
     return other;
   }
