@@ -48,7 +48,7 @@ class HomeDirectListWidget extends StatelessWidget {
                   final channel = directState.channels[index];
 
                   return FutureBuilder(
-                    initialData: Account,
+                    //  initialData: Account init,
                     future: Get.find<ChannelsCubit>()
                         .fetchMembers(channel: channel)
                         .then((value) => value.first),
