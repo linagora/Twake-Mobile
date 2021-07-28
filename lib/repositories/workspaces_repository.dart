@@ -27,13 +27,13 @@ class WorkspacesRepository {
 
       return local.map((i) => Account.fromJson(json: i)).toList();
     } else {
-      final List<dynamic> remoteResult = await this._api.get(
-            endpoint: sprintf(
-              Endpoint.workspaceMembers,
-              [Globals.instance.companyId, workspaceId],
-            ),
-            key: 'resources',
-          );
+      final List<dynamic> remoteResult = await _api.get(
+        endpoint: sprintf(
+          Endpoint.workspaceMembers,
+          [Globals.instance.companyId, workspaceId],
+        ),
+        key: 'resources',
+      );
 
       final List<Account> users = remoteResult
           .map((entry) => Account.fromJson(
@@ -41,9 +41,9 @@ class WorkspacesRepository {
               ))
           .toList();
 
-      this._storage.multiInsert(table: Table.account, data: users);
+      _storage.multiInsert(table: Table.account, data: users);
 
-      this._storage.multiInsert(
+      _storage.multiInsert(
           table: Table.account2workspace,
           data: users.map(
             (u) => Account2Workspace(
@@ -86,7 +86,7 @@ class WorkspacesRepository {
   }
 
   Future<List<Workspace>> fetchLocal({required String companyId}) async {
-    final localResult = await this._storage.select(
+    final localResult = await _storage.select(
       table: Table.workspace,
       where: 'company_id = ?',
       whereArgs: [companyId],
@@ -99,10 +99,10 @@ class WorkspacesRepository {
   }
 
   Future<List<Workspace>> fetchRemote({required String companyId}) async {
-    final List<dynamic> remoteResult = await this._api.get(
-          endpoint: sprintf(Endpoint.workspaces, [companyId]),
-          key: 'resources',
-        );
+    final List<dynamic> remoteResult = await _api.get(
+      endpoint: sprintf(Endpoint.workspaces, [companyId]),
+      key: 'resources',
+    );
 
     final List<Workspace> workspaces = remoteResult
         .map((entry) => Workspace.fromJson(
@@ -120,7 +120,7 @@ class WorkspacesRepository {
       {String? companyId, required String name, List<String>? members}) async {
     companyId = companyId ?? Globals.instance.companyId;
 
-    final creationResult = await this._api.post(
+    final creationResult = await _api.post(
       endpoint: sprintf(Endpoint.workspaces, [companyId]),
       data: {'company_id': companyId, 'name': name, 'members': members},
     );

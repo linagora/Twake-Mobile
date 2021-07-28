@@ -7,8 +7,6 @@ import 'package:twake/services/service_bundle.dart';
 
 export 'package:twake/models/message/message.dart';
 
-const _THREAD_SIZE = 300;
-
 class MessagesRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
@@ -78,7 +76,6 @@ class MessagesRepository {
   }) async {
     List<dynamic> remoteResult;
     final queryParameters = <String, dynamic>{
-      'replies_per_thread': 0,
       'emoji': false,
     };
 
@@ -137,7 +134,6 @@ class MessagesRepository {
         queryParameters: {
           'page_token': beforeMessageId,
           'direction': 'history',
-          'replies_per_thread': 0
         },
         key: 'resources',
       );
@@ -322,29 +318,24 @@ class MessagesRepository {
 
   Future<Message> getMessageRemote({
     required String messageId,
-    String? channelId,
-    String? threadId,
+    required String threadId,
   }) async {
-    final Map<String, dynamic> queryParameters = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId,
-      'channel_id': channelId ?? Globals.instance.channelId,
-      'fallback_ws_id': Globals.instance.workspaceId,
-      'message_id': messageId,
-    };
-
-    if (threadId?.isNotEmpty ?? false) queryParameters['thread_id'] = threadId;
-
-    final List<dynamic> remoteResult = await _api.get(
-      endpoint: Endpoint.threads,
-      queryParameters: queryParameters,
+    final remoteResult = await _api.get(
+      endpoint: sprintf(
+              Endpoint.threadMessages, [Globals.instance.companyId, threadId]) +
+          '/$messageId',
+      key: 'resource',
     );
 
-    final message = Message.fromJson(remoteResult.first);
+    final message = Message.fromJson(
+      remoteResult,
+      transform: true,
+      channelId: Globals.instance.channelId,
+    );
 
-    _storage.insert(table: Table.message, data: message);
+    await _storage.insert(table: Table.message, data: message);
 
-    return message;
+    return await getMessageLocal(messageId: messageId);
   }
 
   Future<void> removeMessageLocal({required String messageId}) async {

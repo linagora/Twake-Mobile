@@ -94,6 +94,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     Globals.instance.workspaceIdSet = workspaceId;
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
+    _repository.fetchMembers();
 
     emit(WorkspacesLoadSuccess(
       workspaces: workspaces,
