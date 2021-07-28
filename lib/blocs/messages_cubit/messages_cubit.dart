@@ -331,7 +331,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         case IOEventAction.update:
           final message = await _repository.getMessageRemote(
             messageId: change.data.messageId,
-            channelId: change.channelId,
             threadId: change.data.threadId,
           );
           if (message.userId == Globals.instance.userId && _sendInProgress)
@@ -418,8 +417,8 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             if (!messages.any((m) => m.id == change.data.threadId)) continue;
 
             final message = await _repository.getMessageRemote(
-              messageId: change.data.threadId!,
-              channelId: change.channelId,
+              messageId: change.data.messageId,
+              threadId: change.data.threadId,
             );
 
             final i = messages.indexWhere((m) => m.id == change.data.threadId);

@@ -124,6 +124,10 @@ class MessagesRepository {
     required String beforeMessageId,
   }) async {
     List<dynamic> remoteResult;
+    final queryParameters = {
+      'page_token': beforeMessageId,
+      'direction': 'history',
+    };
     if (threadId == null) {
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threads, [
@@ -131,10 +135,7 @@ class MessagesRepository {
           Globals.instance.workspaceId,
           channelId
         ]),
-        queryParameters: {
-          'page_token': beforeMessageId,
-          'direction': 'history',
-        },
+        queryParameters: queryParameters,
         key: 'resources',
       );
     } else {
@@ -143,10 +144,7 @@ class MessagesRepository {
           Endpoint.threadMessages,
           [Globals.instance.companyId, threadId],
         ),
-        queryParameters: {
-          'page_token': beforeMessageId,
-          'direction': 'history',
-        },
+        queryParameters: queryParameters,
         key: 'resources',
       );
     }
@@ -293,11 +291,15 @@ class MessagesRepository {
     );
   }
 
-  Future<Message> getMessage({required String messageId}) async {
+  Future<Message> getMessage(
+      {required String messageId, String? threadId}) async {
     try {
       return await getMessageLocal(messageId: messageId);
     } catch (_) {
-      return await getMessageRemote(messageId: messageId, threadId: messageId);
+      return await getMessageRemote(
+        messageId: messageId,
+        threadId: threadId ?? messageId,
+      );
     }
   }
 
