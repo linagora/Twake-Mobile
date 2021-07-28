@@ -76,7 +76,6 @@ class AuthenticationRepository {
             '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
         scopes: ['openid', 'profile', 'email'],
         preferEphemeralSession: true,
-        promptValues: ['none'],
       ),
     );
     if (tokenResponse == null) {
@@ -148,17 +147,17 @@ class AuthenticationRepository {
       });
     }
 
-    final result = await _storage.first(table: Table.authentication);
-    final authentication = Authentication.fromJson(result);
-//
-    await _appAuth.endSession(
-      EndSessionRequest(
-        postLogoutRedirectUrl: 'twakemobile.com://oauthredirect/',
-        idTokenHint: authentication.idToken,
-        discoveryUrl:
-            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-      ),
-    );
+    // final result = await _storage.first(table: Table.authentication);
+    // final authentication = Authentication.fromJson(result);
+
+    // await _appAuth.endSession(
+    // EndSessionRequest(
+    // postLogoutRedirectUrl: 'twakemobile.com://signout',
+    // idTokenHint: authentication.idToken,
+    // discoveryUrl:
+    // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+    // ),
+    // );
     Logger().w('session ended');
 //
     Globals.instance.reset();

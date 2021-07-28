@@ -63,8 +63,8 @@ class ApiDataTransformer {
 
   static Map<String, dynamic> message(
       {required Map<String, dynamic> json, String? channelId}) {
-    if (json['stats'] != null)
-      json['responses_count'] = json['stats']['replies'];
+    if (json['stats'] != null && json['stats']['replies'] != null)
+      json['responses_count'] = json['stats']['replies'] - 1;
     if (json['last_replies'] != null && channelId != null) {
       final replies = json['last_replies'] as List<dynamic>;
       replies.forEach((r) => r['channel_id'] = channelId);

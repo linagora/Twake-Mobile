@@ -94,6 +94,8 @@ class MessagesRepository {
         key: 'resources',
       );
     } else {
+      queryParameters['limit'] = 1000;
+
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threadMessages, [
           companyId ?? Globals.instance.companyId,
