@@ -297,7 +297,7 @@ class MessagesRepository {
     try {
       return await getMessageLocal(messageId: messageId);
     } catch (_) {
-      return await getMessageRemote(messageId: messageId);
+      return await getMessageRemote(messageId: messageId, threadId: messageId);
     }
   }
 
