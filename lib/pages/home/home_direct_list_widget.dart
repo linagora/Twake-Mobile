@@ -63,7 +63,7 @@ class HomeDirectListWidget extends StatelessWidget {
                           title: (snapshot.data as Account).fullName,
                           name: channel.lastMessage?.senderName,
                           content: channel.lastMessage?.body,
-                          imageUrl: (snapshot.data as Account).thumbnail,
+                          imageUrl: (snapshot.data as Account).picture,
                           dateTime: channel.lastActivity,
                           channelId: channel.id,
                           isDirect: true,
