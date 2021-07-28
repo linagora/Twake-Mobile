@@ -37,7 +37,13 @@ class UserThumbnail extends StatelessWidget {
                   height: size,
                 );
               } else {
-                return NamedAvatar(size: size, name: state.account.fullName);
+                var firstName = state.account.firstName ?? '';
+                return NamedAvatar(
+                  size: size,
+                  name: firstName,
+                  username: userName,
+                  boxShape: BoxShape.circle,
+                );
               }
             } else {
               return RoundedShimmer(size: size);
@@ -52,7 +58,11 @@ class UserThumbnail extends StatelessWidget {
         height: size,
       );
     } else if (userName.isNotReallyEmpty) {
-      return NamedAvatar(size: size, name: userName);
+      return NamedAvatar(
+        size: size,
+        name: userName,
+        username: userName,
+      );
     } else {
       return RoundedShimmer(size: size);
     }

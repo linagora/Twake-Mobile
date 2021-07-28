@@ -164,14 +164,16 @@ class _MessageTileState<T extends BaseMessagesCubit>
           children: [
             SizedBox(width: 6.0),
             Padding(
-              padding: const EdgeInsets.only(bottom: 18.0),
+              padding: _message.reactions.isEmpty
+                  ? const EdgeInsets.only(bottom: 2.0)
+                  : const EdgeInsets.only(bottom: 22.0),
               child: (!_isMyMessage && _shouldShowSender)
                   ? UserThumbnail(
                       thumbnailUrl: _message.thumbnail ?? '',
                       userName: _message.sender,
-                      size: 24.0,
+                      size: 28.0,
                     )
-                  : SizedBox(width: 24.0, height: 24.0),
+                  : SizedBox(width: 28.0, height: 28.0),
             ),
             SizedBox(width: 6.0),
             Flexible(
@@ -259,7 +261,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 ),
                               Padding(
                                 padding:
-                                    EdgeInsets.fromLTRB(12.0, 5.0, 9.0, 3.0),
+                                    EdgeInsets.fromLTRB(12.0, 5.0, 2.0, 0.0),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -267,29 +269,31 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(
-                                      child: Container(
-                                        //alignment: Alignment.topLeft,
-                                        child: TwacodeRenderer(
-                                          _message.content.prepared,
-                                          TextStyle(
-                                            fontSize: 15.0,
-                                            fontWeight: FontWeight.w400,
-                                            color: _isMyMessage
-                                                ? Colors.white
-                                                : Colors.black,
+                                      child: Column(
+                                        children: [
+                                          TwacodeRenderer(
+                                            _message.content.prepared,
+                                            TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.w400,
+                                              color: _isMyMessage
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                            _message.username.hashCode % 360,
+                                          ).message,
+                                          SizedBox(
+                                            height: 3,
                                           ),
-                                          _message.username.hashCode % 360,
-                                        ).message,
+                                        ],
                                       ),
                                     ),
                                     SizedBox(
                                       width: 10,
                                     ),
-                                    Align(
-                                      alignment: Alignment.topRight,
-                                      child: Container(
-                                        alignment: Alignment.bottomRight,
-                                        child: Text(
+                                    Column(
+                                      children: [
+                                        Text(
                                           _message.threadId != null ||
                                                   _hideShowAnswers
                                               ? DateFormatter
@@ -305,25 +309,25 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             color: _isMyMessage
                                                 ? Color(0xffffffff)
                                                     .withOpacity(0.58)
-                                                : Color(0xff8e8e93),
+                                                : Color(0xFF8E8E93),
                                           ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 ),
                               ),
                               SizedBox(height: 5.0),
-                              /* if (_message.responsesCount > 0 &&
-                                  _message.threadId == null &&
-                                  !_hideShowAnswers)
-                                Divider(
-                                  height: 1.0,
-                                  thickness: 1.0,
-                                  color: _isMyMessage
-                                      ? Colors.white.withOpacity(0.19)
-                                      : Color(0xFF979797).withOpacity(0.19),
-                                ),*/
+                              /*   if (_message.responsesCount > 0 &&
+                                    _message.threadId == null &&
+                                    !_hideShowAnswers)
+                                  Divider(
+                                    height: 1.0,
+                                    thickness: 1.0,
+                                    color: _isMyMessage
+                                        ? Colors.white.withOpacity(0.19)
+                                        : Color(0xFF979797).withOpacity(0.19),
+                                  ),*/
                               if (_message.responsesCount > 0 &&
                                   _message.threadId == null &&
                                   !_hideShowAnswers)
@@ -371,18 +375,22 @@ class _MessageTileState<T extends BaseMessagesCubit>
             SizedBox(width: 3.0),
             _message.isDelivered && _isMyMessage
                 ? Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Icon(
                         Icons.check_circle_outline_rounded,
                         color: Color(0xFF004DFF),
+                        size: 20,
                       ),
-                      SizedBox(height: 18.0)
+                      _message.reactions.isEmpty
+                          ? SizedBox(height: 5.0)
+                          : SizedBox(height: 24.0)
                     ],
                   )
                 : Container(),
             _message.isDelivered && _isMyMessage
-                ? SizedBox(width: 10.0)
-                : SizedBox(width: 26.0)
+                ? SizedBox(width: 8.0)
+                : SizedBox(width: 12.0)
           ],
         ),
       );
