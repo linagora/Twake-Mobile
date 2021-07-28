@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
-import 'package:twake/utils/emojis.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
@@ -523,6 +522,7 @@ class ASTNode {
 }
 
 enum TType {
+  Twacode,
   Text,
   LineBreak,
   InlineCode,
@@ -566,35 +566,7 @@ class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
   TwacodeRenderer(this.twacode, TextStyle parentStyle, double userUniqueColor) {
-    this.twacode.addAll(this.extractFiles(this.twacode));
     spans = render(this.twacode, parentStyle, userUniqueColor);
-  }
-
-  // Files should only occur in the end of the twacode structure
-  // they are usually put inside of nop type object's content
-  // or rarely exist as a standalon object in the end of the list
-  List<dynamic> extractFiles(List<dynamic> content) {
-    List<dynamic> files = [];
-    final last = content.last;
-
-    if (last is List) {
-      files.addAll(extractFiles(last));
-    }
-
-    if (last is Map) {
-      if (last['type'] == 'file') {
-        files.add(last);
-        content.removeLast();
-      } else if (last['content'] is List) {
-        var inner = last['content'] as List;
-        for (int i = 0; i < inner.length; i++)
-          if (inner[i] is Map && inner[i]['type'] == 'file') {
-            files.add(inner[i]);
-            inner.removeAt(i);
-          }
-      }
-    }
-    return files;
   }
 
   TextStyle getStyle(
@@ -733,6 +705,10 @@ class TwacodeRenderer {
         );
       } else if (twacode[i] is List) {
         spans.addAll(render(twacode[i], parentStyle, userUniqueColor));
+      } else if (twacode[i] is Map && twacode[i]['type'] == 'twacode') {
+        spans.addAll(
+          render(twacode[i]['elements'], parentStyle, userUniqueColor),
+        );
       } else if (twacode[i] is Map) {
         final t = twacode[i];
         late TType type;

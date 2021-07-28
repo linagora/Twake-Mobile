@@ -7,8 +7,7 @@ import 'package:twake/services/service_bundle.dart';
 
 export 'package:twake/models/message/message.dart';
 
-const _LIST_SIZE = 50;
-// const _THREAD_SIZE = 1000;
+const _THREAD_SIZE = 300;
 
 class MessagesRepository {
   final _api = ApiService.instance;
@@ -61,12 +60,8 @@ class MessagesRepository {
       sql: sql,
       args: [channelId, if (threadId != null) threadId],
     );
-    final messages = localResult
-        .map((entry) => Message.fromJson(
-              json: entry,
-              channelId: channelId,
-            ))
-        .toList();
+    final messages =
+        localResult.map((entry) => Message.fromJson(entry)).toList();
 
     messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
@@ -79,25 +74,36 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async {
-    final List<dynamic> remoteResult = await _api.get(
-      endpoint: sprintf(Endpoint.threads, [
-        companyId ?? Globals.instance.companyId,
-        workspaceId ?? Globals.instance.workspaceId,
-        channelId
-      ]),
-      key: 'resources',
-    );
+    List<dynamic> remoteResult;
+    if (threadId == null) {
+      remoteResult = await _api.get(
+        endpoint: sprintf(Endpoint.threads, [
+          companyId ?? Globals.instance.companyId,
+          workspaceId ?? Globals.instance.workspaceId,
+          channelId
+        ]),
+        key: 'resources',
+      );
+    } else {
+      remoteResult = await _api.get(
+        endpoint: sprintf(Endpoint.threadMessages, [
+          companyId ?? Globals.instance.companyId,
+          threadId,
+        ]),
+        key: 'resources',
+      );
+    }
 
     var remoteMessages = remoteResult
         .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
         .map((entry) => Message.fromJson(
-              json: entry,
+              entry,
               channelId: channelId,
               jsonify: false,
               transform: true,
             ));
 
-    _storage.multiInsert(table: Table.message, data: remoteMessages);
+    await _storage.multiInsert(table: Table.message, data: remoteMessages);
 
     return await fetchLocal(channelId: channelId, threadId: threadId);
   }
@@ -107,31 +113,45 @@ class MessagesRepository {
     String? threadId,
     required String beforeMessageId,
   }) async {
-    final List<dynamic> remoteResult = await _api.get(
-      endpoint: sprintf(Endpoint.threads, [
-        Globals.instance.companyId,
-        Globals.instance.workspaceId,
-        channelId
-      ]),
-      queryParameters: {},
-    );
+    List<dynamic> remoteResult;
+    if (threadId == null) {
+      remoteResult = await _api.get(
+        endpoint: sprintf(Endpoint.threads, [
+          Globals.instance.companyId,
+          Globals.instance.workspaceId,
+          channelId
+        ]),
+        queryParameters: {
+          'token_page': beforeMessageId,
+          'direction': 'history',
+          'replies_per_thread': _THREAD_SIZE
+        },
+      );
+    } else {
+      remoteResult = await _api.get(
+        endpoint: sprintf(
+          Endpoint.threadMessages,
+          [Globals.instance.companyId, threadId],
+        ),
+        queryParameters: {
+          'token_page': beforeMessageId,
+          'direction': 'history',
+        },
+      );
+    }
 
-    var remoteMessages = remoteResult.map((entry) => Message.fromJson(
-          json: entry,
-          jsonify: false,
-        ));
+    var remoteMessages = remoteResult
+        .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
+        .map((entry) => Message.fromJson(
+              entry,
+              jsonify: false,
+              transform: true,
+              channelId: channelId,
+            ));
 
-    _storage.multiInsert(table: Table.message, data: remoteMessages);
+    await _storage.multiInsert(table: Table.message, data: remoteMessages);
 
-    // API returns top level messages intermixed with thread level messages
-    // so we need to filter here
-    messages = remoteMessages
-        .where((m) => m.channelId == channelId && m.threadId == threadId)
-        .toList();
-
-    messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-
-    return messages;
+    return await fetchLocal(channelId: channelId, threadId: threadId);
   }
 
   Stream<Message> send({
@@ -185,7 +205,7 @@ class MessagesRepository {
     final remoteResult =
         await _api.post(endpoint: Endpoint.threads, data: data);
 
-    message = Message.fromJson(json: remoteResult, jsonify: false);
+    message = Message.fromJson(remoteResult, jsonify: false);
     message.createdAt = now;
     message.updatedAt = now;
 
@@ -204,13 +224,13 @@ class MessagesRepository {
       'channel_id': message.channelId,
       'thread_id': message.threadId,
       'message_id': message.id,
-      'original_str': message.content.originalStr,
-      'prepared': message.content.prepared,
+      'original_str': message.text,
+      'prepared': message.blocks,
     };
 
     final remoteResult = await _api.put(endpoint: Endpoint.threads, data: data);
 
-    message = Message.fromJson(json: remoteResult, jsonify: false);
+    message = Message.fromJson(remoteResult, jsonify: false);
 
     _storage.insert(table: Table.message, data: message);
 
@@ -277,7 +297,7 @@ class MessagesRepository {
       whereArgs: [messageId],
     );
 
-    final message = Message.fromJson(json: result);
+    final message = Message.fromJson(result);
 
     return message;
   }
@@ -304,7 +324,7 @@ class MessagesRepository {
 
     Logger().v('Remote message: $remoteResult');
 
-    final message = Message.fromJson(json: remoteResult.first);
+    final message = Message.fromJson(remoteResult.first);
 
     _storage.insert(table: Table.message, data: message);
 

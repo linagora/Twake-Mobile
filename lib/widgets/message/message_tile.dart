@@ -86,8 +86,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       Navigator.pop(context);
                     },
                     onCopy: () {
-                      onCopy(
-                          context: context, text: _message.content.originalStr);
+                      onCopy(context: context, text: _message.text);
                       Navigator.of(context).pop();
                     },
                   );
@@ -95,7 +94,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
         },
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();
-          if (_message.threadId == null &&
+          if (!_message.inThread &&
               _message.responsesCount != 0 &&
               !_hideShowAnswers) {
             onReply(context, _message.id);
@@ -113,7 +112,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
               Column(
                 children: [
                   ImageAvatar(
-                    _message.thumbnail,
+                    _message.picture,
                     width: 30,
                     height: 30,
                   ),
@@ -138,11 +137,13 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          _message.threadId != null || _hideShowAnswers
+                          _message.inThread || _hideShowAnswers
                               ? DateFormatter.getVerboseDateTime(
-                                  _message.creationDate)
+                                  _message.createdAt,
+                                )
                               : DateFormatter.getVerboseTime(
-                                  _message.creationDate),
+                                  _message.createdAt,
+                                ),
                           style: TextStyle(
                             fontSize: 11.0,
                             fontWeight: FontWeight.w400,
@@ -153,7 +154,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     ),
                     SizedBox(height: 5.0),
                     TwacodeRenderer(
-                      _message.content.prepared,
+                      _message.blocks,
                       TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.w400,
@@ -180,7 +181,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           );
                         }),
                         if (_message.responsesCount > 0 &&
-                            _message.threadId == null &&
+                            !_message.inThread &&
                             !_hideShowAnswers)
                           Text(
                             'See all answers (${_message.responsesCount})',

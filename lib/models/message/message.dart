@@ -9,7 +9,7 @@ part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
-  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'lastReplies'];
+  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'last_replies'];
 
   final String id;
   final String threadId;
@@ -18,13 +18,16 @@ class Message extends BaseModel {
 
   int createdAt;
   int updatedAt;
+
+  @JsonKey(defaultValue: 0)
   int responsesCount;
 
   @JsonKey(defaultValue: '')
   String text;
 
-  List<Map<String, dynamic>> blocks;
+  List<dynamic> blocks;
 
+  @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
 
   List<Message>? lastReplies;
@@ -62,6 +65,9 @@ class Message extends BaseModel {
   @JsonKey(ignore: true)
   bool get isRead => _isRead > 0;
 
+  @JsonKey(ignore: true)
+  bool get inThread => id != threadId;
+
   set isRead(bool val) => _isRead = val ? 1 : 0;
 
   @JsonKey(ignore: true)
@@ -87,11 +93,11 @@ class Message extends BaseModel {
     this.draft,
   });
 
-  factory Message.fromJson({
-    required Map<String, dynamic> json,
-    required String channelId,
+  factory Message.fromJson(
+    Map<String, dynamic> json, {
     bool jsonify: true,
     bool transform: false,
+    String? channelId,
   }) {
     // message retrieved from sqlite database will have
     // it's composite fields json string encoded, so there's a
@@ -107,6 +113,7 @@ class Message extends BaseModel {
 
   @override
   Map<String, dynamic> toJson({stringify: true}) {
+    this.lastReplies?.clear();
     var json = _$MessageToJson(this);
     json.remove('username');
     json.remove('last_name');

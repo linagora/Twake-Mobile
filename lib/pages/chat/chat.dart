@@ -11,13 +11,11 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/message/message.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
-import 'package:twake/widgets/message/message_tile.dart';
 import 'chat_header.dart';
 import 'messages_grouped_list.dart';
 
@@ -89,7 +87,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               ComposeBar(
                 autofocus: messagesState is MessageEditInProgress,
                 initialText: (messagesState is MessageEditInProgress)
-                    ? messagesState.message.content.originalStr
+                    ? messagesState.message.text
                     : draft,
                 onMessageSend: (content, context) async {
                   final stateThread = Get.find<ThreadMessagesCubit>().state;
@@ -200,7 +198,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: TwacodeRenderer(
-                                  _message.content.prepared,
+                                  _message.blocks,
                                   TextStyle(
                                       fontSize: 14.0,
                                       //fontWeight: FontWeight.w400,

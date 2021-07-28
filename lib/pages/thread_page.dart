@@ -103,10 +103,10 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                           ComposeBar(
                               autofocus: autofocus ||
                                   messagesState is MessageEditInProgress,
-                              initialText: (messagesState
-                                      is MessageEditInProgress)
-                                  ? messagesState.message.content.originalStr
-                                  : '',
+                              initialText:
+                                  (messagesState is MessageEditInProgress)
+                                      ? messagesState.message.text
+                                      : '',
                               onMessageSend: (content, context) async {
                                 if (messagesState is MessageEditInProgress)
                                   Get.find<ThreadMessagesCubit>().edit(

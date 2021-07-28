@@ -9,7 +9,6 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 
@@ -80,13 +79,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       reverse: true,
       elements: messages,
       groupBy: (Message m) {
-        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.creationDate);
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.createdAt);
         return DateTime(dt.year, dt.month, dt.day);
       },
       groupComparator: (DateTime value1, DateTime value2) =>
           value1.compareTo(value2),
       itemComparator: (Message m1, Message m2) {
-        return m1.creationDate.compareTo(m2.creationDate);
+        return m1.createdAt.compareTo(m2.createdAt);
       },
       separator: SizedBox(height: 1.0),
       groupSeparatorBuilder: (DateTime dt) {

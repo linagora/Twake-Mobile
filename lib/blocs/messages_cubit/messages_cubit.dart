@@ -99,7 +99,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       channelId: channelId,
       threadId: threadId,
       beforeMessageId: state.messages.first.id,
-      beforeDate: state.messages.first.creationDate,
     );
     // if user switched channel before the fetchBefore method is complete, abort
     // and just ignore the result
@@ -136,7 +135,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       channelId: Globals.instance.channelId!,
       prepared: prepared,
       originalStr: originalStr,
-      threadId: threadId,
+      threadId: threadId ?? fakeId,
     );
 
     _sendInProgress = true;
@@ -194,7 +193,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final prepared = TwacodeParser(editedText).message;
 
     if (newAttachments.isNotEmpty) {
-      final oldPrepared = message.content.prepared;
+      final oldPrepared = message.blocks;
       final content = newAttachments.map((f) => f.toMap()).toList();
       Map<String, dynamic> nop = {};
       if (oldPrepared.last['type'] == 'nop') {
@@ -213,8 +212,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
     final messages = (this.state as MessagesLoadSuccess).messages;
 
-    message.content =
-        MessageContent(originalStr: editedText, prepared: prepared);
+    message.blocks = prepared;
     // It's assumed that the message argument is also contained in
     // the messages list of the current state
     emit(MessagesLoadSuccess(

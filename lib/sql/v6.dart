@@ -58,7 +58,7 @@ CREATE TABLE message (
     channel_id TEXT NOT NULL,
     responses_count INT DEFAULT 0,
     user_id TEXT NOT NULL,
-    creation_at INT NOT NULL,
+    created_at INT NOT NULL,
     updated_at INT NOT NULL,
     text TEXT DEFAULT "",
     blocks TEXT DEFAULT "[]",

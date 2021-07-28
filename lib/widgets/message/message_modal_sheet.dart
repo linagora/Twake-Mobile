@@ -161,7 +161,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                 width: 30,
                               ),
                             ),
-                          widget.message.content.originalStr?.isEmpty ?? true
+                          widget.message.blocks.isEmpty
                               ? Container()
                               : GestureDetector(
                                   child: Column(
@@ -203,13 +203,13 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     widget.onCopy!();
                                   },
                                 ),
-                          if (widget.message.threadId == null)
+                          if (!widget.message.inThread)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
                               ),
                             ),
-                          if (widget.message.threadId == null)
+                          if (!widget.message.inThread)
                             GestureDetector(
                               child: Column(
                                 children: [

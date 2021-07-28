@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
@@ -49,8 +48,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
   late Message _message;
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-  double _width = 0.0;
-  double _height = 0.0;
 
   // static downloadingCallback(id, status, progress) {
   // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
@@ -58,7 +55,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
   // }
   Size wdgtHieght = Size(0, 0);
   // use _wdgtKey in the Bubble
-  final GlobalKey _wdgtKey = GlobalKey();
   double h = 1;
 
   @override
@@ -71,14 +67,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
     // FlutterDownloader.registerCallback(downloadingCallback);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (mounted) {
-        // setState(() {
-        _width = context.size?.width ?? 0.0;
-        _height = context.size?.height ?? 0.0;
-        // });
-      }
-    });
   }
 
   @override
@@ -140,8 +128,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     Navigator.pop(context);
                   },
                   onCopy: () {
-                    onCopy(
-                        context: context, text: _message.content.originalStr);
+                    onCopy(context: context, text: _message.text);
                     Navigator.of(context).pop();
                   },
                 );
@@ -150,9 +137,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
         },
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();
-          if (_message.threadId == null &&
-              _message.responsesCount != 0 &&
-              !_hideShowAnswers) {
+          if (_message.responsesCount != 0 && !_hideShowAnswers) {
             onReply(_message);
           }
         },
@@ -169,7 +154,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   : const EdgeInsets.only(bottom: 22.0),
               child: (!_isMyMessage && _shouldShowSender)
                   ? UserThumbnail(
-                      thumbnailUrl: _message.thumbnail ?? '',
+                      thumbnailUrl: _message.picture ?? '',
                       userName: _message.sender,
                       size: 28.0,
                     )
@@ -272,7 +257,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                       child: Column(
                                         children: [
                                           TwacodeRenderer(
-                                            _message.content.prepared,
+                                            _message.blocks,
                                             TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.w400,
@@ -294,13 +279,14 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                     Column(
                                       children: [
                                         Text(
-                                          _message.threadId != null ||
-                                                  _hideShowAnswers
+                                          _message.inThread || _hideShowAnswers
                                               ? DateFormatter
                                                   .getVerboseDateTime(
-                                                      _message.creationDate)
+                                                  _message.createdAt,
+                                                )
                                               : DateFormatter.getVerboseTime(
-                                                  _message.creationDate),
+                                                  _message.createdAt,
+                                                ),
                                           textAlign: TextAlign.end,
                                           style: TextStyle(
                                             fontSize: 11.0,
@@ -329,7 +315,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                         : Color(0xFF979797).withOpacity(0.19),
                                   ),*/
                               if (_message.responsesCount > 0 &&
-                                  _message.threadId == null &&
+                                  !_message.inThread &&
                                   !_hideShowAnswers)
                                 Container(
                                   padding:

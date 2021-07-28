@@ -171,24 +171,30 @@ class InitService {
         .followedBy(directs)
         .map((c) async {
           remoteResult = await _apiService.get(
-            endpoint: Endpoint.messages,
+            endpoint: sprintf(
+              Endpoint.threads,
+              [c.companyId, c.workspaceId, c.id],
+            ),
             queryParameters: {
-              'company_id': c.companyId,
-              'workspace_id': c.workspaceId,
-              // TODO remove fallback_ws_id after files are fixed
-              'fallback_ws_id': Globals.instance.workspaceId,
-              'channel_id': c.id,
               'limit': 100,
             },
+            key: 'resources',
           );
-          final messages = remoteResult.map(
-            (i) => Message.fromJson(json: i, jsonify: false),
-          );
+          final messages = remoteResult
+              .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
+              .map(
+                (i) => Message.fromJson(
+                  i,
+                  jsonify: false,
+                  transform: true,
+                  channelId: c.id,
+                ),
+              );
 
           _storageService.multiInsert(table: Table.message, data: messages);
         })
         .toList()
-        .chunks(3)
+        .chunks(7)
         .forEach((f) async {
           await Future.wait(f);
         });
