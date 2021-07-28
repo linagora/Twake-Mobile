@@ -48,9 +48,11 @@ class Endpoint {
   static const threads =
       '/internal/services/messages/v1/companies/%s/workspaces/%s/channels/%s/feed';
   // API Endpoint for working with messages inside threads
-  static const threadMessages = '/companies/%s/threads/%s/messages';
+  static const threadMessages =
+      '/internal/services/messages/v1/companies/%s/threads/%s/messages';
   // API Endpoint for creating threads
-  static const threadsPost = '/companies/%s/threads';
+  static const threadsPost =
+      '/internal/services/messages/v1/companies/%s/threads';
 
   static const proxyMethods = const [
     badges,

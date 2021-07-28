@@ -9,7 +9,7 @@ part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
-  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'last_replies'];
+  static const COMPOSITE_FIELDS = ['blocks', 'reactions'];
 
   final String id;
   final String threadId;
@@ -29,8 +29,6 @@ class Message extends BaseModel {
 
   @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
-
-  List<Message>? lastReplies;
 
   final String? username;
   final String? firstName;
@@ -113,7 +111,6 @@ class Message extends BaseModel {
 
   @override
   Map<String, dynamic> toJson({stringify: true}) {
-    this.lastReplies?.clear();
     var json = _$MessageToJson(this);
     json.remove('username');
     json.remove('last_name');

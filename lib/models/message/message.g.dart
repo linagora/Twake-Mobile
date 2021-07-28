@@ -26,9 +26,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     lastName: json['last_name'] as String?,
     picture: json['picture'] as String?,
     draft: json['draft'] as String?,
-  )..lastReplies = (json['last_replies'] as List<dynamic>?)
-      ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
-      .toList();
+  );
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -42,7 +40,6 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'text': instance.text,
       'blocks': instance.blocks,
       'reactions': instance.reactions.map((e) => e.toJson()).toList(),
-      'last_replies': instance.lastReplies?.map((e) => e.toJson()).toList(),
       'username': instance.username,
       'first_name': instance.firstName,
       'last_name': instance.lastName,

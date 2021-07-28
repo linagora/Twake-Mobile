@@ -95,7 +95,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       parentMessage: state.parentMessage,
     ));
 
-    final beforeMessages = await _repository.fetchBefore(
+    final messages = await _repository.fetchBefore(
       channelId: channelId,
       threadId: threadId,
       beforeMessageId: state.messages.first.id,
@@ -104,11 +104,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     // and just ignore the result
     if (channelId != Globals.instance.channelId) return;
 
-    final allMessages = beforeMessages + state.messages;
-
     final newState = MessagesLoadSuccess(
-      messages: allMessages,
-      hash: allMessages.fold(0, (acc, m) => acc + m.hash),
+      messages: messages,
+      hash: messages.fold(0, (acc, m) => acc + m.hash),
       parentMessage: state.parentMessage,
     );
 

@@ -32,6 +32,7 @@ class MessagesRepository {
       workspaceId: workspaceId,
       channelId: channelId,
       threadId: threadId,
+      afterMessageId: messages.isNotEmpty ? messages.last.id : null,
     );
 
     remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
@@ -73,8 +74,18 @@ class MessagesRepository {
     String? workspaceId,
     required String channelId,
     String? threadId,
+    String? afterMessageId,
   }) async {
     List<dynamic> remoteResult;
+    final queryParameters = <String, dynamic>{
+      'replies_per_thread': 0,
+      'emoji': false,
+    };
+
+    if (afterMessageId != null) {
+      queryParameters['page_token'] = afterMessageId;
+      queryParameters['direction'] = 'future';
+    }
     if (threadId == null) {
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threads, [
@@ -82,6 +93,7 @@ class MessagesRepository {
           workspaceId ?? Globals.instance.workspaceId,
           channelId
         ]),
+        queryParameters: queryParameters,
         key: 'resources',
       );
     } else {
@@ -90,6 +102,7 @@ class MessagesRepository {
           companyId ?? Globals.instance.companyId,
           threadId,
         ]),
+        queryParameters: queryParameters,
         key: 'resources',
       );
     }
@@ -122,10 +135,11 @@ class MessagesRepository {
           channelId
         ]),
         queryParameters: {
-          'token_page': beforeMessageId,
+          'page_token': beforeMessageId,
           'direction': 'history',
-          'replies_per_thread': _THREAD_SIZE
+          'replies_per_thread': 0
         },
+        key: 'resources',
       );
     } else {
       remoteResult = await _api.get(
@@ -134,9 +148,10 @@ class MessagesRepository {
           [Globals.instance.companyId, threadId],
         ),
         queryParameters: {
-          'token_page': beforeMessageId,
+          'page_token': beforeMessageId,
           'direction': 'history',
         },
+        key: 'resources',
       );
     }
 
@@ -291,13 +306,16 @@ class MessagesRepository {
   }
 
   Future<Message> getMessageLocal({required String messageId}) async {
-    final result = await _storage.first(
-      table: Table.message,
-      where: 'id = ?',
-      whereArgs: [messageId],
-    );
+    final sql = '''
+          SELECT m.*, a.username, a.first_name,
+            a.last_name,
+            a.picture
+          FROM ${Table.message.name} AS m JOIN
+              ${Table.account.name} AS a ON a.id = m.user_id
+              WHERE m.id = ?''';
+    final result = await _storage.rawSelect(sql: sql, args: [messageId]);
 
-    final message = Message.fromJson(result);
+    final message = Message.fromJson(result.first);
 
     return message;
   }
@@ -321,8 +339,6 @@ class MessagesRepository {
       endpoint: Endpoint.threads,
       queryParameters: queryParameters,
     );
-
-    Logger().v('Remote message: $remoteResult');
 
     final message = Message.fromJson(remoteResult.first);
 

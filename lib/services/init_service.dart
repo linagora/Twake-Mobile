@@ -176,6 +176,7 @@ class InitService {
               [c.companyId, c.workspaceId, c.id],
             ),
             queryParameters: {
+              'emojis': false,
               'limit': 100,
             },
             key: 'resources',

@@ -63,7 +63,6 @@ CREATE TABLE message (
     text TEXT DEFAULT "",
     blocks TEXT DEFAULT "[]",
     reactions TEXT DEFAULT "[]",
-    last_replies TEXT DEFAULT "[]",
     draft TEXT,
     is_read INT DEFAULT 1
 );
