@@ -15,6 +15,7 @@ class HomeChannelTile extends StatelessWidget {
   final OnHomeChannelTileClick? onHomeChannelTileClick;
   final String channelId;
   final bool isPrivate;
+  final bool isDirect;
 
   const HomeChannelTile(
       {required this.title,
@@ -24,7 +25,8 @@ class HomeChannelTile extends StatelessWidget {
       this.dateTime,
       this.onHomeChannelTileClick,
       required this.channelId,
-      this.isPrivate = false})
+      this.isPrivate = false,
+      this.isDirect = false})
       : super();
 
   @override
@@ -47,6 +49,7 @@ class HomeChannelTile extends StatelessWidget {
                     alignment: Alignment.center,
                     child: ChannelThumbnail(
                       isPrivate: isPrivate,
+                      isDirect: isDirect,
                       icon: imageUrl ?? '',
                       iconSize: 32.0,
                       name: title,
