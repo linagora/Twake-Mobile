@@ -3,8 +3,6 @@ class Endpoint {
 
   // API Endpoint for authentication
   static const authorize = '/authorize';
-  // API Endpoint for prolonging token
-  static const authorizationProlong = '/authorization/prolong';
 
   /// List of internal methods, for authorized users only
 
@@ -23,7 +21,7 @@ class Endpoint {
 
   // Core methods
   // Obtain JWToken pair for Twake
-  static const token = '/ajax/users/console/token';
+  static const login = '/internal/services/console/v1/login';
   // API Endpoint for getting API version info + auth method
   static const info = '/internal/services/general/v1/server';
   // API Endpoint for working with user's workspaces in all companies
@@ -53,6 +51,8 @@ class Endpoint {
   // API Endpoint for creating threads
   static const threadsPost =
       '/internal/services/messages/v1/companies/%s/threads';
+  // API Endpoint for prolonging token
+  static const authorizationProlong = '/internal/services/console/v1/token';
 
   static const proxyMethods = const [
     badges,
@@ -62,14 +62,11 @@ class Endpoint {
     fileUpload,
     logout,
     authorize,
-    authorizationProlong,
   ];
 
   static const publicMethods = const [
     authorize,
-    authorizationProlong,
     info,
-    token,
   ];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {

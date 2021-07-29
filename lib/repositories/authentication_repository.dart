@@ -82,8 +82,8 @@ class AuthenticationRepository {
       return false;
     }
     final authenticationResult = await _api.post(
-      endpoint: Endpoint.token,
-      data: {'access_token': tokenResponse.accessToken},
+      endpoint: Endpoint.login,
+      data: {'remote_access_token': tokenResponse.accessToken},
     );
     // register device
     _api.post(endpoint: Endpoint.device, data: {
@@ -108,15 +108,14 @@ class AuthenticationRepository {
   Future<Authentication> prolongAuthentication(
     Authentication authentication,
   ) async {
-    dynamic authenticationResult = {};
+    Map<String, dynamic> authenticationResult = {};
+
+    Globals.instance.tokenSet = authentication.refreshToken;
+
     try {
       authenticationResult = await _api.post(
         endpoint: Endpoint.authorizationProlong,
-        data: {
-          'refresh_token': authentication.refreshToken,
-          'fcm_token': Globals.instance.fcmToken,
-          'timezoneoffset': tzo,
-        },
+        data: const {},
       );
     } catch (e, ss) {
       final message = 'Error while prolonging token with valid refresh:\n$e';
@@ -126,7 +125,7 @@ class AuthenticationRepository {
     }
 
     final freshAuthentication = Authentication.complementWithConsole(
-      json: authenticationResult,
+      json: ApiDataTransformer.token(payload: authenticationResult),
       other: authentication,
     );
 
@@ -201,7 +200,7 @@ class AuthenticationRepository {
 
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final needToProlong = authentication.expiration - now <
-        10 * 60; // less than 10 minutes to expiration
+        59 * 60; // less than 10 minutes to expiration
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }

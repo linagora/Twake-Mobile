@@ -4,7 +4,7 @@ import 'package:twake/models/globals/globals.dart';
 class ApiDataTransformer {
   static Map<String, dynamic> token({
     required Map<String, dynamic> payload,
-    required AuthorizationTokenResponse tokenResponse,
+    AuthorizationTokenResponse? tokenResponse,
   }) {
     final accessToken = payload['access_token'];
     if (accessToken == null) throw 'Invalid payload for access token';
@@ -14,12 +14,12 @@ class ApiDataTransformer {
       'refresh_token': accessToken['refresh'],
       'expiration': accessToken['expiration'],
       'refresh_expiration': accessToken['refresh_expiration'],
-      'console_token': tokenResponse.accessToken,
-      'id_token': tokenResponse.idToken,
-      'console_refresh': tokenResponse.refreshToken,
-      'console_expiration':
-          tokenResponse.accessTokenExpirationDateTime!.millisecondsSinceEpoch ~/
-              1000
+      'console_token': tokenResponse?.accessToken,
+      'id_token': tokenResponse?.idToken,
+      'console_refresh': tokenResponse?.refreshToken,
+      'console_expiration': tokenResponse
+              ?.accessTokenExpirationDateTime!.millisecondsSinceEpoch ??
+          0 ~/ 1000
     };
   }
 
