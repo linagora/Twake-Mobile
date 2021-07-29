@@ -1,6 +1,11 @@
 PODS:
   - Amplitude-iOS (4.8.2)
   - Analytics (3.7.0)
+  - AppAuth (1.4.0):
+    - AppAuth/Core (= 1.4.0)
+    - AppAuth/ExternalUserAgent (= 1.4.0)
+  - AppAuth/Core (1.4.0)
+  - AppAuth/ExternalUserAgent (1.4.0)
   - connectivity (0.0.1):
     - Flutter
     - Reachability
@@ -74,6 +79,9 @@ PODS:
     - GoogleUtilities/Reachability (~> 7.4)
     - GoogleUtilities/UserDefaults (~> 7.4)
   - Flutter (1.0.0)
+  - flutter_appauth (0.0.1):
+    - AppAuth (= 1.4.0)
+    - Flutter
   - flutter_downloader (0.0.1):
     - Flutter
   - flutter_local_notifications (0.0.1):
@@ -142,6 +150,8 @@ PODS:
   - SwiftyGif (5.4.0)
   - url_launcher (0.0.1):
     - Flutter
+  - webview_cookie_manager (0.0.1):
+    - Flutter
   - webview_flutter (0.0.1):
     - Flutter
 
@@ -152,6 +162,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
+  - flutter_appauth (from `.symlinks/plugins/flutter_appauth/ios`)
   - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_segment (from `.symlinks/plugins/flutter_segment/ios`)
@@ -163,12 +174,14 @@ DEPENDENCIES:
   - shared_preferences (from `.symlinks/plugins/shared_preferences/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - webview_cookie_manager (from `.symlinks/plugins/webview_cookie_manager/ios`)
   - webview_flutter (from `.symlinks/plugins/webview_flutter/ios`)
 
 SPEC REPOS:
   trunk:
     - Amplitude-iOS
     - Analytics
+    - AppAuth
     - DKImagePickerController
     - DKPhotoGallery
     - Firebase
@@ -200,6 +213,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
+  flutter_appauth:
+    :path: ".symlinks/plugins/flutter_appauth/ios"
   flutter_downloader:
     :path: ".symlinks/plugins/flutter_downloader/ios"
   flutter_local_notifications:
@@ -222,12 +237,15 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/sqflite/ios"
   url_launcher:
     :path: ".symlinks/plugins/url_launcher/ios"
+  webview_cookie_manager:
+    :path: ".symlinks/plugins/webview_cookie_manager/ios"
   webview_flutter:
     :path: ".symlinks/plugins/webview_flutter/ios"
 
 SPEC CHECKSUMS:
   Amplitude-iOS: 46c8e6e65c49bb1ad1909a9add1a68e1f8562b3f
   Analytics: 77fd5fb102a4a5eedafa2c2b0245ceb7b7c15e45
+  AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
   DKImagePickerController: b5eb7f7a388e4643264105d648d01f727110fc3d
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
@@ -241,6 +259,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 7f31798a8198c354eadcb87176d2090b62edc187
   FirebaseMessaging: 1a33b4af3c8042ed6ddacb6c031894af2064bfab
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  flutter_appauth: 05c3778a1e4ae23364dd2ef37cbae14b244f646b
   flutter_downloader: 058b9c41564a90500f67f3e432e3524613a7fd83
   flutter_local_notifications: 0c0b1ae97e741e1521e4c1629a459d04b9aec743
   flutter_segment: f20a38d465030de0f1b2aa9325cef9c1442b0721
@@ -262,6 +281,7 @@ SPEC CHECKSUMS:
   sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
   SwiftyGif: 5d4af95df24caf1c570dbbcb32a3b8a0763bc6d7
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+  webview_cookie_manager: eaf920722b493bd0f7611b5484771ca53fed03f7
   webview_flutter: 3603125dfd3bcbc9d8d418c3f80aeecf331c068b
 
 PODFILE CHECKSUM: f63b24efb6ec591bd555a99f803c2b12e4a5e19d
