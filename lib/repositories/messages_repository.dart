@@ -4,6 +4,7 @@ import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 export 'package:twake/models/message/message.dart';
 
@@ -206,17 +207,30 @@ class MessagesRepository {
 
     yield message;
 
-    final data = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId,
-      'channel_id': channelId,
-      'thread_id': threadId,
-      'original_str': originalStr,
-      'prepared': prepared,
-    };
+    final data = threadId == id
+        ? {
+            'resource': {
+              'participants': [
+                {
+                  'type': 'channel',
+                  'id': channelId,
+                  'workspace_id': Globals.instance.workspaceId,
+                  'company_id': Globals.instance.companyId,
+                }
+              ]
+            },
+            'option': ApiDataTransformer.apiMessage(message: message)
+          }
+        : {'resource': ApiDataTransformer.apiMessage(message: message)};
 
-    final remoteResult =
-        await _api.post(endpoint: Endpoint.threads, data: data);
+    final endpoint = threadId == id
+        ? sprintf(Endpoint.threadsPost, [Globals.instance.companyId])
+        : sprintf(
+            Endpoint.threadMessages,
+            [Globals.instance.companyId, threadId],
+          );
+
+    final remoteResult = await _api.post(endpoint: endpoint, data: data);
 
     message = Message.fromJson(remoteResult, jsonify: false);
     message.createdAt = now;

@@ -1,5 +1,6 @@
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/message/message.dart';
 
 class ApiDataTransformer {
   static Map<String, dynamic> token({
@@ -73,6 +74,18 @@ class ApiDataTransformer {
         (json['files'] as List<dynamic>).map((f) => f['id']).toList();
 
     if (channelId != null) json['channel_id'] = channelId;
+
+    return json;
+  }
+
+  static Map<String, dynamic> apiMessage(
+      {required Message message, bool removeIds: true}) {
+    final json = message.toJson(stringify: false);
+    if (removeIds) {
+      json.remove('id');
+      json.remove('thread_id');
+    }
+    json['type'] = 'message';
 
     return json;
   }
