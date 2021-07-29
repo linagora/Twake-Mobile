@@ -61,7 +61,6 @@ CREATE TABLE message (
     created_at INT NOT NULL,
     updated_at INT NOT NULL,
     text TEXT DEFAULT "",
-    files TEXT DEFAULT "[]",
     blocks TEXT DEFAULT "[]",
     reactions TEXT DEFAULT "[]",
     draft TEXT,
