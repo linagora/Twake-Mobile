@@ -22,6 +22,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
             ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
+    files: (json['files'] as List<dynamic>).map((e) => e as String).toList(),
     firstName: json['first_name'] as String?,
     lastName: json['last_name'] as String?,
     picture: json['picture'] as String?,
@@ -39,6 +40,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'responses_count': instance.responsesCount,
       'text': instance.text,
       'blocks': instance.blocks,
+      'files': instance.files,
       'reactions': instance.reactions.map((e) => e.toJson()).toList(),
       'username': instance.username,
       'first_name': instance.firstName,

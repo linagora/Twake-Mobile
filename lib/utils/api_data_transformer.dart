@@ -69,6 +69,8 @@ class ApiDataTransformer {
       final replies = json['last_replies'] as List<dynamic>;
       replies.forEach((r) => r['channel_id'] = channelId);
     }
+    json['files'] =
+        (json['files'] as List<dynamic>).map((f) => f['id']).toList();
 
     if (channelId != null) json['channel_id'] = channelId;
 
