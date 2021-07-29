@@ -6,12 +6,8 @@ class Endpoint {
 
   /// List of internal methods, for authorized users only
 
-  // API Endpoint for sending logout event to backend
-  static const logout = '/logout';
   // API Endpoint for working with user's companies
   static const badges = '/badges';
-  // API Endpoint for marking the channel as read
-  static const channelsRead = '/channels/read';
   // API Endpoint for working with message reactions
   static const reactions = '/reactions';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
@@ -53,14 +49,15 @@ class Endpoint {
       '/internal/services/messages/v1/companies/%s/threads';
   // API Endpoint for prolonging token
   static const authorizationProlong = '/internal/services/console/v1/token';
+  // API Endpoint for marking the channel as read
+  static const channelsRead =
+      '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/read';
 
   static const proxyMethods = const [
     badges,
-    channelsRead,
     reactions,
     notificationRooms,
     fileUpload,
-    logout,
     authorize,
   ];
 

@@ -141,9 +141,10 @@ class AuthenticationRepository {
 
   Future<void> logout() async {
     if (Globals.instance.isNetworkConnected) {
-      _api.post(endpoint: Endpoint.logout, data: {
-        'fcm_token': Globals.instance.fcmToken,
-      });
+      _api.delete(
+        endpoint: Endpoint.device + '/${Globals.instance.fcmToken}',
+        data: const {},
+      );
     }
 
     // final result = await _storage.first(table: Table.authentication);
@@ -200,7 +201,7 @@ class AuthenticationRepository {
 
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final needToProlong = authentication.expiration - now <
-        59 * 60; // less than 10 minutes to expiration
+        10 * 60; // less than 10 minutes to expiration
     if (needToProlong) {
       authentication = await prolongAuthentication(authentication);
     }
