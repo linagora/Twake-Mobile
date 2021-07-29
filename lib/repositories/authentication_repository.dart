@@ -76,6 +76,7 @@ class AuthenticationRepository {
             '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
         scopes: ['openid', 'profile', 'email'],
         preferEphemeralSession: true,
+        // promptValues: ['login'] // leads to infinite loop
       ),
     );
     if (tokenResponse == null) {
