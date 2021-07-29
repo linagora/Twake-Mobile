@@ -9,7 +9,7 @@ part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
-  static const COMPOSITE_FIELDS = ['blocks', 'reactions'];
+  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'files'];
 
   final String id;
   final String threadId;
@@ -26,6 +26,8 @@ class Message extends BaseModel {
   String text;
 
   List<dynamic> blocks;
+
+  List<String> files;
 
   @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
@@ -85,6 +87,7 @@ class Message extends BaseModel {
     required this.text,
     required this.blocks,
     required this.reactions,
+    required this.files,
     this.firstName,
     this.lastName,
     this.picture,

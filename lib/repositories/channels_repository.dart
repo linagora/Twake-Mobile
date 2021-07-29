@@ -254,11 +254,12 @@ class ChannelsRepository {
     if (!Globals.instance.isNetworkConnected) return;
 
     await _api.post(
-      endpoint: Endpoint.channelsRead,
+      endpoint: sprintf(
+        Endpoint.channelsRead,
+        [channel.companyId, channel.workspaceId, channel.id],
+      ),
       data: {
-        'company_id': channel.companyId,
-        'workspace_id': channel.workspaceId,
-        'id': channel.id,
+        'value': true,
       },
     );
   }

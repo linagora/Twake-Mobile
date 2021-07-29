@@ -76,17 +76,15 @@ class AuthenticationRepository {
             '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
         scopes: ['openid', 'profile', 'email'],
         preferEphemeralSession: true,
-
         // promptValues: ['login'] // leads to infinite loop
-
       ),
     );
     if (tokenResponse == null) {
       return false;
     }
     final authenticationResult = await _api.post(
-      endpoint: Endpoint.token,
-      data: {'access_token': tokenResponse.accessToken},
+      endpoint: Endpoint.login,
+      data: {'remote_access_token': tokenResponse.accessToken},
     );
     // register device
     _api.post(endpoint: Endpoint.device, data: {
@@ -111,15 +109,14 @@ class AuthenticationRepository {
   Future<Authentication> prolongAuthentication(
     Authentication authentication,
   ) async {
-    dynamic authenticationResult = {};
+    Map<String, dynamic> authenticationResult = {};
+
+    Globals.instance.tokenSet = authentication.refreshToken;
+
     try {
       authenticationResult = await _api.post(
         endpoint: Endpoint.authorizationProlong,
-        data: {
-          'refresh_token': authentication.refreshToken,
-          'fcm_token': Globals.instance.fcmToken,
-          'timezoneoffset': tzo,
-        },
+        data: const {},
       );
     } catch (e, ss) {
       final message = 'Error while prolonging token with valid refresh:\n$e';
@@ -129,7 +126,7 @@ class AuthenticationRepository {
     }
 
     final freshAuthentication = Authentication.complementWithConsole(
-      json: authenticationResult,
+      json: ApiDataTransformer.token(payload: authenticationResult),
       other: authentication,
     );
 
@@ -145,22 +142,23 @@ class AuthenticationRepository {
 
   Future<void> logout() async {
     if (Globals.instance.isNetworkConnected) {
-      _api.post(endpoint: Endpoint.logout, data: {
-        'fcm_token': Globals.instance.fcmToken,
-      });
+      _api.delete(
+        endpoint: Endpoint.device + '/${Globals.instance.fcmToken}',
+        data: const {},
+      );
     }
 
-    final result = await _storage.first(table: Table.authentication);
-    final authentication = Authentication.fromJson(result);
-//
-    await _appAuth.endSession(
-      EndSessionRequest(
-        postLogoutRedirectUrl: 'twakemobile.com://oauthredirect/',
-        idTokenHint: authentication.idToken,
-        discoveryUrl:
-            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-      ),
-    );
+    // final result = await _storage.first(table: Table.authentication);
+    // final authentication = Authentication.fromJson(result);
+
+    // await _appAuth.endSession(
+    // EndSessionRequest(
+    // postLogoutRedirectUrl: 'twakemobile.com://signout',
+    // idTokenHint: authentication.idToken,
+    // discoveryUrl:
+    // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+    // ),
+    // );
     Logger().w('session ended');
 //
     Globals.instance.reset();

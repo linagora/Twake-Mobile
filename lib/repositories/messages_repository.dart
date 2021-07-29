@@ -94,6 +94,8 @@ class MessagesRepository {
         key: 'resources',
       );
     } else {
+      queryParameters['limit'] = 1000;
+
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threadMessages, [
           companyId ?? Globals.instance.companyId,
@@ -167,6 +169,7 @@ class MessagesRepository {
     required String id,
     required String channelId,
     required List<dynamic> prepared,
+    List<String> files: const [],
     String? originalStr,
     required String threadId,
   }) async* {
@@ -191,6 +194,7 @@ class MessagesRepository {
       updatedAt: now,
       responsesCount: 0,
       text: originalStr ?? '',
+      files: files,
       blocks: [],
       username: currentUser.username,
       firstName: currentUser.firstName,
