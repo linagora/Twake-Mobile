@@ -51,7 +51,24 @@ class HomeDirectListWidget extends StatelessWidget {
                     //  initialData: Account init,
                     future: Get.find<ChannelsCubit>()
                         .fetchMembers(channel: channel)
-                        .then((value) => value.first),
+                        .then((accountList) {
+                      List<String> titleU = [];
+                      if (accountList.length == 1) {
+                        titleU.add(accountList.first.fullName);
+                        titleU.add(accountList.first.picture.toString());
+                        return titleU;
+                      } else {
+                        accountList.removeWhere(
+                            (account) => account.id == Globals.instance.userId);
+                        String title = "";
+                        accountList.forEach((account) {
+                          title += account.fullName;
+                        });
+                        titleU.add(title);
+                        titleU.add(accountList.first.picture.toString());
+                        return titleU;
+                      }
+                    }),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         return HomeChannelTile(
@@ -60,10 +77,10 @@ class HomeDirectListWidget extends StatelessWidget {
                             channelId: channel.id,
                             workspaceId: channel.workspaceId,
                           ),
-                          title: (snapshot.data as Account).fullName,
+                          title: (snapshot.data as List<String>)[0],
                           name: channel.lastMessage?.senderName,
                           content: channel.lastMessage?.body,
-                          imageUrl: (snapshot.data as Account).picture,
+                          imageUrl: (snapshot.data as List<String>)[1],
                           dateTime: channel.lastActivity,
                           channelId: channel.id,
                           isDirect: true,
