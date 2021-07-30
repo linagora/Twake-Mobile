@@ -78,14 +78,18 @@ class ApiDataTransformer {
     return json;
   }
 
-  static Map<String, dynamic> apiMessage(
-      {required Message message, bool removeIds: true}) {
+  static Map<String, dynamic> apiMessage({
+    required Message message,
+    bool removeIds: true,
+  }) {
     final json = message.toJson(stringify: false);
     if (removeIds) {
       json.remove('id');
       json.remove('thread_id');
     }
     json['type'] = 'message';
+    json['subtype'] = null;
+    json['context'] = const {};
 
     return json;
   }

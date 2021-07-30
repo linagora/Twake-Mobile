@@ -247,9 +247,9 @@ class MessagesRepository {
     message.createdAt = now;
     message.updatedAt = now;
 
-    _storage.insert(table: Table.message, data: message);
+    await _storage.insert(table: Table.message, data: message);
 
-    yield message;
+    yield await getMessageLocal(messageId: message.id);
   }
 
   Future<Message> edit({required Message message}) async {
@@ -285,17 +285,14 @@ class MessagesRepository {
     // Reactions should be disallowed without active internet connection
     if (!Globals.instance.isNetworkConnected) return message;
 
-    final data = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId,
-      'channel_id': message.channelId,
-      'thread_id': message.threadId,
-      'message_id': message.id,
-      'reaction': reaction,
-    };
-
     // Might add some extra checks
-    await _api.post(endpoint: Endpoint.reactions, data: data);
+    await _api.post(
+        endpoint: sprintf(Endpoint.threadMessages,
+                [Globals.instance.companyId, message.threadId]) +
+            '/${message.id}/reaction',
+        data: {
+          'reactions': [reaction]
+        });
 
     _storage.insert(table: Table.message, data: message);
 

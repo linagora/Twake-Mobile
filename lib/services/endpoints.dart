@@ -8,8 +8,6 @@ class Endpoint {
 
   // API Endpoint for working with user's companies
   static const badges = '/badges';
-  // API Endpoint for working with message reactions
-  static const reactions = '/reactions';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const notificationRooms = '/workspace/notifications';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
@@ -52,10 +50,10 @@ class Endpoint {
   // API Endpoint for marking the channel as read
   static const channelsRead =
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/read';
+  // API Endpoint for working with message reactions
 
   static const proxyMethods = const [
     badges,
-    reactions,
     notificationRooms,
     fileUpload,
     authorize,
