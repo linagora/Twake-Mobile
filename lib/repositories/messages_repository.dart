@@ -196,7 +196,7 @@ class MessagesRepository {
       responsesCount: 0,
       text: originalStr ?? '',
       files: files,
-      blocks: [],
+      blocks: prepared,
       username: currentUser.username,
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
@@ -219,7 +219,9 @@ class MessagesRepository {
                 }
               ]
             },
-            'option': ApiDataTransformer.apiMessage(message: message)
+            'options': {
+              'message': ApiDataTransformer.apiMessage(message: message)
+            }
           }
         : {'resource': ApiDataTransformer.apiMessage(message: message)};
 
@@ -230,9 +232,18 @@ class MessagesRepository {
             [Globals.instance.companyId, threadId],
           );
 
-    final remoteResult = await _api.post(endpoint: endpoint, data: data);
+    final remoteResult = await _api.post(
+      endpoint: endpoint,
+      data: data,
+      key: 'resource',
+    );
 
-    message = Message.fromJson(remoteResult, jsonify: false);
+    message = Message.fromJson(
+      remoteResult['message'],
+      jsonify: false,
+      transform: true,
+      channelId: channelId,
+    );
     message.createdAt = now;
     message.updatedAt = now;
 
@@ -309,8 +320,10 @@ class MessagesRepository {
     );
   }
 
-  Future<Message> getMessage(
-      {required String messageId, String? threadId}) async {
+  Future<Message> getMessage({
+    required String messageId,
+    String? threadId,
+  }) async {
     try {
       return await getMessageLocal(messageId: messageId);
     } catch (_) {
@@ -342,7 +355,9 @@ class MessagesRepository {
   }) async {
     final remoteResult = await _api.get(
       endpoint: sprintf(
-              Endpoint.threadMessages, [Globals.instance.companyId, threadId]) +
+            Endpoint.threadMessages,
+            [Globals.instance.companyId, threadId],
+          ) +
           '/$messageId',
       key: 'resource',
     );

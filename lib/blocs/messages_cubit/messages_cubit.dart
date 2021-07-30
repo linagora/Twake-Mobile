@@ -331,7 +331,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         case IOEventAction.update:
           final message = await _repository.getMessageRemote(
             messageId: change.data.messageId,
-            threadId: change.data.threadId,
+            threadId: change.data.threadIdNotEmpty,
           );
           if (message.userId == Globals.instance.userId && _sendInProgress)
             continue;
@@ -388,17 +388,17 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
         SynchronizationService.instance.socketIOThreadMessageStream;
 
     await for (final change in threadsStream) {
-      Logger().v('GOT thread change');
       switch (change.data.action) {
         case IOEventAction.remove:
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
 
-            if (!messages.any((m) => m.id == change.data.threadId)) continue;
+            if (!messages.any((m) => m.id == change.data.threadIdNotEmpty))
+              continue;
 
-            final message =
-                messages.firstWhere((m) => m.id == change.data.threadId);
+            final message = messages
+                .firstWhere((m) => m.id == change.data.threadIdNotEmpty);
 
             final oldHash = message.hash;
             message.responsesCount -= 1;
@@ -414,14 +414,13 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
 
-            if (!messages.any((m) => m.id == change.data.threadId)) continue;
-
             final message = await _repository.getMessageRemote(
               messageId: change.data.messageId,
-              threadId: change.data.threadId,
+              threadId: change.data.threadIdNotEmpty,
             );
 
-            final i = messages.indexWhere((m) => m.id == change.data.threadId);
+            final i = messages
+                .indexWhere((m) => m.id == change.data.threadIdNotEmpty);
 
             messages[i] = message;
 

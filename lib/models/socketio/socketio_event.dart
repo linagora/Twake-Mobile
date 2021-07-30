@@ -37,6 +37,8 @@ class MessageData {
     required this.threadId,
   });
 
+  String get threadIdNotEmpty => threadId.isEmpty ? messageId : threadId;
+
   factory MessageData.fromJson(Map<String, dynamic> json) {
     return _$MessageDataFromJson(json);
   }

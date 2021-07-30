@@ -15,7 +15,12 @@ class TwacodeParser {
     parse(original);
   }
 
-  List<dynamic> get message => nodes.map((n) => n.transform()).toList();
+  List<dynamic> get message => [
+        {
+          'type': 'twacode',
+          'elements': nodes.map((n) => n.transform()).toList()
+        }
+      ];
 
   void parse(String? original) {
     if (original == null) {
