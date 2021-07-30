@@ -221,26 +221,24 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           ),
                           child: Column(
                             //crossAxisAlignment: CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (!widget.channel.isDirect && !_isMyMessage)
-                                Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(12, 6, 1, 1),
-                                    child: Text(
-                                      '${_message.sender}',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: HSLColor.fromAHSL(
-                                                1,
-                                                _message.username.hashCode %
-                                                    360,
-                                                0.9,
-                                                0.3)
-                                            .toColor(),
-                                      ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                                  child: Text(
+                                    '${_message.sender}',
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: HSLColor.fromAHSL(
+                                              1,
+                                              _message.username.hashCode % 360,
+                                              0.9,
+                                              0.3)
+                                          .toColor(),
                                     ),
                                   ),
                                 ),
@@ -304,20 +302,19 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 ),
                               ),
                               SizedBox(height: 5.0),
-                              /*   if (_message.responsesCount > 0 &&
-                                    _message.threadId == null &&
-                                    !_hideShowAnswers)
-                                  Divider(
-                                    height: 1.0,
-                                    thickness: 1.0,
-                                    color: _isMyMessage
-                                        ? Colors.white.withOpacity(0.19)
-                                        : Color(0xFF979797).withOpacity(0.19),
-                                  ),*/
+                              if (_message.responsesCount > 0)
+                                Divider(
+                                  height: 1.0,
+                                  thickness: 1.0,
+                                  color: _isMyMessage
+                                      ? Color(0xffffffff).withOpacity(0.58)
+                                      : Color(0xFF8E8E93),
+                                ),
                               if (_message.responsesCount > 0 &&
                                   !_message.inThread &&
                                   !_hideShowAnswers)
                                 Container(
+                                  alignment: Alignment.center,
                                   padding:
                                       EdgeInsets.only(top: 15.0, bottom: 15.0),
                                   // alignment: Alignment.bottomCenter,
