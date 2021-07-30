@@ -135,7 +135,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
         if (state is MessagesLoadSuccess) {
-          final _message = state.parentMessage;
+          final _message = state.messages.first;
           // TODO: add null check
           // if (_message == null) {
           //   _message =  ;
@@ -165,7 +165,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                               style:
                                   TextStyle(fontSize: 15, color: Colors.black)),
                           Text(
-                            '${_message!.sender}',
+                            '${_message.sender}',
                             style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
