@@ -256,19 +256,22 @@ class MessagesRepository {
     // Editing should be disallowed without active internet connection
     if (!Globals.instance.isNetworkConnected) return message;
 
-    final data = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId,
-      'channel_id': message.channelId,
-      'thread_id': message.threadId,
-      'message_id': message.id,
-      'original_str': message.text,
-      'prepared': message.blocks,
-    };
+    final remoteResult = await _api.post(
+      endpoint: sprintf(
+            Endpoint.threadMessages,
+            [Globals.instance.companyId, message.threadId],
+          ) +
+          '/${message.id}',
+      data: {'resource': ApiDataTransformer.apiMessage(message: message)},
+      key: 'resource',
+    );
 
-    final remoteResult = await _api.put(endpoint: Endpoint.threads, data: data);
-
-    message = Message.fromJson(remoteResult, jsonify: false);
+    message = Message.fromJson(
+      remoteResult,
+      jsonify: false,
+      transform: true,
+      channelId: message.channelId,
+    );
 
     _storage.insert(table: Table.message, data: message);
 
@@ -299,18 +302,18 @@ class MessagesRepository {
     return message;
   }
 
-  Future<void> delete({required String messageId, String? threadId}) async {
+  Future<void> delete(
+      {required String messageId, required String threadId}) async {
     // Deleting should be disallowed without active internet connection
     if (!Globals.instance.isNetworkConnected) return;
 
-    final data = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId,
-      'channel_id': Globals.instance.channelId,
-      'message_id': messageId,
-      'thread_id': threadId,
-    };
-    await _api.delete(endpoint: Endpoint.threads, data: data);
+    await _api.post(
+        endpoint: sprintf(
+              Endpoint.threadMessages,
+              [Globals.instance.companyId, threadId],
+            ) +
+            '/$messageId/delete',
+        data: const {});
 
     // Only delete message from local store if API request was successful
     await _storage.delete(
@@ -364,6 +367,7 @@ class MessagesRepository {
 
     final message = Message.fromJson(
       remoteResult,
+      jsonify: false,
       transform: true,
       channelId: Globals.instance.channelId,
     );

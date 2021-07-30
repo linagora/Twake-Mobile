@@ -194,6 +194,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final messages = (this.state as MessagesLoadSuccess).messages;
 
     message.blocks = prepared;
+    message.text = editedText;
     // It's assumed that the message argument is also contained in
     // the messages list of the current state
     emit(MessagesLoadSuccess(
