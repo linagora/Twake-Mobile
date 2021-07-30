@@ -39,13 +39,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       workspaceId: isDirect ? 'direct' : null,
     );
 
-    Message? parentMessage;
-
     threadId = threadId ?? Globals.instance.threadId;
-
-    if (threadId != null) {
-      parentMessage = await _repository.getMessage(messageId: threadId);
-    }
 
     List<Message> lastList = const [];
     await for (var list in stream) {
@@ -60,7 +54,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       emit(MessagesLoadSuccess(
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
-        parentMessage: parentMessage,
       ));
     }
 
@@ -70,14 +63,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<void> swipeReply(
-    String threadId,
+    Message thread,
   ) async {
-    final parentMessage = await _repository.getMessage(messageId: threadId);
-
     emit(MessagesLoadSuccess(
-      messages: [],
+      messages: [thread],
       hash: 0,
-      parentMessage: parentMessage,
     ));
   }
 
@@ -92,7 +82,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     emit(MessagesBeforeLoadInProgress(
       messages: state.messages,
       hash: state.hash,
-      parentMessage: state.parentMessage,
     ));
 
     final messages = await _repository.fetchBefore(
@@ -107,7 +96,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final newState = MessagesLoadSuccess(
       messages: messages,
       hash: messages.fold(0, (acc, m) => acc + m.hash),
-      parentMessage: state.parentMessage,
     );
 
     emit(newState);
@@ -145,12 +133,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
       if (message.channelId != Globals.instance.channelId) return;
 
-      final messages = this.state is MessagesLoadSuccess
-          ? (this.state as MessagesLoadSuccess).messages
-          : const <Message>[];
-      final hash = this.state is MessagesLoadSuccess
-          ? (this.state as MessagesLoadSuccess).hash
-          : 0;
+      final messages = (this.state as MessagesLoadSuccess).messages;
+      final hash = (this.state as MessagesLoadSuccess).hash;
 
       final index = messages.indexWhere((m) => m.id == fakeId);
 
@@ -177,7 +161,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     emit(MessageEditInProgress(
       messages: s.messages,
       hash: s.hash,
-      parentMessage: s.parentMessage,
       message: message,
     ));
   }
@@ -300,9 +283,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
   void saveDraft({String? draft}) {
     if (state is! MessagesLoadSuccess) return;
-    if ((state as MessagesLoadSuccess).parentMessage == null) return;
 
-    final thread = (state as MessagesLoadSuccess).parentMessage!;
+    final thread = (state as MessagesLoadSuccess).messages.first;
 
     thread.draft = draft;
 
@@ -317,13 +299,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
-            final parentMessage = (state as MessagesLoadSuccess).parentMessage;
             if (messages.first.channelId == change.channelId) {
               messages.removeWhere((m) => m.id == change.data.messageId);
               emit(MessagesLoadSuccess(
                 messages: messages,
                 hash: hash - 1, // we only need to update hash in someway
-                parentMessage: parentMessage,
               ));
             }
           }
@@ -335,10 +315,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           );
           if (message.userId == Globals.instance.userId && _sendInProgress)
             continue;
+
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
-            final parentMessage = (state as MessagesLoadSuccess).parentMessage;
             if (Globals.instance.channelId == change.channelId) {
               // message is already present
               if (messages.any((m) => m.id == message.id)) {
@@ -349,7 +329,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                 emit(MessagesLoadSuccess(
                   messages: messages,
                   hash: hash + 1, // we only need to update hash in someway
-                  parentMessage: parentMessage,
                 ));
               } else {
                 // new message has been created
@@ -357,7 +336,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                 final newState = MessagesLoadSuccess(
                   messages: messages,
                   hash: hash + message.hash,
-                  parentMessage: parentMessage,
                 );
                 emit(newState);
               }
@@ -428,7 +406,6 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
               messages: messages,
               hash: hash + message.hash,
             );
-            print('Will emit: ${state != newState}');
 
             emit(newState);
           }

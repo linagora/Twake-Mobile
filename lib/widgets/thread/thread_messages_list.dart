@@ -87,7 +87,6 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
 
   double? appBarHeight;
   List<Widget> widgets = [];
-  Message? parentMessage;
   List<Message> _messages = <Message>[];
 
   var _controller = ScrollController();
@@ -100,7 +99,6 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
     final state = Get.find<ThreadMessagesCubit>().state;
     if (state is MessagesLoadSuccess) {
       _messages = state.messages;
-      parentMessage = state.parentMessage;
     }
 
     _controller.addListener(() {
@@ -139,7 +137,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   itemBuilder: (context, i) {
                     //  print(i);
                     if (i == _messages.length - 1) {
-                      return buildThreadMessageColumn(parentMessage!);
+                      return buildThreadMessageColumn(_messages.first);
                     } else {
                       return MessageTile<ThreadMessagesCubit>(
                         message: _messages[_messages.length - 1 - i],
@@ -149,7 +147,7 @@ class _ThreadMessagesListState extends State<ThreadMessagesList> {
                   },
                 )
               : SingleChildScrollView(
-                  child: buildThreadMessageColumn(parentMessage!),
+                  child: buildThreadMessageColumn(_messages.first),
                 ),
         );
       },

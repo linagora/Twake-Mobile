@@ -13,14 +13,12 @@ class MessagesInitial extends MessagesState {
 }
 
 class MessagesLoadSuccess extends MessagesState {
-  final Message? parentMessage; // used in threads
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
 
   const MessagesLoadSuccess({
     required this.messages,
     required this.hash,
-    this.parentMessage,
   });
 
   @override
@@ -42,7 +40,7 @@ class MessageEditInProgress extends MessagesLoadSuccess {
     required List<Message> messages,
     required int hash,
     Message? parentMessage,
-  }) : super(messages: messages, hash: hash, parentMessage: parentMessage);
+  }) : super(messages: messages, hash: hash);
 
   @override
   List<Object?> get props => [message];
@@ -60,5 +58,5 @@ class MessagesBeforeLoadInProgress extends MessagesLoadSuccess {
     required List<Message> messages,
     required int hash,
     Message? parentMessage,
-  }) : super(messages: messages, hash: hash, parentMessage: parentMessage);
+  }) : super(messages: messages, hash: hash);
 }

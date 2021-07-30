@@ -12,8 +12,6 @@ import 'package:twake/widgets/common/image_avatar.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
 
-final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
-
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool hideShowAnswers;
   final Message message;

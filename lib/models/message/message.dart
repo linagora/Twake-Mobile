@@ -59,7 +59,7 @@ class Message extends BaseModel {
     if (this.firstName == null || this.lastName == null) {
       return this.username!;
     }
-    return '$lastName $lastName';
+    return '$firstName $lastName';
   }
 
   @JsonKey(ignore: true)

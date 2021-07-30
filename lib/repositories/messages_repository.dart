@@ -239,7 +239,7 @@ class MessagesRepository {
     );
 
     message = Message.fromJson(
-      remoteResult['message'],
+      id == threadId ? remoteResult['message'] : remoteResult,
       jsonify: false,
       transform: true,
       channelId: channelId,
