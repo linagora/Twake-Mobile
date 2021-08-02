@@ -334,7 +334,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             style: TextStyle(
                                               color: _isMyMessage
                                                   ? Colors.white
-                                                  : Colors.black,
+                                                  : Color(4278210047),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 13,
                                             ),
