@@ -73,6 +73,16 @@ class ApiDataTransformer {
     json['files'] =
         (json['files'] as List<dynamic>).map((f) => f['id']).toList();
 
+    if (json.containsKey('users') &&
+        (json['users'] as List<dynamic>).isNotEmpty) {
+      final user = (json['users'] as List<dynamic>).first;
+
+      json['username'] = user['username'];
+      json['first_name'] = user['first_name'];
+      json['last_name'] = user['last_name'];
+      json['picture'] = user['picture'];
+    }
+
     if (channelId != null) json['channel_id'] = channelId;
 
     return json;

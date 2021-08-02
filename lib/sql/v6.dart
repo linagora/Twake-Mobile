@@ -65,6 +65,10 @@ CREATE TABLE message (
     blocks TEXT DEFAULT "[]",
     reactions TEXT DEFAULT "[]",
     draft TEXT,
+    username TEXT,
+    first_name TEXT,
+    last_name TEXT,
+    picture TEXT,
     is_read INT DEFAULT 1
 );
 ''';

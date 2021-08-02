@@ -32,10 +32,10 @@ class Message extends BaseModel {
   @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
 
-  final String? username;
-  final String? firstName;
-  final String? lastName;
-  final String? picture;
+  String? username;
+  String? firstName;
+  String? lastName;
+  String? picture;
 
   String? draft;
 
@@ -115,10 +115,6 @@ class Message extends BaseModel {
   @override
   Map<String, dynamic> toJson({stringify: true}) {
     var json = _$MessageToJson(this);
-    json.remove('username');
-    json.remove('last_name');
-    json.remove('first_name');
-    json.remove('picture');
     // message that is to be stored to sqlite database should have
     // it's composite fields json string encoded, because sqlite doesn't support
     // non primitive data types, so we need to encode those fields

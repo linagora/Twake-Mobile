@@ -177,6 +177,7 @@ class InitService {
             ),
             queryParameters: {
               'emojis': false,
+              'include_users': 1,
               'limit': 100,
             },
             key: 'resources',

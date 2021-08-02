@@ -34,6 +34,8 @@ class MessagesRepository {
       afterMessageId: messages.isNotEmpty ? messages.last.id : null,
     );
 
+    if (remoteMessages.isEmpty) return;
+
     remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     yield remoteMessages;
@@ -43,22 +45,23 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async {
-    var sql = '''
-          SELECT m.*, a.username, a.first_name,
-            a.last_name,
-            a.picture
-          FROM ${Table.message.name} AS m JOIN
-              ${Table.account.name} AS a ON a.id = m.user_id
-              WHERE m.channel_id = ?''';
+    // var sql = '''
+    // SELECT m.*, a.username, a.first_name,
+    // a.last_name,
+    // a.picture
+    // FROM ${Table.message.name} AS m JOIN
+    // ${Table.account.name} AS a ON a.id = m.user_id
+    // WHERE m.channel_id = ?''';
+    var where = 'channel_id = ?';
     if (threadId == null) {
-      sql += ' AND m.thread_id = m.id';
+      where += ' AND thread_id = id';
     } else {
-      sql += ' AND m.thread_id = ?';
+      where += ' AND m.thread_id = ?';
     }
-    sql += ' ORDER BY created_at DESC';
-    final localResult = await _storage.rawSelect(
-      sql: sql,
-      args: [channelId, if (threadId != null) threadId],
+    final localResult = await _storage.select(
+      table: Table.message,
+      where: where,
+      whereArgs: [channelId, if (threadId != null) threadId],
     );
     final messages =
         localResult.map((entry) => Message.fromJson(entry)).toList();
@@ -77,6 +80,7 @@ class MessagesRepository {
   }) async {
     List<dynamic> remoteResult;
     final queryParameters = <String, dynamic>{
+      'include_users': 1,
       'emoji': false,
     };
 
@@ -128,6 +132,7 @@ class MessagesRepository {
   }) async {
     List<dynamic> remoteResult;
     final queryParameters = {
+      'include_users': 1,
       'page_token': beforeMessageId,
       'direction': 'history',
     };
@@ -200,6 +205,7 @@ class MessagesRepository {
       username: currentUser.username,
       firstName: currentUser.firstName,
       lastName: currentUser.lastName,
+      picture: currentUser.picture,
       reactions: [],
     );
 
@@ -247,9 +253,14 @@ class MessagesRepository {
     message.createdAt = now;
     message.updatedAt = now;
 
-    await _storage.insert(table: Table.message, data: message);
+    message.username = currentUser.username;
+    message.firstName = currentUser.firstName;
+    message.lastName = currentUser.lastName;
+    message.picture = currentUser.picture;
 
-    yield await getMessageLocal(messageId: message.id);
+    _storage.insert(table: Table.message, data: message);
+
+    yield message;
   }
 
   Future<Message> edit({required Message message}) async {
@@ -266,16 +277,21 @@ class MessagesRepository {
       key: 'resource',
     );
 
-    message = Message.fromJson(
+    final edited = Message.fromJson(
       remoteResult,
       jsonify: false,
       transform: true,
       channelId: message.channelId,
     );
 
-    _storage.insert(table: Table.message, data: message);
+    edited.username = message.username;
+    edited.firstName = message.firstName;
+    edited.lastName = message.lastName;
+    edited.picture = message.picture;
 
-    return message;
+    _storage.insert(table: Table.message, data: edited);
+
+    return edited;
   }
 
   Future<Message> react({
@@ -335,16 +351,13 @@ class MessagesRepository {
   }
 
   Future<Message> getMessageLocal({required String messageId}) async {
-    final sql = '''
-          SELECT m.*, a.username, a.first_name,
-            a.last_name,
-            a.picture
-          FROM ${Table.message.name} AS m JOIN
-              ${Table.account.name} AS a ON a.id = m.user_id
-              WHERE m.id = ?''';
-    final result = await _storage.rawSelect(sql: sql, args: [messageId]);
+    final result = await _storage.first(
+      table: Table.message,
+      where: 'id = ?',
+      whereArgs: [messageId],
+    );
 
-    final message = Message.fromJson(result.first);
+    final message = Message.fromJson(result);
 
     return message;
   }
@@ -360,6 +373,7 @@ class MessagesRepository {
           ) +
           '/$messageId',
       key: 'resource',
+      queryParameters: {'include_users': 1},
     );
 
     final message = Message.fromJson(
@@ -369,9 +383,11 @@ class MessagesRepository {
       channelId: Globals.instance.channelId,
     );
 
-    await _storage.insert(table: Table.message, data: message);
+    Logger().w('Message: ${message.toJson()}');
 
-    return await getMessageLocal(messageId: messageId);
+    _storage.insert(table: Table.message, data: message);
+
+    return message;
   }
 
   Future<void> removeMessageLocal({required String messageId}) async {

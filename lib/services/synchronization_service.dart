@@ -105,14 +105,16 @@ class SynchronizationService {
             r.resource['workspace_id'] != 'direct';
       });
 
-  Stream<SocketIOEvent> get socketIOChannelMessageStream =>
-      _socketio.eventStream.where((e) {
-        return e.data.threadIdNotEmpty == e.data.messageId;
+  Stream<SocketIOResource> get socketIOChannelMessageStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.message &&
+            r.resource['thread_id'] == r.resource['id'];
       });
 
-  Stream<SocketIOEvent> get socketIOThreadMessageStream =>
-      _socketio.eventStream.where((e) {
-        return e.data.threadIdNotEmpty != e.data.messageId;
+  Stream<SocketIOResource> get socketIOThreadMessageStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.message &&
+            r.resource['thread_id'] != r.resource['id'];
       });
 
   Stream<SocketIOResource> get sockeIOBadgesUpdateStream =>

@@ -12,7 +12,7 @@ export 'messages_state.dart';
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
 
-  final _socketIOEventStream = SocketIOService.instance.eventStream;
+  final _socketIOEventStream = SocketIOService.instance.resourceStream;
 
   bool _sendInProgress = false;
 
@@ -269,8 +269,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   void selectThread({required String messageId}) {
     Globals.instance.threadIdSet = messageId;
 
-    SynchronizationService.instance
-        .subscribeToThreadReplies(threadId: messageId);
+    // SynchronizationService.instance
+    // .subscribeToThreadReplies(threadId: messageId);
   }
 
   void clearSelectedThread() {
@@ -301,25 +301,25 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
   Future<void> listenToMessageChanges() async {
     await for (final change in _socketIOEventStream) {
-      switch (change.data.action) {
-        case IOEventAction.remove:
-          _repository.removeMessageLocal(messageId: change.data.messageId);
+      switch (change.action) {
+        case ResourceAction.deleted:
+          _repository.removeMessageLocal(messageId: change.resource['id']);
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
-            if (messages.first.channelId == change.channelId) {
-              messages.removeWhere((m) => m.id == change.data.messageId);
-              emit(MessagesLoadSuccess(
-                messages: messages,
-                hash: hash - 1, // we only need to update hash in someway
-              ));
-            }
+            messages.removeWhere((m) => m.id == change.resource['id']);
+            emit(MessagesLoadSuccess(
+              messages: messages,
+              hash: hash - 1, // we only need to update hash in someway
+            ));
           }
           break;
-        case IOEventAction.update:
+        case ResourceAction.created:
+        case ResourceAction.saved:
+        case ResourceAction.updated:
           final message = await _repository.getMessageRemote(
-            messageId: change.data.messageId,
-            threadId: change.data.threadIdNotEmpty,
+            messageId: change.resource['id'],
+            threadId: change.resource['thread_id'],
           );
           if (message.userId == Globals.instance.userId && _sendInProgress)
             continue;
@@ -327,28 +327,28 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
-            if (Globals.instance.channelId == change.channelId) {
-              // message is already present
-              if (messages.any((m) => m.id == message.id)) {
-                final index = messages.indexWhere((m) => m.id == message.id);
+            // message is already present
+            if (messages.any((m) => m.id == message.id)) {
+              final index = messages.indexWhere((m) => m.id == message.id);
 
-                messages[index] = message;
+              messages[index] = message;
 
-                emit(MessagesLoadSuccess(
-                  messages: messages,
-                  hash: hash + 1, // we only need to update hash in someway
-                ));
-              } else {
-                // new message has been created
-                messages.add(message);
-                final newState = MessagesLoadSuccess(
-                  messages: messages,
-                  hash: hash + message.hash,
-                );
-                emit(newState);
-              }
+              emit(MessagesLoadSuccess(
+                messages: messages,
+                hash: hash + 1, // we only need to update hash in someway
+              ));
+            } else {
+              // new message has been created
+              messages.add(message);
+              final newState = MessagesLoadSuccess(
+                messages: messages,
+                hash: hash + message.hash,
+              );
+              emit(newState);
             }
           }
+          break;
+        case ResourceAction.event:
           break;
       }
     }
@@ -374,17 +374,17 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
         SynchronizationService.instance.socketIOThreadMessageStream;
 
     await for (final change in threadsStream) {
-      switch (change.data.action) {
-        case IOEventAction.remove:
+      switch (change.action) {
+        case ResourceAction.deleted:
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
 
-            if (!messages.any((m) => m.id == change.data.threadIdNotEmpty))
+            if (!messages.any((m) => m.id == change.resource['thread_id']))
               continue;
 
             final message = messages
-                .firstWhere((m) => m.id == change.data.threadIdNotEmpty);
+                .firstWhere((m) => m.id == change.resource['thread_id']);
 
             final oldHash = message.hash;
             message.responsesCount -= 1;
@@ -395,18 +395,21 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             ));
           }
           break;
-        case IOEventAction.update:
+
+        case ResourceAction.created:
+        case ResourceAction.saved:
+        case ResourceAction.updated:
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
 
             final message = await _repository.getMessageRemote(
-              messageId: change.data.messageId,
-              threadId: change.data.threadIdNotEmpty,
+              messageId: change.resource['id'],
+              threadId: change.resource['thread_id'],
             );
 
             final i = messages
-                .indexWhere((m) => m.id == change.data.threadIdNotEmpty);
+                .indexWhere((m) => m.id == change.resource['thread_id']);
 
             messages[i] = message;
 
@@ -417,6 +420,8 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
             emit(newState);
           }
+          break;
+        case ResourceAction.event:
           break;
       }
     }
@@ -430,5 +435,5 @@ class ThreadMessagesCubit extends BaseMessagesCubit {
   @override
   final _socketIOEventStream = SynchronizationService
       .instance.socketIOThreadMessageStream
-      .where((e) => e.data.threadId == Globals.instance.threadId);
+      .where((e) => e.resource['thread_id'] == Globals.instance.threadId);
 }
