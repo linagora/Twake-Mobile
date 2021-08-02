@@ -245,90 +245,104 @@ class _MessageTileState<T extends BaseMessagesCubit>
                               Padding(
                                 padding:
                                     EdgeInsets.fromLTRB(12.0, 5.0, 2.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                child: Column(
                                   children: [
-                                    Flexible(
-                                      child: Column(
-                                        children: [
-                                          TwacodeRenderer(
-                                            _message.blocks,
-                                            TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w400,
-                                              color: _isMyMessage
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                            _message.username.hashCode % 360,
-                                          ).message,
-                                          SizedBox(
-                                            height: 3,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          _message.inThread || _hideShowAnswers
-                                              ? DateFormatter
-                                                  .getVerboseDateTime(
-                                                  _message.createdAt,
-                                                )
-                                              : DateFormatter.getVerboseTime(
-                                                  _message.createdAt,
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              TwacodeRenderer(
+                                                _message.blocks,
+                                                TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: _isMyMessage
+                                                      ? Colors.white
+                                                      : Colors.black,
                                                 ),
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                            fontSize: 11.0,
-                                            fontWeight: FontWeight.w400,
-                                            fontStyle: FontStyle.italic,
-                                            color: _isMyMessage
-                                                ? Color(0xffffffff)
-                                                    .withOpacity(0.58)
-                                                : Color(0xFF8E8E93),
+                                                _message.username.hashCode %
+                                                    360,
+                                              ).message,
+                                              SizedBox(
+                                                height: 3,
+                                              ),
+                                            ],
                                           ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              _message.inThread ||
+                                                      _hideShowAnswers
+                                                  ? DateFormatter
+                                                      .getVerboseDateTime(
+                                                      _message.createdAt,
+                                                    )
+                                                  : DateFormatter
+                                                      .getVerboseTime(
+                                                      _message.createdAt,
+                                                    ),
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w400,
+                                                fontStyle: FontStyle.italic,
+                                                color: _isMyMessage
+                                                    ? Color(0xffffffff)
+                                                        .withOpacity(0.58)
+                                                    : Color(0xFF8E8E93),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
+                                    if (_message.responsesCount > 0)
+                                      //    Container(
+                                      //  alignment: Alignment.center,
+                                      //    child: Divider(
+                                      //      height: 1.0,
+                                      //     thickness: 1.0,
+                                      //     color: _isMyMessage
+                                      //        ? Color(0xffffffff)
+                                      //             .withOpacity(0.58)
+                                      //         : Color(0xFF8E8E93),
+                                      //   ),
+                                      //   ),
+                                      if (_message.responsesCount > 0 &&
+                                          !_message.inThread &&
+                                          !_hideShowAnswers)
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: 90.0,
+                                          ),
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.only(
+                                              top: 15.0, bottom: 15.0),
+                                          // alignment: Alignment.bottomCenter,
+                                          child: Text(
+                                            'View ${_message.responsesCount} replies',
+                                            style: TextStyle(
+                                              color: _isMyMessage
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 5.0),
-                              if (_message.responsesCount > 0)
-                                Divider(
-                                  height: 1.0,
-                                  thickness: 1.0,
-                                  color: _isMyMessage
-                                      ? Color(0xffffffff).withOpacity(0.58)
-                                      : Color(0xFF8E8E93),
-                                ),
-                              if (_message.responsesCount > 0 &&
-                                  !_message.inThread &&
-                                  !_hideShowAnswers)
-                                Container(
-                                  alignment: Alignment.center,
-                                  padding:
-                                      EdgeInsets.only(top: 15.0, bottom: 15.0),
-                                  // alignment: Alignment.bottomCenter,
-                                  child: Text(
-                                    'View ${_message.responsesCount} replies',
-                                    style: TextStyle(
-                                      color: _isMyMessage
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
                             ],
                           ),
                         ),
