@@ -24,6 +24,8 @@ class SocketIOResource {
 }
 
 enum ResourceType {
+  @JsonValue('message')
+  message,
   @JsonValue('channel')
   channel,
   @JsonValue('channel_member')
@@ -37,6 +39,8 @@ enum ResourceType {
 }
 
 enum ResourceAction {
+  @JsonValue('created')
+  created,
   @JsonValue('updated')
   updated,
   @JsonValue('saved')

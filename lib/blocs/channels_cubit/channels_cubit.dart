@@ -286,8 +286,6 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             selected: selected,
           ));
 
-          SynchronizationService.instance.refreshRooms();
-
           break;
 
         default:
@@ -309,6 +307,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       final channels = (state as ChannelsLoadedSuccess).channels;
       switch (change.action) {
         case ResourceAction.saved:
+        case ResourceAction.created:
         case ResourceAction.updated:
           final rchannels = await _repository.fetchRemote(
             companyId: Globals.instance.companyId!,

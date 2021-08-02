@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/companies_repository.dart';
+import 'package:twake/services/service_bundle.dart';
 
 import 'companies_state.dart';
 
@@ -26,6 +27,10 @@ class CompaniesCubit extends Cubit<CompaniesState> {
       if (Globals.instance.companyId != null) {
         selected =
             companies.firstWhere((c) => c.id == Globals.instance.companyId);
+        SynchronizationService.instance.subscribeForChannels(
+          companyId: selected.id,
+          workspaceId: 'direct',
+        );
       }
       emit(CompaniesLoadSuccess(companies: companies, selected: selected!));
     }
@@ -39,6 +44,11 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     final companies = (state as CompaniesLoadSuccess).companies;
 
     final selected = companies.firstWhere((c) => c.id == companyId);
+
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: companyId,
+      workspaceId: 'direct',
+    );
 
     emit(CompaniesLoadSuccess(companies: companies, selected: selected));
   }

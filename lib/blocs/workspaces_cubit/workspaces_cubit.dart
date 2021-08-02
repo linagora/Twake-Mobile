@@ -19,7 +19,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     // wait for authentication check before attempting to subscribe
     Future.delayed(Duration(seconds: 7), () {
       SynchronizationService.instance.subscribeToBadges();
-      SynchronizationService.instance.subscribeForChannels();
+      SynchronizationService.instance.subscribeForChannels(
+        companyId: Globals.instance.companyId!,
+        workspaceId: Globals.instance.workspaceId!,
+      );
     });
   }
 
@@ -37,7 +40,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
     if (selectedId != null) {
       Globals.instance.workspaceIdSet = selectedId;
-      SynchronizationService.instance.subscribeForChannels();
+      SynchronizationService.instance.subscribeForChannels(
+        companyId: Globals.instance.companyId!,
+        workspaceId: selectedId,
+      );
     }
 
     selectedId = selectedId ?? Globals.instance.workspaceId;
@@ -101,6 +107,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       selected: workspaces.firstWhere((w) => w.id == workspaceId),
     ));
     // Subscribe to socketIO updates
-    SynchronizationService.instance.subscribeForChannels();
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: Globals.instance.companyId!,
+      workspaceId: workspaceId,
+    );
   }
 }

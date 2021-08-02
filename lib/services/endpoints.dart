@@ -9,8 +9,6 @@ class Endpoint {
   // API Endpoint for working with user's companies
   static const badges = '/badges';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
-  static const notificationRooms = '/workspace/notifications';
-  // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const fileUpload = '/media/upload';
 
   // Core methods
@@ -54,7 +52,6 @@ class Endpoint {
 
   static const proxyMethods = const [
     badges,
-    notificationRooms,
     fileUpload,
     authorize,
   ];
