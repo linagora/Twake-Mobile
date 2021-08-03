@@ -25,8 +25,8 @@ class MessagesLoadSuccess extends MessagesState {
   List<Object?> get props => [hash];
 }
 
-class NoMessagesFound extends MessagesState {
-  const NoMessagesFound();
+class NoMessagesFound extends MessagesLoadSuccess {
+  NoMessagesFound() : super(messages: <Message>[], hash: 0);
 
   @override
   List<Object?> get props => const [];

@@ -66,7 +66,8 @@ class SocketIOService {
 
     _socket.on(
       IOEvent.join_success,
-      (r) => Logger().v('successfully joined room $r'),
+      (r) => {},
+      // (r) => Logger().v('successfully joined room $r'),
     );
 
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
@@ -101,7 +102,7 @@ class SocketIOService {
   }
 
   void _handleEvent(data) {
-    Logger().v('GOT EVENT: $data');
+    // Logger().v('GOT EVENT: $data');
     final event = SocketIOEvent.fromJson(json: data);
     _eventStream.sink.add(event);
   }

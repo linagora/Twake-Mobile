@@ -259,7 +259,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final hash = (this.state as MessagesLoadSuccess).hash;
     messages.removeWhere((m) => m.id == message.id);
 
-    emit(MessagesLoadSuccess(messages: messages, hash: hash - message.hash));
+    if (messages.isNotEmpty) {
+      emit(MessagesLoadSuccess(messages: messages, hash: hash - message.hash));
+    } else {
+      emit(NoMessagesFound());
+    }
 
     // Again, here we can use try except to undelete the message
     // if the request to API failed for some reason

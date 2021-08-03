@@ -29,18 +29,18 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       builder: (context, state) {
         List<Message> messages = <Message>[];
 
-        if (state is MessagesLoadSuccess) {
-          if (state.messages.isEmpty) {
-            return MessagesLoadingAnimation();
-          }
-          messages = state.messages;
-        } else if (state is MessagesBeforeLoadInProgress) {
-          return MessagesLoadingAnimation();
-        } else if (state is NoMessagesFound) {
+        if (state is NoMessagesFound) {
           return EmptyChatContainer(
             isDirect: widget.parentChannel.isDirect,
             userName: widget.parentChannel.name,
           );
+        } else if (state is MessagesBeforeLoadInProgress) {
+          return MessagesLoadingAnimation();
+        } else if (state is MessagesLoadSuccess) {
+          if (state.messages.isEmpty) {
+            return MessagesLoadingAnimation();
+          }
+          messages = state.messages;
         } else {
           return MessagesLoadingAnimation();
         }
