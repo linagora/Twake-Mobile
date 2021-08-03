@@ -56,7 +56,7 @@ class MessagesRepository {
     if (threadId == null) {
       where += ' AND thread_id = id';
     } else {
-      where += ' AND m.thread_id = ?';
+      where += ' AND thread_id = ?';
     }
     final localResult = await _storage.select(
       table: Table.message,
@@ -382,8 +382,6 @@ class MessagesRepository {
       transform: true,
       channelId: Globals.instance.channelId,
     );
-
-    Logger().w('Message: ${message.toJson()}');
 
     _storage.insert(table: Table.message, data: message);
 

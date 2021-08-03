@@ -404,7 +404,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             final hash = (state as MessagesLoadSuccess).hash;
 
             final message = await _repository.getMessageRemote(
-              messageId: change.resource['id'],
+              messageId: change.resource['thread_id'],
               threadId: change.resource['thread_id'],
             );
 
