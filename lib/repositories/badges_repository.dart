@@ -1,6 +1,7 @@
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 export 'package:twake/models/badge/badge.dart';
 
@@ -39,9 +40,12 @@ class BadgesRepository {
     final List remoteResult = await _api.get(
       endpoint: Endpoint.badges,
       queryParameters: queryParameters,
+      key: 'resources',
     );
 
-    final badges = remoteResult.map((e) => Badge.fromJson(json: e)).toList();
+    final badges = ApiDataTransformer.badges(list: remoteResult)
+        .map((e) => Badge.fromJson(json: e))
+        .toList();
 
     await _storage.truncate(table: Table.badge);
 

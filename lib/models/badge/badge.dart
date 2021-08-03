@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
-import 'package:twake/services/service_bundle.dart';
 
 part 'badge.g.dart';
 

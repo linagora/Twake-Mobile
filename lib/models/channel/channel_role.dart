@@ -9,4 +9,7 @@ enum ChannelRole {
 
   @JsonValue('guest')
   guest,
+
+  @JsonValue('bot')
+  bot,
 }

@@ -6,8 +6,6 @@ class Endpoint {
 
   /// List of internal methods, for authorized users only
 
-  // API Endpoint for working with user's companies
-  static const badges = '/badges';
   // API Endpoint for getting all the rooms to which it's possible to subscribe
   static const fileUpload = '/media/upload';
 
@@ -48,10 +46,10 @@ class Endpoint {
   // API Endpoint for marking the channel as read
   static const channelsRead =
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/read';
-  // API Endpoint for working with message reactions
+  // API Endpoint for working with user's companies
+  static const badges = '/internal/services/notifications/v1/badges';
 
   static const proxyMethods = const [
-    badges,
     fileUpload,
     authorize,
   ];

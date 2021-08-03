@@ -70,13 +70,13 @@ class AuthenticationRepository {
     final AuthorizationTokenResponse? tokenResponse =
         await _appAuth.authorizeAndExchangeCode(
       AuthorizationTokenRequest(
-        Globals.instance.clientId!,
+        'twakemobile', // Globals.instance.clientId!,
         'twakemobile.com://oauthredirect',
         discoveryUrl:
             '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
         scopes: ['openid', 'profile', 'email'],
         preferEphemeralSession: true,
-        // promptValues: ['login'] // leads to infinite loop
+        // promptValues: ['login'], // leads to infinite loop
       ),
     );
     if (tokenResponse == null) {
@@ -150,14 +150,14 @@ class AuthenticationRepository {
 
     // final result = await _storage.first(table: Table.authentication);
     // final authentication = Authentication.fromJson(result);
-
+//
     // await _appAuth.endSession(
-    // EndSessionRequest(
-    // postLogoutRedirectUrl: 'twakemobile.com://signout',
-    // idTokenHint: authentication.idToken,
-    // discoveryUrl:
-    // '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-    // ),
+    //   EndSessionRequest(
+    //     // postLogoutRedirectUrl: 'twakemobile.com://signout',
+    //     // idTokenHint: authentication.idToken,
+    //     discoveryUrl:
+    //         '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+    //   ),
     // );
     Logger().w('session ended');
 //

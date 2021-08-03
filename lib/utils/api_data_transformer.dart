@@ -103,4 +103,34 @@ class ApiDataTransformer {
 
     return json;
   }
+
+  static List<Map<String, dynamic>> badges({required List<dynamic> list}) {
+    final badgeCollection = <String, Map<String, dynamic>>{};
+
+    for (final i in list) {
+      final String workspaceId = i['workspace_id'];
+      final String channelId = i['channel_id'];
+
+      if (badgeCollection.containsKey(workspaceId)) {
+        badgeCollection[workspaceId]!['count'] += 1;
+      } else {
+        badgeCollection[workspaceId] = {
+          'type': 'workspace',
+          'id': workspaceId,
+          'count': 1,
+        };
+      }
+      if (badgeCollection.containsKey(channelId)) {
+        badgeCollection[channelId]!['count'] += 1;
+      } else {
+        badgeCollection[channelId] = {
+          'type': 'channel',
+          'id': channelId,
+          'count': 1,
+        };
+      }
+    }
+
+    return badgeCollection.values.toList();
+  }
 }

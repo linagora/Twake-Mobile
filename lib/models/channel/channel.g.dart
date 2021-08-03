@@ -79,4 +79,5 @@ const _$ChannelRoleEnumMap = {
   ChannelRole.owner: 'owner',
   ChannelRole.member: 'member',
   ChannelRole.guest: 'guest',
+  ChannelRole.bot: 'bot',
 };
