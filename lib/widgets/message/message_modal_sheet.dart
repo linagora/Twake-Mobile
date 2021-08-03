@@ -13,6 +13,7 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final Function? onCopy;
   final BuildContext? ctx;
   final bool isMe;
+  final bool isThread;
 
   const MessageModalSheet({
     required this.message,
@@ -22,6 +23,7 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
     this.onCopy,
     this.ctx,
     required this.isMe,
+    this.isThread = false,
     Key? key,
   }) : super(key: key);
 
@@ -98,7 +100,14 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                     showEmojiBoard: toggleEmojiBoard,
                   ),
                 ),
-                Spacer(),
+                Expanded(
+                    child: GestureDetector(
+                       behavior: HitTestBehavior.opaque,
+                  child: Container(),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                )),
                 Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFF2F2F6),
@@ -203,13 +212,13 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     widget.onCopy!();
                                   },
                                 ),
-                          if (!widget.message.inThread)
+                          if (!widget.message.inThread && !widget.isThread)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
                               ),
                             ),
-                          if (!widget.message.inThread)
+                          if (!widget.message.inThread && !widget.isThread)
                             GestureDetector(
                               child: Column(
                                 children: [

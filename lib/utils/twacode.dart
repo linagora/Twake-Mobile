@@ -628,7 +628,9 @@ class TwacodeRenderer {
 
       case TType.User:
         style = TextStyle(
-          color: HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor(),
+          color: parentStyle.color == Colors.black
+              ? HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor()
+              : Colors.white,
         );
         break;
 

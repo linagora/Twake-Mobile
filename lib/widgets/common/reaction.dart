@@ -9,7 +9,11 @@ import 'package:twake/models/message/reaction.dart' as rct;
 class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
   final Message message;
   final rct.Reaction reaction;
-  Reaction({required this.message, required this.reaction});
+  final bool isFirstInThread;
+  Reaction(
+      {required this.message,
+      required this.reaction,
+      this.isFirstInThread = false});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,7 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
                   Text(
                     '${reaction.name}',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: isFirstInThread? 20:15,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),

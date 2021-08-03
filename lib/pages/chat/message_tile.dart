@@ -20,20 +20,24 @@ import 'package:twake/widgets/common/reaction.dart';
 final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
 
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
-  final bool hideShowAnswers;
+  final bool hideShowReplies;
   final bool shouldShowSender;
   final Message message;
   final Channel channel;
+  final bool hideReaction;
   final bool upBubbleSide;
   final bool downBubbleSide;
+  final bool isThread;
 
   MessageTile({
     required this.message,
     required this.channel,
     required this.upBubbleSide,
     required this.downBubbleSide,
-    this.hideShowAnswers = false,
+    this.hideShowReplies = false,
     this.shouldShowSender = true,
+    this.hideReaction = false,
+    this.isThread = false,
     Key? key,
   }) : super(key: key);
 
@@ -43,7 +47,7 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
 
 class _MessageTileState<T extends BaseMessagesCubit>
     extends State<MessageTile> {
-  late bool _hideShowAnswers;
+  late bool _hideShowReplies;
   late bool _shouldShowSender;
   late Message _message;
   ReceivePort _receivePort = ReceivePort();
@@ -60,7 +64,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
   @override
   void initState() {
     super.initState();
-    _hideShowAnswers = widget.hideShowAnswers;
+    _hideShowReplies = widget.hideShowReplies;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
 
@@ -75,8 +79,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
     if (oldWidget.shouldShowSender != widget.shouldShowSender) {
       _shouldShowSender = widget.shouldShowSender;
     }
-    if (oldWidget.hideShowAnswers != widget.hideShowAnswers) {
-      _hideShowAnswers = widget.hideShowAnswers;
+    if (oldWidget.hideShowReplies != widget.hideShowReplies) {
+      _hideShowReplies = widget.hideShowReplies;
     }
     if (oldWidget.message != widget.message) {
       _message = widget.message;
@@ -116,16 +120,24 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 return MessageModalSheet<T>(
                   message: _message,
                   isMe: _isMyMessage,
+                  isThread: widget.isThread,
                   onReply: onReply,
                   onEdit: () {
-                    Get.find<ChannelMessagesCubit>()
-                        .startEdit(message: _message);
+                    widget.isThread
+                        ? Get.find<ThreadMessagesCubit>()
+                            .startEdit(message: _message)
+                        : Get.find<ChannelMessagesCubit>()
+                            .startEdit(message: _message);
                     Navigator.of(context).pop();
                   },
                   ctx: context,
                   onDelete: () {
-                    Get.find<ChannelMessagesCubit>().delete(message: _message);
-                    Navigator.pop(context);
+                    widget.isThread
+                        ? Get.find<ThreadMessagesCubit>()
+                            .delete(message: _message)
+                        : Get.find<ChannelMessagesCubit>()
+                            .delete(message: _message);
+                    Navigator.of(context).pop();
                   },
                   onCopy: () {
                     onCopy(context: context, text: _message.text);
@@ -137,7 +149,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
         },
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();
-          if (_message.responsesCount != 0 && !_hideShowAnswers) {
+          if (_message.responsesCount != 0 && !_hideShowReplies) {
             onReply(_message);
           }
         },
@@ -282,7 +294,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           children: [
                                             Text(
                                               _message.inThread ||
-                                                      _hideShowAnswers
+                                                      _hideShowReplies
                                                   ? DateFormatter
                                                       .getVerboseDateTime(
                                                       _message.createdAt,
@@ -320,7 +332,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                       //   ),
                                       if (_message.responsesCount > 0 &&
                                           !_message.inThread &&
-                                          !_hideShowAnswers)
+                                          !_hideShowReplies)
                                         Container(
                                           constraints: BoxConstraints(
                                             maxWidth: 90.0,
@@ -334,7 +346,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             style: TextStyle(
                                               color: _isMyMessage
                                                   ? Colors.white
-                                                  : Color(4278210047),
+                                                  : Color(0xFF004DFF),
                                               fontWeight: FontWeight.bold,
                                               fontSize: 13,
                                             ),
@@ -348,23 +360,24 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 17.0,
-                      bottom: -1.0,
-                      child: Wrap(
-                        runSpacing: Dim.heightMultiplier,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        textDirection: TextDirection.ltr,
-                        children: [
-                          ..._message.reactions.map((r) {
-                            return Reaction<T>(
-                              message: _message,
-                              reaction: r,
-                            );
-                          }),
-                        ],
+                    if (!widget.hideReaction)
+                      Positioned(
+                        left: 17.0,
+                        bottom: -1.0,
+                        child: Wrap(
+                          runSpacing: Dim.heightMultiplier,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          textDirection: TextDirection.ltr,
+                          children: [
+                            ..._message.reactions.map((r) {
+                              return Reaction<T>(
+                                message: _message,
+                                reaction: r,
+                              );
+                            }),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
