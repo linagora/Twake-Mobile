@@ -136,10 +136,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       builder: (ctx, state) {
         if (state is MessagesLoadSuccess) {
           final _message = state.messages.first;
-          // TODO: add null check
-          // if (_message == null) {
-          //   _message =  ;
-          // }
           return Column(
             children: [
               Divider(
