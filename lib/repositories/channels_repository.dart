@@ -60,6 +60,10 @@ class ChannelsRepository {
   }) async {
     final queryParameters = {'mine': 1};
 
+    if (workspaceId == 'direct') {
+      queryParameters['include_users'] = 1;
+    }
+
     final List<dynamic> remoteResult = await _api.get(
       endpoint: sprintf(endpoint, [companyId, workspaceId]),
       queryParameters: queryParameters,

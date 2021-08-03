@@ -59,6 +59,22 @@ class ApiDataTransformer {
           json['owner'] == Globals.instance.userId ? 'owner' : 'member';
     }
 
+    if (json['workspace_id'] == 'direct' && json['users'] != null) {
+      final users = json['users'] as List;
+
+      json['name'] = users.map((u) {
+        final String name = (u['first_name'] as String).isNotEmpty
+            ? u['first_name']
+            : u['username'];
+
+        return name;
+      }).join(', ');
+
+      json['icon'] = users.map((u) {
+        return u['picture'] ?? '';
+      }).join(',');
+    }
+
     return json;
   }
 
