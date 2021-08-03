@@ -164,8 +164,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
               padding: _message.reactions.isEmpty
                   ? const EdgeInsets.only(bottom: 2.0)
                   : const EdgeInsets.only(bottom: 22.0),
-              child: (!_isMyMessage && _shouldShowSender)
-                  ? UserThumbnail(
+              child: (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
+                  ?  UserThumbnail(
                       thumbnailUrl: _message.picture ?? '',
                       userName: _message.sender,
                       size: 28.0,
@@ -235,7 +235,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                             //crossAxisAlignment: CrossAxisAlignment.stretch,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (!widget.channel.isDirect && !_isMyMessage)
+                              if (!widget.channel.isDirect && !_isMyMessage && widget.downBubbleSide)
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(12, 0, 0, 0),
@@ -335,7 +335,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           !_hideShowReplies)
                                         Container(
                                           constraints: BoxConstraints(
-                                            maxWidth: 90.0,
+                                            maxWidth: 95.0,
                                           ),
                                           alignment: Alignment.center,
                                           padding: EdgeInsets.only(

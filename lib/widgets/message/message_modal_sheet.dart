@@ -212,7 +212,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     widget.onCopy!();
                                   },
                                 ),
-                          if (!widget.message.inThread && !widget.isThread)
+                          if (!widget.message.inThread && !widget.isThread && widget.message.blocks.isNotEmpty)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
