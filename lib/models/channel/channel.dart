@@ -51,6 +51,12 @@ class Channel extends BaseModel {
     return hash;
   }
 
+  List<String> get avatars {
+    if (!isDirect) throw 'The getter avatars exist only for direct channels';
+
+    return icon!.split(',').toList();
+  }
+
   int get membersCount => members.length;
 
   bool get isDirect => workspaceId == 'direct';
