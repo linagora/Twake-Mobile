@@ -101,13 +101,14 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                   ),
                 ),
                 Expanded(
-                    child: GestureDetector(
-                       behavior: HitTestBehavior.opaque,
-                  child: Container(),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                )),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFF2F2F6),
@@ -212,7 +213,9 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     widget.onCopy!();
                                   },
                                 ),
-                          if (!widget.message.inThread && !widget.isThread && widget.message.blocks.isNotEmpty)
+                          if (!widget.message.inThread &&
+                              !widget.isThread &&
+                              widget.message.blocks.isNotEmpty)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
