@@ -67,20 +67,29 @@ class AuthenticationRepository {
   }
 
   Future<bool> webviewAuthenticate() async {
-    final AuthorizationTokenResponse? tokenResponse =
-        await _appAuth.authorizeAndExchangeCode(
-      AuthorizationTokenRequest(
-        'twakemobile', // Globals.instance.clientId!,
-        'twakemobile.com://oauthredirect',
-        discoveryUrl:
-            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-        scopes: ['openid', 'profile', 'email'],
-        preferEphemeralSession: true,
-        // promptValues: ['login'], // leads to infinite loop
-      ),
-    );
-    if (tokenResponse == null) {
-      return false;
+    AuthorizationTokenResponse? tokenResponse;
+
+    while (true) {
+      try {
+        tokenResponse = await _appAuth.authorizeAndExchangeCode(
+          AuthorizationTokenRequest(
+            'twakemobile', // Globals.instance.clientId!,
+            'twakemobile.com://oauthredirect',
+            discoveryUrl:
+                '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+            scopes: ['openid', 'profile', 'email'],
+            preferEphemeralSession: true,
+            // promptValues: ['login'], // leads to infinite loop
+          ),
+        );
+      } catch (_) {
+        continue;
+      }
+      if (tokenResponse == null) {
+        continue;
+      } else {
+        break;
+      }
     }
     final authenticationResult = await _api.post(
       endpoint: Endpoint.login,
@@ -148,17 +157,17 @@ class AuthenticationRepository {
       );
     }
 
-    // final result = await _storage.first(table: Table.authentication);
-    // final authentication = Authentication.fromJson(result);
+    final result = await _storage.first(table: Table.authentication);
+    final authentication = Authentication.fromJson(result);
 //
-    // await _appAuth.endSession(
-    //   EndSessionRequest(
-    //     // postLogoutRedirectUrl: 'twakemobile.com://signout',
-    //     // idTokenHint: authentication.idToken,
-    //     discoveryUrl:
-    //         '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-    //   ),
-    // );
+    await _appAuth.endSession(
+      EndSessionRequest(
+        postLogoutRedirectUrl: 'twakemobile.com://oauthredirect',
+        idTokenHint: authentication.idToken,
+        discoveryUrl:
+            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+      ),
+    );
     Logger().w('session ended');
 //
     Globals.instance.reset();

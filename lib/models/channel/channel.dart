@@ -30,6 +30,9 @@ class Channel extends BaseModel {
 
   final List<String> members;
 
+  @JsonKey(defaultValue: 0)
+  final int membersCount;
+
   final ChannelVisibility visibility;
 
   final int lastActivity;
@@ -49,6 +52,12 @@ class Channel extends BaseModel {
     final int hash =
         name.hashCode + icon.hashCode + lastActivity + members.length;
     return hash;
+  }
+
+  List<String> get avatars {
+    if (!isDirect) throw 'The getter avatars exist only for direct channels';
+
+    return icon!.split(',').toList();
   }
 
   int get membersCount => members.length;

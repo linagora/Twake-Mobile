@@ -116,14 +116,26 @@ class WorkspacesRepository {
     return workspaces;
   }
 
-  Future<Workspace> createWorkspace(
-      {String? companyId, required String name, List<String>? members}) async {
+  Future<Workspace> create({
+    String? companyId,
+    required String name,
+    List<String>? members,
+  }) async {
     companyId = companyId ?? Globals.instance.companyId;
 
     final creationResult = await _api.post(
       endpoint: sprintf(Endpoint.workspaces, [companyId]),
-      data: {'company_id': companyId, 'name': name, 'members': members},
+      data: {
+        'resource': {
+          'name': name,
+          'logo': '',
+          'default': false,
+        }
+      },
+      key: 'resource',
     );
+
+    Logger().w('AFTER WS CREATE: $creationResult');
 
     final workspace = Workspace.fromJson(json: creationResult, transform: true);
 
