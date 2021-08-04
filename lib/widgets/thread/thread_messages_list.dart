@@ -156,24 +156,24 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   void bubbleSide(List<Message> messages, int index) {
     //conditions for determining the shape of the sides of the bubble
     //if there is only one message in the chat
-    if (_messages.length == 1) {
+    if (messages.length == 1) {
       upBubbleSide = true;
       downBubbleSide = true;
     } else {
       // boundary bubbles handling
-      if (index == 0 || index == _messages.length - 1) {
+      if (index == 0 || index == messages.length - 1) {
         if (index == 0) {
-          if (_messages[_messages.length - index - 1].userId !=
-              _messages[_messages.length - index - 1 - 1].userId) {
+          if (messages[messages.length - index - 1].userId !=
+              messages[messages.length - index - 1 - 1].userId) {
             upBubbleSide = true;
           } else {
             upBubbleSide = false;
           }
           downBubbleSide = true;
         }
-        if (index == _messages.length - 1) {
-          if (_messages[_messages.length - index - 1].userId !=
-              _messages[_messages.length - index - 1 + 1].userId) {
+        if (index == messages.length - 1) {
+          if (messages[messages.length - index - 1].userId !=
+              messages[messages.length - index - 1 + 1].userId) {
             downBubbleSide = true;
           } else {
             downBubbleSide = false;
@@ -182,14 +182,14 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         }
       } else {
         // processing of all basic bubbles in the chat except of boundary values
-        if (_messages[_messages.length - index - 1].userId !=
-            _messages[_messages.length - index - 1 + 1].userId) {
+        if (messages[messages.length - index - 1].userId !=
+            messages[messages.length - index - 1 + 1].userId) {
           downBubbleSide = true;
         } else {
           downBubbleSide = false;
         }
-        if (_messages[_messages.length - index - 1].userId !=
-            _messages[_messages.length - index - 1 - 1].userId) {
+        if (messages[messages.length - index - 1].userId !=
+            messages[messages.length - index - 1 - 1].userId) {
           upBubbleSide = true;
         } else {
           upBubbleSide = false;

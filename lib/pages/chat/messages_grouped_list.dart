@@ -109,7 +109,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-        //conditions for determining the shape of the sides of the bubble
+       //conditions for determining the shape of the sides of the bubble
 
         //if there is only one message in the chat
         if (messages.length == 1) {
@@ -126,6 +126,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 upBubbleSide = false;
               }
               downBubbleSide = true;
+              //Conditions for accounting for the change of day
+              if (DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1].createdAt) !=
+                  DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1 - 1].createdAt)) {
+                upBubbleSide = true;
+              }
             }
             if (index == messages.length - 1) {
               if (messages[messages.length - index - 1].userId !=
@@ -135,6 +142,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 downBubbleSide = false;
               }
               upBubbleSide = true;
+              //Conditions for accounting for the change of day
+              if (DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1].createdAt) !=
+                  DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1 + 1].createdAt)) {
+                downBubbleSide = true;
+              }
             }
           } else {
             // processing of all basic bubbles in the chat except of boundary values
@@ -150,8 +164,21 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             } else {
               upBubbleSide = false;
             }
+            //Conditions for accounting for the change of day
+            if (DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1].createdAt) !=
+                DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1 + 1].createdAt)) {
+              downBubbleSide = true;
+            }
+            if (DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1].createdAt) !=
+                DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1 - 1].createdAt)) {
+              upBubbleSide = true;
+            }
           }
-        }
+        } 
         return SwipeActionCell(
           key: ObjectKey(messages[index]),
           performsFirstActionWithFullSwipe: true,
@@ -179,7 +206,6 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
                   Get.find<ThreadMessagesCubit>().swipeReply(message);
                   setState(() {});
-            
                 },
                 color: Colors.transparent),
           ],
