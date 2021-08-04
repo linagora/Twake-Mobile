@@ -30,6 +30,9 @@ class Channel extends BaseModel {
 
   final List<String> members;
 
+  @JsonKey(defaultValue: 0)
+  final int membersCount;
+
   final ChannelVisibility visibility;
 
   final int lastActivity;

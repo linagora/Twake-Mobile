@@ -128,10 +128,14 @@ class WorkspacesRepository {
       data: {
         'resource': {
           'name': name,
+          'logo': '',
           'default': false,
         }
       },
+      key: 'resource',
     );
+
+    Logger().w('AFTER WS CREATE: $creationResult');
 
     final workspace = Workspace.fromJson(json: creationResult, transform: true);
 
