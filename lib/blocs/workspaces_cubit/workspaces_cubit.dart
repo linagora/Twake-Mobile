@@ -77,7 +77,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     required String name,
     List<String>? members,
   }) async {
-    final workspace = await _repository.createWorkspace(
+    final workspace = await _repository.create(
         companyId: companyId, name: name, members: members);
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;

@@ -78,10 +78,7 @@ class _AuthFormState extends State<AuthForm> {
     return null;
   }
 
-  void onSubmit() {
-    Get.find<AuthenticationCubit>()
-        .authenticate(username: _username, password: _password);
-  }
+  void onSubmit() {}
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +100,7 @@ class _AuthFormState extends State<AuthForm> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  height:Dim.wm9 ,
+                  height: Dim.wm9,
                 ),
                 FittedBox(
                   fit: BoxFit.fitWidth,
@@ -170,9 +167,8 @@ class _AuthFormState extends State<AuthForm> {
                     textColor: Colors.white,
                     disabledColor: Color.fromRGBO(238, 238, 238, 1),
                     child: Text('Login',
-                        style: TextStyle(
-                            fontSize: Dim.wm4,
-                            color: Colors.white)),
+                        style:
+                            TextStyle(fontSize: Dim.wm4, color: Colors.white)),
                     onPressed: _username.isNotEmpty && _password.isNotEmpty
                         ? () => onSubmit()
                         : null,

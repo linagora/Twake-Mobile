@@ -47,30 +47,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  void authenticate({
-    required String username,
-    required String password,
-  }) async {
-    emit(AuthenticationInProgress());
-    final success = await _repository.authenticate(
-      username: username,
-      password: password,
-    );
-
-    if (!success) {
-      emit(AuthenticationFailure(
-        username: username,
-        password: password,
-      ));
-      return;
-    }
-    _repository.startTokenValidator();
-
-    emit(AuthenticationSuccess());
-
-    await syncData();
-  }
-
   Future<void> syncData() async {
     emit(PostAuthenticationSyncInProgress(progress: 0));
 
