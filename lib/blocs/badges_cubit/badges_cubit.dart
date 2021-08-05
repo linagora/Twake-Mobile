@@ -90,4 +90,24 @@ class BadgesCubit extends Cubit<BadgesState> {
       ));
     }
   }
+
+  int get unreadInDirects {
+    if (state is! BadgesLoadSuccess) return 0;
+
+    final badges = (state as BadgesLoadSuccess).badges;
+
+    final totalInCompany = badges
+        .firstWhere((b) =>
+            b.type == BadgeType.company && b.id == Globals.instance.companyId)
+        .count;
+
+    final totalInWorkspaces = badges.fold<int>(0, (a, b) {
+      if (b.type == BadgeType.workspace) {
+        return a + b.count;
+      }
+      return a;
+    });
+
+    return totalInCompany - totalInWorkspaces;
+  }
 }
