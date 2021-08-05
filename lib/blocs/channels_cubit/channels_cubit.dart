@@ -318,11 +318,13 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             selected = rchannels.firstWhere((c) => c.id == selected!.id);
           }
 
-          emit(ChannelsLoadedSuccess(
+          final newState = ChannelsLoadedSuccess(
             channels: rchannels,
-            hash: channels.fold(0, (acc, c) => acc + c.hash),
+            hash: rchannels.fold(0, (acc, c) => acc + c.hash),
             selected: selected,
-          ));
+          );
+
+          emit(newState);
           break;
         case ResourceAction.deleted:
           // fill up required fields with dummy data
