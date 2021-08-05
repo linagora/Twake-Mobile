@@ -66,8 +66,8 @@ class SocketIOService {
 
     _socket.on(
       IOEvent.join_success,
-      (r) => {},
-      // (r) => Logger().v('successfully joined room $r'),
+      // (r) => {},
+      (r) => Logger().v('successfully joined room $r'),
     );
 
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));

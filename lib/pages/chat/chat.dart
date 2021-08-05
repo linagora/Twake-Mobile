@@ -36,7 +36,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: () {
             popBack();
-            Get.find<BadgesCubit>().fetch();
             Get.find<ThreadMessagesCubit>().reset();
           },
           child: Padding(

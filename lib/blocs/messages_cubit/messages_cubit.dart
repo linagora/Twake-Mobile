@@ -106,7 +106,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     List<File> attachments: const [],
     String? threadId,
   }) async {
-    final prepared = TwacodeParser(originalStr).message;
+    final prepared = TwacodeParser(originalStr ?? '').message;
     if (attachments.isNotEmpty) {
       final nop = {
         'type': 'nop',

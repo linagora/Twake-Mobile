@@ -5,9 +5,10 @@ import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
+final RegExp specialsMentionsMatch = RegExp('(all|here|channel)');
 
 class TwacodeParser {
-  String? original = "";
+  String original = "";
 
   List<ASTNode> nodes = [];
 
@@ -142,7 +143,7 @@ class TwacodeParser {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
-                type: TType.User,
+                type: TType.Mention,
                 text: original.substring(i + 1, index),
               ));
           start = index;
@@ -268,9 +269,9 @@ class TwacodeParser {
   }
 
   int doesCloseBold(int i) {
-    final len = original!.length - 1;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.star && original![j + 1] == Delim.star) {
+    final len = original.length - 1;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.star && original[j + 1] == Delim.star) {
         return j + 2;
       }
     }
@@ -278,9 +279,9 @@ class TwacodeParser {
   }
 
   int doesCloseItalic(int i) {
-    final len = original!.length;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.underline) {
+    final len = original.length;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.underline) {
         return j + 1;
       }
     }
@@ -291,20 +292,20 @@ class TwacodeParser {
     var start = i;
     var end = i;
     while (start > 0) {
-      final cur = original![start - 1];
+      final cur = original[start - 1];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       start -= 1;
     }
-    while (end < original!.length) {
-      final cur = original![end];
+    while (end < original.length) {
+      final cur = original[end];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       end += 1;
     }
-    final parts = original!.substring(start, end).split('@');
+    final parts = original.substring(start, end).split('@');
     if (parts[0].isEmpty || parts[1].isEmpty) {
       return Tuple2(0, 0);
     }
@@ -324,20 +325,20 @@ class TwacodeParser {
     var start = i;
     var end = i;
     while (start > 0) {
-      final cur = original![start - 1];
+      final cur = original[start - 1];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       start -= 1;
     }
-    while (end < original!.length) {
-      final cur = original![end];
+    while (end < original.length) {
+      final cur = original[end];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       end += 1;
     }
-    final parts = original!.substring(start, end).split('://');
+    final parts = original.substring(start, end).split('://');
     if (parts[0].isEmpty || parts[1].isEmpty) {
       return Tuple2(0, 0);
     }
@@ -352,46 +353,50 @@ class TwacodeParser {
   }
 
   int doesCloseUnderline(int i) {
-    final len = original!.length - 1;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.underline &&
-          original![j + 1] == Delim.underline) {
+    final len = original.length - 1;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.underline &&
+          original[j + 1] == Delim.underline) {
         return j + 2;
       }
     }
     return 0;
   }
 
+  bool isMention(String text) {
+    return idMatch.hasMatch(text) || specialsMentionsMatch.hasMatch(text);
+  }
+
   int isUser(int i) {
-    for (int j = i; j < original!.length; j++) {
-      if (original![j] == Delim.ws || original![j] == Delim.lf) {
-        if (idMatch.hasMatch(original!.substring(i, j))) {
+    for (int j = i; j < original.length; j++) {
+      if (original[j] == Delim.ws || original[j] == Delim.lf) {
+        if (isMention(original.substring(i, j))) {
           return j;
         } else {
           return 0;
         }
       }
     }
-    if (idMatch.hasMatch(original!.substring(i))) {
-      return original!.length;
+    if (isMention(original.substring(i))) {
+      return original.length;
     } else {
       return 0;
     }
   }
 
   int isChannel(int i) {
-    for (int j = i; j < original!.length; j++) {
-      if (original![j] == Delim.ws || original![j] == Delim.lf) {
+    for (int j = i; j < original.length; j++) {
+      if (original[j] == Delim.ws || original[j] == Delim.lf) {
         return j;
       }
     }
-    return original!.length;
+    return original.length;
   }
 
   int doesCloseStrikeThrough(int i) {
-    final len = original!.length - 1;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.tilde && original![j + 1] == Delim.tilde) {
+    final len = original.length - 1;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.tilde && original[j + 1] == Delim.tilde) {
         return j + 2;
       }
     }
@@ -399,9 +404,9 @@ class TwacodeParser {
   }
 
   int doesCloseInlineCode(int i) {
-    final len = original!.length;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.tick) {
+    final len = original.length;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.tick) {
         return j + 1;
       }
     }
@@ -409,10 +414,10 @@ class TwacodeParser {
   }
 
   int doesCloseMultiCode(int i) {
-    final len = original!.length;
+    final len = original.length;
     int ticks = 0;
     for (int j = i; j < len; j++) {
-      if (original![j] == Delim.tick) {
+      if (original[j] == Delim.tick) {
         if (ticks == 2) {
           return j + 1;
         } else {
@@ -426,9 +431,9 @@ class TwacodeParser {
   }
 
   int hasLineFeed(int i) {
-    final len = original!.length;
+    final len = original.length;
     for (int j = i; j < len; j++) {
-      if (original![j] == Delim.lf) {
+      if (original[j] == Delim.lf) {
         return j;
       }
     }
@@ -499,7 +504,7 @@ class ASTNode {
         map['content'] = this.text;
         break;
 
-      case TType.User:
+      case TType.Mention:
         map['start'] = '@';
         map['content'] = this.text;
         break;
@@ -538,7 +543,7 @@ enum TType {
   Italic,
   Quote,
   MultiQuote,
-  User,
+  Mention,
   Channel,
   Url,
   Emoji,
@@ -626,7 +631,7 @@ class TwacodeRenderer {
         );
         break;
 
-      case TType.User:
+      case TType.Mention:
         style = TextStyle(
           color: parentStyle.color == Colors.black
               ? HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor()
@@ -743,7 +748,7 @@ class TwacodeRenderer {
               type = TType.Url;
               break;
             case 'user':
-              type = TType.User;
+              type = TType.Mention;
               break;
             case 'email':
               type = TType.Email;
@@ -782,7 +787,7 @@ class TwacodeRenderer {
               type = TType.StrikeThrough;
               break;
             case '@':
-              type = TType.User;
+              type = TType.Mention;
               break;
             case '>':
               type = TType.Quote;
@@ -1051,7 +1056,7 @@ class TwacodeRenderer {
 
           if (type == TType.Channel) {
             content = '#' + (t['content'] as String).replaceAll(idMatch, '');
-          } else if (type == TType.User) {
+          } else if (type == TType.Mention) {
             content = '@' + (t['content'] as String).replaceAll(idMatch, '');
           } else {
             content = t['content'];

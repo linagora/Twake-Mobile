@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:twake/models/authentication/authentication.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -37,35 +35,6 @@ class AuthenticationRepository {
     return true;
   }
 
-  Future<bool> authenticate({
-    required String username,
-    required String password,
-  }) async {
-    dynamic authenticationResult = {};
-    try {
-      authenticationResult = await _api.post(
-        endpoint: Endpoint.authorize,
-        data: {
-          'username': username.trim(),
-          'password': password.trim(),
-          'device': Platform.isAndroid ? 'android' : 'apple',
-          'timezoneoffset': tzo,
-          'fcm_token': Globals.instance.fcmToken,
-        },
-      );
-    } catch (e) {
-      Logger().e('Error occured during authentication:\n$e');
-      return false;
-    }
-
-    final authentication = Authentication.fromJson(authenticationResult);
-
-    _storage.cleanInsert(table: Table.authentication, data: authentication);
-    Globals.instance.tokenSet = authentication.token;
-
-    return true;
-  }
-
   Future<bool> webviewAuthenticate() async {
     AuthorizationTokenResponse? tokenResponse;
 
@@ -95,14 +64,6 @@ class AuthenticationRepository {
       endpoint: Endpoint.login,
       data: {'remote_access_token': tokenResponse.accessToken},
     );
-    // register device
-    _api.post(endpoint: Endpoint.device, data: {
-      'resource': {
-        'type': 'FCM',
-        'value': Globals.instance.fcmToken,
-        'version': Globals.version,
-      }
-    });
 
     final authentication = Authentication.fromJson(ApiDataTransformer.token(
       payload: authenticationResult,
@@ -111,6 +72,8 @@ class AuthenticationRepository {
 
     _storage.cleanInsert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
+
+    registerDevice();
 
     return true;
   }
@@ -145,6 +108,8 @@ class AuthenticationRepository {
     );
 
     Globals.instance.tokenSet = freshAuthentication.token;
+
+    registerDevice();
 
     return freshAuthentication;
   }
@@ -216,6 +181,18 @@ class AuthenticationRepository {
       authentication = await prolongAuthentication(authentication);
     }
     Future.delayed(Duration(seconds: 120), () => _tokenValidityCheck());
+  }
+
+  Future<void> registerDevice() async {
+    if (!Globals.instance.isNetworkConnected) return;
+
+    await _api.post(endpoint: Endpoint.device, data: {
+      'resource': {
+        'type': 'FCM',
+        'value': Globals.instance.fcmToken,
+        'version': Globals.version,
+      }
+    });
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;

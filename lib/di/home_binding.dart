@@ -15,6 +15,7 @@ class HomeBinding implements Bindings {
   void dependencies() {
     final authenticationCubit = AuthenticationCubit();
     Get.put(authenticationCubit, permanent: true);
+    authenticationCubit.registerDevice();
 
     final companiesCubit = CompaniesCubit();
     Get.put(companiesCubit, permanent: true);

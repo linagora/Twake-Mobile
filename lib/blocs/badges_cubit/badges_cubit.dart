@@ -22,10 +22,12 @@ class BadgesCubit extends Cubit<BadgesState> {
     final badgesStream = _repository.fetch();
 
     await for (final badges in badgesStream) {
-      emit(BadgesLoadSuccess(
-        badges: badges,
-        hash: badges.fold(0, (acc, b) => b.hash + acc),
-      ));
+      emit(
+        BadgesLoadSuccess(
+          badges: badges,
+          hash: badges.fold<int>(0, (acc, b) => b.hash + acc),
+        ),
+      );
     }
   }
 

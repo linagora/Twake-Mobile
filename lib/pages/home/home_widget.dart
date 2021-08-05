@@ -66,10 +66,13 @@ class _HomeWidgetState extends State<HomeWidget> {
           toolbarHeight: kToolbarHeight + 44,
           bottom: TabBar(
             tabs: [
-              Tab(
-                child: BadgesCount(
-                  type: BadgeType.workspace,
-                  id: Globals.instance.workspaceId!,
+              BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                bloc: Get.find<WorkspacesCubit>(),
+                builder: (_s, _) => Tab(
+                  child: BadgesCount(
+                    type: BadgeType.workspace,
+                    id: Globals.instance.workspaceId!,
+                  ),
                 ),
               ),
               Tab(
