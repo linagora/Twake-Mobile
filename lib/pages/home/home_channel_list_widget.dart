@@ -26,12 +26,17 @@ class HomeChannelListWidget extends StatelessWidget {
             return SmartRefresher(
               controller: _refreshController,
               onRefresh: () async {
-                await _channelsCubit.fetch(
-                  workspaceId: Globals.instance.workspaceId!,
-                  companyId: Globals.instance.companyId,
-                );
-                await Future.delayed(Duration(seconds: 1));
-                _refreshController.refreshCompleted();
+                try {
+                  await _channelsCubit.fetch(
+                    workspaceId: Globals.instance.workspaceId!,
+                    companyId: Globals.instance.companyId,
+                  );
+                  await Future.delayed(Duration(seconds: 1));
+                } catch (e, ss) {
+                  print('Error occured while pull to refresh:\n$e\n$ss');
+                } finally {
+                  _refreshController.refreshCompleted();
+                }
               },
               child: ListView.separated(
                 separatorBuilder: (BuildContext context, int index) {

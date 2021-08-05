@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
-import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
