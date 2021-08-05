@@ -54,10 +54,20 @@ class Channel extends BaseModel {
     return hash;
   }
 
-  List<String> get avatars {
+  List<Avatar> get avatars {
     if (!isDirect) throw 'The getter avatars exist only for direct channels';
 
-    return icon!.split(',').toList();
+    final links = icon!.split(',').toList();
+    final names = name.split(', ').toList();
+
+    final avatarsList = <Avatar>[];
+
+    // both links and names should be of the same length
+    for (int i = 0; i < links.length; i++) {
+      avatarsList.add(Avatar(link: links[i], name: names[i]));
+    }
+
+    return avatarsList;
   }
 
   bool get isDirect => workspaceId == 'direct';
@@ -139,4 +149,11 @@ class Channel extends BaseModel {
     }
     return json;
   }
+}
+
+class Avatar {
+  final String link;
+  final String name;
+
+  const Avatar({required this.link, required this.name});
 }
