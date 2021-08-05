@@ -60,8 +60,6 @@ class Channel extends BaseModel {
     return icon!.split(',').toList();
   }
 
-  int get membersCount => members.length;
-
   bool get isDirect => workspaceId == 'direct';
 
   bool get isPrivate => visibility == ChannelVisibility.private;
@@ -77,6 +75,7 @@ class Channel extends BaseModel {
     required this.members,
     required this.visibility,
     required this.lastActivity,
+    required this.membersCount,
     required this.role,
     this.userLastAccess: 0,
     this.draft,
@@ -107,6 +106,7 @@ class Channel extends BaseModel {
     int? lastActivity,
     MessageSummary? lastMessage,
     int? userLastAccess,
+    int? membersCount,
   }) {
     final copy = Channel(
       id: id,
@@ -116,6 +116,7 @@ class Channel extends BaseModel {
       companyId: companyId,
       workspaceId: workspaceId,
       members: members,
+      membersCount: membersCount ?? this.membersCount,
       visibility: visibility ?? this.visibility,
       lastActivity: lastActivity ?? this.lastActivity,
       lastMessage: lastMessage ?? this.lastMessage,

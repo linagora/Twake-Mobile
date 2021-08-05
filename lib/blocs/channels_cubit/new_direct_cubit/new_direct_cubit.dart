@@ -105,6 +105,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
           companyId: Globals.instance.companyId!,
           workspaceId: 'direct',
           members: [memberId, Globals.instance.userId!],
+          membersCount: 2,
           role: ChannelRole.owner,
           visibility: ChannelVisibility.direct,
           lastActivity: DateTime.now().millisecondsSinceEpoch,

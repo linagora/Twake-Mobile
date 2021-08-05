@@ -78,6 +78,7 @@ class AddChannelCubit extends Cubit<AddChannelState> {
       companyId: Globals.instance.companyId!,
       workspaceId: Globals.instance.workspaceId!,
       members: state.selectedMembers.map((member) => member.id).toList(),
+      membersCount: state.selectedMembers.length,
       lastActivity: now,
       visibility: state.channelVisibility,
       role: ChannelRole.owner,
