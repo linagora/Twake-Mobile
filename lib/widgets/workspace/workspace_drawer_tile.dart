@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/repositories/badges_repository.dart';
 import 'package:twake/widgets/common/badges.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_button.dart';
 import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
 
@@ -35,14 +34,14 @@ class WorkspaceDrawerTile extends StatelessWidget {
               children: [
                 isSelected
                     ? Image.asset(
-                  imageSelectedTile,
-                  width: 6,
-                  height: 44,
-                )
+                        imageSelectedTile,
+                        width: 6,
+                        height: 44,
+                      )
                     : SizedBox(
-                  width: 6,
-                  height: 44,
-                ),
+                        width: 6,
+                        height: 44,
+                      ),
                 SizedBox(width: 16.0),
                 WorkspaceThumbnail(
                   workspaceName: name ?? '',

@@ -145,6 +145,12 @@ class NavigatorService {
 
     final channel = await directsCubit.getChannel(channelId: channelId);
 
+    channelMessagesCubit.reset();
+    channelMessagesCubit.fetch(
+      channelId: channelId,
+      isDirect: channel.isDirect,
+    );
+
     if (channel.isDirect) {
       directsCubit.selectChannel(channelId: channelId);
 
@@ -158,11 +164,6 @@ class NavigatorService {
         channelsCubit.clearSelection();
       });
     }
-    channelMessagesCubit.reset();
-    channelMessagesCubit.fetch(
-      channelId: channelId,
-      isDirect: channel.isDirect,
-    );
 
     badgesCubit.reset(channelId: channelId);
 

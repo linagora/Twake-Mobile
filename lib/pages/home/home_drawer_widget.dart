@@ -257,6 +257,7 @@ class HomeDrawerWidget extends StatelessWidget {
       workspaceId: workspaceId,
       companyId: Globals.instance.companyId,
     );
+    DefaultTabController.of(context)?.animateTo(0);
 
     Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
     // close drawer

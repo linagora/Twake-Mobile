@@ -95,19 +95,6 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
           title: _buildHeader(),
         ),
-
-        /* float button to create channel
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: FloatingActionButton(
-              onPressed: () => push(RoutePaths.newChannel.path),
-              backgroundColor: Color(0xff004dff),
-              child: Image.asset(imageAddChannel),
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-           */
-
         body: Stack(
           children: [
             Positioned(
