@@ -116,7 +116,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     ),
                     decoration: InputDecoration(
                       hintText: Globals.instance.host.isEmpty
-                          ? 'https://web.qa.twake.app'
+                          ? 'https://beta.twake.app'
                           : Globals.instance.host,
                       hintStyle: TextStyle(
                         fontSize: 17.0,

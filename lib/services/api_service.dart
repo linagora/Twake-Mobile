@@ -40,7 +40,7 @@ class ApiService {
     void onError(DioError error, ErrorInterceptorHandler handler) {
       Logger().e('Request error:\n$error'
           '\nHEADERS: ${error.requestOptions.headers}'
-          '\nPATH: ${error.requestOptions.uri.path}'
+          '\nPATH: ${error.requestOptions.uri.host}${error.requestOptions.uri.path}'
           '\nRESPONSE: ${error.response?.data}'
           '\nQUERYPARAMS: ${error.requestOptions.queryParameters}'
           '\nREQUEST PAYLOAD: ${error.requestOptions.data}');

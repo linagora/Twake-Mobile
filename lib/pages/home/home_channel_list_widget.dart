@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -31,7 +32,7 @@ class HomeChannelListWidget extends StatelessWidget {
                     workspaceId: Globals.instance.workspaceId!,
                     companyId: Globals.instance.companyId,
                   );
-                  await Future.delayed(Duration(seconds: 1));
+                  Get.find<WorkspacesCubit>().fetchMembers();
                 } catch (e, ss) {
                   print('Error occured while pull to refresh:\n$e\n$ss');
                 } finally {

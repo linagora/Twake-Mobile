@@ -128,7 +128,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                     builder: (context, workspaceState) {
                       if (workspaceState is WorkspacesLoadSuccess) {
                         return GestureDetector(
-                          onTap: () => Scaffold.of(context).openDrawer(),
+                          onTap: () {
+                            Get.find<AccountCubit>().fetch();
+                            Scaffold.of(context).openDrawer();
+                          },
                           child: Container(
                             width: 75,
                             child: Row(

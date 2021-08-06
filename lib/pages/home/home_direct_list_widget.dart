@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -25,12 +26,17 @@ class HomeDirectListWidget extends StatelessWidget {
             return SmartRefresher(
               controller: _refreshController,
               onRefresh: () async {
-                await _directsCubit.fetch(
-                  workspaceId: 'direct',
-                  companyId: Globals.instance.companyId,
-                );
-                await Future.delayed(Duration(seconds: 1));
-                _refreshController.refreshCompleted();
+                try {
+                  await _directsCubit.fetch(
+                    workspaceId: 'direct',
+                    companyId: Globals.instance.companyId,
+                  );
+                  Get.find<WorkspacesCubit>().fetchMembers();
+                } catch (e, ss) {
+                  print('Error occured during directs refresh:\n$e\n$ss');
+                } finally {
+                  _refreshController.refreshCompleted();
+                }
               },
               child: ListView.separated(
                 separatorBuilder: (BuildContext context, int index) {

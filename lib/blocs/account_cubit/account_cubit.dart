@@ -15,6 +15,9 @@ class AccountCubit extends Cubit<AccountState> {
   late final AccountRepository _repository;
 
   AccountCubit({AccountRepository? repository}) : super(AccountInitial()) {
+    // issue #731
+    Segment.setContext({});
+
     if (repository == null) {
       repository = AccountRepository();
     }

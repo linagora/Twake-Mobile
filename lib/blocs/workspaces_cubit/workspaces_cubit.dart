@@ -112,5 +112,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       companyId: Globals.instance.companyId!,
       workspaceId: workspaceId,
     );
+
+    fetchMembers(workspaceId: workspaceId);
   }
 }

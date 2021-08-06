@@ -46,7 +46,7 @@ class AuthenticationRepository {
             'twakemobile.com://oauthredirect',
             discoveryUrl:
                 '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-            scopes: ['openid', 'profile', 'email'],
+            scopes: ['openid', 'profile', 'email', 'offline_access', 'api'],
             preferEphemeralSession: true,
             // promptValues: ['login'], // leads to infinite loop
           ),
@@ -185,6 +185,7 @@ class AuthenticationRepository {
 
   Future<void> registerDevice() async {
     if (!Globals.instance.isNetworkConnected) return;
+    if (Globals.instance.token == null) return;
 
     await _api.post(endpoint: Endpoint.device, data: {
       'resource': {

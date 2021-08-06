@@ -135,8 +135,6 @@ class WorkspacesRepository {
       key: 'resource',
     );
 
-    Logger().w('AFTER WS CREATE: $creationResult');
-
     final workspace = Workspace.fromJson(json: creationResult, transform: true);
 
     _storage.insert(table: Table.workspace, data: workspace);

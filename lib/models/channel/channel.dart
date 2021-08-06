@@ -105,6 +105,7 @@ class Channel extends BaseModel {
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
+
     return _$ChannelFromJson(json);
   }
 
