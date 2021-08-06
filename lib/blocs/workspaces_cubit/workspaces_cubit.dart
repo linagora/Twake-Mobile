@@ -19,11 +19,13 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     // wait for authentication check before attempting to subscribe
     Future.delayed(Duration(seconds: 7), () {
       SynchronizationService.instance.subscribeToBadges();
-      if (Globals.instance.companyId != null)
+      if (Globals.instance.companyId != null) {
         SynchronizationService.instance.subscribeForChannels(
           companyId: Globals.instance.companyId!,
           workspaceId: Globals.instance.workspaceId!,
         );
+        fetchMembers();
+      }
     });
   }
 
