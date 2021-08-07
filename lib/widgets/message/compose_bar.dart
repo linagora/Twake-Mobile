@@ -378,7 +378,7 @@ class TextInput extends StatefulWidget {
   final Function? toggleEmojiBoard;
   final bool? autofocus;
   final bool? emojiVisible;
-  final bool? canSend;
+  final bool canSend;
   final Function? onMessageSend;
   final Function? openFileExplorer;
   final Function? fileNumClear;
@@ -393,7 +393,7 @@ class TextInput extends StatefulWidget {
     this.scrollController,
     this.toggleEmojiBoard,
     this.openFileExplorer,
-    this.canSend,
+    this.canSend = false,
     this.fileNumber,
     this.fileNumClear,
   });
@@ -542,7 +542,7 @@ class _TextInputState extends State<TextInput> {
           //   color: Colors.black54,
           // ),
           GestureDetector(
-            onTap: widget.canSend!
+            onTap: widget.canSend
                 ? () async {
                     await widget.onMessageSend!(
                       await Get.find<MentionsCubit>()
@@ -553,13 +553,19 @@ class _TextInputState extends State<TextInput> {
                     widget.fileNumClear!();
                   }
                 : null,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset(
-                'assets/images/send.png',
-                color: widget.canSend! ? Color(0xFF004DFF) : Colors.grey[400],
-              ),
-            ),
+            child: widget.canSend
+                ? Container(
+                    padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+                    child: Image.asset(
+                      'assets/images/send_blue.png',
+                    ),
+                  )
+                : Container(
+                    padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+                    child: Image.asset(
+                      'assets/images/send.png',
+                    ),
+                  ),
           ),
         ],
       ),

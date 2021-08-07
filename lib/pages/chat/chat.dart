@@ -197,7 +197,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                                   TextStyle(
                                       fontSize: 14.0,
                                       //fontWeight: FontWeight.w400,
-                                      color: Color(0xFF818C99)),
+                                      color: Color(0xFF818C99),),
                                   _message.username.hashCode % 360,
                                 ).message,
                               ),
