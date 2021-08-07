@@ -25,6 +25,19 @@ class MessagesLoadSuccess extends MessagesState {
   List<Object?> get props => [hash];
 }
 
+class MessagesLoadSuccessSwipeToReply extends MessagesState {
+  final List<Message> messages;
+  final int hash; // sum of hash of all messages in the list
+
+  const MessagesLoadSuccessSwipeToReply({
+    required this.messages,
+    required this.hash,
+  });
+
+  @override
+  List<Object?> get props => [hash];
+}
+
 class NoMessagesFound extends MessagesLoadSuccess {
   NoMessagesFound() : super(messages: <Message>[], hash: 0);
 

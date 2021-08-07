@@ -65,7 +65,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   Future<void> swipeReply(
     Message thread,
   ) async {
-    emit(MessagesLoadSuccess(
+    emit(MessagesLoadSuccessSwipeToReply(
       messages: [thread],
       hash: 0,
     ));

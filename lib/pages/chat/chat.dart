@@ -133,7 +133,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
-        if (state is MessagesLoadSuccess) {
+        if (state is MessagesLoadSuccessSwipeToReply) {
           final _message = state.messages.first;
           return Column(
             children: [
