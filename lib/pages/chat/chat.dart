@@ -95,7 +95,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   if (uploadState is FileUploadSuccess) {
                     attachments = uploadState.files;
                   }
-                  if (stateThread is MessagesLoadSuccess) {
+                  if (stateThread is MessagesLoadSuccessSwipeToReply) {
                     Get.find<ThreadMessagesCubit>().send(
                         originalStr: content,
                         attachments: attachments,
