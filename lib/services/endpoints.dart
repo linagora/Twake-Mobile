@@ -48,6 +48,7 @@ class Endpoint {
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/read';
   // API Endpoint for working with user's companies
   static const badges = '/internal/services/notifications/v1/badges';
+  static const files = '/internal/services/files/v1/companies/%s/files';
 
   static const proxyMethods = const [
     fileUpload,

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 part 'file.g.dart';
 
@@ -7,13 +8,11 @@ class File {
   final String id;
   final String name;
   final String? preview;
-  final String download;
   final String size;
 
   const File({
     required this.id,
     required this.name,
-    required this.download,
     required this.size,
     this.preview,
   });
@@ -32,8 +31,16 @@ class File {
     };
   }
 
-  factory File.fromJson({required Map<String, dynamic> json}) =>
-      _$FileFromJson(json);
+  String get download => ''; // TODO implement download link generation
+
+  factory File.fromJson({
+    required Map<String, dynamic> json,
+    bool transform: false,
+  }) {
+    if (transform) json = ApiDataTransformer.file(json: json);
+
+    return _$FileFromJson(json);
+  }
 
   Map<String, dynamic> toJson() => _$FileToJson(this);
 }

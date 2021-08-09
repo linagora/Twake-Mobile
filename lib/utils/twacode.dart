@@ -932,65 +932,66 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
-          final s = int.parse((t['metadata']['size'] ?? '0').toString());
-          InlineSpan text;
-          const MB = 1024 * 1024;
-          const KB = 1024;
-          final size = s > MB
-              ? '${(s / MB).toStringAsFixed(2)} MB'
-              : s > KB
-                  ? '${(s / KB).toStringAsFixed(2)} KB'
-                  : '$s B';
-          text = TextSpan(
-            text: t['metadata']['name'],
-            style: parentStyle.merge(
-              getStyle(type, parentStyle, userUniqueColor),
-            ),
-          );
-          final widget = Container(
-            margin: EdgeInsets.all(4),
-            padding: EdgeInsets.all(3),
-            child: Row(children: [
-              InkWell(
-                child: SizedBox(
-                  child: t['metadata']['preview'] != null
-                      ? ClipRRect(
-                          child: Image.network(t['metadata']['preview']),
-                          borderRadius: BorderRadius.all(Radius.circular(8)))
-                      : CircleAvatar(
-                          child: Icon(Icons.cloud_download),
-                          backgroundColor: Colors.indigo[100],
-                        ),
-                  width: 40,
-                  height: 40,
-                ),
-              ),
-              SizedBox(width: 10),
-              Flexible(
-                // fit: FlexFit.tight,
-                child: Column(
-                  children: [
-                    RichText(
-                      text: text,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      //softWrap: true,
-                    ),
-                    Text(
-                      size,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.italic,
-                          color: Color(0xff8e8e93)),
-                    ),
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                ),
-              ),
-            ]),
-          );
+          final widget = Text('files not yet supported');
+          // final s = int.parse((t['metadata']['size'] ?? '0').toString());
+          // InlineSpan text;
+          // const MB = 1024 * 1024;
+          // const KB = 1024;
+          // final size = s > MB
+          // ? '${(s / MB).toStringAsFixed(2)} MB'
+          // : s > KB
+          // ? '${(s / KB).toStringAsFixed(2)} KB'
+          // : '$s B';
+          // text = TextSpan(
+          // text: t['metadata']['name'],
+          // style: parentStyle.merge(
+          // getStyle(type, parentStyle, userUniqueColor),
+          // ),
+          // );
+          // final widget = Container(
+          // margin: EdgeInsets.all(4),
+          // padding: EdgeInsets.all(3),
+          // child: Row(children: [
+          // InkWell(
+          // child: SizedBox(
+          // child: t['metadata']['preview'] != null
+          // ? ClipRRect(
+          // child: Image.network(t['metadata']['preview']),
+          // borderRadius: BorderRadius.all(Radius.circular(8)))
+          // : CircleAvatar(
+          // child: Icon(Icons.cloud_download),
+          // backgroundColor: Colors.indigo[100],
+          // ),
+          // width: 40,
+          // height: 40,
+          // ),
+          // ),
+          // SizedBox(width: 10),
+          // Flexible(
+          // // fit: FlexFit.tight,
+          // child: Column(
+          // children: [
+          // RichText(
+          // text: text,
+          // overflow: TextOverflow.ellipsis,
+          // maxLines: 1,
+          // // softWrap: true,
+          // ),
+          // Text(
+          // size,
+          // textAlign: TextAlign.end,
+          // style: TextStyle(
+          // fontSize: 11.0,
+          // fontWeight: FontWeight.w400,
+          // fontStyle: FontStyle.italic,
+          // color: Color(0xff8e8e93)),
+          // ),
+          // ],
+          // crossAxisAlignment: CrossAxisAlignment.start,
+          // ),
+          // ),
+          // ]),
+          // );
           spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Icon) {
           if (t['src'] == null) continue;
