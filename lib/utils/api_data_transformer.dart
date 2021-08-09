@@ -25,7 +25,8 @@ class ApiDataTransformer {
   }
 
   static Map<String, dynamic> account({required Map<String, dynamic> json}) {
-    json['language'] = json['preference']['locale'];
+    if (json['preference'] != null)
+      json['language'] = json['preference']['locale'];
 
     return json;
   }
@@ -50,14 +51,9 @@ class ApiDataTransformer {
 
     if (json['user_member'] != null) {
       json['user_last_access'] = json['user_member']['last_access'];
-
-      json['role'] = json['owner'] == json['user_member']['user_id']
-          ? 'owner'
-          : json['user_member']['type'];
-    } else {
-      json['role'] =
-          json['owner'] == Globals.instance.userId ? 'owner' : 'member';
     }
+    json['role'] =
+        json['owner'] == Globals.instance.userId ? 'owner' : 'member';
 
     if (json['workspace_id'] == 'direct' && json['users'] != null) {
       final users = json['users'] as List;
@@ -127,9 +123,19 @@ class ApiDataTransformer {
     final badgeCollection = <String, Map<String, dynamic>>{};
 
     for (final i in list) {
+      final String companyId = i['company_id'];
       final String workspaceId = i['workspace_id'];
       final String channelId = i['channel_id'];
 
+      if (badgeCollection.containsKey(companyId)) {
+        badgeCollection[companyId]!['count'] += 1;
+      } else {
+        badgeCollection[companyId] = {
+          'type': 'company',
+          'id': companyId,
+          'count': 1,
+        };
+      }
       if (badgeCollection.containsKey(workspaceId)) {
         badgeCollection[workspaceId]!['count'] += 1;
       } else {

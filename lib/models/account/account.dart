@@ -68,7 +68,12 @@ class Account extends BaseModel {
     if (transform) {
       json = ApiDataTransformer.account(json: json);
     }
-    return _$AccountFromJson(json);
+    try {
+      return _$AccountFromJson(json);
+    } catch (e) {
+      print('Faulty accont: $json');
+      throw e;
+    }
   }
 
   @override

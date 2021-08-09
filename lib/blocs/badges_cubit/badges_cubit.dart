@@ -97,20 +97,10 @@ class BadgesCubit extends Cubit<BadgesState> {
     if (state is! BadgesLoadSuccess) return 0;
 
     final badges = (state as BadgesLoadSuccess).badges;
+    final directs = badges
+        .where((b) => b.type == BadgeType.workspace && b.id == 'direct')
+        .fold<int>(0, (acc, b) => acc + b.count);
 
-    final totalInCompany = badges
-        .firstWhere((b) =>
-            b.type == BadgeType.company && b.id == Globals.instance.companyId,
-            orElse: () => Badge(type: BadgeType.none, id: ''))
-        .count;
-
-    final totalInWorkspaces = badges.fold<int>(0, (a, b) {
-      if (b.type == BadgeType.workspace) {
-        return a + b.count;
-      }
-      return a;
-    });
-
-    return (totalInCompany - totalInWorkspaces).abs();
+    return directs;
   }
 }

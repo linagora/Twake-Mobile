@@ -32,6 +32,7 @@ class WorkspacesRepository {
           Endpoint.workspaceMembers,
           [Globals.instance.companyId, workspaceId],
         ),
+        queryParameters: {'limit': 10000},
         key: 'resources',
       );
 

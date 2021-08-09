@@ -156,7 +156,9 @@ class ChannelsRepository {
         queryParameters: {'limit': 1000},
         key: 'resources',
       );
-      channel.members.addAll(res.map((m) => m['user_id']));
+      channel.members.addAll(
+        res.where((m) => m['user_id'] != null).map((m) => m['user_id']),
+      );
     }
 
     for (final m in channel.members) {
@@ -165,6 +167,11 @@ class ChannelsRepository {
         where: 'id = ?',
         whereArgs: [m],
       );
+
+      if (member.isEmpty) {
+        print('Faulty member: $m');
+        continue;
+      }
 
       members.add(Account.fromJson(json: member));
     }

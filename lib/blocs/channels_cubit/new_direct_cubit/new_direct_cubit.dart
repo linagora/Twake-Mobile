@@ -80,9 +80,11 @@ class NewDirectCubit extends Cubit<NewDirectState> {
 
     if (directsCubit.state is ChannelsLoadedSuccess) {
       final directs = (directsCubit.state as ChannelsLoadedSuccess).channels;
-      for (final direct in directs.where((d) => d.members.length < 2)) {
-        final account =
-            await accountCubit.fetchStateless(userId: direct.members.first);
+      for (final direct in directs.where((d) => d.members.length < 3)) {
+        final account = await accountCubit.fetchStateless(
+            userId: direct.members
+                .where((id) => id != Globals.instance.userId)
+                .first);
         recentChats[direct.id] = account;
       }
     }
