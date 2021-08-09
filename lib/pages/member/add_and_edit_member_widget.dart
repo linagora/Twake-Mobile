@@ -174,10 +174,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             top: 14, left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                              addMemberState is AddMemberInSearch
-                                  ? 'FOUND PEOPLE'
-                                  : 'FREQUENTLY CONTACTED',
+                          child: Text('FOUND PEOPLE',
                               style: TextStyle(
                                 color: Color(0x59000000),
                                 fontSize: 13,
