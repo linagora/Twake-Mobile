@@ -162,17 +162,22 @@ class _MessageTileState<T extends BaseMessagesCubit>
             SizedBox(width: 6.0),
             Padding(
               padding: _message.reactions.isEmpty
-                  ? const EdgeInsets.only(bottom: 2.0)
+                  ? const EdgeInsets.only(bottom: 3.0)
                   : const EdgeInsets.only(bottom: 22.0),
-              child: (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
-                  ?  UserThumbnail(
-                      thumbnailUrl: _message.picture ?? '',
-                      userName: _message.sender,
-                      size: 28.0,
-                    )
-                  : SizedBox(width: 28.0, height: 28.0),
+              child:
+                  (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
+                      ? UserThumbnail(
+                          thumbnailUrl: _message.picture ?? '',
+                          userName: _message.sender,
+                          size: 28.0,
+                        )
+                      : SizedBox(width: 28.0, height: 28.0),
             ),
-            SizedBox(width: 6.0),
+            _isMyMessage
+                ? SizedBox(width: MediaQuery.of(context).size.width * 0.08)
+                : SizedBox(
+                    width: 6,
+                  ),
             Flexible(
               child: Container(
                 child: Stack(
@@ -235,7 +240,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
                             //crossAxisAlignment: CrossAxisAlignment.stretch,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (!widget.channel.isDirect && !_isMyMessage && widget.downBubbleSide)
+                              if (!widget.channel.isDirect &&
+                                  !_isMyMessage &&
+                                  widget.downBubbleSide)
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(12, 0, 0, 0),
@@ -288,7 +295,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 10,
+                                          width: 5,
                                         ),
                                         Column(
                                           children: [
@@ -400,7 +407,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 : Container(),
             _message.isDelivered && _isMyMessage
                 ? SizedBox(width: 8.0)
-                : SizedBox(width: 12.0)
+                : SizedBox(width: 12.0),
+            if (!_isMyMessage)
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.1,
+              )
           ],
         ),
       );

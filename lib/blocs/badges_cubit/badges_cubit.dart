@@ -100,7 +100,8 @@ class BadgesCubit extends Cubit<BadgesState> {
 
     final totalInCompany = badges
         .firstWhere((b) =>
-            b.type == BadgeType.company && b.id == Globals.instance.companyId)
+            b.type == BadgeType.company && b.id == Globals.instance.companyId,
+            orElse: () => Badge(type: BadgeType.none, id: ''))
         .count;
 
     final totalInWorkspaces = badges.fold<int>(0, (a, b) {
@@ -110,6 +111,6 @@ class BadgesCubit extends Cubit<BadgesState> {
       return a;
     });
 
-    return totalInCompany - totalInWorkspaces;
+    return (totalInCompany - totalInWorkspaces).abs();
   }
 }
