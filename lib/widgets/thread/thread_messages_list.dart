@@ -58,13 +58,15 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                             color: Color(0xFF818C99),
                           ),
                         )
-                      : Text(
-                          '${state.messages.length - 1}' + ' replie ',
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            color: Color(0xFF818C99),
-                          ),
-                        ),
+                      : state.messages.length - 1 == 1
+                          ? Text(
+                              '${state.messages.length - 1}' + ' reply ',
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                color: Color(0xFF818C99),
+                              ),
+                            )
+                          : Container(),
                 ),
               Wrap(
                 runSpacing: Dim.heightMultiplier,
@@ -84,13 +86,23 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
               if (message.reactions.isNotEmpty)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    '${state.messages.length - 1}' + ' replies ',
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      color: Color(0xFF818C99),
-                    ),
-                  ),
+                  child: state.messages.length - 1 > 1
+                      ? Text(
+                          '${state.messages.length - 1}' + ' replies ',
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Color(0xFF818C99),
+                          ),
+                        )
+                      : state.messages.length - 1 == 1
+                          ? Text(
+                              '${state.messages.length - 1}' + ' reply ',
+                              style: TextStyle(
+                                fontSize: 15.0,
+                                color: Color(0xFF818C99),
+                              ),
+                            )
+                          : Container(),
                 ),
             ],
           ),
