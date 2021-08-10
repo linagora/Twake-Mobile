@@ -184,8 +184,12 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   children: [
                     Container(
                       padding: _message.reactions.isEmpty
-                          ? const EdgeInsets.only(bottom: 1.0)
-                          : const EdgeInsets.only(bottom: 22.0),
+                          ? widget.downBubbleSide
+                              ? const EdgeInsets.only(bottom: 12.0)
+                              : const EdgeInsets.only(bottom: 1.0)
+                          : widget.downBubbleSide
+                              ? const EdgeInsets.only(bottom: 30.0)
+                              : const EdgeInsets.only(bottom: 22.0),
                       color: Colors.white,
                       child: ClipRRect(
                         borderRadius: _isMyMessage
@@ -342,7 +346,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           !_hideShowReplies)
                                         Container(
                                           constraints: BoxConstraints(
-                                            maxWidth: 95.0,
+                                            maxWidth: 100.0,
                                           ),
                                           alignment: Alignment.center,
                                           padding: EdgeInsets.only(

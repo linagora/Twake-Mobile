@@ -25,14 +25,14 @@ class MessagesLoadSuccess extends MessagesState {
   List<Object?> get props => [hash];
 }
 
-class MessagesLoadSuccessSwipeToReply extends MessagesState {
+class MessagesLoadSuccessSwipeToReply extends MessagesLoadSuccess {
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
 
   const MessagesLoadSuccessSwipeToReply({
     required this.messages,
     required this.hash,
-  });
+  }) : super(messages: messages, hash: hash);
 
   @override
   List<Object?> get props => [hash];
