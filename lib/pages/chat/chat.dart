@@ -96,10 +96,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     attachments = uploadState.files;
                   }
                   if (stateThread is MessagesLoadSuccessSwipeToReply) {
-                    Get.find<ThreadMessagesCubit>().send(
-                        originalStr: content,
-                        attachments: attachments,
-                        threadId: Globals.instance.threadId);
+                    await Get.find<ThreadMessagesCubit>().send(
+                      originalStr: content,
+                      attachments: attachments,
+                      threadId: stateThread.messages.first.id,
+                    );
                     Get.find<ThreadMessagesCubit>().reset();
                   } else {
                     if (messagesState is MessageEditInProgress)
@@ -195,9 +196,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                                 child: TwacodeRenderer(
                                   _message.blocks,
                                   TextStyle(
-                                      fontSize: 14.0,
-                                      //fontWeight: FontWeight.w400,
-                                      color: Color(0xFF818C99),),
+                                    fontSize: 14.0,
+                                    //fontWeight: FontWeight.w400,
+                                    color: Color(0xFF818C99),
+                                  ),
                                   _message.username.hashCode % 360,
                                 ).message,
                               ),

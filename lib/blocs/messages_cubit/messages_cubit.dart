@@ -273,8 +273,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   void selectThread({required String messageId}) {
     Globals.instance.threadIdSet = messageId;
 
-    // SynchronizationService.instance
-    // .subscribeToThreadReplies(threadId: messageId);
+    SynchronizationService.instance
+        .subscribeToThreadReplies(threadId: messageId);
   }
 
   void clearSelectedThread() {

@@ -202,9 +202,6 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 onTap: (CompletionHandler handler) async {
                   Get.find<ThreadMessagesCubit>().reset();
 
-                  Get.find<ChannelMessagesCubit>()
-                      .selectThread(messageId: message.id);
-
                   Get.find<ThreadMessagesCubit>().swipeReply(message);
 
                   setState(() {});
