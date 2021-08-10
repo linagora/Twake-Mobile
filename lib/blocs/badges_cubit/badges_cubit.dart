@@ -22,6 +22,7 @@ class BadgesCubit extends Cubit<BadgesState> {
     final badgesStream = _repository.fetch();
 
     await for (final badges in badgesStream) {
+      Logger().w('Badges: ${badges.map((b) => b.toJson())}');
       emit(
         BadgesLoadSuccess(
           badges: badges,

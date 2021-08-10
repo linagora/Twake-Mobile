@@ -46,15 +46,16 @@ class AuthenticationRepository {
             'twakemobile.com://oauthredirect',
             discoveryUrl:
                 '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
-            scopes: ['openid', 'profile', 'email', 'offline_access', 'api'],
-            preferEphemeralSession: true,
-            // promptValues: ['login'], // leads to infinite loop
+            scopes: ['openid', 'profile', 'email', 'offline_access'],
+            // preferEphemeralSession: true,
           ),
         );
-      } catch (_) {
+      } catch (e, ss) {
+        Logger().wtf('Error authenticating via console\n$e\n$ss');
         continue;
       }
       if (tokenResponse == null) {
+        Logger().w('Token is null, retrying auth');
         continue;
       } else {
         break;

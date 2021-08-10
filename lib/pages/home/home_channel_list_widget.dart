@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -33,6 +34,7 @@ class HomeChannelListWidget extends StatelessWidget {
                     companyId: Globals.instance.companyId,
                   );
                   Get.find<WorkspacesCubit>().fetchMembers();
+                  Get.find<BadgesCubit>().fetch();
                 } catch (e, ss) {
                   print('Error occured while pull to refresh:\n$e\n$ss');
                 } finally {
