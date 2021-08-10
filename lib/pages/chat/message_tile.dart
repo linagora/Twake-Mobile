@@ -187,7 +187,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           ? widget.downBubbleSide
                               ? const EdgeInsets.only(bottom: 12.0)
                               : const EdgeInsets.only(bottom: 1.0)
-                          : const EdgeInsets.only(bottom: 20.0),
+                          : const EdgeInsets.only(bottom: 22.0),
                       color: Colors.white,
                       child: ClipRRect(
                         borderRadius: _isMyMessage
@@ -401,9 +401,19 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         color: Color(0xFF004DFF),
                         size: 20,
                       ),
-                      _message.reactions.isEmpty
-                          ? SizedBox(height: 5.0)
-                          : SizedBox(height: 24.0)
+                      if (widget.downBubbleSide)
+                        _message.reactions.isEmpty
+                            ? SizedBox(height: 10.0)
+                            : SizedBox(height: 18.0),
+                      if (_message.reactions.isNotEmpty &&
+                          !widget.downBubbleSide)
+                        SizedBox(height: 18.0)
+
+                      //   _message.reactions.isEmpty
+                      //       ? SizedBox(height: 10.0)
+                      //       : SizedBox(
+                      //
+                      //           height: MediaQuery.of(context).size.width * 0.05)
                     ],
                   )
                 : Container(),
