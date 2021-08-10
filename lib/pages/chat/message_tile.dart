@@ -163,7 +163,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
             Padding(
               padding: _message.reactions.isEmpty
                   ? const EdgeInsets.only(bottom: 3.0)
-                  : const EdgeInsets.only(bottom: 22.0),
+                  : const EdgeInsets.only(bottom: 18.0),
               child:
                   (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
                       ? UserThumbnail(
@@ -187,9 +187,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           ? widget.downBubbleSide
                               ? const EdgeInsets.only(bottom: 12.0)
                               : const EdgeInsets.only(bottom: 1.0)
-                          : widget.downBubbleSide
-                              ? const EdgeInsets.only(bottom: 30.0)
-                              : const EdgeInsets.only(bottom: 22.0),
+                          : const EdgeInsets.only(bottom: 20.0),
                       color: Colors.white,
                       child: ClipRRect(
                         borderRadius: _isMyMessage
