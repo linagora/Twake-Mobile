@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
@@ -136,6 +138,10 @@ class _ComposeBar extends State<ComposeBar> {
     }
   }
 
+  void swipeRequestFocus(bool _focus) {
+    _focus ? _focusNode.requestFocus() : _focusNode.unfocus();
+  }
+
   void mentionReplace(String? username) async {
     final text = _controller.text;
     _controller.text = text.replaceRange(
@@ -218,154 +224,165 @@ class _ComposeBar extends State<ComposeBar> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: onBackPress,
-      child: Column(
-        children: [
-          _mentionsVisible
-              ? BlocBuilder<MentionsCubit, MentionState>(
-                  bloc: Get.find<MentionsCubit>(),
-                  builder: (context, state) {
-                    if (state is MentionsLoadSuccess) {
-                      final List<Widget> _listW = [];
-                      _listW.add(Divider(thickness: 1));
-                      for (int i = 0; i < state.accounts.length; i++) {
-                        _listW.add(
-                          InkWell(
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 40.0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  SizedBox(width: 15),
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
-                                    child: CircleAvatar(
-                                      child: state.accounts[i].picture! == ""
-                                          ? CircleAvatar(
-                                              child: Icon(Icons.person,
-                                                  color: Colors.grey),
-                                              backgroundColor: Colors.blue[50],
-                                            )
-                                          : Image.network(
-                                              state.accounts[i].picture!,
-                                              fit: BoxFit.contain,
-                                              loadingBuilder:
-                                                  (context, child, progress) {
-                                                if (progress == null) {
-                                                  return child;
-                                                }
+    return BlocListener<ThreadMessagesCubit, MessagesState>(
+      bloc: Get.find<ThreadMessagesCubit>(),
+      listener: (context, state) {
+        if (state is MessagesLoadSuccessSwipeToReply) {
+          swipeRequestFocus(true);
+        } else if (state is MessagesInitial) {
+          swipeRequestFocus(false);
+        }
+      },
+      child: WillPopScope(
+        onWillPop: onBackPress,
+        child: Column(
+          children: [
+            _mentionsVisible
+                ? BlocBuilder<MentionsCubit, MentionState>(
+                    bloc: Get.find<MentionsCubit>(),
+                    builder: (context, state) {
+                      if (state is MentionsLoadSuccess) {
+                        final List<Widget> _listW = [];
+                        _listW.add(Divider(thickness: 1));
+                        for (int i = 0; i < state.accounts.length; i++) {
+                          _listW.add(
+                            InkWell(
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 40.0,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(width: 15),
+                                    ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                      child: CircleAvatar(
+                                        child: state.accounts[i].picture! == ""
+                                            ? CircleAvatar(
+                                                child: Icon(Icons.person,
+                                                    color: Colors.grey),
+                                                backgroundColor:
+                                                    Colors.blue[50],
+                                              )
+                                            : Image.network(
+                                                state.accounts[i].picture!,
+                                                fit: BoxFit.contain,
+                                                loadingBuilder:
+                                                    (context, child, progress) {
+                                                  if (progress == null) {
+                                                    return child;
+                                                  }
 
-                                                return CircleAvatar(
-                                                  child: Icon(Icons.person,
-                                                      color: Colors.grey),
-                                                  backgroundColor:
-                                                      Colors.blue[50],
-                                                );
-                                              },
-                                            ),
+                                                  return CircleAvatar(
+                                                    child: Icon(Icons.person,
+                                                        color: Colors.grey),
+                                                    backgroundColor:
+                                                        Colors.blue[50],
+                                                  );
+                                                },
+                                              ),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    '${state.accounts[i].fullName} ',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w300),
-                                  ),
-                                  Expanded(child: SizedBox()),
-                                  Icon(
-                                    Icons.message_rounded,
-                                    color: Colors.grey,
-                                  ),
-                                  SizedBox(width: 15),
-                                ],
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    Text(
+                                      '${state.accounts[i].fullName} ',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    Expanded(child: SizedBox()),
+                                    Icon(
+                                      Icons.message_rounded,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(width: 15),
+                                  ],
+                                ),
                               ),
-                            ),
-                            onTap: () {
-                              Get.find<MentionsCubit>().reset();
+                              onTap: () {
+                                Get.find<MentionsCubit>().reset();
 
-                              mentionReplace(state.accounts[i].username);
-                              setState(
-                                () {
-                                  _mentionsVisible = false;
-                                },
-                              );
-                            },
+                                mentionReplace(state.accounts[i].username);
+                                setState(
+                                  () {
+                                    _mentionsVisible = false;
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                          if (i < state.accounts.length - 1) {
+                            _listW.add(Divider(thickness: 1));
+                          }
+                        }
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                              maxHeight:
+                                  MediaQuery.of(context).size.height * 0.3),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: _listW,
+                            ),
                           ),
                         );
-                        if (i < state.accounts.length - 1) {
-                          _listW.add(Divider(thickness: 1));
-                        }
+                      } else if (state is MentionsInitial) {
+                        return Container();
+                        //Text("Empty");
                       }
-                      return ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxHeight:
-                                MediaQuery.of(context).size.height * 0.3),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: _listW,
-                          ),
-                        ),
-                      );
-                    } else if (state is MentionsInitial) {
                       return Container();
-                      //Text("Empty");
-                    }
-                    return Container();
+                    },
+                  )
+                : Container(),
+            TextInput(
+              controller: _controller,
+              scrollController: _scrollController,
+              focusNode: _focusNode,
+              autofocus: widget.autofocus,
+              toggleEmojiBoard: toggleEmojiBoard,
+              emojiVisible: _emojiVisible,
+              onMessageSend: widget.onMessageSend,
+              canSend: _canSend,
+              openFileExplorer: _openFileExplorer,
+              fileNumber: _fileNumber,
+              fileNumClear: _fileNumClear,
+            ),
+            Offstage(
+              offstage: !_emojiVisible,
+              child: Container(
+                height: 250,
+                child: EmojiPicker(
+                  onEmojiSelected: (cat, emoji) {
+                    _controller.text += emoji.emoji;
                   },
-                )
-              : Container(),
-          TextInput(
-            controller: _controller,
-            scrollController: _scrollController,
-            focusNode: _focusNode,
-            autofocus: widget.autofocus,
-            toggleEmojiBoard: toggleEmojiBoard,
-            emojiVisible: _emojiVisible,
-            onMessageSend: widget.onMessageSend,
-            canSend: _canSend,
-            openFileExplorer: _openFileExplorer,
-            fileNumber: _fileNumber,
-            fileNumClear: _fileNumClear,
-          ),
-          Offstage(
-            offstage: !_emojiVisible,
-            child: Container(
-              height: 250,
-              child: EmojiPicker(
-                onEmojiSelected: (cat, emoji) {
-                  _controller.text += emoji.emoji;
-                },
-                config: Config(
-                  columns: 7,
-                  emojiSizeMax: 32.0,
-                  verticalSpacing: 0,
-                  horizontalSpacing: 0,
-                  initCategory: Category.RECENT,
-                  bgColor: Color(0xFFF2F2F2),
-                  indicatorColor: Colors.blue,
-                  iconColor: Colors.grey,
-                  iconColorSelected: Colors.blue,
-                  progressIndicatorColor: Colors.blue,
-                  showRecentsTab: true,
-                  recentsLimit: 28,
-                  noRecentsText: "No Recents",
-                  noRecentsStyle:
-                      const TextStyle(fontSize: 20, color: Colors.black26),
-                  categoryIcons: const CategoryIcons(),
-                  buttonMode: ButtonMode.MATERIAL,
+                  config: Config(
+                    columns: 7,
+                    emojiSizeMax: 32.0,
+                    verticalSpacing: 0,
+                    horizontalSpacing: 0,
+                    initCategory: Category.RECENT,
+                    bgColor: Color(0xFFF2F2F2),
+                    indicatorColor: Colors.blue,
+                    iconColor: Colors.grey,
+                    iconColorSelected: Colors.blue,
+                    progressIndicatorColor: Colors.blue,
+                    showRecentsTab: true,
+                    recentsLimit: 28,
+                    noRecentsText: "No Recents",
+                    noRecentsStyle:
+                        const TextStyle(fontSize: 20, color: Colors.black26),
+                    categoryIcons: const CategoryIcons(),
+                    buttonMode: ButtonMode.MATERIAL,
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }

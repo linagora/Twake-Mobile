@@ -14,7 +14,6 @@ import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
-
   const MessagesGroupedList({required this.parentChannel});
 
   @override
@@ -109,7 +108,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-       //conditions for determining the shape of the sides of the bubble
+        //conditions for determining the shape of the sides of the bubble
 
         //if there is only one message in the chat
         if (messages.length == 1) {
@@ -178,7 +177,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
               upBubbleSide = true;
             }
           }
-        } 
+        }
         return SwipeActionCell(
           key: ObjectKey(messages[index]),
           performsFirstActionWithFullSwipe: true,
@@ -201,10 +200,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
+                  Get.find<ThreadMessagesCubit>().reset();
+
                   Get.find<ChannelMessagesCubit>()
                       .selectThread(messageId: message.id);
 
                   Get.find<ThreadMessagesCubit>().swipeReply(message);
+
                   setState(() {});
                 },
                 color: Colors.transparent),

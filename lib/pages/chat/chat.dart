@@ -95,7 +95,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   if (uploadState is FileUploadSuccess) {
                     attachments = uploadState.files;
                   }
-                  if (stateThread is MessagesLoadSuccess) {
+                  if (stateThread is MessagesLoadSuccessSwipeToReply) {
                     Get.find<ThreadMessagesCubit>().send(
                         originalStr: content,
                         attachments: attachments,
@@ -133,7 +133,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
-        if (state is MessagesLoadSuccess) {
+        if (state is MessagesLoadSuccessSwipeToReply) {
           final _message = state.messages.first;
           return Column(
             children: [
