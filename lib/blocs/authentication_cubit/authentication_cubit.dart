@@ -41,6 +41,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   Future<bool> authenticate() async {
+    emit(AuthenticationInProgress());
     final authenticated = await _repository.webviewAuthenticate();
     if (authenticated) {
       emit(AuthenticationSuccess());

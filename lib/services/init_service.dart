@@ -33,7 +33,7 @@ class InitService {
     _apiService = ApiService(reset: true);
     SynchronizationService(reset: true);
     if (globals.oidcAuthority == null)
-      await globals.hostSet('https://beta.twake.app');
+      await globals.hostSet('https://web.qa.twake.app');
   }
 
   // should only be called once after successful authentication/login
@@ -141,7 +141,7 @@ class InitService {
         key: 'resources',
       );
       final accounts = remoteResult.map(
-        (i) => Account.fromJson(json: i['user']),
+        (i) => Account.fromJson(json: i['user'], transform: true),
       );
       // Create links between accounts and workspaces
       final accounts2workspaces = remoteResult.map(
