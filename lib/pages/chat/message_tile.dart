@@ -162,8 +162,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
             SizedBox(width: 6.0),
             Padding(
               padding: _message.reactions.isEmpty
-                  ? const EdgeInsets.only(bottom: 3.0)
-                  : const EdgeInsets.only(bottom: 18.0),
+                  ? const EdgeInsets.only(bottom: 15.0)
+                  : const EdgeInsets.only(bottom: 22.0),
               child:
                   (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
                       ? UserThumbnail(
