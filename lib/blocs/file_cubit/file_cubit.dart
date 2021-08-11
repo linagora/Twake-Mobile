@@ -49,7 +49,6 @@ class FileCubit extends Cubit<FileState> {
 
   Future<File> getById({required String id}) async {
     final file = await _repository.getById(id: id);
-    Logger().w('Returning ${file.toJson()}');
 
     return file;
   }

@@ -27,6 +27,12 @@ class ApiDataTransformer {
   static Map<String, dynamic> account({required Map<String, dynamic> json}) {
     if (json['preference'] != null)
       json['language'] = json['preference']['locale'];
+    if (json['is_verified'] != null) {
+      json['is_verified'] = json['is_verified'] ? 1 : 0;
+    }
+    if (json['deleted'] != null) {
+      json['deleted'] = json['deleted'] ? 1 : 0;
+    }
 
     return json;
   }
