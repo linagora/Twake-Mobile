@@ -69,7 +69,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 if (state is AuthenticationInProgress) {
                   return buildSplashScreen();
                 } else if (state is AuthenticationInitial) {
-                  return SignInSignUpForm();
+                  return SignFlow();
                 } else if (state is PostAuthenticationSyncInProgress) {
                   return SyncingDataScreen(
                     state.progress.toDouble(),
@@ -80,7 +80,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     state is AuthenticationSuccess) {
                   return HomeWidget();
                 } else if (state is AuthenticationFailure) {
-                  return SignInSignUpForm(); //AuthPage();
+                  return SignFlow();
                 } else {
                   return buildSplashScreen();
                 }

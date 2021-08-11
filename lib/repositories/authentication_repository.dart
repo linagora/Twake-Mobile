@@ -47,7 +47,7 @@ class AuthenticationRepository {
             discoveryUrl:
                 '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
             scopes: ['openid', 'profile', 'email', 'offline_access'],
-            // preferEphemeralSession: true,
+            preferEphemeralSession: true,
           ),
         );
       } catch (e, ss) {

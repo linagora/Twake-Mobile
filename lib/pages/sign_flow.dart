@@ -1,9 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/pages/server_configuration.dart';
+
+class SignFlow extends StatefulWidget {
+  @override
+  _SignFlowState createState() => _SignFlowState();
+}
+
+class _SignFlowState extends State<SignFlow> {
+  int _index = 0;
+  List<Widget> _widgets = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _widgets = [
+      SignInSignUpForm(
+        onChangeServer: () => setState(() {
+          _index = 1;
+        }),
+      ),
+      ServerConfiguration(
+        onCancel: () => setState(() {
+          _index = 0;
+        }),
+        onConfirm: () => setState(() {
+          _index = 0;
+        }),
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          IndexedStack(
+            alignment: Alignment.bottomCenter,
+            sizing: StackFit.expand,
+            index: _index,
+            children: _widgets,
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class SignInSignUpForm extends StatelessWidget {
-  const SignInSignUpForm({Key? key}) : super(key: key);
+  final Function onChangeServer;
+  const SignInSignUpForm({Key? key, required this.onChangeServer})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +145,9 @@ class SignInSignUpForm extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      onChangeServer();
+                    },
                     child: Text(
                       'Change server',
                       style: TextStyle(

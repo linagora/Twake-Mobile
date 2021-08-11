@@ -279,17 +279,20 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           child: Column(
                                             children: [
                                               TwacodeRenderer(
-                                                _message.blocks,
-                                                TextStyle(
-                                                  fontSize: 15.0,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: _isMyMessage
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                                _message.username.hashCode %
-                                                    360,
-                                              ).message,
+                                                      _message.blocks,
+                                                      TextStyle(
+                                                        fontSize: 15.0,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: _isMyMessage
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                      _message.username
+                                                              .hashCode %
+                                                          360,
+                                                      false)
+                                                  .message,
                                               SizedBox(
                                                 height: 3,
                                               ),
