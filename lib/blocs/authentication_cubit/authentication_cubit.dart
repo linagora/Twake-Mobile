@@ -36,15 +36,12 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       _repository.startTokenValidator();
       await NavigatorService.instance.navigateOnNotificationLaunch();
     } else {
-      authenticated = await _repository.webviewAuthenticate();
-      if (authenticated) {
-        emit(AuthenticationSuccess());
-        _repository.startTokenValidator();
-        await syncData();
-      } else {
-        emit(AuthenticationInitial());
-      }
+      emit(AuthenticationInitial());
     }
+  }
+
+  Future<bool> authenticate() async {
+    return _repository.webviewAuthenticate();
   }
 
   Future<void> syncData() async {

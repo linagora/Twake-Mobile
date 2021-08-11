@@ -52,7 +52,7 @@ class AuthenticationRepository {
         );
       } catch (e, ss) {
         Logger().wtf('Error authenticating via console\n$e\n$ss');
-        continue;
+        return false;
       }
       if (tokenResponse == null) {
         Logger().w('Token is null, retrying auth');
@@ -76,6 +76,7 @@ class AuthenticationRepository {
 
     registerDevice();
 
+    startTokenValidator();
     return true;
   }
 
