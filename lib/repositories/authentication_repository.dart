@@ -76,7 +76,6 @@ class AuthenticationRepository {
 
     registerDevice();
 
-    startTokenValidator();
     return true;
   }
 
