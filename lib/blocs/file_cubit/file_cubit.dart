@@ -6,6 +6,8 @@ import 'package:logger/logger.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/repositories/file_repository.dart';
 
+export 'package:twake/models/file/file.dart';
+
 part 'file_state.dart';
 
 class FileCubit extends Cubit<FileState> {
@@ -43,6 +45,13 @@ class FileCubit extends Cubit<FileState> {
     }
 
     emit(FileUploadSuccess(files: uploadedFiles));
+  }
+
+  Future<File> getById({required String id}) async {
+    final file = await _repository.getById(id: id);
+    Logger().w('Returning ${file.toJson()}');
+
+    return file;
   }
 
   void download({required File file}) async {

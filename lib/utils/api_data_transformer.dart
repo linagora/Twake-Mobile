@@ -87,6 +87,8 @@ class ApiDataTransformer {
     if (json['files'] != null) {
       json['files'] =
           (json['files'] as List<dynamic>).map((f) => f['id']).toList();
+    } else {
+      json['files'] = <String>[];
     }
     if (json.containsKey('users') &&
         (json['users'] as List<dynamic>).isNotEmpty) {

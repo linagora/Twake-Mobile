@@ -1,14 +1,4 @@
 class Endpoint {
-  /// List of public methods
-
-  // API Endpoint for authentication
-  static const authorize = '/authorize';
-
-  /// List of internal methods, for authorized users only
-
-  // API Endpoint for getting all the rooms to which it's possible to subscribe
-  static const fileUpload = '/media/upload';
-
   // Core methods
   // Obtain JWToken pair for Twake
   static const login = '/internal/services/console/v1/login';
@@ -50,21 +40,11 @@ class Endpoint {
   static const badges = '/internal/services/notifications/v1/badges';
   static const files = '/internal/services/files/v1/companies/%s/files';
 
-  static const proxyMethods = const [
-    fileUpload,
-    authorize,
-  ];
-
   static const publicMethods = const [
-    authorize,
     info,
   ];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {
     return publicMethods.contains(method);
-  }
-
-  static bool isProxy(String method) {
-    return proxyMethods.contains(method);
   }
 }

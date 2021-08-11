@@ -8,7 +8,7 @@ class File {
   final String id;
   final String name;
   final String? preview;
-  final String size;
+  final int size;
 
   const File({
     required this.id,
@@ -32,6 +32,16 @@ class File {
   }
 
   String get download => ''; // TODO implement download link generation
+
+  String get sizeStr {
+    const MB = 1024 * 1024;
+    const KB = 1024;
+    return size > MB
+        ? '${(size / MB).toStringAsFixed(2)} MB'
+        : size > KB
+            ? '${(size / KB).toStringAsFixed(2)} KB'
+            : '$size B';
+  }
 
   factory File.fromJson({
     required Map<String, dynamic> json,
