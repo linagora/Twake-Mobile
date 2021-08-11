@@ -141,7 +141,7 @@ class InitService {
         key: 'resources',
       );
       final accounts = remoteResult.map(
-        (i) => Account.fromJson(json: i['user']),
+        (i) => Account.fromJson(json: i['user'], transform: true),
       );
       // Create links between accounts and workspaces
       final accounts2workspaces = remoteResult.map(

@@ -27,6 +27,12 @@ class ApiDataTransformer {
   static Map<String, dynamic> account({required Map<String, dynamic> json}) {
     if (json['preference'] != null)
       json['language'] = json['preference']['locale'];
+    if (json['is_verified'] != null) {
+      json['is_verified'] = json['is_verified'] ? 1 : 0;
+    }
+    if (json['deleted'] != null) {
+      json['deleted'] = json['deleted'] ? 1 : 0;
+    }
 
     return json;
   }
@@ -87,6 +93,8 @@ class ApiDataTransformer {
     if (json['files'] != null) {
       json['files'] =
           (json['files'] as List<dynamic>).map((f) => f['id']).toList();
+    } else {
+      json['files'] = <String>[];
     }
     if (json.containsKey('users') &&
         (json['users'] as List<dynamic>).isNotEmpty) {

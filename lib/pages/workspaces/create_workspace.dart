@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -24,10 +26,12 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
   List<Map<String, dynamic>> _membersList = [];
   List<String> _members = [];
   List<TextEditingController> _controllers = [];
+  Account? user;
 
   @override
   void initState() {
     super.initState();
+    user = (Get.find<AccountCubit>().state as AccountLoadSuccess).account;
     _workspaceNameFocusNode.addListener(_onFocusChange);
   }
 
@@ -50,14 +54,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         return CupertinoAlertDialog(
           title: Text('Invitation limit'),
           content: Text(
-              'To add more team members,please, verify your account. We sent verification details to: alexandre@linagora.com'),
+              'To add more team members,please, verify your account. We sent verification details to: ${user!.email}'),
           actions: <Widget>[
-            CupertinoDialogAction(
-              child: Text('Open email'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
             CupertinoDialogAction(
               child: Text('OK'),
               onPressed: () {
@@ -276,7 +274,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       onTap: () async {
         setState(() {
           _controllers.add(TextEditingController());
-          _count < 5 ? _count++ : _invitationLimit();
+          _count < 5 || user!.isVerified ? _count++ : _invitationLimit();
         });
       },
     );

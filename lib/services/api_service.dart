@@ -6,7 +6,6 @@ import 'package:twake/services/service_bundle.dart';
 class ApiService {
   static late ApiService _service;
   late final Dio _dio;
-  static const _PROXY_PREFIX = '/internal/mobile';
 
   factory ApiService({required bool reset}) {
     if (reset) {
@@ -25,8 +24,7 @@ class ApiService {
     ));
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-      options.baseUrl = Globals.instance.host +
-          (Endpoint.isProxy(options.path) ? _PROXY_PREFIX : '');
+      options.baseUrl = Globals.instance.host;
 
       if (Endpoint.isPublic(options.path)) {
         handler.next(options);

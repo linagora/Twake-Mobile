@@ -23,9 +23,9 @@ class Account extends BaseModel {
   final int lastActivity;
 
   @JsonKey(name: 'is_verified')
-  int _isVerified = 0;
-  @JsonKey(name: 'deleted')
-  int _deleted = 0;
+  final int verified;
+
+  final int deleted;
 
   Account({
     required this.id,
@@ -33,6 +33,8 @@ class Account extends BaseModel {
     this.firstName,
     this.lastName,
     required this.username,
+    required this.verified,
+    required this.deleted,
     this.picture,
     this.providerId,
     this.status,
@@ -54,10 +56,10 @@ class Account extends BaseModel {
       : username;
 
   @JsonKey(ignore: true)
-  bool get isVerified => _isVerified > 0;
+  bool get isVerified => verified > 0;
 
   @JsonKey(ignore: true)
-  bool get deleted => _deleted > 0;
+  bool get isDeleted => deleted > 0;
 
   factory Account.fromJson({
     required Map<String, dynamic> json,
@@ -70,8 +72,8 @@ class Account extends BaseModel {
     }
     try {
       return _$AccountFromJson(json);
-    } catch (e) {
-      print('Faulty accont: $json');
+    } catch (e, ss) {
+      print('Faulty accont: $json\n$ss');
       throw e;
     }
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
+import 'package:twake/widgets/common/file_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
@@ -952,79 +953,8 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
-          final widget = Text('files not yet supported');
-          // final s = int.parse((t['metadata']['size'] ?? '0').toString());
-          // InlineSpan text;
-          // const MB = 1024 * 1024;
-          // const KB = 1024;
-          // final size = s > MB
-          // ? '${(s / MB).toStringAsFixed(2)} MB'
-          // : s > KB
-          // ? '${(s / KB).toStringAsFixed(2)} KB'
-          // : '$s B';
-          // text = TextSpan(
-          // text: t['metadata']['name'],
-          // style: parentStyle.merge(
-          // getStyle(type, parentStyle, userUniqueColor),
-          // ),
-          // );
-          // final widget = Container(
-          // margin: EdgeInsets.all(4),
-          // padding: EdgeInsets.all(3),
-          // child: Row(children: [
-          // InkWell(
-          // child: SizedBox(
-          // child: t['metadata']['preview'] != null
-          // ? ClipRRect(
-          // child: Image.network(t['metadata']['preview']),
-          // borderRadius: BorderRadius.all(Radius.circular(8)))
-          // : CircleAvatar(
-          // child: Icon(Icons.cloud_download),
-          // backgroundColor: Colors.indigo[100],
-          // ),
-          // width: 40,
-          // height: 40,
-          // ),
-          // ),
-          // SizedBox(width: 10),
-          // Flexible(
-          // // fit: FlexFit.tight,
-          // child: Column(
-          // children: [
-          // RichText(
-          // text: text,
-          // overflow: TextOverflow.ellipsis,
-          // maxLines: 1,
-          // // softWrap: true,
-          // ),
-          // Text(
-          // size,
-          // textAlign: TextAlign.end,
-          // style: TextStyle(
-          // fontSize: 11.0,
-          // fontWeight: FontWeight.w400,
-          // fontStyle: FontStyle.italic,
-          // color: Color(0xff8e8e93)),
-          // ),
-          // ],
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          // ),
-          // ),
-          // ]),
-          // );
-          spans.add(WidgetSpan(child: widget));
-        } else if (type == TType.Icon) {
-          if (t['src'] == null) continue;
-          final widget = Container(
-            padding: EdgeInsets.zero,
-            child: SizedBox(
-              child: ClipRRect(
-                  child: Image.network(t['src']),
-                  borderRadius: BorderRadius.all(Radius.circular(2))),
-              width: 15,
-              height: 15,
-            ),
-          );
+          final widget = FileTile(fileId: t['content']);
+
           spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
           spans.add(TextSpan(

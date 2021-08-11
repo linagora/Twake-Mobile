@@ -10,7 +10,7 @@ File _$FileFromJson(Map<String, dynamic> json) {
   return File(
     id: json['id'] as String,
     name: json['name'] as String,
-    size: json['size'] as String,
+    size: json['size'] as int,
     preview: json['preview'] as String?,
   );
 }
