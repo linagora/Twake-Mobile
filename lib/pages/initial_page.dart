@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/pages/auth_page.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/pages/sign_flow.dart';
 import 'package:twake/pages/syncing_data.dart';
