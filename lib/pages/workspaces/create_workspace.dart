@@ -57,12 +57,6 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               'To add more team members,please, verify your account. We sent verification details to: ${user!.email}'),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text('Open email'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            CupertinoDialogAction(
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
