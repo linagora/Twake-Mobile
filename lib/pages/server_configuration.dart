@@ -77,7 +77,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 10.0),
-                Image.asset('assets/images/server.png'),
+                if (MediaQuery.of(context).viewInsets.bottom == 0)
+                  Image.asset('assets/images/server.png'),
                 SizedBox(height: 15.0),
                 Text(
                   'Server connection\npreference',
