@@ -32,15 +32,13 @@ class _AccountSettingsState extends State<AccountSettings> {
           title: 'Are you sure you want to log out of your account?',
           leadingActionTitle: 'Cancel',
           trailingActionTitle: 'Log out',
-          trailingAction: () async {
+          trailingAction: () {
             Get.find<AuthenticationCubit>().logout();
           },
         );
       },
     );
   }
-
-  void _save() {}
 
   @override
   Widget build(BuildContext context) {

@@ -46,9 +46,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     if (authenticated) {
       emit(AuthenticationSuccess());
       _repository.startTokenValidator();
-      syncData();
+      await syncData();
     } else {
-      AuthenticationInitial();
+      emit(AuthenticationInitial());
     }
     return authenticated;
   }
@@ -78,7 +78,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   void logout() async {
     await _repository.logout();
     emit(AuthenticationInitial());
-    checkAuthentication();
+    SocketIOService.instance.disconnect();
   }
 
   void registerDevice() async {

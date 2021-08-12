@@ -7,6 +7,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 import 'home_channel_tile.dart';
@@ -62,7 +63,7 @@ class HomeChannelListWidget extends StatelessWidget {
                     title: channel.name,
                     name: channel.lastMessage?.senderName,
                     content: channel.lastMessage?.body,
-                    imageUrl: channel.icon,
+                    imageUrl: Emojis.getByName(channel.icon ?? ''),
                     dateTime: channel.lastActivity,
                     channelId: channel.id,
                     isPrivate: channel.isPrivate,

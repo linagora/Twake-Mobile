@@ -16,6 +16,7 @@ class InitService {
     _storageService = StorageService(reset: true);
     await _storageService.init();
 
+    const host = 'https://beta.twake.app';
     final g = await _storageService.first(table: Table.globals);
     Globals globals;
     if (g.isNotEmpty) {
@@ -24,7 +25,7 @@ class InitService {
       globals.threadIdSet = null;
     } else {
       final String fcmToken = (await FirebaseMessaging.instance.getToken())!;
-      globals = Globals(host: 'https://beta.twake.app', fcmToken: fcmToken);
+      globals = Globals(host: host, fcmToken: fcmToken);
       globals.save();
     }
 
@@ -32,8 +33,7 @@ class InitService {
     PushNotificationsService(reset: true);
     _apiService = ApiService(reset: true);
     SynchronizationService(reset: true);
-    if (globals.oidcAuthority == null)
-      await globals.hostSet('https://web.qa.twake.app');
+    if (globals.oidcAuthority == null) await globals.hostSet(host);
   }
 
   // should only be called once after successful authentication/login
@@ -178,6 +178,7 @@ class InitService {
             queryParameters: {
               'emojis': false,
               'include_users': 1,
+              'direction': 'future',
               'limit': 100,
             },
             key: 'resources',

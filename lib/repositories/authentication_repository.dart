@@ -121,6 +121,8 @@ class AuthenticationRepository {
         endpoint: Endpoint.device + '/${Globals.instance.fcmToken}',
         data: const {},
       );
+    } else {
+      return;
     }
 
     final result = await _storage.first(table: Table.authentication);

@@ -138,6 +138,14 @@ class SocketIOService {
     await _resourceStream.close();
     await _reconnectionStream.close();
   }
+
+  void disconnect() {
+    _socket.disconnect();
+  }
+
+  void connect() {
+    _socket.connect();
+  }
 }
 
 class IOEvent {
