@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
-import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/file_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -638,7 +637,9 @@ class TwacodeRenderer {
         style = TextStyle(
           color: parentStyle.color == Colors.black
               ? HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor()
-              : Colors.white,
+              : isSwipe
+                  ? Colors.blue
+                  : Colors.white,
         );
         break;
 
@@ -713,6 +714,14 @@ class TwacodeRenderer {
     );
   }
 
+  RichText get messageOnSwipe {
+    return RichText(
+      text: TextSpan(children: this.spans),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 2,
+    );
+  }
+
   List<InlineSpan> render(List<dynamic> twacode, TextStyle parentStyle,
       double userUniqueColor, bool isSwipe) {
     List<InlineSpan> spans = [];
@@ -721,11 +730,8 @@ class TwacodeRenderer {
       if (twacode[i] is String) {
         spans.add(
           TextSpan(
-            text: spans.isEmpty
-                ? (twacode[i] as String).trimLeft()
-                : isSwipe
-                    ? twacode[0].toString().trimLeft()
-                    : twacode[i],
+            text:
+                spans.isEmpty ? (twacode[i] as String).trimLeft() : twacode[i],
             style: parentStyle.merge(
               getStyle(TType.Text, parentStyle, userUniqueColor, isSwipe),
             ),
@@ -932,13 +938,9 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               // text: Emojis.getByName(t['content']),
-              text: Emojis.getByName(t['content']),
+              text: t['content'],
               style: getStyle(
-                type,
-                parentStyle,
-                userUniqueColor,
-                isSwipe,
-              ),
+                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe),
             ),
           );
         } else if (type == TType.Nop) {
