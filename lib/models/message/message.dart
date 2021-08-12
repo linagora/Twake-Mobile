@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
@@ -109,7 +110,13 @@ class Message extends BaseModel {
     if (transform) {
       json = ApiDataTransformer.message(json: json, channelId: channelId);
     }
-    return _$MessageFromJson(json);
+    try {
+      return _$MessageFromJson(json);
+    } catch (e, ss) {
+      Logger().w('Faulty message: $json');
+      Logger().e('\n$e\n$ss');
+      throw e;
+    }
   }
 
   @override

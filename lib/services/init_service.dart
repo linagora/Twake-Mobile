@@ -178,11 +178,11 @@ class InitService {
             queryParameters: {
               'emojis': false,
               'include_users': 1,
-              'direction': 'future',
               'limit': 100,
             },
             key: 'resources',
           );
+          print('CompanyID: ${c.companyId}');
           final messages = remoteResult
               .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
               .map(
