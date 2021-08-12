@@ -31,7 +31,7 @@ class ComposeBar extends StatefulWidget {
 }
 
 class _ComposeBar extends State<ComposeBar> {
-  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+$');
+  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9._-]+$');
   var _emojiVisible = false;
   var _mentionsVisible = false;
   var _forceLooseFocus = false;
@@ -66,7 +66,10 @@ class _ComposeBar extends State<ComposeBar> {
     });
 
     _controller.addListener(() {
+      if (_controller.selection.base.offset < 0) return;
+
       var text = _controller.text;
+      text = text.substring(0, _controller.selection.base.offset);
       if (_userMentionRegex.hasMatch(text)) {
         Get.find<MentionsCubit>().fetch(
           searchTerm: text.split('@').last.trimRight(),
@@ -142,16 +145,17 @@ class _ComposeBar extends State<ComposeBar> {
     _focus ? _focusNode.requestFocus() : _focusNode.unfocus();
   }
 
-  void mentionReplace(String? username) async {
-    final text = _controller.text;
-    _controller.text = text.replaceRange(
+  void mentionReplace(String username) async {
+    var text = _controller.text;
+    text = text.substring(0, _controller.selection.base.offset);
+    _controller.text = _controller.text.replaceRange(
       text.lastIndexOf('@'),
-      text.length,
+      _controller.selection.base.offset,
       '@$username ',
     );
     _controller.selection = TextSelection.fromPosition(
       TextPosition(
-        offset: _controller.text.length,
+        offset: text.lastIndexOf('@') + username.length + 2,
       ),
     );
   }
