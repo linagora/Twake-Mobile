@@ -13,6 +13,7 @@ import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
@@ -52,7 +53,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             userId: channel.members.isNotEmpty ? channel.members.first : null,
             // TODO: figure out why do we need this?
             name: channel.name,
-            icon: channel.icon ?? '',
+            icon: Emojis.getByName(channel.icon ?? ''),
             membersCount: channel.membersCount,
             onTap: () {
               if (T == ChannelsCubit) {

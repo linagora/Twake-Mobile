@@ -3638,7 +3638,7 @@ const _EMOJIS = const {
 };
 
 class Emojis {
-  static String? getByName(String name) {
+  static String getByName(String name) {
     name = name.replaceAll(':', '');
     return _EMOJIS[name] ?? name;
   }

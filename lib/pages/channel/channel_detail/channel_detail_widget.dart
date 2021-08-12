@@ -5,6 +5,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
 
 class ChannelDetailWidget extends StatelessWidget {
@@ -46,14 +47,17 @@ class ChannelDetailWidget extends StatelessWidget {
                         bloc: Get.find<ChannelsCubit>(),
                         builder: (ctx, channelState) {
                           Channel? selectedChannel =
-                              (channelState is ChannelsLoadedSuccess) ? channelState.selected : null;
+                              (channelState is ChannelsLoadedSuccess)
+                                  ? channelState.selected
+                                  : null;
                           return ChannelThumbnail(
                             isPrivate: selectedChannel != null
                                 ? selectedChannel.isPrivate
                                 : false,
                             icon: (selectedChannel != null &&
                                     selectedChannel.icon != null)
-                                ? selectedChannel.icon! : '',
+                                ? Emojis.getByName(selectedChannel.icon ?? '')
+                                : '',
                             name: selectedChannel != null
                                 ? selectedChannel.name
                                 : '',
@@ -72,8 +76,10 @@ class ChannelDetailWidget extends StatelessWidget {
                 child: BlocBuilder<ChannelsCubit, ChannelsState>(
                   bloc: Get.find<ChannelsCubit>(),
                   builder: (ctx, channelState) {
-                    return Text((channelState is ChannelsLoadedSuccess)
-                        ? channelState.selected?.name ?? '' : '',
+                    return Text(
+                        (channelState is ChannelsLoadedSuccess)
+                            ? channelState.selected?.name ?? ''
+                            : '',
                         style: TextStyle(
                           color: Color(0xff000000),
                           fontSize: 17,
@@ -86,8 +92,10 @@ class ChannelDetailWidget extends StatelessWidget {
               BlocBuilder<ChannelsCubit, ChannelsState>(
                 bloc: Get.find<ChannelsCubit>(),
                 builder: (ctx, channelState) {
-                  return Text((channelState is ChannelsLoadedSuccess)
-                      ? '${channelState.selected?.membersCount} members' : '',
+                  return Text(
+                      (channelState is ChannelsLoadedSuccess)
+                          ? '${channelState.selected?.membersCount} members'
+                          : '',
                       style: TextStyle(
                         color: Color(0x59000000),
                         fontSize: 13,
@@ -185,25 +193,28 @@ class ChannelDetailWidget extends StatelessWidget {
               //   ],
               // ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                 child: Container(
-                    decoration: BoxDecoration(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
                         color: Colors.white,
-                        border: Border.all(
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(12))),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        final currentState = Get.find<ChannelsCubit>().state;
-                        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
-                          NavigatorService.instance.navigateToEditChannel(currentState.selected!);
-                        }
-                      },
-                      child: Row(
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(12))),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          final currentState = Get.find<ChannelsCubit>().state;
+                          if (currentState is ChannelsLoadedSuccess &&
+                              currentState.selected != null) {
+                            NavigatorService.instance
+                                .navigateToEditChannel(currentState.selected!);
+                          }
+                        },
+                        child: Row(
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(
@@ -224,93 +235,119 @@ class ChannelDetailWidget extends StatelessWidget {
                                   )),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(right: 10.0, left: 4),
-                              child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
+                              padding:
+                                  const EdgeInsets.only(right: 10.0, left: 4),
+                              child: Icon(
+                                Icons.keyboard_arrow_right,
+                                color: Color(0x4c3c3c43),
+                              ),
                             )
                           ],
                         ),
-                    ),
-                    Divider(height: 1, color: Color(0x1e000000),),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        final currentState = Get.find<ChannelsCubit>().state;
-                        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
-                          NavigatorService.instance.navigateToChannelSetting(currentState.selected!);
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 16.0, bottom: 16, left: 10, right: 20),
-                            child: Icon(
-                              Icons.settings,
-                              color: Colors.black,
-                              size: 16,
+                      ),
+                      Divider(
+                        height: 1,
+                        color: Color(0x1e000000),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          final currentState = Get.find<ChannelsCubit>().state;
+                          if (currentState is ChannelsLoadedSuccess &&
+                              currentState.selected != null) {
+                            NavigatorService.instance.navigateToChannelSetting(
+                                currentState.selected!);
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 16.0, bottom: 16, left: 10, right: 20),
+                              child: Icon(
+                                Icons.settings,
+                                color: Colors.black,
+                                size: 16,
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Text('Channel settings',
-                                style: TextStyle(
-                                  color: Color(0xff000000),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                )),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10.0, left: 4),
-                            child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
-                          )
-                        ],
-                      ),
-                    ),
-                    Divider(height: 1, color: Color(0x1e000000),),
-                    GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        final currentState = Get.find<ChannelsCubit>().state;
-                        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
-                          NavigatorService.instance.navigateToChannelMemberManagement(currentState.selected!);
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 16.0, bottom: 16, left: 10, right: 20),
-                            child: Image.asset(imageGroupBlack, width: 16, height: 16,),
-                          ),
-                          Expanded(
-                            child: Text('Member management',
-                                style: TextStyle(
-                                  color: Color(0xff000000),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                )),
-                          ),
-                          BlocBuilder<ChannelsCubit, ChannelsState>(
-                            bloc: Get.find<ChannelsCubit>(),
-                            builder: (ctx, channelState) {
-                              return Text('${(channelState is ChannelsLoadedSuccess)
-                                  ? channelState.selected?.membersCount : ''}',
+                            Expanded(
+                              child: Text('Channel settings',
                                   style: TextStyle(
-                                    color: Color(0xff004dff),
+                                    color: Color(0xff000000),
                                     fontSize: 15,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w400,
                                     fontStyle: FontStyle.normal,
-                                  ));
-                            },
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10.0),
-                            child: Icon(Icons.keyboard_arrow_right, color: Color(0x4c3c3c43),),
-                          )
-                        ],
+                                  )),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(right: 10.0, left: 4),
+                              child: Icon(
+                                Icons.keyboard_arrow_right,
+                                color: Color(0x4c3c3c43),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    )
+                      Divider(
+                        height: 1,
+                        color: Color(0x1e000000),
+                      ),
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {
+                          final currentState = Get.find<ChannelsCubit>().state;
+                          if (currentState is ChannelsLoadedSuccess &&
+                              currentState.selected != null) {
+                            NavigatorService.instance
+                                .navigateToChannelMemberManagement(
+                                    currentState.selected!);
+                          }
+                        },
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 16.0, bottom: 16, left: 10, right: 20),
+                              child: Image.asset(
+                                imageGroupBlack,
+                                width: 16,
+                                height: 16,
+                              ),
+                            ),
+                            Expanded(
+                              child: Text('Member management',
+                                  style: TextStyle(
+                                    color: Color(0xff000000),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                  )),
+                            ),
+                            BlocBuilder<ChannelsCubit, ChannelsState>(
+                              bloc: Get.find<ChannelsCubit>(),
+                              builder: (ctx, channelState) {
+                                return Text(
+                                    '${(channelState is ChannelsLoadedSuccess) ? channelState.selected?.membersCount : ''}',
+                                    style: TextStyle(
+                                      color: Color(0xff004dff),
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      fontStyle: FontStyle.normal,
+                                    ));
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Icon(
+                                Icons.keyboard_arrow_right,
+                                color: Color(0x4c3c3c43),
+                              ),
+                            )
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

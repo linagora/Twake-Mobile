@@ -10,7 +10,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/widgets/common/stacked_image_avatars.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
@@ -70,7 +70,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                           Container(
                             alignment: Alignment.topLeft,
                             child: TextAvatar(
-                              channel.icon,
+                              Emojis.getByName(channel.icon ?? ''),
                               fontSize: Dim.tm4(),
                             ),
                           ),
@@ -88,8 +88,9 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                             ),
                             SizedBox(height: 5.0),
                             Text(
-                              channel.isDirect?
-                             'Threaded replies':channel.name,
+                              channel.isDirect
+                                  ? 'Threaded replies'
+                                  : channel.name,
                               style: TextStyle(
                                 fontSize: 13.0,
                                 fontWeight: FontWeight.w400,
