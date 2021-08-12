@@ -31,8 +31,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       [workspacesCubit.fetchMembers(local: true), _fetchRecentChats()],
     );
 
-    final workspaceMembers = (result.first as List<Account>)
-      ..removeWhere((element) => element.id == Globals.instance.userId);
+    final workspaceMembers = (result.first as List<Account>);
 
     final recentChats = result.last as Map<String, Account>;
 
@@ -80,7 +79,7 @@ class NewDirectCubit extends Cubit<NewDirectState> {
 
     if (directsCubit.state is ChannelsLoadedSuccess) {
       final directs = (directsCubit.state as ChannelsLoadedSuccess).channels;
-      for (final direct in directs.where((d) => d.members.length < 3)) {
+      for (final direct in directs.where((d) => d.members.length == 2)) {
         final account = await accountCubit.fetchStateless(
             userId: direct.members
                 .where((id) => id != Globals.instance.userId)

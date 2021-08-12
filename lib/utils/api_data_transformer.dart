@@ -64,7 +64,8 @@ class ApiDataTransformer {
     if (json['workspace_id'] == 'direct' && json['users'] != null) {
       final users = json['users'] as List;
 
-      users.retainWhere((u) => u['id'] != Globals.instance.userId);
+      if (users.length > 1)
+        users.retainWhere((u) => u['id'] != Globals.instance.userId);
 
       json['name'] = users.map((u) {
         final String name = (u['first_name'] as String).isNotEmpty
