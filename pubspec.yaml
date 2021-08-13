@@ -79,7 +79,7 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.0.4
   json_serializable: ^4.1.3
-  flutter_launcher_icons: ^0.9.0
+  flutter_launcher_icons: ^0.9.1
   test: ^1.15.8
   bloc_test: ^8.0.2 
 
@@ -87,7 +87,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: 'dev_assets/logo.png'
-  adaptive_icon_background: '#837DFF'
+  adaptive_icon_background: '#004dff'
   adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
 
 # For information on the generic Dart part of this file, see the
