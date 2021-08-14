@@ -35,14 +35,32 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   Widget buildSplashScreen() {
     return Scaffold(
-      body: Center(
-        child: SizedBox(
-          width: Dim.heightPercent(13),
-          height: Dim.heightPercent(13),
-          child: Lottie.asset(
-            'assets/animations/splash.json',
-            animate: true,
-            repeat: true,
+      body: Container(
+        color: Color(0xFF004DFF),
+        child: Center(
+          child: Column(
+            children: [
+              Spacer(),
+              SizedBox(
+                height: Dim.heightPercent(5),
+              ),
+              SizedBox(
+                width: Dim.widthPercent(45),
+                child: Image.asset(
+                  'assets/images/3.0x/Twake_launch_logo.png',
+                ),
+              ),
+              Spacer(),
+              SizedBox(
+                width: Dim.widthPercent(30),
+                child: Image.asset(
+                  'assets/images/3.0x/Twake_launch_Linagora.png',
+                ),
+              ),
+              SizedBox(
+                height: Dim.heightPercent(5),
+              ),
+            ],
           ),
         ),
       ),
