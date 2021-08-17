@@ -17,8 +17,6 @@ import 'package:twake/widgets/message/message_modal_sheet.dart';
 
 import 'package:twake/widgets/common/reaction.dart';
 
-final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
-
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool hideShowReplies;
   final bool shouldShowSender;

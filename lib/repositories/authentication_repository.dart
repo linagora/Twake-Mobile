@@ -48,6 +48,8 @@ class AuthenticationRepository {
                 '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
             scopes: ['openid', 'profile', 'email', 'offline_access'],
             preferEphemeralSession: true,
+            promptValues: ['consent'],
+            responseMode: 'query',
           ),
         );
       } catch (e, ss) {

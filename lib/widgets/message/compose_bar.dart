@@ -31,7 +31,7 @@ class ComposeBar extends StatefulWidget {
 }
 
 class _ComposeBar extends State<ComposeBar> {
-  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9._-]+$');
+  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z0-9._-]+$');
   var _emojiVisible = false;
   var _mentionsVisible = false;
   var _forceLooseFocus = false;
