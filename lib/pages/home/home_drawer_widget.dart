@@ -24,6 +24,7 @@ class HomeDrawerWidget extends StatelessWidget {
     _workspacesCubit.fetch(
       companyId: Globals.instance.companyId,
     );
+    Get.find<CompaniesCubit>().fetch();
 
     return Drawer(
       child: SafeArea(
@@ -165,84 +166,89 @@ class HomeDrawerWidget extends StatelessWidget {
                 color: Colors.grey,
                 height: 1,
               ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.add_circle_sharp,
-                              color: Colors.black,
-                            ),
-                            SizedBox(
-                              width: 12,
-                            ),
-                            Text(
-                              'Add a new workspace',
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
+              if ((Get.find<CompaniesCubit>().state as CompaniesLoadSuccess)
+                  .selected
+                  .canCreateWorkspace)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.add_circle_sharp,
+                                color: Colors.black,
                               ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          // close drawer
-                          Navigator.of(context).pop();
-                          NavigatorService.instance.navigateToCreateWorkspace();
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    BlocBuilder<AccountCubit, AccountState>(
-                      bloc: Get.find<AccountCubit>(),
-                      builder: (context, accountState) {
-                        if (accountState is AccountLoadSuccess) {
-                          return GestureDetector(
-                            onTap: () {
-                              // close drawer
-                              Navigator.of(context).pop();
-                              NavigatorService.instance.navigateToAccount();
-                            },
-                            behavior: HitTestBehavior.opaque,
-                            child: Row(
-                              children: [
-                                RoundedImage(
-                                  imageUrl: accountState.account.picture ?? '',
-                                  width: 24,
-                                  height: 24,
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                'Add a new workspace',
+                                style: TextStyle(
+                                  color: Color(0xff000000),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
                                 ),
-                                SizedBox(
-                                  width: 12,
-                                ),
-                                Text('${accountState.account.fullName}',
-                                    style: TextStyle(
-                                      color: Color(0xff000000),
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w400,
-                                      fontStyle: FontStyle.normal,
-                                    )),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  child: Icon(Icons.arrow_forward_ios_sharp,
-                                      size: 10, color: Colors.black),
-                                ),
-                                Expanded(child: SizedBox.shrink())
-                              ],
-                            ),
-                          );
-                        }
-                        return SizedBox.shrink();
-                      },
-                    )
-                  ],
-                ),
-              )
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            // close drawer
+                            Navigator.of(context).pop();
+                            NavigatorService.instance
+                                .navigateToCreateWorkspace();
+                          }),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      BlocBuilder<AccountCubit, AccountState>(
+                        bloc: Get.find<AccountCubit>(),
+                        builder: (context, accountState) {
+                          if (accountState is AccountLoadSuccess) {
+                            return GestureDetector(
+                              onTap: () {
+                                // close drawer
+                                Navigator.of(context).pop();
+                                NavigatorService.instance.navigateToAccount();
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Row(
+                                children: [
+                                  RoundedImage(
+                                    imageUrl:
+                                        accountState.account.picture ?? '',
+                                    width: 24,
+                                    height: 24,
+                                  ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  Text('${accountState.account.fullName}',
+                                      style: TextStyle(
+                                        color: Color(0xff000000),
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w400,
+                                        fontStyle: FontStyle.normal,
+                                      )),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 2),
+                                    child: Icon(Icons.arrow_forward_ios_sharp,
+                                        size: 10, color: Colors.black),
+                                  ),
+                                  Expanded(child: SizedBox.shrink())
+                                ],
+                              ),
+                            );
+                          }
+                          return SizedBox.shrink();
+                        },
+                      )
+                    ],
+                  ),
+                )
             ],
           ),
         ),

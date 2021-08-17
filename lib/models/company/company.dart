@@ -29,6 +29,9 @@ class Company extends BaseModel {
     required this.role,
   });
 
+  bool get canCreateWorkspace =>
+      role == CompanyRole.owner || role == CompanyRole.admin;
+
   factory Company.fromJson({
     required Map<String, dynamic> json,
     bool jsonify: false,

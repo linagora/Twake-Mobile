@@ -182,7 +182,6 @@ class InitService {
             },
             key: 'resources',
           );
-          print('CompanyID: ${c.companyId}');
           final messages = remoteResult
               .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
               .map(
