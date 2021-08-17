@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/file_tile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -937,8 +938,7 @@ class TwacodeRenderer {
         } else if (type == TType.Emoji) {
           spans.add(
             TextSpan(
-              // text: Emojis.getByName(t['content']),
-              text: t['content'],
+              text: Emojis.getByName(t['content']),
               style: getStyle(
                   TType.LineBreak, parentStyle, userUniqueColor, isSwipe),
             ),
