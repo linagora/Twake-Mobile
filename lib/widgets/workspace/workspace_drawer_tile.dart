@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/repositories/badges_repository.dart';
 import 'package:twake/widgets/common/badges.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_button.dart';
 import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
 
@@ -43,12 +44,18 @@ class WorkspaceDrawerTile extends StatelessWidget {
                         height: 44,
                       ),
                 SizedBox(width: 16.0),
-                WorkspaceThumbnail(
+                ImageWidget(
+                  imageType: ImageType.workspace,
+                  name: name ?? '',
+                  size: 44,
+                  backgroundColor: Color(0xfff5f5f5),
+                ),
+                /*     WorkspaceThumbnail(
                   workspaceName: name ?? '',
                   size: 44.0,
                   isSelected: isSelected,
                   borderRadius: 12.0,
-                ),
+                ),*/
                 SizedBox(width: 16.0),
                 Expanded(
                   child: Text(

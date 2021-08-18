@@ -9,6 +9,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/user_thumbnail.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
@@ -164,10 +165,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   : const EdgeInsets.only(bottom: 22.0),
               child:
                   (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
-                      ? UserThumbnail(
-                          thumbnailUrl: _message.picture ?? '',
-                          userName: _message.sender,
-                          size: 28.0,
+                      ? ImageWidget(
+                          imageType: ImageType.chat,
+                          imageUrl: _message.picture ?? '',
+                          name: _message.sender,
+                          size: 28,
                         )
                       : SizedBox(width: 28.0, height: 28.0),
             ),
