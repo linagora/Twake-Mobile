@@ -76,10 +76,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 10.0),
-                if (MediaQuery.of(context).viewInsets.bottom == 0)
-                  Image.asset('assets/images/server.png'),
-                SizedBox(height: 15.0),
+                Expanded(child: SizedBox(height: 10.0)),
+                Image.asset('assets/images/server.png'),
+                Expanded(child: SizedBox(height: 15.0)),
                 Text(
                   'Server connection\npreference',
                   textAlign: TextAlign.center,
@@ -90,15 +89,17 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 36.0),
-                Padding(
-                  padding: EdgeInsets.only(left: 16, right: 36.0),
-                  child: Text(
-                    'Before you can proceed, please, choose a default server connection',
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black.withOpacity(0.6),
+                Expanded(child: SizedBox(height: 36.0)),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16, right: 36.0),
+                    child: Text(
+                      'Before you can proceed, please, choose a default server connection',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black.withOpacity(0.6),
+                      ),
                     ),
                   ),
                 ),
