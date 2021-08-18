@@ -445,7 +445,7 @@ class _TextInputState extends State<TextInput> {
     return Container(
       padding: EdgeInsets.only(
         top: 11.0,
-        bottom: 11.0 + MediaQuery.of(context).padding.bottom,
+        bottom: 11.0,
       ),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1.5)),
