@@ -33,8 +33,6 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             isDirect: widget.parentChannel.isDirect,
             userName: widget.parentChannel.name,
           );
-        } else if (state is MessagesBeforeLoadInProgress) {
-          return MessagesLoadingAnimation();
         } else if (state is MessagesLoadSuccess) {
           if (state.messages.isEmpty) {
             return MessagesLoadingAnimation();
