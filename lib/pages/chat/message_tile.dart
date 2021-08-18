@@ -95,8 +95,27 @@ class _MessageTileState<T extends BaseMessagesCubit>
     FlutterClipboard.copy(text);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(milliseconds: 1000),
-        content: Text('Message has been copied to clipboard'),
+        margin: EdgeInsets.fromLTRB(
+          15.0,
+          5.0,
+          15.0,
+          65.0,
+          //  Dim.heightPercent(8),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(milliseconds: 1500),
+        content: Row(
+          children: [
+            Icon(Icons.copy, color: Colors.white),
+            SizedBox(
+              width: 20,
+            ),
+            Text('Message has been copied to clipboard'),
+          ],
+        ),
       ),
     );
   }

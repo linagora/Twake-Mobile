@@ -115,6 +115,17 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                          margin: EdgeInsets.fromLTRB(
+                            15.0,
+                            5.0,
+                            15.0,
+                            65.0,
+                            //  Dim.heightPercent(8),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          behavior: SnackBarBehavior.floating,
                           duration: Duration(seconds: 3),
                           content: Text('Processing'),
                         ),
@@ -135,6 +146,18 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            margin: EdgeInsets.fromLTRB(
+                              15.0,
+                              5.0,
+                              15.0,
+                              65.0,
+                              //  Dim.heightPercent(8),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 3),
                             content: Text(
                                 'An error occurred while creating the workspace'),
                           ),

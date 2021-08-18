@@ -47,13 +47,24 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       //   print(Globals.instance.host);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          margin: EdgeInsets.fromLTRB(
+            15.0,
+            5.0,
+            15.0,
+            65.0,
+            //  Dim.heightPercent(8),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
           content: Text(
             'Invalid host',
             style: TextStyle(
               color: Colors.red,
             ),
           ),
-          duration: Duration(seconds: 2),
         ),
       );
     }
