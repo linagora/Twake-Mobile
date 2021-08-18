@@ -7,6 +7,8 @@ import 'package:twake/services/service_bundle.dart';
 
 import 'companies_state.dart';
 
+export 'companies_state.dart';
+
 class CompaniesCubit extends Cubit<CompaniesState> {
   late final CompaniesRepository _repository;
 
@@ -21,18 +23,16 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   Future<void> fetch() async {
     final streamCompanies = _repository.fetch();
 
+    Company? selected;
     await for (var companies in streamCompanies) {
-      Company? selected;
-
       if (Globals.instance.companyId != null) {
         selected =
             companies.firstWhere((c) => c.id == Globals.instance.companyId);
-        SynchronizationService.instance.subscribeForChannels(
-          companyId: selected.id,
-          workspaceId: 'direct',
-        );
+      } else {
+        selected = companies.first;
+        Globals.instance.companyIdSet = selected.id;
       }
-      emit(CompaniesLoadSuccess(companies: companies, selected: selected!));
+      emit(CompaniesLoadSuccess(companies: companies, selected: selected));
     }
   }
 

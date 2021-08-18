@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -56,7 +57,9 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             icon: Emojis.getByName(channel.icon ?? ''),
             membersCount: channel.membersCount,
             onTap: () {
-              if (T == ChannelsCubit) {
+              final cstate =
+                  Get.find<CompaniesCubit>().state as CompaniesLoadSuccess;
+              if (T == ChannelsCubit && cstate.selected.canUpdateChannel) {
                 NavigatorService.instance.navigateToChannelDetail();
               }
             }),

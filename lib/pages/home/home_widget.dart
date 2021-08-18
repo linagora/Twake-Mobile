@@ -17,7 +17,6 @@ import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
 import 'home_drawer_widget.dart';
@@ -180,25 +179,31 @@ class _HomeWidgetState extends State<HomeWidget> {
                     height: 15,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => push(RoutePaths.newDirect.path),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: Color(0xfff9f8f9),
-                        width: 40,
-                        height: 40,
-                        child: Image.asset(
-                          imageAddChannel,
-                          width: 20,
-                          height: 20,
-                          color: Color(0xff004dff),
-                        ),
-                      ),
-                    ),
-                  ),
+                BlocBuilder(
+                  bloc: Get.find<CompaniesCubit>(),
+                  builder: (ctx, cstate) => (cstate is CompaniesLoadSuccess &&
+                          cstate.selected.canUpdateChannel)
+                      ? Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: () => push(RoutePaths.newDirect.path),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                color: Color(0xfff9f8f9),
+                                width: 40,
+                                height: 40,
+                                child: Image.asset(
+                                  imageAddChannel,
+                                  width: 20,
+                                  height: 20,
+                                  color: Color(0xff004dff),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
                 )
               ],
             ),

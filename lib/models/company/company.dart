@@ -31,6 +31,7 @@ class Company extends BaseModel {
 
   bool get canCreateWorkspace =>
       role == CompanyRole.owner || role == CompanyRole.admin;
+  bool get canUpdateChannel => role != CompanyRole.guest;
 
   factory Company.fromJson({
     required Map<String, dynamic> json,
