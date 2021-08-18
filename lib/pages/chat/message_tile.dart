@@ -244,7 +244,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                             children: [
                               if (!widget.channel.isDirect &&
                                   !_isMyMessage &&
-                                  widget.downBubbleSide)
+                                  widget.upBubbleSide)
                                 Padding(
                                   padding:
                                       const EdgeInsets.fromLTRB(12, 0, 0, 0),
@@ -347,7 +347,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           !_hideShowReplies)
                                         Container(
                                           constraints: BoxConstraints(
-                                            maxWidth: 100.0,
+                                            maxWidth: 105.0,
                                           ),
                                           alignment: Alignment.center,
                                           padding: EdgeInsets.only(
