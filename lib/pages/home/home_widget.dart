@@ -15,6 +15,7 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/widgets/common/badges.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
 import 'home_channel_list_widget.dart';
@@ -143,12 +144,17 @@ class _HomeWidgetState extends State<HomeWidget> {
                             width: 75,
                             child: Row(
                               children: [
-                                WorkspaceThumbnail(
+                                ImageWidget(
+                                    imageType: ImageType.workspace,
+                                    size: 42,
+                                    name: workspaceState.selected?.name ?? '',
+                                    backgroundColor: Color(0xfff5f5f5)),
+                                /* WorkspaceThumbnail(
                                   workspaceName:
                                       workspaceState.selected?.name ?? '',
                                   size: 44.0,
                                   borderRadius: 12.0,
-                                ),
+                                ),*/
                                 SizedBox(
                                   width: 5,
                                 ),

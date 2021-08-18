@@ -3,6 +3,7 @@ import 'package:twake/models/badge/badge.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 
 typedef OnHomeChannelTileClick = void Function();
 
@@ -46,8 +47,16 @@ class HomeChannelTile extends StatelessWidget {
               Stack(
                 children: [
                   Align(
-                    alignment: Alignment.center,
-                    child: ChannelThumbnail(
+                      alignment: Alignment.center,
+                      child: ImageWidget(
+                        imageType:
+                            isDirect ? ImageType.direct : ImageType.channel,
+                        imageUrl: imageUrl ?? '',
+                        isPrivate: isPrivate,
+                        name: title,
+                        size: 54,
+                      )
+                      /* ChannelThumbnail(
                       isPrivate: isPrivate,
                       isDirect: isDirect,
                       icon: imageUrl ?? '',
@@ -55,8 +64,8 @@ class HomeChannelTile extends StatelessWidget {
                       name: title,
                       width: 54,
                       height: 54,
-                    ),
-                  ),
+                    ),*/
+                      ),
                 ],
               ),
               SizedBox(

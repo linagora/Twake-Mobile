@@ -10,6 +10,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/workspace/workspace_drawer_tile.dart';
@@ -42,13 +43,20 @@ class HomeDrawerWidget extends StatelessWidget {
                       return Stack(
                         children: [
                           Positioned(
-                              left: 16,
-                              child: RoundedImage(
-                                width: 56,
-                                height: 56,
-                                borderRadius: 16.0,
-                                imageUrl: companyState.selected.logo ?? '',
-                              )),
+                            left: 16,
+                            child: ImageWidget(
+                              imageType: ImageType.homeDrower,
+                              size: 56,
+                              borderRadius: 16,
+                              imageUrl: companyState.selected.logo ?? '',
+                            ),
+                            /* RoundedImage(
+                              width: 56,
+                              height: 56,
+                              borderRadius: 16.0,
+                              imageUrl: companyState.selected.logo ?? '',
+                            ),*/
+                          ),
                           Positioned.fill(
                             left: 82,
                             top: 12,
