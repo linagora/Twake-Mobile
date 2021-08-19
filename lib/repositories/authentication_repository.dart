@@ -174,10 +174,10 @@ class AuthenticationRepository {
 
     var authentication = Authentication.fromJson(result);
 
-    Logger().v(
-      'Token validity check, expires at: '
-      '${DateTime.fromMillisecondsSinceEpoch(authentication.expiration * 1000)}',
-    );
+    // Logger().v(
+    // 'Token validity check, expires at: '
+    // '${DateTime.fromMillisecondsSinceEpoch(authentication.expiration * 1000)}',
+    // );
 
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final needToProlong = authentication.expiration - now <

@@ -14,6 +14,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/push_notifications_service.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -28,12 +29,13 @@ class HomeWidget extends StatefulWidget {
   _HomeWidgetState createState() => _HomeWidgetState();
 }
 
-class _HomeWidgetState extends State<HomeWidget> {
+class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   final _tabs = [HomeChannelListWidget(), HomeDirectListWidget()];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
 
     PushNotificationsService.instance.requestPermission();
 
@@ -52,6 +54,37 @@ class _HomeWidgetState extends State<HomeWidget> {
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
     Get.find<BadgesCubit>().fetch();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      Get.find<CompaniesCubit>().fetch();
+      Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+
+      Get.find<ChannelsCubit>().fetch(
+        workspaceId: Globals.instance.workspaceId!,
+        companyId: Globals.instance.companyId,
+      );
+      Get.find<DirectsCubit>().fetch(
+        workspaceId: 'direct',
+        companyId: Globals.instance.companyId,
+      );
+
+      Get.find<AccountCubit>().fetch();
+
+      Get.find<BadgesCubit>().fetch();
+      // Reset socketio connection and all the subscriptions
+      SocketIOService.instance.disconnect();
+      SocketIOService.instance.connect();
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 
   @override

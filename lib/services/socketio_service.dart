@@ -85,6 +85,8 @@ class SocketIOService {
     Globals.instance.connection.listen((state) {
       if (state == Connection.connected && !_healthCheckRunning) {
         _checkConnectionHealth();
+      } else {
+        _healthCheckRunning = false;
       }
     });
 
