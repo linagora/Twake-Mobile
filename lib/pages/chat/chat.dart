@@ -55,6 +55,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             // TODO: figure out why do we need this?
             name: channel.name,
             icon: Emojis.getByName(channel.icon ?? ''),
+            avatars: channel.isDirect ? channel.avatars : const [],
             membersCount: channel.membersCount,
             onTap: () {
               final cstate =
