@@ -49,13 +49,9 @@ class HomeDrawerWidget extends StatelessWidget {
                               size: 56,
                               borderRadius: 16,
                               imageUrl: companyState.selected.logo ?? '',
+                              name: companyState.selected.name,
+                              backgroundColor: Color(0xfff5f5f5),
                             ),
-                            /* RoundedImage(
-                              width: 56,
-                              height: 56,
-                              borderRadius: 16.0,
-                              imageUrl: companyState.selected.logo ?? '',
-                            ),*/
                           ),
                           Positioned.fill(
                             left: 82,
@@ -227,12 +223,19 @@ class HomeDrawerWidget extends StatelessWidget {
                               behavior: HitTestBehavior.opaque,
                               child: Row(
                                 children: [
-                                  RoundedImage(
+                                  ImageWidget(
+                                    name: accountState.account.fullName,
+                                    imageType: ImageType.direct,
+                                    size: 26,
+                                    imageUrl:
+                                        accountState.account.picture ?? '',
+                                  ),
+                                  /* RoundedImage(
                                     imageUrl:
                                         accountState.account.picture ?? '',
                                     width: 24,
                                     height: 24,
-                                  ),
+                                  ),*/
                                   SizedBox(
                                     width: 12,
                                   ),

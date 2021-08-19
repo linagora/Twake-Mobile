@@ -1,5 +1,7 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+import 'package:twake/models/channel/channel.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/user_thumbnail.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
@@ -12,17 +14,19 @@ class ChatHeader extends StatelessWidget {
   final String icon;
   final String name;
   final Function? onTap;
+  final List<Avatar> avatars;
 
-  const ChatHeader({
-    Key? key,
-    required this.isDirect,
-    this.isPrivate = false,
-    this.userId,
-    this.membersCount,
-    this.icon = '',
-    this.name = '',
-    this.onTap,
-  }) : super(key: key);
+  const ChatHeader(
+      {Key? key,
+      required this.isDirect,
+      this.isPrivate = false,
+      this.userId,
+      this.membersCount,
+      this.icon = '',
+      this.name = '',
+      this.onTap,
+      this.avatars = const []})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,24 +35,13 @@ class ChatHeader extends StatelessWidget {
       onTap: onTap as void Function()?,
       child: Row(
         children: [
-          if (isDirect)
-            UserThumbnail(
-              userId: userId ?? '',
-              size: 38.0,
-            ),
-          if (!isDirect)
-            ShimmerLoading(
-              key: ValueKey<String>('channel_icon'),
-              isLoading: icon.isEmpty,
-              width: 38.0,
-              height: 38.0,
-              child: ChannelThumbnail(
-                icon: icon,
-                isPrivate: isPrivate,
-                width: 38.0,
-                height: 38.0,
-              ),
-            ),
+          ImageWidget(
+              imageType: isDirect ? ImageType.direct : ImageType.channel,
+              size: 38,
+              imageUrl: isDirect ? avatars.first.link : icon,
+              avatars: avatars,
+              stackSize: 26,
+              name: name),
           SizedBox(width: 12.0),
           Expanded(
             child: Column(

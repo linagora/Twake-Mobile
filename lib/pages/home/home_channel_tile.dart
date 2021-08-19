@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/models/badge/badge.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/channel_thumbnail.dart';
@@ -12,6 +13,7 @@ class HomeChannelTile extends StatelessWidget {
   final String? name;
   final String? content;
   final String? imageUrl;
+  final List<Avatar> avatars;
   final int? dateTime;
   final OnHomeChannelTileClick? onHomeChannelTileClick;
   final String channelId;
@@ -24,6 +26,7 @@ class HomeChannelTile extends StatelessWidget {
       this.content,
       this.imageUrl,
       this.dateTime,
+      this.avatars = const [],
       this.onHomeChannelTileClick,
       required this.channelId,
       this.isPrivate = false,
@@ -44,29 +47,13 @@ class HomeChannelTile extends StatelessWidget {
               SizedBox(
                 width: 10,
               ),
-              Stack(
-                children: [
-                  Align(
-                      alignment: Alignment.center,
-                      child: ImageWidget(
-                        imageType:
-                            isDirect ? ImageType.direct : ImageType.channel,
-                        imageUrl: imageUrl ?? '',
-                        isPrivate: isPrivate,
-                        name: title,
-                        size: 54,
-                      )
-                      /* ChannelThumbnail(
-                      isPrivate: isPrivate,
-                      isDirect: isDirect,
-                      icon: imageUrl ?? '',
-                      iconSize: 32.0,
-                      name: title,
-                      width: 54,
-                      height: 54,
-                    ),*/
-                      ),
-                ],
+              ImageWidget(
+                imageType: isDirect ? ImageType.direct : ImageType.channel,
+                imageUrl: imageUrl ?? '',
+                isPrivate: isPrivate,
+                name: title,
+                size: 54,
+                avatars: avatars,
               ),
               SizedBox(
                 width: 11,

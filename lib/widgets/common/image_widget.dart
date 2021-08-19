@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
@@ -16,6 +17,8 @@ class ImageWidget extends StatelessWidget {
   final double size;
   final Color backgroundColor;
   final double borderRadius;
+  final List<Avatar> avatars;
+  final double stackSize;
   const ImageWidget(
       {Key? key,
       this.size = 0,
@@ -24,6 +27,8 @@ class ImageWidget extends StatelessWidget {
       this.isPrivate = false,
       this.name = "",
       this.borderRadius = 0,
+      this.avatars = const [],
+      this.stackSize = 35,
       this.backgroundColor = Colors.transparent})
       : super(key: key);
 
@@ -33,24 +38,28 @@ class ImageWidget extends StatelessWidget {
       if (imageUrl != null && imageUrl != "") {
         return channelImage(imageUrl, isPrivate);
       } else
-        return namedAvatar(name, size, backgroundColor);
+        return namedAvatar(name, size, backgroundColor, borderRadius);
     }
     if (imageType == ImageType.direct) {
-      if (imageUrl != null && imageUrl != "") {
+      if (imageUrl != null &&
+          imageUrl != "" &&
+          (avatars.length == 1 || avatars.isEmpty)) {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
+      } else if (avatars.isNotEmpty && imageUrl != "") {
+        return stackImage(stackSize, avatars, borderRadius, backgroundColor);
       } else
-        return namedAvatar(name, size, backgroundColor);
+        return namedAvatar(name, size, backgroundColor, borderRadius);
     }
     if (imageType == ImageType.chat) {
       if (imageUrl != null && imageUrl != "") {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
       } else {
-        return namedAvatar(name, size, backgroundColor);
+        return namedAvatar(name, size, backgroundColor, borderRadius);
       }
     }
     if (imageType == ImageType.workspace) {
       if (name != "") {
-        return namedAvatar(name, size, backgroundColor);
+        return namedAvatar(name, size, backgroundColor, borderRadius);
       } else {
         return RoundedShimmer(size: size);
       }
@@ -58,11 +67,49 @@ class ImageWidget extends StatelessWidget {
     if (imageType == ImageType.homeDrower) {
       if (imageUrl != null && imageUrl != "") {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
+      } else if (name != "") {
+        return namedAvatar(name, size, backgroundColor, borderRadius);
       } else {
         return RoundedShimmer(size: size);
       }
     }
     return RoundedShimmer(size: size);
+  }
+
+  Widget stackImage(double stackSize, List<Avatar> avatars, double borderRadius,
+      Color backgroundColor) {
+    List<Widget> imageAvatars = [];
+
+    final len = avatars.length > 2 ? 2 : avatars.length;
+    for (int i = 0; i < len; i++) {
+      if (avatars[i].link != "") {
+        imageAvatars.add(
+          Positioned(
+            left: i * stackSize / 2,
+            child:
+                roundImage(avatars[i].link, isPrivate, stackSize, borderRadius),
+          ),
+        );
+      } else {
+        imageAvatars.add(
+          Positioned(
+            left: i * stackSize / 2,
+            child: namedAvatar(
+                avatars[i].name, stackSize, backgroundColor, borderRadius),
+          ),
+        );
+      }
+    }
+
+    return Center(
+      child: Container(
+        height: size,
+        width: size,
+        child: Stack(
+          children: imageAvatars,
+        ),
+      ),
+    );
   }
 
   Widget roundImage(
@@ -83,8 +130,8 @@ class ImageWidget extends StatelessWidget {
             : BorderRadius.circular(borderRadius),
         border: Border.all(
           style: BorderStyle.solid,
-          width: 0,
-          color: Colors.transparent,
+          width: 2,
+          color: Colors.grey.shade300,
         ),
       ),
       child: ClipRRect(
@@ -92,30 +139,31 @@ class ImageWidget extends StatelessWidget {
             ? BorderRadius.circular(size / 2 - 1)
             : BorderRadius.circular(borderRadius),
         child: Container(
-            width: size,
-            height: size,
-            child: CachedNetworkImage(
-              // Loading from network.
-              fit: BoxFit.cover,
-              imageUrl: imageUrl,
-              progressIndicatorBuilder: (context, url, downloadProgress) {
-                return ShimmerLoading(
-                  isLoading: true,
-                  width: size,
-                  height: size,
-                  child: Container(),
-                );
-              },
-              errorWidget: (context, url, error) {
-                return Image.asset(
-                  _FALLBACK_IMG,
-                  // isAntiAlias: true,
-                  fit: BoxFit.cover,
-                  width: size,
-                  height: size,
-                );
-              },
-            )),
+          width: size,
+          height: size,
+          child: CachedNetworkImage(
+            // Loading from network.
+            fit: BoxFit.cover,
+            imageUrl: imageUrl,
+            progressIndicatorBuilder: (context, url, downloadProgress) {
+              return ShimmerLoading(
+                isLoading: true,
+                width: size,
+                height: size,
+                child: Container(),
+              );
+            },
+            errorWidget: (context, url, error) {
+              return Image.asset(
+                _FALLBACK_IMG,
+                // isAntiAlias: true,
+                fit: BoxFit.cover,
+                width: size,
+                height: size,
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -149,7 +197,8 @@ class ImageWidget extends StatelessWidget {
     ]);
   }
 
-  Widget namedAvatar(String name, double size, Color backgroundColor) {
+  Widget namedAvatar(
+      String name, double size, Color backgroundColor, double borderRadius) {
     String charactersToShow = '';
     if (name.isNotReallyEmpty) {
       charactersToShow = name[0].toUpperCase();
@@ -163,35 +212,46 @@ class ImageWidget extends StatelessWidget {
         }
       }
     }
-    return Container(
-      width: size,
-      height: size,
-      decoration: backgroundColor == Colors.transparent
-          ? BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: userColors(),
-              ), // TODO: del old randomGradient()?,
-            )
-          : BoxDecoration(
-              shape: BoxShape.circle,
-              color: backgroundColor,
-            ),
-      padding: EdgeInsets.all(5.0),
-      alignment: Alignment.center,
-      child: SizedBox.expand(
-        child: FittedBox(
-          child: Text(
-            charactersToShow,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 26.0,
-              fontWeight: FontWeight.bold,
-              color: backgroundColor == Colors.transparent
-                  ? Colors.white
-                  : Colors.black,
+
+    return ClipRRect(
+      borderRadius: borderRadius == 0
+          ? BorderRadius.circular(size / 2 - 1)
+          : BorderRadius.circular(borderRadius),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: backgroundColor == Colors.transparent
+            ? BoxDecoration(
+                shape: borderRadius == 0 ? BoxShape.circle : BoxShape.rectangle,
+                border: Border.all(
+                  style: BorderStyle.solid,
+                  width: 2,
+                  color: Colors.grey.shade300,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: userColors(),
+                ), // TODO: del old randomGradient()?,
+              )
+            : BoxDecoration(
+                shape: borderRadius == 0 ? BoxShape.circle : BoxShape.rectangle,
+                color: backgroundColor,
+              ),
+        padding: EdgeInsets.all(5.0),
+        alignment: Alignment.center,
+        child: SizedBox.expand(
+          child: FittedBox(
+            child: Text(
+              charactersToShow,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 26.0,
+                fontWeight: FontWeight.bold,
+                color: backgroundColor == Colors.transparent
+                    ? Colors.white
+                    : Colors.black,
+              ),
             ),
           ),
         ),
