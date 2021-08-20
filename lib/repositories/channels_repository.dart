@@ -117,6 +117,8 @@ class ChannelsRepository {
       key: 'resource',
     );
 
+    Logger().w('Channel data: ${channel.toJson()}');
+
     var edited = Channel.fromJson(
       json: result,
       jsonify: false,

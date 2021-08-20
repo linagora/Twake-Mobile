@@ -30,7 +30,13 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     required String channelId,
     String? threadId,
     isDirect: false,
+    bool empty: false,
   }) async {
+    if (empty) {
+      emit(NoMessagesFound());
+      return;
+    }
+
     emit(MessagesLoadInProgress());
 
     final stream = _repository.fetch(

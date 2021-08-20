@@ -34,19 +34,18 @@ class EditChannelCubit extends Cubit<EditChannelState> {
   }
 
   void editChannel(
-  {
-    required Channel currentChannel,
-    required String name,
-    String? description,
-    required String icon
-  }) async {
+      {required Channel currentChannel,
+      required String name,
+      String? description,
+      required String icon}) async {
     emit(EditChannelInProgress(emoijIcon: state.emoijIcon));
 
     final result = await _channelsCubit.edit(
-        channel: currentChannel,
-        name: name,
-        description: description,
-        icon: icon);
+      channel: currentChannel,
+      name: name,
+      description: description,
+      icon: icon,
+    );
 
     emit(result ? const EditChannelSuccess() : const EditChannelFailure());
   }
