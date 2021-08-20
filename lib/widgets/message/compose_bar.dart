@@ -563,6 +563,7 @@ class _TextInputState extends State<TextInput> {
           //   color: Colors.black54,
           // ),
           GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: widget.canSend
                 ? () async {
                     await widget.onMessageSend!(
