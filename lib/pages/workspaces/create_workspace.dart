@@ -313,39 +313,37 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: Form(
-            //    key: _formKey1,
-            child: TextFormField(
-              controller: controller,
-              //    validator: _validate,
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(10),
-                suffix: IconButton(
-                  onPressed: () {
-                    controller.clear();
-                  },
-                  iconSize: 17,
-                  icon: Icon(CupertinoIcons.clear_thick_circled),
-                  color: Color(0xffeeeeef),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0.0,
-                    style: BorderStyle.none,
-                  ),
-                ),
-              ),
-              onChanged: (text) {
-                _onUpdate(index, text);
-              },
+        child: Form(
+          //    key: _formKey1,
+          child: TextFormField(
+            maxLines: 1,
+            controller: controller,
+            //    validator: _validate,
+            style: TextStyle(
+              fontSize: 17.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
             ),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.only(left: 15),
+              suffix: IconButton(
+                onPressed: () {
+                  controller.clear();
+                },
+                iconSize: 17,
+                icon: Icon(CupertinoIcons.clear_thick_circled),
+                color: Color(0xffeeeeef),
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.0,
+                  style: BorderStyle.none,
+                ),
+              ),
+            ),
+            onChanged: (text) {
+              _onUpdate(index, text);
+            },
           ),
         ),
       ),
