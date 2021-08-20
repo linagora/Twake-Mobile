@@ -58,7 +58,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
+    if (state == AppLifecycleState.resumed && Globals.instance.token != null) {
       Get.find<CompaniesCubit>().fetch();
       Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
 

@@ -10,6 +10,8 @@ class AuthenticationRepository {
   final _storage = StorageService.instance;
   final _appAuth = FlutterAppAuth();
   bool _validatorRunning = false;
+  // for logout
+  String idToken = '';
 
   AuthenticationRepository();
 
@@ -17,6 +19,7 @@ class AuthenticationRepository {
     final result = await _storage.first(table: Table.authentication);
     if (result.isEmpty) return false;
     var authentication = Authentication.fromJson(result);
+    idToken = authentication.idToken;
 
     switch (hasExpired(authentication)) {
       case Expiration.Valid:
@@ -31,6 +34,7 @@ class AuthenticationRepository {
           return true;
         }
         authentication = await prolongAuthentication(authentication);
+        idToken = authentication.idToken;
     }
     return true;
   }
@@ -72,6 +76,7 @@ class AuthenticationRepository {
       payload: authenticationResult,
       tokenResponse: tokenResponse,
     ));
+    this.idToken = authentication.idToken;
 
     _storage.cleanInsert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
@@ -105,6 +110,8 @@ class AuthenticationRepository {
       other: authentication,
     );
 
+    this.idToken = freshAuthentication.idToken;
+
     _storage.cleanInsert(
       table: Table.authentication,
       data: freshAuthentication,
@@ -127,13 +134,10 @@ class AuthenticationRepository {
       return;
     }
 
-    final result = await _storage.first(table: Table.authentication);
-    final authentication = Authentication.fromJson(result);
-//
     await _appAuth.endSession(
       EndSessionRequest(
         postLogoutRedirectUrl: 'twakemobile.com://oauthredirect',
-        idTokenHint: authentication.idToken,
+        idTokenHint: this.idToken,
         discoveryUrl:
             '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
       ),

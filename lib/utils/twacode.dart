@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/file_tile.dart';
+import 'package:twake/widgets/common/user_mention.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
@@ -641,6 +642,7 @@ class TwacodeRenderer {
               : isSwipe
                   ? Colors.blue
                   : Colors.white,
+          fontSize: 14,
         );
         break;
 
@@ -1002,6 +1004,18 @@ class TwacodeRenderer {
               ),
             ),
           );
+        } else if (type == TType.Mention) {
+          final username = (t['content'] as String).split(':').first;
+          final userId = (t['content'] as String).split(':').last;
+          spans.add(
+            WidgetSpan(
+              child: UserMention(
+                userId: userId,
+                username: username,
+                style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              ),
+            ),
+          );
         } else if (type == TType.Unknown) {
           spans.add(
             TextSpan(
@@ -1016,8 +1030,6 @@ class TwacodeRenderer {
 
           if (type == TType.Channel) {
             content = '#' + (t['content'] as String).replaceAll(idMatch, '');
-          } else if (type == TType.Mention) {
-            content = '@' + (t['content'] as String).replaceAll(idMatch, '');
           } else {
             content = t['content'];
           }

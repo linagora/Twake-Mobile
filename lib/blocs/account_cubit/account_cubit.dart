@@ -9,6 +9,8 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/account_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
+export 'package:twake/models/account/account.dart';
+
 part 'account_state.dart';
 
 class AccountCubit extends Cubit<AccountState> {
