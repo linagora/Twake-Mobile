@@ -1,11 +1,9 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/widgets/common/rounded_shimmer.dart';
-import 'package:twake/widgets/common/selectable_avatar.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_text_field.dart';
 
 class AccountInfo extends StatefulWidget {
@@ -19,11 +17,9 @@ class _AccountInfoState extends State<AccountInfo> {
   final _lastNameController = TextEditingController();
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
-
+  String _name = "";
   var _canSave = false;
-  var _isLoading = true;
   var _picture = '';
-  var _imageBytes = <int>[];
 
   @override
   void initState() {
@@ -46,8 +42,6 @@ class _AccountInfoState extends State<AccountInfo> {
 
   void _save() {}
 
-  Future<void> _openFileExplorer() async {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,11 +55,9 @@ class _AccountInfoState extends State<AccountInfo> {
               _firstNameController.text = accountState.account.firstName ?? '';
               _lastNameController.text = accountState.account.lastName ?? '';
               _picture = accountState.account.picture ?? '';
-              _isLoading = false;
+              _name = accountState.account.fullName;
             } else if (accountState is AccountLoadInProgress ||
-                accountState is AccountLoadFailure) {
-              _isLoading = true;
-            }
+                accountState is AccountLoadFailure) {}
 
             return GestureDetector(
               onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -120,26 +112,13 @@ class _AccountInfoState extends State<AccountInfo> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            _isLoading
-                                ? RoundedShimmer(size: 100.0)
-                                : SelectableAvatar(
-                                    size: 100.0,
-                                    userPic: _picture,
-                                    bytes: Uint8List.fromList(_imageBytes),
-                                    onTap: () => _openFileExplorer(),
-                                  ),
+                            ImageWidget(
+                              imageType: ImageType.direct,
+                              name: _name,
+                              imageUrl: _picture,
+                              size: 100,
+                            ),
                             SizedBox(height: 12.0),
-                            // GestureDetector(
-                            //   onTap: () => _openFileExplorer(),
-                            //   child: Text(
-                            //     'Tap to upload',
-                            //     style: TextStyle(
-                            //       color: Color(0xff3840f7),
-                            //       fontSize: 13.0,
-                            //       fontWeight: FontWeight.w400,
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
