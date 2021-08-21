@@ -15,7 +15,10 @@ import 'home_channel_tile.dart';
 class HomeChannelListWidget extends StatelessWidget {
   final _refreshController = RefreshController();
   final _channelsCubit = Get.find<ChannelsCubit>();
+  final String serchText;
+  late Channel channel;
 
+  HomeChannelListWidget({this.serchText = ""});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,6 +29,23 @@ class HomeChannelListWidget extends StatelessWidget {
             currentState is ChannelsLoadedSuccess,
         builder: (context, channelState) {
           if (channelState is ChannelsLoadedSuccess) {
+            //  searching by name, senderName and description
+            final channels = channelState.channels.where((channel) {
+              if (channel.name.toLowerCase().contains(serchText)) {
+                return true;
+              } else if (channel.lastMessage?.senderName != null) {
+                if (channel.lastMessage!.senderName
+                    .toLowerCase()
+                    .contains(serchText)) {
+                  return true;
+                }
+              } else if (channel.description != null) {
+                if (channel.description!.toLowerCase().contains(serchText)) {
+                  return true;
+                }
+              }
+              return false;
+            }).toList();
             return SmartRefresher(
               controller: _refreshController,
               onRefresh: () async {
@@ -52,9 +72,14 @@ class HomeChannelListWidget extends StatelessWidget {
                     ),
                   );
                 },
-                itemCount: channelState.channels.length,
+                itemCount: channels.length > 0
+                    ? channels.length
+                    : channelState.channels.length,
                 itemBuilder: (context, index) {
-                  final channel = channelState.channels[index];
+                  channels.length > 0
+                      ? channel = channels[index]
+                      : channel = channelState.channels[index];
+
                   return HomeChannelTile(
                     onHomeChannelTileClick: () =>
                         NavigatorService.instance.navigate(

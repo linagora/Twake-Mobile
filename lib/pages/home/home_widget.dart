@@ -18,6 +18,7 @@ import 'package:twake/services/service_bundle.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
+import 'package:twake/widgets/common/twake_search_text_field.dart';
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
 import 'home_drawer_widget.dart';
@@ -30,8 +31,8 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
-  final _tabs = [HomeChannelListWidget(), HomeDirectListWidget()];
-
+  final _searchController = TextEditingController();
+  String _searchText = "";
   @override
   void initState() {
     super.initState();
@@ -54,6 +55,12 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
     Get.find<BadgesCubit>().fetch();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchText = _searchController.text.toLowerCase();
+      });
+    });
   }
 
   @override
@@ -96,7 +103,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         appBar: AppBar(
           leading: SizedBox.shrink(),
           leadingWidth: 0,
-          toolbarHeight: kToolbarHeight + 44,
+          toolbarHeight: kToolbarHeight + 100,
           bottom: TabBar(
             tabs: [
               BlocBuilder<WorkspacesCubit, WorkspacesState>(
@@ -139,14 +146,19 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
           children: [
             Positioned(
               child: Opacity(
-                opacity: 0.22,
+                opacity: 0.6,
                 child: Divider(
-                  height: 2,
+                  height: 4,
                   color: Color(0xffd8d8d8),
                 ),
               ),
             ),
-            TabBarView(children: _tabs),
+            TabBarView(
+              children: [
+                HomeChannelListWidget(serchText: _searchText),
+                HomeDirectListWidget(serchText: _searchText)
+              ],
+            )
           ],
         ),
       ),
@@ -244,6 +256,12 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
           Divider(
             color: Colors.white,
             height: 12,
+          ),
+          TwakeSearchTextField(
+            height: 40,
+            controller: _searchController,
+            hintText: 'Search',
+            backgroundColor: Color(0xfff9f8f9),
           ),
         ],
       ),

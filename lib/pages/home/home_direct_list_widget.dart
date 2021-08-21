@@ -13,6 +13,10 @@ import 'home_channel_tile.dart';
 class HomeDirectListWidget extends StatelessWidget {
   final _refreshController = RefreshController();
   final _directsCubit = Get.find<DirectsCubit>();
+  final String serchText;
+  late Channel channel;
+
+  HomeDirectListWidget({this.serchText = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,23 @@ class HomeDirectListWidget extends StatelessWidget {
             currentState is ChannelsLoadedSuccess,
         builder: (context, directState) {
           if (directState is ChannelsLoadedSuccess) {
+            //  searching by name, senderName and description
+            final channels = directState.channels.where((channel) {
+              if (channel.name.toLowerCase().contains(serchText)) {
+                return true;
+              } else if (channel.lastMessage?.senderName != null) {
+                if (channel.lastMessage!.senderName
+                    .toLowerCase()
+                    .contains(serchText)) {
+                  return true;
+                }
+              } else if (channel.description != null) {
+                if (channel.description!.toLowerCase().contains(serchText)) {
+                  return true;
+                }
+              }
+              return false;
+            }).toList();
             return SmartRefresher(
               controller: _refreshController,
               onRefresh: () async {
@@ -50,9 +71,14 @@ class HomeDirectListWidget extends StatelessWidget {
                     ),
                   );
                 },
-                itemCount: directState.channels.length,
+                itemCount: channels.length > 0
+                    ? channels.length
+                    : directState.channels.length,
                 itemBuilder: (context, index) {
-                  final channel = directState.channels[index];
+                  channels.length > 0
+                      ? channel = channels[index]
+                      : channel = directState.channels[index];
+
                   final avatar = channel.avatars.first;
                   return HomeChannelTile(
                     onHomeChannelTileClick: () =>
