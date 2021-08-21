@@ -32,16 +32,6 @@ class HomeDirectListWidget extends StatelessWidget {
             final channels = directState.channels.where((channel) {
               if (channel.name.toLowerCase().contains(serchText)) {
                 return true;
-              } else if (channel.lastMessage?.senderName != null) {
-                if (channel.lastMessage!.senderName
-                    .toLowerCase()
-                    .contains(serchText)) {
-                  return true;
-                }
-              } else if (channel.description != null) {
-                if (channel.description!.toLowerCase().contains(serchText)) {
-                  return true;
-                }
               }
               return false;
             }).toList();

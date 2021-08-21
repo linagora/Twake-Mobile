@@ -29,16 +29,10 @@ class HomeChannelListWidget extends StatelessWidget {
             currentState is ChannelsLoadedSuccess,
         builder: (context, channelState) {
           if (channelState is ChannelsLoadedSuccess) {
-            //  searching by name, senderName and description
+            //  searching by name and description
             final channels = channelState.channels.where((channel) {
               if (channel.name.toLowerCase().contains(serchText)) {
                 return true;
-              } else if (channel.lastMessage?.senderName != null) {
-                if (channel.lastMessage!.senderName
-                    .toLowerCase()
-                    .contains(serchText)) {
-                  return true;
-                }
               } else if (channel.description != null) {
                 if (channel.description!.toLowerCase().contains(serchText)) {
                   return true;
