@@ -7,6 +7,7 @@ class TwakeSearchTextField extends StatefulWidget {
   final Color backgroundColor;
   final double fontSize;
   final bool showPrefixIcon;
+  final double borderRadius;
   late final TextEditingController? controller;
 
   TwakeSearchTextField(
@@ -15,7 +16,9 @@ class TwakeSearchTextField extends StatefulWidget {
       this.backgroundColor = const Color(0xfff9f8f9),
       this.fontSize = 17,
       TextEditingController? controller,
-      this.showPrefixIcon = true}) : super() {
+      this.showPrefixIcon = true,
+      this.borderRadius = 12})
+      : super() {
     this.controller = controller != null ? controller : TextEditingController();
   }
 
@@ -55,17 +58,20 @@ class _TwakeSearchTextFieldState extends State<TwakeSearchTextField> {
           contentPadding: EdgeInsets.only(
               top: 10, bottom: 10, left: widget.showPrefixIcon ? 0 : 30),
           prefixIcon: widget.showPrefixIcon ? Icon(Icons.search) : null,
-          suffixIcon: showClearButton ? Padding(
-            padding: const EdgeInsets.only(right: 16.0, left: 16),
-            child: GestureDetector(
-                onTap: () {
-                  widget.controller?.clear();
-                }, child: _ClearIcon()),
-          ) : SizedBox.shrink(),
+          suffixIcon: showClearButton
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 16.0, left: 16),
+                  child: GestureDetector(
+                      onTap: () {
+                        widget.controller?.clear();
+                      },
+                      child: _ClearIcon()),
+                )
+              : SizedBox.shrink(),
           suffixIconConstraints: BoxConstraints(minHeight: 16, minWidth: 16),
           border: new OutlineInputBorder(
-            borderRadius: const BorderRadius.all(
-              const Radius.circular(10.0),
+            borderRadius: BorderRadius.all(
+              Radius.circular(widget.borderRadius),
             ),
             borderSide: BorderSide(
               width: 0,
