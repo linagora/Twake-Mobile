@@ -167,8 +167,3 @@ flutter:
         - asset: assets/fonts/Lato-BoldItalic.ttf
           weight: 900
           style: italic
-
-
-    - family: Twake-Fontastic
-      fonts:
-        - asset: assets/fonts/twake-fontastic.ttf
