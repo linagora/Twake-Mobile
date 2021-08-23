@@ -60,9 +60,7 @@ class HomeDirectListWidget extends StatelessWidget {
                     ),
                   );
                 },
-                itemCount: channels.length > 0
-                    ? channels.length
-                    : directState.channels.length,
+                itemCount: channels.length,
                 itemBuilder: (context, index) {
                   final avatar = channels[index].avatars.first;
                   return HomeChannelTile(
