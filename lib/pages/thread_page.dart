@@ -66,19 +66,12 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (!channel.isDirect)
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: TextAvatar(
-                              Emojis.getByName(channel.icon ?? ''),
-                              fontSize: Dim.tm4(),
-                            ),
-                          ),
-                        Spacer(),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Expanded(
+                            Container(
+                              constraints: BoxConstraints(
+                                  maxWidth: Dim.widthPercent(70)),
                               child: Text(
                                 "${messagesState.messages[0].firstName}'s messages",
                                 overflow: TextOverflow.ellipsis,
@@ -90,28 +83,27 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               ),
                             ),
                             SizedBox(height: 5.0),
-                            Text(
-                              channel.isDirect
-                                  ? 'Threaded replies'
-                                  : channel.name,
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff92929C),
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                            Row(
+                              children: [
+                                Text(
+                                  channel.isDirect
+                                      ? 'Threaded replies'
+                                      : channel.name,
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff92929C),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                SizedBox(
+                                  width: 55,
+                                )
+                              ],
                             ),
                           ],
                         ),
-                        SizedBox(
-                          width: 55,
-                        ),
-                        if (!channel.isDirect)
-                          SizedBox(
-                            width: 35,
-                          ),
-                        Spacer()
                       ],
                     ),
                   ),

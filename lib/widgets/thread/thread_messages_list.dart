@@ -47,9 +47,23 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
               SizedBox(
                 width: 15,
               ),
-              if (message.reactions.isEmpty)
-                Padding(
-                  padding: EdgeInsets.fromLTRB(6, 10, 0, 5),
+              Wrap(
+                runSpacing: Dim.heightMultiplier,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                textDirection: TextDirection.ltr,
+                children: [
+                  ...message.reactions.map((r) {
+                    return Reaction<T>(
+                      message: message,
+                      reaction: r,
+                      isFirstInThread: true,
+                    );
+                  }),
+                ],
+              ),
+              Spacer(),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 12.0),
                   child: state.messages.length - 1 > 1
                       ? Text(
                           '${state.messages.length - 1}' + ' replies ',
@@ -67,55 +81,13 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                               ),
                             )
                           : Text(
-                              'there are no replies yet ',
+                              '${state.messages.length - 1}' +
+                                  ' there are no replies yet ',
                               style: TextStyle(
                                 fontSize: 15.0,
                                 color: Color(0xFF818C99),
                               ),
-                            ),
-                ),
-              Wrap(
-                runSpacing: Dim.heightMultiplier,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                textDirection: TextDirection.ltr,
-                children: [
-                  ...message.reactions.map((r) {
-                    return Reaction<T>(
-                      message: message,
-                      reaction: r,
-                      isFirstInThread: true,
-                    );
-                  }),
-                ],
-              ),
-              Spacer(),
-              if (message.reactions.isNotEmpty)
-                Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.0),
-                    child: state.messages.length - 1 > 1
-                        ? Text(
-                            '${state.messages.length - 1}' + ' replies ',
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: Color(0xFF818C99),
-                            ),
-                          )
-                        : state.messages.length - 1 == 1
-                            ? Text(
-                                '${state.messages.length - 1}' + ' reply ',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  color: Color(0xFF818C99),
-                                ),
-                              )
-                            : Text(
-                                '${state.messages.length - 1}' +
-                                    ' there are no replies yet ',
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  color: Color(0xFF818C99),
-                                ),
-                              )),
+                            )),
             ],
           ),
         SizedBox(
