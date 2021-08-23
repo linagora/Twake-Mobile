@@ -262,7 +262,7 @@ class _RecentChatTile extends StatelessWidget {
         child: Column(
           children: [
             ImageWidget(
-              imageType: ImageType.direct,
+              imageType: ImageType.common,
               size: 52,
               imageUrl: imageUrl,
               name: name,
@@ -314,7 +314,7 @@ class _FoundPeopleDirectTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 12),
               child: ImageWidget(
-                imageType: ImageType.direct,
+                imageType: ImageType.common,
                 imageUrl: imageUrl,
                 size: 40,
                 name: name,

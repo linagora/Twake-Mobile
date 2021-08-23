@@ -45,17 +45,12 @@ class WorkspaceDrawerTile extends StatelessWidget {
                       ),
                 SizedBox(width: 16.0),
                 ImageWidget(
-                  imageType: ImageType.workspace,
+                  imageType: ImageType.common,
+                  imageUrl: logo ?? '',
                   name: name ?? '',
                   size: 44,
                   backgroundColor: Color(0xfff5f5f5),
                 ),
-                /*     WorkspaceThumbnail(
-                  workspaceName: name ?? '',
-                  size: 44.0,
-                  isSelected: isSelected,
-                  borderRadius: 12.0,
-                ),*/
                 SizedBox(width: 16.0),
                 Expanded(
                   child: Text(

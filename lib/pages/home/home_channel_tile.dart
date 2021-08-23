@@ -48,7 +48,7 @@ class HomeChannelTile extends StatelessWidget {
                 width: 10,
               ),
               ImageWidget(
-                imageType: isDirect ? ImageType.direct : ImageType.channel,
+                imageType: isDirect ? ImageType.common : ImageType.channel,
                 imageUrl: imageUrl ?? '',
                 isPrivate: isPrivate,
                 name: title,

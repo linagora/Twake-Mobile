@@ -113,7 +113,7 @@ class _AccountInfoState extends State<AccountInfo> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             ImageWidget(
-                              imageType: ImageType.direct,
+                              imageType: ImageType.common,
                               name: _name,
                               imageUrl: _picture,
                               size: 100,

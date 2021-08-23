@@ -185,7 +185,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
               child:
                   (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
                       ? ImageWidget(
-                          imageType: ImageType.chat,
+                          imageType: ImageType.common,
                           imageUrl: _message.picture ?? '',
                           name: _message.sender,
                           size: 28,

@@ -189,16 +189,12 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                             child: Row(
                               children: [
                                 ImageWidget(
-                                    imageType: ImageType.workspace,
+                                    imageType: ImageType.common,
+                                    imageUrl:
+                                        workspaceState.selected?.logo ?? '',
                                     size: 42,
                                     name: workspaceState.selected?.name ?? '',
                                     backgroundColor: Color(0xfff5f5f5)),
-                                /* WorkspaceThumbnail(
-                                  workspaceName:
-                                      workspaceState.selected?.name ?? '',
-                                  size: 44.0,
-                                  borderRadius: 12.0,
-                                ),*/
                                 SizedBox(
                                   width: 5,
                                 ),

@@ -30,7 +30,7 @@ class FoundMemberTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: ImageWidget(
-                imageType: ImageType.direct,
+                imageType: ImageType.common,
                 size: 37,
                 name: name,
                 imageUrl: imageUrl,
