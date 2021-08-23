@@ -14,7 +14,6 @@ class HomeDirectListWidget extends StatelessWidget {
   final _refreshController = RefreshController();
   final _directsCubit = Get.find<DirectsCubit>();
   final String serchText;
-  late Channel channel;
 
   HomeDirectListWidget({this.serchText = ""});
 
@@ -29,12 +28,12 @@ class HomeDirectListWidget extends StatelessWidget {
         builder: (context, directState) {
           if (directState is ChannelsLoadedSuccess) {
             //  searching by name, senderName and description
-            final channels = directState.channels.where((channel) {
-              if (channel.name.toLowerCase().contains(serchText)) {
-                return true;
-              }
-              return false;
-            }).toList();
+            final channels = serchText.isEmpty
+                ? directState.channels
+                : directState.channels
+                    .where((channel) =>
+                        channel.name.toLowerCase().contains(serchText))
+                    .toList();
             return SmartRefresher(
               controller: _refreshController,
               onRefresh: () async {
@@ -65,23 +64,19 @@ class HomeDirectListWidget extends StatelessWidget {
                     ? channels.length
                     : directState.channels.length,
                 itemBuilder: (context, index) {
-                  channels.length > 0
-                      ? channel = channels[index]
-                      : channel = directState.channels[index];
-
-                  final avatar = channel.avatars.first;
+                  final avatar = channels[index].avatars.first;
                   return HomeChannelTile(
                     onHomeChannelTileClick: () =>
                         NavigatorService.instance.navigate(
-                      channelId: channel.id,
+                      channelId: channels[index].id,
                     ),
-                    title: channel.name,
-                    name: channel.lastMessage?.senderName,
-                    content: channel.lastMessage?.body,
+                    title: channels[index].name,
+                    name: channels[index].lastMessage?.senderName,
+                    content: channels[index].lastMessage?.body,
                     imageUrl: avatar.link,
-                    avatars: channel.avatars,
-                    dateTime: channel.lastActivity,
-                    channelId: channel.id,
+                    avatars: channels[index].avatars,
+                    dateTime: channels[index].lastActivity,
+                    channelId: channels[index].id,
                     isDirect: true,
                   );
                 },

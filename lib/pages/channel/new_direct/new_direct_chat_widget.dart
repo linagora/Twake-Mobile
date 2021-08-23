@@ -8,7 +8,6 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 

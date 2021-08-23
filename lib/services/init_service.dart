@@ -179,6 +179,7 @@ class InitService {
               'emojis': false,
               'include_users': 1,
               'limit': 100,
+              'direction': 'history',
             },
             key: 'resources',
           );

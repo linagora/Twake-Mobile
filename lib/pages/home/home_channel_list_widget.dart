@@ -16,7 +16,6 @@ class HomeChannelListWidget extends StatelessWidget {
   final _refreshController = RefreshController();
   final _channelsCubit = Get.find<ChannelsCubit>();
   final String serchText;
-  late Channel channel;
 
   HomeChannelListWidget({this.serchText = ""});
   @override
@@ -30,16 +29,15 @@ class HomeChannelListWidget extends StatelessWidget {
         builder: (context, channelState) {
           if (channelState is ChannelsLoadedSuccess) {
             //  searching by name and description
-            final channels = channelState.channels.where((channel) {
-              if (channel.name.toLowerCase().contains(serchText)) {
-                return true;
-              } else if (channel.description != null) {
-                if (channel.description!.toLowerCase().contains(serchText)) {
-                  return true;
-                }
-              }
-              return false;
-            }).toList();
+            final channels = serchText.isEmpty
+                ? channelState.channels
+                : channelState.channels.where((channel) {
+                    return channel.name.toLowerCase().contains(serchText) ||
+                        (channel.description
+                                ?.toLowerCase()
+                                .contains(serchText) ??
+                            false);
+                  }).toList();
             return SmartRefresher(
               controller: _refreshController,
               onRefresh: () async {
@@ -70,22 +68,18 @@ class HomeChannelListWidget extends StatelessWidget {
                     ? channels.length
                     : channelState.channels.length,
                 itemBuilder: (context, index) {
-                  channels.length > 0
-                      ? channel = channels[index]
-                      : channel = channelState.channels[index];
-
                   return HomeChannelTile(
                     onHomeChannelTileClick: () =>
                         NavigatorService.instance.navigate(
-                      channelId: channel.id,
+                      channelId: channels[index].id,
                     ),
-                    title: channel.name,
-                    name: channel.lastMessage?.senderName,
-                    content: channel.lastMessage?.body,
-                    imageUrl: Emojis.getByName(channel.icon ?? ''),
-                    dateTime: channel.lastActivity,
-                    channelId: channel.id,
-                    isPrivate: channel.isPrivate,
+                    title: channels[index].name,
+                    name: channels[index].lastMessage?.senderName,
+                    content: channels[index].lastMessage?.body,
+                    imageUrl: Emojis.getByName(channels[index].icon ?? ''),
+                    dateTime: channels[index].lastActivity,
+                    channelId: channels[index].id,
+                    isPrivate: channels[index].isPrivate,
                   );
                 },
               ),
