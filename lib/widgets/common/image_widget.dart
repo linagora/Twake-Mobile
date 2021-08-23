@@ -57,13 +57,6 @@ class ImageWidget extends StatelessWidget {
         return namedAvatar(name, size, backgroundColor, borderRadius);
       }
     }
-    if (imageType == ImageType.workspace) {
-      if (name != "") {
-        return namedAvatar(name, size, backgroundColor, borderRadius);
-      } else {
-        return RoundedShimmer(size: size);
-      }
-    }
     if (imageType == ImageType.homeDrower) {
       if (imageUrl != null && imageUrl != "") {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
