@@ -231,12 +231,6 @@ class HomeDrawerWidget extends StatelessWidget {
                                     imageUrl:
                                         accountState.account.picture ?? '',
                                   ),
-                                  /* RoundedImage(
-                                    imageUrl:
-                                        accountState.account.picture ?? '',
-                                    width: 24,
-                                    height: 24,
-                                  ),*/
                                   SizedBox(
                                     width: 12,
                                   ),
