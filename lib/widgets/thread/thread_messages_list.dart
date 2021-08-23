@@ -81,8 +81,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                               ),
                             )
                           : Text(
-                              '${state.messages.length - 1}' +
-                                  ' there are no replies yet ',
+                              ' there are no replies yet ',
                               style: TextStyle(
                                 fontSize: 15.0,
                                 color: Color(0xFF818C99),

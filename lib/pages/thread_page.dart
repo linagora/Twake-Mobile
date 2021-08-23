@@ -69,19 +69,48 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              constraints: BoxConstraints(
-                                  maxWidth: Dim.widthPercent(70)),
-                              child: Text(
-                                "${messagesState.messages[0].firstName}'s messages",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xff444444),
-                                ),
-                              ),
-                            ),
+                            messagesState.messages[0].firstName!.length > 24
+                                ? Row(
+                                    children: [
+                                      Text(
+                                        "${messagesState.messages[0].firstName!.substring(0, 12)}...",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      Text(
+                                        "${messagesState.messages[0].firstName!.substring(messagesState.messages[0].firstName!.length - 3, messagesState.messages[0].firstName!.length)}'s messages",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 45,
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Text(
+                                        "${messagesState.messages[0].firstName!}'s messages",
+                                        // overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 55,
+                                      ),
+                                    ],
+                                  ),
                             SizedBox(height: 5.0),
                             Row(
                               children: [
