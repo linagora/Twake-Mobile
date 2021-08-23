@@ -54,7 +54,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         Navigator.of(context).pop();
                       },
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
                         child: Icon(
                           Icons.arrow_back_ios,
                           color: Color(0xff004dff),
@@ -67,7 +67,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            messagesState.messages[0].firstName!.length > 24
+                            messagesState.messages[0].firstName!.length > 20
                                 ? Row(
                                     children: [
                                       Text(
@@ -89,7 +89,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 45,
+                                        width: 44,
                                       ),
                                     ],
                                   )
@@ -105,7 +105,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                         ),
                                       ),
                                       SizedBox(
-                                        width: 55,
+                                        width: 44,
                                       ),
                                     ],
                                   ),
@@ -125,8 +125,8 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                   maxLines: 1,
                                 ),
                                 SizedBox(
-                                  width: 55,
-                                )
+                                  width: 50,
+                                ),
                               ],
                             ),
                           ],
