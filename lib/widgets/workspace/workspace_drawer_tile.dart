@@ -45,7 +45,7 @@ class WorkspaceDrawerTile extends StatelessWidget {
                       ),
                 SizedBox(width: 16.0),
                 ImageWidget(
-                  imageType: ImageType.chat,
+                  imageType: ImageType.common,
                   imageUrl: logo ?? '',
                   name: name ?? '',
                   size: 44,

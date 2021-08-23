@@ -189,7 +189,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                             child: Row(
                               children: [
                                 ImageWidget(
-                                    imageType: ImageType.chat,
+                                    imageType: ImageType.common,
                                     imageUrl:
                                         workspaceState.selected?.logo ?? '',
                                     size: 42,

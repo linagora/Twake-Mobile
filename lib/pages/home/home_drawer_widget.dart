@@ -45,7 +45,7 @@ class HomeDrawerWidget extends StatelessWidget {
                           Positioned(
                             left: 16,
                             child: ImageWidget(
-                              imageType: ImageType.homeDrower,
+                              imageType: ImageType.common,
                               size: 56,
                               borderRadius: 16,
                               imageUrl: companyState.selected.logo ?? '',
@@ -226,7 +226,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                 children: [
                                   ImageWidget(
                                     name: accountState.account.fullName,
-                                    imageType: ImageType.direct,
+                                    imageType: ImageType.common,
                                     size: 26,
                                     imageUrl:
                                         accountState.account.picture ?? '',

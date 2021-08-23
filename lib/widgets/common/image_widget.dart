@@ -40,7 +40,7 @@ class ImageWidget extends StatelessWidget {
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
-    if (imageType == ImageType.direct) {
+    if (imageType == ImageType.common) {
       if (imageUrl != null &&
           imageUrl != "" &&
           (avatars.length == 1 || avatars.isEmpty)) {
@@ -50,22 +50,7 @@ class ImageWidget extends StatelessWidget {
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
-    if (imageType == ImageType.chat) {
-      if (imageUrl != null && imageUrl != "") {
-        return roundImage(imageUrl, isPrivate, size, borderRadius);
-      } else {
-        return namedAvatar(name, size, backgroundColor, borderRadius);
-      }
-    }
-    if (imageType == ImageType.homeDrower) {
-      if (imageUrl != null && imageUrl != "") {
-        return roundImage(imageUrl, isPrivate, size, borderRadius);
-      } else if (name != "") {
-        return namedAvatar(name, size, backgroundColor, borderRadius);
-      } else {
-        return RoundedShimmer(size: size);
-      }
-    }
+
     return RoundedShimmer(size: size);
   }
 
@@ -262,4 +247,4 @@ class ImageWidget extends StatelessWidget {
   }
 }
 
-enum ImageType { channel, direct, chat, workspace, homeDrower, none }
+enum ImageType { common, channel, none }

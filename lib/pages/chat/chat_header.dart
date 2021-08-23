@@ -36,7 +36,7 @@ class ChatHeader extends StatelessWidget {
       child: Row(
         children: [
           ImageWidget(
-              imageType: isDirect ? ImageType.direct : ImageType.channel,
+              imageType: isDirect ? ImageType.common : ImageType.channel,
               size: 38,
               imageUrl: isDirect ? avatars.first.link : icon,
               avatars: avatars,
