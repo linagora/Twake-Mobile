@@ -82,11 +82,12 @@ class MessagesRepository {
     final queryParameters = <String, dynamic>{
       'include_users': 1,
       'emoji': false,
-      'direction': 'future',
+      'direction': 'history',
     };
 
     if (afterMessageId != null) {
       queryParameters['page_token'] = afterMessageId;
+      queryParameters['direction'] = 'future';
     }
     if (threadId == null) {
       remoteResult = await _api.get(

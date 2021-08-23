@@ -64,9 +64,7 @@ class HomeChannelListWidget extends StatelessWidget {
                     ),
                   );
                 },
-                itemCount: channels.length > 0
-                    ? channels.length
-                    : channelState.channels.length,
+                itemCount: channels.length,
                 itemBuilder: (context, index) {
                   return HomeChannelTile(
                     onHomeChannelTileClick: () =>
