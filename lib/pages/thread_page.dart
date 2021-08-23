@@ -10,8 +10,6 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/utils/emojis.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
@@ -155,7 +153,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                     ),
                   ),
                 )
-              : Center(child: CircularProgressIndicator());
+              : Container();
         });
   }
 }

@@ -101,16 +101,6 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         SizedBox(
           height: 12.0,
         ),
-        if (state is MessagesInitial)
-          Align(
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(),
-          ),
-        if (state is MessagesLoadInProgress)
-          Align(
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(),
-          ),
       ],
     );
   }

@@ -37,7 +37,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       return;
     }
 
-    emit(MessagesLoadInProgress());
+    if (threadId == null) emit(MessagesLoadInProgress());
 
     final stream = _repository.fetch(
       channelId: channelId,

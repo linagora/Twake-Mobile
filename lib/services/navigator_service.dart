@@ -119,6 +119,7 @@ class NavigatorService {
     String? workspaceId,
     required String channelId,
     String? threadId,
+    bool reloadThreads: true,
   }) async {
     if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
@@ -145,28 +146,30 @@ class NavigatorService {
 
     final channel = await directsCubit.getChannel(channelId: channelId);
 
-    channelMessagesCubit.reset();
-    channelMessagesCubit.fetch(
-      channelId: channelId,
-      isDirect: channel.isDirect,
-      empty: channel.lastMessage == null,
-    );
+    if (reloadThreads) {
+      channelMessagesCubit.reset();
+      channelMessagesCubit.fetch(
+        channelId: channelId,
+        isDirect: channel.isDirect,
+        empty: channel.lastMessage == null,
+      );
 
-    if (channel.isDirect) {
-      directsCubit.selectChannel(channelId: channelId);
+      if (channel.isDirect) {
+        directsCubit.selectChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
-        directsCubit.clearSelection();
-      });
-    } else {
-      channelsCubit.selectChannel(channelId: channelId);
+        Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
+          directsCubit.clearSelection();
+        });
+      } else {
+        channelsCubit.selectChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
-        channelsCubit.clearSelection();
-      });
+        Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
+          channelsCubit.clearSelection();
+        });
+      }
+
+      badgesCubit.reset(channelId: channelId);
     }
-
-    badgesCubit.reset(channelId: channelId);
 
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);

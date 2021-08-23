@@ -87,8 +87,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
   }
 
   void onReply(Message message) {
-    NavigatorService.instance
-        .navigate(channelId: message.channelId, threadId: message.id);
+    NavigatorService.instance.navigate(
+      channelId: message.channelId,
+      threadId: message.id,
+      reloadThreads: false,
+    );
   }
 
   onCopy({required context, required text}) {
