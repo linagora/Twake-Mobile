@@ -8,10 +8,10 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/workspace/workspace_drawer_tile.dart';
 
@@ -222,6 +222,7 @@ class HomeDrawerWidget extends StatelessWidget {
                               },
                               behavior: HitTestBehavior.opaque,
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   ImageWidget(
                                     name: accountState.account.fullName,
@@ -239,13 +240,20 @@ class HomeDrawerWidget extends StatelessWidget {
                                   SizedBox(
                                     width: 12,
                                   ),
-                                  Text('${accountState.account.fullName}',
-                                      style: TextStyle(
-                                        color: Color(0xff000000),
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w400,
-                                        fontStyle: FontStyle.normal,
-                                      )),
+                                  Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth: Dim.widthPercent(55),
+                                    ),
+                                    child:
+                                        Text('${accountState.account.fullName}',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Color(0xff000000),
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                            )),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 2),

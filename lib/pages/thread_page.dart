@@ -78,12 +78,15 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              "${messagesState.messages[0].firstName}'s messages",
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xff444444),
+                            Expanded(
+                              child: Text(
+                                "${messagesState.messages[0].firstName}'s messages",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xff444444),
+                                ),
                               ),
                             ),
                             SizedBox(height: 5.0),
