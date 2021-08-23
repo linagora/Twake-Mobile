@@ -27,7 +27,7 @@ class HomeDirectListWidget extends StatelessWidget {
             currentState is ChannelsLoadedSuccess,
         builder: (context, directState) {
           if (directState is ChannelsLoadedSuccess) {
-            //  searching by name, senderName and description
+            //  searching by name
             final channels = serchText.isEmpty
                 ? directState.channels
                 : directState.channels
