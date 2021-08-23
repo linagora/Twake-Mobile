@@ -578,8 +578,13 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
-  TwacodeRenderer(this.twacode, TextStyle parentStyle, double userUniqueColor,
-      bool isSwipe) {
+
+  TwacodeRenderer({
+    required this.twacode,
+    required TextStyle parentStyle,
+    double userUniqueColor = 0.0,
+    bool isSwipe: false,
+  }) {
     spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe);
   }
 
@@ -1005,8 +1010,9 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.Mention) {
-          final username = (t['content'] as String).split(':').first;
-          final userId = (t['content'] as String).split(':').last;
+          final user = (t['content'] as String).split(':');
+          final username = user.first;
+          final userId = user.length == 2 ? user.last : null;
           spans.add(
             WidgetSpan(
               child: UserMention(

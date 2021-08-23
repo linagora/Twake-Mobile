@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 
 class UserMention extends StatelessWidget {
-  final String userId;
+  final String? userId;
   final String username;
   final TextStyle style;
 
@@ -15,21 +15,26 @@ class UserMention extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: Get.find<AccountCubit>().fetchStateless(userId: userId),
-        builder: (ctx, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final account = (snapshot.data as Account);
-            return Text(
-              account.fullName,
-              style: style,
-            );
-          } else {
-            return Text(
-              '@' + username,
-              style: style,
-            );
-          }
-        });
+    return userId != null
+        ? FutureBuilder(
+            future: Get.find<AccountCubit>().fetchStateless(userId: userId!),
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                final account = (snapshot.data as Account);
+                return Text(
+                  account.fullName,
+                  style: style,
+                );
+              } else {
+                return Text(
+                  '@' + username,
+                  style: style,
+                );
+              }
+            })
+        : Text(
+            '@' + username,
+            style: style,
+          );
   }
 }

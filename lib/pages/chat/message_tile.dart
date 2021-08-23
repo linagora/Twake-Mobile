@@ -298,20 +298,19 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                           child: Column(
                                             children: [
                                               TwacodeRenderer(
-                                                      _message.blocks,
-                                                      TextStyle(
-                                                        fontSize: 15.0,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: _isMyMessage
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                      ),
-                                                      _message.username
-                                                              .hashCode %
-                                                          360,
-                                                      false)
-                                                  .message,
+                                                twacode: _message.blocks,
+                                                parentStyle: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: _isMyMessage
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                                userUniqueColor:
+                                                    _message.username.hashCode %
+                                                        360,
+                                                isSwipe: false,
+                                              ).message,
                                               SizedBox(
                                                 height: 3,
                                               ),

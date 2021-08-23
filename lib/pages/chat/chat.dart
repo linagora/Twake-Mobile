@@ -194,15 +194,15 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.8,
                             child: TwacodeRenderer(
-                                    _message.blocks,
-                                    TextStyle(
-                                      fontSize: 14.0,
-                                      //fontWeight: FontWeight.w400,
-                                      color: Color(0xFF818C99),
-                                    ),
-                                    _message.username.hashCode % 360,
-                                    true)
-                                .messageOnSwipe,
+                              twacode: _message.blocks,
+                              parentStyle: TextStyle(
+                                fontSize: 14.0,
+                                //fontWeight: FontWeight.w400,
+                                color: Color(0xFF818C99),
+                              ),
+                              userUniqueColor: _message.username.hashCode % 360,
+                              isSwipe: true,
+                            ).messageOnSwipe,
                           ),
                           SizedBox(
                             height: 3,
