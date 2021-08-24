@@ -27,7 +27,8 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
     _nameEditingController.text = _currentChannel?.name ?? '';
     _descriptionEditingController.text = _currentChannel?.description ?? '';
     Get.find<EditChannelCubit>().setEmoijIcon(_currentChannel?.icon ?? '');
-    Get.find<EditChannelCubit>().validateEditChannelData(name: _currentChannel?.name ?? '');
+    Get.find<EditChannelCubit>()
+        .validateEditChannelData(name: _currentChannel?.name ?? '');
   }
 
   @override
@@ -93,14 +94,15 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                     Get.find<EditChannelCubit>().editChannel(
                                         currentChannel: _currentChannel!,
                                         name: _nameEditingController.text,
-                                        description: _descriptionEditingController.text,
+                                        description:
+                                            _descriptionEditingController.text,
                                         icon: editChannelState.emoijIcon);
                                   }
                                 },
                                 text: 'Save',
                                 isEnable: (editChannelState
-                                is EditChannelValidation &&
-                                    editChannelState.validToEditChannel)
+                                            is EditChannelValidation &&
+                                        editChannelState.validToEditChannel)
                                     ? true
                                     : false);
                           },
@@ -126,108 +128,62 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                 ),
                 Expanded(
                     child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16, right: 16, top: 16, bottom: 8),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                  ),
-                                  borderRadius:
-                                  BorderRadius.all(Radius.circular(12))),
-                              height: 80,
-                              // color: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 10),
-                                child: Container(
-                                  child: Row(
-                                    children: [
-                                      BlocBuilder<EditChannelCubit, EditChannelState>(
-                                          bloc: Get.find<EditChannelCubit>(),
-                                          builder: (context, editChannelState) {
-                                            if (editChannelState
-                                                .emoijIcon.isNotEmpty) {
-                                              return _buildSelectedChannelIcon(
-                                                  editChannelState.emoijIcon);
-                                            }
-                                            return PickImageWidget(
-                                                onPickImageWidgetClick: () {
-                                                  FocusManager.instance.primaryFocus
-                                                      ?.unfocus();
-                                                  Get.find<EditChannelCubit>()
-                                                      .showEmoijKeyBoard(true);
-                                                });
-                                          }),
-                                      SizedBox(
-                                        width: 16,
-                                      ),
-                                      Flexible(
-                                        child: Focus(
-                                          onFocusChange: (hasFocus) {
-                                            if (hasFocus) {
-                                              Get.find<EditChannelCubit>()
-                                                  .showEmoijKeyBoard(false);
-                                            }
-                                          },
-                                          child: TextFormField(
-                                            onFieldSubmitted: (_) => FocusManager
-                                                .instance.primaryFocus
-                                                ?.nextFocus(),
-                                            textInputAction: TextInputAction.next,
-                                            onChanged: (text) =>
-                                                Get.find<EditChannelCubit>()
-                                                    .validateEditChannelData(
-                                                    name: text),
-                                            controller: _nameEditingController,
-                                            cursorColor: Colors.black,
-                                            style: _getTextFieldTextStyle(),
-                                            decoration: _getTextFieldDecoration(
-                                                'Channel name'),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 0, top: 20),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('CHANNEL NAME',
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, top: 5, bottom: 8),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.white,
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 28, right: 28, bottom: 24),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  'Please provide a channel name and optional channel icon',
-                                  style: TextStyle(
-                                    color: Color(0xff969ca4),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    fontStyle: FontStyle.normal,
-                                  )),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 16, right: 16, bottom: 8),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                  ),
-                                  borderRadius:
+                              borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
-                              height: 48,
-                              child: Align(
-                                  alignment: Alignment.center,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 14),
+                          height: 80,
+                          // color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            child: Container(
+                              child: Row(
+                                children: [
+                                  BlocBuilder<EditChannelCubit,
+                                          EditChannelState>(
+                                      bloc: Get.find<EditChannelCubit>(),
+                                      builder: (context, editChannelState) {
+                                        if (editChannelState
+                                            .emoijIcon.isNotEmpty) {
+                                          return _buildSelectedChannelIcon(
+                                              editChannelState.emoijIcon);
+                                        }
+                                        return PickImageWidget(
+                                            onPickImageWidgetClick: () {
+                                          FocusManager.instance.primaryFocus
+                                              ?.unfocus();
+                                          Get.find<EditChannelCubit>()
+                                              .showEmoijKeyBoard(true);
+                                        });
+                                      }),
+                                  SizedBox(
+                                    width: 16,
+                                  ),
+                                  Flexible(
                                     child: Focus(
                                       onFocusChange: (hasFocus) {
                                         if (hasFocus) {
@@ -236,33 +192,108 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                         }
                                       },
                                       child: TextFormField(
-                                          controller: _descriptionEditingController,
-                                          cursorColor: Colors.black,
-                                          style: _getTextFieldTextStyle(),
-                                          decoration: _getTextFieldDecoration(
-                                              'Channel description')),
+                                        onFieldSubmitted: (_) => FocusManager
+                                            .instance.primaryFocus
+                                            ?.nextFocus(),
+                                        textInputAction: TextInputAction.next,
+                                        onChanged: (text) =>
+                                            Get.find<EditChannelCubit>()
+                                                .validateEditChannelData(
+                                                    name: text),
+                                        controller: _nameEditingController,
+                                        cursorColor: Colors.black,
+                                        style: _getTextFieldTextStyle(),
+                                        decoration: _getTextFieldDecoration(
+                                            'Channel name'),
+                                      ),
                                     ),
-                                  )),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 28, right: 28, bottom: 24),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  'Please provide an optional decription for your channel',
-                                  style: TextStyle(
-                                    color: Color(0xff969ca4),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    fontStyle: FontStyle.normal,
-                                  )),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    )),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              'Please provide a channel name and optional channel icon',
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 5),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('CHANNEL DESCRIPTION',
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 8),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                color: Colors.white,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(12))),
+                          height: 48,
+                          child: Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 14),
+                                child: Focus(
+                                  onFocusChange: (hasFocus) {
+                                    if (hasFocus) {
+                                      Get.find<EditChannelCubit>()
+                                          .showEmoijKeyBoard(false);
+                                    }
+                                  },
+                                  child: TextFormField(
+                                      controller: _descriptionEditingController,
+                                      cursorColor: Colors.black,
+                                      style: _getTextFieldTextStyle(),
+                                      decoration: _getTextFieldDecoration(
+                                          'Channel description')),
+                                ),
+                              )),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              'Please provide an optional decription for your channel',
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
                 BlocBuilder<EditChannelCubit, EditChannelState>(
                     bloc: Get.find<EditChannelCubit>(),
                     builder: (context, editChannelState) {
@@ -316,17 +347,17 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
       onTap: () => Get.find<EditChannelCubit>().showEmoijKeyBoard(true),
       child: ClipOval(
           child: Container(
-            width: 56,
-            height: 56,
-            color: Color(0xfff2f2f6),
-            child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                emoij,
-                style: TextStyle(fontSize: 30),
-              ),
-            ),
-          )),
+        width: 56,
+        height: 56,
+        color: Color(0xfff2f2f6),
+        child: Align(
+          alignment: Alignment.center,
+          child: Text(
+            emoij,
+            style: TextStyle(fontSize: 30),
+          ),
+        ),
+      )),
     );
   }
 
@@ -346,9 +377,9 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
       ));
 
   TextStyle _getTextFieldTextStyle() => const TextStyle(
-    color: Colors.black,
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
-    fontStyle: FontStyle.normal,
-  );
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      );
 }
