@@ -362,6 +362,9 @@ class _ComposeBar extends State<ComposeBar> {
                 child: EmojiPicker(
                   onEmojiSelected: (cat, emoji) {
                     _controller.text += emoji.emoji;
+                    setState(() {
+                      _canSend = true;
+                    });
                   },
                   config: Config(
                     columns: 7,

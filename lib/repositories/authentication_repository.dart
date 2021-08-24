@@ -196,13 +196,15 @@ class AuthenticationRepository {
     if (!Globals.instance.isNetworkConnected) return;
     if (Globals.instance.token == null) return;
 
-    await _api.post(endpoint: Endpoint.device, data: {
+    final data = {
       'resource': {
         'type': 'FCM',
         'value': Globals.instance.fcmToken,
         'version': Globals.version,
       }
-    });
+    };
+    Logger().w('Registering device: ${Endpoint.device}\n$data');
+    await _api.post(endpoint: Endpoint.device, data: data);
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
