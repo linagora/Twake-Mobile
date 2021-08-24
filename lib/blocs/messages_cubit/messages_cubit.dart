@@ -111,6 +111,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     String? originalStr,
     List<File> attachments: const [],
     String? threadId,
+    bool isDirect: false,
   }) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     if (attachments.isNotEmpty) {
@@ -128,6 +129,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       prepared: prepared,
       originalStr: originalStr,
       threadId: threadId ?? fakeId,
+      isDirect: isDirect,
     );
 
     _sendInProgress = true;

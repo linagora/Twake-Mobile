@@ -103,6 +103,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                       originalStr: content,
                       attachments: attachments,
                       threadId: stateThread.messages.first.id,
+                      isDirect: channel.isDirect,
                     );
                     Get.find<ThreadMessagesCubit>().reset();
                   } else {
@@ -115,8 +116,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                       if (uploadState is FileUploadSuccess) {
                         attachments = uploadState.files;
                       }
-                      Get.find<ChannelMessagesCubit>()
-                          .send(originalStr: content, attachments: attachments);
+                      Get.find<ChannelMessagesCubit>().send(
+                        originalStr: content,
+                        attachments: attachments,
+                        isDirect: channel.isDirect,
+                      );
                     }
                   }
                   // reset channels draft

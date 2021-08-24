@@ -58,8 +58,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     }
   }
 
-  void changeSelectedChannelAfterCreateSuccess(
-      {required Channel channel}) async {
+  void changeSelectedChannelAfterCreateSuccess({
+    required Channel channel,
+  }) async {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 

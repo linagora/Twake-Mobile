@@ -9,6 +9,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
 
 class NewDirectCubit extends Cubit<NewDirectState> {
@@ -90,9 +91,9 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     return recentChats;
   }
 
-  void newDirect(String memberId) async {
+  void newDirect(Account account) async {
     final recentKey = state.recentChats.keys.firstWhere(
-        (key) => state.recentChats[key]?.id == memberId,
+        (key) => state.recentChats[key]?.id == account.id,
         orElse: () => '');
     if (recentKey.isNotEmpty) {
       NavigatorService.instance.navigate(channelId: recentKey);
@@ -100,12 +101,14 @@ class NewDirectCubit extends Cubit<NewDirectState> {
       final channel = await channelsRepository.create(
         channel: Channel(
           id: 'fake',
-          name: '',
-          icon: '',
+          name: account.firstName?.isNotEmpty ?? false
+              ? account.firstName!
+              : account.username,
+          icon: account.picture,
           description: '',
           companyId: Globals.instance.companyId!,
           workspaceId: 'direct',
-          members: [memberId, Globals.instance.userId!],
+          members: [account.id, Globals.instance.userId!],
           membersCount: 2,
           role: ChannelRole.owner,
           visibility: ChannelVisibility.direct,

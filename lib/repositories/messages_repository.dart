@@ -179,6 +179,7 @@ class MessagesRepository {
     List<String> files: const [],
     String? originalStr,
     required String threadId,
+    bool isDirect: false,
   }) async* {
     if (!Globals.instance.isNetworkConnected) return;
 
@@ -221,7 +222,8 @@ class MessagesRepository {
                 {
                   'type': 'channel',
                   'id': channelId,
-                  'workspace_id': Globals.instance.workspaceId,
+                  'workspace_id':
+                      isDirect ? 'direct' : Globals.instance.workspaceId,
                   'company_id': Globals.instance.companyId,
                 }
               ]

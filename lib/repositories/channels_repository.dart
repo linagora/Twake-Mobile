@@ -96,6 +96,9 @@ class ChannelsRepository {
       key: 'resource',
     );
 
+    result['name'] = channel.name;
+    result['icon'] = channel.icon;
+
     final created = Channel.fromJson(
       json: result,
       jsonify: false,

@@ -165,9 +165,11 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                     attachments = uploadState.files;
                                   }
                                   Get.find<ThreadMessagesCubit>().send(
-                                      originalStr: content,
-                                      attachments: attachments,
-                                      threadId: Globals.instance.threadId);
+                                    originalStr: content,
+                                    attachments: attachments,
+                                    threadId: Globals.instance.threadId,
+                                    isDirect: channel.isDirect,
+                                  );
                                 }
                                 // reset thread draft
                                 Get.find<ThreadMessagesCubit>()
