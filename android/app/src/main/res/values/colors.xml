@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="background_color">#004dff</color>
     <color name="ic_launcher_background">#004dff</color>
     <color name="twake_notification_color">#8079EE</color>
 </resources>
