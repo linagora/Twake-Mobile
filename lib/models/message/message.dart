@@ -42,15 +42,15 @@ class Message extends BaseModel {
   @JsonKey(defaultValue: 1, name: 'is_read')
   int _isRead = 1;
 
-  @JsonKey(defaultValue: 1, name: 'is_delivered')
-  int _isDelivered = 1;
+  @JsonKey(defaultValue: Delivery.delivered)
+  Delivery delivery;
 
   int get hash {
     return this.id.hashCode +
         this.text.hashCode +
         this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
-        this._isDelivered +
+        this.delivery.hashCode +
         this._isRead +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
   }
@@ -70,11 +70,6 @@ class Message extends BaseModel {
 
   set isRead(bool val) => _isRead = val ? 1 : 0;
 
-  @JsonKey(ignore: true)
-  bool get isDelivered => _isDelivered > 0;
-
-  set isDelivered(bool val) => _isDelivered = val ? 1 : 0;
-
   Message({
     required this.id,
     required this.threadId,
@@ -88,6 +83,7 @@ class Message extends BaseModel {
     required this.blocks,
     required this.reactions,
     required this.files,
+    this.delivery: Delivery.delivered,
     this.firstName,
     this.lastName,
     this.picture,
@@ -129,4 +125,13 @@ class Message extends BaseModel {
 
     return other;
   }
+}
+
+enum Delivery {
+  @JsonValue('in_progress')
+  inProgress,
+  @JsonValue('delivered')
+  delivered,
+  @JsonValue('failed')
+  failed,
 }

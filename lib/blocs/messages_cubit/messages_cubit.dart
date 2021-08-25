@@ -107,6 +107,43 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     emit(newState);
   }
 
+  Future<void> resend({required Message message, bool isDirect: false}) async {
+    _sendInProgress = true;
+
+    final sendStream = _repository.resend(
+      message: message,
+      isDirect: isDirect,
+    );
+
+    final id = message.id;
+
+    await for (final message in sendStream) {
+      // user might have changed screen, so make sure we are still in
+      // messages view screen, and the state is MessagesLoadSuccess
+      if (this.state is! MessagesLoadSuccess) return;
+
+      if (message.channelId != Globals.instance.channelId) return;
+
+      final messages = (this.state as MessagesLoadSuccess).messages;
+      final hash = (this.state as MessagesLoadSuccess).hash;
+
+      final index = messages.indexWhere((m) => m.id == id);
+
+      if (index.isNegative) {
+        messages.add(message);
+      } else {
+        messages[index] = message;
+      }
+
+      emit(MessagesLoadSuccess(
+        messages: messages,
+        hash: hash + message.hash,
+      ));
+    }
+
+    _sendInProgress = false;
+  }
+
   Future<void> send({
     String? originalStr,
     List<File> attachments: const [],

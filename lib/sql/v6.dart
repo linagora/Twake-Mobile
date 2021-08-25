@@ -70,7 +70,8 @@ CREATE TABLE message (
     first_name TEXT,
     last_name TEXT,
     picture TEXT,
-    is_read INT DEFAULT 1
+    is_read INT DEFAULT 1,
+    delivery TEXT DEFAULT "delivered"
 );
 ''';
 

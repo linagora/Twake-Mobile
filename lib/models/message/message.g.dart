@@ -23,6 +23,8 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
             .toList() ??
         [],
     files: (json['files'] as List<dynamic>).map((e) => e as String).toList(),
+    delivery: _$enumDecodeNullable(_$DeliveryEnumMap, json['delivery']) ??
+        Delivery.delivered,
     firstName: json['first_name'] as String?,
     lastName: json['last_name'] as String?,
     picture: json['picture'] as String?,
@@ -47,4 +49,48 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'last_name': instance.lastName,
       'picture': instance.picture,
       'draft': instance.draft,
+      'delivery': _$DeliveryEnumMap[instance.delivery],
     };
+
+K _$enumDecode<K, V>(
+  Map<K, V> enumValues,
+  Object? source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError(
+      'A value must be provided. Supported values: '
+      '${enumValues.values.join(', ')}',
+    );
+  }
+
+  return enumValues.entries.singleWhere(
+    (e) => e.value == source,
+    orElse: () {
+      if (unknownValue == null) {
+        throw ArgumentError(
+          '`$source` is not one of the supported values: '
+          '${enumValues.values.join(', ')}',
+        );
+      }
+      return MapEntry(unknownValue, enumValues.values.first);
+    },
+  ).key;
+}
+
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$DeliveryEnumMap = {
+  Delivery.inProgress: 'in_progress',
+  Delivery.delivered: 'delivered',
+  Delivery.failed: 'failed',
+};

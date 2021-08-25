@@ -211,7 +211,7 @@ class MessagesRepository {
       reactions: [],
     );
 
-    message.isDelivered = false;
+    message.delivery = Delivery.inProgress;
 
     yield message;
 
@@ -241,25 +241,103 @@ class MessagesRepository {
             [Globals.instance.companyId, threadId],
           );
 
-    final remoteResult = await _api.post(
-      endpoint: endpoint,
-      data: data,
-      key: 'resource',
-    );
+    try {
+      final remoteResult = await _api.post(
+        endpoint: endpoint,
+        data: data,
+        key: 'resource',
+      );
+      message = Message.fromJson(
+        id == threadId ? remoteResult['message'] : remoteResult,
+        jsonify: false,
+        transform: true,
+        channelId: channelId,
+      );
+      message.createdAt = now;
+      message.updatedAt = now;
 
-    message = Message.fromJson(
-      id == threadId ? remoteResult['message'] : remoteResult,
-      jsonify: false,
-      transform: true,
-      channelId: channelId,
-    );
-    message.createdAt = now;
-    message.updatedAt = now;
+      message.username = currentUser.username;
+      message.firstName = currentUser.firstName;
+      message.lastName = currentUser.lastName;
+      message.picture = currentUser.picture;
+    } catch (e, ss) {
+      Logger().e('Error sending message: $e\n$ss');
+      message.delivery = Delivery.failed;
+    }
 
-    message.username = currentUser.username;
-    message.firstName = currentUser.firstName;
-    message.lastName = currentUser.lastName;
-    message.picture = currentUser.picture;
+    _storage.insert(table: Table.message, data: message);
+
+    yield message;
+  }
+
+  Stream<Message> resend({
+    required Message message,
+    bool isDirect: false,
+  }) async* {
+    if (!Globals.instance.isNetworkConnected) return;
+
+    message.delivery = Delivery.inProgress;
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    yield message;
+
+    final data = message.threadId == message.id
+        ? {
+            'resource': {
+              'participants': [
+                {
+                  'type': 'channel',
+                  'id': message.channelId,
+                  'workspace_id':
+                      isDirect ? 'direct' : Globals.instance.workspaceId,
+                  'company_id': Globals.instance.companyId,
+                }
+              ]
+            },
+            'options': {
+              'message': ApiDataTransformer.apiMessage(message: message)
+            }
+          }
+        : {'resource': ApiDataTransformer.apiMessage(message: message)};
+
+    final endpoint = message.threadId == message.id
+        ? sprintf(Endpoint.threadsPost, [Globals.instance.companyId])
+        : sprintf(
+            Endpoint.threadMessages,
+            [Globals.instance.companyId, message.threadId],
+          );
+
+    try {
+      final remoteResult = await _api.post(
+        endpoint: endpoint,
+        data: data,
+        key: 'resource',
+      );
+      final newMessage = Message.fromJson(
+        message.id == message.threadId ? remoteResult['message'] : remoteResult,
+        jsonify: false,
+        transform: true,
+        channelId: message.channelId,
+      );
+      newMessage.createdAt = now;
+      newMessage.updatedAt = now;
+
+      newMessage.username = message.username;
+      newMessage.firstName = message.firstName;
+      newMessage.lastName = message.lastName;
+      newMessage.picture = message.picture;
+
+      _storage.delete(
+        table: Table.message,
+        where: 'id = ?',
+        whereArgs: [message.id],
+      );
+
+      message = newMessage;
+    } catch (e, ss) {
+      Logger().e('Error sending message: $e\n$ss');
+      message.delivery = Delivery.failed;
+    }
 
     _storage.insert(table: Table.message, data: message);
 

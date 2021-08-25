@@ -10,7 +10,6 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/user_thumbnail.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
@@ -131,7 +130,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
       return InkWell(
         onLongPress: () {
-          if (_message.isDelivered || _isMyMessage == false)
+          if (_message.delivery == Delivery.delivered || _isMyMessage == false)
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -416,7 +415,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
               ),
             ),
             SizedBox(width: 3.0),
-            _message.isDelivered && _isMyMessage
+            _message.delivery == Delivery.delivered || _isMyMessage == false
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -441,7 +440,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     ],
                   )
                 : Container(),
-            _message.isDelivered && _isMyMessage
+            _message.delivery == Delivery.delivered || _isMyMessage == false
                 ? SizedBox(width: 8.0)
                 : SizedBox(width: 12.0),
             if (!_isMyMessage)
