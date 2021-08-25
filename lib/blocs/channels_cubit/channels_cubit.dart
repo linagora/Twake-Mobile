@@ -170,14 +170,14 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   Future<bool> removeMembers({
     required Channel channel,
-    required List<String> usersToRemove,
+    required String userId,
   }) async {
     final oldHash = channel.hash;
 
     try {
       channel = await _repository.removeMembers(
         channel: channel,
-        usersToRemove: usersToRemove,
+        userId: userId,
       );
     } catch (e) {
       Logger().e('Error occured while removing members from channel:\n$e');

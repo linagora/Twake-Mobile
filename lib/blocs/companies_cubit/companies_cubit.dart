@@ -34,6 +34,10 @@ class CompaniesCubit extends Cubit<CompaniesState> {
       }
       emit(CompaniesLoadSuccess(companies: companies, selected: selected));
     }
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: Globals.instance.companyId!,
+      workspaceId: 'direct',
+    );
   }
 
   void selectCompany({required String companyId}) {

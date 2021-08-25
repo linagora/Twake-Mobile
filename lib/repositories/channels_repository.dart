@@ -220,33 +220,29 @@ class ChannelsRepository {
 
   Future<Channel> removeMembers({
     required Channel channel,
-    required List<String> usersToRemove,
+    required String userId,
   }) async {
-    final futures = usersToRemove.map((u) {
-      final Map<String, dynamic> data = {
-        'resource': {
-          'user_id': u,
-          'channel_id': channel.id,
-          'type': 'member',
-        },
-      };
-      return _api.post(
+    final Map<String, dynamic> data = {
+      'resource': {
+        'user_id': userId,
+        'channel_id': channel.id,
+        'type': 'member',
+      },
+    };
+    try {
+      await _api.post(
         endpoint: sprintf(Endpoint.channelMembers,
             [channel.companyId, channel.workspaceId, channel.id]),
         data: data,
       );
-    });
-
-    try {
-      await Future.wait(futures);
     } catch (e, ss) {
       Logger().e('ERROR during member addition:\n$e\n$ss');
       return channel;
     }
 
-    channel.members.removeWhere((c) => usersToRemove.contains(c));
+    channel.members.removeWhere((u) => u == userId);
 
-    _storage.insert(table: Table.channel, data: channel);
+    // _storage.insert(table: Table.channel, data: channel);
 
     return channel;
   }
