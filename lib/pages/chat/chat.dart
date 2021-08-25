@@ -99,7 +99,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     attachments = uploadState.files;
                   }
                   if (stateThread is MessagesLoadSuccessSwipeToReply) {
-                    await Get.find<ThreadMessagesCubit>().send(
+                    Get.find<ThreadMessagesCubit>().send(
                       originalStr: content,
                       attachments: attachments,
                       threadId: stateThread.messages.first.id,
