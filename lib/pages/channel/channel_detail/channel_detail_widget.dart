@@ -6,7 +6,7 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
-import 'package:twake/widgets/common/channel_thumbnail.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 
 class ChannelDetailWidget extends StatelessWidget {
   const ChannelDetailWidget({Key? key}) : super(key: key);
@@ -50,21 +50,19 @@ class ChannelDetailWidget extends StatelessWidget {
                               (channelState is ChannelsLoadedSuccess)
                                   ? channelState.selected
                                   : null;
-                          return ChannelThumbnail(
-                            isPrivate: selectedChannel != null
-                                ? selectedChannel.isPrivate
-                                : false,
-                            icon: (selectedChannel != null &&
-                                    selectedChannel.icon != null)
-                                ? Emojis.getByName(selectedChannel.icon ?? '')
-                                : '',
-                            name: selectedChannel != null
-                                ? selectedChannel.name
-                                : '',
-                            iconSize: 50,
-                            width: 88,
-                            height: 88,
-                          );
+                          return ImageWidget(
+                              imageType: ImageType.channel,
+                              isPrivate: selectedChannel != null
+                                  ? selectedChannel.isPrivate
+                                  : false,
+                              imageUrl: (selectedChannel != null &&
+                                      selectedChannel.icon != null)
+                                  ? Emojis.getByName(selectedChannel.icon ?? '')
+                                  : '',
+                              name: selectedChannel != null
+                                  ? selectedChannel.name
+                                  : '',
+                              size: 100);
                         },
                       ),
                     ),

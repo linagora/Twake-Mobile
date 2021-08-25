@@ -7,7 +7,9 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/edit_channel_cubit/edit_channel_cubit.dart';
 import 'package:twake/blocs/channels_cubit/edit_channel_cubit/edit_channel_state.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/pick_image_widget.dart';
 
 class EditChannelWidget extends StatefulWidget {
@@ -344,21 +346,12 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
 
   Widget _buildSelectedChannelIcon(String emoij) {
     return GestureDetector(
-      onTap: () => Get.find<EditChannelCubit>().showEmoijKeyBoard(true),
-      child: ClipOval(
-          child: Container(
-        width: 56,
-        height: 56,
-        color: Color(0xfff2f2f6),
-        child: Align(
-          alignment: Alignment.center,
-          child: Text(
-            emoij,
-            style: TextStyle(fontSize: 30),
-          ),
-        ),
-      )),
-    );
+        onTap: () => Get.find<EditChannelCubit>().showEmoijKeyBoard(true),
+        child: ImageWidget(
+          imageType: ImageType.channel,
+          imageUrl: Emojis.getByName(emoij),
+          size: 56,
+        ));
   }
 
   InputDecoration _getTextFieldDecoration(String hintText) => InputDecoration(
