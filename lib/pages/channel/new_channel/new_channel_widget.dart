@@ -412,9 +412,6 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
     return BlocBuilder<AddChannelCubit, AddChannelState>(
         bloc: Get.find<AddChannelCubit>(),
         builder: (context, addChannelState) {
-          if (addChannelState.channelVisibility == ChannelVisibility.public) {
-            return SizedBox.shrink();
-          }
           return GestureDetector(
             onTap: () async {
               final currentSelectedMembers =
