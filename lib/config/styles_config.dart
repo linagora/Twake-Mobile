@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'dart:io' show Platform;
 
 class StylesConfig {
   StylesConfig._();
@@ -10,8 +11,8 @@ class StylesConfig {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: Colors.blue,
     accentColor: accentColorRGB,
+    fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro',
     textTheme: lightTextTheme,
-    useTextSelectionTheme: true,
     scaffoldBackgroundColor: Colors.white,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: Color(0xff004dff),
