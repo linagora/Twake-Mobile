@@ -130,9 +130,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Pacifico
+    - family: SFPro
       fonts:
-        - asset: assets/fonts/Pacifico-Regular.ttf
+        - asset: assets/fonts/SF-Pro-Text-Regular.otf
     - family: Poboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf

@@ -11,9 +11,8 @@ class StylesConfig {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: Colors.blue,
     accentColor: accentColorRGB,
-    fontFamily: Platform.isAndroid ? 'Pacifico' : 'Roboto', //'Pacifico',
+    fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro',
     textTheme: lightTextTheme,
-    useTextSelectionTheme: true,
     scaffoldBackgroundColor: Colors.white,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: Color(0xff004dff),
