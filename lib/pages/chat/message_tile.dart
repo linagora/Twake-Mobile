@@ -51,10 +51,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
 
-  // static downloadingCallback(id, status, progress) {
-  // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
-  // sendPort.send([id, status, progress]);
-  // }
   Size wdgtHieght = Size(0, 0);
   // use _wdgtKey in the Bubble
   double h = 1;

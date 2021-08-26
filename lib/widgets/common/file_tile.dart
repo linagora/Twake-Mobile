@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 
-class FileTile extends StatelessWidget {
+class FileTile extends StatefulWidget {
   final String fileId;
 
-  const FileTile({required this.fileId});
+  FileTile({required this.fileId}) : super(key: ValueKey(fileId));
 
+  @override
+  _FileTileState createState() => _FileTileState();
+}
+
+class _FileTileState extends State<FileTile> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Get.find<FileCubit>().getById(id: fileId),
+        future: Get.find<FileCubit>().getById(id: widget.fileId),
         builder: (ctx, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == null) {

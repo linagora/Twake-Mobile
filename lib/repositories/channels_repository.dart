@@ -222,18 +222,12 @@ class ChannelsRepository {
     required Channel channel,
     required String userId,
   }) async {
-    final Map<String, dynamic> data = {
-      'resource': {
-        'user_id': userId,
-        'channel_id': channel.id,
-        'type': 'member',
-      },
-    };
     try {
-      await _api.post(
+      await _api.delete(
         endpoint: sprintf(Endpoint.channelMembers,
-            [channel.companyId, channel.workspaceId, channel.id]),
-        data: data,
+                [channel.companyId, channel.workspaceId, channel.id]) +
+            '/$userId',
+        data: const {},
       );
     } catch (e, ss) {
       Logger().e('ERROR during member addition:\n$e\n$ss');

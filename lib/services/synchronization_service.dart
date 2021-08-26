@@ -109,7 +109,7 @@ class SynchronizationService {
       _socketio.resourceStream.where((r) {
         return r.type == ResourceType.message &&
             r.resource['thread_id'] == r.resource['id'] &&
-            r.resource['subtype'] != 'deleted';
+            r.resource['subtype'] == null;
       });
 
   Stream<SocketIOResource> get socketIOThreadMessageStream =>

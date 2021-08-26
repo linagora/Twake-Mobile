@@ -69,6 +69,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
     bool upBubbleSide = false;
     bool downBubbleSide = false;
     return GroupedListView<Message, DateTime>(
+      // addAutomaticKeepAlives: true,
       key: PageStorageKey<String>('uniqueKey'),
       order: GroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
