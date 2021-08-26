@@ -1,4 +1,8 @@
 class Endpoint {
+  // Console methods
+  // Obtain secretToken for account registration
+  static const reservation = '/api/subscriptions/reservation';
+
   // Core methods
   // Obtain JWToken pair for Twake
   static const login = '/internal/services/console/v1/login';
