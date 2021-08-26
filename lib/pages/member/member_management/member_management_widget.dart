@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_cubit.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
@@ -211,8 +213,10 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                       itemBuilder: (ctx, index) {
                                         final member = members[index];
                                         return _MemberManagementTile(
+                                          userId: member.id,
                                           name: member.fullName,
                                           logo: member.picture,
+                                          currentChannel: _currentChannel,
                                         );
                                       },
                                     ),
@@ -236,35 +240,211 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
 class _MemberManagementTile extends StatelessWidget {
   final String name;
   final String? logo;
+  final Channel? currentChannel;
+  final String userId;
 
-  const _MemberManagementTile({Key? key, required this.name, this.logo})
-      : super(key: key);
+  const _MemberManagementTile({
+    Key? key,
+    required this.name,
+    required this.currentChannel,
+    required this.userId,
+    this.logo,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: RoundedImage(
-              imageUrl: logo ?? '',
-              width: 34,
-              height: 34,
-            ),
-          ),
-          Expanded(
-            child: Text(name,
-                style: TextStyle(
-                  color: Color(0xff000000),
-                  fontSize: 17,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
+    return GestureDetector(
+      child: Container(
+        height: 50,
+        child: Row(
+          children: [
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: ImageWidget(
+                  imageType: ImageType.common,
+                  imageUrl: logo ?? '',
+                  name: name,
+                  size: 34,
                 )),
-          )
-        ],
+            Expanded(
+              child: Text(name,
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontSize: 17,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
+                  )),
+            )
+          ],
+        ),
       ),
+      onLongPress: () async {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) {
+            return modalSheet(
+                context: context,
+                name: name,
+                logo: logo,
+                currentChannel: currentChannel,
+                userId: userId);
+          },
+        );
+      },
     );
   }
+}
+
+Widget modalSheet(
+    {required BuildContext context,
+    required String name,
+    required String? logo,
+    required Channel? currentChannel,
+    required String userId}) {
+  return Column(
+    children: [
+      Expanded(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          child: Container(),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22.0),
+        ),
+        child: Container(
+          height: 325,
+          width: Dim.widthPercent(94),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
+                  child: ImageWidget(
+                    imageType: ImageType.common,
+                    imageUrl: logo,
+                    name: name,
+                    size: 70,
+                  ),
+                ),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 45),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Icon(
+                          CupertinoIcons.text_bubble_fill,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        "Send a direct message",
+                        style: TextStyle(
+                          fontSize: 17.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 35),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Icon(
+                          CupertinoIcons.shield_lefthalf_fill,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        "Dismiss as admin",
+                        style: TextStyle(
+                          fontSize: 17.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 35, bottom: 15),
+                  child: GestureDetector(
+                    onTap: () async {
+                      if (currentChannel != null) {
+                        await Get.find<ChannelsCubit>().removeMembers(
+                            channel: currentChannel, userId: userId);
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: Icon(
+                            CupertinoIcons.minus_circle_fill,
+                            color: Color(0xFFFF3347),
+                          ),
+                        ),
+                        Text(
+                          "Remove from channel",
+                          style: TextStyle(
+                            fontSize: 17.0,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFFF3347),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 15, 0, 25),
+        child: GestureDetector(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22.0),
+            ),
+            child: Container(
+              child: Center(
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF004DFF),
+                  ),
+                ),
+              ),
+              height: 60,
+              width: Dim.widthPercent(94),
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
+    ],
+  );
 }

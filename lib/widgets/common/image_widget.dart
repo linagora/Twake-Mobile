@@ -152,22 +152,22 @@ class ImageWidget extends StatelessWidget {
     }
     return Stack(alignment: Alignment.topRight, children: [
       Container(
-        width: 54,
-        height: 54,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Color(0xfff5f5f5),
         ),
         child: Container(
-          width: 46,
-          height: 46,
+          width: size - 10,
+          height: size - 10,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(46 * 0.5),
+            borderRadius: BorderRadius.circular(size * 0.5),
           ),
           child: AutoSizeText(
             icon,
-            style: TextStyle(fontSize: 32),
+            style: TextStyle(fontSize: size * 0.6),
           ),
         ),
       ),
