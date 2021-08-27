@@ -68,10 +68,11 @@ class RegistrationRepository {
     }
     final len = pass.length;
     for (int i = 0; i < len; i++) {
-      final index = generator.nextInt(len);
-      final t = pass[index];
-      pass[index] = pass[len - index - 1];
-      pass[len - index - 1] = t;
+      final to = generator.nextInt(len) + 1;
+      final from = generator.nextInt(len) + 1;
+      final t = pass[to];
+      pass[to] = pass[len - from];
+      pass[len - from] = t;
     }
 
     return String.fromCharCodes(pass);
