@@ -182,6 +182,9 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                                     name: text),
                                         controller: _nameEditingController,
                                         cursorColor: Colors.black,
+                                        inputFormatters: [
+                                          LengthLimitingTextInputFormatter(30)
+                                        ],
                                         style: _getTextFieldTextStyle(),
                                         decoration: _getTextFieldDecoration(
                                             'Channel name'),
