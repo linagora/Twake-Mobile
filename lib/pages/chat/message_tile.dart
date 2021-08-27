@@ -2,6 +2,7 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -191,7 +192,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       : SizedBox(width: 28.0, height: 28.0),
             ),
             _isMyMessage
-                ? SizedBox(width: MediaQuery.of(context).size.width * 0.08)
+                ? SizedBox(
+                    width: Dim.widthPercent(8),
+                  )
                 : SizedBox(
                     width: 6,
                   ),
@@ -202,7 +205,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     Container(
                       padding: _message.reactions.isEmpty
                           ? widget.downBubbleSide
-                              ? const EdgeInsets.only(bottom: 12.0)
+                              ? const EdgeInsets.only(bottom: 12.0, top: 3)
                               : const EdgeInsets.only(bottom: 1.0)
                           : const EdgeInsets.only(bottom: 22.0),
                       color: Colors.white,
@@ -411,37 +414,78 @@ class _MessageTileState<T extends BaseMessagesCubit>
               ),
             ),
             SizedBox(width: 3.0),
-            _message.delivery == Delivery.delivered || _isMyMessage == false
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline_rounded,
-                        color: Color(0xFF004DFF),
-                        size: 20,
-                      ),
-                      if (widget.downBubbleSide)
-                        _message.reactions.isEmpty
-                            ? SizedBox(height: 10.0)
-                            : SizedBox(height: 18.0),
-                      if (_message.reactions.isNotEmpty &&
-                          !widget.downBubbleSide)
-                        SizedBox(height: 18.0)
-
-                      //   _message.reactions.isEmpty
-                      //       ? SizedBox(height: 10.0)
-                      //       : SizedBox(
-                      //
-                      //           height: MediaQuery.of(context).size.width * 0.05)
-                    ],
-                  )
+            _isMyMessage == true
+                ? _message.delivery == Delivery.inProgress
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 10,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              CupertinoIcons.time_solid,
+                              color: Colors.grey[400],
+                              size: 20,
+                            ),
+                          ),
+                          if (widget.downBubbleSide)
+                            _message.reactions.isEmpty
+                                ? SizedBox(height: 10.0)
+                                : SizedBox(height: 18.0),
+                          if (_message.reactions.isNotEmpty &&
+                              !widget.downBubbleSide)
+                            SizedBox(height: 18.0)
+                        ],
+                      )
+                    : _message.delivery == Delivery.delivered
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.check_circle_outline_rounded,
+                                color: Color(0xFF004DFF),
+                                size: 20,
+                              ),
+                              if (widget.downBubbleSide)
+                                _message.reactions.isEmpty
+                                    ? SizedBox(height: 10.0)
+                                    : SizedBox(height: 18.0),
+                              if (_message.reactions.isNotEmpty &&
+                                  !widget.downBubbleSide)
+                                SizedBox(height: 18.0)
+                            ],
+                          )
+                        : _message.delivery == Delivery.failed
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Colors.white,
+                                    child: Icon(
+                                      CupertinoIcons
+                                          .exclamationmark_circle_fill,
+                                      color: Colors.red[400],
+                                      size: 20,
+                                    ),
+                                  ),
+                                  if (widget.downBubbleSide)
+                                    _message.reactions.isEmpty
+                                        ? SizedBox(height: 10.0)
+                                        : SizedBox(height: 18.0),
+                                  if (_message.reactions.isNotEmpty &&
+                                      !widget.downBubbleSide)
+                                    SizedBox(height: 18.0)
+                                ],
+                              )
+                            : Container()
                 : Container(),
             _message.delivery == Delivery.delivered || _isMyMessage == false
                 ? SizedBox(width: 8.0)
                 : SizedBox(width: 12.0),
             if (!_isMyMessage)
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.1,
+                width: Dim.widthPercent(10),
               )
           ],
         ),
