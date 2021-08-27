@@ -224,7 +224,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     SynchronizationService.instance
         .cancelNotificationsForChannel(channelId: channelId);
 
-    _repository.markChannelRead(channel: selected);
+    _repository.markChannel(channel: selected, read: true);
   }
 
   void clearSelection() {

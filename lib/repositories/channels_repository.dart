@@ -257,7 +257,8 @@ class ChannelsRepository {
     return channel;
   }
 
-  Future<void> markChannelRead({required Channel channel}) async {
+  Future<void> markChannel(
+      {required Channel channel, required bool read}) async {
     if (!Globals.instance.isNetworkConnected) return;
 
     await _api.post(
@@ -266,7 +267,7 @@ class ChannelsRepository {
         [channel.companyId, channel.workspaceId, channel.id],
       ),
       data: {
-        'value': true,
+        'value': read,
       },
     );
   }
