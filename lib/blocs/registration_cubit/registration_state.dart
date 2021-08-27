@@ -32,8 +32,12 @@ class RegistrationSuccess extends RegistrationState {
 
 class RegistrationFailed extends RegistrationState {
   final String email;
+  final bool emailExists;
 
-  const RegistrationFailed({required this.email});
+  const RegistrationFailed({
+    required this.email,
+    required this.emailExists,
+  });
 
   @override
   List<Object?> get props => [email];

@@ -1,7 +1,9 @@
 class Endpoint {
   // Console methods
   // Obtain secretToken for account registration
-  static const reservation = '/api/subscriptions/reservation';
+  static const reservation =
+      'https://subscription.%s/api/subscriptions/reservation';
+  static const signup = 'https://account.%s/api/signup';
 
   // Core methods
   // Obtain JWToken pair for Twake
@@ -44,11 +46,15 @@ class Endpoint {
   static const badges = '/internal/services/notifications/v1/badges';
   static const files = '/internal/services/files/v1/companies/%s/files';
 
-  static const publicMethods = const [
-    info,
-  ];
+  static const publicMethods = const [info, reservation, signup];
+
+  static const consoleMethods = const [reservation, signup];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {
     return publicMethods.contains(method);
+  }
+
+  static bool isConsole(String method) {
+    return consoleMethods.contains(method);
   }
 }
