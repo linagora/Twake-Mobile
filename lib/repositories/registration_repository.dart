@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dio/dio.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -31,7 +33,11 @@ class RegistrationRepository {
         data: {
           'email': email,
           'name': name,
-          'company': 'My company',
+          'companyName': 'My company',
+          'password': _pass,
+          'locale': 'en',
+          'secretToken': secretToken,
+          'captchResponseToken': code,
         },
         key: 'email',
       );
@@ -45,6 +51,30 @@ class RegistrationRepository {
       }
     }
     return SignUpStatus.success;
+  }
+
+  String get _pass {
+    final generator = Random.secure();
+    List<int> pass = [];
+    pass.add(generator.nextInt(26) + 65);
+    pass.add(generator.nextInt(26) + 97);
+    pass.add(generator.nextInt(10) + 48);
+    pass.add(generator.nextInt(6) + 59);
+
+    final cycles = generator.nextInt(10) + 10;
+
+    for (int i = 0; i < cycles; i++) {
+      pass.add(generator.nextInt(26) + (i % 2 == 0 ? 97 : 65));
+    }
+    final len = pass.length;
+    for (int i = 0; i < len; i++) {
+      final index = generator.nextInt(len);
+      final t = pass[index];
+      pass[index] = pass[len - index - 1];
+      pass[len - index - 1] = t;
+    }
+
+    return String.fromCharCodes(pass);
   }
 }
 
