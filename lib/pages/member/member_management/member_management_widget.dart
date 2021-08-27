@@ -389,6 +389,9 @@ Widget modalSheet(
                       if (currentChannel != null) {
                         await Get.find<ChannelsCubit>().removeMembers(
                             channel: currentChannel, userId: userId);
+                        Get.find<MemberManagementCubit>()
+                            .getMembersFromIds(channel: currentChannel);
+                        Navigator.pop(context);
                       }
                     },
                     child: Row(
