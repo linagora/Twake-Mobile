@@ -603,9 +603,13 @@ class TwacodeRenderer {
 
       case TType.MultiLineCode:
         style = TextStyle(
-          fontFamily: MONOSPACE,
+          fontFamily: 'SourceCodePro',
+          fontSize: 15,
+
           // backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
-          // color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
+          color: parentStyle.color == Colors.black
+              ? Color(0xFFEB5D00)
+              : Color(0xFF1CFFA3),
         );
         break;
 
@@ -851,17 +855,24 @@ class TwacodeRenderer {
           final style = getStyle(type, parentStyle, userUniqueColor, isSwipe);
           spans.add(
             WidgetSpan(
-              child: Container(
-                constraints: BoxConstraints(maxHeight: 250),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: parentStyle.backgroundColor,
-                  border: Border.all(color: Colors.grey, width: 0.9),
-                ),
-                child: SingleChildScrollView(
-                  child: Text(t['content'], style: parentStyle.merge(style)),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: parentStyle.backgroundColor,
+                    border: Border.all(
+                        color: parentStyle.color == Colors.black
+                            ? Color(0xFFEB5D00)
+                            : Color(0xFF1CFFA3),
+                        width: 1),
+                  ),
+                  constraints: BoxConstraints(maxHeight: 300),
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: SingleChildScrollView(
+                    child: Text(t['content'], style: parentStyle.merge(style)),
+                  ),
                 ),
               ),
             ),
