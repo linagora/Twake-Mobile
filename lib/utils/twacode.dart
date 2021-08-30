@@ -855,11 +855,21 @@ class TwacodeRenderer {
           final style = getStyle(type, parentStyle, userUniqueColor, isSwipe);
           spans.add(
             WidgetSpan(
-              child: Container(
-                constraints: BoxConstraints(maxHeight: 300),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Scrollbar(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: parentStyle.backgroundColor,
+                    border: Border.all(
+                        color: parentStyle.color == Colors.black
+                            ? Color(0xFFEB5D00)
+                            : Color(0xFF1CFFA3),
+                        width: 1),
+                  ),
+                  constraints: BoxConstraints(maxHeight: 300),
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
                   child: SingleChildScrollView(
                     child: Text(t['content'], style: parentStyle.merge(style)),
                   ),
