@@ -593,11 +593,12 @@ class TwacodeRenderer {
     TextStyle style;
     switch (type) {
       case TType.InlineCode:
-        style = const TextStyle(
-          height: 1.1,
-          fontFamily: MONOSPACE,
-          // backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
-          // color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
+        style = TextStyle(
+          fontFamily: 'SourceCodePro',
+          fontSize: 15,
+          color: parentStyle.color == Colors.black
+              ? Color(0xFFEB5D00)
+              : Color(0xFF1CFFA3),
         );
         break;
 
