@@ -549,6 +549,7 @@ enum TType {
   Mention,
   Channel,
   Url,
+  Link,
   Emoji,
   Email,
   Icon,
@@ -659,6 +660,7 @@ class TwacodeRenderer {
         break;
 
       case TType.Url:
+      case TType.Link:
         style = parentStyle.color == Colors.black
             ? TextStyle(
                 color: Colors.blue,
@@ -815,6 +817,9 @@ class TwacodeRenderer {
               break;
             case '~~':
               type = TType.StrikeThrough;
+              break;
+            case '[':
+              type = TType.Link;
               break;
             case '@':
               type = TType.Mention;
@@ -984,6 +989,20 @@ class TwacodeRenderer {
                     );
                   }
                 }));
+        } else if (type == TType.Link) {
+          final url = (t['content'] as String).split('(').last;
+          spans.add(TextSpan(
+              style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              text: (t['content'] as String).split(']').first,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  if (await canLaunch(url)) {
+                    await launch(
+                      url,
+                      forceSafariVC: true,
+                    );
+                  }
+                }));
         } else if (type == TType.LineBreak) {
           spans.add(TextSpan(
               text: '\n',
@@ -1023,6 +1042,7 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.Unknown) {
+          print('unknown format: $t');
           spans.add(
             TextSpan(
               text: 'not supported',
