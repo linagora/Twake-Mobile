@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/pages/server_configuration.dart';
+import 'package:twake/pages/sign_up.dart';
 
 class SignFlow extends StatefulWidget {
   @override
@@ -18,6 +19,9 @@ class _SignFlowState extends State<SignFlow> {
 
     _widgets = [
       SignInSignUpForm(
+        onSignUp: () => setState(() {
+          _index = 2;
+        }),
         onChangeServer: () => setState(() {
           _index = 1;
         }),
@@ -27,6 +31,11 @@ class _SignFlowState extends State<SignFlow> {
           _index = 0;
         }),
         onConfirm: () => setState(() {
+          _index = 0;
+        }),
+      ),
+      SignUp(
+        onCancel: () => setState(() {
           _index = 0;
         }),
       ),
@@ -52,7 +61,9 @@ class _SignFlowState extends State<SignFlow> {
 
 class SignInSignUpForm extends StatelessWidget {
   final Function onChangeServer;
-  const SignInSignUpForm({Key? key, required this.onChangeServer})
+  final Function onSignUp;
+  const SignInSignUpForm(
+      {Key? key, required this.onChangeServer, required this.onSignUp})
       : super(key: key);
 
   @override
@@ -117,7 +128,9 @@ class SignInSignUpForm extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      onSignUp();
+                    },
                     child: Text(
                       'Sign up',
                       style: TextStyle(
