@@ -86,8 +86,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 if (state is AuthenticationInProgress) {
                   return buildSplashScreen();
                 } else if (state is AuthenticationInitial) {
-                  return SignUp();
-                  //SignFlow();
+                  return SignFlow();
                 } else if (state is PostAuthenticationSyncInProgress) {
                   return SyncingDataScreen(
                     state.progress.toDouble(),
