@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:twake/config/dimensions_config.dart';
 
 class EmptyChatContainer extends StatelessWidget {
   final bool isDirect;
@@ -23,8 +24,8 @@ class EmptyChatContainer extends StatelessWidget {
         children: [
           SizedBox(height: 16.0),
           Container(
-            width: MediaQuery.of(context).size.width - 72.0,
-            padding: const EdgeInsets.only(top: 16.0),
+            width: Dim.widthPercent(80),
+            padding: const EdgeInsets.only(top: 16.0, left: 5, right: 5),
             decoration: BoxDecoration(
               color: Color(0xfff6f6f6),
               borderRadius: BorderRadius.only(
@@ -51,8 +52,9 @@ class EmptyChatContainer extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.only(top: 12.0, bottom: 16.0),
-            width: MediaQuery.of(context).size.width - 72.0,
+            padding: const EdgeInsets.only(
+                top: 12.0, bottom: 16.0, left: 5, right: 5),
+            width: Dim.widthPercent(80),
             decoration: BoxDecoration(
               color: Color(0xfff6f6f6),
               borderRadius: BorderRadius.only(
@@ -62,11 +64,11 @@ class EmptyChatContainer extends StatelessWidget {
             ),
             child: AutoSizeText(
               isError ? 'Couldn\'t load messages' : message,
-              minFontSize: 10.0,
+              minFontSize: 12.0,
               maxFontSize: 15.0,
-              maxLines: 4,
+              maxLines: 15,
               textAlign: TextAlign.center,
-              softWrap: false,
+              softWrap: true,
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w400,
@@ -89,7 +91,9 @@ class MessagesLoadingAnimation extends StatelessWidget {
       child: Center(
         child: Column(
           children: [
-            SizedBox(height: 50,),
+            SizedBox(
+              height: 50,
+            ),
             SizedBox(
               height: 160,
               width: 160,
@@ -100,12 +104,16 @@ class MessagesLoadingAnimation extends StatelessWidget {
             Text(
               'We are loading chat,',
               style: TextStyle(
-                  fontSize: 20, color: Colors.black, fontWeight: FontWeight.w900),
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w900),
             ),
             Text(
               'please, be patient 😊😕',
               style: TextStyle(
-                  fontSize: 20, color: Colors.black, fontWeight: FontWeight.w900),
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w900),
             )
           ],
         ),

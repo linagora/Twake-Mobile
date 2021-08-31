@@ -167,34 +167,39 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                           Text("Reply to ",
                               style:
                                   TextStyle(fontSize: 15, color: Colors.black)),
-                          Text(
-                            '${_message.sender}',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black),
+                          Container(
+                            constraints:
+                                BoxConstraints(maxWidth: Dim.widthPercent(70)),
+                            child: Text(
+                              '${_message.sender}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black),
+                            ),
                           ),
                           //TODO do we need to use user's color or not?
                           /* Text(
-                                  '${_message.sender}',
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                    color: HSLColor.fromAHSL(
-                                            1,
-                                            _message.username.hashCode % 360,
-                                            0.9,
-                                            0.3)
-                                        .toColor(),
-                                  ),
-                                ),*/
+                                    '${_message.sender}',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: HSLColor.fromAHSL(
+                                              1,
+                                              _message.username.hashCode % 360,
+                                              0.9,
+                                              0.3)
+                                          .toColor(),
+                                    ),
+                                  ),*/
                         ],
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            width: Dim.widthPercent(80),
                             child: TwacodeRenderer(
                               twacode: _message.blocks,
                               parentStyle: TextStyle(

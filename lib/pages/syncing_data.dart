@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 
 class SyncingDataScreen extends StatefulWidget {
   SyncingDataScreen(this.progress, {Key? key}) : super(key: key);
@@ -28,7 +29,7 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.35,
+                width: Dim.widthPercent(35),
                 child: Image.asset(
                   'assets/images/data_sync.png',
                 ),
@@ -54,7 +55,7 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
                 height: 30,
               ),
               Container(
-                width: MediaQuery.of(context).size.width * 0.6,
+                width: Dim.widthPercent(60),
                 height: 10,
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(
@@ -88,7 +89,7 @@ class SyncDataFailed extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: MediaQuery.of(context).size.width * 0.35,
+                width: Dim.widthPercent(35),
                 child: FittedBox(
                   child: Image.asset(
                     'assets/images/data_sync_failed.png',

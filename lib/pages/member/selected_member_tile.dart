@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:twake/config/dimensions_config.dart';
 
 typedef OnSelectedMemberTileClick = void Function();
 
@@ -7,7 +8,8 @@ class SelectedMemberTile extends StatelessWidget {
   final String memberName;
   final OnSelectedMemberTileClick? onSelectedMemberTileClick;
 
-  const SelectedMemberTile({Key? key, required this.memberName, this.onSelectedMemberTileClick})
+  const SelectedMemberTile(
+      {Key? key, required this.memberName, this.onSelectedMemberTileClick})
       : super(key: key);
 
   @override
@@ -31,16 +33,25 @@ class SelectedMemberTile extends StatelessWidget {
                 ),
               ),
               Flexible(
-                  child: Text(memberName,
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                    ),
-                  )),
-              SizedBox(width: 12,)
+                  child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: Dim.widthPercent(75),
+                ),
+                child: Text(
+                  memberName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    fontStyle: FontStyle.normal,
+                  ),
+                ),
+              )),
+              SizedBox(
+                width: 12,
+              )
             ],
           ),
         ));

@@ -87,7 +87,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
     return _emojiVisible
         ? buildEmojiBoard()
         : Container(
-            height: MediaQuery.of(context).size.height * 0.45,
+            height: Dim.widthPercent(45),
             child: Column(
               children: [
                 Container(
@@ -335,7 +335,7 @@ class EmojiLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSize = 27.0;
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: Dim.widthPercent(80),
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,
         horizontal: 16.0, //Dim.wm2,

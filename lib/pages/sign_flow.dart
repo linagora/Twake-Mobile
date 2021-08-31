@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/sign_up.dart';
 
@@ -78,7 +79,7 @@ class SignInSignUpForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.015,
+                  height: Dim.heightPercent(2),
                 ),
                 Container(
                   width: 88,
@@ -94,7 +95,7 @@ class SignInSignUpForm extends StatelessWidget {
                   height: 40,
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: Dim.widthPercent(90),
                   height: 60,
                   child: TextButton(
                     style: TextButton.styleFrom(
@@ -119,7 +120,7 @@ class SignInSignUpForm extends StatelessWidget {
                   height: 30,
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: Dim.widthPercent(90),
                   height: 60,
                   child: TextButton(
                     style: TextButton.styleFrom(
@@ -149,7 +150,7 @@ class SignInSignUpForm extends StatelessWidget {
                   height: 15,
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.9,
+                  width: Dim.widthPercent(90),
                   height: 60,
                   child: TextButton(
                     style: TextButton.styleFrom(
@@ -175,7 +176,7 @@ class SignInSignUpForm extends StatelessWidget {
                 ),
                 Center(
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.85,
+                    width: Dim.widthPercent(85),
                     child: Text(
                       'You can connect with different server or instead proceed with default Linagora server.',
                       style: TextStyle(fontSize: 13),

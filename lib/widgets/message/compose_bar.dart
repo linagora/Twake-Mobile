@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
@@ -325,8 +326,8 @@ class _ComposeBar extends State<ComposeBar> {
                         }
                         return ConstrainedBox(
                           constraints: BoxConstraints(
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * 0.3),
+                            maxHeight: Dim.heightPercent(30),
+                          ),
                           child: SingleChildScrollView(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

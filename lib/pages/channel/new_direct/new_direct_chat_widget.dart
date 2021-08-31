@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -320,13 +321,16 @@ class _FoundPeopleDirectTile extends StatelessWidget {
                 name: name,
               ),
             ),
-            Text(name,
-                style: TextStyle(
-                  color: Color(0xff000000),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  fontStyle: FontStyle.normal,
-                ))
+            Container(
+              constraints: BoxConstraints(maxWidth: Dim.widthPercent(70)),
+              child: Text(name,
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.normal,
+                  )),
+            )
           ],
         ),
       ),
