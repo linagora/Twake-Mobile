@@ -456,33 +456,40 @@ class _MessageTileState<T extends BaseMessagesCubit>
                             ],
                           )
                         : _message.delivery == Delivery.failed
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor: Colors.white,
-                                    child: Icon(
-                                      CupertinoIcons
-                                          .exclamationmark_circle_fill,
-                                      color: Colors.red[400],
-                                      size: 20,
+                            ? GestureDetector(
+                                onTap: () async {
+                                  widget.isThread
+                                      ? Get.find<ThreadMessagesCubit>()
+                                          .resend(message: _message)
+                                      : Get.find<ChannelMessagesCubit>()
+                                          .resend(message: _message);
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: Colors.white,
+                                      child: Icon(
+                                        CupertinoIcons
+                                            .exclamationmark_circle_fill,
+                                        color: Colors.red[400],
+                                        size: 20,
+                                      ),
                                     ),
-                                  ),
-                                  if (widget.downBubbleSide)
-                                    _message.reactions.isEmpty
-                                        ? SizedBox(height: 10.0)
-                                        : SizedBox(height: 18.0),
-                                  if (_message.reactions.isNotEmpty &&
-                                      !widget.downBubbleSide)
-                                    SizedBox(height: 18.0)
-                                ],
+                                    if (widget.downBubbleSide)
+                                      _message.reactions.isEmpty
+                                          ? SizedBox(height: 10.0)
+                                          : SizedBox(height: 18.0),
+                                    if (_message.reactions.isNotEmpty &&
+                                        !widget.downBubbleSide)
+                                      SizedBox(height: 18.0)
+                                  ],
+                                ),
                               )
                             : Container()
                 : Container(),
-            _message.delivery == Delivery.delivered || _isMyMessage == false
-                ? SizedBox(width: 8.0)
-                : SizedBox(width: 12.0),
+            SizedBox(width: 6.0),
             if (!_isMyMessage)
               SizedBox(
                 width: Dim.widthPercent(10),
