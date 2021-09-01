@@ -82,6 +82,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     String? threadId,
   }) async {
     if (this.state is! MessagesLoadSuccess) return;
+    if ((this.state as MessagesLoadSuccess).endOfHistory) return;
 
     final state = this.state as MessagesLoadSuccess;
 
