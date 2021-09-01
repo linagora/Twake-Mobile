@@ -15,10 +15,12 @@ class MessagesInitial extends MessagesState {
 class MessagesLoadSuccess extends MessagesState {
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
+  final bool endOfHistory;
 
   const MessagesLoadSuccess({
     required this.messages,
     required this.hash,
+    this.endOfHistory: false,
   });
 
   @override

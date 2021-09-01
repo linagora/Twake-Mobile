@@ -90,6 +90,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       hash: state.hash,
     ));
 
+    final prevLen = state.messages.length;
+
     final messages = await _repository.fetchBefore(
       channelId: channelId,
       threadId: threadId,
@@ -102,6 +104,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final newState = MessagesLoadSuccess(
       messages: messages,
       hash: messages.fold(0, (acc, m) => acc + m.hash),
+      endOfHistory: prevLen == messages.length,
     );
 
     emit(newState);
@@ -126,6 +129,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
       final messages = (this.state as MessagesLoadSuccess).messages;
       final hash = (this.state as MessagesLoadSuccess).hash;
+      final endOfHistory = (this.state as MessagesLoadSuccess).endOfHistory;
 
       final index = messages.indexWhere((m) => m.id == id);
 
@@ -138,6 +142,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       emit(MessagesLoadSuccess(
         messages: messages,
         hash: hash + message.hash,
+        endOfHistory: endOfHistory,
       ));
     }
 
@@ -180,6 +185,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
       final messages = (this.state as MessagesLoadSuccess).messages;
       final hash = (this.state as MessagesLoadSuccess).hash;
+      final endOfHistory = (this.state as MessagesLoadSuccess).endOfHistory;
 
       final index = messages.indexWhere((m) => m.id == fakeId);
 
@@ -192,6 +198,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       emit(MessagesLoadSuccess(
         messages: messages,
         hash: hash + message.hash,
+        endOfHistory: endOfHistory,
       ));
     }
 
@@ -237,6 +244,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
+    final endOfHistory = (this.state as MessagesLoadSuccess).endOfHistory;
 
     message.blocks = prepared;
     message.text = editedText;
@@ -246,6 +254,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       messages: messages,
       // hash should be different from current state because we changed the text of message
       hash: messages.fold(0, (acc, m) => acc + m.hash),
+      endOfHistory: endOfHistory,
     ));
     // here we can use try except to revert the message to original state
     // if the request to API failed for some reason
@@ -285,11 +294,13 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     if (this.state is! MessagesLoadSuccess) return;
 
     final messages = (this.state as MessagesLoadSuccess).messages;
+    final endOfHistory = (this.state as MessagesLoadSuccess).endOfHistory;
 
     emit(MessagesLoadSuccess(
       messages: messages,
       // hash should be different from current state, as reactions were modified
       hash: messages.fold(0, (acc, m) => acc + m.hash),
+      endOfHistory: endOfHistory,
     ));
 
     // As usual, we can try except here to roll back reactions if
@@ -302,10 +313,15 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
     final messages = (this.state as MessagesLoadSuccess).messages;
     final hash = (this.state as MessagesLoadSuccess).hash;
+    final endOfHistory = (this.state as MessagesLoadSuccess).endOfHistory;
     messages.removeWhere((m) => m.id == message.id);
 
     if (messages.isNotEmpty) {
-      emit(MessagesLoadSuccess(messages: messages, hash: hash - message.hash));
+      emit(MessagesLoadSuccess(
+        messages: messages,
+        hash: hash - message.hash,
+        endOfHistory: endOfHistory,
+      ));
     } else {
       emit(NoMessagesFound());
     }
