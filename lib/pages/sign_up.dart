@@ -1,8 +1,10 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 
 class SignUp extends StatefulWidget {
@@ -34,9 +36,16 @@ class _SignUpState extends State<SignUp> {
     super.dispose();
   }
 
-  void _sendLink() async {
-    //add send action if validate
+  void _sendLink(String email) async {
     if (_formKey.currentState!.validate()) {
+      /* Get.find<RegistrationCubit>().prepare();
+      final stateRegistration = Get.find<RegistrationCubit>().state;
+      if (stateRegistration is RegistrationReady) {
+        await Get.find<RegistrationCubit>().signup(
+            email: email,
+            secretToken: stateRegistration.secretToken,
+            code: stateRegistration.code);
+      }*/
       setState(() {
         isSent = true;
       });
@@ -125,6 +134,47 @@ class _SignUpState extends State<SignUp> {
                               color: Colors.black),
                         ),
                       ),
+                      BlocBuilder<RegistrationCubit, RegistrationState>(
+                        bloc: Get.find<RegistrationCubit>(),
+                        builder: (ctx, state) {
+                          if (state is RegistrationSuccess) {
+                            return Container();
+                          } else if (state is EmailResendSuccess) {
+                            return Container();
+                          } else if (state is EmailResendFailed) {
+                            return Container();
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 25, right: 25, bottom: 25),
+                        child: TextButton(
+                          onPressed: () async {
+                            await Get.find<RegistrationCubit>()
+                                .resendEmail(email: _controller.text);
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF004DFF),
+                              borderRadius: BorderRadius.circular(14.0),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Resend email',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       TextButton(
                         onPressed: () async {
                           await Get.find<AuthenticationCubit>().authenticate();
@@ -181,7 +231,7 @@ class _SignUpState extends State<SignUp> {
                             },
                             controller: _controller,
                             onFieldSubmitted: (_) {
-                              _sendLink();
+                              _sendLink(_controller.text);
                               setState(() {});
                             },
                             style: TextStyle(
@@ -284,13 +334,13 @@ class _SignUpState extends State<SignUp> {
                             left: 25, right: 25, bottom: 25),
                         child: TextButton(
                           onPressed: () {
-                            _sendLink();
+                            _sendLink(_controller.text);
                             setState(() {});
                           },
                           child: Container(
                             height: 50,
                             decoration: BoxDecoration(
-                              color: Color(0xff3840f7),
+                              color: Color(0xFF004DFF),
                               borderRadius: BorderRadius.circular(14.0),
                             ),
                             alignment: Alignment.center,
