@@ -15,8 +15,8 @@ import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
-
 import 'package:twake/widgets/common/reaction.dart';
+import 'package:twake/widgets/message/resend_modal_sheet.dart';
 
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool hideShowReplies;
@@ -458,11 +458,17 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         : _message.delivery == Delivery.failed
                             ? GestureDetector(
                                 onTap: () async {
-                                  widget.isThread
-                                      ? Get.find<ThreadMessagesCubit>()
-                                          .resend(message: _message)
-                                      : Get.find<ChannelMessagesCubit>()
-                                          .resend(message: _message);
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (_) {
+                                      return ResendModalSheet(
+                                        message: _message,
+                                        isThread: widget.isThread,
+                                      );
+                                    },
+                                  );
                                 },
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
