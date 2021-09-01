@@ -385,6 +385,7 @@ Widget modalSheet(
                 Padding(
                   padding: const EdgeInsets.only(top: 35, bottom: 15),
                   child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () async {
                       if (currentChannel != null) {
                         await Get.find<ChannelsCubit>().removeMembers(
@@ -392,6 +393,23 @@ Widget modalSheet(
                         Get.find<MemberManagementCubit>()
                             .getMembersFromIds(channel: currentChannel);
                         Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            margin: EdgeInsets.fromLTRB(
+                              15.0,
+                              5.0,
+                              15.0,
+                              65.0,
+                              //  Dim.heightPercent(8),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 3),
+                            content: Text('Member is removed'),
+                          ),
+                        );
                       }
                     },
                     child: Row(
