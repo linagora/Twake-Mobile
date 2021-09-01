@@ -8,6 +8,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
+import 'package:twake/utils/translit.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
 import 'home_channel_tile.dart';
@@ -33,6 +34,9 @@ class HomeChannelListWidget extends StatelessWidget {
                 ? channelState.channels
                 : channelState.channels.where((channel) {
                     return channel.name.toLowerCase().contains(serchText) ||
+                        channel.name
+                            .toLowerCase()
+                            .contains(translitCyrillicToLatin(serchText)) ||
                         (channel.description
                                 ?.toLowerCase()
                                 .contains(serchText) ??
