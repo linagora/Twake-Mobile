@@ -181,8 +181,6 @@ class MessagesRepository {
     required String threadId,
     bool isDirect: false,
   }) async* {
-    if (!Globals.instance.isNetworkConnected) return;
-
     final now = DateTime.now().millisecondsSinceEpoch;
 
     final result = await _storage.first(
@@ -274,8 +272,6 @@ class MessagesRepository {
     required Message message,
     bool isDirect: false,
   }) async* {
-    if (!Globals.instance.isNetworkConnected) return;
-
     message.delivery = Delivery.inProgress;
     final now = DateTime.now().millisecondsSinceEpoch;
 

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:twake/blocs/registration_cubit/registration_state.dart';
 import 'package:twake/repositories/registration_repository.dart';
 
@@ -18,7 +19,10 @@ class RegistrationCubit extends Cubit<RegistrationState> {
   void prepare() async {
     final secretToken = await _repository.secretToken;
 
-    emit(RegistrationReady(secretToken: secretToken, code: ''));
+    emit(RegistrationReady(
+      secretToken: secretToken,
+      code: DotEnv().env['CAPTCHA_TOKEN']!,
+    ));
   }
 
   Future<void> signup({

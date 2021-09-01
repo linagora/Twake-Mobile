@@ -36,6 +36,7 @@ class AuthenticationRepository {
         authentication = await prolongAuthentication(authentication);
         idToken = authentication.idToken;
     }
+
     return true;
   }
 
@@ -204,7 +205,11 @@ class AuthenticationRepository {
       }
     };
     Logger().w('Registering device: ${Endpoint.device}\n$data');
-    await _api.post(endpoint: Endpoint.device, data: data);
+    final l = await _api.post(endpoint: Endpoint.device, data: data);
+    Logger().w('RESPONSE: $l');
+    final devices =
+        await _api.get(endpoint: Endpoint.device, queryParameters: const {});
+    Logger().w('DEVS: $devices');
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
