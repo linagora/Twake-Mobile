@@ -116,6 +116,8 @@ flutter:
     - assets/images/2.0x/
     - assets/images/3.0x/
 
+    # temporary
+    - .env
     # localization
     # - assets/translations/
 
