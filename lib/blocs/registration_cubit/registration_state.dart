@@ -42,3 +42,17 @@ class RegistrationFailed extends RegistrationState {
   @override
   List<Object?> get props => [email];
 }
+
+class EmailResendSuccess extends RegistrationState {
+  const EmailResendSuccess();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class EmailResendFailed extends RegistrationState {
+  const EmailResendFailed();
+
+  @override
+  List<Object?> get props => [];
+}

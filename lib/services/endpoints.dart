@@ -5,6 +5,9 @@ class Endpoint {
       'https://subscription.%s/api/subscriptions/reservation';
   static const signup = 'https://account.%s/api/signup';
 
+  static const emailResend =
+      'https://account.%s/api/users/resend-verification-email';
+
   // Core methods
   // Obtain JWToken pair for Twake
   static const login = '/internal/services/console/v1/login';
@@ -46,9 +49,9 @@ class Endpoint {
   static const badges = '/internal/services/notifications/v1/badges';
   static const files = '/internal/services/files/v1/companies/%s/files';
 
-  static const publicMethods = const [info, reservation, signup];
+  static const publicMethods = const [info, reservation, signup, emailResend];
 
-  static const consoleMethods = const [reservation, signup];
+  static const consoleMethods = const [reservation, signup, emailResend];
   // Returns true if the method is publicly accessable, i.e. without authorization
   static bool isPublic(String method) {
     return publicMethods.contains(method);

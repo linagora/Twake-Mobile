@@ -48,4 +48,14 @@ class RegistrationCubit extends Cubit<RegistrationState> {
         ));
     }
   }
+
+  Future<void> resendEmail({required String email}) async {
+    final res = await _repository.resendEmail(email: email);
+
+    if (res) {
+      emit(EmailResendSuccess());
+    } else {
+      emit(EmailResendFailed());
+    }
+  }
 }

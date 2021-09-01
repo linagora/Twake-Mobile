@@ -53,6 +53,17 @@ class RegistrationRepository {
     return SignUpStatus.success;
   }
 
+  Future<bool> resendEmail({required String email}) async {
+    try {
+      await _api.post(endpoint: Endpoint.emailResend, data: {'email': email});
+    } catch (e) {
+      Logger().e('Error resending email: $e');
+      return false;
+    }
+
+    return true;
+  }
+
   String get _pass {
     final generator = Random.secure();
     List<int> pass = [];
