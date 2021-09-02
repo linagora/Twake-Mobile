@@ -87,7 +87,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
     return _emojiVisible
         ? buildEmojiBoard()
         : Container(
-            height: Dim.widthPercent(45),
+            height: Dim.heightPercent(45),
             child: Column(
               children: [
                 Container(
