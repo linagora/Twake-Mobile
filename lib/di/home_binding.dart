@@ -7,6 +7,7 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/services/navigator_service.dart';
 
@@ -46,6 +47,9 @@ class HomeBinding implements Bindings {
 
     final badgesCubit = BadgesCubit();
     Get.put(badgesCubit, permanent: true);
+
+    final registratCubit = RegistrationCubit();
+    Get.put(registratCubit, permanent: true);
 
     NavigatorService(
       accountCubit: accountCubit,
