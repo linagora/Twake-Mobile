@@ -45,14 +45,14 @@ class SocketIOService {
 
     // Set up all the event handlers
     _socket.onConnect((_) {
-      Logger().v('Socket IO connection estabilished');
+      // Logger().v('Socket IO connection estabilished');
 
       _socket.emit(IOEvent.authenticate, {'token': Globals.instance.token});
     });
 
     _socket.on(IOEvent.authenticated, (_) {
       _reconnectionStream.sink.add(true);
-      Logger().v('Successfully authenticated on Socket IO channel');
+      // Logger().v('Successfully authenticated on Socket IO channel');
     });
 
     _socket.on(
@@ -66,8 +66,8 @@ class SocketIOService {
 
     _socket.on(
       IOEvent.join_success,
-      // (r) => {},
-      (r) => Logger().v('successfully joined room $r'),
+      (r) => {},
+      // (r) => Logger().v('successfully joined room $r'),
     );
 
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
@@ -110,7 +110,7 @@ class SocketIOService {
   }
 
   void _handleResource(data) {
-    Logger().v('GOT RESOURCE: $data');
+    // Logger().v('GOT RESOURCE: $data');
     final resource = SocketIOResource.fromJson(json: data);
     _resourceStream.sink.add(resource);
   }

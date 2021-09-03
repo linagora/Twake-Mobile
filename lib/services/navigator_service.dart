@@ -174,6 +174,12 @@ class NavigatorService {
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
 
+      threadMessagesCubit.fetch(
+        channelId: channelId,
+        threadId: threadId,
+        isDirect: channel.isDirect,
+      );
+
       final path = channel.isDirect
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
@@ -182,12 +188,6 @@ class NavigatorService {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
-
-      threadMessagesCubit.fetch(
-        channelId: channelId,
-        threadId: threadId,
-        isDirect: channel.isDirect,
-      );
     }
   }
 

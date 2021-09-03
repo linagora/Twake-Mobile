@@ -123,8 +123,10 @@ class SynchronizationService {
       _socketio.resourceStream
           .where((r) => r.type == ResourceType.userNotificationBadges);
 
-  Future<void> subscribeForChannels(
-      {required String workspaceId, required String companyId}) async {
+  Future<void> subscribeForChannels({
+    required String workspaceId,
+    required String companyId,
+  }) async {
     if (Globals.instance.token == null) return;
 
     if (workspaceId != 'direct') {

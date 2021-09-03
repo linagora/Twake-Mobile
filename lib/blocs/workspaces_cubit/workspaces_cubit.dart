@@ -17,7 +17,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     _repository = repository;
 
     // wait for authentication check before attempting to subscribe
-    Future.delayed(Duration(seconds: 7), () {
+    Future.delayed(Duration(seconds: 5), () {
       SynchronizationService.instance.subscribeToBadges();
       if (Globals.instance.companyId != null) {
         SynchronizationService.instance.subscribeForChannels(
