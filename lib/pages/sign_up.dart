@@ -36,7 +36,6 @@ class _SignUpState extends State<SignUp> {
 
   void _sendLink(String email) async {
     if (_formKey.currentState!.validate()) {
-      Get.find<RegistrationCubit>().prepare();
       final stateRegistration = Get.find<RegistrationCubit>().state;
       if (stateRegistration is RegistrationReady) {
         await Get.find<RegistrationCubit>().signup(
@@ -94,18 +93,18 @@ class _SignUpState extends State<SignUp> {
         child: BlocBuilder<RegistrationCubit, RegistrationState>(
           bloc: Get.find<RegistrationCubit>(),
           builder: (ctx, state) {
-            if (state is RegistrationInitial) {
-              return registrationInitial(emailExists: false);
+            if (state is RegistrationReady) {
+              return registrationInitial(emailExists: false, init: false);
             } else if (state is RegistrationSuccess) {
               return registrationSuccess();
             } else if (state is RegistrationFailed) {
               if (state.emailExists) {
-                return registrationInitial(emailExists: true);
+                return registrationInitial(emailExists: true, init: false);
               } else {
                 return registrationFailed();
               }
             } else {
-              return registrationFailed();
+              return registrationInitial(emailExists: false, init: true);
             }
           },
         ),
@@ -113,7 +112,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget registrationInitial({required bool emailExists}) {
+  Widget registrationInitial({required bool emailExists, required bool init}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -139,86 +138,90 @@ class _SignUpState extends State<SignUp> {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15),
-          child: Form(
-            key: _formKey,
-            child: TextFormField(
-              validator: (value) {
-                if (value == null) {
-                  return null;
-                }
-                if (EmailValidator.validate(value)) {
-                  return null;
-                } else {
-                  if (emailExists) {
-                    return 'Entered email is already in use';
-                  } else {
-                    return 'Please enter the correct email address';
-                  }
-                }
-              },
-              controller: _controller,
-              onFieldSubmitted: (_) {
-                _sendLink(_controller.text);
-                setState(() {});
-              },
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                hintText: " Email",
-                hintStyle: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xffc8c8c8),
-                ),
-                alignLabelWithHint: true,
-                fillColor: Color(0xfff4f4f4),
-                filled: true,
-                suffix: _formKey.currentState == null
-                    ? Container(
-                        width: 30,
-                        height: 25,
-                        padding: EdgeInsets.only(left: 10),
-                        child: IconButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: () => _controller.clear(),
-                          iconSize: 15,
-                          icon: Icon(CupertinoIcons.clear),
+          child: init
+              ? Center(child: CircularProgressIndicator())
+              : Form(
+                  autovalidateMode: AutovalidateMode.disabled,
+                  key: _formKey,
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.disabled,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter email address';
+                      }
+                      if (EmailValidator.validate(value)) {
+                        return null;
+                      } else {
+                        if (emailExists) {
+                          return 'Entered email is already in use';
+                        } else {
+                          return 'Please enter the correct email address';
+                        }
+                      }
+                    },
+                    controller: _controller,
+                    onFieldSubmitted: (_) {
+                      _sendLink(_controller.text);
+                      //  setState(() {});
+                    },
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: " Email",
+                      hintStyle: TextStyle(
+                        fontSize: 14.0,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xffc8c8c8),
+                      ),
+                      alignLabelWithHint: true,
+                      fillColor: Color(0xfff4f4f4),
+                      filled: true,
+                      suffix: _formKey.currentState == null
+                          ? Container(
+                              width: 30,
+                              height: 25,
+                              padding: EdgeInsets.only(left: 10),
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                onPressed: () => _controller.clear(),
+                                iconSize: 15,
+                                icon: Icon(CupertinoIcons.clear),
+                              ),
+                            )
+                          : _formKey.currentState!.validate()
+                              ? Container(
+                                  width: 30,
+                                  height: 25,
+                                  padding: EdgeInsets.only(left: 10),
+                                  child: IconButton(
+                                    padding: EdgeInsets.all(0),
+                                    onPressed: () => _controller.clear(),
+                                    iconSize: 15,
+                                    icon: Icon(CupertinoIcons.clear),
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  radius: 10,
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    CupertinoIcons.exclamationmark_circle_fill,
+                                    color: Colors.red[400],
+                                    size: 20,
+                                  ),
+                                ),
+                      border: UnderlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          width: 0.0,
+                          style: BorderStyle.none,
                         ),
-                      )
-                    : _formKey.currentState!.validate()
-                        ? Container(
-                            width: 30,
-                            height: 25,
-                            padding: EdgeInsets.only(left: 10),
-                            child: IconButton(
-                              padding: EdgeInsets.all(0),
-                              onPressed: () => _controller.clear(),
-                              iconSize: 15,
-                              icon: Icon(CupertinoIcons.clear),
-                            ),
-                          )
-                        : CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              CupertinoIcons.exclamationmark_circle_fill,
-                              color: Colors.red[400],
-                              size: 20,
-                            ),
-                          ),
-                border: UnderlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    width: 0.0,
-                    style: BorderStyle.none,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
         ),
         Flexible(
           child: SizedBox(
