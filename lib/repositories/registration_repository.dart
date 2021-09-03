@@ -37,7 +37,7 @@ class RegistrationRepository {
           'password': _pass,
           'locale': 'en',
           'secretToken': secretToken,
-          'captchResponseToken': code,
+          'captchaResponseToken': code,
         },
         key: 'email',
       );
