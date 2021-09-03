@@ -42,11 +42,11 @@ class RegistrationRepository {
         key: 'email',
       );
     } on DioError catch (e) {
+      Logger().e('Error signing up the user: $e');
       if (e.response?.statusCode == 409) {
         // email exists
         return SignUpStatus.emailExists;
       } else {
-        Logger().e('Error signing up the user: $e');
         return SignUpStatus.unknownError;
       }
     }
@@ -79,7 +79,7 @@ class RegistrationRepository {
     }
     final len = pass.length;
     for (int i = 0; i < len; i++) {
-      final to = generator.nextInt(len) + 1;
+      final to = generator.nextInt(len);
       final from = generator.nextInt(len) + 1;
       final t = pass[to];
       pass[to] = pass[len - from];
