@@ -21,7 +21,7 @@ void main() async {
 
   await InitService.preAuthenticationInit();
 
-  await DotEnv().load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
 
   runApp(RefreshConfiguration(
     headerBuilder: () => PullToRefreshHeader(
