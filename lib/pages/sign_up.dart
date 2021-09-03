@@ -74,16 +74,16 @@ class _SignUpState extends State<SignUp> {
               Padding(
                 padding: const EdgeInsets.only(right: 10),
                 child: CupertinoButton(
-                    child: Icon(
-                      CupertinoIcons.clear,
-                      color: Colors.grey[600],
-                    ),
-                    onPressed: () {
-                      {
-                        widget.onCancel!();
-                        _controller.clear();
-                      }
-                    }),
+                  child: Icon(
+                    CupertinoIcons.clear,
+                    color: Colors.grey[600],
+                  ),
+                  onPressed: () {
+                    widget.onCancel!();
+                    _controller.clear();
+                    Get.find<RegistrationCubit>().emit(RegistrationInitial());
+                  },
+                ),
               ),
             ],
           ),
@@ -97,6 +97,10 @@ class _SignUpState extends State<SignUp> {
               return registrationInitial(emailExists: false, init: false);
             } else if (state is RegistrationSuccess) {
               return registrationSuccess();
+            } else if (state is EmailResendSuccess) {
+              return registrationSuccess(emailResendSuccess: true);
+            } else if (state is EmailResendFailed) {
+              return registrationSuccess(emailResendSuccess: false);
             } else if (state is RegistrationFailed) {
               if (state.emailExists) {
                 return registrationInitial(emailExists: true, init: false);
@@ -141,10 +145,8 @@ class _SignUpState extends State<SignUp> {
           child: init
               ? Center(child: CircularProgressIndicator())
               : Form(
-                  autovalidateMode: AutovalidateMode.disabled,
                   key: _formKey,
                   child: TextFormField(
-                    autovalidateMode: AutovalidateMode.disabled,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter email address';
@@ -152,11 +154,7 @@ class _SignUpState extends State<SignUp> {
                       if (EmailValidator.validate(value)) {
                         return null;
                       } else {
-                        if (emailExists) {
-                          return 'Entered email is already in use';
-                        } else {
-                          return 'Please enter the correct email address';
-                        }
+                        return 'Please enter the correct email address';
                       }
                     },
                     controller: _controller,
@@ -223,6 +221,14 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
         ),
+        if (emailExists)
+          Padding(
+            padding: const EdgeInsets.only(left: 35),
+            child: Text(
+              "Entered email address is already in use",
+              style: TextStyle(fontSize: 12, color: Colors.red),
+            ),
+          ),
         Flexible(
           child: SizedBox(
             height: Dim.heightPercent(40),
@@ -261,7 +267,6 @@ class _SignUpState extends State<SignUp> {
           child: TextButton(
             onPressed: () {
               _sendLink(_controller.text);
-              setState(() {});
             },
             child: Container(
               height: 50,
@@ -286,7 +291,7 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Widget registrationSuccess() {
+  Widget registrationSuccess({bool? emailResendSuccess}) {
     return Column(
       children: [
         SizedBox(
@@ -321,11 +326,8 @@ class _SignUpState extends State<SignUp> {
                 color: Colors.black),
           ),
         ),
-        BlocBuilder<RegistrationCubit, RegistrationState>(
-          bloc: Get.find<RegistrationCubit>(),
-          builder: (ctx, state) {
-            if (state is RegistrationSuccess) {
-              return Padding(
+        emailResendSuccess == null
+            ? Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
                 child: TextButton(
                   onPressed: () async {
@@ -350,73 +352,43 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                 ),
-              );
-            } else if (state is EmailResendSuccess) {
-              return Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.check_mark_circled_solid,
-                    color: Color(0xff3840F7),
+              )
+            : emailResendSuccess
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        CupertinoIcons.check_mark_circled_solid,
+                        color: Color(0xFF02A82E),
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Email sent',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF02A82E),
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Email resend failed',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red[400],
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Email sent',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF02A82E),
-                    ),
-                  ),
-                ],
-              );
-            } else if (state is EmailResendFailed) {
-              return Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.exclamationmark_circle_fill,
-                    color: Colors.red[400],
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Email resend failed',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF02A82E),
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return Row(
-                children: [
-                  Icon(
-                    CupertinoIcons.exclamationmark_circle_fill,
-                    color: Colors.red[400],
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Email resend failed',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF02A82E),
-                    ),
-                  ),
-                ],
-              );
-            }
-          },
-        ),
         TextButton(
           onPressed: () async {
             await Get.find<AuthenticationCubit>().authenticate();
@@ -488,7 +460,7 @@ class _SignUpState extends State<SignUp> {
           ),
           TextButton(
             onPressed: () {
-              _sendLink(_controller.text);
+              Get.find<RegistrationCubit>().prepare();
             },
             child: Container(
               height: 50,
@@ -513,3 +485,93 @@ class _SignUpState extends State<SignUp> {
     );
   }
 }
+
+
+
+
+/*
+  BlocBuilder<RegistrationCubit, RegistrationState>(
+          bloc: Get.find<RegistrationCubit>(),
+          builder: (ctx, state) {
+            if (state is RegistrationSuccess) {
+              return Padding(
+                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
+                child: TextButton(
+                  onPressed: () async {
+                    await Get.find<RegistrationCubit>()
+                        .resendEmail(email: _controller.text);
+                  },
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Color(0xFF004DFF),
+                      borderRadius: BorderRadius.circular(14.0),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Resend email',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 17.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            } else if (state is EmailResendSuccess) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.check_mark_circled_solid,
+                    color: Color(0xff3840F7),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Email sent',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF02A82E),
+                    ),
+                  ),
+                ],
+              );
+            } else if (state is EmailResendFailed) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Email resend failed',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF02A82E),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Email resend failed',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red[400],
+                    ),
+                  ),
+                ],
+              );
+            }
+          },
+        ),*/
