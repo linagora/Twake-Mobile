@@ -984,6 +984,7 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
+          print('FILE: $t');
           final widget = FileTile(fileId: t['content']);
 
           spans.add(WidgetSpan(child: widget));

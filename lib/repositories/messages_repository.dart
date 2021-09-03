@@ -392,8 +392,10 @@ class MessagesRepository {
     return message;
   }
 
-  Future<void> delete(
-      {required String messageId, required String threadId}) async {
+  Future<void> delete({
+    required String messageId,
+    required String threadId,
+  }) async {
     // Deleting should be disallowed without active internet connection
     if (!Globals.instance.isNetworkConnected) return;
 

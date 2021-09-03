@@ -21,7 +21,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
 
     emit(RegistrationReady(
       secretToken: secretToken,
-      code: DotEnv().env['CAPTCHA_TOKEN']!,
+      code: dotenv.env['CAPTCHA_TOKEN']!,
     ));
   }
 
