@@ -30,7 +30,7 @@ class ResendModalSheet extends StatelessWidget {
             borderRadius: BorderRadius.circular(22.0),
           ),
           child: Container(
-            height: 115,
+            height: 160,
             width: Dim.widthPercent(94),
             child: Padding(
               padding: const EdgeInsets.only(left: 25, right: 25, top: 10),
@@ -70,6 +70,34 @@ class ResendModalSheet extends StatelessWidget {
                               .resend(message: message)
                           : Get.find<ChannelMessagesCubit>()
                               .resend(message: message);
+                      Navigator.pop(context);
+                    },
+                  ),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      padding: EdgeInsets.only(top: 10),
+                      alignment: Alignment.center,
+                      width: Dim.widthPercent(80),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Text(
+                          "Delete this message",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red[400],
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      isThread
+                          ? Get.find<ThreadMessagesCubit>()
+                              .delete(message: message)
+                          : Get.find<ChannelMessagesCubit>()
+                              .delete(message: message);
+
                       Navigator.pop(context);
                     },
                   ),
