@@ -66,24 +66,27 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && Globals.instance.token != null) {
-      Get.find<CompaniesCubit>().fetch();
-      Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+      Future.delayed(Duration(seconds: 7), () {
+        Get.find<CompaniesCubit>().fetch();
+        Get.find<WorkspacesCubit>()
+            .fetch(companyId: Globals.instance.companyId);
 
-      Get.find<ChannelsCubit>().fetch(
-        workspaceId: Globals.instance.workspaceId!,
-        companyId: Globals.instance.companyId,
-      );
-      Get.find<DirectsCubit>().fetch(
-        workspaceId: 'direct',
-        companyId: Globals.instance.companyId,
-      );
+        Get.find<ChannelsCubit>().fetch(
+          workspaceId: Globals.instance.workspaceId!,
+          companyId: Globals.instance.companyId,
+        );
+        Get.find<DirectsCubit>().fetch(
+          workspaceId: 'direct',
+          companyId: Globals.instance.companyId,
+        );
 
-      Get.find<AccountCubit>().fetch();
+        Get.find<AccountCubit>().fetch();
 
-      Get.find<BadgesCubit>().fetch();
-      // Reset socketio connection and all the subscriptions
-      SocketIOService.instance.disconnect();
-      SocketIOService.instance.connect();
+        Get.find<BadgesCubit>().fetch();
+        // Reset socketio connection and all the subscriptions
+        SocketIOService.instance.disconnect();
+        SocketIOService.instance.connect();
+      });
     }
     super.didChangeAppLifecycleState(state);
   }

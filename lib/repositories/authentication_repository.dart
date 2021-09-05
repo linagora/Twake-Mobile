@@ -204,12 +204,7 @@ class AuthenticationRepository {
         'version': Globals.version,
       }
     };
-    Logger().w('Registering device: ${Endpoint.device}\n$data');
-    final l = await _api.post(endpoint: Endpoint.device, data: data);
-    Logger().w('RESPONSE: $l');
-    final devices =
-        await _api.get(endpoint: Endpoint.device, queryParameters: const {});
-    Logger().w('DEVS: $devices');
+    await _api.post(endpoint: Endpoint.device, data: data);
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
