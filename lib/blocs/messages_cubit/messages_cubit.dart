@@ -101,11 +101,16 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     // if user switched channel before the fetchBefore method is complete, abort
     // and just ignore the result
     if (channelId != Globals.instance.channelId) return;
+    final endOfHistory = prevLen == messages.length;
+
+    if (endOfHistory) {
+      messages.insert(0, dummy);
+    }
 
     final newState = MessagesLoadSuccess(
       messages: messages,
       hash: messages.fold(0, (acc, m) => acc + m.hash),
-      endOfHistory: prevLen == messages.length,
+      endOfHistory: endOfHistory,
     );
 
     emit(newState);
@@ -363,6 +368,22 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     thread.draft = draft;
 
     _repository.saveOne(message: thread);
+  }
+
+  Message get dummy {
+    return Message(
+      id: '',
+      threadId: '',
+      channelId: '',
+      blocks: const [],
+      createdAt: 0,
+      updatedAt: 0,
+      responsesCount: 0,
+      userId: '',
+      text: '',
+      reactions: const [],
+      files: const [],
+    );
   }
 
   Future<void> listenToMessageChanges() async {

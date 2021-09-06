@@ -78,7 +78,7 @@ class Message extends BaseModel {
     required this.createdAt,
     required this.updatedAt,
     required this.responsesCount,
-    required this.username,
+    this.username,
     required this.text,
     required this.blocks,
     required this.reactions,
