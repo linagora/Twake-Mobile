@@ -39,6 +39,7 @@ class ApiDataTransformer {
 
   static Map<String, dynamic> company({required Map<String, dynamic> json}) {
     json['total_members'] = json['stats']['total_members'];
+    json['role'] = (json['role'] ?? '').isNotEmpty ? json['role'] : 'member';
 
     return json;
   }
