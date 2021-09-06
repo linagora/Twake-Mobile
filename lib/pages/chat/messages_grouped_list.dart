@@ -27,7 +27,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       bloc: Get.find<ChannelMessagesCubit>(),
       builder: (context, state) {
         List<Message> messages = <Message>[];
-
+        bool endOfHistory = false;
         if (state is NoMessagesFound) {
           return EmptyChatContainer(
             isDirect: widget.parentChannel.isDirect,
@@ -37,6 +37,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           if (state.messages.isEmpty) {
             return MessagesLoadingAnimation();
           }
+          endOfHistory = state.endOfHistory;
           messages = state.messages;
         } else {
           return MessagesLoadingAnimation();
@@ -54,7 +55,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           child: Expanded(
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
-              child: _buildStickyGroupedListView(context, messages),
+              child:
+                  _buildStickyGroupedListView(context, messages, endOfHistory),
             ),
           ),
         );
@@ -63,9 +65,7 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   }
 
   Widget _buildStickyGroupedListView(
-    BuildContext context,
-    List<Message> messages,
-  ) {
+      BuildContext context, List<Message> messages, bool endOfHistory) {
     bool upBubbleSide = false;
     bool downBubbleSide = false;
     return GroupedListView<Message, DateTime>(
@@ -213,6 +213,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             downBubbleSide: downBubbleSide,
             key: ValueKey(message.hash),
             channel: widget.parentChannel,
+            endOfHistory:
+                (index == messages.length - 1 && endOfHistory) ? true : false,
           ),
         );
       },
