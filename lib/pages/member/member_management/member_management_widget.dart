@@ -274,7 +274,36 @@ class _MemberManagementTile extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                     fontStyle: FontStyle.normal,
                   )),
-            )
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    left: 10, top: 5, bottom: 5, right: 20),
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.grey[300],
+                  ),
+                ),
+              ),
+              onTap: () async {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) {
+                    return modalSheet(
+                        context: context,
+                        name: name,
+                        logo: logo,
+                        currentChannel: currentChannel,
+                        userId: userId);
+                  },
+                );
+              },
+            ),
           ],
         ),
       ),
