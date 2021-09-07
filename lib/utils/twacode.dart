@@ -996,8 +996,8 @@ class TwacodeRenderer {
                   if (await canLaunch(t['url'] ?? t['content'])) {
                     await launch(
                       t['url'] ?? t['content'],
-                      forceSafariVC: true,
-                      forceWebView: true,
+                      // forceSafariVC: true,
+                      // forceWebView: true,
                     );
                   }
                 }));
@@ -1011,7 +1011,7 @@ class TwacodeRenderer {
                   if (await canLaunch(url)) {
                     await launch(
                       url,
-                      forceSafariVC: true,
+                      // forceSafariVC: true,
                     );
                   }
                 }));
