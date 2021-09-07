@@ -18,14 +18,16 @@ class Globals extends BaseModel {
   String host;
 
   Future<bool> hostSet(String val) async {
-    final oldHost = host;
-
+    final previousHost = host;
     host = val;
+
     try {
-      await ApiService.instance.get(endpoint: Endpoint.version);
+      final info = await ApiService.instance.get(endpoint: Endpoint.info);
+      oidcAuthority = info['configuration']['accounts']['console']['authority'];
+      clientId = info['configuration']['accounts']['console']['client_id'];
     } catch (e) {
-      Logger().w('Host is invalid: $val');
-      host = oldHost;
+      Logger().w('Host is invalid: $val\n$e');
+      host = previousHost;
       return false;
     }
     save();
@@ -90,8 +92,15 @@ class Globals extends BaseModel {
     save();
   }
 
+  String? clientId;
+
+  String? oidcAuthority;
+
   @JsonKey(ignore: true)
   bool isNetworkConnected = true;
+
+  @JsonKey(ignore: true)
+  static const version = '3.0.4';
 
   @JsonKey(ignore: true)
   final _connection = StreamController<Connection>.broadcast();
@@ -150,7 +159,7 @@ class Globals extends BaseModel {
       switch (state) {
         case ConnectivityResult.mobile:
         case ConnectivityResult.wifi:
-          ApiService.instance.get(endpoint: Endpoint.version).then((_) {
+          ApiService.instance.get(endpoint: Endpoint.info).then((_) {
             if (!isNetworkConnected) {
               isNetworkConnected = true;
               _connection.sink.add(Connection.connected);

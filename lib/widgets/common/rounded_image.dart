@@ -26,7 +26,7 @@ class RoundedImage extends StatelessWidget {
     this.isSelected = false,
     this.borderWidth = 0.0,
     this.borderRadius = 0.0,
-    final imageUrl = '',
+    String imageUrl = '',
   }) : this.imageUrl = imageUrl.contains('http')
             ? imageUrl
             : Globals.instance.host + "/$imageUrl";

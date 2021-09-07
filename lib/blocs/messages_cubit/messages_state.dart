@@ -13,22 +13,35 @@ class MessagesInitial extends MessagesState {
 }
 
 class MessagesLoadSuccess extends MessagesState {
-  final Message? parentMessage; // used in threads
   final List<Message> messages;
   final int hash; // sum of hash of all messages in the list
+  final bool endOfHistory;
 
   const MessagesLoadSuccess({
     required this.messages,
     required this.hash,
-    this.parentMessage,
+    this.endOfHistory: false,
   });
 
   @override
   List<Object?> get props => [hash];
 }
 
-class NoMessagesFound extends MessagesState {
-  const NoMessagesFound();
+class MessagesLoadSuccessSwipeToReply extends MessagesLoadSuccess {
+  final List<Message> messages;
+  final int hash; // sum of hash of all messages in the list
+
+  const MessagesLoadSuccessSwipeToReply({
+    required this.messages,
+    required this.hash,
+  }) : super(messages: messages, hash: hash);
+
+  @override
+  List<Object?> get props => [hash];
+}
+
+class NoMessagesFound extends MessagesLoadSuccess {
+  NoMessagesFound() : super(messages: <Message>[], hash: 0);
 
   @override
   List<Object?> get props => const [];
@@ -42,7 +55,7 @@ class MessageEditInProgress extends MessagesLoadSuccess {
     required List<Message> messages,
     required int hash,
     Message? parentMessage,
-  }) : super(messages: messages, hash: hash, parentMessage: parentMessage);
+  }) : super(messages: messages, hash: hash);
 
   @override
   List<Object?> get props => [message];
@@ -60,5 +73,5 @@ class MessagesBeforeLoadInProgress extends MessagesLoadSuccess {
     required List<Message> messages,
     required int hash,
     Message? parentMessage,
-  }) : super(messages: messages, hash: hash, parentMessage: parentMessage);
+  }) : super(messages: messages, hash: hash);
 }

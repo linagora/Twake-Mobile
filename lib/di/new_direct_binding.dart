@@ -4,7 +4,6 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/repositories/channels_repository.dart';
-import 'package:twake/services/endpoints.dart';
 
 class NewDirectBinding implements Bindings {
   @override
@@ -13,6 +12,6 @@ class NewDirectBinding implements Bindings {
         workspacesCubit: Get.find<WorkspacesCubit>(),
         accountCubit: Get.find<AccountCubit>(),
         directsCubit: Get.find<DirectsCubit>(),
-        channelsRepository: ChannelsRepository(endpoint: Endpoint.directs)));
+        channelsRepository: ChannelsRepository()));
   }
 }

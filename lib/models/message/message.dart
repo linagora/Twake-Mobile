@@ -1,95 +1,109 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
-import 'message_content.dart';
 import 'reaction.dart';
-
-export 'message_content.dart';
 
 part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
-  static const COMPOSITE_FIELDS = ['content', 'reactions'];
+  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'files'];
 
   final String id;
-  final String? threadId;
+  final String threadId;
   final String channelId;
   final String userId;
 
-  int creationDate;
-  int modificationDate;
+  int createdAt;
+  int updatedAt;
+
+  @JsonKey(defaultValue: 0)
   int responsesCount;
 
-  MessageContent content;
+  @JsonKey(defaultValue: '')
+  String text;
+
+  List<dynamic> blocks;
+
+  List<String> files;
+
+  @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
 
-  final String username;
-  final String? firstname;
-  final String? lastname;
-  final String? thumbnail;
+  String? username;
+  String? firstName;
+  String? lastName;
+  String? picture;
+
   String? draft;
 
   @JsonKey(defaultValue: 1, name: 'is_read')
   int _isRead = 1;
 
-  @JsonKey(defaultValue: 1, name: 'is_delivered')
-  int _isDelivered = 1;
+  @JsonKey(defaultValue: Delivery.delivered)
+  Delivery delivery;
 
   int get hash {
     return this.id.hashCode +
-        this.content.originalStr.hashCode +
+        this.text.hashCode +
         this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
-        this._isDelivered +
+        this.delivery.hashCode +
         this._isRead +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
   }
 
   String get sender {
-    if (this.firstname == null || this.lastname == null) {
-      return this.username;
+    if (this.firstName == null || this.lastName == null) {
+      return this.username!;
     }
-    return '$firstname $lastname';
+    return '$firstName $lastName';
   }
 
   @JsonKey(ignore: true)
   bool get isRead => _isRead > 0;
 
-  set isRead(bool val) => _isRead = val ? 1 : 0;
-
   @JsonKey(ignore: true)
-  bool get isDelivered => _isDelivered > 0;
+  bool get inThread => id != threadId;
 
-  set isDelivered(bool val) => _isDelivered = val ? 1 : 0;
+  set isRead(bool val) => _isRead = val ? 1 : 0;
 
   Message({
     required this.id,
-    this.threadId,
+    required this.threadId,
     required this.channelId,
     required this.userId,
-    required this.creationDate,
-    required this.modificationDate,
+    required this.createdAt,
+    required this.updatedAt,
     required this.responsesCount,
-    required this.username,
-    required this.content,
+    this.username,
+    required this.text,
+    required this.blocks,
     required this.reactions,
-    this.firstname,
-    this.lastname,
-    this.thumbnail,
+    required this.files,
+    this.delivery: Delivery.delivered,
+    this.firstName,
+    this.lastName,
+    this.picture,
     this.draft,
   });
 
-  factory Message.fromJson({
-    required Map<String, dynamic> json,
+  factory Message.fromJson(
+    Map<String, dynamic> json, {
     bool jsonify: true,
+    bool transform: false,
+    String? channelId,
   }) {
     // message retrieved from sqlite database will have
     // it's composite fields json string encoded, so there's a
     // need to decode them back
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
+    }
+    if (transform) {
+      json = ApiDataTransformer.message(json: json, channelId: channelId);
     }
     return _$MessageFromJson(json);
   }
@@ -107,8 +121,17 @@ class Message extends BaseModel {
   }
 
   Message recent(Message other) {
-    if (this.modificationDate > other.modificationDate) return this;
+    if (this.updatedAt > other.updatedAt) return this;
 
     return other;
   }
+}
+
+enum Delivery {
+  @JsonValue('in_progress')
+  inProgress,
+  @JsonValue('delivered')
+  delivered,
+  @JsonValue('failed')
+  failed,
 }

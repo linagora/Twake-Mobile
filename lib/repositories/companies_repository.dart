@@ -34,8 +34,10 @@ class CompaniesRepository {
   }
 
   Future<List<Company>> fetchRemote({List<Company>? localCopy}) async {
-    final List<dynamic> remoteResult =
-        await this._api.get(endpoint: Endpoint.companies);
+    final List<dynamic> remoteResult = await this._api.get(
+          endpoint: sprintf(Endpoint.companies, [Globals.instance.userId]),
+          key: 'resources',
+        );
 
     if (localCopy == null) {
       final res = await _storage.select(table: Table.company);
@@ -43,7 +45,7 @@ class CompaniesRepository {
     }
 
     final companies = remoteResult
-        .map((entry) => Company.fromJson(json: entry, jsonify: false))
+        .map((entry) => Company.fromJson(json: entry, tranform: true))
         .toList();
 
     // Here we can resave local attributes before writing to storage

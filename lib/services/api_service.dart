@@ -6,7 +6,6 @@ import 'package:twake/services/service_bundle.dart';
 class ApiService {
   static late ApiService _service;
   late final Dio _dio;
-  static const _PROXY_PREFIX = '/internal/mobile';
 
   factory ApiService({required bool reset}) {
     if (reset) {
@@ -25,7 +24,12 @@ class ApiService {
     ));
 
     void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-      options.baseUrl = Globals.instance.host + _PROXY_PREFIX;
+      options.baseUrl = Globals.instance.host;
+
+      if (Endpoint.isConsole(options.path)) {
+        final bastHost = options.baseUrl.split('.').skip(1).join('.');
+        options.path = sprintf(options.path, [bastHost]);
+      }
       if (Endpoint.isPublic(options.path)) {
         handler.next(options);
         return;
@@ -38,7 +42,7 @@ class ApiService {
     void onError(DioError error, ErrorInterceptorHandler handler) {
       Logger().e('Request error:\n$error'
           '\nHEADERS: ${error.requestOptions.headers}'
-          '\nPATH: ${error.requestOptions.uri.path}'
+          '\nPATH: ${error.requestOptions.uri.host}${error.requestOptions.uri.path}'
           '\nRESPONSE: ${error.response?.data}'
           '\nQUERYPARAMS: ${error.requestOptions.queryParameters}'
           '\nREQUEST PAYLOAD: ${error.requestOptions.data}');
@@ -92,13 +96,14 @@ class ApiService {
     required String endpoint,
     Map<String, dynamic> queryParameters: const {},
     CancelToken? cancelToken,
+    String? key,
   }) async {
     final r = await this._dio.get(
           endpoint,
           queryParameters: queryParameters,
           cancelToken: cancelToken,
         );
-    return r.data;
+    return key != null ? r.data[key] : r.data;
   }
 
   Future<dynamic> post({
@@ -106,6 +111,7 @@ class ApiService {
     required dynamic data,
     Function(int, int)? onSendProgress,
     CancelToken? cancelToken,
+    String? key,
   }) async {
     final r = await this._dio.post(
           endpoint,
@@ -113,20 +119,21 @@ class ApiService {
           onSendProgress: onSendProgress,
           cancelToken: cancelToken,
         );
-    return r.data;
+    return key == null ? r.data : r.data[key];
   }
 
   Future<dynamic> put({
     required String endpoint,
     required dynamic data,
     CancelToken? cancelToken,
+    String? key,
   }) async {
     final r = await this._dio.put(
           endpoint,
           data: data,
           cancelToken: cancelToken,
         );
-    return r.data;
+    return key == null ? r.data : r.data[key];
   }
 
   Future<dynamic> patch({

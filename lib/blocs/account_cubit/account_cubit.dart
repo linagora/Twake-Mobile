@@ -9,12 +9,17 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/account_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
+export 'package:twake/models/account/account.dart';
+
 part 'account_state.dart';
 
 class AccountCubit extends Cubit<AccountState> {
   late final AccountRepository _repository;
 
   AccountCubit({AccountRepository? repository}) : super(AccountInitial()) {
+    // issue #731
+    Segment.setContext({});
+
     if (repository == null) {
       repository = AccountRepository();
     }
@@ -36,7 +41,7 @@ class AccountCubit extends Cubit<AccountState> {
       // tracking
       if (sendAnalyticAfterFetch && !isTracked && !kDebugMode) {
         isTracked = true;
-        Segment.identify(userId: account.consoleId ?? account.id).then((r) {
+        Segment.identify(userId: account.providerId ?? account.id).then((r) {
           Segment.track(eventName: 'twake-mobile:open_client');
         }).onError((e, s) {
           Logger().d('Error while send tracking info: $e');

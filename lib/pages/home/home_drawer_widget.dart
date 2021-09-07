@@ -8,9 +8,10 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/workspace/workspace_drawer_tile.dart';
 
@@ -24,6 +25,7 @@ class HomeDrawerWidget extends StatelessWidget {
     _workspacesCubit.fetch(
       companyId: Globals.instance.companyId,
     );
+    Get.find<CompaniesCubit>().fetch();
 
     return Drawer(
       child: SafeArea(
@@ -41,13 +43,16 @@ class HomeDrawerWidget extends StatelessWidget {
                       return Stack(
                         children: [
                           Positioned(
-                              left: 16,
-                              child: RoundedImage(
-                                width: 56,
-                                height: 56,
-                                borderRadius: 16.0,
-                                imageUrl: companyState.selected.logo ?? '',
-                              )),
+                            left: 16,
+                            child: ImageWidget(
+                              imageType: ImageType.common,
+                              size: 56,
+                              borderRadius: 16,
+                              imageUrl: companyState.selected.logo ?? '',
+                              name: companyState.selected.name,
+                              backgroundColor: Color(0xfff5f5f5),
+                            ),
+                          ),
                           Positioned.fill(
                             left: 82,
                             top: 12,
@@ -165,84 +170,100 @@ class HomeDrawerWidget extends StatelessWidget {
                 color: Colors.grey,
                 height: 1,
               ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    GestureDetector(
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.add_circle_sharp,
-                              color: Colors.black,
-                            ),
-                            SizedBox(
-                              width: 12,
-                            ),
-                            Text(
-                              'Add a new workspace',
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              ),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          // close drawer
-                          Navigator.of(context).pop();
-                          NavigatorService.instance.navigateToCreateWorkspace();
-                        }),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    BlocBuilder<AccountCubit, AccountState>(
-                      bloc: Get.find<AccountCubit>(),
-                      builder: (context, accountState) {
-                        if (accountState is AccountLoadSuccess) {
-                          return GestureDetector(
-                            onTap: () {
-                              // close drawer
-                              Navigator.of(context).pop();
-                              NavigatorService.instance.navigateToAccount();
-                            },
-                            behavior: HitTestBehavior.opaque,
+              BlocBuilder(
+                bloc: Get.find<CompaniesCubit>(),
+                builder: (ctx, cstate) => Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      if ((cstate as CompaniesLoadSuccess)
+                          .selected
+                          .canCreateWorkspace)
+                        GestureDetector(
                             child: Row(
                               children: [
-                                RoundedImage(
-                                  imageUrl:
-                                      accountState.account.thumbnail ?? '',
-                                  width: 24,
-                                  height: 24,
+                                Icon(
+                                  Icons.add_circle_sharp,
+                                  color: Colors.black,
                                 ),
                                 SizedBox(
                                   width: 12,
                                 ),
                                 Text(
-                                    '${accountState.account.firstname} ${accountState.account.lastname}',
-                                    style: TextStyle(
-                                      color: Color(0xff000000),
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w400,
-                                      fontStyle: FontStyle.normal,
-                                    )),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 2),
-                                  child: Icon(Icons.arrow_forward_ios_sharp,
-                                      size: 10, color: Colors.black),
+                                  'Add a new workspace',
+                                  style: TextStyle(
+                                    color: Color(0xff000000),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.normal,
+                                  ),
                                 ),
-                                Expanded(child: SizedBox.shrink())
                               ],
                             ),
-                          );
-                        }
-                        return SizedBox.shrink();
-                      },
-                    )
-                  ],
+                            onTap: () {
+                              // close drawer
+                              Navigator.of(context).pop();
+                              NavigatorService.instance
+                                  .navigateToCreateWorkspace();
+                            }),
+                      if (cstate.selected.canCreateWorkspace)
+                        SizedBox(
+                          height: 20,
+                        ),
+                      BlocBuilder<AccountCubit, AccountState>(
+                        bloc: Get.find<AccountCubit>(),
+                        builder: (context, accountState) {
+                          if (accountState is AccountLoadSuccess) {
+                            return GestureDetector(
+                              onTap: () {
+                                // close drawer
+                                Navigator.of(context).pop();
+                                NavigatorService.instance.navigateToAccount();
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  ImageWidget(
+                                    name: accountState.account.fullName,
+                                    imageType: ImageType.common,
+                                    size: 26,
+                                    imageUrl:
+                                        accountState.account.picture ?? '',
+                                  ),
+                                  SizedBox(
+                                    width: 12,
+                                  ),
+                                  Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth: Dim.widthPercent(55),
+                                    ),
+                                    child:
+                                        Text('${accountState.account.fullName}',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              color: Color(0xff000000),
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.normal,
+                                            )),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 2),
+                                    child: Icon(Icons.arrow_forward_ios_sharp,
+                                        size: 10, color: Colors.black),
+                                  ),
+                                  Expanded(child: SizedBox.shrink())
+                                ],
+                              ),
+                            );
+                          }
+                          return SizedBox.shrink();
+                        },
+                      )
+                    ],
+                  ),
                 ),
               )
             ],
@@ -259,11 +280,7 @@ class HomeDrawerWidget extends StatelessWidget {
       workspaceId: workspaceId,
       companyId: Globals.instance.companyId,
     );
-
-    Get.find<DirectsCubit>().fetch(
-      workspaceId: 'direct',
-      companyId: Globals.instance.companyId,
-    );
+    DefaultTabController.of(context)?.animateTo(0);
 
     Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
     // close drawer

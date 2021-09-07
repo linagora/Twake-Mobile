@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/account/account.dart';
@@ -10,14 +9,13 @@ abstract class AddChannelState extends Equatable {
   final ChannelVisibility channelVisibility;
   final List<Account> selectedMembers;
 
-  const AddChannelState(
-      {
-        this.validToCreateChannel = false,
-        this.showEmoijKeyboard = false,
-        this.emoijIcon = '',
-        this.channelVisibility = ChannelVisibility.public,
-        this.selectedMembers = const [],
-      });
+  const AddChannelState({
+    this.validToCreateChannel = false,
+    this.showEmoijKeyboard = false,
+    this.emoijIcon = '',
+    this.channelVisibility = ChannelVisibility.public,
+    this.selectedMembers = const [],
+  });
 }
 
 class AddChannelInitial extends AddChannelState {
@@ -28,32 +26,40 @@ class AddChannelInitial extends AddChannelState {
 }
 
 class AddChannelValidation extends AddChannelState {
-
-  const AddChannelValidation(
-      {bool validToCreateChannel = false,
-      bool showEmoijKeyboard = false,
-      String emoijIcon = '',
-      ChannelVisibility channelVisibility = ChannelVisibility.public,
-      List<Account> selectedMembers = const []})
-      : super(
-            validToCreateChannel: validToCreateChannel,
-            showEmoijKeyboard: showEmoijKeyboard,
-            emoijIcon: emoijIcon,
-            channelVisibility: channelVisibility,
-            selectedMembers: selectedMembers);
+  const AddChannelValidation({
+    bool validToCreateChannel = false,
+    bool showEmoijKeyboard = false,
+    String emoijIcon = '',
+    ChannelVisibility channelVisibility = ChannelVisibility.public,
+    List<Account> selectedMembers = const [],
+  }) : super(
+          validToCreateChannel: validToCreateChannel,
+          showEmoijKeyboard: showEmoijKeyboard,
+          emoijIcon: emoijIcon,
+          channelVisibility: channelVisibility,
+          selectedMembers: selectedMembers,
+        );
 
   @override
-  List<Object?> get props =>
-      [validToCreateChannel, showEmoijKeyboard, emoijIcon, channelVisibility, selectedMembers];
+  List<Object?> get props => [
+        validToCreateChannel,
+        showEmoijKeyboard,
+        emoijIcon,
+        channelVisibility,
+        selectedMembers,
+      ];
 }
 
 class AddChannelInProgress extends AddChannelState {
-
-  const AddChannelInProgress(
-      {String emoijIcon = '',
-      ChannelVisibility channelVisibility = ChannelVisibility.public,
-      List<Account> selectedMembers = const []})
-      : super(emoijIcon: emoijIcon, channelVisibility: channelVisibility, selectedMembers: selectedMembers);
+  const AddChannelInProgress({
+    String emoijIcon = '',
+    ChannelVisibility channelVisibility = ChannelVisibility.public,
+    List<Account> selectedMembers = const [],
+  }) : super(
+          emoijIcon: emoijIcon,
+          channelVisibility: channelVisibility,
+          selectedMembers: selectedMembers,
+        );
 
   @override
   List<Object?> get props => [];

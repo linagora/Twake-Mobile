@@ -47,13 +47,24 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       //   print(Globals.instance.host);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          margin: EdgeInsets.fromLTRB(
+            15.0,
+            5.0,
+            15.0,
+            65.0,
+            //  Dim.heightPercent(8),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
           content: Text(
             'Invalid host',
             style: TextStyle(
               color: Colors.red,
             ),
           ),
-          duration: Duration(seconds: 2),
         ),
       );
     }
@@ -76,9 +87,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 10.0),
+                Expanded(child: SizedBox(height: 10.0)),
                 Image.asset('assets/images/server.png'),
-                SizedBox(height: 15.0),
+                Expanded(child: SizedBox(height: 15.0)),
                 Text(
                   'Server connection\npreference',
                   textAlign: TextAlign.center,
@@ -89,15 +100,17 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 36.0),
-                Padding(
-                  padding: EdgeInsets.only(left: 16, right: 36.0),
-                  child: Text(
-                    'Before you can proceed, please, choose a default server connection',
-                    style: TextStyle(
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black.withOpacity(0.6),
+                Expanded(child: SizedBox(height: 36.0)),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16, right: 36.0),
+                    child: Text(
+                      'Before you can proceed, please, choose a default server connection',
+                      style: TextStyle(
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black.withOpacity(0.6),
+                      ),
                     ),
                   ),
                 ),
@@ -116,7 +129,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     ),
                     decoration: InputDecoration(
                       hintText: Globals.instance.host.isEmpty
-                          ? 'https://web.qa.twake.app'
+                          ? 'https://beta.twake.app'
                           : Globals.instance.host,
                       hintStyle: TextStyle(
                         fontSize: 17.0,

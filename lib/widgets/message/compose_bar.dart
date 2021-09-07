@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
@@ -29,7 +32,7 @@ class ComposeBar extends StatefulWidget {
 }
 
 class _ComposeBar extends State<ComposeBar> {
-  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z1-9_-]+$');
+  final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z0-9._-]+$');
   var _emojiVisible = false;
   var _mentionsVisible = false;
   var _forceLooseFocus = false;
@@ -64,7 +67,10 @@ class _ComposeBar extends State<ComposeBar> {
     });
 
     _controller.addListener(() {
+      if (_controller.selection.base.offset < 0) return;
+
       var text = _controller.text;
+      text = text.substring(0, _controller.selection.base.offset);
       if (_userMentionRegex.hasMatch(text)) {
         Get.find<MentionsCubit>().fetch(
           searchTerm: text.split('@').last.trimRight(),
@@ -136,16 +142,21 @@ class _ComposeBar extends State<ComposeBar> {
     }
   }
 
-  void mentionReplace(String? username) async {
-    final text = _controller.text;
-    _controller.text = text.replaceRange(
+  void swipeRequestFocus(bool _focus) {
+    _focus ? _focusNode.requestFocus() : _focusNode.unfocus();
+  }
+
+  void mentionReplace(String username) async {
+    var text = _controller.text;
+    text = text.substring(0, _controller.selection.base.offset);
+    _controller.text = _controller.text.replaceRange(
       text.lastIndexOf('@'),
-      text.length,
+      _controller.selection.base.offset,
       '@$username ',
     );
     _controller.selection = TextSelection.fromPosition(
       TextPosition(
-        offset: _controller.text.length,
+        offset: text.lastIndexOf('@') + username.length + 2,
       ),
     );
   }
@@ -218,160 +229,168 @@ class _ComposeBar extends State<ComposeBar> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: onBackPress,
-      child: Column(
-        children: [
-          _mentionsVisible
-              ? BlocBuilder<MentionsCubit, MentionState>(
-                  bloc: Get.find<MentionsCubit>(),
-                  builder: (context, state) {
-                    if (state is MentionsLoadSuccess) {
-                      final List<Widget> _listW = [];
-                      _listW.add(Divider(thickness: 1));
-                      for (int i = 0; i < state.accounts.length; i++) {
-                        _listW.add(
-                          InkWell(
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 40.0,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  SizedBox(width: 15),
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(30)),
-                                    child: CircleAvatar(
-                                      child: state.accounts[i].thumbnail! == ""
-                                          ? CircleAvatar(
-                                              child: Icon(Icons.person,
-                                                  color: Colors.grey),
-                                              backgroundColor: Colors.blue[50],
-                                            )
-                                          : Image.network(
-                                              state.accounts[i].thumbnail!,
-                                              fit: BoxFit.contain,
-                                              loadingBuilder:
-                                                  (context, child, progress) {
-                                                if (progress == null) {
-                                                  return child;
-                                                }
+    return BlocListener<ThreadMessagesCubit, MessagesState>(
+      bloc: Get.find<ThreadMessagesCubit>(),
+      listener: (context, state) {
+        if (state is MessagesLoadSuccessSwipeToReply) {
+          swipeRequestFocus(true);
+        } else if (state is MessagesInitial) {
+          swipeRequestFocus(false);
+        }
+      },
+      child: WillPopScope(
+        onWillPop: onBackPress,
+        child: Column(
+          children: [
+            _mentionsVisible
+                ? BlocBuilder<MentionsCubit, MentionState>(
+                    bloc: Get.find<MentionsCubit>(),
+                    builder: (context, state) {
+                      if (state is MentionsLoadSuccess) {
+                        final List<Widget> _listW = [];
+                        _listW.add(Divider(thickness: 1));
+                        for (int i = 0; i < state.accounts.length; i++) {
+                          _listW.add(
+                            InkWell(
+                              child: Container(
+                                alignment: Alignment.center,
+                                height: 40.0,
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(width: 15),
+                                    ClipRRect(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(30)),
+                                      child: CircleAvatar(
+                                        child: state.accounts[i].picture! == ""
+                                            ? CircleAvatar(
+                                                child: Icon(Icons.person,
+                                                    color: Colors.grey),
+                                                backgroundColor:
+                                                    Colors.blue[50],
+                                              )
+                                            : Image.network(
+                                                state.accounts[i].picture!,
+                                                fit: BoxFit.contain,
+                                                loadingBuilder:
+                                                    (context, child, progress) {
+                                                  if (progress == null) {
+                                                    return child;
+                                                  }
 
-                                                return CircleAvatar(
-                                                  child: Icon(Icons.person,
-                                                      color: Colors.grey),
-                                                  backgroundColor:
-                                                      Colors.blue[50],
-                                                );
-                                              },
-                                            ),
+                                                  return CircleAvatar(
+                                                    child: Icon(Icons.person,
+                                                        color: Colors.grey),
+                                                    backgroundColor:
+                                                        Colors.blue[50],
+                                                  );
+                                                },
+                                              ),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  Text(
-                                    '${state.accounts[i].firstname} ',
-                                    style: TextStyle(
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w300),
-                                  ),
-                                  Text(
-                                    ' ${state.accounts[i].lastname}',
-                                    style: TextStyle(
-                                      fontSize: 16.0,
+                                    SizedBox(
+                                      width: 15,
                                     ),
-                                  ),
-                                  Expanded(child: SizedBox()),
-                                  Icon(
-                                    Icons.message_rounded,
-                                    color: Colors.grey,
-                                  ),
-                                  SizedBox(width: 15),
-                                ],
+                                    Text(
+                                      '${state.accounts[i].fullName} ',
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w300),
+                                    ),
+                                    Expanded(child: SizedBox()),
+                                    Icon(
+                                      Icons.message_rounded,
+                                      color: Colors.grey,
+                                    ),
+                                    SizedBox(width: 15),
+                                  ],
+                                ),
                               ),
-                            ),
-                            onTap: () {
-                              Get.find<MentionsCubit>().reset();
+                              onTap: () {
+                                Get.find<MentionsCubit>().reset();
 
-                              mentionReplace(state.accounts[i].username);
-                              setState(
-                                () {
-                                  _mentionsVisible = false;
-                                },
-                              );
-                            },
+                                mentionReplace(state.accounts[i].username);
+                                setState(
+                                  () {
+                                    _mentionsVisible = false;
+                                  },
+                                );
+                              },
+                            ),
+                          );
+                          if (i < state.accounts.length - 1) {
+                            _listW.add(Divider(thickness: 1));
+                          }
+                        }
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: Dim.heightPercent(30),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: _listW,
+                            ),
                           ),
                         );
-                        if (i < state.accounts.length - 1) {
-                          _listW.add(Divider(thickness: 1));
-                        }
+                      } else if (state is MentionsInitial) {
+                        return Container();
+                        //Text("Empty");
                       }
-                      return ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxHeight:
-                                MediaQuery.of(context).size.height * 0.3),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: _listW,
-                          ),
-                        ),
-                      );
-                    } else if (state is MentionsInitial) {
                       return Container();
-                      //Text("Empty");
-                    }
-                    return Container();
+                    },
+                  )
+                : Container(),
+            TextInput(
+              controller: _controller,
+              scrollController: _scrollController,
+              focusNode: _focusNode,
+              autofocus: widget.autofocus,
+              toggleEmojiBoard: toggleEmojiBoard,
+              emojiVisible: _emojiVisible,
+              onMessageSend: widget.onMessageSend,
+              canSend: _canSend,
+              openFileExplorer: _openFileExplorer,
+              fileNumber: _fileNumber,
+              fileNumClear: _fileNumClear,
+            ),
+            Offstage(
+              offstage: !_emojiVisible,
+              child: Container(
+                height: 250,
+                child: EmojiPicker(
+                  onEmojiSelected: (cat, emoji) {
+                    _controller.text += emoji.emoji;
+                    setState(() {
+                      _canSend = true;
+                    });
                   },
-                )
-              : Container(),
-          TextInput(
-            controller: _controller,
-            scrollController: _scrollController,
-            focusNode: _focusNode,
-            autofocus: widget.autofocus,
-            toggleEmojiBoard: toggleEmojiBoard,
-            emojiVisible: _emojiVisible,
-            onMessageSend: widget.onMessageSend,
-            canSend: _canSend,
-            openFileExplorer: _openFileExplorer,
-            fileNumber: _fileNumber,
-            fileNumClear: _fileNumClear,
-          ),
-          Offstage(
-            offstage: !_emojiVisible,
-            child: Container(
-              height: 250,
-              child: EmojiPicker(
-                onEmojiSelected: (cat, emoji) {
-                  _controller.text += emoji.emoji;
-                },
-                config: Config(
-                  columns: 7,
-                  emojiSizeMax: 32.0,
-                  verticalSpacing: 0,
-                  horizontalSpacing: 0,
-                  initCategory: Category.RECENT,
-                  bgColor: Color(0xFFF2F2F2),
-                  indicatorColor: Colors.blue,
-                  iconColor: Colors.grey,
-                  iconColorSelected: Colors.blue,
-                  progressIndicatorColor: Colors.blue,
-                  showRecentsTab: true,
-                  recentsLimit: 28,
-                  noRecentsText: "No Recents",
-                  noRecentsStyle:
-                      const TextStyle(fontSize: 20, color: Colors.black26),
-                  categoryIcons: const CategoryIcons(),
-                  buttonMode: ButtonMode.MATERIAL,
+                  config: Config(
+                    columns: 7,
+                    emojiSizeMax: 32.0,
+                    verticalSpacing: 0,
+                    horizontalSpacing: 0,
+                    initCategory: Category.RECENT,
+                    bgColor: Color(0xFFF2F2F2),
+                    indicatorColor: Colors.blue,
+                    iconColor: Colors.grey,
+                    iconColorSelected: Colors.blue,
+                    progressIndicatorColor: Colors.blue,
+                    showRecentsTab: true,
+                    recentsLimit: 28,
+                    noRecentsText: "No Recents",
+                    noRecentsStyle:
+                        const TextStyle(fontSize: 20, color: Colors.black26),
+                    categoryIcons: const CategoryIcons(),
+                    buttonMode: ButtonMode.MATERIAL,
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -384,7 +403,7 @@ class TextInput extends StatefulWidget {
   final Function? toggleEmojiBoard;
   final bool? autofocus;
   final bool? emojiVisible;
-  final bool? canSend;
+  final bool canSend;
   final Function? onMessageSend;
   final Function? openFileExplorer;
   final Function? fileNumClear;
@@ -399,7 +418,7 @@ class TextInput extends StatefulWidget {
     this.scrollController,
     this.toggleEmojiBoard,
     this.openFileExplorer,
-    this.canSend,
+    this.canSend = false,
     this.fileNumber,
     this.fileNumClear,
   });
@@ -430,7 +449,7 @@ class _TextInputState extends State<TextInput> {
     return Container(
       padding: EdgeInsets.only(
         top: 11.0,
-        bottom: 11.0 + MediaQuery.of(context).padding.bottom,
+        bottom: 11.0,
       ),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1.5)),
@@ -548,7 +567,8 @@ class _TextInputState extends State<TextInput> {
           //   color: Colors.black54,
           // ),
           GestureDetector(
-            onTap: widget.canSend!
+            behavior: HitTestBehavior.opaque,
+            onTap: widget.canSend
                 ? () async {
                     await widget.onMessageSend!(
                       await Get.find<MentionsCubit>()
@@ -559,13 +579,19 @@ class _TextInputState extends State<TextInput> {
                     widget.fileNumClear!();
                   }
                 : null,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset(
-                'assets/images/send.png',
-                color: widget.canSend! ? Color(0xFF004DFF) : Colors.grey[400],
-              ),
-            ),
+            child: widget.canSend
+                ? Container(
+                    padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+                    child: Image.asset(
+                      'assets/images/send_blue.png',
+                    ),
+                  )
+                : Container(
+                    padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+                    child: Image.asset(
+                      'assets/images/send.png',
+                    ),
+                  ),
           ),
         ],
       ),

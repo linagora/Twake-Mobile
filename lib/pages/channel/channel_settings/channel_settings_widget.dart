@@ -71,7 +71,8 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                       ),
                       Align(
                         alignment: Alignment.centerRight,
-                        child: BlocBuilder<ChannelSettingCubit, ChannelSettingState>(
+                        child: BlocBuilder<ChannelSettingCubit,
+                            ChannelSettingState>(
                           bloc: Get.find<ChannelSettingCubit>(),
                           builder: (context, editChannelState) {
                             return EnableButtonWidget(
@@ -106,56 +107,59 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                 ),
                 Expanded(
                     child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16, bottom: 12, top: 16),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("CHANNEL TYPE",
-                                  style: TextStyle(
-                                    color: Color(0xff969ca4),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FontStyle.normal,
-                                  )),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 8.0, left: 16, right: 16),
-                            child: BlocBuilder<ChannelSettingCubit, ChannelSettingState>(
-                              bloc: Get.find<ChannelSettingCubit>(),
-                              buildWhen: (_, currentState) =>
-                              currentState is ChannelSettingInSettingState,
-                              builder: (context, addChannelState) =>
-                                  SelectableChannelTypeWidget(
-                                    channelVisibility:
-                                    addChannelState.channelVisibility,
-                                    onSelectableChannelTypeClick: (channelVisibility) =>
-                                        Get.find<ChannelSettingCubit>()
-                                            .setChannelVisibility(_currentChannel, channelVisibility),
-                                  ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 28, right: 28, bottom: 24),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                  'Public channels can be found by everyone, though private can only be joined by invitation',
-                                  style: TextStyle(
-                                    color: Color(0xff969ca4),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    fontStyle: FontStyle.normal,
-                                  )),
-                            ),
-                          ),
-                        ],
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, bottom: 12, top: 16),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("CHANNEL TYPE",
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
                       ),
-                    )),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 8.0, left: 16, right: 16),
+                        child: BlocBuilder<ChannelSettingCubit,
+                            ChannelSettingState>(
+                          bloc: Get.find<ChannelSettingCubit>(),
+                          buildWhen: (_, currentState) =>
+                              currentState is ChannelSettingInSettingState,
+                          builder: (context, addChannelState) =>
+                              SelectableChannelTypeWidget(
+                            channelVisibility:
+                                addChannelState.channelVisibility,
+                            onSelectableChannelTypeClick: (channelVisibility) =>
+                                Get.find<ChannelSettingCubit>()
+                                    .setChannelVisibility(
+                                        _currentChannel, channelVisibility),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              'Public channels can be found by everyone, though private can only be joined by invitation',
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
               ],
             ),
           ),

@@ -19,7 +19,9 @@ Globals _$GlobalsFromJson(Map<String, dynamic> json) {
     workspaceId: json['workspace_id'] as String?,
     channelId: json['channel_id'] as String?,
     threadId: json['thread_id'] as String?,
-  );
+  )
+    ..clientId = json['client_id'] as String?
+    ..oidcAuthority = json['oidc_authority'] as String?;
 }
 
 Map<String, dynamic> _$GlobalsToJson(Globals instance) => <String, dynamic>{
@@ -32,6 +34,8 @@ Map<String, dynamic> _$GlobalsToJson(Globals instance) => <String, dynamic>{
       'token': instance.token,
       'fcm_token': instance.fcmToken,
       'user_id': instance.userId,
+      'client_id': instance.clientId,
+      'oidc_authority': instance.oidcAuthority,
     };
 
 K _$enumDecode<K, V>(

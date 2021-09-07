@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
@@ -24,10 +26,12 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
   List<Map<String, dynamic>> _membersList = [];
   List<String> _members = [];
   List<TextEditingController> _controllers = [];
+  Account? user;
 
   @override
   void initState() {
     super.initState();
+    user = (Get.find<AccountCubit>().state as AccountLoadSuccess).account;
     _workspaceNameFocusNode.addListener(_onFocusChange);
   }
 
@@ -50,14 +54,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         return CupertinoAlertDialog(
           title: Text('Invitation limit'),
           content: Text(
-              'To add more team members,please, verify your account. We sent verification details to: alexandre@linagora.com'),
+              'To add more team members,please, verify your account. We sent verification details to: ${user!.email}'),
           actions: <Widget>[
-            CupertinoDialogAction(
-              child: Text('Open email'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
             CupertinoDialogAction(
               child: Text('OK'),
               onPressed: () {
@@ -117,6 +115,17 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                          margin: EdgeInsets.fromLTRB(
+                            15.0,
+                            5.0,
+                            15.0,
+                            65.0,
+                            //  Dim.heightPercent(8),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          behavior: SnackBarBehavior.floating,
                           duration: Duration(seconds: 3),
                           content: Text('Processing'),
                         ),
@@ -137,6 +146,18 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
+                            margin: EdgeInsets.fromLTRB(
+                              15.0,
+                              5.0,
+                              15.0,
+                              65.0,
+                              //  Dim.heightPercent(8),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 3),
                             content: Text(
                                 'An error occurred while creating the workspace'),
                           ),
@@ -276,7 +297,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       onTap: () async {
         setState(() {
           _controllers.add(TextEditingController());
-          _count < 5 ? _count++ : _invitationLimit();
+          _count < 5 || user!.isVerified ? _count++ : _invitationLimit();
         });
       },
     );
@@ -292,39 +313,37 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10.0),
         ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 15),
-          child: Form(
-            //    key: _formKey1,
-            child: TextFormField(
-              controller: controller,
-              //    validator: _validate,
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(10),
-                suffix: IconButton(
-                  onPressed: () {
-                    controller.clear();
-                  },
-                  iconSize: 17,
-                  icon: Icon(CupertinoIcons.clear_thick_circled),
-                  color: Color(0xffeeeeef),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    width: 0.0,
-                    style: BorderStyle.none,
-                  ),
-                ),
-              ),
-              onChanged: (text) {
-                _onUpdate(index, text);
-              },
+        child: Form(
+          //    key: _formKey1,
+          child: TextFormField(
+            maxLines: 1,
+            controller: controller,
+            //    validator: _validate,
+            style: TextStyle(
+              fontSize: 17.0,
+              fontWeight: FontWeight.w400,
+              color: Colors.black,
             ),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.only(left: 15),
+              suffix: IconButton(
+                onPressed: () {
+                  controller.clear();
+                },
+                iconSize: 17,
+                icon: Icon(CupertinoIcons.clear_thick_circled),
+                color: Color(0xffeeeeef),
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  width: 0.0,
+                  style: BorderStyle.none,
+                ),
+              ),
+            ),
+            onChanged: (text) {
+              _onUpdate(index, text);
+            },
           ),
         ),
       ),

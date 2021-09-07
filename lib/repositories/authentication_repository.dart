@@ -1,14 +1,17 @@
-import 'dart:io';
-
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:twake/models/authentication/authentication.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 
 class AuthenticationRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
+  final _appAuth = FlutterAppAuth();
   bool _validatorRunning = false;
+  // for logout
+  String idToken = '';
 
   AuthenticationRepository();
 
@@ -16,6 +19,7 @@ class AuthenticationRepository {
     final result = await _storage.first(table: Table.authentication);
     if (result.isEmpty) return false;
     var authentication = Authentication.fromJson(result);
+    idToken = authentication.idToken;
 
     switch (hasExpired(authentication)) {
       case Expiration.Valid:
@@ -30,36 +34,55 @@ class AuthenticationRepository {
           return true;
         }
         authentication = await prolongAuthentication(authentication);
+        idToken = authentication.idToken;
     }
+
     return true;
   }
 
-  Future<bool> authenticate({
-    required String username,
-    required String password,
-  }) async {
-    dynamic authenticationResult = {};
-    try {
-      authenticationResult = await _api.post(
-        endpoint: Endpoint.authorize,
-        data: {
-          'username': username.trim(),
-          'password': password.trim(),
-          'device': Platform.isAndroid ? 'android' : 'apple',
-          'timezoneoffset': tzo,
-          'fcm_token': Globals.instance.fcmToken,
-        },
-      );
-    } catch (e) {
-      Logger().e('Error occured during authentication:\n$e');
-      return false;
+  Future<bool> webviewAuthenticate() async {
+    AuthorizationTokenResponse? tokenResponse;
+
+    while (true) {
+      try {
+        tokenResponse = await _appAuth.authorizeAndExchangeCode(
+          AuthorizationTokenRequest(
+            'twakemobile', // Globals.instance.clientId!,
+            'twakemobile.com://oauthredirect',
+            discoveryUrl:
+                '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+            scopes: ['openid', 'profile', 'email', 'offline_access'],
+            preferEphemeralSession: true,
+            promptValues: ['consent'],
+            responseMode: 'query',
+          ),
+        );
+      } catch (e, ss) {
+        Logger().wtf('Error authenticating via console\n$e\n$ss');
+        return false;
+      }
+      if (tokenResponse == null) {
+        Logger().w('Token is null, retrying auth');
+        continue;
+      } else {
+        break;
+      }
     }
+    final authenticationResult = await _api.post(
+      endpoint: Endpoint.login,
+      data: {'remote_access_token': tokenResponse.accessToken},
+    );
 
-    final authentication = Authentication.fromJson(authenticationResult);
+    final authentication = Authentication.fromJson(ApiDataTransformer.token(
+      payload: authenticationResult,
+      tokenResponse: tokenResponse,
+    ));
+    this.idToken = authentication.idToken;
 
-    await _storage.truncate(table: Table.authentication);
     _storage.cleanInsert(table: Table.authentication, data: authentication);
     Globals.instance.tokenSet = authentication.token;
+
+    registerDevice();
 
     return true;
   }
@@ -67,15 +90,14 @@ class AuthenticationRepository {
   Future<Authentication> prolongAuthentication(
     Authentication authentication,
   ) async {
-    dynamic authenticationResult = {};
+    Map<String, dynamic> authenticationResult = {};
+
+    Globals.instance.tokenSet = authentication.refreshToken;
+
     try {
       authenticationResult = await _api.post(
         endpoint: Endpoint.authorizationProlong,
-        data: {
-          'refresh_token': authentication.refreshToken,
-          'fcm_token': Globals.instance.fcmToken,
-          'timezoneoffset': tzo,
-        },
+        data: const {},
       );
     } catch (e, ss) {
       final message = 'Error while prolonging token with valid refresh:\n$e';
@@ -84,22 +106,45 @@ class AuthenticationRepository {
       throw e;
     }
 
-    authentication = Authentication.fromJson(authenticationResult);
+    final freshAuthentication = Authentication.complementWithConsole(
+      json: ApiDataTransformer.token(payload: authenticationResult),
+      other: authentication,
+    );
 
-    await _storage.truncate(table: Table.authentication);
-    _storage.cleanInsert(table: Table.authentication, data: authentication);
-    Globals.instance.tokenSet = authentication.token;
+    this.idToken = freshAuthentication.idToken;
 
-    return authentication;
+    _storage.cleanInsert(
+      table: Table.authentication,
+      data: freshAuthentication,
+    );
+
+    Globals.instance.tokenSet = freshAuthentication.token;
+
+    registerDevice();
+
+    return freshAuthentication;
   }
 
   Future<void> logout() async {
     if (Globals.instance.isNetworkConnected) {
-      await _api.post(endpoint: Endpoint.logout, data: {
-        'fcm_token': Globals.instance.fcmToken,
-      });
+      _api.delete(
+        endpoint: Endpoint.device + '/${Globals.instance.fcmToken}',
+        data: const {},
+      );
+    } else {
+      return;
     }
 
+    await _appAuth.endSession(
+      EndSessionRequest(
+        postLogoutRedirectUrl: 'twakemobile.com://oauthredirect',
+        idTokenHint: this.idToken,
+        discoveryUrl:
+            '${Globals.instance.oidcAuthority}/.well-known/openid-configuration',
+      ),
+    );
+    Logger().w('session ended');
+//
     Globals.instance.reset();
 
     await _storage.truncateAll();
@@ -134,10 +179,10 @@ class AuthenticationRepository {
 
     var authentication = Authentication.fromJson(result);
 
-    Logger().v(
-      'Token validity check, expires at: '
-      '${DateTime.fromMillisecondsSinceEpoch(authentication.expiration * 1000)}',
-    );
+    // Logger().v(
+    // 'Token validity check, expires at: '
+    // '${DateTime.fromMillisecondsSinceEpoch(authentication.expiration * 1000)}',
+    // );
 
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final needToProlong = authentication.expiration - now <
@@ -146,6 +191,20 @@ class AuthenticationRepository {
       authentication = await prolongAuthentication(authentication);
     }
     Future.delayed(Duration(seconds: 120), () => _tokenValidityCheck());
+  }
+
+  Future<void> registerDevice() async {
+    if (!Globals.instance.isNetworkConnected) return;
+    if (Globals.instance.token == null) return;
+
+    final data = {
+      'resource': {
+        'type': 'FCM',
+        'value': Globals.instance.fcmToken,
+        'version': Globals.version,
+      }
+    };
+    await _api.post(endpoint: Endpoint.device, data: data);
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;

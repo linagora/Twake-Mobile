@@ -29,7 +29,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void checkAuthentication() async {
     emit(AuthenticationInProgress());
-    final authenticated = await _repository.isAuthenticated();
+    bool authenticated = await _repository.isAuthenticated();
 
     if (authenticated) {
       emit(AuthenticationSuccess());
@@ -40,28 +40,17 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
-  void authenticate({
-    required String username,
-    required String password,
-  }) async {
+  Future<bool> authenticate() async {
     emit(AuthenticationInProgress());
-    final success = await _repository.authenticate(
-      username: username,
-      password: password,
-    );
-
-    if (!success) {
-      emit(AuthenticationFailure(
-        username: username,
-        password: password,
-      ));
-      return;
+    final authenticated = await _repository.webviewAuthenticate();
+    if (authenticated) {
+      emit(AuthenticationSuccess());
+      _repository.startTokenValidator();
+      await syncData();
+    } else {
+      emit(AuthenticationInitial());
     }
-    _repository.startTokenValidator();
-
-    emit(AuthenticationSuccess());
-
-    await syncData();
+    return authenticated;
   }
 
   Future<void> syncData() async {
@@ -86,9 +75,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     Logger().v('SYNC TOOK: ${end.difference(start).inSeconds} sec');
   }
 
-  void logout() {
-    _repository.logout();
+  void logout() async {
+    await _repository.logout();
     emit(AuthenticationInitial());
+    SocketIOService.instance.disconnect();
+  }
+
+  void registerDevice() async {
+    await _repository.registerDevice();
   }
 
   @override

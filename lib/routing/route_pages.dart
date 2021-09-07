@@ -56,7 +56,8 @@ final routePages = [
                         GetPage(
                             name: RoutePaths.addChannelMembers.name,
                             page: () => AddAndEditMemberWidget(
-                                  addAndEditMemberType: AddAndEditMemberType.addNewMember,
+                                  addAndEditMemberType:
+                                      AddAndEditMemberType.addNewMember,
                                 ),
                             transition: Transition.native,
                             binding: AddMemberBinding())
@@ -113,6 +114,11 @@ final routePages = [
       ),
       GetPage(
         name: RoutePaths.homeWidget.name,
+        page: () => HomeWidget(),
+        transition: Transition.native,
+      ),
+      GetPage(
+        name: RoutePaths.signInUpScreen.name,
         page: () => HomeWidget(),
         transition: Transition.native,
       ),

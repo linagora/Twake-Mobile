@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 3.0.0
+version: 3.0.5
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -34,7 +34,8 @@ dependencies:
   grouped_list: 
     git: https://github.com/bobs4462/grouped_list.git
   scrollable_positioned_list: ^0.2.0-nullsafety.0
-  webview_flutter: ^2.0.8
+  webview_cookie_manager: ^2.0.1
+  webview_flutter: ^2.0.9
   logger: ^1.0.0
   clipboard: ^0.1.3
   url_launcher: ^6.0.3
@@ -56,10 +57,8 @@ dependencies:
   cached_network_image: ^3.0.0
   bubble: ^1.2.1
   flutter_swipe_action_cell: ^2.1.0
-  # flutter_emoji_keyboard:
-  # git: https://github.com/bobs4462/emoji_keyboard.git
   emoji_picker_flutter: ^1.0.6
-
+  flutter_appauth: ^2.0.0-dev.3
 
   flutter_local_notifications: ^6.0.0
   photo_view: ^0.11.1
@@ -69,6 +68,8 @@ dependencies:
   image: ^3.0.2
   get: ^4.1.4
   pull_to_refresh: ^2.0.0
+  sprintf: ^6.0.0
+  flutter_dotenv: 5.0.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -79,7 +80,7 @@ dev_dependencies:
     sdk: flutter
   build_runner: ^2.0.4
   json_serializable: ^4.1.3
-  flutter_launcher_icons: ^0.9.0
+  flutter_launcher_icons: ^0.9.1
   test: ^1.15.8
   bloc_test: ^8.0.2 
 
@@ -87,7 +88,7 @@ flutter_icons:
   android: true
   ios: true
   image_path: 'dev_assets/logo.png'
-  adaptive_icon_background: '#837DFF'
+  adaptive_icon_background: '#004dff'
   adaptive_icon_foreground: 'dev_assets/logo_adaptive.png'
 
 # For information on the generic Dart part of this file, see the
@@ -114,6 +115,8 @@ flutter:
     - assets/images/2.0x/
     - assets/images/3.0x/
 
+    # temporary
+    - .env
     # localization
     # - assets/translations/
 
@@ -130,6 +133,15 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: SourceCodePro
+      fonts:
+        - asset: assets/fonts/SourceCodePro-Regular.ttf
+    - family: SFPro
+      fonts:
+        - asset: assets/fonts/SF-Pro-Text-Regular.otf
+    - family: Poboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
     - family: PT
       fonts:
         - asset: assets/fonts/PTSans-Regular.ttf
@@ -167,8 +179,3 @@ flutter:
         - asset: assets/fonts/Lato-BoldItalic.ttf
           weight: 900
           style: italic
-
-
-    - family: Twake-Fontastic
-      fonts:
-        - asset: assets/fonts/twake-fontastic.ttf

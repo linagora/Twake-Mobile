@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/named_avatar.dart';
@@ -30,7 +29,7 @@ class UserThumbnail extends StatelessWidget {
           builder: (_, state) {
             var thumbUrl;
             if (state is AccountLoadSuccess) {
-              thumbUrl = state.account.thumbnail ?? '';
+              thumbUrl = state.account.picture ?? '';
               if (thumbnailUrl.isNotReallyEmpty) {
                 return RoundedImage(
                   imageUrl: thumbUrl,
@@ -38,7 +37,7 @@ class UserThumbnail extends StatelessWidget {
                   height: size,
                 );
               } else {
-                var firstName = state.account.firstname ?? '';
+                var firstName = state.account.firstName ?? '';
                 return NamedAvatar(
                   size: size,
                   name: firstName,

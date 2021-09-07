@@ -4,20 +4,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
-import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/message/message.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
-import 'package:twake/widgets/message/message_tile.dart';
 import 'chat_header.dart';
 import 'messages_grouped_list.dart';
 
@@ -38,7 +36,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: () {
             popBack();
-            Get.find<BadgesCubit>().fetch();
             Get.find<ThreadMessagesCubit>().reset();
           },
           child: Padding(
@@ -52,13 +49,16 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         title: ChatHeader(
             isDirect: channel.isDirect,
             isPrivate: channel.isPrivate,
-            userId: channel.members.first,
+            userId: channel.members.isNotEmpty ? channel.members.first : null,
             // TODO: figure out why do we need this?
             name: channel.name,
-            icon: channel.icon ?? '',
+            icon: Emojis.getByName(channel.icon ?? ''),
+            avatars: channel.isDirect ? channel.avatars : const [],
             membersCount: channel.membersCount,
             onTap: () {
-              if (T == ChannelsCubit) {
+              final cstate =
+                  Get.find<CompaniesCubit>().state as CompaniesLoadSuccess;
+              if (T == ChannelsCubit && cstate.selected.canUpdateChannel) {
                 NavigatorService.instance.navigateToChannelDetail();
               }
             }),
@@ -89,7 +89,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               ComposeBar(
                 autofocus: messagesState is MessageEditInProgress,
                 initialText: (messagesState is MessageEditInProgress)
-                    ? messagesState.message.content.originalStr
+                    ? messagesState.message.text
                     : draft,
                 onMessageSend: (content, context) async {
                   final stateThread = Get.find<ThreadMessagesCubit>().state;
@@ -98,11 +98,13 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   if (uploadState is FileUploadSuccess) {
                     attachments = uploadState.files;
                   }
-                  if (stateThread is MessagesLoadSuccess) {
+                  if (stateThread is MessagesLoadSuccessSwipeToReply) {
                     Get.find<ThreadMessagesCubit>().send(
-                        originalStr: content,
-                        attachments: attachments,
-                        threadId: Globals.instance.threadId);
+                      originalStr: content,
+                      attachments: attachments,
+                      threadId: stateThread.messages.first.id,
+                      isDirect: channel.isDirect,
+                    );
                     Get.find<ThreadMessagesCubit>().reset();
                   } else {
                     if (messagesState is MessageEditInProgress)
@@ -114,8 +116,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                       if (uploadState is FileUploadSuccess) {
                         attachments = uploadState.files;
                       }
-                      Get.find<ChannelMessagesCubit>()
-                          .send(originalStr: content, attachments: attachments);
+                      Get.find<ChannelMessagesCubit>().send(
+                        originalStr: content,
+                        attachments: attachments,
+                        isDirect: channel.isDirect,
+                      );
                     }
                   }
                   // reset channels draft
@@ -136,12 +141,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
       bloc: Get.find<ThreadMessagesCubit>(),
       builder: (ctx, state) {
-        if (state is MessagesLoadSuccess) {
-          final _message = state.parentMessage;
-          // TODO: add null check
-          // if (_message == null) {
-          //   _message =  ;
-          // }
+        if (state is MessagesLoadSuccessSwipeToReply) {
+          final _message = state.messages.first;
           return Column(
             children: [
               Divider(
@@ -166,55 +167,55 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                           Text("Reply to ",
                               style:
                                   TextStyle(fontSize: 15, color: Colors.black)),
-                          Text(
-                            '${_message!.sender}',
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black),
+                          Container(
+                            constraints:
+                                BoxConstraints(maxWidth: Dim.widthPercent(70)),
+                            child: Text(
+                              '${_message.sender}',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black),
+                            ),
                           ),
                           //TODO do we need to use user's color or not?
                           /* Text(
-                                  '${_message.sender}',
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w600,
-                                    color: HSLColor.fromAHSL(
-                                            1,
-                                            _message.username.hashCode % 360,
-                                            0.9,
-                                            0.3)
-                                        .toColor(),
-                                  ),
-                                ),*/
+                                    '${_message.sender}',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color: HSLColor.fromAHSL(
+                                              1,
+                                              _message.username.hashCode % 360,
+                                              0.9,
+                                              0.3)
+                                          .toColor(),
+                                    ),
+                                  ),*/
                         ],
                       ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxHeight:
-                                MediaQuery.of(context).size.height * 0.15),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                child: TwacodeRenderer(
-                                  _message.content.prepared,
-                                  TextStyle(
-                                      fontSize: 14.0,
-                                      //fontWeight: FontWeight.w400,
-                                      color: Color(0xFF818C99)),
-                                  _message.username.hashCode % 360,
-                                ).message,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            width: Dim.widthPercent(80),
+                            child: TwacodeRenderer(
+                              twacode: _message.blocks,
+                              parentStyle: TextStyle(
+                                fontSize: 14.0,
+                                //fontWeight: FontWeight.w400,
+                                color: Color(0xFF818C99),
                               ),
-                              SizedBox(
-                                height: 3,
-                              ),
-                            ],
+                              userUniqueColor: _message.username.hashCode % 360,
+                              isSwipe: true,
+                            ).messageOnSwipe,
                           ),
-                        ),
-                      )
+                          SizedBox(
+                            height: 3,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                   Spacer(),

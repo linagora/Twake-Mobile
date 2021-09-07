@@ -2,39 +2,41 @@ import 'dart:isolate';
 import 'dart:ui';
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/widgets/common/user_thumbnail.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
-
 import 'package:twake/widgets/common/reaction.dart';
-
-final RegExp singleLineFeed = RegExp('(?<!\n)\n(?!\n)');
+import 'package:twake/widgets/message/resend_modal_sheet.dart';
 
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
-  final bool hideShowAnswers;
+  final bool hideShowReplies;
   final bool shouldShowSender;
   final Message message;
   final Channel channel;
+  final bool hideReaction;
   final bool upBubbleSide;
   final bool downBubbleSide;
+  final bool isThread;
 
   MessageTile({
     required this.message,
     required this.channel,
     required this.upBubbleSide,
     required this.downBubbleSide,
-    this.hideShowAnswers = false,
+    this.hideShowReplies = false,
     this.shouldShowSender = true,
+    this.hideReaction = false,
+    this.isThread = false,
     Key? key,
   }) : super(key: key);
 
@@ -44,41 +46,26 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
 
 class _MessageTileState<T extends BaseMessagesCubit>
     extends State<MessageTile> {
-  late bool _hideShowAnswers;
+  late bool _hideShowReplies;
   late bool _shouldShowSender;
   late Message _message;
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-  double _width = 0.0;
-  double _height = 0.0;
 
-  // static downloadingCallback(id, status, progress) {
-  // SendPort sendPort = IsolateNameServer.lookupPortByName("downloading")!;
-  // sendPort.send([id, status, progress]);
-  // }
   Size wdgtHieght = Size(0, 0);
   // use _wdgtKey in the Bubble
-  final GlobalKey _wdgtKey = GlobalKey();
   double h = 1;
 
   @override
   void initState() {
     super.initState();
-    _hideShowAnswers = widget.hideShowAnswers;
+    _hideShowReplies = widget.hideShowReplies;
     _shouldShowSender = widget.shouldShowSender;
     _message = widget.message;
 
     IsolateNameServer.registerPortWithName(
         _receivePort.sendPort, "downloading");
     // FlutterDownloader.registerCallback(downloadingCallback);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      if (mounted) {
-        // setState(() {
-        _width = context.size?.width ?? 0.0;
-        _height = context.size?.height ?? 0.0;
-        // });
-      }
-    });
   }
 
   @override
@@ -87,8 +74,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
     if (oldWidget.shouldShowSender != widget.shouldShowSender) {
       _shouldShowSender = widget.shouldShowSender;
     }
-    if (oldWidget.hideShowAnswers != widget.hideShowAnswers) {
-      _hideShowAnswers = widget.hideShowAnswers;
+    if (oldWidget.hideShowReplies != widget.hideShowReplies) {
+      _hideShowReplies = widget.hideShowReplies;
     }
     if (oldWidget.message != widget.message) {
       _message = widget.message;
@@ -96,16 +83,38 @@ class _MessageTileState<T extends BaseMessagesCubit>
   }
 
   void onReply(Message message) {
-    NavigatorService.instance
-        .navigate(channelId: message.channelId, threadId: message.id);
+    NavigatorService.instance.navigate(
+      channelId: message.channelId,
+      threadId: message.id,
+      reloadThreads: false,
+    );
   }
 
   onCopy({required context, required text}) {
     FlutterClipboard.copy(text);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: Duration(milliseconds: 1000),
-        content: Text('Message has been copied to clipboard'),
+        margin: EdgeInsets.fromLTRB(
+          15.0,
+          5.0,
+          15.0,
+          65.0,
+          //  Dim.heightPercent(8),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(milliseconds: 1500),
+        content: Row(
+          children: [
+            Icon(Icons.copy, color: Colors.white),
+            SizedBox(
+              width: 20,
+            ),
+            Text('Message has been copied to clipboard'),
+          ],
+        ),
       ),
     );
   }
@@ -115,10 +124,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
     final messageState = Get.find<ChannelMessagesCubit>().state;
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
-
       return InkWell(
         onLongPress: () {
-          if (_message.isDelivered || _isMyMessage == false)
+          if (_message.delivery == Delivery.delivered || _isMyMessage == false)
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -128,20 +136,27 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 return MessageModalSheet<T>(
                   message: _message,
                   isMe: _isMyMessage,
+                  isThread: widget.isThread,
                   onReply: onReply,
                   onEdit: () {
-                    Get.find<ChannelMessagesCubit>()
-                        .startEdit(message: _message);
+                    widget.isThread
+                        ? Get.find<ThreadMessagesCubit>()
+                            .startEdit(message: _message)
+                        : Get.find<ChannelMessagesCubit>()
+                            .startEdit(message: _message);
                     Navigator.of(context).pop();
                   },
                   ctx: context,
                   onDelete: () {
-                    Get.find<ChannelMessagesCubit>().delete(message: _message);
-                    Navigator.pop(context);
+                    widget.isThread
+                        ? Get.find<ThreadMessagesCubit>()
+                            .delete(message: _message)
+                        : Get.find<ChannelMessagesCubit>()
+                            .delete(message: _message);
+                    Navigator.of(context).pop();
                   },
                   onCopy: () {
-                    onCopy(
-                        context: context, text: _message.content.originalStr);
+                    onCopy(context: context, text: _message.text);
                     Navigator.of(context).pop();
                   },
                 );
@@ -150,9 +165,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
         },
         onTap: () {
           FocusManager.instance.primaryFocus!.unfocus();
-          if (_message.threadId == null &&
-              _message.responsesCount != 0 &&
-              !_hideShowAnswers) {
+          if (_message.responsesCount != 0 && !_hideShowReplies) {
             onReply(_message);
           }
         },
@@ -165,24 +178,34 @@ class _MessageTileState<T extends BaseMessagesCubit>
             SizedBox(width: 6.0),
             Padding(
               padding: _message.reactions.isEmpty
-                  ? const EdgeInsets.only(bottom: 2.0)
+                  ? const EdgeInsets.only(bottom: 15.0)
                   : const EdgeInsets.only(bottom: 22.0),
-              child: (!_isMyMessage && _shouldShowSender)
-                  ? UserThumbnail(
-                      thumbnailUrl: _message.thumbnail ?? '',
-                      userName: _message.sender,
-                      size: 28.0,
-                    )
-                  : SizedBox(width: 28.0, height: 28.0),
+              child:
+                  (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
+                      ? ImageWidget(
+                          imageType: ImageType.common,
+                          imageUrl: _message.picture ?? '',
+                          name: _message.sender,
+                          size: 28,
+                        )
+                      : SizedBox(width: 28.0, height: 28.0),
             ),
-            SizedBox(width: 6.0),
+            _isMyMessage
+                ? SizedBox(
+                    width: Dim.widthPercent(8),
+                  )
+                : SizedBox(
+                    width: 6,
+                  ),
             Flexible(
               child: Container(
                 child: Stack(
                   children: [
                     Container(
                       padding: _message.reactions.isEmpty
-                          ? const EdgeInsets.only(bottom: 1.0)
+                          ? widget.downBubbleSide
+                              ? const EdgeInsets.only(bottom: 12.0, top: 3)
+                              : const EdgeInsets.only(bottom: 1.0)
                           : const EdgeInsets.only(bottom: 22.0),
                       color: Colors.white,
                       child: ClipRRect(
@@ -236,161 +259,246 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           ),
                           child: Column(
                             //crossAxisAlignment: CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              if (!widget.channel.isDirect && !_isMyMessage)
-                                Container(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(12, 6, 1, 1),
-                                    child: Text(
-                                      '${_message.sender}',
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w700,
-                                        color: HSLColor.fromAHSL(
-                                                1,
-                                                _message.username.hashCode %
-                                                    360,
-                                                0.9,
-                                                0.3)
-                                            .toColor(),
-                                      ),
+                              if (!widget.channel.isDirect &&
+                                  !_isMyMessage &&
+                                  widget.upBubbleSide)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                                  child: Text(
+                                    '${_message.sender}',
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: HSLColor.fromAHSL(
+                                              1,
+                                              _message.username.hashCode % 360,
+                                              0.9,
+                                              0.3)
+                                          .toColor(),
                                     ),
                                   ),
                                 ),
                               Padding(
                                 padding:
                                     EdgeInsets.fromLTRB(12.0, 5.0, 2.0, 0.0),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                child: Column(
                                   children: [
-                                    Flexible(
-                                      child: Column(
-                                        children: [
-                                          TwacodeRenderer(
-                                            _message.content.prepared,
-                                            TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w400,
-                                              color: _isMyMessage
-                                                  ? Colors.white
-                                                  : Colors.black,
-                                            ),
-                                            _message.username.hashCode % 360,
-                                          ).message,
-                                          SizedBox(
-                                            height: 3,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          _message.threadId != null ||
-                                                  _hideShowAnswers
-                                              ? DateFormatter
-                                                  .getVerboseDateTime(
-                                                      _message.creationDate)
-                                              : DateFormatter.getVerboseTime(
-                                                  _message.creationDate),
-                                          textAlign: TextAlign.end,
-                                          style: TextStyle(
-                                            fontSize: 11.0,
-                                            fontWeight: FontWeight.w400,
-                                            fontStyle: FontStyle.italic,
-                                            color: _isMyMessage
-                                                ? Color(0xffffffff)
-                                                    .withOpacity(0.58)
-                                                : Color(0xFF8E8E93),
+                                        Flexible(
+                                          child: Column(
+                                            children: [
+                                              TwacodeRenderer(
+                                                twacode: _message.blocks,
+                                                parentStyle: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: _isMyMessage
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                                userUniqueColor:
+                                                    _message.username.hashCode %
+                                                        360,
+                                                isSwipe: false,
+                                              ).message,
+                                              SizedBox(
+                                                height: 3,
+                                              ),
+                                            ],
                                           ),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text(
+                                              _message.inThread ||
+                                                      _hideShowReplies
+                                                  ? DateFormatter
+                                                      .getVerboseDateTime(
+                                                      _message.createdAt,
+                                                    )
+                                                  : DateFormatter
+                                                      .getVerboseTime(
+                                                      _message.createdAt,
+                                                    ),
+                                              textAlign: TextAlign.end,
+                                              style: TextStyle(
+                                                fontSize: 11.0,
+                                                fontWeight: FontWeight.w400,
+                                                fontStyle: FontStyle.italic,
+                                                color: _isMyMessage
+                                                    ? Color(0xffffffff)
+                                                        .withOpacity(0.58)
+                                                    : Color(0xFF8E8E93),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
+                                    if (_message.responsesCount > 0)
+                                      //    Container(
+                                      //  alignment: Alignment.center,
+                                      //    child: Divider(
+                                      //      height: 1.0,
+                                      //     thickness: 1.0,
+                                      //     color: _isMyMessage
+                                      //        ? Color(0xffffffff)
+                                      //             .withOpacity(0.58)
+                                      //         : Color(0xFF8E8E93),
+                                      //   ),
+                                      //   ),
+                                      if (_message.responsesCount > 0 &&
+                                          !_message.inThread &&
+                                          !_hideShowReplies)
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: 105.0,
+                                          ),
+                                          alignment: Alignment.center,
+                                          padding: EdgeInsets.only(
+                                              top: 15.0, bottom: 15.0),
+                                          // alignment: Alignment.bottomCenter,
+                                          child: Text(
+                                            'View ${_message.responsesCount} replies',
+                                            style: TextStyle(
+                                              color: _isMyMessage
+                                                  ? Colors.white
+                                                  : Color(0xFF004DFF),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
                                   ],
                                 ),
                               ),
-                              SizedBox(height: 5.0),
-                              /*   if (_message.responsesCount > 0 &&
-                                    _message.threadId == null &&
-                                    !_hideShowAnswers)
-                                  Divider(
-                                    height: 1.0,
-                                    thickness: 1.0,
-                                    color: _isMyMessage
-                                        ? Colors.white.withOpacity(0.19)
-                                        : Color(0xFF979797).withOpacity(0.19),
-                                  ),*/
-                              if (_message.responsesCount > 0 &&
-                                  _message.threadId == null &&
-                                  !_hideShowAnswers)
-                                Container(
-                                  padding:
-                                      EdgeInsets.only(top: 15.0, bottom: 15.0),
-                                  // alignment: Alignment.bottomCenter,
-                                  child: Text(
-                                    'View ${_message.responsesCount} replies',
-                                    style: TextStyle(
-                                      color: _isMyMessage
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
                             ],
                           ),
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 17.0,
-                      bottom: -1.0,
-                      child: Wrap(
-                        runSpacing: Dim.heightMultiplier,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        textDirection: TextDirection.ltr,
-                        children: [
-                          ..._message.reactions.map((r) {
-                            return Reaction<T>(
-                              message: _message,
-                              reaction: r,
-                            );
-                          }),
-                        ],
+                    if (!widget.hideReaction)
+                      Positioned(
+                        left: 17.0,
+                        bottom: -1.0,
+                        child: Wrap(
+                          runSpacing: Dim.heightMultiplier,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          textDirection: TextDirection.ltr,
+                          children: [
+                            ..._message.reactions.map((r) {
+                              return Reaction<T>(
+                                message: _message,
+                                reaction: r,
+                              );
+                            }),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
             SizedBox(width: 3.0),
-            _message.isDelivered && _isMyMessage
-                ? Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Icon(
-                        Icons.check_circle_outline_rounded,
-                        color: Color(0xFF004DFF),
-                        size: 20,
-                      ),
-                      _message.reactions.isEmpty
-                          ? SizedBox(height: 5.0)
-                          : SizedBox(height: 24.0)
-                    ],
-                  )
+            _isMyMessage == true
+                ? _message.delivery == Delivery.inProgress
+                    ? Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 10,
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              CupertinoIcons.time_solid,
+                              color: Colors.grey[400],
+                              size: 20,
+                            ),
+                          ),
+                          if (widget.downBubbleSide)
+                            _message.reactions.isEmpty
+                                ? SizedBox(height: 10.0)
+                                : SizedBox(height: 18.0),
+                          if (_message.reactions.isNotEmpty &&
+                              !widget.downBubbleSide)
+                            SizedBox(height: 18.0)
+                        ],
+                      )
+                    : _message.delivery == Delivery.delivered
+                        ? Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.check_circle_outline_rounded,
+                                color: Color(0xFF004DFF),
+                                size: 20,
+                              ),
+                              if (widget.downBubbleSide)
+                                _message.reactions.isEmpty
+                                    ? SizedBox(height: 10.0)
+                                    : SizedBox(height: 18.0),
+                              if (_message.reactions.isNotEmpty &&
+                                  !widget.downBubbleSide)
+                                SizedBox(height: 18.0)
+                            ],
+                          )
+                        : _message.delivery == Delivery.failed
+                            ? GestureDetector(
+                                onTap: () async {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (_) {
+                                      return ResendModalSheet(
+                                        message: _message,
+                                        isThread: widget.isThread,
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: Colors.white,
+                                      child: Icon(
+                                        CupertinoIcons
+                                            .exclamationmark_circle_fill,
+                                        color: Colors.red[400],
+                                        size: 20,
+                                      ),
+                                    ),
+                                    if (widget.downBubbleSide)
+                                      _message.reactions.isEmpty
+                                          ? SizedBox(height: 10.0)
+                                          : SizedBox(height: 18.0),
+                                    if (_message.reactions.isNotEmpty &&
+                                        !widget.downBubbleSide)
+                                      SizedBox(height: 18.0)
+                                  ],
+                                ),
+                              )
+                            : Container()
                 : Container(),
-            _message.isDelivered && _isMyMessage
-                ? SizedBox(width: 8.0)
-                : SizedBox(width: 12.0)
+            SizedBox(width: 6.0),
+            if (!_isMyMessage)
+              SizedBox(
+                width: Dim.widthPercent(10),
+              )
           ],
         ),
       );

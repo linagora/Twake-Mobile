@@ -1,7 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/models/channel/channel_role.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/message/message_summary.dart';
+import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
 export 'channel_visibility.dart';
@@ -11,10 +13,11 @@ part 'channel.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Channel extends BaseModel {
-  static const COMPOSITE_FIELDS = ['members', 'permissions', 'last_message'];
+  static const COMPOSITE_FIELDS = ['members', 'last_message'];
 
   final String id;
 
+  @JsonKey(defaultValue: '')
   final String name;
 
   final String? icon;
@@ -27,6 +30,9 @@ class Channel extends BaseModel {
 
   final List<String> members;
 
+  @JsonKey(defaultValue: 0)
+  final int membersCount;
+
   final ChannelVisibility visibility;
 
   final int lastActivity;
@@ -38,8 +44,7 @@ class Channel extends BaseModel {
 
   String? draft;
 
-  @JsonKey(defaultValue: const [])
-  final List<String> permissions;
+  final ChannelRole role;
 
   bool get hasUnread => userLastAccess < lastActivity;
 
@@ -49,7 +54,21 @@ class Channel extends BaseModel {
     return hash;
   }
 
-  int get membersCount => members.length;
+  List<Avatar> get avatars {
+    if (!isDirect) throw 'The getter avatars exist only for direct channels';
+
+    final links = icon!.split(',').toList();
+    final names = name.split(', ').toList();
+
+    final avatarsList = <Avatar>[];
+
+    // both links and names should be of the same length
+    for (int i = 0; i < links.length; i++) {
+      avatarsList.add(Avatar(link: links[i], name: names[i]));
+    }
+
+    return avatarsList;
+  }
 
   bool get isDirect => workspaceId == 'direct';
 
@@ -66,21 +85,27 @@ class Channel extends BaseModel {
     required this.members,
     required this.visibility,
     required this.lastActivity,
+    required this.membersCount,
+    required this.role,
     this.userLastAccess: 0,
     this.draft,
-    required this.permissions,
   });
 
   factory Channel.fromJson({
     required Map<String, dynamic> json,
     bool jsonify: true,
+    bool transform: false,
   }) {
     // message retrieved from sqlite database will have
     // it's composite fields json string encoded, so there's a
     // need to decode them back
+    if (transform) {
+      json = ApiDataTransformer.channel(json: json);
+    }
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
+
     return _$ChannelFromJson(json);
   }
 
@@ -91,6 +116,8 @@ class Channel extends BaseModel {
     ChannelVisibility? visibility,
     int? lastActivity,
     MessageSummary? lastMessage,
+    int? userLastAccess,
+    int? membersCount,
   }) {
     final copy = Channel(
       id: id,
@@ -100,12 +127,13 @@ class Channel extends BaseModel {
       companyId: companyId,
       workspaceId: workspaceId,
       members: members,
+      membersCount: membersCount ?? this.membersCount,
       visibility: visibility ?? this.visibility,
       lastActivity: lastActivity ?? this.lastActivity,
       lastMessage: lastMessage ?? this.lastMessage,
-      userLastAccess: userLastAccess,
+      role: this.role,
+      userLastAccess: userLastAccess ?? this.userLastAccess,
       draft: draft,
-      permissions: permissions,
     );
 
     return copy;
@@ -122,4 +150,11 @@ class Channel extends BaseModel {
     }
     return json;
   }
+}
+
+class Avatar {
+  final String link;
+  final String name;
+
+  const Avatar({required this.link, required this.name});
 }

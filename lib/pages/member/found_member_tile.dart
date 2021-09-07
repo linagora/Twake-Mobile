@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 typedef OnFoundMemberTileClick = void Function();
@@ -28,10 +29,11 @@ class FoundMemberTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: RoundedImage(
+              child: ImageWidget(
+                imageType: ImageType.common,
+                size: 37,
+                name: name,
                 imageUrl: imageUrl,
-                width: 34,
-                height: 34,
               ),
             ),
             Expanded(

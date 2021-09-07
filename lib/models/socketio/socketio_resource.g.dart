@@ -48,6 +48,7 @@ K _$enumDecode<K, V>(
 }
 
 const _$ResourceActionEnumMap = {
+  ResourceAction.created: 'created',
   ResourceAction.updated: 'updated',
   ResourceAction.saved: 'saved',
   ResourceAction.deleted: 'deleted',
@@ -55,6 +56,7 @@ const _$ResourceActionEnumMap = {
 };
 
 const _$ResourceTypeEnumMap = {
+  ResourceType.message: 'message',
   ResourceType.channel: 'channel',
   ResourceType.channelMember: 'channel_member',
   ResourceType.channelActivity: 'channel_activity',

@@ -4,7 +4,7 @@ import 'package:twake/services/service_bundle.dart';
 
 class MentionsRepository {
   final _storage = StorageService.instance;
-  final _userMentionRegex = RegExp(r'(?<=(^|\s))@[A-Za-z1-9._-]+(?=(\s|$))');
+  final _userMentionRegex = RegExp(r'(?<=(^|\s))@[A-Za-z0-9._-]+(?=(\s|$))');
 
   MentionsRepository();
 
@@ -15,8 +15,8 @@ class MentionsRepository {
         ${Table.account2workspace.name} AS a2w ON a.id = a2w.user_id
         WHERE a2w.workspace_id = ? AND (
             a.username LIKE ? OR
-            a.firstname LIKE ? OR 
-            a.lastname LIKE ? OR
+            a.first_name LIKE ? OR 
+            a.last_name LIKE ? OR
             a.email LIKE ?
         )
     ''';

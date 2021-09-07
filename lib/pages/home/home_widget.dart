@@ -14,9 +14,11 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/push_notifications_service.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/widgets/common/badges.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
+import 'package:twake/widgets/common/twake_search_text_field.dart';
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
 import 'home_drawer_widget.dart';
@@ -28,12 +30,13 @@ class HomeWidget extends StatefulWidget {
   _HomeWidgetState createState() => _HomeWidgetState();
 }
 
-class _HomeWidgetState extends State<HomeWidget> {
-  final _tabs = [HomeChannelListWidget(), HomeDirectListWidget()];
-
+class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
+  final _searchController = TextEditingController();
+  String _searchText = "";
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addObserver(this);
 
     PushNotificationsService.instance.requestPermission();
 
@@ -52,6 +55,46 @@ class _HomeWidgetState extends State<HomeWidget> {
     Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
 
     Get.find<BadgesCubit>().fetch();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchText = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && Globals.instance.token != null) {
+      Future.delayed(Duration(seconds: 7), () {
+        Get.find<CompaniesCubit>().fetch();
+        Get.find<WorkspacesCubit>()
+            .fetch(companyId: Globals.instance.companyId);
+
+        Get.find<ChannelsCubit>().fetch(
+          workspaceId: Globals.instance.workspaceId!,
+          companyId: Globals.instance.companyId,
+        );
+        Get.find<DirectsCubit>().fetch(
+          workspaceId: 'direct',
+          companyId: Globals.instance.companyId,
+        );
+
+        Get.find<AccountCubit>().fetch();
+
+        Get.find<BadgesCubit>().fetch();
+        // Reset socketio connection and all the subscriptions
+        SocketIOService.instance.disconnect();
+        SocketIOService.instance.connect();
+      });
+    }
+    super.didChangeAppLifecycleState(state);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -63,17 +106,27 @@ class _HomeWidgetState extends State<HomeWidget> {
         appBar: AppBar(
           leading: SizedBox.shrink(),
           leadingWidth: 0,
-          toolbarHeight: kToolbarHeight + 44,
+          toolbarHeight: kToolbarHeight + 100,
           bottom: TabBar(
             tabs: [
-              Tab(
-                child: BadgesCount(
-                  type: BadgeType.workspace,
-                  id: Globals.instance.workspaceId!,
+              BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                bloc: Get.find<WorkspacesCubit>(),
+                builder: (_s, _) => Tab(
+                  child: BadgesCount(
+                    type: BadgeType.workspace,
+                    id: Globals.instance.workspaceId!,
+                  ),
                 ),
               ),
-              Tab(
-                text: 'Chats',
+              BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                bloc: Get.find<WorkspacesCubit>(),
+                builder: (_s, _) => Tab(
+                  child: BadgesCount(
+                    type: BadgeType.workspace,
+                    id: Globals.instance.workspaceId!,
+                    isInDirects: true,
+                  ),
+                ),
               ),
             ],
             isScrollable: true,
@@ -92,31 +145,23 @@ class _HomeWidgetState extends State<HomeWidget> {
           ),
           title: _buildHeader(),
         ),
-
-        /* float button to create channel
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: FloatingActionButton(
-              onPressed: () => push(RoutePaths.newChannel.path),
-              backgroundColor: Color(0xff004dff),
-              child: Image.asset(imageAddChannel),
-            ),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-           */
-
         body: Stack(
           children: [
             Positioned(
               child: Opacity(
-                opacity: 0.22,
+                opacity: 0.6,
                 child: Divider(
-                  height: 2,
+                  height: 4,
                   color: Color(0xffd8d8d8),
                 ),
               ),
             ),
-            TabBarView(children: _tabs),
+            TabBarView(
+              children: [
+                HomeChannelListWidget(serchText: _searchText),
+                HomeDirectListWidget(serchText: _searchText)
+              ],
+            )
           ],
         ),
       ),
@@ -138,17 +183,21 @@ class _HomeWidgetState extends State<HomeWidget> {
                     builder: (context, workspaceState) {
                       if (workspaceState is WorkspacesLoadSuccess) {
                         return GestureDetector(
-                          onTap: () => Scaffold.of(context).openDrawer(),
+                          onTap: () {
+                            Get.find<AccountCubit>().fetch();
+                            Scaffold.of(context).openDrawer();
+                          },
                           child: Container(
                             width: 75,
                             child: Row(
                               children: [
-                                WorkspaceThumbnail(
-                                  workspaceName:
-                                      workspaceState.selected?.name ?? '',
-                                  size: 44.0,
-                                  borderRadius: 12.0,
-                                ),
+                                ImageWidget(
+                                    imageType: ImageType.common,
+                                    imageUrl:
+                                        workspaceState.selected?.logo ?? '',
+                                    size: 42,
+                                    name: workspaceState.selected?.name ?? '',
+                                    backgroundColor: Color(0xfff5f5f5)),
                                 SizedBox(
                                   width: 5,
                                 ),
@@ -174,25 +223,31 @@ class _HomeWidgetState extends State<HomeWidget> {
                     height: 15,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => push(RoutePaths.newDirect.path),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: Color(0xfff9f8f9),
-                        width: 40,
-                        height: 40,
-                        child: Image.asset(
-                          imageAddChannel,
-                          width: 20,
-                          height: 20,
-                          color: Color(0xff004dff),
-                        ),
-                      ),
-                    ),
-                  ),
+                BlocBuilder(
+                  bloc: Get.find<CompaniesCubit>(),
+                  builder: (ctx, cstate) => (cstate is CompaniesLoadSuccess &&
+                          cstate.selected.canUpdateChannel)
+                      ? Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: () => push(RoutePaths.newDirect.path),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                color: Color(0xfff9f8f9),
+                                width: 40,
+                                height: 40,
+                                child: Image.asset(
+                                  imageAddChannel,
+                                  width: 20,
+                                  height: 20,
+                                  color: Color(0xff004dff),
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(),
                 )
               ],
             ),
@@ -200,6 +255,12 @@ class _HomeWidgetState extends State<HomeWidget> {
           Divider(
             color: Colors.white,
             height: 12,
+          ),
+          TwakeSearchTextField(
+            height: 40,
+            controller: _searchController,
+            hintText: 'Search',
+            backgroundColor: Color(0xfff9f8f9),
           ),
         ],
       ),

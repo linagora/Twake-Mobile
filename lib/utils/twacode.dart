@@ -3,12 +3,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/utils/emojis.dart';
+import 'package:twake/widgets/common/file_tile.dart';
+import 'package:twake/widgets/common/user_mention.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final RegExp idMatch = RegExp(':([a-zA-z0-9-]+)');
+final RegExp specialsMentionsMatch = RegExp('(all|here|channel)');
 
 class TwacodeParser {
-  String? original = "";
+  String original = "";
 
   List<ASTNode> nodes = [];
 
@@ -16,7 +19,12 @@ class TwacodeParser {
     parse(original);
   }
 
-  List<dynamic> get message => nodes.map((n) => n.transform()).toList();
+  List<dynamic> get message => [
+        {
+          'type': 'twacode',
+          'elements': nodes.map((n) => n.transform()).toList()
+        }
+      ];
 
   void parse(String? original) {
     if (original == null) {
@@ -138,7 +146,7 @@ class TwacodeParser {
             this.nodes.add(ASTNode(type: TType.Text, text: acc));
           }
           this.nodes.add(ASTNode(
-                type: TType.User,
+                type: TType.Mention,
                 text: original.substring(i + 1, index),
               ));
           start = index;
@@ -264,9 +272,9 @@ class TwacodeParser {
   }
 
   int doesCloseBold(int i) {
-    final len = original!.length - 1;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.star && original![j + 1] == Delim.star) {
+    final len = original.length - 1;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.star && original[j + 1] == Delim.star) {
         return j + 2;
       }
     }
@@ -274,9 +282,9 @@ class TwacodeParser {
   }
 
   int doesCloseItalic(int i) {
-    final len = original!.length;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.underline) {
+    final len = original.length;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.underline) {
         return j + 1;
       }
     }
@@ -287,20 +295,20 @@ class TwacodeParser {
     var start = i;
     var end = i;
     while (start > 0) {
-      final cur = original![start - 1];
+      final cur = original[start - 1];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       start -= 1;
     }
-    while (end < original!.length) {
-      final cur = original![end];
+    while (end < original.length) {
+      final cur = original[end];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       end += 1;
     }
-    final parts = original!.substring(start, end).split('@');
+    final parts = original.substring(start, end).split('@');
     if (parts[0].isEmpty || parts[1].isEmpty) {
       return Tuple2(0, 0);
     }
@@ -320,20 +328,20 @@ class TwacodeParser {
     var start = i;
     var end = i;
     while (start > 0) {
-      final cur = original![start - 1];
+      final cur = original[start - 1];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       start -= 1;
     }
-    while (end < original!.length) {
-      final cur = original![end];
+    while (end < original.length) {
+      final cur = original[end];
       if (cur == Delim.ws || cur == Delim.lf) {
         break;
       }
       end += 1;
     }
-    final parts = original!.substring(start, end).split('://');
+    final parts = original.substring(start, end).split('://');
     if (parts[0].isEmpty || parts[1].isEmpty) {
       return Tuple2(0, 0);
     }
@@ -348,46 +356,50 @@ class TwacodeParser {
   }
 
   int doesCloseUnderline(int i) {
-    final len = original!.length - 1;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.underline &&
-          original![j + 1] == Delim.underline) {
+    final len = original.length - 1;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.underline &&
+          original[j + 1] == Delim.underline) {
         return j + 2;
       }
     }
     return 0;
   }
 
+  bool isMention(String text) {
+    return idMatch.hasMatch(text) || specialsMentionsMatch.hasMatch(text);
+  }
+
   int isUser(int i) {
-    for (int j = i; j < original!.length; j++) {
-      if (original![j] == Delim.ws || original![j] == Delim.lf) {
-        if (idMatch.hasMatch(original!.substring(i, j))) {
+    for (int j = i; j < original.length; j++) {
+      if (original[j] == Delim.ws || original[j] == Delim.lf) {
+        if (isMention(original.substring(i, j))) {
           return j;
         } else {
           return 0;
         }
       }
     }
-    if (idMatch.hasMatch(original!.substring(i))) {
-      return original!.length;
+    if (isMention(original.substring(i))) {
+      return original.length;
     } else {
       return 0;
     }
   }
 
   int isChannel(int i) {
-    for (int j = i; j < original!.length; j++) {
-      if (original![j] == Delim.ws || original![j] == Delim.lf) {
+    for (int j = i; j < original.length; j++) {
+      if (original[j] == Delim.ws || original[j] == Delim.lf) {
         return j;
       }
     }
-    return original!.length;
+    return original.length;
   }
 
   int doesCloseStrikeThrough(int i) {
-    final len = original!.length - 1;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.tilde && original![j + 1] == Delim.tilde) {
+    final len = original.length - 1;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.tilde && original[j + 1] == Delim.tilde) {
         return j + 2;
       }
     }
@@ -395,9 +407,9 @@ class TwacodeParser {
   }
 
   int doesCloseInlineCode(int i) {
-    final len = original!.length;
-    for (int j = i; j < len && original![j] != '\n'; j++) {
-      if (original![j] == Delim.tick) {
+    final len = original.length;
+    for (int j = i; j < len && original[j] != '\n'; j++) {
+      if (original[j] == Delim.tick) {
         return j + 1;
       }
     }
@@ -405,10 +417,10 @@ class TwacodeParser {
   }
 
   int doesCloseMultiCode(int i) {
-    final len = original!.length;
+    final len = original.length;
     int ticks = 0;
     for (int j = i; j < len; j++) {
-      if (original![j] == Delim.tick) {
+      if (original[j] == Delim.tick) {
         if (ticks == 2) {
           return j + 1;
         } else {
@@ -422,9 +434,9 @@ class TwacodeParser {
   }
 
   int hasLineFeed(int i) {
-    final len = original!.length;
+    final len = original.length;
     for (int j = i; j < len; j++) {
-      if (original![j] == Delim.lf) {
+      if (original[j] == Delim.lf) {
         return j;
       }
     }
@@ -495,7 +507,7 @@ class ASTNode {
         map['content'] = this.text;
         break;
 
-      case TType.User:
+      case TType.Mention:
         map['start'] = '@';
         map['content'] = this.text;
         break;
@@ -523,6 +535,7 @@ class ASTNode {
 }
 
 enum TType {
+  Twacode,
   Text,
   LineBreak,
   InlineCode,
@@ -533,9 +546,10 @@ enum TType {
   Italic,
   Quote,
   MultiQuote,
-  User,
+  Mention,
   Channel,
   Url,
+  Link,
   Emoji,
   Email,
   Icon,
@@ -565,56 +579,39 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
-  TwacodeRenderer(this.twacode, TextStyle parentStyle, double userUniqueColor) {
-    this.twacode.addAll(this.extractFiles(this.twacode));
-    spans = render(this.twacode, parentStyle, userUniqueColor);
-  }
 
-  // Files should only occur in the end of the twacode structure
-  // they are usually put inside of nop type object's content
-  // or rarely exist as a standalon object in the end of the list
-  List<dynamic> extractFiles(List<dynamic> content) {
-    List<dynamic> files = [];
-    final last = content.last;
-
-    if (last is List) {
-      files.addAll(extractFiles(last));
-    }
-
-    if (last is Map) {
-      if (last['type'] == 'file') {
-        files.add(last);
-        content.removeLast();
-      } else if (last['content'] is List) {
-        var inner = last['content'] as List;
-        for (int i = 0; i < inner.length; i++)
-          if (inner[i] is Map && inner[i]['type'] == 'file') {
-            files.add(inner[i]);
-            inner.removeAt(i);
-          }
-      }
-    }
-    return files;
+  TwacodeRenderer({
+    required this.twacode,
+    required TextStyle parentStyle,
+    double userUniqueColor = 0.0,
+    bool isSwipe: false,
+  }) {
+    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe);
   }
 
   TextStyle getStyle(
-      TType type, TextStyle parentStyle, double userUniqueColor) {
+      TType type, TextStyle parentStyle, double userUniqueColor, isSwipe) {
     TextStyle style;
     switch (type) {
       case TType.InlineCode:
-        style = const TextStyle(
-          height: 1.1,
-          fontFamily: MONOSPACE,
-          // backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
-          // color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
+        style = TextStyle(
+          fontFamily: 'SourceCodePro',
+          fontSize: 15,
+          color: parentStyle.color == Colors.black
+              ? Color(0xFFEB5D00)
+              : Color(0xFF1CFFA3),
         );
         break;
 
       case TType.MultiLineCode:
         style = TextStyle(
-          fontFamily: MONOSPACE,
+          fontFamily: 'SourceCodePro',
+          fontSize: 15,
+
           // backgroundColor: Color.fromRGBO(0xCC, 0xE6, 0xFF, 1),
-          // color: Color.fromRGBO(0x75, 0x1A, 0xFF, 1),
+          color: parentStyle.color == Colors.black
+              ? Color(0xFFEB5D00)
+              : Color(0xFF1CFFA3),
         );
         break;
 
@@ -649,9 +646,14 @@ class TwacodeRenderer {
         );
         break;
 
-      case TType.User:
+      case TType.Mention:
         style = TextStyle(
-          color: HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor(),
+          color: parentStyle.color == Colors.black
+              ? HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor()
+              : isSwipe
+                  ? Colors.blue
+                  : Colors.white,
+          fontSize: 14,
         );
         break;
 
@@ -663,15 +665,21 @@ class TwacodeRenderer {
         break;
 
       case TType.Url:
+      case TType.Link:
         style = parentStyle.color == Colors.black
             ? TextStyle(
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               )
-            : TextStyle(
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-              );
+            : isSwipe
+                ? TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  )
+                : TextStyle(
+                    color: Colors.white,
+                    decoration: TextDecoration.underline,
+                  );
         break;
 
       case TType.Attachment:
@@ -688,10 +696,15 @@ class TwacodeRenderer {
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               )
-            : TextStyle(
-                color: Colors.white,
-                decoration: TextDecoration.underline,
-              );
+            : isSwipe
+                ? TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  )
+                : TextStyle(
+                    color: Colors.white,
+                    decoration: TextDecoration.underline,
+                  );
         break;
 
       case TType.Unknown:
@@ -716,8 +729,16 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render(
-      List<dynamic> twacode, TextStyle parentStyle, double userUniqueColor) {
+  RichText get messageOnSwipe {
+    return RichText(
+      text: TextSpan(children: this.spans),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 2,
+    );
+  }
+
+  List<InlineSpan> render(List<dynamic> twacode, TextStyle parentStyle,
+      double userUniqueColor, bool isSwipe) {
     List<InlineSpan> spans = [];
 
     for (int i = 0; i < twacode.length; i++) {
@@ -727,12 +748,16 @@ class TwacodeRenderer {
             text:
                 spans.isEmpty ? (twacode[i] as String).trimLeft() : twacode[i],
             style: parentStyle.merge(
-              getStyle(TType.Text, parentStyle, userUniqueColor),
+              getStyle(TType.Text, parentStyle, userUniqueColor, isSwipe),
             ),
           ),
         );
       } else if (twacode[i] is List) {
-        spans.addAll(render(twacode[i], parentStyle, userUniqueColor));
+        spans.addAll(render(twacode[i], parentStyle, userUniqueColor, isSwipe));
+      } else if (twacode[i] is Map && twacode[i]['type'] == 'twacode') {
+        spans.addAll(
+          render(twacode[i]['elements'], parentStyle, userUniqueColor, isSwipe),
+        );
       } else if (twacode[i] is Map) {
         final t = twacode[i];
         late TType type;
@@ -760,7 +785,7 @@ class TwacodeRenderer {
               type = TType.Url;
               break;
             case 'user':
-              type = TType.User;
+              type = TType.Mention;
               break;
             case 'email':
               type = TType.Email;
@@ -798,8 +823,11 @@ class TwacodeRenderer {
             case '~~':
               type = TType.StrikeThrough;
               break;
+            case '[':
+              type = TType.Link;
+              break;
             case '@':
-              type = TType.User;
+              type = TType.Mention;
               break;
             case '>':
               type = TType.Quote;
@@ -826,39 +854,49 @@ class TwacodeRenderer {
             spans.add(
               TextSpan(
                 text: '\n',
-                style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
+                style: getStyle(
+                    TType.LineBreak, parentStyle, userUniqueColor, isSwipe),
               ),
             );
-          final style = getStyle(type, parentStyle, userUniqueColor);
+          final style = getStyle(type, parentStyle, userUniqueColor, isSwipe);
           spans.add(
             WidgetSpan(
-              child: Container(
-                constraints: BoxConstraints(maxHeight: 250),
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: parentStyle.backgroundColor,
-                  border: Border.all(color: Colors.grey, width: 0.9),
-                ),
-                child: SingleChildScrollView(
-                  child: Text(t['content'], style: parentStyle.merge(style)),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 5, bottom: 5),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: parentStyle.backgroundColor,
+                    border: Border.all(
+                        color: parentStyle.color == Colors.black
+                            ? Color(0xFFEB5D00)
+                            : Color(0xFF1CFFA3),
+                        width: 1),
+                  ),
+                  constraints: BoxConstraints(maxHeight: 300),
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: SingleChildScrollView(
+                    child: Text(t['content'], style: parentStyle.merge(style)),
+                  ),
                 ),
               ),
             ),
           );
         } else if (type == TType.Attachment &&
             (t['content'] as List).isNotEmpty) {
-          final items = render(t['content'], parentStyle, userUniqueColor);
+          final items =
+              render(t['content'], parentStyle, userUniqueColor, isSwipe);
           final text = TextSpan(
             children: items,
             style: parentStyle.merge(
-              getStyle(type, parentStyle, userUniqueColor),
+              getStyle(type, parentStyle, userUniqueColor, isSwipe),
             ),
           );
           spans.add(TextSpan(
               text: '\n',
-              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor)));
+              style: getStyle(
+                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe)));
           spans.add(
             WidgetSpan(
               child: Container(
@@ -883,11 +921,12 @@ class TwacodeRenderer {
           InlineSpan text;
 
           if (t['content'] is List) {
-            final items = render(t['content'], parentStyle, userUniqueColor);
+            final items =
+                render(t['content'], parentStyle, userUniqueColor, isSwipe);
             text = TextSpan(
               children: items,
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             );
           } else {
@@ -895,7 +934,7 @@ class TwacodeRenderer {
             text = TextSpan(
               text: t['content'],
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             );
           }
@@ -924,7 +963,8 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               text: Emojis.getByName(t['content']),
-              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
+              style: getStyle(
+                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe),
             ),
           );
         } else if (type == TType.Nop) {
@@ -933,114 +973,61 @@ class TwacodeRenderer {
               t['context']
             ]; // I know, I know, it cannot be uglier
           }
-          final items = render(t['content'], parentStyle, userUniqueColor);
+          final items =
+              render(t['content'], parentStyle, userUniqueColor, isSwipe);
           spans.add(
             TextSpan(
               children: items,
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             ),
           );
         } else if (type == TType.File) {
-          final s = int.parse((t['metadata']['size'] ?? '0').toString());
-          InlineSpan text;
-          const MB = 1024 * 1024;
-          const KB = 1024;
-          final size = s > MB
-              ? '${(s / MB).toStringAsFixed(2)} MB'
-              : s > KB
-                  ? '${(s / KB).toStringAsFixed(2)} KB'
-                  : '$s B';
-          text = TextSpan(
-            text: t['metadata']['name'],
-            style: parentStyle.merge(
-              getStyle(type, parentStyle, userUniqueColor),
-            ),
-          );
-          final widget = Container(
-            margin: EdgeInsets.all(4),
-            padding: EdgeInsets.all(3),
-            child: Row(children: [
-              InkWell(
-                child: SizedBox(
-                  child: t['metadata']['preview'] != null
-                      ? ClipRRect(
-                          child: Image.network(t['metadata']['preview']),
-                          borderRadius: BorderRadius.all(Radius.circular(8)))
-                      : CircleAvatar(
-                          child: Icon(Icons.cloud_download),
-                          backgroundColor: Colors.indigo[100],
-                        ),
-                  width: 40,
-                  height: 40,
-                ),
-              ),
-              SizedBox(width: 10),
-              Flexible(
-                // fit: FlexFit.tight,
-                child: Column(
-                  children: [
-                    RichText(
-                      text: text,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      //softWrap: true,
-                    ),
-                    Text(
-                      size,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                          fontSize: 11.0,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.italic,
-                          color: Color(0xff8e8e93)),
-                    ),
-                  ],
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                ),
-              ),
-            ]),
-          );
-          spans.add(WidgetSpan(child: widget));
-        } else if (type == TType.Icon) {
-          if (t['src'] == null) continue;
-          final widget = Container(
-            padding: EdgeInsets.zero,
-            child: SizedBox(
-              child: ClipRRect(
-                  child: Image.network(t['src']),
-                  borderRadius: BorderRadius.all(Radius.circular(2))),
-              width: 15,
-              height: 15,
-            ),
-          );
+          final widget = FileTile(fileId: t['content']);
+
           spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
           spans.add(TextSpan(
-              style: getStyle(type, parentStyle, userUniqueColor),
+              style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
               text: t['content'],
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
                   if (await canLaunch(t['url'] ?? t['content'])) {
                     await launch(
                       t['url'] ?? t['content'],
-                      forceSafariVC: false,
-                      forceWebView: false,
+                      // forceSafariVC: true,
+                      // forceWebView: true,
+                    );
+                  }
+                }));
+        } else if (type == TType.Link) {
+          final url = (t['content'] as String).split('(').last;
+          spans.add(TextSpan(
+              style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              text: (t['content'] as String).split(']').first,
+              recognizer: TapGestureRecognizer()
+                ..onTap = () async {
+                  if (await canLaunch(url)) {
+                    await launch(
+                      url,
+                      // forceSafariVC: true,
                     );
                   }
                 }));
         } else if (type == TType.LineBreak) {
           spans.add(TextSpan(
               text: '\n',
-              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor)));
+              style: getStyle(
+                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe)));
         } else if (t['content'] is List) {
-          final items = render(t['content'], parentStyle, userUniqueColor);
+          final items =
+              render(t['content'], parentStyle, userUniqueColor, isSwipe);
           spans.add(
             TextSpan(
               children: items,
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             ),
           );
@@ -1049,16 +1036,30 @@ class TwacodeRenderer {
             TextSpan(
               text: t['content'],
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              ),
+            ),
+          );
+        } else if (type == TType.Mention) {
+          final user = (t['content'] as String).split(':');
+          final username = user.first;
+          final userId = user.length == 2 ? user.last : null;
+          spans.add(
+            WidgetSpan(
+              child: UserMention(
+                userId: userId,
+                username: username,
+                style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             ),
           );
         } else if (type == TType.Unknown) {
+          print('unknown format: $t');
           spans.add(
             TextSpan(
               text: 'not supported',
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             ),
           );
@@ -1067,8 +1068,6 @@ class TwacodeRenderer {
 
           if (type == TType.Channel) {
             content = '#' + (t['content'] as String).replaceAll(idMatch, '');
-          } else if (type == TType.User) {
-            content = '@' + (t['content'] as String).replaceAll(idMatch, '');
           } else {
             content = t['content'];
           }
@@ -1076,7 +1075,7 @@ class TwacodeRenderer {
             TextSpan(
               text: content is String ? content : 'not supported',
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor),
+                getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             ),
           );

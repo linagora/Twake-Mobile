@@ -13,6 +13,7 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final Function? onCopy;
   final BuildContext? ctx;
   final bool isMe;
+  final bool isThread;
 
   const MessageModalSheet({
     required this.message,
@@ -22,6 +23,7 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
     this.onCopy,
     this.ctx,
     required this.isMe,
+    this.isThread = false,
     Key? key,
   }) : super(key: key);
 
@@ -85,7 +87,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
     return _emojiVisible
         ? buildEmojiBoard()
         : Container(
-            height: MediaQuery.of(context).size.height * 0.45,
+            height: Dim.heightPercent(45),
             child: Column(
               children: [
                 Container(
@@ -98,7 +100,15 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                     showEmojiBoard: toggleEmojiBoard,
                   ),
                 ),
-                Spacer(),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
                 Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFF2F2F6),
@@ -161,7 +171,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                 width: 30,
                               ),
                             ),
-                          widget.message.content.originalStr?.isEmpty ?? true
+                          widget.message.blocks.isEmpty
                               ? Container()
                               : GestureDetector(
                                   child: Column(
@@ -203,13 +213,15 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     widget.onCopy!();
                                   },
                                 ),
-                          if (widget.message.threadId == null)
+                          if (!widget.message.inThread &&
+                              !widget.isThread &&
+                              widget.message.blocks.isNotEmpty)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
                               ),
                             ),
-                          if (widget.message.threadId == null)
+                          if (!widget.message.inThread && !widget.isThread)
                             GestureDetector(
                               child: Column(
                                 children: [
@@ -323,7 +335,7 @@ class EmojiLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSize = 27.0;
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: Dim.widthPercent(80),
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,
         horizontal: 16.0, //Dim.wm2,

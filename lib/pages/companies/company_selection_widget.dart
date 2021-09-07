@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_state.dart';
@@ -30,10 +31,8 @@ class CompanySelectionWidget extends StatelessWidget {
           buildWhen: (previousState, currentState) =>
               previousState is CompaniesInitial ||
               currentState is CompaniesLoadSuccess,
-
           builder: (context, companiesState) {
             if (companiesState is CompaniesLoadSuccess) {
-
               final companies = companiesState.companies;
               final selected = companiesState.selected;
 
@@ -51,7 +50,7 @@ class CompanySelectionWidget extends StatelessWidget {
                                 borderRadius: 12.0,
                                 width: 44.0,
                                 height: 44.0,
-                                imageUrl: companiesState.selected.logo,
+                                imageUrl: companiesState.selected.logo ?? '',
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -106,11 +105,6 @@ class CompanySelectionWidget extends StatelessWidget {
                               );
                               popBack();
 
-                              if (company.selectedWorkspace != null) {
-                                Globals.instance.workspaceIdSet =
-                                    company.selectedWorkspace;
-                              }
-
                               await Get.find<WorkspacesCubit>().fetch(
                                 companyId: company.id,
                                 selectedId: company.selectedWorkspace,
@@ -120,6 +114,8 @@ class CompanySelectionWidget extends StatelessWidget {
                                 workspaceId: Globals.instance.workspaceId!,
                                 companyId: company.id,
                               );
+
+                              Get.find<BadgesCubit>().fetch();
 
                               Get.find<DirectsCubit>().fetch(
                                 workspaceId: 'direct',

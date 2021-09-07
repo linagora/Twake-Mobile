@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -7,8 +10,6 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/widgets/common/stacked_image_avatars.dart';
-import 'package:twake/widgets/common/text_avatar.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/widgets/thread/thread_messages_list.dart';
 
@@ -43,52 +44,96 @@ class _ThreadPageState<T extends BaseChannelsCubit>
           return messagesState is MessagesLoadSuccess
               ? Scaffold(
                   appBar: AppBar(
-                      titleSpacing: 0.0,
-                      shadowColor: Colors.grey[300],
-                      toolbarHeight:
-                          Dim.heightPercent((kToolbarHeight * 0.15).round()),
-                      leading: BackButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                    titleSpacing: 0.0,
+                    shadowColor: Colors.grey[300],
+                    toolbarHeight:
+                        Dim.heightPercent((kToolbarHeight * 0.15).round()),
+                    leading: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Color(0xff004dff),
+                        ),
                       ),
-                      title: Row(
-                        children: [
-                          channel.isDirect
-                              ? StackedUserAvatars(
-                                  userIds: channel.members,
-                                )
-                              : TextAvatar(
-                                  channel.icon,
-                                  fontSize: Dim.tm4(),
+                    ),
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            messagesState.messages[0].firstName!.length > 20
+                                ? Row(
+                                    children: [
+                                      Text(
+                                        "${messagesState.messages[0].firstName!.substring(0, 12)}...",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      Text(
+                                        "${messagesState.messages[0].firstName!.substring(messagesState.messages[0].firstName!.length - 3, messagesState.messages[0].firstName!.length)}'s messages",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 44,
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    children: [
+                                      Text(
+                                        "${messagesState.messages[0].firstName!}'s messages",
+                                        // overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontSize: 17.0,
+                                          fontWeight: FontWeight.w800,
+                                          color: Color(0xff444444),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 44,
+                                      ),
+                                    ],
+                                  ),
+                            SizedBox(height: 5.0),
+                            Row(
+                              children: [
+                                Text(
+                                  channel.isDirect
+                                      ? 'Threaded replies'
+                                      : channel.name,
+                                  style: TextStyle(
+                                    fontSize: 13.0,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xff92929C),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
-                          SizedBox(width: 12.0),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Threaded replies',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xff444444),
+                                SizedBox(
+                                  width: 50,
                                 ),
-                              ),
-                              SizedBox(height: 1.0),
-                              Text(
-                                channel.name,
-                                style: TextStyle(
-                                  fontSize: 10.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color(0xff92929C),
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        ],
-                      )),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   body: SafeArea(
                     child: Container(
                       constraints: BoxConstraints(
@@ -99,14 +144,14 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ThreadMessagesList(),
+                          ThreadMessagesList(parentChannel: channel),
                           ComposeBar(
                               autofocus: autofocus ||
                                   messagesState is MessageEditInProgress,
-                              initialText: (messagesState
-                                      is MessageEditInProgress)
-                                  ? messagesState.message.content.originalStr
-                                  : '',
+                              initialText:
+                                  (messagesState is MessageEditInProgress)
+                                      ? messagesState.message.text
+                                      : '',
                               onMessageSend: (content, context) async {
                                 if (messagesState is MessageEditInProgress)
                                   Get.find<ThreadMessagesCubit>().edit(
@@ -120,9 +165,11 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                     attachments = uploadState.files;
                                   }
                                   Get.find<ThreadMessagesCubit>().send(
-                                      originalStr: content,
-                                      attachments: attachments,
-                                      threadId: Globals.instance.threadId);
+                                    originalStr: content,
+                                    attachments: attachments,
+                                    threadId: Globals.instance.threadId,
+                                    isDirect: channel.isDirect,
+                                  );
                                 }
                                 // reset thread draft
                                 Get.find<ThreadMessagesCubit>()
@@ -137,7 +184,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                     ),
                   ),
                 )
-              : Center(child: CircularProgressIndicator());
+              : Container();
         });
   }
 }

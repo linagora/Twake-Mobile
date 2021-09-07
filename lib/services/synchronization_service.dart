@@ -1,17 +1,19 @@
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/socketio/socketio_room.dart';
 import 'package:twake/services/service_bundle.dart';
 
 class SynchronizationService {
   static late SynchronizationService _service;
-  final _api = ApiService.instance;
 
   final _socketio = SocketIOService.instance;
   final _pushNotifications = PushNotificationsService.instance;
 
   String? subscribedChannelId;
+  String? subscribedThreadId;
 
-  List<SocketIORoom> _subRooms = [];
+  String _currentPublicChannels = '';
+  String _currentPrivateChannels = '';
+  String _currentDirectChannels = '';
+
   Map<String, List<int>> _localNotifications = {};
 
   factory SynchronizationService({required bool reset}) {
@@ -28,11 +30,16 @@ class SynchronizationService {
 
     // Set up auto resubscription in case of internet connection loss
     _socketio.socketIOReconnectionStream.listen((authenticated) async {
-      if (authenticated && _subRooms.isNotEmpty) {
+      if (authenticated) {
         Logger().v('Resubscribing on socketio reconnect');
         // wait for the socketio service to authenticate first
         await Future.delayed(Duration(seconds: 3));
-        await subscribeForChannels();
+        await subscribeForChannels(
+            companyId: Globals.instance.companyId!,
+            workspaceId: Globals.instance.workspaceId!);
+        await subscribeForChannels(
+            companyId: Globals.instance.companyId!, workspaceId: 'direct');
+
         await subscribeToBadges();
 
         if (subscribedChannelId != null)
@@ -98,70 +105,64 @@ class SynchronizationService {
             r.resource['workspace_id'] != 'direct';
       });
 
-  Stream<SocketIOEvent> get socketIOChannelMessageStream =>
-      _socketio.eventStream.where((e) {
-        return (e.data.threadId?.isEmpty ?? true) ||
-            e.data.threadId == e.data.messageId;
+  Stream<SocketIOResource> get socketIOChannelMessageStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.message &&
+            r.resource['thread_id'] == r.resource['id'] &&
+            r.resource['subtype'] == null;
       });
 
-  Stream<SocketIOEvent> get socketIOThreadMessageStream =>
-      _socketio.eventStream.where((e) {
-        return (e.data.threadId?.isNotEmpty ?? false) &&
-            e.data.threadId != e.data.messageId;
+  Stream<SocketIOResource> get socketIOThreadMessageStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.message &&
+            r.resource['thread_id'] != r.resource['id'] &&
+            r.resource['subtype'] != 'deleted';
       });
 
   Stream<SocketIOResource> get sockeIOBadgesUpdateStream =>
       _socketio.resourceStream
           .where((r) => r.type == ResourceType.userNotificationBadges);
 
-  Future<List<SocketIORoom>> get socketIORooms async {
-    final queryParameters = {
-      'company_id': Globals.instance.companyId,
-      'workspace_id': Globals.instance.workspaceId
-    };
-    final List<dynamic> result = await _api.get(
-      endpoint: Endpoint.notificationRooms,
-      queryParameters: queryParameters,
-    );
-
-    final rooms = result.map((r) => SocketIORoom.fromJson(json: r));
-
-    return rooms.toList();
-  }
-
-  Future<void> refreshRooms() async {
-    _subRooms = await socketIORooms;
-  }
-
-  Future<void> subscribeForChannels() async {
+  Future<void> subscribeForChannels({
+    required String workspaceId,
+    required String companyId,
+  }) async {
     if (Globals.instance.token == null) return;
 
-    const wsRooms = const [RoomType.channelsList, RoomType.directsList];
+    if (workspaceId != 'direct') {
+      // Unsubscribe from previous workspace
+      _socketio.unsubscribe(room: _currentPublicChannels);
+      _socketio.unsubscribe(room: _currentPrivateChannels);
 
-    // Unsubscribe from previous workspace
-    for (final room in _subRooms.where((r) => wsRooms.contains(r.type))) {
-      _socketio.unsubscribe(room: room.key);
-    }
-    // Request rooms for new workspace
-    await refreshRooms();
+      _currentPublicChannels = sprintf(
+        '/companies/%s/workspaces/%s/channels?type=public',
+        [companyId, workspaceId],
+      );
+      _socketio.subscribe(room: _currentPublicChannels);
 
-    // Subscribe for new workspace
-    for (final room in _subRooms.where((r) => wsRooms.contains(r.type))) {
-      _socketio.subscribe(room: room.key);
+      _currentPrivateChannels = sprintf(
+        '/companies/%s/workspaces/%s/channels?type=private&user=%s',
+        [companyId, workspaceId, Globals.instance.userId],
+      );
+      _socketio.subscribe(room: _currentPrivateChannels);
+    } else {
+      _socketio.unsubscribe(room: _currentDirectChannels);
+
+      _currentDirectChannels = sprintf(
+        '/companies/%s/workspaces/direct/channels?type=direct&user=%s)',
+        [companyId, Globals.instance.userId],
+      );
+      _socketio.subscribe(room: _currentDirectChannels);
     }
   }
 
   Future<void> subscribeToBadges() async {
     if (Globals.instance.token == null) return;
 
-    if (!_subRooms.any((r) => r.type == RoomType.notifications)) {
-      await refreshRooms();
-    }
+    final room = sprintf(
+        '/notifications?type=private&user=%s', [Globals.instance.userId]);
 
-    final badgesRoom =
-        _subRooms.firstWhere((r) => r.type == RoomType.notifications);
-
-    _socketio.subscribe(room: badgesRoom.key);
+    _socketio.subscribe(room: room);
   }
 
   void subscribeToMessages({required String channelId}) async {
@@ -169,34 +170,58 @@ class SynchronizationService {
       throw Exception('Shoud not be called with no active connection');
 
     // Unsubscribe just in case
-    unsubscribeFromMessages(channelId: channelId);
+    if (subscribedChannelId != null)
+      unsubscribeFromMessages(channelId: subscribedChannelId!);
 
-    // if the channel is not present, rerequest the list
-    if (!_subRooms.any((r) =>
-        const [RoomType.channel, RoomType.direct].contains(r.type) &&
-        r.id == channelId)) await refreshRooms();
-
-    // Make sure that channel rooms has been fetched before,
-    // or you'll get Bad state
-    final channelRoom = _subRooms.firstWhere((r) =>
-        const [RoomType.channel, RoomType.direct].contains(r.type) &&
-        r.id == channelId);
-
+    final room = sprintf('/companies/%s/workspaces/%s/channels/%s/feed', [
+      Globals.instance.companyId,
+      Globals.instance.workspaceId,
+      channelId,
+    ]);
     // Subscribe, to new channel
-    _socketio.subscribe(room: channelRoom.key);
-    channelRoom.subscribed = true;
+    _socketio.subscribe(room: room);
 
     subscribedChannelId = channelId;
   }
 
+  void subscribeToThreadReplies({required String threadId}) async {
+    if (!Globals.instance.isNetworkConnected)
+      throw Exception('Shoud not be called with no active connection');
+
+    // Unsubscribe just in case
+    if (subscribedThreadId != null) {
+      unsubscribeFromThreadReplies(threadId: subscribedThreadId!);
+    }
+
+    final room = sprintf('/companies/%s/threads/%s', [
+      Globals.instance.companyId,
+      threadId,
+    ]);
+    // Subscribe, to new channel
+    _socketio.subscribe(room: room);
+
+    subscribedThreadId = threadId;
+  }
+
   void unsubscribeFromMessages({required String channelId}) {
-    if (!_subRooms.any((r) => r.id == channelId)) return;
+    final room = sprintf('/companies/%s/workspaces/%s/channels/%s/feed', [
+      Globals.instance.companyId,
+      Globals.instance.workspaceId,
+      channelId,
+    ]);
 
-    final room = _subRooms.firstWhere((r) => r.id == channelId);
-
-    _socketio.unsubscribe(room: room.key);
-    room.subscribed = false;
+    _socketio.unsubscribe(room: room);
 
     subscribedChannelId = null;
+  }
+
+  void unsubscribeFromThreadReplies({required String threadId}) {
+    final room = sprintf('/companies/%s/threads/%s', [
+      Globals.instance.companyId,
+      subscribedThreadId,
+    ]);
+    _socketio.unsubscribe(room: room);
+
+    subscribedThreadId = null;
   }
 }

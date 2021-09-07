@@ -17,9 +17,15 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     _repository = repository;
 
     // wait for authentication check before attempting to subscribe
-    Future.delayed(Duration(seconds: 7), () {
+    Future.delayed(Duration(seconds: 5), () {
       SynchronizationService.instance.subscribeToBadges();
-      SynchronizationService.instance.subscribeForChannels();
+      if (Globals.instance.companyId != null) {
+        SynchronizationService.instance.subscribeForChannels(
+          companyId: Globals.instance.companyId!,
+          workspaceId: Globals.instance.workspaceId!,
+        );
+        fetchMembers();
+      }
     });
   }
 
@@ -37,7 +43,10 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
     if (selectedId != null) {
       Globals.instance.workspaceIdSet = selectedId;
-      SynchronizationService.instance.subscribeForChannels();
+      SynchronizationService.instance.subscribeForChannels(
+        companyId: Globals.instance.companyId!,
+        workspaceId: selectedId,
+      );
     }
 
     selectedId = selectedId ?? Globals.instance.workspaceId;
@@ -49,13 +58,17 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       Workspace? selected;
 
       if (state is WorkspacesLoadSuccess) {
-        selected = (state as WorkspacesLoadSuccess).selected!;
+        selected = (state as WorkspacesLoadSuccess).selected;
       } else if (selectedId != null &&
           workspaces.any((w) => w.id == selectedId)) {
         selected = workspaces.firstWhere((w) => w.id == selectedId);
+      } else {
+        selected = workspaces.first;
       }
 
-      if (selected != null) Globals.instance.workspaceIdSet = selected.id;
+      if (selected != null) {
+        Globals.instance.workspaceIdSet = selected.id;
+      }
 
       emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: selected));
     }
@@ -66,7 +79,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     required String name,
     List<String>? members,
   }) async {
-    final workspace = await _repository.createWorkspace(
+    final workspace = await _repository.create(
         companyId: companyId, name: name, members: members);
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
@@ -90,12 +103,18 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     Globals.instance.workspaceIdSet = workspaceId;
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
+    _repository.fetchMembers();
 
     emit(WorkspacesLoadSuccess(
       workspaces: workspaces,
       selected: workspaces.firstWhere((w) => w.id == workspaceId),
     ));
     // Subscribe to socketIO updates
-    SynchronizationService.instance.subscribeForChannels();
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: Globals.instance.companyId!,
+      workspaceId: workspaceId,
+    );
+
+    fetchMembers(workspaceId: workspaceId);
   }
 }

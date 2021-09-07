@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/badge/badge.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/badges.dart';
-import 'package:twake/widgets/common/channel_thumbnail.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 
 typedef OnHomeChannelTileClick = void Function();
 
@@ -11,6 +13,7 @@ class HomeChannelTile extends StatelessWidget {
   final String? name;
   final String? content;
   final String? imageUrl;
+  final List<Avatar> avatars;
   final int? dateTime;
   final OnHomeChannelTileClick? onHomeChannelTileClick;
   final String channelId;
@@ -23,6 +26,7 @@ class HomeChannelTile extends StatelessWidget {
       this.content,
       this.imageUrl,
       this.dateTime,
+      this.avatars = const [],
       this.onHomeChannelTileClick,
       required this.channelId,
       this.isPrivate = false,
@@ -43,21 +47,13 @@ class HomeChannelTile extends StatelessWidget {
               SizedBox(
                 width: 10,
               ),
-              Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: ChannelThumbnail(
-                      isPrivate: isPrivate,
-                      isDirect: isDirect,
-                      icon: imageUrl ?? '',
-                      iconSize: 32.0,
-                      name: title,
-                      width: 54,
-                      height: 54,
-                    ),
-                  ),
-                ],
+              ImageWidget(
+                imageType: isDirect ? ImageType.common : ImageType.channel,
+                imageUrl: imageUrl ?? '',
+                isPrivate: isPrivate,
+                name: title,
+                size: 54,
+                avatars: avatars,
               ),
               SizedBox(
                 width: 11,
@@ -101,15 +97,20 @@ class HomeChannelTile extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Text(
-                            name ?? 'This channel is empty',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: Color(0xb2000000),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
+                          Container(
+                            constraints: BoxConstraints(
+                              maxWidth: Dim.widthPercent(70),
+                            ),
+                            child: Text(
+                              name ?? 'This channel is empty',
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: TextStyle(
+                                color: Color(0xb2000000),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                fontStyle: FontStyle.normal,
+                              ),
                             ),
                           ),
                           Spacer(),

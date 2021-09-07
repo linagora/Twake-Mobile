@@ -22,10 +22,12 @@ class BadgesCubit extends Cubit<BadgesState> {
     final badgesStream = _repository.fetch();
 
     await for (final badges in badgesStream) {
-      emit(BadgesLoadSuccess(
-        badges: badges,
-        hash: badges.fold(0, (acc, b) => b.hash + acc),
-      ));
+      emit(
+        BadgesLoadSuccess(
+          badges: badges,
+          hash: badges.fold<int>(0, (acc, b) => b.hash + acc),
+        ),
+      );
     }
   }
 
@@ -89,5 +91,16 @@ class BadgesCubit extends Cubit<BadgesState> {
         hash: badges.fold(0, (acc, b) => b.hash + acc),
       ));
     }
+  }
+
+  int get unreadInDirects {
+    if (state is! BadgesLoadSuccess) return 0;
+
+    final badges = (state as BadgesLoadSuccess).badges;
+    final directs = badges
+        .where((b) => b.type == BadgeType.workspace && b.id == 'direct')
+        .fold<int>(0, (acc, b) => acc + b.count);
+
+    return directs;
   }
 }

@@ -43,7 +43,7 @@ class StorageService {
         return version;
       });
 
-      if (oldDBVersion < 5) {
+      if (oldDBVersion < 6) {
         await deleteDatabase(path);
       }
     }
@@ -57,6 +57,7 @@ class StorageService {
 
     void onCreate(Database db, int version) async {
       for (var ddl in CURRENT_MIGRATION) {
+        print('Executing: $ddl');
         await db.execute(ddl);
       }
     }

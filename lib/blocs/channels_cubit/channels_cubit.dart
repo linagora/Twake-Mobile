@@ -58,8 +58,9 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     }
   }
 
-  void changeSelectedChannelAfterCreateSuccess(
-      {required Channel channel}) async {
+  void changeSelectedChannelAfterCreateSuccess({
+    required Channel channel,
+  }) async {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -169,14 +170,14 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   Future<bool> removeMembers({
     required Channel channel,
-    required List<String> usersToRemove,
+    required String userId,
   }) async {
     final oldHash = channel.hash;
 
     try {
       channel = await _repository.removeMembers(
         channel: channel,
-        usersToRemove: usersToRemove,
+        userId: userId,
       );
     } catch (e) {
       Logger().e('Error occured while removing members from channel:\n$e');
@@ -223,7 +224,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     SynchronizationService.instance
         .cancelNotificationsForChannel(channelId: channelId);
 
-    _repository.markChannelRead(channel: selected);
+    _repository.markChannel(channel: selected, read: true);
   }
 
   void clearSelection() {
@@ -286,8 +287,6 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             selected: selected,
           ));
 
-          SynchronizationService.instance.refreshRooms();
-
           break;
 
         default:
@@ -309,6 +308,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       final channels = (state as ChannelsLoadedSuccess).channels;
       switch (change.action) {
         case ResourceAction.saved:
+        case ResourceAction.created:
         case ResourceAction.updated:
           final rchannels = await _repository.fetchRemote(
             companyId: Globals.instance.companyId!,
@@ -319,11 +319,13 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
             selected = rchannels.firstWhere((c) => c.id == selected!.id);
           }
 
-          emit(ChannelsLoadedSuccess(
+          final newState = ChannelsLoadedSuccess(
             channels: rchannels,
-            hash: channels.fold(0, (acc, c) => acc + c.hash),
+            hash: rchannels.fold(0, (acc, c) => acc + c.hash),
             selected: selected,
-          ));
+          );
+
+          emit(newState);
           break;
         case ResourceAction.deleted:
           // fill up required fields with dummy data
@@ -379,6 +381,6 @@ class DirectsCubit extends BaseChannelsCubit {
   DirectsCubit({ChannelsRepository? repository})
       : super(
             repository: repository == null
-                ? ChannelsRepository(endpoint: Endpoint.directs)
+                ? ChannelsRepository(endpoint: Endpoint.channels)
                 : repository);
 }

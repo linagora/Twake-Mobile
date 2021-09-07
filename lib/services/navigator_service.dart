@@ -119,6 +119,7 @@ class NavigatorService {
     String? workspaceId,
     required String channelId,
     String? threadId,
+    bool reloadThreads: true,
   }) async {
     if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
@@ -145,29 +146,39 @@ class NavigatorService {
 
     final channel = await directsCubit.getChannel(channelId: channelId);
 
-    if (channel.isDirect) {
-      directsCubit.selectChannel(channelId: channelId);
+    if (reloadThreads) {
+      channelMessagesCubit.reset();
+      channelMessagesCubit.fetch(
+        channelId: channelId,
+        isDirect: channel.isDirect,
+        empty: channel.lastMessage == null,
+      );
 
-      Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
-        directsCubit.clearSelection();
-      });
-    } else {
-      channelsCubit.selectChannel(channelId: channelId);
+      if (channel.isDirect) {
+        directsCubit.selectChannel(channelId: channelId);
 
-      Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
-        channelsCubit.clearSelection();
-      });
+        Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
+          directsCubit.clearSelection();
+        });
+      } else {
+        channelsCubit.selectChannel(channelId: channelId);
+
+        Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
+          channelsCubit.clearSelection();
+        });
+      }
+
+      badgesCubit.reset(channelId: channelId);
     }
-    channelMessagesCubit.reset();
-    channelMessagesCubit.fetch(
-      channelId: channelId,
-      isDirect: channel.isDirect,
-    );
-
-    badgesCubit.reset(channelId: channelId);
 
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
+
+      threadMessagesCubit.fetch(
+        channelId: channelId,
+        threadId: threadId,
+        isDirect: channel.isDirect,
+      );
 
       final path = channel.isDirect
           ? RoutePaths.directMessageThread.path
@@ -177,20 +188,16 @@ class NavigatorService {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
-
-      threadMessagesCubit.fetch(
-        channelId: channelId,
-        threadId: threadId,
-        isDirect: channel.isDirect,
-      );
     }
   }
 
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
     accountCubit.fetch();
-    Get.toNamed(shouldShowInfo
-        ? RoutePaths.accountInfo.path
-        : RoutePaths.accountSettings.path);
+    Get.toNamed(
+      shouldShowInfo
+          ? RoutePaths.accountInfo.path
+          : RoutePaths.accountSettings.path,
+    );
   }
 
   Future<void> navigateToCreateWorkspace() async {

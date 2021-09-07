@@ -35,11 +35,11 @@ class AccountRepository {
 
   Future<Account> remoteFetch({String? userId}) async {
     final remoteResult = await _api.get(
-      endpoint: Endpoint.account,
-      queryParameters: {'id': userId},
+      endpoint: sprintf(Endpoint.account, [userId ?? 'me']),
+      key: 'resource',
     );
 
-    final account = Account.fromJson(json: remoteResult);
+    final account = Account.fromJson(json: remoteResult, transform: true);
 
     _storage.insert(table: Table.account, data: account);
 
@@ -47,8 +47,8 @@ class AccountRepository {
   }
 
   Future<Account> edit({
-    String? firstname,
-    String? lastname,
+    String? firstName,
+    String? lastName,
     required String username,
     String? status,
     String? statusIcon,
@@ -57,8 +57,8 @@ class AccountRepository {
     String? newPassword,
   }) async {
     final _ = {
-      'firstname': firstname,
-      'lastname': lastname,
+      'firstname': firstName,
+      'lastname': lastName,
       'username': username,
       'status': status,
       'status_icon': statusIcon,
@@ -70,17 +70,5 @@ class AccountRepository {
     };
 
     throw Exception('Moved to Twake console for a while');
-  }
-
-  Future<void> currentSet() async {
-    final remoteResult = await _api.get(
-      endpoint: Endpoint.account,
-    );
-
-    var account = Account.fromJson(json: remoteResult);
-
-    _storage.insert(table: Table.account, data: account);
-
-    Globals.instance.userIdSet = account.id;
   }
 }

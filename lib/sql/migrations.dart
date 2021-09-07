@@ -1,15 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 
-export 'v1.dart' show DDL_V1;
-export 'v2.dart' show DDL_V2;
-export 'v3.dart' show DDL_V3;
-export 'v4.dart' show DDL_V4;
+import 'v6.dart';
 
-import 'v5.dart';
-
-const CURRENT_MIGRATION = DDL_V5;
-const DBVER = 5;
+const CURRENT_MIGRATION = DDL_V6;
+const DBVER = 6;
 
 Future<void> dbUpgrade({required Database db, required int version}) async {
-  // Do necessary schema changes here
+  // if (version == 5) for (final ddl in DDL_V6) db.execute(ddl);
 }

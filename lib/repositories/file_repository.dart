@@ -18,24 +18,31 @@ class FileRepository {
     final multipartFile = await MultipartFile.fromFile(path, filename: name);
     final formData = FormData.fromMap({
       'file': multipartFile,
-      'company_id': Globals.instance.companyId,
     });
     final result = await _api.post(
-      endpoint: Endpoint.fileUpload,
+      endpoint: Endpoint.files,
       data: formData,
       cancelToken: cancelToken,
+      key: 'resource',
     );
 
-    final file = File.fromJson(json: result);
+    final file = File.fromJson(json: result, transform: true);
 
     _files.add(file);
 
     return _files;
   }
 
-  //Future<String> download({required File file}) async {
-  // TODO implement download
-  //}
+  Future<File> getById({required String id}) async {
+    final result = await _api.get(
+      endpoint: sprintf(Endpoint.files, [Globals.instance.companyId]) + '/$id',
+      key: 'resource',
+    );
+
+    Logger().w('Requested file for $id\n$result');
+
+    return File.fromJson(json: result, transform: true);
+  }
 
   void clearFiles() {
     _files.clear();

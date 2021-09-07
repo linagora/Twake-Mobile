@@ -3,8 +3,11 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/companies_repository.dart';
+import 'package:twake/services/service_bundle.dart';
 
 import 'companies_state.dart';
+
+export 'companies_state.dart';
 
 class CompaniesCubit extends Cubit<CompaniesState> {
   late final CompaniesRepository _repository;
@@ -20,15 +23,21 @@ class CompaniesCubit extends Cubit<CompaniesState> {
   Future<void> fetch() async {
     final streamCompanies = _repository.fetch();
 
+    Company? selected;
     await for (var companies in streamCompanies) {
-      Company? selected;
-
       if (Globals.instance.companyId != null) {
         selected =
             companies.firstWhere((c) => c.id == Globals.instance.companyId);
+      } else {
+        selected = companies.first;
+        Globals.instance.companyIdSet = selected.id;
       }
-      emit(CompaniesLoadSuccess(companies: companies, selected: selected!));
+      emit(CompaniesLoadSuccess(companies: companies, selected: selected));
     }
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: Globals.instance.companyId!,
+      workspaceId: 'direct',
+    );
   }
 
   void selectCompany({required String companyId}) {
@@ -39,6 +48,11 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     final companies = (state as CompaniesLoadSuccess).companies;
 
     final selected = companies.firstWhere((c) => c.id == companyId);
+
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: companyId,
+      workspaceId: 'direct',
+    );
 
     emit(CompaniesLoadSuccess(companies: companies, selected: selected));
   }

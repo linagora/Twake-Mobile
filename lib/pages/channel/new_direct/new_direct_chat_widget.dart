@@ -3,11 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
@@ -98,7 +99,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
               Container(
                 height: 40,
                 child: GestureDetector(
-                  behavior:  HitTestBehavior.translucent,
+                  behavior: HitTestBehavior.translucent,
                   onTap: () => push(RoutePaths.newChannel.path),
                   child: Row(
                     children: [
@@ -175,7 +176,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                               ); // key is channelId
                             },
                             name: member.value.fullName,
-                            imageUrl: member.value.thumbnail ?? '',
+                            imageUrl: member.value.picture ?? '',
                           );
                         },
                       ),
@@ -220,10 +221,10 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         final member = members[index];
                         return _FoundPeopleDirectTile(
                           onFoundPeopleDirectTileClick: () {
-                            Get.find<NewDirectCubit>().newDirect(member.id);
+                            Get.find<NewDirectCubit>().newDirect(member);
                           },
                           name: member.fullName,
-                          imageUrl: member.thumbnail ?? '',
+                          imageUrl: member.picture ?? '',
                         );
                       },
                     );
@@ -261,9 +262,11 @@ class _RecentChatTile extends StatelessWidget {
         height: 78,
         child: Column(
           children: [
-            RoundedImage(
-              width: 52,
-              height: 52,
+            ImageWidget(
+              imageType: ImageType.common,
+              size: 52,
+              imageUrl: imageUrl,
+              name: name,
             ),
             Expanded(
               child: Align(
@@ -311,19 +314,23 @@ class _FoundPeopleDirectTile extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 12),
-              child: RoundedImage(
+              child: ImageWidget(
+                imageType: ImageType.common,
                 imageUrl: imageUrl,
-                width: 40,
-                height: 40,
+                size: 40,
+                name: name,
               ),
             ),
-            Text(name,
-                style: TextStyle(
-                  color: Color(0xff000000),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  fontStyle: FontStyle.normal,
-                ))
+            Container(
+              constraints: BoxConstraints(maxWidth: Dim.widthPercent(70)),
+              child: Text(name,
+                  style: TextStyle(
+                    color: Color(0xff000000),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.normal,
+                  )),
+            )
           ],
         ),
       ),

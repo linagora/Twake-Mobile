@@ -27,24 +27,25 @@ class WorkspacesRepository {
 
       return local.map((i) => Account.fromJson(json: i)).toList();
     } else {
-      final List<dynamic> remoteResult = await this._api.get(
-        endpoint: Endpoint.workspaceMembers,
-        queryParameters: {
-          'workspace_id': workspaceId,
-          'company_id': Globals.instance.companyId
-        },
+      final List<dynamic> remoteResult = await _api.get(
+        endpoint: sprintf(
+          Endpoint.workspaceMembers,
+          [Globals.instance.companyId, workspaceId],
+        ),
+        queryParameters: {'limit': 10000},
+        key: 'resources',
       );
 
       final List<Account> users = remoteResult
           .map((entry) => Account.fromJson(
-                json: entry,
-                jsonify: false,
+                json: entry['user'],
+                transform: true,
               ))
           .toList();
 
-      this._storage.multiInsert(table: Table.account, data: users);
+      _storage.multiInsert(table: Table.account, data: users);
 
-      this._storage.multiInsert(
+      _storage.multiInsert(
           table: Table.account2workspace,
           data: users.map(
             (u) => Account2Workspace(
@@ -69,13 +70,25 @@ class WorkspacesRepository {
 
     if (!Globals.instance.isNetworkConnected || localOnly) return;
 
-    workspaces = await fetchRemote(companyId: companyId);
+    final rworkspaces = await fetchRemote(companyId: companyId);
 
     yield workspaces;
+
+    if (rworkspaces.length != workspaces.length) {
+      for (final w in workspaces) {
+        if (!rworkspaces.any((rw) => rw.id == w.id)) {
+          _storage.delete(
+            table: Table.workspace,
+            where: 'id = ?',
+            whereArgs: [w.id],
+          );
+        }
+      }
+    }
   }
 
   Future<List<Workspace>> fetchLocal({required String companyId}) async {
-    final localResult = await this._storage.select(
+    final localResult = await _storage.select(
       table: Table.workspace,
       where: 'company_id = ?',
       whereArgs: [companyId],
@@ -88,15 +101,15 @@ class WorkspacesRepository {
   }
 
   Future<List<Workspace>> fetchRemote({required String companyId}) async {
-    final List<dynamic> remoteResult = await this._api.get(
-      endpoint: Endpoint.workspaces,
-      queryParameters: {'company_id': companyId},
+    final List<dynamic> remoteResult = await _api.get(
+      endpoint: sprintf(Endpoint.workspaces, [companyId]),
+      key: 'resources',
     );
 
     final List<Workspace> workspaces = remoteResult
         .map((entry) => Workspace.fromJson(
               json: entry,
-              jsonify: false,
+              transform: true,
             ))
         .toList();
 
@@ -105,18 +118,26 @@ class WorkspacesRepository {
     return workspaces;
   }
 
-  Future<Workspace> createWorkspace(
-      {String? companyId, required String name, List<String>? members}) async {
-    final creationResult = await this._api.post(
-      endpoint: Endpoint.workspaces,
+  Future<Workspace> create({
+    String? companyId,
+    required String name,
+    List<String>? members,
+  }) async {
+    companyId = companyId ?? Globals.instance.companyId;
+
+    final creationResult = await _api.post(
+      endpoint: sprintf(Endpoint.workspaces, [companyId]),
       data: {
-        'company_id': companyId ?? Globals.instance.companyId,
-        'name': name,
-        'members': members
+        'resource': {
+          'name': name,
+          'logo': '',
+          'default': false,
+        }
       },
+      key: 'resource',
     );
 
-    final workspace = Workspace.fromJson(json: creationResult, jsonify: false);
+    final workspace = Workspace.fromJson(json: creationResult, transform: true);
 
     _storage.insert(table: Table.workspace, data: workspace);
 

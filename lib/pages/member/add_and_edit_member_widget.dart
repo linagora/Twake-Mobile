@@ -13,17 +13,15 @@ import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'selected_member_tile.dart';
 
-enum AddAndEditMemberType {
-  createChannel, addNewMember
-}
+enum AddAndEditMemberType { createChannel, addNewMember }
 
 class AddAndEditMemberWidget extends StatefulWidget {
   final AddAndEditMemberType addAndEditMemberType;
 
-  const AddAndEditMemberWidget({
-    Key? key,
-    this.addAndEditMemberType = AddAndEditMemberType.createChannel
-  }) : super(key: key);
+  const AddAndEditMemberWidget(
+      {Key? key,
+      this.addAndEditMemberType = AddAndEditMemberType.createChannel})
+      : super(key: key);
 
   @override
   _AddAndEditMemberWidgetState createState() => _AddAndEditMemberWidgetState();
@@ -82,23 +80,31 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           builder: (ctx, addMemberState) {
                             return EnableButtonWidget(
                                 onEnableButtonWidgetClick: () async {
-                                  if (widget.addAndEditMemberType == AddAndEditMemberType.createChannel) {
-                                    popBack(result: addMemberState.selectedMembers);
+                                  if (widget.addAndEditMemberType ==
+                                      AddAndEditMemberType.createChannel) {
+                                    popBack(
+                                        result: addMemberState.selectedMembers);
                                   } else {
-                                    final currentState = Get.find<ChannelsCubit>().state;
-                                    if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
-                                      final results = await Get.find<AddMemberCubit>()
-                                          .addMembersToChannel(
-                                              currentState.selected!,
-                                              addMemberState.selectedMembers);
+                                    final currentState =
+                                        Get.find<ChannelsCubit>().state;
+                                    if (currentState is ChannelsLoadedSuccess &&
+                                        currentState.selected != null) {
+                                      final results =
+                                          await Get.find<AddMemberCubit>()
+                                              .addMembersToChannel(
+                                                  currentState.selected!,
+                                                  addMemberState
+                                                      .selectedMembers);
                                       popBack(result: results);
                                     }
                                   }
                                 },
                                 text: 'Add',
-                                isEnable: addMemberState.selectedMembers.isNotEmpty &&
+                                isEnable: addMemberState
+                                        .selectedMembers.isNotEmpty &&
                                     !(addMemberState is AddMemberInProgress));
-                          },),
+                          },
+                        ),
                       ),
                       Align(
                           alignment: Alignment.center,
@@ -132,7 +138,9 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                 ),
                 BlocBuilder<AddMemberCubit, AddMemberState>(
                     bloc: Get.find<AddMemberCubit>(),
-                    buildWhen: (_ , current) => current is AddMemberInSearch || current is AddMemberInFrequentlyContacted,
+                    buildWhen: (_, current) =>
+                        current is AddMemberInSearch ||
+                        current is AddMemberInFrequentlyContacted,
                     builder: (context, addMemberState) {
                       if (addMemberState.selectedMembers.isEmpty) {
                         return SizedBox.shrink();
@@ -143,16 +151,18 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             padding: EdgeInsets.symmetric(horizontal: 8),
                             scrollDirection: Axis.horizontal,
                             separatorBuilder: (_, index) => SizedBox(
-                              width: 8,
-                            ),
+                                  width: 8,
+                                ),
                             itemCount: addMemberState.selectedMembers.length,
                             itemBuilder: (context, index) {
-                              final selectedUser = addMemberState.selectedMembers[index];
+                              final selectedUser =
+                                  addMemberState.selectedMembers[index];
                               return SelectedMemberTile(
-                                onSelectedMemberTileClick: () {
-                                  Get.find<AddMemberCubit>().removeMember(selectedUser);
-                                },
-                                  memberName: '${selectedUser.firstname} ${selectedUser.lastname}');
+                                  onSelectedMemberTileClick: () {
+                                    Get.find<AddMemberCubit>()
+                                        .removeMember(selectedUser);
+                                  },
+                                  memberName: '${selectedUser.fullName}');
                             }),
                       );
                     }),
@@ -164,7 +174,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             top: 14, left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(addMemberState is AddMemberInSearch ? 'FOUND PEOPLE' : 'FREQUENTLY CONTACTED',
+                          child: Text('FOUND PEOPLE',
                               style: TextStyle(
                                 color: Color(0x59000000),
                                 fontSize: 13,
@@ -177,8 +187,8 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                 Expanded(
                     child: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 16, right: 16, bottom: 16),
+                    padding:
+                        const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                     child: BlocBuilder<AddMemberCubit, AddMemberState>(
                       bloc: Get.find<AddMemberCubit>(),
                       builder: (context, addMemberState) {
@@ -206,19 +216,23 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                     final user = users[index];
                                     final isSelected = addMemberState
                                             .selectedMembers
-                                            .indexWhere((element) => element.id == user.id) != -1;
+                                            .indexWhere((element) =>
+                                                element.id == user.id) !=
+                                        -1;
                                     return FoundMemberTile(
                                       onFoundMemberTileClick: () {
                                         if (isSelected) {
-                                          Get.find<AddMemberCubit>().removeMember(user);
+                                          Get.find<AddMemberCubit>()
+                                              .removeMember(user);
                                         } else {
-                                          Get.find<AddMemberCubit>().selectMember(user);
+                                          Get.find<AddMemberCubit>()
+                                              .selectMember(user);
                                           _searchController.text = '';
                                         }
                                       },
                                       isSelected: isSelected,
-                                      imageUrl: user.thumbnail ?? '',
-                                      name: '${user.firstname} ${user.lastname}',
+                                      imageUrl: user.picture ?? '',
+                                      name: '${user.fullName}',
                                     );
                                   })),
                         );

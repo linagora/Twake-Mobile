@@ -29,13 +29,15 @@ class SocketIOEvent {
 class MessageData {
   final IOEventAction action;
   final String messageId;
-  final String? threadId;
+  final String threadId;
 
   const MessageData({
     required this.action,
     required this.messageId,
-    this.threadId,
+    required this.threadId,
   });
+
+  String get threadIdNotEmpty => threadId.isEmpty ? messageId : threadId;
 
   factory MessageData.fromJson(Map<String, dynamic> json) {
     return _$MessageDataFromJson(json);

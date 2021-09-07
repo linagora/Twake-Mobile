@@ -9,13 +9,12 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
+import 'package:twake/widgets/common/channel_first_message.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
-
   const MessagesGroupedList({required this.parentChannel});
 
   @override
@@ -29,19 +28,18 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       bloc: Get.find<ChannelMessagesCubit>(),
       builder: (context, state) {
         List<Message> messages = <Message>[];
-
-        if (state is MessagesLoadSuccess) {
-          if (state.messages.isEmpty) {
-            return MessagesLoadingAnimation();
-          }
-          messages = state.messages;
-        } else if (state is MessagesBeforeLoadInProgress) {
-          return MessagesLoadingAnimation();
-        } else if (state is NoMessagesFound) {
+        bool endOfHistory = false;
+        if (state is NoMessagesFound) {
           return EmptyChatContainer(
             isDirect: widget.parentChannel.isDirect,
             userName: widget.parentChannel.name,
           );
+        } else if (state is MessagesLoadSuccess) {
+          if (state.messages.isEmpty) {
+            return MessagesLoadingAnimation();
+          }
+          endOfHistory = state.endOfHistory;
+          messages = state.messages;
         } else {
           return MessagesLoadingAnimation();
         }
@@ -58,7 +56,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
           child: Expanded(
             child: GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
-              child: _buildStickyGroupedListView(context, messages),
+              child:
+                  _buildStickyGroupedListView(context, messages, endOfHistory),
             ),
           ),
         );
@@ -67,12 +66,11 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
   }
 
   Widget _buildStickyGroupedListView(
-    BuildContext context,
-    List<Message> messages,
-  ) {
+      BuildContext context, List<Message> messages, bool endOfHistory) {
     bool upBubbleSide = false;
     bool downBubbleSide = false;
     return GroupedListView<Message, DateTime>(
+      // addAutomaticKeepAlives: true,
       key: PageStorageKey<String>('uniqueKey'),
       order: GroupedListOrder.DESC,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -80,13 +78,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       reverse: true,
       elements: messages,
       groupBy: (Message m) {
-        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.creationDate);
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.createdAt);
         return DateTime(dt.year, dt.month, dt.day);
       },
       groupComparator: (DateTime value1, DateTime value2) =>
           value1.compareTo(value2),
       itemComparator: (Message m1, Message m2) {
-        return m1.creationDate.compareTo(m2.creationDate);
+        return m1.createdAt.compareTo(m2.createdAt);
       },
       separator: SizedBox(height: 1.0),
       groupSeparatorBuilder: (DateTime dt) {
@@ -127,6 +125,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 upBubbleSide = false;
               }
               downBubbleSide = true;
+              //Conditions for accounting for the change of day
+              if (DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1].createdAt) !=
+                  DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1 - 1].createdAt)) {
+                upBubbleSide = true;
+              }
             }
             if (index == messages.length - 1) {
               if (messages[messages.length - index - 1].userId !=
@@ -136,6 +141,13 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 downBubbleSide = false;
               }
               upBubbleSide = true;
+              //Conditions for accounting for the change of day
+              if (DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1].createdAt) !=
+                  DateFormatter.getVerboseDate(
+                      messages[messages.length - index - 1 + 1].createdAt)) {
+                downBubbleSide = true;
+              }
             }
           } else {
             // processing of all basic bubbles in the chat except of boundary values
@@ -150,6 +162,19 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
               upBubbleSide = true;
             } else {
               upBubbleSide = false;
+            }
+            //Conditions for accounting for the change of day
+            if (DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1].createdAt) !=
+                DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1 + 1].createdAt)) {
+              downBubbleSide = true;
+            }
+            if (DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1].createdAt) !=
+                DateFormatter.getVerboseDate(
+                    messages[messages.length - index - 1 - 1].createdAt)) {
+              upBubbleSide = true;
             }
           }
         }
@@ -175,24 +200,24 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   ],
                 ),
                 onTap: (CompletionHandler handler) async {
-                  Get.find<ChannelMessagesCubit>()
-                      .selectThread(messageId: message.id);
-
-                  Get.find<ThreadMessagesCubit>().swipeReply(
-                    message.id,
-                  );
-                  setState(() {});
                   Get.find<ThreadMessagesCubit>().reset();
+
+                  Get.find<ThreadMessagesCubit>().swipeReply(message);
+
+                  setState(() {});
                 },
                 color: Colors.transparent),
           ],
-          child: MessageTile<ChannelMessagesCubit>(
-            message: message,
-            upBubbleSide: upBubbleSide,
-            downBubbleSide: downBubbleSide,
-            key: ValueKey(message.hash),
-            channel: widget.parentChannel,
-          ),
+          child: (index == messages.length - 1 && endOfHistory)
+              ? ChannelFirstMessage(
+                  channel: widget.parentChannel, icon: message.picture ?? "")
+              : MessageTile<ChannelMessagesCubit>(
+                  message: message,
+                  upBubbleSide: upBubbleSide,
+                  downBubbleSide: downBubbleSide,
+                  key: ValueKey(message.hash),
+                  channel: widget.parentChannel,
+                ),
         );
       },
     );
