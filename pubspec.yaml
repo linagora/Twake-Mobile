@@ -59,7 +59,6 @@ dependencies:
   flutter_swipe_action_cell: ^2.1.0
   emoji_picker_flutter: ^1.0.6
   flutter_appauth: ^2.0.0-dev.3
-  email_validator: ^2.0.1
 
   flutter_local_notifications: ^6.0.0
   photo_view: ^0.11.1
