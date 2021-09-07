@@ -27,7 +27,6 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool upBubbleSide;
   final bool downBubbleSide;
   final bool isThread;
-  final bool endOfHistory;
 
   MessageTile({
     required this.message,
@@ -38,7 +37,6 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
     this.shouldShowSender = true,
     this.hideReaction = false,
     this.isThread = false,
-    this.endOfHistory = false,
     Key? key,
   }) : super(key: key);
 
@@ -177,43 +175,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
           mainAxisAlignment:
               _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
           children: [
-            if (widget.endOfHistory)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ImageWidget(
-                        imageType: widget.channel.isDirect
-                            ? ImageType.common
-                            : ImageType.channel,
-                        imageUrl: widget.channel.isDirect
-                            ? _message.picture ?? ''
-                            : widget.channel.icon),
-                    Text(
-                      '${widget.channel.name}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xff444444),
-                      ),
-                    ),
-                    Text(
-                      'This is the first message of the channel',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xff444444),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 100,
-                    ),
-                  ],
-                ),
-              ),
             SizedBox(width: 6.0),
             Padding(
               padding: _message.reactions.isEmpty

@@ -11,6 +11,7 @@ import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
+import 'package:twake/widgets/common/channel_first_message.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
@@ -207,15 +208,16 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 },
                 color: Colors.transparent),
           ],
-          child: MessageTile<ChannelMessagesCubit>(
-            message: message,
-            upBubbleSide: upBubbleSide,
-            downBubbleSide: downBubbleSide,
-            key: ValueKey(message.hash),
-            channel: widget.parentChannel,
-            endOfHistory:
-                (index == messages.length - 1 && endOfHistory) ? true : false,
-          ),
+          child: (index == messages.length - 1 && endOfHistory)
+              ? ChannelFirstMessage(
+                  channel: widget.parentChannel, icon: message.picture ?? "")
+              : MessageTile<ChannelMessagesCubit>(
+                  message: message,
+                  upBubbleSide: upBubbleSide,
+                  downBubbleSide: downBubbleSide,
+                  key: ValueKey(message.hash),
+                  channel: widget.parentChannel,
+                ),
         );
       },
     );
