@@ -104,7 +104,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final endOfHistory = prevLen == messages.length;
 
     if (endOfHistory) {
-      messages.insert(0, dummy);
+      messages.add(dummy(messages.last.createdAt - 1));
     }
 
     final newState = MessagesLoadSuccess(
@@ -370,15 +370,16 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _repository.saveOne(message: thread);
   }
 
-  Message get dummy {
+  Message dummy(int date) {
     return Message(
       id: '',
       threadId: '',
       channelId: '',
       blocks: const [],
-      createdAt: 0,
-      updatedAt: 0,
+      createdAt: date,
+      updatedAt: date,
       responsesCount: 0,
+      username: '',
       userId: '',
       text: '',
       reactions: const [],

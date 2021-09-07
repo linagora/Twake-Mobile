@@ -50,6 +50,8 @@ class MemberManagementCubit extends Cubit<MemberManagementState> {
     }).toList();
 
     emit(MemberManagementSearchState(
-        allMembers: state.allMembers, searchResults: results));
+      allMembers: state.allMembers,
+      searchResults: results,
+    ));
   }
 }

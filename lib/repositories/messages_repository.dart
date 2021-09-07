@@ -36,7 +36,7 @@ class MessagesRepository {
 
     if (remoteMessages.isEmpty) return;
 
-    remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
+    remoteMessages.sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
 
     yield remoteMessages;
   }
@@ -66,7 +66,7 @@ class MessagesRepository {
     final messages =
         localResult.map((entry) => Message.fromJson(entry)).toList();
 
-    messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
+    messages.sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
 
     return messages;
   }
