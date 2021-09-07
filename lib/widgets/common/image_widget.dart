@@ -220,11 +220,14 @@ class ImageWidget extends StatelessWidget {
         alignment: Alignment.center,
         child: SizedBox.expand(
           child: FittedBox(
+            fit: backgroundColor == Colors.transparent
+                ? BoxFit.contain
+                : BoxFit.none,
             child: Text(
               charactersToShow,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 26.0,
+                fontSize: backgroundColor == Colors.transparent ? 26 : 20,
                 fontWeight: FontWeight.bold,
                 color: backgroundColor == Colors.transparent
                     ? Colors.white
