@@ -124,7 +124,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
     final messageState = Get.find<ChannelMessagesCubit>().state;
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
-
       return InkWell(
         onLongPress: () {
           if (_message.delivery == Delivery.delivered || _isMyMessage == false)
