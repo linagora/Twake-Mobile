@@ -1,4 +1,3 @@
-import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +31,17 @@ class _SignUpState extends State<SignUp> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  static bool validateEmail(String value) {
+    const String regExpMail =
+        r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"
+        r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"
+        r")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
+    if (RegExp(regExpMail).hasMatch(value))
+      return true;
+    else
+      return false;
   }
 
   void _sendLink(String email) async {
@@ -151,7 +161,7 @@ class _SignUpState extends State<SignUp> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter email address';
                       }
-                      if (EmailValidator.validate(value)) {
+                      if (validateEmail(value)) {
                         return null;
                       } else {
                         return 'Please enter the correct email address';
