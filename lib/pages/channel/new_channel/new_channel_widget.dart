@@ -310,20 +310,17 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: BlocBuilder<AddChannelCubit, AddChannelState>(
                             bloc: Get.find<AddChannelCubit>(),
                             builder: (context, addChannelState) {
-                              if (addChannelState.channelVisibility ==
-                                  ChannelVisibility.public) {
-                                return SizedBox.shrink();
-                              }
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                    "INVITED MEMBERS (${addChannelState.selectedMembers.length})",
-                                    style: TextStyle(
-                                      color: Color(0xff969ca4),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FontStyle.normal,
-                                    )),
+                                  "INVITED MEMBERS (${addChannelState.selectedMembers.length})",
+                                  style: TextStyle(
+                                    color: Color(0xff969ca4),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    fontStyle: FontStyle.normal,
+                                  ),
+                                ),
                               );
                             }),
                       ),
