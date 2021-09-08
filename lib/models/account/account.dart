@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 
 export 'account2workspace.dart';
@@ -73,7 +74,7 @@ class Account extends BaseModel {
     try {
       return _$AccountFromJson(json);
     } catch (e, ss) {
-      print('Faulty accont: $json\n$ss');
+      Logger().w('Faulty account: $json\n$ss');
       throw e;
     }
   }

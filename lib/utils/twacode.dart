@@ -1054,7 +1054,6 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.Unknown) {
-          print('unknown format: $t');
           spans.add(
             TextSpan(
               text: 'not supported',

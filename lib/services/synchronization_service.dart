@@ -185,8 +185,7 @@ class SynchronizationService {
   }
 
   void subscribeToThreadReplies({required String threadId}) async {
-    if (!Globals.instance.isNetworkConnected)
-      throw Exception('Shoud not be called with no active connection');
+    if (!Globals.instance.isNetworkConnected) return;
 
     // Unsubscribe just in case
     if (subscribedThreadId != null) {

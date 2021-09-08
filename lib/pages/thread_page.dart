@@ -41,7 +41,8 @@ class _ThreadPageState<T extends BaseChannelsCubit>
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, messagesState) {
-          return messagesState is MessagesLoadSuccess
+          return messagesState is MessagesLoadSuccess &&
+                  messagesState.messages.isNotEmpty
               ? Scaffold(
                   appBar: AppBar(
                     titleSpacing: 0.0,

@@ -84,7 +84,7 @@ class NavigatorService {
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
-        threadId: data.threadId,
+        threadId: data.threadId == data.messageId ? null : data.threadId,
       );
     }
   }
@@ -93,11 +93,12 @@ class NavigatorService {
     await for (final local in _pushNotifications.localNotifications) {
       if (local.type != LocalNotificationType.message) continue;
       final data = NotificationPayload.fromJson(json: local.payload);
+      Get.back(closeOverlays: true);
       navigate(
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
-        threadId: data.threadId,
+        threadId: data.threadId == data.messageId ? null : data.threadId,
       );
     }
   }
@@ -105,11 +106,13 @@ class NavigatorService {
   void listenToRemote() async {
     await for (final remote in _pushNotifications.notificationClickStream) {
       final data = remote.payload;
+
+      Get.back(closeOverlays: true);
       navigate(
         companyId: data.companyId,
         workspaceId: data.workspaceId,
         channelId: data.channelId,
-        threadId: data.threadId,
+        threadId: data.threadId == data.messageId ? null : data.threadId,
       );
     }
   }
