@@ -331,11 +331,6 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: BlocBuilder<AddChannelCubit, AddChannelState>(
                           bloc: Get.find<AddChannelCubit>(),
                           builder: (context, addChannelState) {
-                            if (addChannelState.channelVisibility ==
-                                    ChannelVisibility.public ||
-                                addChannelState.selectedMembers.isEmpty) {
-                              return SizedBox.shrink();
-                            }
                             return ListView.separated(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),

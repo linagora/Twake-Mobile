@@ -366,6 +366,7 @@ Widget modalSheet(
                 ),
                 Text(
                   name,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 17.0,
                     fontWeight: FontWeight.w700,
