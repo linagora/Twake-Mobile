@@ -52,10 +52,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
 
-  Size wdgtHieght = Size(0, 0);
-  // use _wdgtKey in the Bubble
-  double h = 1;
-
   @override
   void initState() {
     super.initState();
@@ -121,6 +117,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
   @override
   Widget build(BuildContext context) {
+    final double sizeOfReplyBox = _message.text.length.toDouble() < 15
+        ? 80 - _message.text.length.toDouble() * 5.5
+        : 5;
+
     final messageState = Get.find<ChannelMessagesCubit>().state;
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
@@ -291,8 +291,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Flexible(
                                           child: Column(
@@ -317,9 +315,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             ],
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
+                                        if (_message.responsesCount > 0 &&
+                                            !_message.inThread &&
+                                            !_hideShowReplies)
+                                          SizedBox(width: sizeOfReplyBox),
                                         Column(
                                           children: [
                                             Text(
@@ -348,40 +347,29 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                         ),
                                       ],
                                     ),
-                                    if (_message.responsesCount > 0)
-                                      //    Container(
-                                      //  alignment: Alignment.center,
-                                      //    child: Divider(
-                                      //      height: 1.0,
-                                      //     thickness: 1.0,
-                                      //     color: _isMyMessage
-                                      //        ? Color(0xffffffff)
-                                      //             .withOpacity(0.58)
-                                      //         : Color(0xFF8E8E93),
-                                      //   ),
-                                      //   ),
-                                      if (_message.responsesCount > 0 &&
-                                          !_message.inThread &&
-                                          !_hideShowReplies)
-                                        Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth: 105.0,
-                                          ),
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.only(
-                                              top: 15.0, bottom: 15.0),
-                                          // alignment: Alignment.bottomCenter,
-                                          child: Text(
-                                            'View ${_message.responsesCount} replies',
-                                            style: TextStyle(
-                                              color: _isMyMessage
-                                                  ? Colors.white
-                                                  : Color(0xFF004DFF),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 13,
-                                            ),
+                                    if (_message.responsesCount > 0 &&
+                                        !_message.inThread &&
+                                        !_hideShowReplies)
+                                      Container(
+                                        constraints: BoxConstraints(
+                                          maxWidth: 105.0,
+                                        ),
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.only(
+                                            top: 15.0, bottom: 15.0),
+                                        child: Text(
+                                          _message.responsesCount > 1
+                                              ? 'View ${_message.responsesCount} replies'
+                                              : 'View ${_message.responsesCount} reply',
+                                          style: TextStyle(
+                                            color: _isMyMessage
+                                                ? Colors.white
+                                                : Color(0xFF004DFF),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
                                           ),
                                         ),
+                                      ),
                                   ],
                                 ),
                               ),
