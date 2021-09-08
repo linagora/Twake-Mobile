@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/models/globals/mentions_cache.dart' as mcache;
 
 class UserMention extends StatelessWidget {
   final String? userId;
@@ -15,12 +16,17 @@ class UserMention extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final name = mcache.cache[userId ?? ''];
+    if (name != null) {
+      return Text(name, style: style);
+    }
     return userId != null
         ? FutureBuilder(
             future: Get.find<AccountCubit>().fetchStateless(userId: userId!),
             builder: (ctx, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 final account = (snapshot.data as Account);
+                mcache.cache[userId!] = account.fullName;
                 return Text(
                   account.fullName,
                   style: style,

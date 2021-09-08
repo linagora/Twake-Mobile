@@ -5,7 +5,6 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
-//import 'package:twake/widgets/message/message_tile.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/widgets/common/reaction.dart';
 
@@ -20,90 +19,6 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
 
 class _ThreadMessagesListState<T extends BaseMessagesCubit>
     extends State<ThreadMessagesList> {
-  Widget buildThreadMessageColumn(Message message) {
-    final state = Get.find<ThreadMessagesCubit>().state;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: MessageTile<ThreadMessagesCubit>(
-            channel: widget.parentChannel,
-            downBubbleSide: true,
-            upBubbleSide: true,
-            message: message,
-            hideReaction: true,
-            hideShowReplies: true,
-            isThread: true,
-            key: ValueKey(message.hash),
-          ),
-        ),
-        if (state is MessagesLoadSuccess)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 15,
-              ),
-              Wrap(
-                runSpacing: Dim.heightMultiplier,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                textDirection: TextDirection.ltr,
-                children: [
-                  ...message.reactions.map((r) {
-                    return Reaction<T>(
-                      message: message,
-                      reaction: r,
-                      isFirstInThread: true,
-                    );
-                  }),
-                ],
-              ),
-              Spacer(),
-              Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                  child: state.messages.length - 1 > 1
-                      ? Text(
-                          '${state.messages.length - 1}' + ' replies ',
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            color: Color(0xFF818C99),
-                          ),
-                        )
-                      : state.messages.length - 1 == 1
-                          ? Text(
-                              '${state.messages.length - 1}' + ' reply ',
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Color(0xFF818C99),
-                              ),
-                            )
-                          : Text(
-                              ' there are no replies yet ',
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Color(0xFF818C99),
-                              ),
-                            )),
-            ],
-          ),
-        SizedBox(
-          height: 8.0,
-        ),
-        Divider(
-          thickness: 5.0,
-          height: 2.0,
-          color: Color(0xFFF6F6F6),
-        ),
-        SizedBox(
-          height: 12.0,
-        ),
-      ],
-    );
-  }
-
   double? appBarHeight;
   List<Widget> widgets = [];
   List<Message> _messages = <Message>[];
@@ -204,7 +119,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                     bubbleSide(_messages, index);
 
                     if (index == _messages.length - 1) {
-                      return buildThreadMessageColumn(_messages.first);
+                      return MessageColumn<T>(
+                        message: _messages.first,
+                        parentChannel: widget.parentChannel,
+                      );
                     } else if (index == _messages.length - 2) {
                       // the top side of the first answer in a thread should always be round
                       return MessageTile<ThreadMessagesCubit>(
@@ -230,10 +148,105 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                   },
                 )
               : SingleChildScrollView(
-                  child: buildThreadMessageColumn(_messages.first),
+                  child: MessageColumn<T>(
+                    message: _messages.first,
+                    parentChannel: widget.parentChannel,
+                  ),
                 ),
         );
       },
+    );
+  }
+}
+
+class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
+  final Message message;
+  final Channel parentChannel;
+
+  const MessageColumn({required this.message, required this.parentChannel});
+
+  build(ctx) {
+    final state = Get.find<ThreadMessagesCubit>().state;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 12.0),
+          child: MessageTile<ThreadMessagesCubit>(
+            channel: parentChannel,
+            downBubbleSide: true,
+            upBubbleSide: true,
+            message: message,
+            hideReaction: true,
+            hideShowReplies: true,
+            isThread: true,
+            key: ValueKey(message.hash),
+          ),
+        ),
+        if (state is MessagesLoadSuccess)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 15,
+              ),
+              Wrap(
+                runSpacing: Dim.heightMultiplier,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                textDirection: TextDirection.ltr,
+                children: [
+                  ...message.reactions.map((r) {
+                    return Reaction<T>(
+                      message: message,
+                      reaction: r,
+                      isFirstInThread: true,
+                    );
+                  }),
+                ],
+              ),
+              Spacer(),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                child: state.messages.length - 1 > 1
+                    ? Text(
+                        '${state.messages.length - 1}' + ' replies ',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: Color(0xFF818C99),
+                        ),
+                      )
+                    : state.messages.length - 1 == 1
+                        ? Text(
+                            '${state.messages.length - 1}' + ' reply ',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              color: Color(0xFF818C99),
+                            ),
+                          )
+                        : Text(
+                            ' there are no replies yet ',
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              color: Color(0xFF818C99),
+                            ),
+                          ),
+              ),
+            ],
+          ),
+        SizedBox(
+          height: 8.0,
+        ),
+        Divider(
+          thickness: 5.0,
+          height: 2.0,
+          color: Color(0xFFF6F6F6),
+        ),
+        SizedBox(
+          height: 12.0,
+        ),
+      ],
     );
   }
 }
