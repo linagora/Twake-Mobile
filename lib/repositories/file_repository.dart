@@ -39,7 +39,7 @@ class FileRepository {
       key: 'resource',
     );
 
-    Logger().w('Requested file for $id\n$result');
+    // Logger().w('Requested file for $id\n$result');
 
     return File.fromJson(json: result, transform: true);
   }
