@@ -35,7 +35,7 @@ class SelectedMemberTile extends StatelessWidget {
               Flexible(
                   child: Container(
                 constraints: BoxConstraints(
-                  maxWidth: Dim.widthPercent(75),
+                  maxWidth: Dim.widthPercent(72),
                 ),
                 child: Text(
                   memberName,
