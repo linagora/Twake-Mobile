@@ -713,10 +713,10 @@ class TwacodeRenderer {
 
       default:
         style = TextStyle(
-          // color: Colors.black,
-          fontFamily: DEFAULT,
-          // fontSize: 17,
-        );
+            // color: Colors.black,
+            // fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro',
+            // fontSize: 17,
+            );
     }
     return style;
   }
@@ -1087,4 +1087,3 @@ class TwacodeRenderer {
 }
 
 const MONOSPACE = 'PTMono';
-const DEFAULT = 'PT';

@@ -316,10 +316,13 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             ],
                                           ),
                                         ),
-                                        if (_message.responsesCount > 0 &&
-                                            !_message.inThread &&
-                                            !_hideShowReplies)
-                                          SizedBox(width: sizeOfReplyBox),
+                                        SizedBox(
+                                            width:
+                                                (_message.responsesCount > 0 &&
+                                                        !_message.inThread &&
+                                                        !_hideShowReplies)
+                                                    ? sizeOfReplyBox
+                                                    : 5),
                                         Column(
                                           children: [
                                             Text(
