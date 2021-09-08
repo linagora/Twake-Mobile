@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_cubit.dart';
 import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_state.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/pages/member/selected_member_tile.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
@@ -331,11 +330,6 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: BlocBuilder<AddChannelCubit, AddChannelState>(
                           bloc: Get.find<AddChannelCubit>(),
                           builder: (context, addChannelState) {
-                            if (addChannelState.channelVisibility ==
-                                    ChannelVisibility.public ||
-                                addChannelState.selectedMembers.isEmpty) {
-                              return SizedBox.shrink();
-                            }
                             return ListView.separated(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
