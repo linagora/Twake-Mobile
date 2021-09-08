@@ -120,7 +120,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
     final double sizeOfReplyBox = _message.text.length.toDouble() < 15
         ? 80 - _message.text.length.toDouble() * 5.5
         : 5;
-
     final messageState = Get.find<ChannelMessagesCubit>().state;
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
@@ -291,6 +290,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Flexible(
                                           child: Column(
