@@ -40,21 +40,13 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
     PushNotificationsService.instance.requestPermission();
 
-    Get.find<CompaniesCubit>().fetch();
-    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+    refetchData();
 
-    Get.find<ChannelsCubit>().fetch(
+    SynchronizationService.instance.subscribeToBadges();
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: Globals.instance.companyId!,
       workspaceId: Globals.instance.workspaceId!,
-      companyId: Globals.instance.companyId,
     );
-    Get.find<DirectsCubit>().fetch(
-      workspaceId: 'direct',
-      companyId: Globals.instance.companyId,
-    );
-
-    Get.find<AccountCubit>().fetch(sendAnalyticAfterFetch: true);
-
-    Get.find<BadgesCubit>().fetch();
 
     _searchController.addListener(() {
       setState(() {
@@ -67,28 +59,31 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && Globals.instance.token != null) {
       Future.delayed(Duration(seconds: 6), () {
-        Get.find<CompaniesCubit>().fetch();
-        Get.find<WorkspacesCubit>()
-            .fetch(companyId: Globals.instance.companyId);
-
-        Get.find<ChannelsCubit>().fetch(
-          workspaceId: Globals.instance.workspaceId!,
-          companyId: Globals.instance.companyId,
-        );
-        Get.find<DirectsCubit>().fetch(
-          workspaceId: 'direct',
-          companyId: Globals.instance.companyId,
-        );
-
-        Get.find<AccountCubit>().fetch();
-
-        Get.find<BadgesCubit>().fetch();
+        refetchData();
         // Reset socketio connection and all the subscriptions
         SocketIOService.instance.disconnect();
         SocketIOService.instance.connect();
       });
     }
     super.didChangeAppLifecycleState(state);
+  }
+
+  void refetchData() {
+    Get.find<CompaniesCubit>().fetch();
+    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+
+    Get.find<ChannelsCubit>().fetch(
+      workspaceId: Globals.instance.workspaceId!,
+      companyId: Globals.instance.companyId,
+    );
+    Get.find<DirectsCubit>().fetch(
+      workspaceId: 'direct',
+      companyId: Globals.instance.companyId,
+    );
+
+    Get.find<AccountCubit>().fetch();
+
+    Get.find<BadgesCubit>().fetch();
   }
 
   @override

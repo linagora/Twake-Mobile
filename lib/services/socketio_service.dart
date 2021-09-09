@@ -110,7 +110,7 @@ class SocketIOService {
   }
 
   void _handleResource(data) {
-    // Logger().v('GOT RESOURCE: $data');
+    Logger().v('GOT RESOURCE: $data');
     final resource = SocketIOResource.fromJson(json: data);
     _resourceStream.sink.add(resource);
   }
@@ -131,6 +131,7 @@ class SocketIOService {
     }
     // wait for 5 sec and rerun the check and rerun
     Future.delayed(Duration(seconds: 5)).then((_) {
+      Logger().w('Checking connection health');
       _checkConnectionHealth();
     });
   }
