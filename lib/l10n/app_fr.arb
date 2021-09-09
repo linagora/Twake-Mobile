@@ -1,1 +1,4 @@
-{}
+{
+  "workspaceCreate": "Créer un nouvel espace de travail",
+  "@workspaceCreate": {}
+}
