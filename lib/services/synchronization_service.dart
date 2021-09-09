@@ -87,15 +87,28 @@ class SynchronizationService {
             r.resource['workspace_id'] == 'direct';
       });
 
+  Stream<SocketIOResource> get socketIODirectMembershipStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.channelMember &&
+            r.resource['workspace_id'] == 'direct';
+      });
+
+  Stream<SocketIOResource> get socketIOChannelMembershipStream =>
+      _socketio.resourceStream.where((r) {
+        return r.type == ResourceType.channelMember &&
+            r.resource['workspace_id'] != 'direct';
+      });
+
   Stream<SocketIOResource> get socketIODirectsActivityStream =>
       _socketio.resourceStream.where((r) {
-        return r.type == ResourceType.channelActivity &&
+        return ResourceType.channel == r.type &&
             r.resource['workspace_id'] == 'direct';
       });
 
   Stream<SocketIOResource> get socketIOChannelsStream =>
       _socketio.resourceStream.where((r) {
-        return r.type == ResourceType.channel &&
+        return ([ResourceType.channel, ResourceType.channelMember]
+                .contains(r.type)) &&
             r.resource['workspace_id'] != 'direct';
       });
 

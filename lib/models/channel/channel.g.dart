@@ -19,10 +19,13 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
         : MessageSummary.fromJson(json['last_message'] as Map<String, dynamic>),
     members:
         (json['members'] as List<dynamic>).map((e) => e as String).toList(),
-    visibility: _$enumDecode(_$ChannelVisibilityEnumMap, json['visibility']),
+    visibility:
+        _$enumDecodeNullable(_$ChannelVisibilityEnumMap, json['visibility']) ??
+            ChannelVisibility.public,
     lastActivity: json['last_activity'] as int,
     membersCount: json['members_count'] as int? ?? 0,
-    role: _$enumDecode(_$ChannelRoleEnumMap, json['role']),
+    role: _$enumDecodeNullable(_$ChannelRoleEnumMap, json['role']) ??
+        ChannelRole.member,
     userLastAccess: json['user_last_access'] as int? ?? 0,
     draft: json['draft'] as String?,
   );
@@ -69,6 +72,17 @@ K _$enumDecode<K, V>(
       return MapEntry(unknownValue, enumValues.values.first);
     },
   ).key;
+}
+
+K? _$enumDecodeNullable<K, V>(
+  Map<K, V> enumValues,
+  dynamic source, {
+  K? unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<K, V>(enumValues, source, unknownValue: unknownValue);
 }
 
 const _$ChannelVisibilityEnumMap = {

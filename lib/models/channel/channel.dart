@@ -33,6 +33,7 @@ class Channel extends BaseModel {
   @JsonKey(defaultValue: 0)
   final int membersCount;
 
+  @JsonKey(defaultValue: ChannelVisibility.public)
   final ChannelVisibility visibility;
 
   final int lastActivity;
@@ -44,6 +45,7 @@ class Channel extends BaseModel {
 
   String? draft;
 
+  @JsonKey(defaultValue: ChannelRole.member)
   final ChannelRole role;
 
   bool get hasUnread => userLastAccess < lastActivity;

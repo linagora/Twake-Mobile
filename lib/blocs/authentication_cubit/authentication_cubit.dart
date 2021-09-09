@@ -50,6 +50,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     } else {
       emit(AuthenticationInitial());
     }
+    SocketIOService.instance.connect();
     return authenticated;
   }
 
