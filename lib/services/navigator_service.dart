@@ -66,6 +66,7 @@ class NavigatorService {
   static NavigatorService get instance => _service;
 
   Future<void> navigateOnNotificationLaunch() async {
+    await Future.delayed(Duration(seconds: 3));
     final local = await _pushNotifications.checkLocalNotificationClick;
     if (local != null) {
       final data = NotificationPayload.fromJson(json: local.payload);

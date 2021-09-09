@@ -136,6 +136,14 @@ class ChannelsRepository {
     return edited;
   }
 
+  Future<void> deleteById({required String channelId}) async {
+    await _storage.delete(
+      table: Table.channel,
+      where: 'id = ?',
+      whereArgs: [channelId],
+    );
+  }
+
   Future<void> delete({required Channel channel, bool syncRemote: true}) async {
     final data = channel.toJson();
 

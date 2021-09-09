@@ -14,6 +14,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   final _socketIOChannelStream = SocketIOService.instance.resourceStream;
   final _socketIOActivityStream = SocketIOService.instance.resourceStream;
+  final _socketIOMembershipStream = SocketIOService.instance.resourceStream;
 
   BaseChannelsCubit({
     required ChannelsRepository repository,
@@ -246,6 +247,61 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     ));
   }
 
+  void listenToMembershipChanges() async {
+    await for (final change in _socketIOMembershipStream) {
+      if (state is! ChannelsLoadedSuccess) continue;
+      var selected = (state as ChannelsLoadedSuccess).selected;
+      final channels = (state as ChannelsLoadedSuccess).channels;
+      switch (change.action) {
+        case ResourceAction.saved:
+        case ResourceAction.created:
+        case ResourceAction.updated:
+          final rchannels = await _repository.fetchRemote(
+            companyId: Globals.instance.companyId!,
+            workspaceId: Globals.instance.workspaceId!,
+          );
+
+          if (selected != null) {
+            selected = rchannels.firstWhere((c) => c.id == selected!.id);
+          }
+
+          final newState = ChannelsLoadedSuccess(
+            channels: rchannels,
+            hash: rchannels.fold(0, (acc, c) => acc + c.hash),
+            selected: selected,
+          );
+
+          emit(newState);
+          break;
+        case ResourceAction.deleted:
+          // fill up required fields with dummy data
+          change.resource['name'] = '';
+          change.resource['permissions'] = const [];
+
+          Logger().w('DELETED: ${change.resource}');
+          final deleted =
+              Channel.fromJson(json: change.resource, jsonify: false);
+
+          _repository.delete(
+            channel: deleted,
+            syncRemote: false,
+          );
+
+          channels.removeWhere((c) => c.id == deleted.id);
+
+          emit(ChannelsLoadedSuccess(
+            channels: channels,
+            hash: channels.fold(0, (acc, c) => acc + c.hash),
+            selected: selected,
+          ));
+          break;
+        case ResourceAction.event:
+          // ignore it for now
+          break;
+      }
+    }
+  }
+
   void listenToActivityChanges() async {
     await for (final change in _socketIOActivityStream) {
       if (state is! ChannelsLoadedSuccess) continue;
@@ -332,15 +388,15 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
           change.resource['name'] = '';
           change.resource['permissions'] = const [];
 
-          final deleted =
-              Channel.fromJson(json: change.resource, jsonify: false);
+          Logger().w('DELETED: ${change.resource}');
 
-          _repository.delete(
-            channel: deleted,
-            syncRemote: false,
+          final String channelId = change.resource['id']!;
+
+          _repository.deleteById(
+            channelId: channelId,
           );
 
-          channels.removeWhere((c) => c.id == deleted.id);
+          channels.removeWhere((c) => c.id == channelId);
 
           emit(ChannelsLoadedSuccess(
             channels: channels,
@@ -365,6 +421,10 @@ class ChannelsCubit extends BaseChannelsCubit {
   final _socketIOActivityStream =
       SynchronizationService.instance.socketIOChannelsActivityStream;
 
+  @override
+  final _socketIOMembershipStream =
+      SynchronizationService.instance.socketIOChannelMembershipStream;
+
   ChannelsCubit({ChannelsRepository? repository})
       : super(repository: repository ?? ChannelsRepository());
 }
@@ -377,6 +437,10 @@ class DirectsCubit extends BaseChannelsCubit {
   @override
   final _socketIOActivityStream =
       SynchronizationService.instance.socketIODirectsActivityStream;
+
+  @override
+  final _socketIOMembershipStream =
+      SynchronizationService.instance.socketIODirectMembershipStream;
 
   DirectsCubit({ChannelsRepository? repository})
       : super(
