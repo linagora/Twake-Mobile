@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/config/styles_config.dart';
@@ -40,6 +41,10 @@ void main() async {
     child: GetMaterialApp(
       theme: StylesConfig.lightTheme,
       title: 'Twake',
+      localizationsDelegates: [AppLocalizations.delegate],
+      supportedLocales: [
+        Locale('en'),
+      ],
       getPages: routePages,
       initialRoute: RoutePaths.initial,
       initialBinding: HomeBinding(),
