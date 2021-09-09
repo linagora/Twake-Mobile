@@ -101,13 +101,13 @@ class SynchronizationService {
 
   Stream<SocketIOResource> get socketIODirectsActivityStream =>
       _socketio.resourceStream.where((r) {
-        return ResourceType.channelActivity == r.type &&
+        return r.type == ResourceType.channelActivity &&
             r.resource['workspace_id'] == 'direct';
       });
 
   Stream<SocketIOResource> get socketIOChannelsStream =>
       _socketio.resourceStream.where((r) {
-        return ResourceType.channel == r.type &&
+        return r.type == ResourceType.channel &&
             r.resource['workspace_id'] != 'direct';
       });
 
