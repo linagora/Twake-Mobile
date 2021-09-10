@@ -1,3 +1,4 @@
 {
-    "workspaceCreate": "Create new workspace"
+    "workspaceCreate": "Add new workspace",
+    "organisationSwitch": "Switch organisation"
 }
