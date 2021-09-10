@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CupertinoWarning extends StatelessWidget {
   @override
@@ -8,8 +9,8 @@ class CupertinoWarning extends StatelessWidget {
         CupertinoActionSheetAction(
             onPressed: () {},
             child: ActionWidget(
-              title: 'Mute',
-              subtitle: 'Stop receiving all notifications',
+              title: AppLocalizations.of(context)!.mute,
+              subtitle: AppLocalizations.of(context)!.notificationsStop,
               icon: Icon(
                 CupertinoIcons.bell_slash_fill,
                 color: Color(0xff004dff),
@@ -18,8 +19,8 @@ class CupertinoWarning extends StatelessWidget {
         CupertinoActionSheetAction(
             onPressed: () {},
             child: ActionWidget(
-              title: 'Pin',
-              subtitle: 'Pin the channel to keep it visible',
+              title: AppLocalizations.of(context)!.pin,
+              subtitle: AppLocalizations.of(context)!.pinInfo,
               icon: Icon(
                 CupertinoIcons.pin_fill,
                 color: Color(0xff004dff),
@@ -28,8 +29,8 @@ class CupertinoWarning extends StatelessWidget {
         CupertinoActionSheetAction(
             onPressed: () {},
             child: ActionWidget(
-              title: 'Archive',
-              subtitle: 'Declutter your current listing',
+              title: AppLocalizations.of(context)!.archive,
+              subtitle: AppLocalizations.of(context)!.archiveInfo,
               icon: Icon(
                 CupertinoIcons.archivebox_fill,
                 color: Color(0xff004dff),
@@ -38,8 +39,8 @@ class CupertinoWarning extends StatelessWidget {
         CupertinoActionSheetAction(
             onPressed: () {},
             child: ActionWidget(
-              title: 'Mark as unread',
-              subtitle: 'Hide the fact of having seen the message',
+              title: AppLocalizations.of(context)!.markAsUnread,
+              subtitle: AppLocalizations.of(context)!.markAsUnreadInfo,
               icon: Icon(
                 CupertinoIcons.envelope_open_fill,
                 color: Color(0xff004dff),
@@ -48,8 +49,8 @@ class CupertinoWarning extends StatelessWidget {
         CupertinoActionSheetAction(
           onPressed: () {},
           child: ActionWidget(
-            title: 'Delete',
-            subtitle: 'Stop receiving all notifications',
+            title: AppLocalizations.of(context)!.delete,
+            subtitle: AppLocalizations.of(context)!.notificationsStop,
             isDestructive: true,
             icon: Icon(
               CupertinoIcons.trash_fill,
@@ -61,7 +62,7 @@ class CupertinoWarning extends StatelessWidget {
       cancelButton: CupertinoActionSheetAction(
         onPressed: () => Navigator.of(context).pop(),
         child: Text(
-          'Cancel',
+          AppLocalizations.of(context)!.cancel,
           maxLines: 1,
           textAlign: TextAlign.start,
           style: TextStyle(

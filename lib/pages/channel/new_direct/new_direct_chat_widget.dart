@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
@@ -48,15 +49,17 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                   Expanded(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Text("New direct chat",
-                          style: TextStyle(
-                            fontFamily: 'SFProText',
-                            color: Color(0xff000000),
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                            fontStyle: FontStyle.normal,
-                            letterSpacing: -0.41,
-                          )),
+                      child: Text(
+                        AppLocalizations.of(context)!.newDirectChat,
+                        style: TextStyle(
+                          fontFamily: 'SFProText',
+                          color: Color(0xff000000),
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FontStyle.normal,
+                          letterSpacing: -0.41,
+                        ),
+                      ),
                     ),
                   ),
                   GestureDetector(
@@ -83,15 +86,18 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         showPrefixIcon: false,
                       )),
                       Positioned(
-                          left: 8,
-                          top: 12,
-                          child: Text("To:",
-                              style: TextStyle(
-                                color: Color(0x66000000),
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              )))
+                        left: 8,
+                        top: 12,
+                        child: Text(
+                          AppLocalizations.of(context)!.to,
+                          style: TextStyle(
+                            color: Color(0x66000000),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -110,13 +116,15 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                       Expanded(
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('Create a New Channel',
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                fontStyle: FontStyle.normal,
-                              )),
+                          child: Text(
+                            AppLocalizations.of(context)!.createNewChannel,
+                            style: TextStyle(
+                              color: Color(0xff000000),
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FontStyle.normal,
+                            ),
+                          ),
                         ),
                       ),
                       Padding(
@@ -135,7 +143,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'RECENT CHATS',
+                    AppLocalizations.of(context)!.recentChats,
                     style: TextStyle(
                       color: Color(0x59000000),
                       fontFamily: 'SFProText',
@@ -186,13 +194,15 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                 padding: const EdgeInsets.only(top: 20.0, left: 16),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('PEOPLE',
-                      style: TextStyle(
-                        color: Color(0x59000000),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        fontStyle: FontStyle.normal,
-                      )),
+                  child: Text(
+                    AppLocalizations.of(context)!.people,
+                    style: TextStyle(
+                      color: Color(0x59000000),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
                 ),
               ),
               Expanded(

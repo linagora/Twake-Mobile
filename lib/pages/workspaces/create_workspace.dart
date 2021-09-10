@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
@@ -104,13 +105,13 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               Container(
                 color: Colors.white,
                 child: SheetTitleBar(
-                  title: 'New Workspace',
-                  leadingTitle: 'Cancel',
+                  title: AppLocalizations.of(context)!.newWorkspace,
+                  leadingTitle: AppLocalizations.of(context)!.cancel,
                   leadingAction: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     popBack();
                   },
-                  trailingTitle: 'Create',
+                  trailingTitle: AppLocalizations.of(context)!.create,
                   trailingAction: () async {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(

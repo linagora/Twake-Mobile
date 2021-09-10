@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -110,7 +111,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                       const EdgeInsets.only(left: 16, right: 16, bottom: 20),
                   child: TwakeSearchTextField(
                     controller: _searchController,
-                    hintText: 'Search for members',
+                    hintText: AppLocalizations.of(context)!.searchMembers,
                     backgroundColor: Color(0xfff9f8f9),
                   ),
                 ),

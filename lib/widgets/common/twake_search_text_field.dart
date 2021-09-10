@@ -3,22 +3,22 @@ import 'package:flutter/material.dart';
 
 class TwakeSearchTextField extends StatefulWidget {
   final double height;
-  final String hintText;
+  final String? hintText;
   final Color backgroundColor;
   final double fontSize;
   final bool showPrefixIcon;
   final double borderRadius;
   late final TextEditingController? controller;
 
-  TwakeSearchTextField(
-      {this.height = 46,
-      this.hintText = 'Search',
-      this.backgroundColor = const Color(0xfff9f8f9),
-      this.fontSize = 17,
-      TextEditingController? controller,
-      this.showPrefixIcon = true,
-      this.borderRadius = 12})
-      : super() {
+  TwakeSearchTextField({
+    this.height = 46,
+    this.hintText,
+    this.backgroundColor = const Color(0xfff9f8f9),
+    this.fontSize = 17,
+    TextEditingController? controller,
+    this.showPrefixIcon = true,
+    this.borderRadius = 12,
+  }) : super() {
     this.controller = controller != null ? controller : TextEditingController();
   }
 

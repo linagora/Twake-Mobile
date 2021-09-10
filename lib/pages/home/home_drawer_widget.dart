@@ -114,7 +114,7 @@ class HomeDrawerWidget extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, top: 20, bottom: 12),
                   child: Text(
-                    'WORKSPACES',
+                    AppLocalizations.of(context)!.workspaces,
                     style: TextStyle(
                       color: Color(0x59000000),
                       fontSize: 13,
