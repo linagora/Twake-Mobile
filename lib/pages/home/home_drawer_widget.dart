@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -190,7 +191,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                   width: 12,
                                 ),
                                 Text(
-                                  'Add a new workspace',
+                                  AppLocalizations.of(ctx)!.workspaceCreate,
                                   style: TextStyle(
                                     color: Color(0xff000000),
                                     fontSize: 15,
