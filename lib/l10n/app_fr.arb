@@ -1,4 +1,6 @@
 {
-  "workspaceCreate": "Créer un nouvel espace de travail",
-  "@workspaceCreate": {}
+  "workspaceCreate": "Ajouter un nouvel espace de travail",
+  "@workspaceCreate": {},
+  "organisationSwitch": "Changement d'organisation",
+  "@organisationSwitch": {}
 }
