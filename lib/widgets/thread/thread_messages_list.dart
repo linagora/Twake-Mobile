@@ -6,6 +6,7 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/reaction.dart';
 
 class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
@@ -25,8 +26,6 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
 
   var _controller = ScrollController();
   ScrollPhysics _physics = BouncingScrollPhysics();
-  bool upBubbleSide = false;
-  bool downBubbleSide = false;
   @override
   void initState() {
     super.initState();
@@ -53,51 +52,6 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     super.dispose();
   }
 
-  void bubbleSide(List<Message> messages, int index) {
-    //conditions for determining the shape of the sides of the bubble
-    //if there is only one message in the chat
-    if (messages.length == 1) {
-      upBubbleSide = true;
-      downBubbleSide = true;
-    } else {
-      // boundary bubbles handling
-      if (index == 0 || index == messages.length - 1) {
-        if (index == 0) {
-          if (messages[messages.length - index - 1].userId !=
-              messages[messages.length - index - 1 - 1].userId) {
-            upBubbleSide = true;
-          } else {
-            upBubbleSide = false;
-          }
-          downBubbleSide = true;
-        }
-        if (index == messages.length - 1) {
-          if (messages[messages.length - index - 1].userId !=
-              messages[messages.length - index - 1 + 1].userId) {
-            downBubbleSide = true;
-          } else {
-            downBubbleSide = false;
-          }
-          upBubbleSide = true;
-        }
-      } else {
-        // processing of all basic bubbles in the chat except of boundary values
-        if (messages[messages.length - index - 1].userId !=
-            messages[messages.length - index - 1 + 1].userId) {
-          downBubbleSide = true;
-        } else {
-          downBubbleSide = false;
-        }
-        if (messages[messages.length - index - 1].userId !=
-            messages[messages.length - index - 1 - 1].userId) {
-          upBubbleSide = true;
-        } else {
-          upBubbleSide = false;
-        }
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
@@ -115,9 +69,9 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                   shrinkWrap: true,
                   itemCount: _messages.length,
                   itemBuilder: (context, index) {
-                    //conditions for determining the shape of the sides of the bubble
-                    bubbleSide(_messages, index);
-
+                    //conditions for determining the shape of the bubble sides
+                    final List<bool> bubbleSides =
+                        bubbleSide(_messages, index, false);
                     if (index == _messages.length - 1) {
                       return MessageColumn<T>(
                         message: _messages.first,
@@ -130,7 +84,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                         key: ValueKey(
                             _messages[_messages.length - 1 - index].hash),
                         channel: widget.parentChannel,
-                        downBubbleSide: downBubbleSide,
+                        downBubbleSide: bubbleSides[1],
                         upBubbleSide: true,
                         isThread: true,
                       );
@@ -140,8 +94,8 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                         key: ValueKey(
                             _messages[_messages.length - 1 - index].hash),
                         channel: widget.parentChannel,
-                        downBubbleSide: downBubbleSide,
-                        upBubbleSide: upBubbleSide,
+                        downBubbleSide: bubbleSides[1],
+                        upBubbleSide: bubbleSides[0],
                         isThread: true,
                       );
                     }

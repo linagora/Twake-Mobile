@@ -9,6 +9,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 import 'package:twake/widgets/common/channel_first_message.dart';
@@ -67,8 +68,6 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
   Widget _buildStickyGroupedListView(
       BuildContext context, List<Message> messages, bool endOfHistory) {
-    bool upBubbleSide = false;
-    bool downBubbleSide = false;
     return GroupedListView<Message, DateTime>(
       // addAutomaticKeepAlives: true,
       key: PageStorageKey<String>('uniqueKey'),
@@ -108,76 +107,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         );
       },
       indexedItemBuilder: (_, message, index) {
-        //conditions for determining the shape of the sides of the bubble
-
-        //if there is only one message in the chat
-        if (messages.length == 1) {
-          upBubbleSide = true;
-          downBubbleSide = true;
-        } else {
-          // boundary bubbles handling
-          if (index == 0 || index == messages.length - 1) {
-            if (index == 0) {
-              if (messages[messages.length - index - 1].userId !=
-                  messages[messages.length - index - 1 - 1].userId) {
-                upBubbleSide = true;
-              } else {
-                upBubbleSide = false;
-              }
-              downBubbleSide = true;
-              //Conditions for accounting for the change of day
-              if (DateFormatter.getVerboseDate(
-                      messages[messages.length - index - 1].createdAt) !=
-                  DateFormatter.getVerboseDate(
-                      messages[messages.length - index - 1 - 1].createdAt)) {
-                upBubbleSide = true;
-              }
-            }
-            if (index == messages.length - 1) {
-              if (messages[messages.length - index - 1].userId !=
-                  messages[messages.length - index - 1 + 1].userId) {
-                downBubbleSide = true;
-              } else {
-                downBubbleSide = false;
-              }
-              upBubbleSide = true;
-              //Conditions for accounting for the change of day
-              if (DateFormatter.getVerboseDate(
-                      messages[messages.length - index - 1].createdAt) !=
-                  DateFormatter.getVerboseDate(
-                      messages[messages.length - index - 1 + 1].createdAt)) {
-                downBubbleSide = true;
-              }
-            }
-          } else {
-            // processing of all basic bubbles in the chat except of boundary values
-            if (messages[messages.length - index - 1].userId !=
-                messages[messages.length - index - 1 + 1].userId) {
-              downBubbleSide = true;
-            } else {
-              downBubbleSide = false;
-            }
-            if (messages[messages.length - index - 1].userId !=
-                messages[messages.length - index - 1 - 1].userId) {
-              upBubbleSide = true;
-            } else {
-              upBubbleSide = false;
-            }
-            //Conditions for accounting for the change of day
-            if (DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1].createdAt) !=
-                DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1 + 1].createdAt)) {
-              downBubbleSide = true;
-            }
-            if (DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1].createdAt) !=
-                DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1 - 1].createdAt)) {
-              upBubbleSide = true;
-            }
-          }
-        }
+        //conditions for determining the shape of the bubble sides
+        final List<bool> bubbleSides = bubbleSide(messages, index, true);
         return SwipeActionCell(
           key: ObjectKey(messages[index]),
           performsFirstActionWithFullSwipe: true,
@@ -213,8 +144,8 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                   channel: widget.parentChannel, icon: message.picture ?? "")
               : MessageTile<ChannelMessagesCubit>(
                   message: message,
-                  upBubbleSide: upBubbleSide,
-                  downBubbleSide: downBubbleSide,
+                  upBubbleSide: bubbleSides[0],
+                  downBubbleSide: bubbleSides[1],
                   key: ValueKey(message.hash),
                   channel: widget.parentChannel,
                 ),
