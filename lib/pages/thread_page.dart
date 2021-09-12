@@ -11,7 +11,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
-import 'package:twake/widgets/thread/thread_messages_list.dart';
+import 'chat/messages_grouped_list.dart';
 
 class ThreadPage<T extends BaseChannelsCubit> extends StatefulWidget {
   final bool autofocus;
@@ -145,7 +145,10 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ThreadMessagesList(parentChannel: channel),
+                          MessagesGroupedList(
+                            parentChannel: channel,
+                            isThread: true,
+                          ),
                           ComposeBar(
                               autofocus: autofocus ||
                                   messagesState is MessageEditInProgress,

@@ -326,16 +326,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                         Column(
                                           children: [
                                             Text(
-                                              _message.inThread ||
-                                                      _hideShowReplies
-                                                  ? DateFormatter
-                                                      .getVerboseDateTime(
-                                                      _message.createdAt,
-                                                    )
-                                                  : DateFormatter
-                                                      .getVerboseTime(
-                                                      _message.createdAt,
-                                                    ),
+                                              DateFormatter.getVerboseTime(
+                                                _message.createdAt,
+                                              ),
                                               textAlign: TextAlign.end,
                                               style: TextStyle(
                                                 fontSize: 11.0,

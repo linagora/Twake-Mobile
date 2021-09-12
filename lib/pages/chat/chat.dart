@@ -84,7 +84,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     child: CircularProgressIndicator(),
                   ),
                 ),
-              MessagesGroupedList(parentChannel: channel),
+              MessagesGroupedList(
+                parentChannel: channel,
+                isThread: false,
+              ),
               threadReply(context),
               ComposeBar(
                 autofocus: messagesState is MessageEditInProgress,
