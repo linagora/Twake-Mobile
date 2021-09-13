@@ -10,6 +10,23 @@ class FileRepository {
 
   FileRepository();
 
+  Future<String> uploadForWS({
+    required String path,
+    String? name,
+  }) async {
+    final multipartFile = await MultipartFile.fromFile(path, filename: name);
+    final formData = FormData.fromMap({
+      'file': multipartFile,
+    });
+    final result = await _api.post(
+      endpoint: Endpoint.files,
+      data: formData,
+      key: 'resource',
+    );
+
+    return File.fromJson(json: result, transform: true).download;
+  }
+
   Future<List<File>> upload({
     required String path,
     String? name,
