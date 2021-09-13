@@ -257,7 +257,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 : Color(0xFFF0F1F5),
                           ),
                           child: Column(
-                            //crossAxisAlignment: CrossAxisAlignment.stretch,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (!widget.channel.isDirect &&
@@ -326,7 +325,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                                   .inThread &&
                                                               !_hideShowReplies)
                                                           ? sizeOfReplyBox
-                                                          : 5),
+                                                          : 0),
                                                 ],
                                               ),
                                               Text(

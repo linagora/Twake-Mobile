@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
 
 typedef OnFoundMemberTileClick = void Function();
 

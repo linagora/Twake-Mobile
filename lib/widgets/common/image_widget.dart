@@ -132,13 +132,7 @@ class ImageWidget extends StatelessWidget {
               );
             },
             errorWidget: (context, url, error) {
-              return Image.asset(
-                _FALLBACK_IMG,
-                // isAntiAlias: true,
-                fit: BoxFit.cover,
-                width: size,
-                height: size,
-              );
+              return namedAvatar(name, size, backgroundColor, borderRadius);
             },
           ),
         ),
