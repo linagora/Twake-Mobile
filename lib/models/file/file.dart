@@ -7,12 +7,14 @@ part 'file.g.dart';
 class File {
   final String id;
   final String name;
+  final String companyId;
   final String? preview;
   final int size;
 
   const File({
     required this.id,
     required this.name,
+    required this.companyId,
     required this.size,
     this.preview,
   });
@@ -31,7 +33,8 @@ class File {
     };
   }
 
-  String get download => ''; // TODO implement download link generation
+  String get download =>
+      '/companies/$companyId/files/$id/download'; // TODO implement download link generation
 
   String get sizeStr {
     const MB = 1024 * 1024;

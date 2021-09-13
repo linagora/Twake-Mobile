@@ -31,7 +31,7 @@ class FileCubit extends Cubit<FileState> {
       size: size,
     ));
 
-    List<File> uploadedFiles = [];
+    List<File> uploadedFiles;
     try {
       uploadedFiles = await _repository.upload(
         path: path,
