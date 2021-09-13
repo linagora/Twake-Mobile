@@ -62,6 +62,7 @@ class AddChannelCubit extends Cubit<AddChannelState> {
   Future<void> create({
     required String name,
     String? description,
+    bool isDefault: false,
   }) async {
     emit(AddChannelInProgress(
       emoijIcon: state.emoijIcon,

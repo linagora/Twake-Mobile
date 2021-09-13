@@ -86,12 +86,15 @@ class ChannelsRepository {
     return channels;
   }
 
-  Future<Channel> create({required Channel channel}) async {
+  Future<Channel> create(
+      {required Channel channel, bool isDefault: false}) async {
     final result = await _api.post(
       endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]),
       data: {
         'options': {'members': channel.members},
-        'resource': channel.toJson(stringify: false)..remove('id'),
+        'resource': channel.toJson(stringify: false)
+          ..remove('id')
+          ..addAll({'default': isDefault}),
       },
       key: 'resource',
     );
