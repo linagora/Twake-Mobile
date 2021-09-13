@@ -283,7 +283,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 ),
                               Padding(
                                 padding:
-                                    EdgeInsets.fromLTRB(12.0, 5.0, 2.0, 0.0),
+                                    EdgeInsets.fromLTRB(12.0, 5.0, 6.0, 0.0),
                                 child: Column(
                                   children: [
                                     Row(
@@ -295,52 +295,64 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                       children: [
                                         Flexible(
                                           child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
                                             children: [
-                                              TwacodeRenderer(
-                                                twacode: _message.blocks,
-                                                parentStyle: TextStyle(
-                                                  fontSize: 15.0,
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Flexible(
+                                                    child: TwacodeRenderer(
+                                                      twacode: _message.blocks,
+                                                      parentStyle: TextStyle(
+                                                        fontSize: 15.0,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: _isMyMessage
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                      ),
+                                                      userUniqueColor: _message
+                                                              .username
+                                                              .hashCode %
+                                                          360,
+                                                      isSwipe: false,
+                                                    ).message,
+                                                  ),
+                                                  SizedBox(
+                                                      width: (_message.responsesCount >
+                                                                  0 &&
+                                                              !_message
+                                                                  .inThread &&
+                                                              !_hideShowReplies)
+                                                          ? sizeOfReplyBox
+                                                          : 5),
+                                                ],
+                                              ),
+                                              Text(
+                                                _message.inThread ||
+                                                        _hideShowReplies
+                                                    ? DateFormatter
+                                                        .getVerboseDateTime(
+                                                        _message.createdAt,
+                                                      )
+                                                    : DateFormatter
+                                                        .getVerboseTime(
+                                                        _message.createdAt,
+                                                      ),
+                                                textAlign: TextAlign.end,
+                                                style: TextStyle(
+                                                  fontSize: 11.0,
                                                   fontWeight: FontWeight.w400,
+                                                  fontStyle: FontStyle.italic,
                                                   color: _isMyMessage
-                                                      ? Colors.white
-                                                      : Colors.black,
+                                                      ? Color(0xffffffff)
+                                                          .withOpacity(0.58)
+                                                      : Color(0xFF8E8E93),
                                                 ),
-                                                userUniqueColor:
-                                                    _message.username.hashCode %
-                                                        360,
-                                                isSwipe: false,
-                                              ).message,
-                                              SizedBox(
-                                                height: 3,
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        SizedBox(
-                                            width:
-                                                (_message.responsesCount > 0 &&
-                                                        !_message.inThread &&
-                                                        !_hideShowReplies)
-                                                    ? sizeOfReplyBox
-                                                    : 5),
-                                        Column(
-                                          children: [
-                                            Text(
-                                              DateFormatter.getVerboseTime(
-                                                _message.createdAt,
-                                              ),
-                                              textAlign: TextAlign.end,
-                                              style: TextStyle(
-                                                fontSize: 11.0,
-                                                fontWeight: FontWeight.w400,
-                                                fontStyle: FontStyle.italic,
-                                                color: _isMyMessage
-                                                    ? Color(0xffffffff)
-                                                        .withOpacity(0.58)
-                                                    : Color(0xFF8E8E93),
-                                              ),
-                                            ),
-                                          ],
                                         ),
                                       ],
                                     ),
@@ -348,10 +360,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                         !_message.inThread &&
                                         !_hideShowReplies)
                                       Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth: 105.0,
-                                        ),
-                                        alignment: Alignment.center,
                                         padding: EdgeInsets.only(
                                             top: 15.0, bottom: 15.0),
                                         child: Text(

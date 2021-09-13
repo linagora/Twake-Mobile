@@ -18,7 +18,7 @@ import 'package:twake/pages/home/home_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/pages/member/member_management/member_management_widget.dart';
-import 'package:twake/pages/thread_page.dart';
+import 'package:twake/pages/chat/thread_page.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
 
