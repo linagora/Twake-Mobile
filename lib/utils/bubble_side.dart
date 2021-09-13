@@ -1,7 +1,10 @@
 import 'package:twake/models/message/message.dart';
 import 'dateformatter.dart';
 
-List<bool> bubbleSide(List<Message> messages, int index, bool isNotThread) {
+List<bool> bubbleSide(
+  List<Message> messages,
+  int index,
+) {
   final List<bool> bubbleSide = List<bool>.filled(2, false, growable: false);
   bool upBubbleSide = false;
   bool downBubbleSide = false;
@@ -22,11 +25,10 @@ List<bool> bubbleSide(List<Message> messages, int index, bool isNotThread) {
         }
         downBubbleSide = true;
         //Conditions for accounting for the change of day
-        if (isNotThread &&
+        if (DateFormatter.getVerboseDate(
+                messages[messages.length - index - 1].createdAt) !=
             DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1].createdAt) !=
-                DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1 - 1].createdAt)) {
+                messages[messages.length - index - 1 - 1].createdAt)) {
           upBubbleSide = true;
         }
       }
@@ -39,11 +41,10 @@ List<bool> bubbleSide(List<Message> messages, int index, bool isNotThread) {
         }
         upBubbleSide = true;
         //Conditions for accounting for the change of day
-        if (isNotThread &&
+        if (DateFormatter.getVerboseDate(
+                messages[messages.length - index - 1].createdAt) !=
             DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1].createdAt) !=
-                DateFormatter.getVerboseDate(
-                    messages[messages.length - index - 1 + 1].createdAt)) {
+                messages[messages.length - index - 1 + 1].createdAt)) {
           downBubbleSide = true;
         }
       }
@@ -62,18 +63,16 @@ List<bool> bubbleSide(List<Message> messages, int index, bool isNotThread) {
         upBubbleSide = false;
       }
       //Conditions for accounting for the change of day
-      if (isNotThread &&
+      if (DateFormatter.getVerboseDate(
+              messages[messages.length - index - 1].createdAt) !=
           DateFormatter.getVerboseDate(
-                  messages[messages.length - index - 1].createdAt) !=
-              DateFormatter.getVerboseDate(
-                  messages[messages.length - index - 1 + 1].createdAt)) {
+              messages[messages.length - index - 1 + 1].createdAt)) {
         downBubbleSide = true;
       }
-      if (isNotThread &&
+      if (DateFormatter.getVerboseDate(
+              messages[messages.length - index - 1].createdAt) !=
           DateFormatter.getVerboseDate(
-                  messages[messages.length - index - 1].createdAt) !=
-              DateFormatter.getVerboseDate(
-                  messages[messages.length - index - 1 - 1].createdAt)) {
+              messages[messages.length - index - 1 - 1].createdAt)) {
         upBubbleSide = true;
       }
     }
