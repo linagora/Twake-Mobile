@@ -301,7 +301,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                         padding: EdgeInsets.only(
                                             top: 15.0, bottom: 15.0),
                                         child: Text(
-                                          '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.reply(_message.responsesCount)}',
+                                          '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
                                           style: TextStyle(
                                             color: _isMyMessage
                                                 ? Colors.white

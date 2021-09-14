@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
@@ -380,7 +381,7 @@ class _ComposeBar extends State<ComposeBar> {
                     progressIndicatorColor: Colors.blue,
                     showRecentsTab: true,
                     recentsLimit: 28,
-                    noRecentsText: "No Recents",
+                    noRecentsText: AppLocalizations.of(context)!.noRecents,
                     noRecentsStyle:
                         const TextStyle(fontSize: 20, color: Colors.black26),
                     categoryIcons: const CategoryIcons(),
@@ -521,7 +522,7 @@ class _TextInputState extends State<TextInput> {
                 decoration: InputDecoration(
                   contentPadding:
                       const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
-                  hintText: 'New reply...',
+                  hintText: AppLocalizations.of(context)!.newReply,
                   hintStyle: TextStyle(
                     fontSize: 13.0,
                     fontWeight: FontWeight.w500,

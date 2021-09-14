@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/config/dimensions_config.dart';
 
 class EmptyChatContainer extends StatelessWidget {
   final bool isDirect;
   final bool isError;
-  final String? userName;
+  final String userName;
 
   const EmptyChatContainer({
     Key? key,
@@ -17,8 +18,8 @@ class EmptyChatContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = isDirect
-        ? 'There are no messages in\nthis chat! Start conversation\nwith $userName by sending\nsome text, image or document'
-        : 'There are no messages in\nthis channel! Start conversation by\nsending some text, image or document';
+        ? AppLocalizations.of(context)!.noConversationInChat(userName)
+        : AppLocalizations.of(context)!.noConversationInChannel;
     return Expanded(
       child: Column(
         children: [
@@ -63,7 +64,9 @@ class EmptyChatContainer extends StatelessWidget {
               ),
             ),
             child: AutoSizeText(
-              isError ? 'Couldn\'t load messages' : message,
+              isError
+                  ? AppLocalizations.of(context)!.messageLoadError
+                  : message,
               minFontSize: 12.0,
               maxFontSize: 15.0,
               maxLines: 15,
@@ -102,19 +105,13 @@ class MessagesLoadingAnimation extends StatelessWidget {
               ),
             ),
             Text(
-              'We are loading chat,',
+              AppLocalizations.of(context)!.chatLoading,
               style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w900),
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.w900,
+              ),
             ),
-            Text(
-              'please, be patient 😊😕',
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w900),
-            )
           ],
         ),
       ),

@@ -39,8 +39,11 @@
     "recentChats": "RECENT CHATS",
     "people": "PEOPLE",
     "cancel": "Cancel",
-    "delete": "Cancel",
+    "delete": "Delete",
     "create": "Create",
+    "messageNotSentInfo": "Your message was not sent. Tap Try Again to resend this message",
+    "tryAgain": "Try again",
+    "deleteMessageInfo": "Delete this message",
     "channelName": "Channel name",
     "channelDescription": "Channel description",
     "channelNameAndIconSuggestion": "Please provide a channel name and optional icon",
@@ -51,6 +54,8 @@
     "addMember": "Add a member",
     "addMembers": "Add members",
     "add": "Add",
+    "messageLoadError": "Couldn't load messages",
+    "chatLoading": "We are loading chat,\nplease, be patient 😊😕",
     "searchMembers": "Search for members",
     "noRecents": "No recents",
     "foundPeople": "FOUND PEOPLE",
@@ -62,11 +67,36 @@
     "messageCopiedInfo": "Message has been copied to clipboard",
     "view": "View",
     "threadReplies": "Threaded replies",
-    "reply": "{count, plural, =0{no replies} =1{1 reply} other{{count} replies}}",
-    "@reply": {
+    "firstMessageInChannelInfo": "This is the first message of the channel",
+    "reply": "Reply",
+    "newReply": "New reply...",
+    "replyTo": "Reply to",
+    "edit": "Edit",
+    "copy": "Copy",
+    "membersPlural": "{count, plural, =0{No members} =1{1 member} other{{count} members}}",
+    "@membersPlural": {
+        "description": "A plural form of 'members' word",
+        "placeholders": {
+            "count": {
+            }
+        }
+    },
+    "replyPlural": "{count, plural, =0{no replies} =1{1 reply} other{{count} replies}}",
+    "@replyPlural": {
         "description": "A plural form of 'reply' word",
         "placeholders": {
             "count": {
+            }
+        }
+    },
+    "noConversationInChannel": "There are no messages in\nthis channel! Start conversation by\nsending some text, image or document",
+    "noConversationInChat": "There are no messages in\nthis chat! Start conversation\nwith {username} by sending\nsome text, image or document",
+    "@noConversationInChat": {
+        "description": "Info message to indicate there're no messages",
+        "placeholders": {
+            "username": {
+                "type": "String",
+                "example": "Bob"
             }
         }
     },

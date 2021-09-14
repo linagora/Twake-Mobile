@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -7,9 +8,11 @@ import 'package:twake/models/message/message.dart';
 class ResendModalSheet extends StatelessWidget {
   final Message message;
   final bool isThread;
-  const ResendModalSheet(
-      {required this.message, required this.isThread, Key? key})
-      : super(key: key);
+  const ResendModalSheet({
+    required this.message,
+    required this.isThread,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +40,7 @@ class ResendModalSheet extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Your message was not sent. Tap Try Again to resend this message',
+                    AppLocalizations.of(context)!.messageNotSentInfo,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -55,7 +58,7 @@ class ResendModalSheet extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: Text(
-                          "Try again",
+                          AppLocalizations.of(context)!.tryAgain,
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w500,
@@ -82,7 +85,7 @@ class ResendModalSheet extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 10),
                         child: Text(
-                          "Delete this message",
+                          AppLocalizations.of(context)!.deleteMessageInfo,
                           style: TextStyle(
                             fontSize: 20.0,
                             fontWeight: FontWeight.w500,
@@ -117,7 +120,7 @@ class ResendModalSheet extends StatelessWidget {
               child: Container(
                 child: Center(
                   child: Text(
-                    "Cancel",
+                    AppLocalizations.of(context)!.cancel,
                     style: TextStyle(
                       fontSize: 20.0,
                       fontWeight: FontWeight.w500,
