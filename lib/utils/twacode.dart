@@ -871,13 +871,21 @@ class TwacodeRenderer {
                         color: parentStyle.color == Colors.black
                             ? Color(0xFFEB5D00)
                             : Color(0xFF1CFFA3),
-                        width: 1),
+                        width: 1.5),
                   ),
                   constraints: BoxConstraints(maxHeight: 300),
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: SingleChildScrollView(
-                    child: Text(t['content'], style: parentStyle.merge(style)),
+                  child: RawScrollbar(
+                    thumbColor: parentStyle.color == Colors.black
+                        ? Colors.grey.withOpacity(0.5)
+                        : Colors.white.withOpacity(0.7),
+                    radius: Radius.circular(20),
+                    thickness: 4,
+                    child: SingleChildScrollView(
+                      child:
+                          Text(t['content'], style: parentStyle.merge(style)),
+                    ),
                   ),
                 ),
               ),
