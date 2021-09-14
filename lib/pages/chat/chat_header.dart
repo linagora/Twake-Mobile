@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
@@ -7,7 +7,7 @@ import 'package:twake/widgets/common/shimmer_loading.dart';
 class ChatHeader extends StatelessWidget {
   final bool isDirect;
   final bool isPrivate;
-  final int? membersCount;
+  final int membersCount;
   final String? userId;
   final String icon;
   final String name;
@@ -19,7 +19,7 @@ class ChatHeader extends StatelessWidget {
       required this.isDirect,
       this.isPrivate = false,
       this.userId,
-      this.membersCount,
+      required this.membersCount,
       this.icon = '',
       this.name = '',
       this.onTap,
@@ -61,20 +61,12 @@ class ChatHeader extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 if (!isDirect)
-                  ShimmerLoading(
-                    key: ValueKey<String>('membersCount'),
-                    isLoading: membersCount == null,
-                    width: 50,
-                    height: 10,
-                    child: Text(
-                      membersCount == null
-                          ? ''
-                          : '${membersCount! > 0 ? membersCount : 'No'} members',
-                      style: TextStyle(
-                        fontSize: 10.0,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff92929C),
-                      ),
+                  Text(
+                    AppLocalizations.of(context)!.membersPlural(membersCount),
+                    style: TextStyle(
+                      fontSize: 10.0,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff92929C),
                     ),
                   ),
               ],

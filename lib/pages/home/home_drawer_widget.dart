@@ -79,13 +79,16 @@ class HomeDrawerWidget extends StatelessWidget {
                                   },
                                   child: Row(
                                     children: [
-                                      Text('Switch organisation',
-                                          style: TextStyle(
-                                            color: Color(0xff004dff),
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            fontStyle: FontStyle.normal,
-                                          )),
+                                      Text(
+                                        AppLocalizations.of(context)!
+                                            .organisationSwitch,
+                                        style: TextStyle(
+                                          color: Color(0xff004dff),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                      ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 2),

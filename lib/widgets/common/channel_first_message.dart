@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/utils/emojis.dart';
 
@@ -67,7 +68,7 @@ class ChannelFirstMessage extends StatelessWidget {
             width: 150,
             padding: const EdgeInsets.only(top: 30, bottom: 10),
             child: Text(
-              'This is the first message of the channel',
+              AppLocalizations.of(context)!.firstMessageInChannelInfo,
               maxLines: 2,
               textAlign: TextAlign.center,
               style: TextStyle(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -152,7 +153,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     height: 5,
                                   ),
                                   Text(
-                                    'delete',
+                                    AppLocalizations.of(context)!.delete,
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w500,
@@ -200,7 +201,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                         height: 5,
                                       ),
                                       Text(
-                                        'Copy',
+                                        AppLocalizations.of(context)!.copy,
                                         style: TextStyle(
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w500,
@@ -246,7 +247,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     height: 5,
                                   ),
                                   Text(
-                                    'Reply',
+                                    AppLocalizations.of(context)!.reply,
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w500,
@@ -291,7 +292,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     height: 5,
                                   ),
                                   Text(
-                                    'Edit',
+                                    AppLocalizations.of(context)!.edit,
                                     style: TextStyle(
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.w500,
