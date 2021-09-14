@@ -23,6 +23,7 @@ class NewChannelWidget extends StatefulWidget {
 class _NewChannelWidgetState extends State<NewChannelWidget> {
   final _nameEditingController = TextEditingController();
   final _descriptionEditingController = TextEditingController();
+  bool addAllUsers = false;
 
   @override
   void dispose() {
@@ -92,7 +93,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                     Get.find<AddChannelCubit>().create(
                                         name: _nameEditingController.text,
                                         description:
-                                            _descriptionEditingController.text),
+                                            _descriptionEditingController.text,
+                                        isDefault: addAllUsers),
                                 text: 'Create',
                                 isEnable: (addChannelState
                                             is AddChannelValidation &&
@@ -312,7 +314,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "INVITED MEMBERS (${addChannelState.selectedMembers.length})",
+                                  "INVITED USERS (${addChannelState.selectedMembers.length})",
                                   style: TextStyle(
                                     color: Color(0xff969ca4),
                                     fontSize: 13,
@@ -322,6 +324,57 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                 ),
                               );
                             }),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 44,
+                            color: Colors.white,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Invite all workspace users",
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                  Spacer(),
+                                  CupertinoSwitch(
+                                    activeColor: Color(0xFF004DFF),
+                                    value: addAllUsers,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        addAllUsers = value;
+                                        print(addAllUsers);
+                                      });
+                                    },
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, bottom: 24),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              'Automatically invite all workspace users to this channel',
+                              style: TextStyle(
+                                color: Color(0xff969ca4),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                fontStyle: FontStyle.normal,
+                              )),
+                        ),
                       ),
                       _buildAddMemberRow(),
                       Padding(
@@ -437,7 +490,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           size: 24,
                         ),
                       ),
-                      Text("Add a member",
+                      Text("Add a user",
                           style: TextStyle(
                             color: Color(0xff004dff),
                             fontSize: 15,
