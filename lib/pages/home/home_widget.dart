@@ -206,8 +206,9 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                             ),
                           ),
                         );
+                      } else {
+                        return SizedBox.shrink();
                       }
-                      return TwakeCircularProgressIndicator();
                     },
                   ),
                 ),

@@ -162,8 +162,9 @@ class HomeDrawerWidget extends StatelessWidget {
                           ),
                         ),
                       );
+                    } else {
+                      return SizedBox.shrink();
                     }
-                    return TwakeCircularProgressIndicator();
                   },
                 ),
               ),

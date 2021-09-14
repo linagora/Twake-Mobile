@@ -66,13 +66,17 @@ class WorkspacesRepository {
 
     var workspaces = await fetchLocal(companyId: companyId!);
 
+    workspaces.sort((w1, w2) => w1.name.compareTo(w2.name));
+
     yield workspaces;
 
     if (!Globals.instance.isNetworkConnected || localOnly) return;
 
     final rworkspaces = await fetchRemote(companyId: companyId);
 
-    yield workspaces;
+    rworkspaces.sort((w1, w2) => w1.name.compareTo(w2.name));
+
+    yield rworkspaces;
 
     if (rworkspaces.length != workspaces.length) {
       for (final w in workspaces) {
