@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -125,14 +126,14 @@ class _AccountInfoState extends State<AccountInfo> {
                       SizedBox(height: 36.0),
                       RoundedTextField(
                         controller: _userNameController,
-                        prefix: 'Username',
-                        hint: 'Not assigned',
+                        prefix: AppLocalizations.of(context)!.username,
+                        hint: AppLocalizations.of(context)!.notAssigned,
                         borderRadius: BorderRadius.circular(10.0),
                         enabled: false,
                       ),
                       SizedBox(height: 43.0),
                       Text(
-                        'NAME',
+                        AppLocalizations.of(context)!.name,
                         style: TextStyle(
                           fontSize: 13.0,
                           fontWeight: FontWeight.w600,
@@ -142,8 +143,8 @@ class _AccountInfoState extends State<AccountInfo> {
                       SizedBox(height: 12.0),
                       RoundedTextField(
                         controller: _firstNameController,
-                        prefix: 'First name',
-                        hint: 'Not assigned',
+                        prefix: AppLocalizations.of(context)!.firstName,
+                        hint: AppLocalizations.of(context)!.notAssigned,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(10.0),
                           topRight: Radius.circular(10.0),
@@ -156,8 +157,8 @@ class _AccountInfoState extends State<AccountInfo> {
                       ),
                       RoundedTextField(
                         controller: _lastNameController,
-                        prefix: 'Last name',
-                        hint: 'Not assigned',
+                        prefix: AppLocalizations.of(context)!.lastName,
+                        hint: AppLocalizations.of(context)!.notAssigned,
                         borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(10.0),
                           bottomRight: Radius.circular(10.0),

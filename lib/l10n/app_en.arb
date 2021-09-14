@@ -3,6 +3,16 @@
     "newWorkspace": "New workspace",
     "organisationSwitch": "Switch organisation",
     "workspaces": "WORKSPACES",
+    "workspaceName": "Workspace name",
+    "workspaceNameInfo": "Please provide a name for a new workspace and optional workspace icon",
+    "workspaceCreationErrorInfo": "Please provide a name for a new workspace and optional workspace icon",
+    "workspaceNameError": "Workspace name cannot be empty",
+    "addEmail": "Add email",
+    "addYourTeamMembers": "ADD YOUR TEAM MEMBERS",
+    "invitationLimit": "Invitation limit",
+    "invitationLimitInfo": "To add more team members,please, verify your account. We sent verification details to: ",
+    "ok": "OK",
+    "processing": "Processing",
     "search": "Search",
     "channels": "Channels",
     "chats": "Chats",
@@ -43,5 +53,31 @@
     "add": "Add",
     "searchMembers": "Search for members",
     "noRecents": "No recents",
-    "foundPeople": "FOUND PEOPLE"
+    "foundPeople": "FOUND PEOPLE",
+    "name": "Name",
+    "username": "Username",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "notAssigned": "Not assigned",
+    "messageCopiedInfo": "Message has been copied to clipboard",
+    "view": "View",
+    "threadReplies": "Threaded replies",
+    "reply": "{count, plural, =0{no replies} =1{1 reply} other{{count} replies}}",
+    "@reply": {
+        "description": "A plural form of 'reply' word",
+        "placeholders": {
+            "count": {
+            }
+        }
+    },
+    "someonesMessages": "{someone}'s messages",
+    "@someonesMessages": {
+        "description": "Possessive case for someone's messages",
+        "placeholders": {
+            "someone": {
+                "type": "String",
+                "example": "Bob"
+            }
+        }
+    }
 }

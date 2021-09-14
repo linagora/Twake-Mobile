@@ -1,21 +1,23 @@
 import 'dart:isolate';
 import 'dart:ui';
+
 import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
-import 'package:twake/widgets/message/message_modal_sheet.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/reaction.dart';
+import 'package:twake/widgets/message/message_modal_sheet.dart';
 import 'package:twake/widgets/message/resend_modal_sheet.dart';
 
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
@@ -51,69 +53,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
   late Message _message;
   ReceivePort _receivePort = ReceivePort();
   int progress = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _hideShowReplies = widget.hideShowReplies;
-    _shouldShowSender = widget.shouldShowSender;
-    _message = widget.message;
-
-    IsolateNameServer.registerPortWithName(
-        _receivePort.sendPort, "downloading");
-    // FlutterDownloader.registerCallback(downloadingCallback);
-  }
-
-  @override
-  void didUpdateWidget(covariant MessageTile oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.shouldShowSender != widget.shouldShowSender) {
-      _shouldShowSender = widget.shouldShowSender;
-    }
-    if (oldWidget.hideShowReplies != widget.hideShowReplies) {
-      _hideShowReplies = widget.hideShowReplies;
-    }
-    if (oldWidget.message != widget.message) {
-      _message = widget.message;
-    }
-  }
-
-  void onReply(Message message) {
-    NavigatorService.instance.navigate(
-      channelId: message.channelId,
-      threadId: message.id,
-      reloadThreads: false,
-    );
-  }
-
-  onCopy({required context, required text}) {
-    FlutterClipboard.copy(text);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        margin: EdgeInsets.fromLTRB(
-          15.0,
-          5.0,
-          15.0,
-          65.0,
-          //  Dim.heightPercent(8),
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(milliseconds: 1500),
-        content: Row(
-          children: [
-            Icon(Icons.copy, color: Colors.white),
-            SizedBox(
-              width: 20,
-            ),
-            Text('Message has been copied to clipboard'),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -362,9 +301,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                         padding: EdgeInsets.only(
                                             top: 15.0, bottom: 15.0),
                                         child: Text(
-                                          _message.responsesCount > 1
-                                              ? 'View ${_message.responsesCount} replies'
-                                              : 'View ${_message.responsesCount} reply',
+                                          '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.reply(_message.responsesCount)}',
                                           style: TextStyle(
                                             color: _isMyMessage
                                                 ? Colors.white
@@ -497,5 +434,68 @@ class _MessageTileState<T extends BaseMessagesCubit>
     } else {
       return CircularProgressIndicator();
     }
+  }
+
+  @override
+  void didUpdateWidget(covariant MessageTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.shouldShowSender != widget.shouldShowSender) {
+      _shouldShowSender = widget.shouldShowSender;
+    }
+    if (oldWidget.hideShowReplies != widget.hideShowReplies) {
+      _hideShowReplies = widget.hideShowReplies;
+    }
+    if (oldWidget.message != widget.message) {
+      _message = widget.message;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _hideShowReplies = widget.hideShowReplies;
+    _shouldShowSender = widget.shouldShowSender;
+    _message = widget.message;
+
+    IsolateNameServer.registerPortWithName(
+        _receivePort.sendPort, "downloading");
+    // FlutterDownloader.registerCallback(downloadingCallback);
+  }
+
+  onCopy({required context, required text}) {
+    FlutterClipboard.copy(text);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        margin: EdgeInsets.fromLTRB(
+          15.0,
+          5.0,
+          15.0,
+          65.0,
+          //  Dim.heightPercent(8),
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(milliseconds: 1500),
+        content: Row(
+          children: [
+            Icon(Icons.copy, color: Colors.white),
+            SizedBox(
+              width: 20,
+            ),
+            Text(AppLocalizations.of(context)!.messageCopiedInfo),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void onReply(Message message) {
+    NavigatorService.instance.navigate(
+      channelId: message.channelId,
+      threadId: message.id,
+      reloadThreads: false,
+    );
   }
 }

@@ -80,11 +80,11 @@ class SocketIOService {
     _socket.connect();
 
     // set up health check for sockeio connection
-    Future.delayed(Duration(seconds: 3), _checkConnectionHealth);
+    Future.delayed(Duration(seconds: 3), _startHealthCheck);
 
     Globals.instance.connection.listen((state) {
       if (state == Connection.connected && !_healthCheckRunning) {
-        _checkConnectionHealth();
+        _startHealthCheck();
       } else {
         _healthCheckRunning = false;
       }
@@ -115,7 +115,7 @@ class SocketIOService {
     _resourceStream.sink.add(resource);
   }
 
-  void _checkConnectionHealth() async {
+  void _startHealthCheck() {
     if (_healthCheckRunning) return;
 
     final glob = Globals.instance;
@@ -125,13 +125,15 @@ class SocketIOService {
     }
 
     _healthCheckRunning = true;
+    _checkConnectionHealth();
+  }
 
+  void _checkConnectionHealth() async {
     if (!_socket.connected) {
       _socket.connect();
     }
     // wait for 5 sec and rerun the check and rerun
-    Future.delayed(Duration(seconds: 5)).then((_) {
-      Logger().w('Checking connection health');
+    Future.delayed(Duration(seconds: 30)).then((_) {
       _checkConnectionHealth();
     });
   }
