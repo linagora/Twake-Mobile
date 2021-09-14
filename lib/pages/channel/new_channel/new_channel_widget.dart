@@ -1,4 +1,5 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -93,7 +94,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                         name: _nameEditingController.text,
                                         description:
                                             _descriptionEditingController.text),
-                                text: 'Create',
+                                text: AppLocalizations.of(context)!.create,
                                 isEnable: (addChannelState
                                             is AddChannelValidation &&
                                         addChannelState.validToCreateChannel)
@@ -105,7 +106,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            "New channel",
+                            AppLocalizations.of(context)!.newChannel,
                             style: TextStyle(
                               color: Color(0xff000000),
                               fontSize: 17,
@@ -186,7 +187,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                         ],
                                         style: _getTextFieldTextStyle(),
                                         decoration: _getTextFieldDecoration(
-                                            'Channel name'),
+                                            AppLocalizations.of(context)!
+                                                .channelName),
                                       ),
                                     ),
                                   ),
@@ -202,7 +204,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Please provide a channel name and optional channel icon',
+                              AppLocalizations.of(context)!
+                                  .channelNameAndIconSuggestion,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 12,
@@ -239,7 +242,9 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                       cursorColor: Colors.black,
                                       style: _getTextFieldTextStyle(),
                                       decoration: _getTextFieldDecoration(
-                                          'Channel description')),
+                                        AppLocalizations.of(context)!
+                                            .channelDescription,
+                                      )),
                                 ),
                               )),
                         ),
@@ -250,7 +255,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Please provide an optional decription for your channel',
+                              AppLocalizations.of(context)!
+                                  .channelDescriptionSuggestion,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 12,
@@ -263,7 +269,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         padding: const EdgeInsets.only(left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("CHANNEL TYPE",
+                          child: Text(AppLocalizations.of(context)!.channelType,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 13,
@@ -295,7 +301,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Public channels can be found by everyone, though private can only be joined by invitation',
+                              AppLocalizations.of(context)!.channelTypeInfo,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 12,
@@ -312,7 +318,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               return Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                  "INVITED MEMBERS (${addChannelState.selectedMembers.length})",
+                                  "${AppLocalizations.of(context)!.invitedMembers} (${addChannelState.selectedMembers.length})",
                                   style: TextStyle(
                                     color: Color(0xff969ca4),
                                     fontSize: 13,
@@ -383,7 +389,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               progressIndicatorColor: Colors.blue,
                               showRecentsTab: true,
                               recentsLimit: 28,
-                              noRecentsText: "No Recents",
+                              noRecentsText:
+                                  AppLocalizations.of(context)!.noRecents,
                               noRecentsStyle: const TextStyle(
                                   fontSize: 20, color: Colors.black26),
                               categoryIcons: const CategoryIcons(),
@@ -437,7 +444,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           size: 24,
                         ),
                       ),
-                      Text("Add a member",
+                      Text(AppLocalizations.of(context)!.addMember,
                           style: TextStyle(
                             color: Color(0xff004dff),
                             fontSize: 15,

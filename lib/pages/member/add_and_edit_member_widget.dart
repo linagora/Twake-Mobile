@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_member_cubit/add_member_cubit.dart';
@@ -99,7 +100,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                     }
                                   }
                                 },
-                                text: 'Add',
+                                text: AppLocalizations.of(context)!.add,
                                 isEnable: addMemberState
                                         .selectedMembers.isNotEmpty &&
                                     !(addMemberState is AddMemberInProgress));
@@ -109,7 +110,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            "Add members",
+                            AppLocalizations.of(context)!.addMembers,
                             style: TextStyle(
                               color: Color(0xff000000),
                               fontSize: 17,
@@ -131,7 +132,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                   ),
                   child: TwakeSearchTextField(
                     controller: _searchController,
-                    hintText: 'Search for members',
+                    hintText: AppLocalizations.of(context)!.searchMembers,
                     backgroundColor: Color(0xfffcfcfc),
                     fontSize: 15,
                   ),

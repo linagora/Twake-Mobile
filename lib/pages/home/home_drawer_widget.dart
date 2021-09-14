@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -113,7 +114,7 @@ class HomeDrawerWidget extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, top: 20, bottom: 12),
                   child: Text(
-                    'WORKSPACES',
+                    AppLocalizations.of(context)!.workspaces,
                     style: TextStyle(
                       color: Color(0x59000000),
                       fontSize: 13,
@@ -190,7 +191,7 @@ class HomeDrawerWidget extends StatelessWidget {
                                   width: 12,
                                 ),
                                 Text(
-                                  'Add a new workspace',
+                                  AppLocalizations.of(ctx)!.workspaceCreate,
                                   style: TextStyle(
                                     color: Color(0xff000000),
                                     fontSize: 15,
