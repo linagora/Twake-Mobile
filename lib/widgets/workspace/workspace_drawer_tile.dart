@@ -4,7 +4,6 @@ import 'package:twake/repositories/badges_repository.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_button.dart';
-import 'package:twake/widgets/workspace/workspace_thumbnail.dart';
 
 typedef OnWorkspaceDrawerTileTap = void Function();
 

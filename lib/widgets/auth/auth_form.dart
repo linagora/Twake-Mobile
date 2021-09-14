@@ -6,8 +6,6 @@ import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart'
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/routing/app_router.dart';
-import 'package:twake/routing/route_paths.dart';
 
 class AuthForm extends StatefulWidget {
   final Function? onConfigurationOpen;

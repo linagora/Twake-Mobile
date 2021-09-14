@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:twake/widgets/common/channel_thumbnail.dart';
 import 'package:twake/widgets/common/rounded_image.dart';
 
 typedef OnWorkspaceTileTap = void Function();

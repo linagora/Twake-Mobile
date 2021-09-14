@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:twake/utils/extensions.dart';
-import 'package:twake/utils/random_hex_color.dart';
 
 class NamedAvatar extends StatelessWidget {
   final double size;
