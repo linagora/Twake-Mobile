@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channel_settings_cubit/channel_setting_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channel_settings_cubit/channel_setting_state.dart';
@@ -82,7 +83,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                                         currentChannel: _currentChannel!);
                                   }
                                 },
-                                text: 'Save',
+                                text: AppLocalizations.of(context)!.save,
                                 isEnable: editChannelState.validToEditChannel);
                           },
                         ),
@@ -90,7 +91,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            'Channel settings',
+                            AppLocalizations.of(context)!.channelSettings,
                             style: TextStyle(
                               color: Color(0xff000000),
                               fontSize: 17,
@@ -114,13 +115,15 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                             left: 16, bottom: 12, top: 16),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("CHANNEL TYPE",
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                fontStyle: FontStyle.normal,
-                              )),
+                          child: Text(
+                            AppLocalizations.of(context)!.channelType,
+                            style: TextStyle(
+                              color: Color(0xff969ca4),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FontStyle.normal,
+                            ),
+                          ),
                         ),
                       ),
                       Padding(
@@ -148,7 +151,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Public channels can be found by everyone, though private can only be joined by invitation',
+                              AppLocalizations.of(context)!.channelTypeInfo,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 12,

@@ -72,7 +72,22 @@
     "newReply": "New reply...",
     "replyTo": "Reply to",
     "edit": "Edit",
+    "save": "Save",
     "copy": "Copy",
+    "channelInfo": "Channel info",
+    "memberManagement": "Member management",
+    "removeFromChannel": "Remove from channel",
+    "memberRemoved": "Member is removed",
+    "sendDirect": "Send a direct message",
+    "channelSettings": "Channel settings",
+    "channelMembersPlural": "{count, plural, =0{No channel members} =1{Channel member} other{Channel members ({count})}}",
+    "@channelMembersPlural": {
+        "description": "A plural form of 'channel members' phrase",
+        "placeholders": {
+            "count": {
+            }
+        }
+    },
     "membersPlural": "{count, plural, =0{No members} =1{1 member} other{{count} members}}",
     "@membersPlural": {
         "description": "A plural form of 'members' word",
