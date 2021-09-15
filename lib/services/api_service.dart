@@ -27,8 +27,8 @@ class ApiService {
       options.baseUrl = Globals.instance.host;
 
       if (Endpoint.isConsole(options.path)) {
-        final bastHost = options.baseUrl.split('.').skip(1).join('.');
-        options.path = sprintf(options.path, [bastHost]);
+        final baseHost = options.baseUrl.split('.').skip(1).join('.');
+        options.path = sprintf(options.path, [baseHost]);
       }
       if (Endpoint.isPublic(options.path)) {
         handler.next(options);
