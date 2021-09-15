@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
@@ -52,12 +53,12 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text('Invitation limit'),
+          title: Text(AppLocalizations.of(context)!.invitationLimit),
           content: Text(
-              'To add more team members,please, verify your account. We sent verification details to: ${user!.email}'),
+              '${AppLocalizations.of(context)!.invitationLimitInfo} ${user!.email}'),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -104,13 +105,13 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               Container(
                 color: Colors.white,
                 child: SheetTitleBar(
-                  title: 'New Workspace',
-                  leadingTitle: 'Cancel',
+                  title: AppLocalizations.of(context)!.newWorkspace,
+                  leadingTitle: AppLocalizations.of(context)!.cancel,
                   leadingAction: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     popBack();
                   },
-                  trailingTitle: 'Create',
+                  trailingTitle: AppLocalizations.of(context)!.create,
                   trailingAction: () async {
                     if (_formKey.currentState!.validate()) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -127,7 +128,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                           ),
                           behavior: SnackBarBehavior.floating,
                           duration: Duration(seconds: 3),
-                          content: Text('Processing'),
+                          content:
+                              Text(AppLocalizations.of(context)!.processing),
                         ),
                       );
 
@@ -159,7 +161,9 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                             behavior: SnackBarBehavior.floating,
                             duration: Duration(seconds: 3),
                             content: Text(
-                                'An error occurred while creating the workspace'),
+                              AppLocalizations.of(context)!
+                                  .workspaceCreationErrorInfo,
+                            ),
                           ),
                         );
                       }
@@ -203,7 +207,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                                   child: Form(
                                     key: _formKey,
                                     child: SheetTextField(
-                                      hint: 'Workspace name',
+                                      hint: AppLocalizations.of(context)!
+                                          .workspaceNameInfo,
                                       controller: _workspaceNameController,
                                       focusNode: _workspaceNameFocusNode,
                                       maxLength: 30,
@@ -212,7 +217,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                                       textInputType: TextInputType.text,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Workspace name cannot be empty';
+                                          return AppLocalizations.of(context)!
+                                              .workspaceNameError;
                                         }
                                         return null;
                                       },
@@ -230,8 +236,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                   Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: HintLine(
-                      text:
-                          'Please provide a name for a new workspace and optional workspace icon',
+                      text: AppLocalizations.of(context)!.workspaceNameInfo,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -239,7 +244,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               ),
               SizedBox(height: 40),
               HintLine(
-                text: 'ADD YOUR TEAM MEMBERS',
+                text: AppLocalizations.of(context)!.addYourTeamMembers,
                 isLarge: true,
                 fontWeight: FontWeight.w500,
               ),
@@ -286,7 +291,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                   width: 10,
                 ),
                 Text(
-                  'Add email',
+                  AppLocalizations.of(context)!.addEmail,
                   style: TextStyle(color: Color(0xFF004DFF), fontSize: 14),
                 ),
               ],

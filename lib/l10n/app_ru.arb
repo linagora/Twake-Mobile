@@ -1,0 +1,10 @@
+{
+  "workspaceCreate": "Добавить новое рабочее пространство",
+  "@workspaceCreate": {},
+  "organisationSwitch": "Изменить компанию",
+  "@organisationSwitch": {},
+  "workspaces": "РАБОЧИЕ ПРОСТРАНСТВА",
+  "@workspaces": {},
+  "newWorkspace": "Новое рабочее пространство",
+  "@newWorkspace": {}
+}

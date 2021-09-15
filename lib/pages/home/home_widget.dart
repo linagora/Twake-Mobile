@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
@@ -205,8 +206,9 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                             ),
                           ),
                         );
+                      } else {
+                        return SizedBox.shrink();
                       }
-                      return TwakeCircularProgressIndicator();
                     },
                   ),
                 ),
@@ -254,7 +256,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
           TwakeSearchTextField(
             height: 40,
             controller: _searchController,
-            hintText: 'Search',
+            hintText: AppLocalizations.of(context)!.search,
             backgroundColor: Color(0xfff9f8f9),
           ),
         ],

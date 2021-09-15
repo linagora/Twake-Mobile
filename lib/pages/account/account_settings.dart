@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
@@ -29,7 +30,7 @@ class _AccountSettingsState extends State<AccountSettings> {
       context: parentContext,
       builder: (BuildContext context) {
         return WarningDialog(
-          title: 'Are you sure you want to log out of your account?',
+          title: AppLocalizations.of(parentContext)!.logoutConfirmation,
           leadingActionTitle: 'Cancel',
           trailingActionTitle: 'Log out',
           trailingAction: () {
@@ -108,7 +109,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         ),
                         SizedBox(height: 32.0),
                         Text(
-                          'Manage all your data in one place',
+                          AppLocalizations.of(context)!.manageYourData,
                           style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.bold,
@@ -132,7 +133,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         ),
                         SizedBox(height: 10.0),
                         Text(
-                          'Twake Connect allows you to edit personal data, manage\nworkspaces as well as manage active participants and\ntheir permissions.',
+                          AppLocalizations.of(context)!.twakeConnectInfo,
                           style: TextStyle(
                             fontSize: 12.0,
                             fontWeight: FontWeight.w400,
@@ -142,7 +143,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         SizedBox(height: 72.0),
                         SwitchField(
                           image: 'assets/images/notifications.png',
-                          title: 'Notifications',
+                          title: AppLocalizations.of(context)!.notifications,
                           value: false,
                           isExtended: true,
                           isRounded: true,
@@ -150,7 +151,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         ),
                         SizedBox(height: 8.0),
                         Text(
-                          'Allow notifications to stay up-to-date on new messages,\nmeetings and other alerts',
+                          AppLocalizations.of(context)!.notificationsInfo,
                           style: TextStyle(
                             fontSize: 12.0,
                             fontWeight: FontWeight.w400,
@@ -160,7 +161,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         SizedBox(height: 24.0),
                         ButtonField(
                           image: 'assets/images/language.png',
-                          title: 'Language',
+                          title: AppLocalizations.of(context)!.language,
                           titleStyle: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w400,
@@ -209,7 +210,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                           onTap: () => NavigatorService.instance.openTwakeWebView(
                               'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
                           image: 'assets/images/support.png',
-                          title: 'Customer support',
+                          title: AppLocalizations.of(context)!.customerSupport,
                           titleStyle: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w400,
@@ -229,7 +230,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              'Log out',
+                              AppLocalizations.of(context)!.logout,
                               style: TextStyle(
                                 fontSize: 17.0,
                                 fontWeight: FontWeight.w400,

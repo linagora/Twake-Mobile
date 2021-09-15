@@ -1,6 +1,7 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -206,7 +207,9 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                         cursorColor: Colors.black,
                                         style: _getTextFieldTextStyle(),
                                         decoration: _getTextFieldDecoration(
-                                            'Channel name'),
+                                          AppLocalizations.of(context)!
+                                              .channelName,
+                                        ),
                                       ),
                                     ),
                                   ),

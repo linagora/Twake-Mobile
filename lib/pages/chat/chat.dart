@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -50,7 +51,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
             isDirect: channel.isDirect,
             isPrivate: channel.isPrivate,
             userId: channel.members.isNotEmpty ? channel.members.first : null,
-            // TODO: figure out why do we need this?
             name: channel.name,
             icon: Emojis.getByName(channel.icon ?? ''),
             avatars: channel.isDirect ? channel.avatars : const [],
@@ -164,9 +164,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("Reply to ",
-                              style:
-                                  TextStyle(fontSize: 15, color: Colors.black)),
+                          Text(
+                            AppLocalizations.of(context)!.replyTo,
+                            style: TextStyle(fontSize: 15, color: Colors.black),
+                          ),
                           Container(
                             constraints:
                                 BoxConstraints(maxWidth: Dim.widthPercent(70)),

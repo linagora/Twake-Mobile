@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -163,29 +164,14 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
               Spacer(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.0),
-                child: state.messages.length - 1 > 1
-                    ? Text(
-                        '${state.messages.length - 1}' + ' replies ',
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: Color(0xFF818C99),
-                        ),
-                      )
-                    : state.messages.length - 1 == 1
-                        ? Text(
-                            '${state.messages.length - 1}' + ' reply ',
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: Color(0xFF818C99),
-                            ),
-                          )
-                        : Text(
-                            ' there are no replies yet ',
-                            style: TextStyle(
-                              fontSize: 15.0,
-                              color: Color(0xFF818C99),
-                            ),
-                          ),
+                child: Text(
+                  AppLocalizations.of(ctx)!
+                      .replyPlural(state.messages.length - 1),
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    color: Color(0xFF818C99),
+                  ),
+                ),
               ),
             ],
           ),

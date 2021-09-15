@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
@@ -10,7 +11,6 @@ class BadgesCount extends StatelessWidget {
   final BadgeType type;
   final String id;
   final bool isInDirects;
-  int counter = 0;
   BadgesCount({
     ValueKey? key,
     required this.type,
@@ -22,7 +22,9 @@ class BadgesCount extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        isInDirects ? Text('Chats') : Text('Channels'),
+        isInDirects
+            ? Text(AppLocalizations.of(context)!.chats)
+            : Text(AppLocalizations.of(context)!.channels),
         SizedBox(
           width: 5,
           height: 5,
@@ -31,9 +33,9 @@ class BadgesCount extends StatelessWidget {
           bloc: Get.find<BadgesCubit>(),
           builder: (ctx, state) {
             if (state is BadgesLoadSuccess) {
-              isInDirects
-                  ? counter = Get.find<BadgesCubit>().unreadInDirects
-                  : counter = state.badges
+              final counter = isInDirects
+                  ? Get.find<BadgesCubit>().unreadInDirects
+                  : state.badges
                       .firstWhere(
                         (b) => b.matches(type: type, id: id),
                         orElse: () => Badge(type: BadgeType.none, id: ''),
