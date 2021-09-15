@@ -102,7 +102,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                         icon: editChannelState.emoijIcon);
                                   }
                                 },
-                                text: 'Save',
+                                text: AppLocalizations.of(context)!.save,
                                 isEnable: (editChannelState
                                             is EditChannelValidation &&
                                         editChannelState.validToEditChannel)
