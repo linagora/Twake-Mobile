@@ -85,7 +85,10 @@ class AddChannelCubit extends Cubit<AddChannelState> {
       role: ChannelRole.owner,
     );
     try {
-      channel = await _channelsRepository.create(channel: channel);
+      channel = await _channelsRepository.create(
+        channel: channel,
+        isDefault: isDefault,
+      );
     } catch (e) {
       Logger().e('Error occured during channel creation:\n$e');
       emit(AddChannelFailure());

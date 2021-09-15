@@ -19,11 +19,15 @@ class WorkspacesRepository {
 
     if (local) {
       final sql = '''
-        SELECT a.* FROM ${Table.account.name} AS a JOIN
+        SELECT DISTINCT a.id, a.* FROM ${Table.account.name} AS a JOIN
         ${Table.account2workspace.name} AS a2w ON a.id = a2w.user_id
-        WHERE a2w.workspace_id = ?''';
+        JOIN ${Table.workspace.name} AS w ON w.id = a2w.workspace_id
+        WHERE w.company_id = ?''';
 
-      final local = await _storage.rawSelect(sql: sql, args: [workspaceId]);
+      final local = await _storage.rawSelect(
+        sql: sql,
+        args: [Globals.instance.companyId],
+      );
 
       return local.map((i) => Account.fromJson(json: i)).toList();
     } else {

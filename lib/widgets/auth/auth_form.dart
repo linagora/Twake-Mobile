@@ -180,7 +180,7 @@ class _AuthFormState extends State<AuthForm> {
                       children: [
                         GestureDetector(
                           onTap: widget.onConfigurationOpen as void Function()?,
-                          //() => openChooseServer(context),
+                          // () => openChooseServer(context),
                           behavior: HitTestBehavior.opaque,
                           child: Text(
                             'Choose the server',

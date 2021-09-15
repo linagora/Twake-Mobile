@@ -17,7 +17,9 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
     _repository = repository;
 
     Future.delayed(Duration(seconds: 5), () {
-      fetchMembers();
+      if (Globals.instance.token != null) {
+        fetchMembers();
+      }
     });
   }
 
