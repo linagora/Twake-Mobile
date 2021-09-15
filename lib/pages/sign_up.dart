@@ -47,10 +47,9 @@ class _SignUpState extends State<SignUp> {
   void _sendLink(String email) async {
     if (_formKey.currentState!.validate()) {
       final stateRegistration = Get.find<RegistrationCubit>().state;
-      if (stateRegistration is RegistrationFailed) {
-        if (stateRegistration.emailExists) {
-          Get.find<RegistrationCubit>().prepare();
-        }
+      if (stateRegistration is RegistrationFailed &&
+          stateRegistration.emailExists) {
+        Get.find<RegistrationCubit>().prepare();
       }
       if (stateRegistration is RegistrationReady) {
         await Get.find<RegistrationCubit>().signup(
