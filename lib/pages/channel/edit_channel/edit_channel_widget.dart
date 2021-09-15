@@ -102,7 +102,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                         icon: editChannelState.emoijIcon);
                                   }
                                 },
-                                text: 'Save',
+                                text: AppLocalizations.of(context)!.save,
                                 isEnable: (editChannelState
                                             is EditChannelValidation &&
                                         editChannelState.validToEditChannel)
@@ -114,7 +114,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            'Channel info',
+                            AppLocalizations.of(context)!.channelInfo,
                             style: TextStyle(
                               color: Color(0xff000000),
                               fontSize: 17,
@@ -138,13 +138,15 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                             left: 28, right: 28, bottom: 0, top: 20),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('CHANNEL NAME',
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                          child: Text(
+                            AppLocalizations.of(context)!.channelName,
+                            style: TextStyle(
+                              color: Color(0xff969ca4),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontStyle: FontStyle.normal,
+                            ),
+                          ),
                         ),
                       ),
                       Padding(
@@ -225,7 +227,8 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Please provide a channel name and optional channel icon',
+                              AppLocalizations.of(context)!
+                                  .channelNameAndIconSuggestion,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 12,
@@ -239,7 +242,8 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                             left: 28, right: 28, bottom: 5),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('CHANNEL DESCRIPTION',
+                          child: Text(
+                              AppLocalizations.of(context)!.channelDescription,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 14,
@@ -272,11 +276,14 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                     }
                                   },
                                   child: TextFormField(
-                                      controller: _descriptionEditingController,
-                                      cursorColor: Colors.black,
-                                      style: _getTextFieldTextStyle(),
-                                      decoration: _getTextFieldDecoration(
-                                          'Channel description')),
+                                    controller: _descriptionEditingController,
+                                    cursorColor: Colors.black,
+                                    style: _getTextFieldTextStyle(),
+                                    decoration: _getTextFieldDecoration(
+                                      AppLocalizations.of(context)!
+                                          .channelDescription,
+                                    ),
+                                  ),
                                 ),
                               )),
                         ),
@@ -287,7 +294,8 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Please provide an optional decription for your channel',
+                              AppLocalizations.of(context)!
+                                  .channelDescriptionSuggestion,
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 12,
@@ -328,7 +336,8 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                               progressIndicatorColor: Colors.blue,
                               showRecentsTab: true,
                               recentsLimit: 28,
-                              noRecentsText: "No Recents",
+                              noRecentsText:
+                                  AppLocalizations.of(context)!.noRecents,
                               noRecentsStyle: const TextStyle(
                                   fontSize: 20, color: Colors.black26),
                               categoryIcons: const CategoryIcons(),

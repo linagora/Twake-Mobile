@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/config/image_path.dart';
@@ -91,9 +92,11 @@ class ChannelDetailWidget extends StatelessWidget {
                 bloc: Get.find<ChannelsCubit>(),
                 builder: (ctx, channelState) {
                   return Text(
-                      (channelState is ChannelsLoadedSuccess)
-                          ? '${channelState.selected?.membersCount} members'
-                          : '',
+                      AppLocalizations.of(context)!.membersPlural(
+                        (channelState as ChannelsLoadedSuccess)
+                            .selected!
+                            .membersCount,
+                      ),
                       style: TextStyle(
                         color: Color(0x59000000),
                         fontSize: 13,
@@ -224,13 +227,17 @@ class ChannelDetailWidget extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: Text('Edit channel info',
-                                  style: TextStyle(
-                                    color: Color(0xff000000),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                  )),
+                              child: Text(
+                                AppLocalizations.of(context)!.edit +
+                                    ' ' +
+                                    AppLocalizations.of(context)!.channelInfo,
+                                style: TextStyle(
+                                  color: Color(0xff000000),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                  fontStyle: FontStyle.normal,
+                                ),
+                              ),
                             ),
                             Padding(
                               padding:
@@ -269,7 +276,8 @@ class ChannelDetailWidget extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: Text('Channel settings',
+                              child: Text(
+                                  AppLocalizations.of(context)!.channelSettings,
                                   style: TextStyle(
                                     color: Color(0xff000000),
                                     fontSize: 15,
@@ -315,7 +323,9 @@ class ChannelDetailWidget extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: Text('Member management',
+                              child: Text(
+                                  AppLocalizations.of(context)!
+                                      .memberManagement,
                                   style: TextStyle(
                                     color: Color(0xff000000),
                                     fontSize: 15,
@@ -327,7 +337,7 @@ class ChannelDetailWidget extends StatelessWidget {
                               bloc: Get.find<ChannelsCubit>(),
                               builder: (ctx, channelState) {
                                 return Text(
-                                    '${(channelState is ChannelsLoadedSuccess) ? channelState.selected?.membersCount : ''}',
+                                    '${(channelState as ChannelsLoadedSuccess).selected!.membersCount}',
                                     style: TextStyle(
                                       color: Color(0xff004dff),
                                       fontSize: 15,

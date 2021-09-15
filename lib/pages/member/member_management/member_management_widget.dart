@@ -72,7 +72,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            'Member management',
+                            AppLocalizations.of(context)!.memberManagement,
                             style: TextStyle(
                               color: Color(0xff000000),
                               fontSize: 17,
@@ -96,7 +96,9 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'CHANNEL MEMBERS (${memberManagementState.allMembers.length})',
+                              AppLocalizations.of(context)!
+                                  .channelMembersPlural(
+                                      memberManagementState.allMembers.length),
                               style: TextStyle(
                                 color: Color(0xff969ca4),
                                 fontSize: 13,
@@ -180,7 +182,9 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                                 ),
                                               ),
                                             ),
-                                            Text("Add a member",
+                                            Text(
+                                                AppLocalizations.of(context)!
+                                                    .addMember,
                                                 style: TextStyle(
                                                   color: Color(0xff004dff),
                                                   fontSize: 15,
@@ -385,27 +389,7 @@ Widget modalSheet(
                         ),
                       ),
                       Text(
-                        "Send a direct message",
-                        style: TextStyle(
-                          fontSize: 17.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 35),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Icon(
-                          CupertinoIcons.shield_lefthalf_fill,
-                          color: Colors.black,
-                        ),
-                      ),
-                      Text(
-                        "Dismiss as admin",
+                        AppLocalizations.of(context)!.sendDirect,
                         style: TextStyle(
                           fontSize: 17.0,
                         ),
@@ -438,7 +422,9 @@ Widget modalSheet(
                             ),
                             behavior: SnackBarBehavior.floating,
                             duration: Duration(seconds: 3),
-                            content: Text('Member is removed'),
+                            content: Text(
+                              AppLocalizations.of(context)!.memberRemoved,
+                            ),
                           ),
                         );
                       }
@@ -453,7 +439,7 @@ Widget modalSheet(
                           ),
                         ),
                         Text(
-                          "Remove from channel",
+                          AppLocalizations.of(context)!.removeFromChannel,
                           style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w500,
@@ -480,7 +466,7 @@ Widget modalSheet(
             child: Container(
               child: Center(
                 child: Text(
-                  "Cancel",
+                  AppLocalizations.of(context)!.cancel,
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w500,
