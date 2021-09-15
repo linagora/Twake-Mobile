@@ -22,7 +22,7 @@ class _SignFlowState extends State<SignFlow> {
     _widgets = [
       SignInSignUpForm(
         onSignUp: () => setState(() {
-          //  _index = 2;
+          _index = 2;
         }),
         onChangeServer: () => setState(() {
           _index = 1;
@@ -37,10 +37,10 @@ class _SignFlowState extends State<SignFlow> {
         }),
       ),
       SignUp(
-          // onCancel: () => setState(() {
-          //   _index = 0;
-          //   }),
-          ),
+        onCancel: () => setState(() {
+          _index = 0;
+        }),
+      ),
     ];
   }
 
@@ -131,7 +131,7 @@ class SignInSignUpForm extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      //  Get.find<RegistrationCubit>().prepare();
+                      Get.find<RegistrationCubit>().prepare();
                       onSignUp();
                     },
                     child: Text(
