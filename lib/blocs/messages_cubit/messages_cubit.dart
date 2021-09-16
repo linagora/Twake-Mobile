@@ -405,6 +405,20 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         case ResourceAction.created:
         case ResourceAction.saved:
         case ResourceAction.updated:
+          if (change.resource['subtype'] == 'deleted') {
+            _repository.removeMessageLocal(messageId: change.resource['id']);
+            if (state is MessagesLoadSuccess) {
+              final messages = (state as MessagesLoadSuccess).messages;
+              final hash = (state as MessagesLoadSuccess).hash;
+              messages.removeWhere((m) => m.id == change.resource['id']);
+              emit(MessagesLoadSuccess(
+                messages: messages,
+                hash: hash - 1, // we only need to update hash in someway
+              ));
+            }
+            continue;
+          }
+
           final message = await _repository.getMessageRemote(
             messageId: change.resource['id'],
             threadId: change.resource['thread_id'],
@@ -503,7 +517,8 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
             final newState = MessagesLoadSuccess(
               messages: messages,
-              hash: hash + message.hash,
+              hash:
+                  hash + message.hash, // just update the hash to force rerender
             );
 
             emit(newState);
