@@ -9,6 +9,7 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 
 class HomeBinding implements Bindings {
@@ -16,7 +17,6 @@ class HomeBinding implements Bindings {
   void dependencies() {
     final authenticationCubit = AuthenticationCubit();
     Get.put(authenticationCubit, permanent: true);
-    authenticationCubit.registerDevice();
 
     final companiesCubit = CompaniesCubit();
     Get.put(companiesCubit, permanent: true);
@@ -50,6 +50,10 @@ class HomeBinding implements Bindings {
 
     final registratCubit = RegistrationCubit();
     Get.put(registratCubit, permanent: true);
+
+    Future.delayed(Duration(seconds: 5), () {
+      if (Globals.instance.token != null) authenticationCubit.registerDevice();
+    });
 
     NavigatorService(
       accountCubit: accountCubit,
