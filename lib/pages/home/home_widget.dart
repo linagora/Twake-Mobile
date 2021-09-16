@@ -58,6 +58,10 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    if (Globals.instance.token == null) return;
+
     if (state == AppLifecycleState.resumed && Globals.instance.token != null) {
       Future.delayed(Duration(seconds: 6), () {
         refetchData();
@@ -66,7 +70,6 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         SocketIOService.instance.connect();
       });
     }
-    super.didChangeAppLifecycleState(state);
   }
 
   void refetchData() {

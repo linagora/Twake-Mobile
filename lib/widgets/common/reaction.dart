@@ -56,16 +56,6 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
                   SizedBox(
                     width: 3,
                   ),
-                  /* reaction.count > 1
-                              ? Text(
-                                  '${reaction.count}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : Container(),*/
                 ],
               ),
             ),
