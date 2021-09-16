@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/sign_up.dart';
 
@@ -131,8 +132,11 @@ class SignInSignUpForm extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      Get.find<RegistrationCubit>().prepare();
-                      onSignUp();
+                      // TODO: remove when signUp will work on beta
+                      if (Globals.instance.host != "https://beta.twake.app") {
+                        Get.find<RegistrationCubit>().prepare();
+                        onSignUp();
+                      }
                     },
                     child: Text(
                       'Sign up',
