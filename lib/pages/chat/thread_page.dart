@@ -130,7 +130,9 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ThreadMessagesList(parentChannel: channel),
+                      ThreadMessagesList<ThreadMessagesCubit>(
+                        parentChannel: channel,
+                      ),
                       ComposeBar(
                           autofocus: autofocus ||
                               messagesState is MessageEditInProgress,

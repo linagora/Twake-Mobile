@@ -16,7 +16,7 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   const ThreadMessagesList({required this.parentChannel});
 
   @override
-  _ThreadMessagesListState createState() => _ThreadMessagesListState();
+  _ThreadMessagesListState createState() => _ThreadMessagesListState<T>();
 }
 
 class _ThreadMessagesListState<T extends BaseMessagesCubit>
