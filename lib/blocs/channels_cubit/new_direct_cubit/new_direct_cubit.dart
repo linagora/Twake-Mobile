@@ -91,33 +91,36 @@ class NewDirectCubit extends Cubit<NewDirectState> {
     return recentChats;
   }
 
-  void newDirect(Account account) async {
-    final recentKey = state.recentChats.keys.firstWhere(
-        (key) => state.recentChats[key]?.id == account.id,
-        orElse: () => '');
-    if (recentKey.isNotEmpty) {
-      NavigatorService.instance.navigate(channelId: recentKey);
-    } else {
-      final channel = await channelsRepository.create(
-        channel: Channel(
-          id: 'fake',
-          name: account.firstName?.isNotEmpty ?? false
-              ? account.firstName!
-              : account.username,
-          icon: account.picture,
-          description: '',
-          companyId: Globals.instance.companyId!,
-          workspaceId: 'direct',
-          members: [account.id, Globals.instance.userId!],
-          membersCount: 2,
-          role: ChannelRole.owner,
-          visibility: ChannelVisibility.direct,
-          lastActivity: DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
-      directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
-      popBack();
-      NavigatorService.instance.navigate(channelId: channel.id);
+  void newDirect(List<Account> accounts) async {
+    if (accounts.length == 1) {
+      final recentKey = state.recentChats.keys.firstWhere(
+          (key) => state.recentChats[key]?.id == accounts.first.id,
+          orElse: () => '');
+      if (recentKey.isNotEmpty) {
+        NavigatorService.instance.navigate(channelId: recentKey);
+        return;
+      }
     }
+    final channel = await channelsRepository.create(
+      channel: Channel(
+        id: 'fake',
+        name: accounts.map((a) {
+          return a.firstName?.isNotEmpty ?? false ? a.firstName! : a.username;
+        }).join(', '),
+        icon: accounts.map((a) => a.picture ?? '').join(','),
+        description: '',
+        companyId: Globals.instance.companyId!,
+        workspaceId: 'direct',
+        members: accounts.map((a) => a.id).toList()
+          ..add(Globals.instance.userId!),
+        membersCount: 2,
+        role: ChannelRole.owner,
+        visibility: ChannelVisibility.direct,
+        lastActivity: DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+    directsCubit.changeSelectedChannelAfterCreateSuccess(channel: channel);
+    popBack();
+    NavigatorService.instance.navigate(channelId: channel.id);
   }
 }
