@@ -231,7 +231,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         final member = members[index];
                         return _FoundPeopleDirectTile(
                           onFoundPeopleDirectTileClick: () {
-                            Get.find<NewDirectCubit>().newDirect(member);
+                            Get.find<NewDirectCubit>().newDirect([member]);
                           },
                           name: member.fullName,
                           imageUrl: member.picture ?? '',
