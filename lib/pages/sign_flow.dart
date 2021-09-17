@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
@@ -110,7 +111,7 @@ class SignInSignUpForm extends StatelessWidget {
                       await Get.find<AuthenticationCubit>().authenticate();
                     },
                     child: Text(
-                      'Sign in',
+                      AppLocalizations.of(context)!.signin,
                       style: TextStyle(
                           fontSize: 17,
                           color: Color(0xFF004DFF),
@@ -139,7 +140,7 @@ class SignInSignUpForm extends StatelessWidget {
                       }
                     },
                     child: Text(
-                      'Sign up',
+                      AppLocalizations.of(context)!.signup,
                       style: TextStyle(
                           fontSize: 17,
                           color: Colors.white,
@@ -149,7 +150,7 @@ class SignInSignUpForm extends StatelessWidget {
                 ),
                 Spacer(),
                 Text(
-                  'Server connection preference',
+                  AppLocalizations.of(context)!.serverConnectionPreference,
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
                 ),
                 SizedBox(
@@ -169,7 +170,7 @@ class SignInSignUpForm extends StatelessWidget {
                       onChangeServer();
                     },
                     child: Text(
-                      'Change server',
+                      AppLocalizations.of(context)!.changeServer,
                       style: TextStyle(
                           fontSize: 17,
                           color: Color(0xFF004DFF),
@@ -184,7 +185,7 @@ class SignInSignUpForm extends StatelessWidget {
                   child: Container(
                     width: Dim.widthPercent(85),
                     child: Text(
-                      'You can connect with different server or instead proceed with default Linagora server.',
+                      AppLocalizations.of(context)!.changeServerInfo,
                       style: TextStyle(fontSize: 13),
                     ),
                   ),

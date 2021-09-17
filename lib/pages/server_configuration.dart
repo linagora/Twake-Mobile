@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -57,7 +58,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 2),
           content: Text(
-            'Invalid host',
+            AppLocalizations.of(context)!.invalidHost,
             style: TextStyle(
               color: Colors.red,
             ),
@@ -90,8 +91,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                   Image.asset('assets/images/server.png'),
                   SizedBox(height: 15.0),
                   Text(
-                    'Server connection\npreference',
+                    AppLocalizations.of(context)!.serverConnectionPreference,
                     textAlign: TextAlign.center,
+                    softWrap: true,
                     maxLines: 2,
                     style: TextStyle(
                       fontSize: 20.0,
@@ -103,7 +105,8 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                   Padding(
                     padding: EdgeInsets.only(left: 16, right: 36.0),
                     child: Text(
-                      'Before you can proceed, please, choose a default server connection',
+                      AppLocalizations.of(context)!
+                          .serverConnectionPreferenceInfo,
                       style: TextStyle(
                         fontSize: 15.0,
                         fontWeight: FontWeight.normal,
@@ -115,8 +118,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
                     child: TextFormField(
                       key: _formKey,
-                      validator: (value) =>
-                          value!.isEmpty ? 'Address cannot be blank' : null,
+                      validator: (value) => value!.isEmpty
+                          ? AppLocalizations.of(context)!.blankAddressError
+                          : null,
                       controller: _controller,
                       onFieldSubmitted: (_) => _connect(),
                       style: TextStyle(
@@ -169,7 +173,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 40.0),
                     child: Text(
-                      'Tap “Connect” if you don’t know exactly what is this all about',
+                      AppLocalizations.of(context)!.changeServerHint,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 15.0,
@@ -191,7 +195,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          'Connect',
+                          AppLocalizations.of(context)!.connect,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 17.0,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -137,7 +138,7 @@ class _SignUpState extends State<SignUp> {
         Padding(
           padding: EdgeInsets.only(left: 25),
           child: Text(
-            'Sign up',
+            AppLocalizations.of(context)!.signup,
             style: TextStyle(
               fontSize: 28.0,
               fontWeight: FontWeight.w900,
@@ -147,7 +148,7 @@ class _SignUpState extends State<SignUp> {
         Padding(
           padding: EdgeInsets.only(left: 25, right: 25, top: 10),
           child: Text(
-            'By continuing, you’re agreeing to our Terms of Services and Privacy Policy',
+            AppLocalizations.of(context)!.signupAgreement,
             style: TextStyle(
                 fontSize: 13.0,
                 fontWeight: FontWeight.normal,
@@ -163,12 +164,14 @@ class _SignUpState extends State<SignUp> {
                   child: TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter email address';
+                        return AppLocalizations.of(context)!
+                            .emailAddressRequest;
                       }
                       if (validateEmail(value)) {
                         return null;
                       } else {
-                        return 'Please enter the correct email address';
+                        return AppLocalizations.of(context)!
+                            .incorrectEmailError;
                       }
                     },
                     controller: _controller,
@@ -182,7 +185,7 @@ class _SignUpState extends State<SignUp> {
                       color: Colors.black,
                     ),
                     decoration: InputDecoration(
-                      hintText: " Email",
+                      hintText: AppLocalizations.of(context)!.email,
                       hintStyle: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold,
@@ -239,7 +242,7 @@ class _SignUpState extends State<SignUp> {
           Padding(
             padding: const EdgeInsets.only(left: 35),
             child: Text(
-              "Entered email address is already in use",
+              AppLocalizations.of(context)!.emailAlreadyInUse,
               style: TextStyle(fontSize: 12, color: Colors.red),
             ),
           ),
@@ -251,7 +254,7 @@ class _SignUpState extends State<SignUp> {
         Align(
           alignment: Alignment.center,
           child: Text(
-            'Already have an account?',
+            AppLocalizations.of(context)!.alreadyHaveAnAccount,
             style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w500,
@@ -265,7 +268,7 @@ class _SignUpState extends State<SignUp> {
               await Get.find<AuthenticationCubit>().authenticate();
             },
             child: Text(
-              'Sign in',
+              AppLocalizations.of(context)!.signin,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 17.0,
@@ -290,7 +293,7 @@ class _SignUpState extends State<SignUp> {
               ),
               alignment: Alignment.center,
               child: Text(
-                'Start using Twake',
+                AppLocalizations.of(context)!.startUsingTwake,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 17.0,
@@ -321,7 +324,7 @@ class _SignUpState extends State<SignUp> {
               right: Dim.widthPercent(10),
               bottom: 15),
           child: Text(
-            'Done, we’ve sent a verfication link and generated password to:',
+            AppLocalizations.of(context)!.registrationEmailSent,
             textAlign: TextAlign.center,
             style: TextStyle(
                 fontSize: 13.0,
@@ -356,7 +359,7 @@ class _SignUpState extends State<SignUp> {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      'Resend email',
+                      AppLocalizations.of(context)!.resendEmail,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 17.0,
@@ -379,7 +382,7 @@ class _SignUpState extends State<SignUp> {
                         width: 10,
                       ),
                       Text(
-                        'Email sent',
+                        AppLocalizations.of(context)!.emailSent,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 17.0,
@@ -393,7 +396,7 @@ class _SignUpState extends State<SignUp> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Email resend failed',
+                        AppLocalizations.of(context)!.emailResendFailed,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 17.0,
@@ -408,7 +411,7 @@ class _SignUpState extends State<SignUp> {
             await Get.find<AuthenticationCubit>().authenticate();
           },
           child: Text(
-            'Sign in',
+            AppLocalizations.of(context)!.signin,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14.0,
@@ -430,7 +433,7 @@ class _SignUpState extends State<SignUp> {
           Padding(
             padding: const EdgeInsets.only(bottom: 25),
             child: Text(
-              'Sign up failed',
+              AppLocalizations.of(context)!.signupFailed,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 32.0,
@@ -440,7 +443,7 @@ class _SignUpState extends State<SignUp> {
             ),
           ),
           Text(
-            'Unfortunately, something went wrong during your sign up',
+            AppLocalizations.of(context)!.signupFailedInfo,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17.0,
@@ -461,7 +464,7 @@ class _SignUpState extends State<SignUp> {
             height: Dim.heightPercent(10),
           ),
           Text(
-            'Please, try to sign up once again later or contact our technical support team',
+            AppLocalizations.of(context)!.signupAgainInfo,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17.0,
@@ -484,7 +487,7 @@ class _SignUpState extends State<SignUp> {
               ),
               alignment: Alignment.center,
               child: Text(
-                'Sign up once again',
+                AppLocalizations.of(context)!.signupAgain,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 17.0,
