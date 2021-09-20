@@ -29,7 +29,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     lastName: json['last_name'] as String?,
     picture: json['picture'] as String?,
     draft: json['draft'] as String?,
-  );
+  )..subtype = _$enumDecodeNullable(_$MessageSubtypeEnumMap, json['subtype']);
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -43,6 +43,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'text': instance.text,
       'blocks': instance.blocks,
       'files': instance.files,
+      'subtype': _$MessageSubtypeEnumMap[instance.subtype],
       'reactions': instance.reactions.map((e) => e.toJson()).toList(),
       'username': instance.username,
       'first_name': instance.firstName,
@@ -93,4 +94,10 @@ const _$DeliveryEnumMap = {
   Delivery.inProgress: 'in_progress',
   Delivery.delivered: 'delivered',
   Delivery.failed: 'failed',
+};
+
+const _$MessageSubtypeEnumMap = {
+  MessageSubtype.application: 'application',
+  MessageSubtype.deleted: 'deleted',
+  MessageSubtype.system: 'system',
 };

@@ -48,13 +48,6 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
   }) async {
-    // var sql = '''
-    // SELECT m.*, a.username, a.first_name,
-    // a.last_name,
-    // a.picture
-    // FROM ${Table.message.name} AS m JOIN
-    // ${Table.account.name} AS a ON a.id = m.user_id
-    // WHERE m.channel_id = ?''';
     var where = 'channel_id = ?';
     if (threadId == null) {
       where += ' AND thread_id = id';
@@ -119,7 +112,11 @@ class MessagesRepository {
     }
 
     var remoteMessages = remoteResult
-        .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
+        .where((rm) =>
+            rm['type'] == 'message' &&
+            rm['subtype'] != 'system' &&
+            rm['subtype'] !=
+                'application') // TODO remove the last condition once the support for applications has been implemented
         .map((entry) => Message.fromJson(
               entry,
               channelId: channelId,
@@ -165,7 +162,11 @@ class MessagesRepository {
     }
 
     var remoteMessages = remoteResult
-        .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
+        .where((rm) =>
+            rm['type'] == 'message' &&
+            rm['subtype'] != 'system' &&
+            rm['subtype'] !=
+                'application') // TODO remove the last condition once the support for applications has been implemented
         .map((entry) => Message.fromJson(
               entry,
               jsonify: false,
