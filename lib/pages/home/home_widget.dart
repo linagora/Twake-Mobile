@@ -43,12 +43,6 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
     refetchData();
 
-    SynchronizationService.instance.subscribeToBadges();
-    SynchronizationService.instance.subscribeForChannels(
-      companyId: Globals.instance.companyId!,
-      workspaceId: Globals.instance.workspaceId!,
-    );
-
     _searchController.addListener(() {
       setState(() {
         _searchText = _searchController.text.toLowerCase();
@@ -88,6 +82,12 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     Get.find<AccountCubit>().fetch();
 
     Get.find<BadgesCubit>().fetch();
+
+    SynchronizationService.instance.subscribeToBadges();
+    SynchronizationService.instance.subscribeForChannels(
+      companyId: Globals.instance.companyId!,
+      workspaceId: Globals.instance.workspaceId!,
+    );
   }
 
   @override

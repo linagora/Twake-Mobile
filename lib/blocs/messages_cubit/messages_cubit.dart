@@ -169,7 +169,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       };
       prepared.add(nop);
     }
-    final fakeId = DateTime.now().toString();
+    final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
 
     final sendStream = _repository.send(
       id: fakeId,
