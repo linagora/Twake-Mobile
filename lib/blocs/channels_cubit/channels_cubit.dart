@@ -30,8 +30,6 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     required String workspaceId,
     bool localOnly: false,
   }) async {
-    emit(ChannelsLoadInProgress());
-
     final channelsStream = _repository.fetch(
       companyId: companyId ?? Globals.instance.companyId!,
       workspaceId: workspaceId,
