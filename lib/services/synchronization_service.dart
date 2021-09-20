@@ -121,14 +121,16 @@ class SynchronizationService {
       _socketio.resourceStream.where((r) {
         return r.type == ResourceType.message &&
             r.resource['thread_id'] == r.resource['id'] &&
-            r.resource['subtype'] == null;
+            r.resource['subtype'] != 'system' &&
+            r.resource['subtype'] != 'application';
       });
 
   Stream<SocketIOResource> get socketIOThreadMessageStream =>
       _socketio.resourceStream.where((r) {
         return r.type == ResourceType.message &&
-            r.resource['thread_id'] != r.resource['id'];
-        // r.resource['subtype'] != 'deleted';
+            r.resource['thread_id'] != r.resource['id'] &&
+            r.resource['subtype'] != 'system' &&
+            r.resource['subtype'] != 'application';
       });
 
   Stream<SocketIOResource> get sockeIOBadgesUpdateStream =>

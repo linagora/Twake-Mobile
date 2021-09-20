@@ -29,6 +29,8 @@ class Message extends BaseModel {
 
   List<String> files;
 
+  MessageSubtype? subtype;
+
   @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
 
@@ -134,4 +136,13 @@ enum Delivery {
   delivered,
   @JsonValue('failed')
   failed,
+}
+
+enum MessageSubtype {
+  @JsonValue('application')
+  application,
+  @JsonValue('deleted')
+  deleted,
+  @JsonValue('system')
+  system
 }
