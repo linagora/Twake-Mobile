@@ -19,8 +19,6 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
-  //late StreamSubscription<Connection> streamSubscription;
-
   @override
   void initState() {
     super.initState();
@@ -58,7 +56,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context)!.internetConnection,  
+                    AppLocalizations.of(context)!.internetConnection,
                     style: TextStyle(color: Colors.black, fontSize: 16),
                   ),
                 ],
