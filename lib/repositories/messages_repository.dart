@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:mutex/mutex.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
@@ -11,6 +12,11 @@ export 'package:twake/models/message/message.dart';
 class MessagesRepository {
   final _api = ApiService.instance;
   final _storage = StorageService.instance;
+
+  final Mutex _sendGuard = Mutex();
+
+  int _counter = 0;
+  int _turn = 0;
 
   MessagesRepository();
 
@@ -243,6 +249,16 @@ class MessagesRepository {
             [Globals.instance.companyId, threadId],
           );
 
+    final turn = _counter;
+    _counter += 1;
+    while (true) {
+      await _sendGuard.acquire();
+      if (_turn == turn) {
+        break;
+      }
+      _sendGuard.release();
+    }
+
     try {
       final remoteResult = await _api.post(
         endpoint: endpoint,
@@ -270,6 +286,9 @@ class MessagesRepository {
     _storage.insert(table: Table.message, data: message);
 
     yield message;
+
+    _turn += 1;
+    _sendGuard.release();
   }
 
   Stream<Message> resend({
