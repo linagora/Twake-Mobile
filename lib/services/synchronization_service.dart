@@ -145,27 +145,36 @@ class SynchronizationService {
 
     if (workspaceId != 'direct') {
       // Unsubscribe from previous workspace
-      _socketio.unsubscribe(room: _currentPublicChannels);
-      _socketio.unsubscribe(room: _currentPrivateChannels);
 
-      _currentPublicChannels = sprintf(
+      var t = sprintf(
         '/companies/%s/workspaces/%s/channels?type=public',
         [companyId, workspaceId],
       );
-      _socketio.subscribe(room: _currentPublicChannels);
+      if (t != _currentPublicChannels)
+        _socketio.unsubscribe(room: _currentPublicChannels);
+      _currentPublicChannels = t;
 
-      _currentPrivateChannels = sprintf(
+      t = sprintf(
         '/companies/%s/workspaces/%s/channels?type=private&user=%s',
         [companyId, workspaceId, Globals.instance.userId],
       );
+
+      if (t != _currentPrivateChannels)
+        _socketio.unsubscribe(room: _currentPrivateChannels);
+      _currentPrivateChannels = t;
+
+      _socketio.subscribe(room: _currentPublicChannels);
+
       _socketio.subscribe(room: _currentPrivateChannels);
     } else {
-      _socketio.unsubscribe(room: _currentDirectChannels);
-
-      _currentDirectChannels = sprintf(
-        '/companies/%s/workspaces/direct/channels?type=direct&user=%s)',
+      final t = sprintf(
+        '/companies/%s/workspaces/direct/channels?type=direct&user=%s',
         [companyId, Globals.instance.userId],
       );
+      if (t != _currentDirectChannels) {
+        _socketio.unsubscribe(room: _currentDirectChannels);
+      }
+      _currentDirectChannels = t;
       _socketio.subscribe(room: _currentDirectChannels);
     }
   }
@@ -179,17 +188,23 @@ class SynchronizationService {
     _socketio.subscribe(room: room);
   }
 
-  void subscribeToMessages({required String channelId}) async {
+  void subscribeToMessages({
+    required String channelId,
+    bool isDirect: false,
+  }) async {
     if (!Globals.instance.isNetworkConnected)
       throw Exception('Shoud not be called with no active connection');
 
     // Unsubscribe just in case
     if (subscribedChannelId != null)
-      unsubscribeFromMessages(channelId: subscribedChannelId!);
+      unsubscribeFromMessages(
+        channelId: subscribedChannelId!,
+        isDirect: isDirect,
+      );
 
     final room = sprintf('/companies/%s/workspaces/%s/channels/%s/feed', [
       Globals.instance.companyId,
-      Globals.instance.workspaceId,
+      isDirect ? 'direct' : Globals.instance.workspaceId,
       channelId,
     ]);
     // Subscribe, to new channel
@@ -216,10 +231,13 @@ class SynchronizationService {
     subscribedThreadId = threadId;
   }
 
-  void unsubscribeFromMessages({required String channelId}) {
+  void unsubscribeFromMessages({
+    required String channelId,
+    bool isDirect: false,
+  }) {
     final room = sprintf('/companies/%s/workspaces/%s/channels/%s/feed', [
       Globals.instance.companyId,
-      Globals.instance.workspaceId,
+      isDirect ? 'direct' : Globals.instance.workspaceId,
       channelId,
     ]);
 

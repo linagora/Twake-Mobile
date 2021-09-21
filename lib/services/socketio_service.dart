@@ -56,6 +56,10 @@ class SocketIOService {
     });
 
     _socket.on(
+      IOEvent.leave,
+      (r) => Logger().e('Left socketio room: $r'),
+    );
+    _socket.on(
       IOEvent.join_error,
       (e) => Logger().e('Error joining the room:\n$e'),
     );
@@ -66,15 +70,15 @@ class SocketIOService {
 
     _socket.on(
       IOEvent.join_success,
-      (r) => {},
-      // (r) => Logger().v('successfully joined room $r'),
+      // (r) => {},
+      (r) => Logger().v('successfully joined room $r'),
     );
 
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
 
     _socket.onDisconnect((_) {
       _reconnectionStream.sink.add(false);
-      Logger().w('Socket IO connection was aborted');
+      // Logger().w('Socket IO connection was aborted');
     });
 
     _socket.connect();

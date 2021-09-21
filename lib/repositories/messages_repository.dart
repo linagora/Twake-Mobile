@@ -62,10 +62,7 @@ class MessagesRepository {
     final messages =
         localResult.map((entry) => Message.fromJson(entry)).toList();
 
-    if (threadId != null)
-      messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-    else
-      messages.sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
+    messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     return messages;
   }
