@@ -277,19 +277,22 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       (r) => r.name == reaction,
       orElse: () => Reaction(
         name: reaction,
-        users: [Globals.instance.userId!],
+        users: [],
         count: 1,
       ),
     );
     final userId = Globals.instance.userId!;
+    bool unreacted = false;
     if (present) {
       if (reacted.users.contains(userId)) {
         reacted.users.remove(userId);
+        unreacted = true;
       } else {
         reacted.users.add(userId);
       }
       reacted.count = reacted.users.length;
     } else {
+      reacted.users.add(Globals.instance.userId!);
       rx.add(reacted);
     }
 
@@ -311,7 +314,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
     // As usual, we can try except here to roll back reactions if
     // API request fails
-    _repository.react(message: message, reaction: reaction);
+    _repository.react(message: message, reaction: unreacted ? '' : reaction);
   }
 
   Future<void> delete({required Message message}) async {

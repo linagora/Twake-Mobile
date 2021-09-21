@@ -391,7 +391,7 @@ class MessagesRepository {
                 [Globals.instance.companyId, message.threadId]) +
             '/${message.id}/reaction',
         data: {
-          'reactions': [reaction]
+          'reactions': reaction.isEmpty ? [] : [reaction]
         });
 
     _storage.insert(table: Table.message, data: message);
