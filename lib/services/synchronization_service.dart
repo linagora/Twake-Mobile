@@ -145,27 +145,36 @@ class SynchronizationService {
 
     if (workspaceId != 'direct') {
       // Unsubscribe from previous workspace
-      _socketio.unsubscribe(room: _currentPublicChannels);
-      _socketio.unsubscribe(room: _currentPrivateChannels);
 
-      _currentPublicChannels = sprintf(
+      var t = sprintf(
         '/companies/%s/workspaces/%s/channels?type=public',
         [companyId, workspaceId],
       );
-      _socketio.subscribe(room: _currentPublicChannels);
+      if (t != _currentPublicChannels)
+        _socketio.unsubscribe(room: _currentPublicChannels);
+      _currentPublicChannels = t;
 
-      _currentPrivateChannels = sprintf(
+      t = sprintf(
         '/companies/%s/workspaces/%s/channels?type=private&user=%s',
         [companyId, workspaceId, Globals.instance.userId],
       );
+
+      if (t != _currentPrivateChannels)
+        _socketio.unsubscribe(room: _currentPrivateChannels);
+      _currentPrivateChannels = t;
+
+      _socketio.subscribe(room: _currentPublicChannels);
+
       _socketio.subscribe(room: _currentPrivateChannels);
     } else {
-      _socketio.unsubscribe(room: _currentDirectChannels);
-
-      _currentDirectChannels = sprintf(
-        '/companies/%s/workspaces/direct/channels?type=direct&user=%s)',
+      final t = sprintf(
+        '/companies/%s/workspaces/direct/channels?type=direct&user=%s',
         [companyId, Globals.instance.userId],
       );
+      if (t != _currentDirectChannels) {
+        _socketio.unsubscribe(room: _currentDirectChannels);
+      }
+      _currentDirectChannels = t;
       _socketio.subscribe(room: _currentDirectChannels);
     }
   }
