@@ -80,7 +80,7 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
 
     workspaces.add(workspace);
 
-    emit(WorkspacesLoadSuccess(workspaces: workspaces, selected: workspace));
+    selectWorkspace(workspaceId: workspace.id);
   }
 
   Future<List<Account>> fetchMembers(
@@ -108,7 +108,5 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
       companyId: Globals.instance.companyId!,
       workspaceId: workspaceId,
     );
-
-    fetchMembers(workspaceId: workspaceId);
   }
 }
