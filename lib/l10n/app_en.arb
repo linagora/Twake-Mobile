@@ -1,4 +1,5 @@
 {
+    "internetConnection": "No internet connection",
     "signin": "Sign in",
     "signup": "Sign up",
     "signupAgreement": "By continuing, you’re agreeing to our Terms of Services and Privacy Policy",
