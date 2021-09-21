@@ -63,8 +63,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
               ),
             ),
           );
-        } else if (connection == Connection.connected) {
-          ScaffoldMessenger.of(context).removeCurrentSnackBar();
         } else {
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
         }
