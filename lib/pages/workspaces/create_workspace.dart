@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
-import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
@@ -105,44 +105,44 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               Container(
                 color: Colors.white,
                 child: SheetTitleBar(
-                  title: AppLocalizations.of(context)!.newWorkspace,
-                  leadingTitle: AppLocalizations.of(context)!.cancel,
-                  leadingAction: () {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                    popBack();
-                  },
-                  trailingTitle: AppLocalizations.of(context)!.create,
-                  trailingAction: () async {
-                    if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          margin: EdgeInsets.fromLTRB(
-                            15.0,
-                            5.0,
-                            15.0,
-                            65.0,
-                            //  Dim.heightPercent(8),
+                    title: AppLocalizations.of(context)!.newWorkspace,
+                    leadingTitle: AppLocalizations.of(context)!.cancel,
+                    leadingAction: () {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                      popBack();
+                    },
+                    trailingTitle: AppLocalizations.of(context)!.create,
+                    trailingAction: () async {
+                      if (_formKey.currentState!.validate()) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            margin: EdgeInsets.fromLTRB(
+                              15.0,
+                              5.0,
+                              15.0,
+                              65.0,
+                              //  Dim.heightPercent(8),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            duration: Duration(seconds: 3),
+                            content:
+                                Text(AppLocalizations.of(context)!.processing),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                          duration: Duration(seconds: 3),
-                          content:
-                              Text(AppLocalizations.of(context)!.processing),
-                        ),
-                      );
+                        );
 
-                      await Get.find<WorkspacesCubit>().createWorkspace(
-                        companyId: Globals.instance.companyId,
-                        name: _workspaceNameController.text,
-                        members: _members,
-                      );
+                        await Get.find<WorkspacesCubit>().createWorkspace(
+                          companyId: Globals.instance.companyId,
+                          name: _workspaceNameController.text,
+                          members: _members,
+                        );
 
-                      final state = Get.find<WorkspacesCubit>().state;
-                      if (state is WorkspacesLoadSuccess) {
-                        Get.find<WorkspacesCubit>()
-                            .selectWorkspace(workspaceId: state.selected!.id);
+                        Get.find<ChannelsCubit>().fetch(
+                          workspaceId: Globals.instance.workspaceId!,
+                          companyId: Globals.instance.companyId,
+                        );
 
                         Navigator.of(context).pop();
                       } else {
@@ -167,9 +167,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                           ),
                         );
                       }
-                    }
-                  },
-                ),
+                    }),
               ),
               SizedBox(height: 16),
               Column(
