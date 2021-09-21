@@ -1,4 +1,5 @@
-{
+{   
+    "messageDeleted": "The message has been deleted",
     "internetConnection": "No internet connection",
     "signin": "Sign in",
     "signup": "Sign up",

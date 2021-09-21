@@ -64,7 +64,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
       bool _isMyMessage = _message.userId == Globals.instance.userId;
       return InkWell(
         onLongPress: () {
-          if (_message.delivery == Delivery.delivered || _isMyMessage == false)
+          if (_message.subtype != MessageSubtype.deleted &&
+              _message.delivery == Delivery.delivered)
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -240,22 +241,44 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Flexible(
-                                                    child: TwacodeRenderer(
-                                                      twacode: _message.blocks,
-                                                      parentStyle: TextStyle(
-                                                        fontSize: 15.0,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: _isMyMessage
-                                                            ? Colors.white
-                                                            : Colors.black,
-                                                      ),
-                                                      userUniqueColor: _message
-                                                              .username
-                                                              .hashCode %
-                                                          360,
-                                                      isSwipe: false,
-                                                    ).message,
+                                                    child: _message.subtype ==
+                                                            MessageSubtype
+                                                                .deleted
+                                                        ? Text(
+                                                            AppLocalizations.of(
+                                                                    context)!
+                                                                .messageDeleted,
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontStyle:
+                                                                  FontStyle
+                                                                      .italic,
+                                                              color: _isMyMessage
+                                                                  ? Colors.white
+                                                                  : Color(
+                                                                      0xFF8E8E93),
+                                                            ),
+                                                          )
+                                                        : TwacodeRenderer(
+                                                            twacode:
+                                                                _message.blocks,
+                                                            parentStyle:
+                                                                TextStyle(
+                                                              fontSize: 15.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: _isMyMessage
+                                                                  ? Colors.white
+                                                                  : Colors
+                                                                      .black,
+                                                            ),
+                                                            userUniqueColor:
+                                                                _message.username
+                                                                        .hashCode %
+                                                                    360,
+                                                            isSwipe: false,
+                                                          ).message,
                                                   ),
                                                   SizedBox(
                                                       width: (_message.responsesCount >
