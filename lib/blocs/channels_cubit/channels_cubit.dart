@@ -205,7 +205,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     _repository.saveOne(channel: current);
   }
 
-  void selectChannel({required String channelId}) {
+  void selectChannel({required String channelId, bool isDirect: false}) {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -219,14 +219,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
     Globals.instance.channelIdSet = channelId;
 
-    SynchronizationService.instance.subscribeToMessages(channelId: channelId);
+    SynchronizationService.instance.subscribeToMessages(
+      channelId: channelId,
+      isDirect: isDirect,
+    );
     SynchronizationService.instance
         .cancelNotificationsForChannel(channelId: channelId);
 
     _repository.markChannel(channel: selected, read: true);
   }
 
-  void clearSelection() {
+  void clearSelection([bool isDirect = false]) {
     Globals.instance.channelIdSet = null;
 
     final selected = (state as ChannelsLoadedSuccess).selected;
@@ -237,7 +240,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     final hash = (state as ChannelsLoadedSuccess).hash;
 
     SynchronizationService.instance
-        .unsubscribeFromMessages(channelId: selected.id);
+        .unsubscribeFromMessages(channelId: selected.id, isDirect: isDirect);
 
     emit(ChannelsLoadedSuccess(
       channels: channels,
@@ -439,6 +442,16 @@ class DirectsCubit extends BaseChannelsCubit {
   @override
   final _socketIOMembershipStream =
       SynchronizationService.instance.socketIODirectMembershipStream;
+
+  @override
+  void selectChannel({required String channelId, bool isDirect: true}) {
+    super.selectChannel(channelId: channelId, isDirect: true);
+  }
+
+  @override
+  void clearSelection([bool isDirect = true]) {
+    super.clearSelection(true);
+  }
 
   DirectsCubit({ChannelsRepository? repository})
       : super(
