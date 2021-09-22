@@ -42,10 +42,7 @@ class MessagesRepository {
 
     if (remoteMessages.isEmpty) return;
 
-    if (threadId != null)
-      remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-    else
-      remoteMessages.sort((m1, m2) => m2.createdAt.compareTo(m1.createdAt));
+    remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
 
     yield remoteMessages;
   }
@@ -113,7 +110,9 @@ class MessagesRepository {
         key: 'resources',
       );
     }
+    if (remoteResult.isNotEmpty) remoteResult.removeAt(0);
 
+    Logger().w('REMOTE MESSAGES: $remoteResult');
     var remoteMessages = remoteResult
         .where((rm) =>
             rm['type'] == 'message' &&
@@ -190,9 +189,8 @@ class MessagesRepository {
     String? originalStr,
     required String threadId,
     bool isDirect: false,
+    required int now,
   }) async* {
-    final now = DateTime.now().millisecondsSinceEpoch;
-
     final result = await _storage.first(
       table: Table.account,
       where: 'id = ?',
@@ -200,6 +198,9 @@ class MessagesRepository {
     );
 
     Account currentUser = Account.fromJson(json: result);
+
+    final turn = _counter;
+    _counter += 1;
 
     Message message = Message(
       id: id,
@@ -249,8 +250,6 @@ class MessagesRepository {
             [Globals.instance.companyId, threadId],
           );
 
-    final turn = _counter;
-    _counter += 1;
     while (true) {
       await _sendGuard.acquire();
       if (_turn == turn) {
@@ -288,6 +287,8 @@ class MessagesRepository {
     yield message;
 
     _turn += 1;
+    await Future.delayed(Duration(milliseconds: 300));
+
     _sendGuard.release();
   }
 

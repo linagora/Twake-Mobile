@@ -14,7 +14,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
   final _socketIOEventStream = SocketIOService.instance.resourceStream;
 
-  bool _sendInProgress = false;
+  int _sendInProgress = 0;
 
   BaseMessagesCubit({MessagesRepository? repository})
       : super(MessagesInitial()) {
@@ -104,7 +104,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final endOfHistory = prevLen == messages.length;
 
     if (endOfHistory) {
-      messages.add(dummy(messages.last.createdAt - 1));
+      messages.add(dummy(messages.first.createdAt - 1));
     }
 
     final newState = MessagesLoadSuccess(
@@ -117,7 +117,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<void> resend({required Message message, bool isDirect: false}) async {
-    _sendInProgress = true;
+    _sendInProgress += 1;
 
     final sendStream = _repository.resend(
       message: message,
@@ -152,7 +152,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       ));
     }
 
-    _sendInProgress = false;
+    _sendInProgress -= 1;
   }
 
   Future<void> send({
@@ -171,6 +171,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
 
+    _sendInProgress += 1;
+
     final sendStream = _repository.send(
       id: fakeId,
       channelId: Globals.instance.channelId!,
@@ -178,9 +180,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       originalStr: originalStr,
       threadId: threadId ?? fakeId,
       isDirect: isDirect,
+      now: DateTime.now().millisecondsSinceEpoch,
     );
-
-    _sendInProgress = true;
 
     await for (final message in sendStream) {
       // user might have changed screen, so make sure we are still in
@@ -208,7 +209,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       ));
     }
 
-    _sendInProgress = false;
+    _sendInProgress -= 1;
   }
 
   void startEdit({required Message message}) {
@@ -412,7 +413,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
             messageId: change.resource['id'],
             threadId: change.resource['thread_id'],
           );
-          if (message.userId == Globals.instance.userId && _sendInProgress)
+          if (message.userId == Globals.instance.userId && _sendInProgress > 0)
             continue;
 
           if (state is MessagesLoadSuccess) {
