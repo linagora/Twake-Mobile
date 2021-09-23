@@ -18,7 +18,7 @@
     "signupFailedInfo": "Unfortunately, something went wrong during your sign up",
     "signupAgainInfo": "Please, try to sign up once again later or contact our technical support team",
     "signupAgain": "Sign up once again",
-    "registrationEmailSent": "Done, we’ve sent a verfication link and generated password to:",
+    "registrationEmailSent": "Done, we’ve sent a verfication link and \n generated password to:",
     "changeServer": "Change server",
     "invalidHost": "Invalid host",
     "blankAddressError": "Address cannot be blank",

@@ -25,6 +25,7 @@ class _SignUpState extends State<SignUp> {
 
   @override
   void initState() {
+    _controller.clear();
     super.initState();
   }
 
@@ -134,6 +135,7 @@ class _SignUpState extends State<SignUp> {
   Widget registrationInitial({required bool emailExists, required bool init}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Padding(
           padding: EdgeInsets.only(left: 25),
@@ -158,7 +160,38 @@ class _SignUpState extends State<SignUp> {
         Padding(
           padding: EdgeInsets.fromLTRB(25.0, 15.0, 25.0, 15),
           child: init
-              ? Center(child: CircularProgressIndicator())
+              ? Form(
+                  child: TextFormField(
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.email,
+                    hintStyle: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xffc8c8c8),
+                    ),
+                    alignLabelWithHint: true,
+                    fillColor: Color(0xfff4f4f4),
+                    filled: true,
+                    suffix: Container(
+                      width: 30,
+                      height: 25,
+                      padding: EdgeInsets.only(left: 10),
+                      child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () => _controller.clear(),
+                        iconSize: 15,
+                        icon: Icon(CupertinoIcons.clear),
+                      ),
+                    ),
+                    border: UnderlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                        width: 0.0,
+                        style: BorderStyle.none,
+                      ),
+                    ),
+                  ),
+                ))
               : Form(
                   key: _formKey,
                   child: TextFormField(
@@ -177,7 +210,6 @@ class _SignUpState extends State<SignUp> {
                     controller: _controller,
                     onFieldSubmitted: (_) {
                       _sendLink(_controller.text);
-                      //  setState(() {});
                     },
                     style: TextStyle(
                       fontSize: 17.0,
@@ -246,10 +278,8 @@ class _SignUpState extends State<SignUp> {
               style: TextStyle(fontSize: 12, color: Colors.red),
             ),
           ),
-        Flexible(
-          child: SizedBox(
-            height: Dim.heightPercent(40),
-          ),
+        SizedBox(
+          height: Dim.heightPercent(8),
         ),
         Align(
           alignment: Alignment.center,
@@ -265,6 +295,9 @@ class _SignUpState extends State<SignUp> {
           alignment: Alignment.center,
           child: TextButton(
             onPressed: () async {
+              widget.onCancel!();
+              _controller.clear();
+              Get.find<RegistrationCubit>().emit(RegistrationInitial());
               await Get.find<AuthenticationCubit>().authenticate();
             },
             child: Text(
@@ -318,11 +351,7 @@ class _SignUpState extends State<SignUp> {
             width: Dim.widthPercent(25),
             child: Image.asset('assets/images/3.0x/send_tile.png')),
         Padding(
-          padding: EdgeInsets.only(
-              top: 25,
-              left: Dim.widthPercent(10),
-              right: Dim.widthPercent(10),
-              bottom: 15),
+          padding: EdgeInsets.only(top: 25, bottom: 15),
           child: Text(
             AppLocalizations.of(context)!.registrationEmailSent,
             textAlign: TextAlign.center,
@@ -345,7 +374,7 @@ class _SignUpState extends State<SignUp> {
         ),
         emailResendSuccess == null
             ? Padding(
-                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
+                padding: const EdgeInsets.only(left: 25, right: 25, bottom: 20),
                 child: TextButton(
                   onPressed: () async {
                     await Get.find<RegistrationCubit>()
@@ -408,13 +437,16 @@ class _SignUpState extends State<SignUp> {
                   ),
         TextButton(
           onPressed: () async {
+            widget.onCancel!();
+            _controller.clear();
+            Get.find<RegistrationCubit>().emit(RegistrationInitial());
             await Get.find<AuthenticationCubit>().authenticate();
           },
           child: Text(
             AppLocalizations.of(context)!.signin,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14.0,
+              fontSize: 15.0,
               fontWeight: FontWeight.bold,
               color: Color(0xff3840f7),
             ),
