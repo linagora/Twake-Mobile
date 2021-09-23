@@ -254,9 +254,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                                   FontStyle
                                                                       .italic,
                                                               color: _isMyMessage
-                                                                  ? Colors.white
+                                                                  ? Color(0xFFB3C9FF)
                                                                   : Color(
-                                                                      0xFF8E8E93),
+                                                                      0xFF7A7A7A),
                                                             ),
                                                           )
                                                         : TwacodeRenderer(
