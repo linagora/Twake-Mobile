@@ -110,9 +110,7 @@ class MessagesRepository {
         key: 'resources',
       );
     }
-    if (remoteResult.isNotEmpty) remoteResult.removeAt(0);
 
-    Logger().w('REMOTE MESSAGES: $remoteResult');
     var remoteMessages = remoteResult
         .where((rm) =>
             rm['type'] == 'message' &&

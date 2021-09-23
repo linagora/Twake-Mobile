@@ -77,8 +77,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   }
 
   void logout() async {
-    await _repository.logout();
     emit(AuthenticationInitial());
+    await _repository.logout();
     SocketIOService.instance.disconnect();
   }
 
