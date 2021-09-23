@@ -70,8 +70,8 @@ class SocketIOService {
 
     _socket.on(
       IOEvent.join_success,
-      // (r) => {},
-      (r) => Logger().v('successfully joined room $r'),
+      (r) => {},
+      // (r) => Logger().v('successfully joined room $r'),
     );
 
     _socket.onError((e) => Logger().e('Error on Socket IO channel:\n$e'));
@@ -114,7 +114,7 @@ class SocketIOService {
   }
 
   void _handleResource(data) {
-    Logger().v('GOT RESOURCE: $data');
+    // Logger().v('GOT RESOURCE: $data');
     final resource = SocketIOResource.fromJson(json: data);
     _resourceStream.sink.add(resource);
   }

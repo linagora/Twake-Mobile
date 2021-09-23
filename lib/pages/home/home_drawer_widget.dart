@@ -141,9 +141,14 @@ class HomeDrawerWidget extends StatelessWidget {
                         child: SmartRefresher(
                           controller: _refreshController,
                           onRefresh: () async {
-                            await _workspacesCubit.fetch(
-                              companyId: Globals.instance.companyId,
-                            );
+                            try {
+                              await _workspacesCubit.fetch(
+                                companyId: Globals.instance.companyId,
+                              );
+                            } catch (e) {
+                              print(
+                                  'Error refreshing the list of workspaces:\n$e');
+                            }
                             await Future.delayed(Duration(seconds: 1));
                             _refreshController.refreshCompleted();
                           },
