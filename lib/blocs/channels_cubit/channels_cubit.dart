@@ -16,13 +16,17 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
   final _socketIOActivityStream = SocketIOService.instance.resourceStream;
   final _socketIOMembershipStream = SocketIOService.instance.resourceStream;
 
+  final isDirect;
+
   BaseChannelsCubit({
     required ChannelsRepository repository,
+    this.isDirect: false,
   })  : _repository = repository,
         super(ChannelsInitial()) {
     // Set up socketIO listeners
     listenToActivityChanges();
     listentToChannelChanges();
+    listenToMembershipChanges();
   }
 
   Future<void> fetch({
@@ -205,7 +209,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     _repository.saveOne(channel: current);
   }
 
-  void selectChannel({required String channelId, bool isDirect: false}) {
+  void selectChannel({required String channelId}) {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -229,7 +233,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     _repository.markChannel(channel: selected, read: true);
   }
 
-  void clearSelection([bool isDirect = false]) {
+  void clearSelection() {
     Globals.instance.channelIdSet = null;
 
     final selected = (state as ChannelsLoadedSuccess).selected;
@@ -259,7 +263,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         case ResourceAction.updated:
           final rchannels = await _repository.fetchRemote(
             companyId: Globals.instance.companyId!,
-            workspaceId: Globals.instance.workspaceId!,
+            workspaceId: isDirect ? 'direct' : Globals.instance.workspaceId!,
           );
 
           if (selected != null) {
@@ -369,7 +373,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         case ResourceAction.updated:
           final rchannels = await _repository.fetchRemote(
             companyId: Globals.instance.companyId!,
-            workspaceId: Globals.instance.workspaceId!,
+            workspaceId: isDirect ? 'direct' : Globals.instance.workspaceId!,
           );
 
           if (selected != null) {
@@ -444,18 +448,20 @@ class DirectsCubit extends BaseChannelsCubit {
       SynchronizationService.instance.socketIODirectMembershipStream;
 
   @override
-  void selectChannel({required String channelId, bool isDirect: true}) {
-    super.selectChannel(channelId: channelId, isDirect: true);
+  void selectChannel({required String channelId}) {
+    super.selectChannel(channelId: channelId);
   }
 
   @override
   void clearSelection([bool isDirect = true]) {
-    super.clearSelection(true);
+    super.clearSelection();
   }
 
   DirectsCubit({ChannelsRepository? repository})
       : super(
-            repository: repository == null
-                ? ChannelsRepository(endpoint: Endpoint.channels)
-                : repository);
+          repository: repository == null
+              ? ChannelsRepository(endpoint: Endpoint.channels)
+              : repository,
+          isDirect: true,
+        );
 }
