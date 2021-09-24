@@ -45,9 +45,9 @@ class _AccountSettingsState extends State<AccountSettings> {
   Widget build(BuildContext context) {
     return BlocListener<AuthenticationCubit, AuthenticationState>(
       bloc: Get.find<AuthenticationCubit>(),
-      listenWhen: (_, current) => current is AuthenticationInitial,
+      listenWhen: (_, current) => current is LogoutInProgress,
       listener: (context, authenticationState) {
-        if (authenticationState is AuthenticationInitial) {
+        if (authenticationState is LogoutInProgress) {
           if (mounted) NavigatorService.instance.back(shouldLogout: true);
         }
       },
