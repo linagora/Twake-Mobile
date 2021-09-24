@@ -4,7 +4,7 @@ import 'package:twake/services/service_bundle.dart';
 class SynchronizationService {
   static late SynchronizationService _service;
 
-  final _socketio = SocketIOService.instance;
+  SocketIOService _socketio = SocketIOService.instance;
   final _pushNotifications = PushNotificationsService.instance;
 
   String? subscribedChannelId;
@@ -27,13 +27,13 @@ class SynchronizationService {
 
   SynchronizationService._() {
     foregroundMessagesCheck();
+    _socketio = SocketIOService.instance; // reacquire new instance of socketio
 
     // Set up auto resubscription in case of internet connection loss
     _socketio.socketIOReconnectionStream.listen((authenticated) async {
       if (authenticated) {
-        Logger().v('Resubscribing on socketio reconnect');
         // wait for the socketio service to authenticate first
-        await Future.delayed(Duration(seconds: 3));
+        Logger().v('Resubscribing on socketio reconnect');
         await subscribeForChannels(
             companyId: Globals.instance.companyId!,
             workspaceId: Globals.instance.workspaceId!);
@@ -150,7 +150,7 @@ class SynchronizationService {
         '/companies/%s/workspaces/%s/channels?type=public',
         [companyId, workspaceId],
       );
-      if (t != _currentPublicChannels)
+      if (t != _currentPublicChannels && _currentPublicChannels.isNotEmpty)
         _socketio.unsubscribe(room: _currentPublicChannels);
       _currentPublicChannels = t;
 
@@ -159,8 +159,9 @@ class SynchronizationService {
         [companyId, workspaceId, Globals.instance.userId],
       );
 
-      if (t != _currentPrivateChannels)
+      if (t != _currentPrivateChannels && _currentPrivateChannels.isNotEmpty)
         _socketio.unsubscribe(room: _currentPrivateChannels);
+
       _currentPrivateChannels = t;
 
       _socketio.subscribe(room: _currentPublicChannels);
@@ -171,7 +172,7 @@ class SynchronizationService {
         '/companies/%s/workspaces/direct/channels?type=direct&user=%s',
         [companyId, Globals.instance.userId],
       );
-      if (t != _currentDirectChannels) {
+      if (t != _currentDirectChannels && _currentDirectChannels.isNotEmpty) {
         _socketio.unsubscribe(room: _currentDirectChannels);
       }
       _currentDirectChannels = t;
@@ -183,7 +184,9 @@ class SynchronizationService {
     if (Globals.instance.token == null) return;
 
     final room = sprintf(
-        '/notifications?type=private&user=%s', [Globals.instance.userId]);
+      '/notifications?type=private&user=%s',
+      [Globals.instance.userId],
+    );
 
     _socketio.subscribe(room: room);
   }

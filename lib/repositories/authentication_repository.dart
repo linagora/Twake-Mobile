@@ -34,6 +34,7 @@ class AuthenticationRepository {
           return true;
         }
         authentication = await prolongAuthentication(authentication);
+        SocketIOService.instance.connect();
         idToken = authentication.idToken;
     }
 

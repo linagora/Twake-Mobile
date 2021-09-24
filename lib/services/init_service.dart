@@ -29,11 +29,12 @@ class InitService {
       globals.save();
     }
 
-    SocketIOService(reset: true);
     PushNotificationsService(reset: true);
     _apiService = ApiService(reset: true);
-    SynchronizationService(reset: true);
+    SocketIOService(reset: true);
     if (globals.oidcAuthority == null) await globals.hostSet(host);
+
+    SynchronizationService(reset: true);
   }
 
   // should only be called once after successful authentication/login

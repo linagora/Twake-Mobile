@@ -46,11 +46,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     if (authenticated) {
       emit(AuthenticationSuccess());
       _repository.startTokenValidator();
+      SocketIOService.instance.connect();
       await syncData();
     } else {
       emit(AuthenticationInitial());
     }
-    SocketIOService.instance.connect();
     return authenticated;
   }
 

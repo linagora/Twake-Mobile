@@ -18,7 +18,6 @@ import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
@@ -56,12 +55,20 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
     if (Globals.instance.token == null) return;
 
-    if (state == AppLifecycleState.resumed && Globals.instance.token != null) {
-      Future.delayed(Duration(seconds: 6), () {
+    if (state == AppLifecycleState.resumed) {
+      SocketIOService.instance.connect();
+      Future.delayed(Duration(seconds: 5), () {
         refetchData();
-        // Reset socketio connection and all the subscriptions
-        SocketIOService.instance.disconnect();
-        SocketIOService.instance.connect();
+
+        SynchronizationService.instance.subscribeToBadges();
+        SynchronizationService.instance.subscribeForChannels(
+          companyId: Globals.instance.companyId!,
+          workspaceId: Globals.instance.workspaceId!,
+        );
+        SynchronizationService.instance.subscribeForChannels(
+          companyId: Globals.instance.companyId!,
+          workspaceId: 'direct',
+        );
       });
     }
   }
@@ -82,12 +89,6 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     Get.find<AccountCubit>().fetch();
 
     Get.find<BadgesCubit>().fetch();
-
-    SynchronizationService.instance.subscribeToBadges();
-    SynchronizationService.instance.subscribeForChannels(
-      companyId: Globals.instance.companyId!,
-      workspaceId: Globals.instance.workspaceId!,
-    );
   }
 
   @override
