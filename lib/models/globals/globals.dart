@@ -31,6 +31,7 @@ class Globals extends BaseModel {
       return false;
     }
     save();
+    SocketIOService.instance.updateHost();
     return true;
   }
 

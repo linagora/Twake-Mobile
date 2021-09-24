@@ -12,7 +12,7 @@ export 'package:twake/models/socketio/socketio_resource.dart';
 
 class SocketIOService {
   static late SocketIOService _service;
-  late final IO.Socket _socket;
+  late IO.Socket _socket;
 
   bool _healthCheckRunning = false;
 
@@ -33,9 +33,14 @@ class SocketIOService {
     return _service;
   }
 
+  void updateHost() {
+    _socket.io.uri = Globals.instance.host;
+    _socket.disconnect();
+    _socket.connect();
+  }
+
   SocketIOService._() {
     final opts = IO.OptionBuilder()
-        .disableAutoConnect()
         .setReconnectionDelay(3000) // wait 3 secs before reconnect
         .setPath('/socket')
         .enableReconnection()
@@ -47,12 +52,16 @@ class SocketIOService {
     _socket.onConnect((_) {
       // Logger().v('Socket IO connection estabilished');
 
+      // Logger().v('Trying to authenticate:\n${Globals.instance.token}');
       _socket.emit(IOEvent.authenticate, {'token': Globals.instance.token});
     });
 
     _socket.on(IOEvent.authenticated, (_) {
       _reconnectionStream.sink.add(true);
       // Logger().v('Successfully authenticated on Socket IO channel');
+
+      // set up health check for sockeio connection
+      Future.delayed(Duration(seconds: 3), _startHealthCheck);
     });
 
     _socket.on(
@@ -81,20 +90,13 @@ class SocketIOService {
       // Logger().w('Socket IO connection was aborted');
     });
 
-    _socket.connect();
-
-    // set up health check for sockeio connection
-    Future.delayed(Duration(seconds: 3), _startHealthCheck);
-
     Globals.instance.connection.listen((state) {
-      if (state == Connection.connected && !_healthCheckRunning) {
+      if (state == Connection.connected) {
         _startHealthCheck();
       } else {
         _healthCheckRunning = false;
       }
     });
-
-    _socket.connect();
   }
 
   static SocketIOService get instance => _service;
@@ -153,6 +155,9 @@ class SocketIOService {
   }
 
   void connect() {
+    if (_socket.connected) {
+      _socket.disconnect();
+    }
     _socket.connect();
   }
 }
