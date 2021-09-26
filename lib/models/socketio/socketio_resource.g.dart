@@ -58,6 +58,7 @@ const _$ResourceActionEnumMap = {
 const _$ResourceTypeEnumMap = {
   ResourceType.message: 'message',
   ResourceType.channel: 'channel',
+  ResourceType.channels: 'channels',
   ResourceType.channelMember: 'channel_member',
   ResourceType.channelActivity: 'channel_activity',
   ResourceType.userNotificationBadges: 'user_notification_badges',

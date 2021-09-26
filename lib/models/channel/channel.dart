@@ -57,7 +57,10 @@ class Channel extends BaseModel {
   }
 
   List<Avatar> get avatars {
-    if (!isDirect) throw 'The getter avatars exist only for direct channels';
+    if (!isDirect) {
+      print(this.toJson());
+      throw 'The getter avatars exist only for direct channels';
+    }
 
     final links = icon!.split(',').toList();
     final names = name.split(', ').toList();

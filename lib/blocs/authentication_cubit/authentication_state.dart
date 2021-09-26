@@ -11,6 +11,13 @@ class AuthenticationInitial extends AuthenticationState {
   List<Object?> get props => const [];
 }
 
+class LogoutInProgress extends AuthenticationState {
+  const LogoutInProgress();
+
+  @override
+  List<Object?> get props => const [];
+}
+
 class AuthenticationSuccess extends AuthenticationState {
   const AuthenticationSuccess();
 

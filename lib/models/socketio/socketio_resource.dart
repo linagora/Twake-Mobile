@@ -28,6 +28,8 @@ enum ResourceType {
   message,
   @JsonValue('channel')
   channel,
+  @JsonValue('channels')
+  channels,
   @JsonValue('channel_member')
   channelMember,
   @JsonValue('channel_activity')
