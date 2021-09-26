@@ -22,7 +22,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
-
+  bool cleanVal = false;
   @override
   void initState() {
     _controller.clear();
@@ -37,9 +37,8 @@ class _SignUpState extends State<SignUp> {
 
   static bool validateEmail(String value) {
     const String regExpMail =
-        r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"
-        r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"
-        r")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
+
     if (RegExp(regExpMail).hasMatch(value))
       return true;
     else
@@ -119,6 +118,7 @@ class _SignUpState extends State<SignUp> {
               return registrationSuccess(emailResendSuccess: false);
             } else if (state is RegistrationFailed) {
               if (state.emailExists) {
+                cleanVal = false;
                 return registrationInitial(emailExists: true, init: false);
               } else {
                 return registrationFailed();
@@ -209,7 +209,14 @@ class _SignUpState extends State<SignUp> {
                     },
                     controller: _controller,
                     onFieldSubmitted: (_) {
-                      _sendLink(_controller.text);
+                      cleanVal = true;
+                      if (_controller.text.indexOf(" ") == -1) {
+                        _sendLink(_controller.text);
+                      } else {
+                        _controller.text = _controller.text
+                            .substring(0, _controller.text.indexOf(" "));
+                        _sendLink(_controller.text);
+                      }
                     },
                     style: TextStyle(
                       fontSize: 17.0,
@@ -270,14 +277,15 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
         ),
-        if (emailExists)
-          Padding(
-            padding: const EdgeInsets.only(left: 35),
-            child: Text(
-              AppLocalizations.of(context)!.emailAlreadyInUse,
-              style: TextStyle(fontSize: 12, color: Colors.red),
-            ),
-          ),
+        (emailExists && cleanVal == false)
+            ? Padding(
+                padding: const EdgeInsets.only(left: 35),
+                child: Text(
+                  AppLocalizations.of(context)!.emailAlreadyInUse,
+                  style: TextStyle(fontSize: 12, color: Colors.red),
+                ),
+              )
+            : Container(),
         SizedBox(
           height: Dim.heightPercent(8),
         ),
@@ -316,7 +324,16 @@ class _SignUpState extends State<SignUp> {
           padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
           child: TextButton(
             onPressed: () {
-              _sendLink(_controller.text);
+             setState(() {
+               cleanVal = true;
+             }); 
+              if (_controller.text.indexOf(" ") == -1) {
+                _sendLink(_controller.text);
+              } else {
+                _controller.text = _controller.text
+                    .substring(0, _controller.text.indexOf(" "));
+                _sendLink(_controller.text);
+              }
             },
             child: Container(
               height: 50,
