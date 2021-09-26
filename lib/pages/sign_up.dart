@@ -22,7 +22,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
-  bool cleanVal = false;
+
   @override
   void initState() {
     _controller.clear();
@@ -38,7 +38,6 @@ class _SignUpState extends State<SignUp> {
   static bool validateEmail(String value) {
     const String regExpMail =
         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
-
     if (RegExp(regExpMail).hasMatch(value))
       return true;
     else
@@ -118,7 +117,6 @@ class _SignUpState extends State<SignUp> {
               return registrationSuccess(emailResendSuccess: false);
             } else if (state is RegistrationFailed) {
               if (state.emailExists) {
-                cleanVal = false;
                 return registrationInitial(emailExists: true, init: false);
               } else {
                 return registrationFailed();
@@ -209,7 +207,6 @@ class _SignUpState extends State<SignUp> {
                     },
                     controller: _controller,
                     onFieldSubmitted: (_) {
-                      cleanVal = true;
                       if (_controller.text.indexOf(" ") == -1) {
                         _sendLink(_controller.text);
                       } else {
@@ -277,15 +274,14 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
         ),
-        (emailExists && cleanVal == false)
-            ? Padding(
-                padding: const EdgeInsets.only(left: 35),
-                child: Text(
-                  AppLocalizations.of(context)!.emailAlreadyInUse,
-                  style: TextStyle(fontSize: 12, color: Colors.red),
-                ),
-              )
-            : Container(),
+        if (emailExists)
+          Padding(
+            padding: const EdgeInsets.only(left: 35),
+            child: Text(
+              AppLocalizations.of(context)!.emailAlreadyInUse,
+              style: TextStyle(fontSize: 12, color: Colors.red),
+            ),
+          ),
         SizedBox(
           height: Dim.heightPercent(8),
         ),
@@ -324,9 +320,6 @@ class _SignUpState extends State<SignUp> {
           padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
           child: TextButton(
             onPressed: () {
-             setState(() {
-               cleanVal = true;
-             }); 
               if (_controller.text.indexOf(" ") == -1) {
                 _sendLink(_controller.text);
               } else {
