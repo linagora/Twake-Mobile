@@ -113,5 +113,11 @@ class StylesConfig {
     fontSize: 12.0,
     fontWeight: FontWeight.w400,
   );
+  static final signupAgreement = TextStyle(
+      fontSize: 13.0,
+      fontWeight: FontWeight.normal,
+      color: Color(0xFF969698),
+      decoration: TextDecoration.underline,
+      decorationStyle: TextDecorationStyle.dotted);
 //TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
 }
