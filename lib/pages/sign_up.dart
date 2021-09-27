@@ -140,6 +140,7 @@ class _SignUpState extends State<SignUp> {
           child: Text(
             AppLocalizations.of(context)!.signup,
             style: TextStyle(
+              fontFamily: 'SFProDisplayHeavy',
               fontSize: 28.0,
               fontWeight: FontWeight.w900,
             ),
