@@ -37,9 +37,7 @@ class _SignUpState extends State<SignUp> {
 
   static bool validateEmail(String value) {
     const String regExpMail =
-        r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"
-        r"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"
-        r")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
+        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+";
     if (RegExp(regExpMail).hasMatch(value))
       return true;
     else
@@ -209,7 +207,13 @@ class _SignUpState extends State<SignUp> {
                     },
                     controller: _controller,
                     onFieldSubmitted: (_) {
-                      _sendLink(_controller.text);
+                      if (_controller.text.indexOf(" ") == -1) {
+                        _sendLink(_controller.text);
+                      } else {
+                        _controller.text = _controller.text
+                            .substring(0, _controller.text.indexOf(" "));
+                        _sendLink(_controller.text);
+                      }
                     },
                     style: TextStyle(
                       fontSize: 17.0,
@@ -316,7 +320,13 @@ class _SignUpState extends State<SignUp> {
           padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
           child: TextButton(
             onPressed: () {
-              _sendLink(_controller.text);
+              if (_controller.text.indexOf(" ") == -1) {
+                _sendLink(_controller.text);
+              } else {
+                _controller.text = _controller.text
+                    .substring(0, _controller.text.indexOf(" "));
+                _sendLink(_controller.text);
+              }
             },
             child: Container(
               height: 50,

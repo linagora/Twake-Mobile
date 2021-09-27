@@ -254,7 +254,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                                   FontStyle
                                                                       .italic,
                                                               color: _isMyMessage
-                                                                  ? Color(0xFFB3C9FF)
+                                                                  ? Color(
+                                                                      0xFFB3C9FF)
                                                                   : Color(
                                                                       0xFF7A7A7A),
                                                             ),
@@ -290,26 +291,29 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                           : 0),
                                                 ],
                                               ),
-                                              Text(
-                                                _message.inThread ||
-                                                        _hideShowReplies
-                                                    ? DateFormatter
-                                                        .getVerboseDateTime(
-                                                        _message.createdAt,
-                                                      )
-                                                    : DateFormatter
-                                                        .getVerboseTime(
-                                                        _message.createdAt,
-                                                      ),
-                                                textAlign: TextAlign.end,
-                                                style: TextStyle(
-                                                  fontSize: 11.0,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontStyle: FontStyle.italic,
-                                                  color: _isMyMessage
-                                                      ? Color(0xffffffff)
-                                                          .withOpacity(0.58)
-                                                      : Color(0xFF8E8E93),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top: 3),
+                                                child: Text(
+                                                  _message.inThread ||
+                                                          _hideShowReplies
+                                                      ? DateFormatter
+                                                          .getVerboseDateTime(
+                                                          _message.createdAt,
+                                                        )
+                                                      : DateFormatter
+                                                          .getVerboseTime(
+                                                          _message.createdAt,
+                                                        ),
+                                                  textAlign: TextAlign.end,
+                                                  style: TextStyle(
+                                                    fontSize: 11.0,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontStyle: FontStyle.italic,
+                                                    color: _isMyMessage
+                                                        ? Color(0xffffffff)
+                                                            .withOpacity(0.58)
+                                                        : Color(0xFF8E8E93),
+                                                  ),
                                                 ),
                                               ),
                                             ],

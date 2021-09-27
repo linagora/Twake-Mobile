@@ -234,7 +234,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                   Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: HintLine(
-                      text: AppLocalizations.of(context)!.workspaceNameInfo,
+                      text: AppLocalizations.of(context)!.workspaceCreationErrorInfo,
                       fontWeight: FontWeight.w500,
                     ),
                   ),

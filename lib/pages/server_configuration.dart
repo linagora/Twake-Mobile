@@ -162,11 +162,13 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                     ),
                   ),
                   MediaQuery.of(context).viewInsets.bottom == 0
-                      ? SizedBox(
-                          height: Dim.heightPercent(
-                              (90 - (450 * 100 / Dim.heightPercent(100)))
-                                  .toInt()),
-                        )
+                      ? Flexible(
+                        child: SizedBox(
+                            height: Dim.heightPercent(
+                                (90 - (450 * 100 / Dim.heightPercent(100)))
+                                    .toInt()),
+                          ),
+                      )
                       : SizedBox(
                           height: 15,
                         ),

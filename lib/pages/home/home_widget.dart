@@ -106,7 +106,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         appBar: AppBar(
           leading: SizedBox.shrink(),
           leadingWidth: 0,
-          toolbarHeight: kToolbarHeight + 100,
+          toolbarHeight: 100 ,
           bottom: TabBar(
             tabs: [
               BlocBuilder<WorkspacesCubit, WorkspacesState>(

@@ -12,7 +12,7 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/workspaces_management/workspace_title.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/widgets/common/rounded_image.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
 
@@ -46,11 +46,13 @@ class CompanySelectionWidget extends StatelessWidget {
                           padding: EdgeInsets.only(left: 16, top: 24),
                           child: Column(
                             children: [
-                              RoundedImage(
-                                borderRadius: 12.0,
-                                width: 44.0,
-                                height: 44.0,
+                              ImageWidget(
+                                imageType: ImageType.common,
+                                size: 56,
+                                borderRadius: 16,
                                 imageUrl: companiesState.selected.logo ?? '',
+                                name: companiesState.selected.name,
+                                backgroundColor: Color(0xfff5f5f5),
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -81,7 +83,6 @@ class CompanySelectionWidget extends StatelessWidget {
                       )
                     ],
                   ),
-                  // AddWorkspaceTile(title: 'Add a new company'),
                   Expanded(
                     child: SmartRefresher(
                       controller: _refreshController,
