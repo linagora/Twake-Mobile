@@ -115,13 +115,7 @@ class _SignUpState extends State<SignUp> {
       body: SafeArea(
         child: BlocBuilder<RegistrationCubit, RegistrationState>(
           bloc: Get.find<RegistrationCubit>(),
-          buildWhen: (_, currentState) =>
-              currentState is RegistrationInitial ||
-              currentState is RegistrationReady ||
-              currentState is RegistrationSuccess ||
-              currentState is RegistrationFailed ||
-              currentState is EmailResendSuccess ||
-              currentState is EmailResendFailed,
+          buildWhen: (_, currentState) => currentState is! RegistrationAwaiting,
           builder: (ctx, state) {
             if (state is RegistrationReady) {
               return registrationInitial(emailExists: false, init: false);
@@ -147,6 +141,8 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget registrationInitial({required bool emailExists, required bool init}) {
+    final List<String> signupAgreement =
+        AppLocalizations.of(context)!.signupAgreement.split("#");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -167,13 +163,13 @@ class _SignUpState extends State<SignUp> {
           child: RichText(
             text: TextSpan(children: [
               TextSpan(
-                  text: AppLocalizations.of(context)!.signupAgreementPart1,
+                  text: signupAgreement[0],
                   style: TextStyle(
                     fontSize: 13.0,
                     color: Color(0xFF969698),
                   )),
               TextSpan(
-                  text: AppLocalizations.of(context)!.signupAgreementPart2,
+                  text: signupAgreement[1],
                   recognizer: _tapGestureRecognizer
                     ..onTap = () async {
                       if (await canLaunch(link)) {
@@ -184,13 +180,13 @@ class _SignUpState extends State<SignUp> {
                     },
                   style: StylesConfig.signupAgreement),
               TextSpan(
-                  text: AppLocalizations.of(context)!.signupAgreementPart3,
+                  text: signupAgreement[2],
                   style: TextStyle(
                     fontSize: 13.0,
                     color: Color(0xFF969698),
                   )),
               TextSpan(
-                  text: AppLocalizations.of(context)!.signupAgreementPart4,
+                  text: signupAgreement[3],
                   recognizer: _tapGestureRecognizer
                     ..onTap = () async {
                       if (await canLaunch(link)) {
