@@ -28,7 +28,7 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
   final _tapGestureRecognizer = TapGestureRecognizer();
-
+  bool emailExistsErr = false;
   @override
   void initState() {
     _controller.clear();
@@ -66,6 +66,10 @@ class _SignUpState extends State<SignUp> {
             secretToken: stateReg.secretToken,
             code: stateReg.code);
       }
+    } else {
+      setState(() {
+        emailExistsErr = false;
+      });
     }
   }
 
@@ -320,7 +324,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
         ),
-        if (emailExists)
+        if (emailExists && emailExistsErr)
           Padding(
             padding: const EdgeInsets.only(left: 35),
             child: Text(
@@ -366,6 +370,7 @@ class _SignUpState extends State<SignUp> {
           padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
           child: TextButton(
             onPressed: () {
+              emailExistsErr = true;
               final stateRegistration = Get.find<RegistrationCubit>().state;
               if (stateRegistration is RegistrationAwaiting) {
               } else {

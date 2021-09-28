@@ -36,7 +36,7 @@ class ImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageType == ImageType.channel) {
       if (imageUrl != null && imageUrl != "") {
-        return channelImage(imageUrl, isPrivate);
+        return channelImage(imageUrl, isPrivate,backgroundColor);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
@@ -140,7 +140,7 @@ class ImageWidget extends StatelessWidget {
     );
   }
 
-  Widget channelImage(String? icon, bool isPrivate) {
+  Widget channelImage(String? icon, bool isPrivate, Color backgroundColor) {
     if (icon == null) {
       icon = "";
     }
@@ -150,7 +150,9 @@ class ImageWidget extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Color(0xfff5f5f5),
+          color: backgroundColor == Colors.white
+              ? Colors.transparent
+              : Color(0xfff5f5f5),
         ),
         child: Container(
           width: size - 10,

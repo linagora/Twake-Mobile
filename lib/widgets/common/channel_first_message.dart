@@ -51,9 +51,10 @@ class ChannelFirstMessage extends StatelessWidget {
                       imageType: ImageType.channel,
                       imageUrl: Emojis.getByName(channel.icon ?? ""),
                       size: 120,
+                      backgroundColor: Colors.white,
                     ),
           SizedBox(
-            height: 25,
+            height: 12,
           ),
           Text(
             '${channel.name}',
@@ -66,7 +67,7 @@ class ChannelFirstMessage extends StatelessWidget {
           ),
           Container(
             width: 150,
-            padding: const EdgeInsets.only(top: 30, bottom: 10),
+            padding: const EdgeInsets.only(top: 8, bottom: 20),
             child: Text(
               AppLocalizations.of(context)!.firstMessageInChannelInfo,
               maxLines: 2,
