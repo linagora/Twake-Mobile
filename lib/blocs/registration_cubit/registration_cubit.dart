@@ -17,6 +17,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
   }
 
   void prepare() async {
+    emit(RegistrationAwaiting());
     final secretToken = await _repository.secretToken;
 
     emit(RegistrationReady(
@@ -30,6 +31,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     required String secretToken,
     required String code,
   }) async {
+    emit(RegistrationAwaiting());
     final status = await _repository.signup(
       email: email,
       secretToken: secretToken,
@@ -50,6 +52,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
   }
 
   Future<void> resendEmail({required String email}) async {
+    emit(RegistrationAwaiting());
     final res = await _repository.resendEmail(email: email);
 
     if (res) {

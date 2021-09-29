@@ -3,7 +3,7 @@
     "internetConnection": "No internet connection",
     "signin": "Sign in",
     "signup": "Sign up",
-    "signupAgreement": "By continuing, you’re agreeing to our Terms of Services and Privacy Policy",
+    "signupAgreement": "By continuing, you’re agreeing to our #Terms of Services# and #Privacy Policy",
     "serverConnectionPreference": "Server connection preference",
     "serverConnectionPreferenceInfo": "Before you can proceed, please, choose a default server connection",
     "emailAddressRequest": "Please enter email address",

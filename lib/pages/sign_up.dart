@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,10 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/styles_config.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+const link = "https://twake.app/en/terms-of-service/";
 
 class SignUp extends StatefulWidget {
   final Function? onCancel;
@@ -22,7 +27,8 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
-
+  final _tapGestureRecognizer = TapGestureRecognizer();
+  bool emailExistsErr = false;
   @override
   void initState() {
     _controller.clear();
@@ -33,6 +39,7 @@ class _SignUpState extends State<SignUp> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+    _tapGestureRecognizer.dispose();
   }
 
   static bool validateEmail(String value) {
@@ -50,13 +57,19 @@ class _SignUpState extends State<SignUp> {
       if (stateRegistration is RegistrationFailed &&
           stateRegistration.emailExists) {
         Get.find<RegistrationCubit>().prepare();
+        await Future.delayed(const Duration(seconds: 1));
       }
-      if (stateRegistration is RegistrationReady) {
+      final stateReg = Get.find<RegistrationCubit>().state;
+      if (stateReg is RegistrationReady) {
         await Get.find<RegistrationCubit>().signup(
             email: email,
-            secretToken: stateRegistration.secretToken,
-            code: stateRegistration.code);
+            secretToken: stateReg.secretToken,
+            code: stateReg.code);
       }
+    } else {
+      setState(() {
+        emailExistsErr = false;
+      });
     }
   }
 
@@ -106,6 +119,7 @@ class _SignUpState extends State<SignUp> {
       body: SafeArea(
         child: BlocBuilder<RegistrationCubit, RegistrationState>(
           bloc: Get.find<RegistrationCubit>(),
+          buildWhen: (_, currentState) => currentState is! RegistrationAwaiting,
           builder: (ctx, state) {
             if (state is RegistrationReady) {
               return registrationInitial(emailExists: false, init: false);
@@ -131,6 +145,8 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget registrationInitial({required bool emailExists, required bool init}) {
+    final List<String> signupAgreement =
+        AppLocalizations.of(context)!.signupAgreement.split("#");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -140,6 +156,7 @@ class _SignUpState extends State<SignUp> {
           child: Text(
             AppLocalizations.of(context)!.signup,
             style: TextStyle(
+              fontFamily: 'SFProDisplayHeavy',
               fontSize: 28.0,
               fontWeight: FontWeight.w900,
             ),
@@ -147,12 +164,43 @@ class _SignUpState extends State<SignUp> {
         ),
         Padding(
           padding: EdgeInsets.only(left: 25, right: 25, top: 10),
-          child: Text(
-            AppLocalizations.of(context)!.signupAgreement,
-            style: TextStyle(
-                fontSize: 13.0,
-                fontWeight: FontWeight.normal,
-                color: Color(0xFF969698)),
+          child: RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                  text: signupAgreement[0],
+                  style: TextStyle(
+                    fontSize: 13.0,
+                    color: Color(0xFF969698),
+                  )),
+              TextSpan(
+                  text: signupAgreement[1],
+                  recognizer: _tapGestureRecognizer
+                    ..onTap = () async {
+                      if (await canLaunch(link)) {
+                        await launch(
+                          link,
+                        );
+                      }
+                    },
+                  style: StylesConfig.signupAgreement),
+              TextSpan(
+                  text: signupAgreement[2],
+                  style: TextStyle(
+                    fontSize: 13.0,
+                    color: Color(0xFF969698),
+                  )),
+              TextSpan(
+                  text: signupAgreement[3],
+                  recognizer: _tapGestureRecognizer
+                    ..onTap = () async {
+                      if (await canLaunch(link)) {
+                        await launch(
+                          link,
+                        );
+                      }
+                    },
+                  style: StylesConfig.signupAgreement)
+            ]),
           ),
         ),
         Padding(
@@ -207,6 +255,7 @@ class _SignUpState extends State<SignUp> {
                     },
                     controller: _controller,
                     onFieldSubmitted: (_) {
+                      /*
                       if (_controller.text.indexOf(" ") == -1) {
                         _sendLink(_controller.text);
                       } else {
@@ -214,6 +263,7 @@ class _SignUpState extends State<SignUp> {
                             .substring(0, _controller.text.indexOf(" "));
                         _sendLink(_controller.text);
                       }
+                      */
                     },
                     style: TextStyle(
                       fontSize: 17.0,
@@ -274,7 +324,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                 ),
         ),
-        if (emailExists)
+        if (emailExists && emailExistsErr)
           Padding(
             padding: const EdgeInsets.only(left: 35),
             child: Text(
@@ -320,12 +370,17 @@ class _SignUpState extends State<SignUp> {
           padding: const EdgeInsets.only(left: 25, right: 25, bottom: 25),
           child: TextButton(
             onPressed: () {
-              if (_controller.text.indexOf(" ") == -1) {
-                _sendLink(_controller.text);
+              emailExistsErr = true;
+              final stateRegistration = Get.find<RegistrationCubit>().state;
+              if (stateRegistration is RegistrationAwaiting) {
               } else {
-                _controller.text = _controller.text
-                    .substring(0, _controller.text.indexOf(" "));
-                _sendLink(_controller.text);
+                if (_controller.text.indexOf(" ") == -1) {
+                  _sendLink(_controller.text);
+                } else {
+                  _controller.text = _controller.text
+                      .substring(0, _controller.text.indexOf(" "));
+                  _sendLink(_controller.text);
+                }
               }
             },
             child: Container(
@@ -335,14 +390,22 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(14.0),
               ),
               alignment: Alignment.center,
-              child: Text(
-                AppLocalizations.of(context)!.startUsingTwake,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              child: BlocBuilder<RegistrationCubit, RegistrationState>(
+                bloc: Get.find<RegistrationCubit>(),
+                builder: (context, state) {
+                  if (state is RegistrationAwaiting && !init) {
+                    return CircularProgressIndicator();
+                  }
+                  return Text(
+                    AppLocalizations.of(context)!.startUsingTwake,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -387,8 +450,12 @@ class _SignUpState extends State<SignUp> {
                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 20),
                 child: TextButton(
                   onPressed: () async {
-                    await Get.find<RegistrationCubit>()
-                        .resendEmail(email: _controller.text);
+                    final registrationState = Get.find<RegistrationCubit>();
+                    if (registrationState is RegistrationAwaiting) {
+                    } else {
+                      await Get.find<RegistrationCubit>()
+                          .resendEmail(email: _controller.text);
+                    }
                   },
                   child: Container(
                     height: 50,
@@ -397,14 +464,23 @@ class _SignUpState extends State<SignUp> {
                       borderRadius: BorderRadius.circular(14.0),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      AppLocalizations.of(context)!.resendEmail,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 17.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                    child: BlocBuilder<RegistrationCubit, RegistrationState>(
+                      bloc: Get.find<RegistrationCubit>(),
+                      builder: (context, state) {
+                        if (state is RegistrationAwaiting) {
+                          return CircularProgressIndicator();
+                        } else {
+                          return Text(
+                            AppLocalizations.of(context)!.resendEmail,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          );
+                        }
+                      },
                     ),
                   ),
                 ),
@@ -428,6 +504,9 @@ class _SignUpState extends State<SignUp> {
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF02A82E),
                         ),
+                      ),
+                      SizedBox(
+                        width: 20,
                       ),
                     ],
                   )

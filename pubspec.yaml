@@ -137,6 +137,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: SFProDisplayHeavy
+      fonts:
+        - asset: assets/fonts/SFProDisplay-Heavy.ttf
     - family: SourceCodePro
       fonts:
         - asset: assets/fonts/SourceCodePro-Regular.ttf

@@ -56,3 +56,10 @@ class EmailResendFailed extends RegistrationState {
   @override
   List<Object?> get props => [];
 }
+
+class RegistrationAwaiting extends RegistrationState {
+  const RegistrationAwaiting();
+
+  @override
+  List<Object?> get props => [];
+}
