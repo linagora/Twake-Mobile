@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_cubit.dart';
 import 'package:twake/blocs/channels_cubit/member_management_cubit/member_management_state.dart';
+import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
@@ -218,9 +219,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                       itemBuilder: (ctx, index) {
                                         final member = members[index];
                                         return _MemberManagementTile(
-                                          userId: member.id,
-                                          name: member.fullName,
-                                          logo: member.picture,
+                                          user: member,
                                           currentChannel: _currentChannel,
                                         );
                                       },
@@ -243,17 +242,13 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
 }
 
 class _MemberManagementTile extends StatelessWidget {
-  final String name;
-  final String? logo;
   final Channel? currentChannel;
-  final String userId;
+  final Account user;
 
   const _MemberManagementTile({
     Key? key,
-    required this.name,
     required this.currentChannel,
-    required this.userId,
-    this.logo,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -267,12 +262,12 @@ class _MemberManagementTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: ImageWidget(
                   imageType: ImageType.common,
-                  imageUrl: logo ?? '',
-                  name: name,
+                  imageUrl: user.picture ?? '',
+                  name: user.fullName,
                   size: 34,
                 )),
             Expanded(
-              child: Text(name,
+              child: Text(user.fullName,
                   style: TextStyle(
                     color: Color(0xff000000),
                     fontSize: 17,
@@ -301,10 +296,10 @@ class _MemberManagementTile extends StatelessWidget {
                   builder: (_) {
                     return modalSheet(
                         context: context,
-                        name: name,
-                        logo: logo,
+                        name: user.fullName,
+                        logo: user.picture,
                         currentChannel: currentChannel,
-                        userId: userId);
+                        user: user);
                   },
                 );
               },
@@ -320,10 +315,10 @@ class _MemberManagementTile extends StatelessWidget {
           builder: (_) {
             return modalSheet(
                 context: context,
-                name: name,
-                logo: logo,
+                name: user.fullName,
+                logo: user.picture,
                 currentChannel: currentChannel,
-                userId: userId);
+                user: user);
           },
         );
       },
@@ -336,7 +331,7 @@ Widget modalSheet(
     required String name,
     required String? logo,
     required Channel? currentChannel,
-    required String userId}) {
+    required Account user}) {
   return Column(
     children: [
       Expanded(
@@ -379,22 +374,28 @@ Widget modalSheet(
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 45),
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Icon(
-                          CupertinoIcons.text_bubble_fill,
-                          color: Colors.black,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Get.find<NewDirectCubit>().newDirect([user]);
+                    },
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: Icon(
+                            CupertinoIcons.text_bubble_fill,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.sendDirect,
-                        style: TextStyle(
-                          fontSize: 17.0,
+                        Text(
+                          AppLocalizations.of(context)!.sendDirect,
+                          style: TextStyle(
+                            fontSize: 17.0,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -404,7 +405,7 @@ Widget modalSheet(
                     onTap: () async {
                       if (currentChannel != null) {
                         await Get.find<ChannelsCubit>().removeMembers(
-                            channel: currentChannel, userId: userId);
+                            channel: currentChannel, userId: user.id);
                         Get.find<MemberManagementCubit>()
                             .getMembersFromIds(channel: currentChannel);
                         Navigator.pop(context);

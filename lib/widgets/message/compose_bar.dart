@@ -301,11 +301,11 @@ class _ComposeBar extends State<ComposeBar> {
                                           fontWeight: FontWeight.w300),
                                     ),
                                     Expanded(child: SizedBox()),
-                                    Icon(
-                                      Icons.message_rounded,
-                                      color: Colors.grey,
-                                    ),
-                                    SizedBox(width: 15),
+                                    // Icon(
+                                    // Icons.message_rounded,
+                                    // color: Colors.grey,
+                                    // ),
+                                    // SizedBox(width: 15),
                                   ],
                                 ),
                               ),

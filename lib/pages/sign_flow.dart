@@ -134,7 +134,7 @@ class SignInSignUpForm extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO: remove when signUp will work on beta
-                      if (Globals.instance.host != "https://beta.twake.app") {
+                      if (Globals.instance.host != "https://web.twake.app") {
                         Get.find<RegistrationCubit>().prepare();
                         onSignUp();
                       }

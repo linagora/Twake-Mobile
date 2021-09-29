@@ -262,6 +262,7 @@ class MessagesRepository {
         data: data,
         key: 'resource',
       );
+
       message = Message.fromJson(
         id == threadId ? remoteResult['message'] : remoteResult,
         jsonify: false,

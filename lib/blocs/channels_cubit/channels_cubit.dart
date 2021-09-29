@@ -215,13 +215,13 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
     final selected = channels.firstWhere((c) => c.id == channelId);
 
+    Globals.instance.channelIdSet = channelId;
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
       selected: selected,
       hash: hash,
     ));
-
-    Globals.instance.channelIdSet = channelId;
 
     SynchronizationService.instance.subscribeToMessages(
       channelId: channelId,
@@ -446,11 +446,6 @@ class DirectsCubit extends BaseChannelsCubit {
   @override
   final _socketIOMembershipStream =
       SynchronizationService.instance.socketIODirectMembershipStream;
-
-  @override
-  void selectChannel({required String channelId}) {
-    super.selectChannel(channelId: channelId);
-  }
 
   @override
   void clearSelection([bool isDirect = true]) {
