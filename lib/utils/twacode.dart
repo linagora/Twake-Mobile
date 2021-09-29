@@ -992,9 +992,9 @@ class TwacodeRenderer {
             ),
           );
         } else if (type == TType.File) {
-          final widget = FileTile(fileId: t['content']);
-
-          spans.add(WidgetSpan(child: widget));
+          // final widget = FileTile(fileId: t['content']); // TODO uncomment once the file upload functionallity works
+          //
+          // spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
           spans.add(TextSpan(
               style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
