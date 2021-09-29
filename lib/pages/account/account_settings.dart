@@ -57,58 +57,59 @@ class _AccountSettingsState extends State<AccountSettings> {
           color: Color(0xffefeef3),
           child: SafeArea(
             bottom: false,
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).padding.bottom + 44.0),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16.0, 22.0, 16.0, 36.0),
-                child: BlocBuilder<AccountCubit, AccountState>(
-                  bloc: Get.find<AccountCubit>(),
-                  builder: (context, accountState) {
-                    var email = '';
-                    var language = '';
-                    if (accountState is AccountLoadSuccess) {
-                      final account = accountState.account;
-                      email = account.email;
-                      language = account.language ?? '';
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: GestureDetector(
-                                onTap: () => NavigatorService.instance.back(),
-                                child: Icon(
-                                  Icons.arrow_back_ios,
-                                  color: Color(0xff3840f7),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.0, 22.0, 16.0, 36.0),
+              child: BlocBuilder<AccountCubit, AccountState>(
+                bloc: Get.find<AccountCubit>(),
+                builder: (context, accountState) {
+                  var email = '';
+                  var language = '';
+                  if (accountState is AccountLoadSuccess) {
+                    final account = accountState.account;
+                    email = account.email;
+                    language = account.language ?? '';
+                  }
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: GestureDetector(
+                              onTap: () => NavigatorService.instance.back(),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Color(0xff3840f7),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  color: _canSave
+                                      ? Color(0xff3840f7)
+                                      : Color(0xffa2a2a2),
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: Text(
-                                  '',
-                                  style: TextStyle(
-                                    color: _canSave
-                                        ? Color(0xff3840f7)
-                                        : Color(0xffa2a2a2),
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 32.0),
-                        Text(
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 32.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(
                           AppLocalizations.of(context)!.manageYourData,
                           style: TextStyle(
                             fontSize: 17.0,
@@ -116,23 +117,26 @@ class _AccountSettingsState extends State<AccountSettings> {
                             color: Colors.black,
                           ),
                         ),
-                        SizedBox(height: 12.0),
-                        ButtonField(
-                          image: 'assets/images/gear_blue.png',
-                          imageSize: 44.0,
-                          title: 'Twake Connect',
-                          height: 88.0,
-                          titleStyle: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                          hasArrow: true,
-                          onTap: () => NavigatorService.instance
-                              .navigateToAccount(shouldShowInfo: true),
+                      ),
+                      SizedBox(height: 12.0),
+                      ButtonField(
+                        image: 'assets/images/gear_blue.png',
+                        imageSize: 44.0,
+                        title: 'Twake Connect',
+                        height: 88.0,
+                        titleStyle: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
                         ),
-                        SizedBox(height: 10.0),
-                        Text(
+                        hasArrow: true,
+                        onTap: () => NavigatorService.instance
+                            .navigateToAccount(shouldShowInfo: true),
+                      ),
+                      SizedBox(height: 10.0),
+                      Padding(
+                         padding: const EdgeInsets.only(left: 8),
+                        child: Text(
                           AppLocalizations.of(context)!.twakeConnectInfo,
                           style: TextStyle(
                             fontSize: 12.0,
@@ -140,17 +144,20 @@ class _AccountSettingsState extends State<AccountSettings> {
                             color: Color(0xff939297),
                           ),
                         ),
-                        SizedBox(height: 72.0),
-                        SwitchField(
-                          image: 'assets/images/notifications.png',
-                          title: AppLocalizations.of(context)!.notifications,
-                          value: false,
-                          isExtended: true,
-                          isRounded: true,
-                          onChanged: (value) {},
-                        ),
-                        SizedBox(height: 8.0),
-                        Text(
+                      ),
+                      SizedBox(height: 22.0),
+                      SwitchField(
+                        image: 'assets/images/notifications.png',
+                        title: AppLocalizations.of(context)!.notifications,
+                        value: true,
+                        isExtended: true,
+                        isRounded: true,
+                        onChanged: (value) {},
+                      ),
+                      SizedBox(height: 8.0),
+                      Padding(
+                         padding: const EdgeInsets.only(left: 8),
+                        child: Text(
                           AppLocalizations.of(context)!.notificationsInfo,
                           style: TextStyle(
                             fontSize: 12.0,
@@ -158,8 +165,10 @@ class _AccountSettingsState extends State<AccountSettings> {
                             color: Color(0xff939297),
                           ),
                         ),
-                        SizedBox(height: 24.0),
-                        ButtonField(
+                      ),
+                         SizedBox(height: 8.0),
+
+                      /* ButtonField(
                           image: 'assets/images/language.png',
                           title: AppLocalizations.of(context)!.language,
                           titleStyle: TextStyle(
@@ -204,45 +213,45 @@ class _AccountSettingsState extends State<AccountSettings> {
                             bottomLeft: Radius.circular(10.0),
                             bottomRight: Radius.circular(10.0),
                           ),
+                        ),*/
+
+                      ButtonField(
+                        onTap: () => NavigatorService.instance.openTwakeWebView(
+                            'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
+                        image: 'assets/images/support.png',
+                        title: AppLocalizations.of(context)!.customerSupport,
+                        titleStyle: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
                         ),
-                        SizedBox(height: 24.0),
-                        ButtonField(
-                          onTap: () => NavigatorService.instance.openTwakeWebView(
-                              'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
-                          image: 'assets/images/support.png',
-                          title: AppLocalizations.of(context)!.customerSupport,
-                          titleStyle: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                        hasArrow: true,
+                        arrowColor: Color(0xff3c3c43).withOpacity(0.3),
+                      ),
+                      Spacer(),
+                      GestureDetector(
+                        onTap: () => _handleLogout(context),
+                        child: Container(
+                          height: 44.0,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          hasArrow: true,
-                          arrowColor: Color(0xff3c3c43).withOpacity(0.3),
-                        ),
-                        SizedBox(height: 21.0),
-                        GestureDetector(
-                          onTap: () => _handleLogout(context),
-                          child: Container(
-                            height: 44.0,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              AppLocalizations.of(context)!.logout,
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xffff3b30),
-                              ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLocalizations.of(context)!.logout,
+                            style: TextStyle(
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xffff3b30),
                             ),
                           ),
                         ),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                      SizedBox(height: 21.0),
+                    ],
+                  );
+                },
               ),
             ),
           ),

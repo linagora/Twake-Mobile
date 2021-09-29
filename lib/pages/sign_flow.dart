@@ -133,11 +133,8 @@ class SignInSignUpForm extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      // TODO: remove when signUp will work on beta
-                      if (Globals.instance.host != "https://web.twake.app") {
-                        Get.find<RegistrationCubit>().prepare();
-                        onSignUp();
-                      }
+                      Get.find<RegistrationCubit>().prepare();
+                      onSignUp();
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signup,
