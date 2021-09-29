@@ -300,7 +300,7 @@ class _ComposeBar extends State<ComposeBar> {
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w300),
                                     ),
-                                    // Expanded(child: SizedBox()),
+                                    Expanded(child: SizedBox()),
                                     // Icon(
                                     // Icons.message_rounded,
                                     // color: Colors.grey,
