@@ -106,7 +106,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         appBar: AppBar(
           leading: SizedBox.shrink(),
           leadingWidth: 0,
-          toolbarHeight: 100,
+          toolbarHeight: kToolbarHeight * 2.7,
           bottom: TabBar(
             tabs: [
               BlocBuilder<WorkspacesCubit, WorkspacesState>(
@@ -173,7 +173,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       child: Column(
         children: [
           Container(
-            height: 44,
+            height: kToolbarHeight / 1.2,
             child: Stack(
               children: [
                 Align(
@@ -255,10 +255,10 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
           ),
           Divider(
             color: Colors.white,
-            height: 12,
+            height: 8,
           ),
           TwakeSearchTextField(
-            height: 40,
+            height: kToolbarHeight / 1.5,
             controller: _searchController,
             hintText: AppLocalizations.of(context)!.search,
             backgroundColor: Color(0xfff9f8f9),
