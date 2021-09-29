@@ -96,7 +96,7 @@ class ApiDataTransformer {
     } else {
       json['files'] = <String>[];
     }
-    if (json.containsKey('application')) {
+    if (json['application'] != null) {
       final app = json['application']['identity'];
       json['username'] = app['name'];
       json['picture'] = app['icon'];

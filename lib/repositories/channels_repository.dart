@@ -176,9 +176,9 @@ class ChannelsRepository {
           queryParameters: queryParameters,
         );
 
+        membersJson.addAll(res['resources'] as List<dynamic>);
         if (res.containsKey('next_page_token')) {
           queryParameters['page_token'] = res['next_page_token'];
-          membersJson.addAll(res['resources'] as List<dynamic>);
         } else {
           break;
         }

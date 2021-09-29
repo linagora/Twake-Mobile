@@ -57,7 +57,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
     if (state == AppLifecycleState.resumed) {
       SocketIOService.instance.connect();
-      Future.delayed(Duration(seconds: 5), () {
+      Future.delayed(Duration(seconds: 7), () {
         refetchData();
 
         SynchronizationService.instance.subscribeToBadges();
@@ -106,7 +106,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         appBar: AppBar(
           leading: SizedBox.shrink(),
           leadingWidth: 0,
-          toolbarHeight: 100 ,
+          toolbarHeight: 100,
           bottom: TabBar(
             tabs: [
               BlocBuilder<WorkspacesCubit, WorkspacesState>(
