@@ -91,7 +91,7 @@ class ChannelsRepository {
     final result = await _api.post(
       endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]),
       data: {
-        'options': {'members': channel.members},
+        'options': {'members': channel.members..add(Globals.instance.userId!)},
         'resource': channel.toJson(stringify: false)
           ..remove('id')
           ..addAll({'default': isDefault}),
@@ -162,17 +162,29 @@ class ChannelsRepository {
   Future<List<Account>> fetchMembers({required Channel channel}) async {
     final List<Account> members = [];
 
+    Map<String, dynamic> res;
+    List<dynamic> membersJson = [];
+
+    final queryParameters = <String, dynamic>{'limit': 100};
     if (channel.members.isEmpty) {
-      final List<dynamic> res = await _api.get(
-        endpoint: sprintf(
-          Endpoint.channelMembers,
-          [channel.companyId, channel.workspaceId, channel.id],
-        ),
-        queryParameters: {'limit': 1000},
-        key: 'resources',
-      );
+      while (true) {
+        res = await _api.get(
+          endpoint: sprintf(
+            Endpoint.channelMembers,
+            [channel.companyId, channel.workspaceId, channel.id],
+          ),
+          queryParameters: queryParameters,
+        );
+
+        if (res.containsKey('next_page_token')) {
+          queryParameters['page_token'] = res['next_page_token'];
+          membersJson.addAll(res['resources'] as List<dynamic>);
+        } else {
+          break;
+        }
+      }
       channel.members.addAll(
-        res.where((m) => m['user_id'] != null).map((m) => m['user_id']),
+        membersJson.where((m) => m['user_id'] != null).map((m) => m['user_id']),
       );
     }
 

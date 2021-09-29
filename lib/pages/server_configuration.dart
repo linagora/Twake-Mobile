@@ -130,7 +130,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                       ),
                       decoration: InputDecoration(
                         hintText: Globals.instance.host.isEmpty
-                            ? 'https://beta.twake.app'
+                            ? 'https://web.twake.app'
                             : Globals.instance.host,
                         hintStyle: TextStyle(
                           fontSize: 17.0,
@@ -163,12 +163,12 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                   ),
                   MediaQuery.of(context).viewInsets.bottom == 0
                       ? Flexible(
-                        child: SizedBox(
+                          child: SizedBox(
                             height: Dim.heightPercent(
                                 (90 - (450 * 100 / Dim.heightPercent(100)))
                                     .toInt()),
                           ),
-                      )
+                        )
                       : SizedBox(
                           height: 15,
                         ),

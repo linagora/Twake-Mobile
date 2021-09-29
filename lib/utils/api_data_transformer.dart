@@ -96,7 +96,11 @@ class ApiDataTransformer {
     } else {
       json['files'] = <String>[];
     }
-    if (json.containsKey('users') &&
+    if (json.containsKey('application')) {
+      final app = json['application']['identity'];
+      json['username'] = app['name'];
+      json['picture'] = app['icon'];
+    } else if (json.containsKey('users') &&
         (json['users'] as List<dynamic>).isNotEmpty) {
       final user = (json['users'] as List<dynamic>).first;
 

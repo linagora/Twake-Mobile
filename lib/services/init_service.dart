@@ -16,7 +16,7 @@ class InitService {
     _storageService = StorageService(reset: true);
     await _storageService.init();
 
-    const host = 'https://beta.twake.app';
+    const host = 'https://web.twake.app';
     final g = await _storageService.first(table: Table.globals);
     Globals globals;
     if (g.isNotEmpty) {
