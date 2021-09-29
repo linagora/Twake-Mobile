@@ -460,7 +460,8 @@ class _TextInputState extends State<TextInput> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(width: 14.0),
-          BlocBuilder<FileCubit, FileState>(
+          // TODO: implement this functionality 
+          /*BlocBuilder<FileCubit, FileState>(
             bloc: Get.find<FileCubit>(),
             builder: (context, state) {
               if (state is FileInitial) {
@@ -496,7 +497,7 @@ class _TextInputState extends State<TextInput> {
                 ),
               );
             },
-          ),
+          ),*/
           SizedBox(width: 14.0),
           Expanded(
             child: Container(
