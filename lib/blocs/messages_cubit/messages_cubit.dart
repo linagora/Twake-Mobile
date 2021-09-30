@@ -183,6 +183,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       now: DateTime.now().millisecondsSinceEpoch,
     );
 
+    final state = this.state as MessagesLoadSuccess;
+    emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
+
     await for (final message in sendStream) {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess

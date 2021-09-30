@@ -251,6 +251,7 @@ class MessagesRepository {
     while (true) {
       await _sendGuard.acquire();
       if (_turn == turn) {
+        _turn += 1;
         break;
       }
       _sendGuard.release();
@@ -285,8 +286,7 @@ class MessagesRepository {
 
     yield message;
 
-    _turn += 1;
-    await Future.delayed(Duration(milliseconds: 300));
+    await Future.delayed(Duration(milliseconds: 200));
 
     _sendGuard.release();
   }
