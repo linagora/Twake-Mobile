@@ -29,7 +29,7 @@ class _SignUpState extends State<SignUp> {
   final _controller = TextEditingController();
   final _tapGestureRecognizer = TapGestureRecognizer();
   bool emailExistsErr = false;
-  bool close = false;
+  bool exit = false;
   @override
   void initState() {
     _controller.clear();
@@ -107,7 +107,7 @@ class _SignUpState extends State<SignUp> {
                     color: Colors.grey[600],
                   ),
                   onPressed: () {
-                    close = true;
+                    exit = true;
                     widget.onCancel!();
                     _controller.clear();
                     Get.find<RegistrationCubit>().emit(RegistrationInitial());
@@ -124,8 +124,8 @@ class _SignUpState extends State<SignUp> {
           buildWhen: (_, currentState) => currentState is! RegistrationAwaiting,
           builder: (ctx, state) {
             if (state is RegistrationReady) {
-              close = false;
-              return registrationInitial(emailExists: false, init: false);
+              exit = false;
+              return registrationFailed();//registrationInitial(emailExists: false, init: false);
             } else if (state is RegistrationSuccess) {
               return registrationSuccess();
             } else if (state is EmailResendSuccess) {
@@ -212,7 +212,7 @@ class _SignUpState extends State<SignUp> {
             key: _formKey,
             child: TextFormField(
               validator: (value) {
-                if (init || close) {
+                if (init || exit) {
                   return null;
                 } else {
                   if (value == null || value.isEmpty) {
@@ -561,8 +561,8 @@ class _SignUpState extends State<SignUp> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17.0,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
+              fontWeight: FontWeight.normal,
+              color: Color(0xFF8A898E),
             ),
           ),
           SizedBox(
