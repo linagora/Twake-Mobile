@@ -128,10 +128,7 @@ class AuthenticationRepository {
 
   Future<void> logout() async {
     if (Globals.instance.isNetworkConnected) {
-      _api.delete(
-        endpoint: Endpoint.device + '/${Globals.instance.fcmToken}',
-        data: const {},
-      );
+      unregisterDevice();
     } else {
       return;
     }
@@ -206,6 +203,13 @@ class AuthenticationRepository {
       }
     };
     await _api.post(endpoint: Endpoint.device, data: data);
+  }
+
+  Future<void> unregisterDevice() async {
+    await _api.delete(
+      endpoint: Endpoint.device + '/${Globals.instance.fcmToken}',
+      data: const {},
+    );
   }
 
   int get tzo => -DateTime.now().timeZoneOffset.inMinutes;
