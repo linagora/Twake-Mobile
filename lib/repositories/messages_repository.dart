@@ -429,13 +429,6 @@ class MessagesRepository {
             ) +
             '/$messageId/delete',
         data: const {});
-
-    // Only delete message from local store if API request was successful
-    await _storage.delete(
-      table: Table.message,
-      where: 'id = ?',
-      whereArgs: [messageId],
-    );
   }
 
   Future<Message> getMessage({
