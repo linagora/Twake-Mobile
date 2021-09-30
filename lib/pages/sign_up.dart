@@ -125,7 +125,7 @@ class _SignUpState extends State<SignUp> {
           builder: (ctx, state) {
             if (state is RegistrationReady) {
               exit = false;
-              return registrationFailed();//registrationInitial(emailExists: false, init: false);
+              return registrationInitial(emailExists: false, init: false);
             } else if (state is RegistrationSuccess) {
               return registrationSuccess();
             } else if (state is EmailResendSuccess) {
