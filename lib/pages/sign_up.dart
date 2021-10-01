@@ -10,7 +10,8 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const link = "https://twake.app/en/terms-of-service/";
+const link1 = "https://twake.app/en/terms-of-service/";
+const link2 = "https://twake.app/en/privacy/";
 
 class SignUp extends StatefulWidget {
   final Function? onCancel;
@@ -27,7 +28,8 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
-  final _tapGestureRecognizer = TapGestureRecognizer();
+  final _tapGestureRecognizerF = TapGestureRecognizer();
+  final _tapGestureRecognizerS = TapGestureRecognizer();
   bool emailExistsErr = false;
   bool exit = false;
   @override
@@ -40,7 +42,8 @@ class _SignUpState extends State<SignUp> {
   void dispose() {
     _controller.dispose();
     super.dispose();
-    _tapGestureRecognizer.dispose();
+    _tapGestureRecognizerF.dispose();
+    _tapGestureRecognizerS.dispose();
   }
 
   static bool validateEmail(String value) {
@@ -177,11 +180,11 @@ class _SignUpState extends State<SignUp> {
                   )),
               TextSpan(
                   text: signupAgreement[1],
-                  recognizer: _tapGestureRecognizer
+                  recognizer: _tapGestureRecognizerF
                     ..onTap = () async {
-                      if (await canLaunch(link)) {
+                      if (await canLaunch(link1)) {
                         await launch(
-                          link,
+                          link1,
                         );
                       }
                     },
@@ -194,11 +197,11 @@ class _SignUpState extends State<SignUp> {
                   )),
               TextSpan(
                   text: signupAgreement[3],
-                  recognizer: _tapGestureRecognizer
+                  recognizer: _tapGestureRecognizerS
                     ..onTap = () async {
-                      if (await canLaunch(link)) {
+                      if (await canLaunch(link2)) {
                         await launch(
-                          link,
+                          link2,
                         );
                       }
                     },
