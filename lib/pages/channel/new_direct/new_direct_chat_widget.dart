@@ -46,7 +46,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
               ),
               Row(
                 children: [
-                  Expanded(
+                  /* Expanded(
                     child: Align(
                       alignment: Alignment.center,
                       child: Text(
@@ -61,45 +61,68 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         ),
                       ),
                     ),
-                  ),
+                  ),*/
+
                   GestureDetector(
                     onTap: () => popBack(),
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: Image.asset(imagePathCancel),
-                    ),
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.blue[600],
+                              fontWeight: FontWeight.w600),
+                        ) //Image.asset(imagePathCancel),
+                        ),
                   )
                 ],
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8),
+                padding: const EdgeInsets.only(top: 30),
                 child: Container(
-                  height: 44,
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                          child: TwakeSearchTextField(
-                        controller: _searchController,
-                        height: 44,
-                        hintText: '',
-                        showPrefixIcon: false,
-                      )),
-                      Positioned(
-                        left: 8,
-                        top: 12,
-                        child: Text(
-                          AppLocalizations.of(context)!.to,
-                          style: TextStyle(
-                            color: Color(0x66000000),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
+                  height: 40,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () => push(RoutePaths.newChannel.path),
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Image.asset(imageGroup),
+                        ),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              AppLocalizations.of(context)!.createNewChannel,
+                              style: TextStyle(
+                                color: Color(0xff000000),
+                                fontSize: 17,
+                                fontWeight: FontWeight.w600,
+                                fontStyle: FontStyle.normal,
+                              ),
+                            ),
                           ),
                         ),
-                      )
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: Icon(
+                            Icons.keyboard_arrow_right,
+                            color: Color(0xff004dff),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Dim.widthPercent(15),
+                ),
+                child: Divider(
+                  thickness: 1,
                 ),
               ),
               Container(
@@ -138,7 +161,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                   ),
                 ),
               ),
-              Padding(
+              /* Padding(
                 padding: const EdgeInsets.only(top: 23.0, left: 16, bottom: 12),
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -153,8 +176,54 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                     ),
                   ),
                 ),
+              ),*/
+                  Padding(
+                padding: const EdgeInsets.only(top: 20.0, left: 16),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    AppLocalizations.of(context)!.directChats,
+                    style: TextStyle(
+                      color: Color(0x59000000),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      fontStyle: FontStyle.normal,
+                    ),
+                  ),
+                ),
               ),
-              BlocBuilder<NewDirectCubit, NewDirectState>(
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8),
+                child: Container(
+                  height: 44,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                          child: TwakeSearchTextField(
+                        controller: _searchController,
+                        height: 44,
+                        hintText: '',
+                        showPrefixIcon: false,
+                      )),
+                      Positioned(
+                        left: 8,
+                        top: 12,
+                        child: Text(
+                          AppLocalizations.of(context)!.to,
+                          style: TextStyle(
+                            color: Color(0x66000000),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.normal,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              /*BlocBuilder<NewDirectCubit, NewDirectState>(
                   bloc: Get.find<NewDirectCubit>(),
                   builder: (context, newDirectState) {
                     if (newDirectState is NewDirectInProgress) {
@@ -189,22 +258,8 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         },
                       ),
                     );
-                  }),
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0, left: 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    AppLocalizations.of(context)!.people,
-                    style: TextStyle(
-                      color: Color(0x59000000),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      fontStyle: FontStyle.normal,
-                    ),
-                  ),
-                ),
-              ),
+                  }),*/
+          
               Expanded(
                 child: BlocBuilder<NewDirectCubit, NewDirectState>(
                   bloc: Get.find<NewDirectCubit>(),

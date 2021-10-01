@@ -64,7 +64,7 @@
     "createNewChannel": "Create a new channel",
     "to": "To:",
     "recentChats": "RECENT CHATS",
-    "people": "PEOPLE",
+    "directChats": "Direct chats",
     "cancel": "Cancel",
     "delete": "Delete",
     "create": "Create",
