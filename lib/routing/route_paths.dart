@@ -1,8 +1,8 @@
 class RoutePaths {
-  static const initial = 'initial/';
+  static const initial = '/initial/';
 
   // channel
-  static final channelMessages = _RoutePathsType(initial, 'channel/messages');
+  static final channelMessages = _RoutePathsType(initial, '/channel/messages');
   static final channelDetail =
       _RoutePathsType(channelMessages.path, '/channel_detail');
   static final editChannel =
@@ -13,30 +13,30 @@ class RoutePaths {
       _RoutePathsType(channelDetail.path, '/channel_member_management');
   static final addChannelMembers =
       _RoutePathsType(channelMemberManagement.path, '/add_channel_members');
-  static final newDirect = _RoutePathsType(initial, 'channel/new_direct');
+  static final newDirect = _RoutePathsType(initial, '/channel/new_direct');
   static final newChannel = _RoutePathsType(newDirect.path, '/new_channel');
   static final addAndEditChannelMembers =
       _RoutePathsType(newChannel.path, '/add_and_edit_channel_members');
 
   // direct
-  static final directMessages = _RoutePathsType(initial, 'direct/messages');
+  static final directMessages = _RoutePathsType(initial, '/direct/messages');
 
   // threads
   static final channelMessageThread =
-      _RoutePathsType(initial, 'channel/message/thread');
+      _RoutePathsType(initial, '/channel/message/thread');
   static final directMessageThread =
-      _RoutePathsType(initial, 'direct/message/thread');
+      _RoutePathsType(initial, '/direct/message/thread');
 
   // account
-  static final accountSettings = _RoutePathsType(initial, 'account_settings');
+  static final accountSettings = _RoutePathsType(initial, '/account_settings');
   static final accountInfo =
-      _RoutePathsType(initial, 'account_settings/account_info');
+      _RoutePathsType(initial, '/account_settings/account_info');
 
-  static final createWorkspace = _RoutePathsType(initial, 'create_workspace');
-  static final homeWidget = _RoutePathsType(initial, 'homeWidget');
+  static final createWorkspace = _RoutePathsType(initial, '/create_workspace');
+  static final homeWidget = _RoutePathsType(initial, '/homeWidget');
 
   // initial
-  static final signInUpScreen = _RoutePathsType(initial, 'sign_flow');
+  static final signInUpScreen = _RoutePathsType(initial, '/sign_flow');
 }
 
 class _RoutePathsType {

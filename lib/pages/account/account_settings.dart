@@ -16,6 +16,7 @@ class AccountSettings extends StatefulWidget {
 
 class _AccountSettingsState extends State<AccountSettings> {
   bool _canSave = false;
+  bool switchVal = true;
 
   @override
   void initState() {
@@ -135,7 +136,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                       ),
                       SizedBox(height: 10.0),
                       Padding(
-                         padding: const EdgeInsets.only(left: 8),
+                        padding: const EdgeInsets.only(left: 8),
                         child: Text(
                           AppLocalizations.of(context)!.twakeConnectInfo,
                           style: TextStyle(
@@ -149,14 +150,22 @@ class _AccountSettingsState extends State<AccountSettings> {
                       SwitchField(
                         image: 'assets/images/notifications.png',
                         title: AppLocalizations.of(context)!.notifications,
-                        value: true,
+                        value: switchVal,
                         isExtended: true,
                         isRounded: true,
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          setState(() {
+                            switchVal = value;
+                          });
+                          switchVal
+                              ? Get.find<AuthenticationCubit>().registerDevice()
+                              : Get.find<AuthenticationCubit>()
+                                  .unRegisterDevice();
+                        },
                       ),
                       SizedBox(height: 8.0),
                       Padding(
-                         padding: const EdgeInsets.only(left: 8),
+                        padding: const EdgeInsets.only(left: 8),
                         child: Text(
                           AppLocalizations.of(context)!.notificationsInfo,
                           style: TextStyle(
@@ -166,7 +175,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                           ),
                         ),
                       ),
-                         SizedBox(height: 8.0),
+                      SizedBox(height: 8.0),
 
                       /* ButtonField(
                           image: 'assets/images/language.png',
