@@ -183,6 +183,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       now: DateTime.now().millisecondsSinceEpoch,
     );
 
+    final state = this.state as MessagesLoadSuccess;
+    emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
+
     await for (final message in sendStream) {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess
@@ -324,21 +327,18 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final messages = (this.state as MessagesLoadSuccess).messages;
     final hash = (this.state as MessagesLoadSuccess).hash;
     final endOfHistory = (this.state as MessagesLoadSuccess).endOfHistory;
-    messages.removeWhere((m) => m.id == message.id);
+    message.subtype = MessageSubtype.deleted;
 
-    if (messages.isNotEmpty) {
-      emit(MessagesLoadSuccess(
-        messages: messages,
-        hash: hash - message.hash,
-        endOfHistory: endOfHistory,
-      ));
-    } else {
-      emit(NoMessagesFound());
-    }
+    emit(MessagesLoadSuccess(
+      messages: messages,
+      hash: hash - message.hash,
+      endOfHistory: endOfHistory,
+    ));
 
     // Again, here we can use try except to undelete the message
     // if the request to API failed for some reason
     _repository.delete(messageId: message.id, threadId: message.threadId);
+    _repository.saveOne(message: message);
   }
 
   void selectThread({required String messageId}) {

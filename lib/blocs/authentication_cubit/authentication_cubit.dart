@@ -87,6 +87,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     await _repository.registerDevice();
   }
 
+  void unRegisterDevice() async {
+    await _repository.registerDevice();
+  }
+
   @override
   Future<void> close() {
     _networkSubscription.cancel();

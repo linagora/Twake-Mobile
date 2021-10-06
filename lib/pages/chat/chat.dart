@@ -99,7 +99,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     attachments = uploadState.files;
                   }
                   if (stateThread is MessagesLoadSuccessSwipeToReply) {
-                    Get.find<ThreadMessagesCubit>().send(
+                    await Get.find<ThreadMessagesCubit>().send(
                       originalStr: content,
                       attachments: attachments,
                       threadId: stateThread.messages.first.id,
@@ -175,25 +175,12 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                               '${_message.sender}',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
-                          //TODO do we need to use user's color or not?
-                          /* Text(
-                                    '${_message.sender}',
-                                    style: TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: HSLColor.fromAHSL(
-                                              1,
-                                              _message.username.hashCode % 360,
-                                              0.9,
-                                              0.3)
-                                          .toColor(),
-                                    ),
-                                  ),*/
                         ],
                       ),
                       Column(

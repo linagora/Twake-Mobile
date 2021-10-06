@@ -17,7 +17,7 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
-  final Function(String, BuildContext)? onMessageSend;
+  final Function(String, BuildContext) onMessageSend;
   final Function(String, BuildContext) onTextUpdated;
   final String? initialText;
 
@@ -405,13 +405,13 @@ class TextInput extends StatefulWidget {
   final bool? autofocus;
   final bool? emojiVisible;
   final bool canSend;
-  final Function? onMessageSend;
+  final Function onMessageSend;
   final Function? openFileExplorer;
   final Function? fileNumClear;
   final int? fileNumber;
 
   TextInput({
-    this.onMessageSend,
+    required this.onMessageSend,
     this.controller,
     this.focusNode,
     this.autofocus,
@@ -460,7 +460,7 @@ class _TextInputState extends State<TextInput> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(width: 14.0),
-          // TODO: implement this functionality 
+          // TODO: implement this functionality
           /*BlocBuilder<FileCubit, FileState>(
             bloc: Get.find<FileCubit>(),
             builder: (context, state) {
@@ -572,7 +572,7 @@ class _TextInputState extends State<TextInput> {
             behavior: HitTestBehavior.opaque,
             onTap: widget.canSend
                 ? () async {
-                    await widget.onMessageSend!(
+                    widget.onMessageSend(
                       await Get.find<MentionsCubit>()
                           .completeMentions(widget.controller!.text),
                       context,
