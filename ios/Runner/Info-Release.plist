@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSAppleMusicUsageDescription</key>
-	<string>Required in order to work with files</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -26,6 +24,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -35,6 +35,8 @@
 		<key>NSAllowsArbitraryLoadsInWebContent</key>
 		<true/>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Required in order to work with files</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Making pictures and videos to posting directly to the chat</string>
 	<key>NSMicrophoneUsageDescription</key>
@@ -63,13 +65,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
-	<key>com.claimsforce.segment.WRITE_KEY</key>
-	<string>rzmv64C2KMN8qPIM8WpiTeInts4ViGYK</string>
-	<key>com.claimsforce.segment.TRACK_APPLICATION_LIFECYCLE_EVENTS</key>
-	<true/>
 	<key>com.claimsforce.segment.ENABLE_AMPLITUDE_INTEGRATION</key>
 	<false/>
+	<key>com.claimsforce.segment.TRACK_APPLICATION_LIFECYCLE_EVENTS</key>
+	<true/>
+	<key>com.claimsforce.segment.WRITE_KEY</key>
+	<string>rzmv64C2KMN8qPIM8WpiTeInts4ViGYK</string>
 </dict>
 </plist>
