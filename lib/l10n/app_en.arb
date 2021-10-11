@@ -61,8 +61,10 @@
     "logout": "Log out",
     "newDirectChat": "New direct chat",
     "newChannel": "New channel",
-    "createNewChannel": "Create a new channel",
-    "to": "To:",
+    "createNewChannel": "New channel",
+    "newChat": "New Chat",
+    "searchForMembers": "Search for members",
+    
     "recentChats": "RECENT CHATS",
     "directChats": "Direct chats",
     "cancel": "Cancel",
