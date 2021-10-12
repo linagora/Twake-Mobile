@@ -69,10 +69,11 @@ class ApiDataTransformer {
         users.retainWhere((u) => u['id'] != Globals.instance.userId);
 
       json['name'] = users.map((u) {
-        final String name = (u['first_name'] as String).isNotEmpty
-            ? u['first_name']
-            : u['username'];
-
+        final String name = u['first_name'] == null
+            ? u['username']
+            : (u['first_name'] as String).isNotEmpty
+                ? u['first_name']
+                : u['username'];
         return name;
       }).join(', ');
 
