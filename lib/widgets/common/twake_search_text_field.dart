@@ -15,9 +15,9 @@ class TwakeSearchTextField extends StatefulWidget {
     this.hintText,
     this.backgroundColor = const Color(0xfff9f8f9),
     this.fontSize = 17,
-    TextEditingController? controller,
     this.showPrefixIcon = true,
     this.borderRadius = 12,
+    TextEditingController? controller,
   }) : super() {
     this.controller = controller != null ? controller : TextEditingController();
   }
@@ -57,7 +57,12 @@ class _TwakeSearchTextFieldState extends State<TwakeSearchTextField> {
         decoration: new InputDecoration(
           contentPadding: EdgeInsets.only(
               top: 10, bottom: 10, left: widget.showPrefixIcon ? 0 : 30),
-          prefixIcon: widget.showPrefixIcon ? Icon(Icons.search) : null,
+          prefixIcon: widget.showPrefixIcon
+              ? Icon(
+                  Icons.search,
+                  color: Colors.grey,
+                )
+              : null,
           suffixIcon: showClearButton
               ? Padding(
                   padding: const EdgeInsets.only(right: 16.0, left: 16),

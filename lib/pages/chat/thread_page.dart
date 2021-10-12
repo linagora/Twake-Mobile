@@ -47,7 +47,8 @@ class _ThreadPageState<T extends BaseChannelsCubit>
         builder: (ctx, messagesState) {
           if (messagesState is MessagesLoadSuccess &&
               messagesState.messages.isNotEmpty) {
-            String name = messagesState.messages[0].firstName!;
+            String name = messagesState.messages[0].firstName ??
+                '${messagesState.messages[0].username}';
             if (name.length > 20) {
               name = name.substring(0, 12) +
                   '...' +
