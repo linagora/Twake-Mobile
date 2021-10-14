@@ -17,6 +17,8 @@ class RoutePaths {
   static final newChannel = _RoutePathsType(newDirect.path, '/new_channel');
   static final addAndEditChannelMembers =
       _RoutePathsType(newChannel.path, '/add_and_edit_channel_members');
+  static final addAndEditDirectMembers =
+      _RoutePathsType(newDirect.path, '/add_and_edit_channel_members');
 
   // direct
   static final directMessages = _RoutePathsType(initial, '/direct/messages');

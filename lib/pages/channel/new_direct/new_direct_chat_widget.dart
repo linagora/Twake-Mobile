@@ -6,12 +6,11 @@ import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dar
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
-import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 class NewDirectChatWidget extends StatefulWidget {
   const NewDirectChatWidget({Key? key}) : super(key: key);
@@ -129,7 +128,10 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                   height: 40,
                   child: GestureDetector(
                     behavior: HitTestBehavior.translucent,
-                    onTap: () => push(RoutePaths.newChannel.path),
+                    onTap: () async {
+                      push(RoutePaths.addAndEditDirectMembers.path,
+                          arguments: AddAndEditMemberType.createDirect);
+                    },
                     child: Row(
                       children: [
                         Padding(
@@ -161,7 +163,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                     ),
                   ),
                 ),
-              if (isVisible || MediaQuery.of(context).viewInsets.bottom == 0)
+              if (isVisible)
                 Padding(
                   padding: const EdgeInsets.only(top: 25.0, left: 16),
                   child: Align(
@@ -245,8 +247,8 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                               fontWeight: FontWeight.w400,
                               fontStyle: FontStyle.normal,
                             ),
-                            hintText: AppLocalizations.of(context)!
-                                .searchForMembers,
+                            hintText:
+                                AppLocalizations.of(context)!.searchForMembers,
                             fillColor: Color(0xfff9f8f9),
                           ),
                         ),

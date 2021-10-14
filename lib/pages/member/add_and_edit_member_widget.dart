@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_member_cubit/add_member_cubit.dart';
 import 'package:twake/blocs/channels_cubit/add_member_cubit/add_member_state.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/pages/member/found_member_tile.dart';
 import 'package:twake/routing/app_router.dart';
@@ -14,15 +15,15 @@ import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'selected_member_tile.dart';
 
-enum AddAndEditMemberType { createChannel, addNewMember }
+enum AddAndEditMemberType { createChannel, addNewMember, createDirect }
 
 class AddAndEditMemberWidget extends StatefulWidget {
   final AddAndEditMemberType addAndEditMemberType;
 
-  const AddAndEditMemberWidget(
-      {Key? key,
-      this.addAndEditMemberType = AddAndEditMemberType.createChannel})
-      : super(key: key);
+  const AddAndEditMemberWidget({
+    Key? key,
+    this.addAndEditMemberType = AddAndEditMemberType.createChannel,
+  }) : super(key: key);
 
   @override
   _AddAndEditMemberWidgetState createState() => _AddAndEditMemberWidgetState();
@@ -85,6 +86,13 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                       AddAndEditMemberType.createChannel) {
                                     popBack(
                                         result: addMemberState.selectedMembers);
+                                  } else if (widget.addAndEditMemberType ==
+                                      AddAndEditMemberType.createDirect) {
+                                    final selectedMembers =
+                                        addMemberState.selectedMembers;
+
+                                    Get.find<NewDirectCubit>()
+                                        .newDirect(selectedMembers);
                                   } else {
                                     final currentState =
                                         Get.find<ChannelsCubit>().state;
@@ -100,7 +108,10 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                     }
                                   }
                                 },
-                                text: AppLocalizations.of(context)!.add,
+                                text: widget.addAndEditMemberType ==
+                                        AddAndEditMemberType.createDirect
+                                    ? AppLocalizations.of(context)!.create
+                                    : AppLocalizations.of(context)!.add,
                                 isEnable: addMemberState
                                         .selectedMembers.isNotEmpty &&
                                     !(addMemberState is AddMemberInProgress));
@@ -196,7 +207,9 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                         List<Account> users =
                             (addMemberState is AddMemberInSearch)
                                 ? addMemberState.searchResults
-                                : addMemberState.frequentlyContacted;
+                                : addMemberState.frequentlyContacted.isEmpty
+                                    ? addMemberState.allMembers
+                                    : addMemberState.frequentlyContacted;
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
