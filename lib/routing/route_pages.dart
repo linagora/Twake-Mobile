@@ -70,6 +70,12 @@ final routePages = [
           binding: NewDirectBinding(),
           children: [
             GetPage(
+                name: RoutePaths.addAndEditDirectMembers.name,
+                page: () => AddAndEditMemberWidget(
+                    addAndEditMemberType: AddAndEditMemberType.createDirect),
+                transition: Transition.native,
+                binding: AddMemberBinding()),
+            GetPage(
                 name: RoutePaths.newChannel.name,
                 page: () => NewChannelWidget(),
                 transition: Transition.native,
