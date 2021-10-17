@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
@@ -75,53 +76,72 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                   ],
                 ),
               if (isVisible)
-                Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: Container(
-                    height: 40,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () => push(RoutePaths.newChannel.path),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Image.asset(imageGroup),
-                          ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                AppLocalizations.of(context)!.createNewChannel,
-                                style: TextStyle(
-                                  color: Color(0xff000000),
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w500,
-                                  fontStyle: FontStyle.normal,
-                                ),
+                BlocBuilder(
+                  bloc: Get.find<CompaniesCubit>(),
+                  builder: (ctx, cstate) => (cstate is CompaniesLoadSuccess &&
+                          cstate.selected.canUpdateChannel)
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 30),
+                          child: Container(
+                            height: 40,
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () => push(RoutePaths.newChannel.path),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Image.asset(imageGroup),
+                                  ),
+                                  Expanded(
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .createNewChannel,
+                                        style: TextStyle(
+                                          color: Color(0xff000000),
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w500,
+                                          fontStyle: FontStyle.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 12.0),
+                                    child: Icon(
+                                      Icons.keyboard_arrow_right,
+                                      color: Color(0xff004dff),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 12.0),
-                            child: Icon(
-                              Icons.keyboard_arrow_right,
-                              color: Color(0xff004dff),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                        )
+                      : Container(),
                 ),
               if (isVisible)
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: Dim.widthPercent(15),
-                  ),
-                  child: Divider(
-                    thickness: 0.5,
-                  ),
+                BlocBuilder(
+                  bloc: Get.find<CompaniesCubit>(),
+                  builder: (ctx, state) {
+                    if (state is CompaniesLoadSuccess &&
+                        state.selected.canUpdateChannel) {
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          left: Dim.widthPercent(15),
+                        ),
+                        child: Divider(
+                          thickness: 0.5,
+                        ),
+                      );
+                    } else
+                      return SizedBox(
+                        height: 20,
+                      );
+                  },
                 ),
               if (isVisible)
                 Container(

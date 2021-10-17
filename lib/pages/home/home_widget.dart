@@ -106,7 +106,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         appBar: AppBar(
           leading: SizedBox.shrink(),
           leadingWidth: 0,
-          toolbarHeight: kToolbarHeight * 2.5,
+          toolbarHeight: 100,
           bottom: TabBar(
             tabs: [
               BlocBuilder<WorkspacesCubit, WorkspacesState>(
@@ -173,7 +173,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       child: Column(
         children: [
           Container(
-            height: kToolbarHeight / 1.2,
+            height: 44,
             child: Stack(
               children: [
                 Align(
@@ -224,41 +224,35 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                     height: 15,
                   ),
                 ),
-                BlocBuilder(
-                  bloc: Get.find<CompaniesCubit>(),
-                  builder: (ctx, cstate) => (cstate is CompaniesLoadSuccess &&
-                          cstate.selected.canUpdateChannel)
-                      ? Align(
-                          alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () => push(RoutePaths.newDirect.path),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                color: Color(0xfff9f8f9),
-                                width: 40,
-                                height: 40,
-                                child: Image.asset(
-                                  imageAddChannel,
-                                  width: 20,
-                                  height: 20,
-                                  color: Color(0xff004dff),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () => push(RoutePaths.newDirect.path),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        color: Color(0xfff9f8f9),
+                        width: 40,
+                        height: 40,
+                        child: Image.asset(
+                          imageAddChannel,
+                          width: 20,
+                          height: 20,
+                          color: Color(0xff004dff),
+                        ),
+                      ),
+                    ),
+                  ),
                 )
               ],
             ),
           ),
           Divider(
             color: Colors.white,
-            height: 8,
+            height: 12,
           ),
           TwakeSearchTextField(
-            height: kToolbarHeight / 1.5,
+            height: 40,
             controller: _searchController,
             hintText: AppLocalizations.of(context)!.search,
             backgroundColor: Color(0xfff9f8f9),
