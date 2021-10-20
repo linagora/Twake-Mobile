@@ -2,5 +2,7 @@
   "workspaceCreate": "Ajouter un nouvel espace de travail",
   "@workspaceCreate": {},
   "organisationSwitch": "Changement d'organisation",
-  "@organisationSwitch": {}
+  "@organisationSwitch": {},
+  "messageDeleted": "Ce message a été supprimé",
+  "@messageDeleted": {}
 }
