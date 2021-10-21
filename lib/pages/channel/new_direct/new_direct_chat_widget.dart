@@ -69,7 +69,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                           style: TextStyle(
                               fontSize: 17,
                               color: Color(0xFF004DFF),
-                              fontWeight: FontWeight.w400),
+                              fontWeight: FontWeight.w500),
                         ),
                       ),
                     )
@@ -283,7 +283,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                               style: TextStyle(
                                   fontSize: 17,
                                   color: Color(0xFF004DFF),
-                                  fontWeight: FontWeight.w400),
+                                  fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),
