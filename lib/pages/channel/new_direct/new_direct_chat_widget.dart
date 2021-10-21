@@ -166,7 +166,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                               style: TextStyle(
                                 color: Color(0xff000000),
                                 fontSize: 17,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w500,
                                 fontStyle: FontStyle.normal,
                               ),
                             ),
