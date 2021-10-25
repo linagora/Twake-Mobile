@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/button_field.dart';
+import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/switch_field.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
 
@@ -17,6 +19,10 @@ class AccountSettings extends StatefulWidget {
 class _AccountSettingsState extends State<AccountSettings> {
   bool _canSave = false;
   bool switchVal = true;
+  String email = '';
+  String language = '';
+  String picture = '';
+  String name = '';
 
   @override
   void initState() {
@@ -63,11 +69,11 @@ class _AccountSettingsState extends State<AccountSettings> {
               child: BlocBuilder<AccountCubit, AccountState>(
                 bloc: Get.find<AccountCubit>(),
                 builder: (context, accountState) {
-                  var email = '';
-                  var language = '';
                   if (accountState is AccountLoadSuccess) {
                     final account = accountState.account;
+                    picture = accountState.account.picture ?? '';
                     email = account.email;
+                    name = accountState.account.fullName;
                     language = account.language ?? '';
                   }
                   return Column(
@@ -111,42 +117,66 @@ class _AccountSettingsState extends State<AccountSettings> {
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: Text(
-                          AppLocalizations.of(context)!.manageYourData,
+                          AppLocalizations.of(context)!.settings,
                           style: TextStyle(
-                            fontSize: 17.0,
+                            fontSize: 34.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
                       ),
                       SizedBox(height: 12.0),
-                      ButtonField(
-                        image: 'assets/images/gear_blue.png',
-                        imageSize: 44.0,
-                        title: 'Twake Connect',
-                        height: 88.0,
-                        titleStyle: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+                      GestureDetector(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: Color(0xFFFCFCFC),
+                              borderRadius: BorderRadius.circular(14.0)),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16.0, top: 18, bottom: 18),
+                                child: ImageWidget(
+                                  imageType: ImageType.common,
+                                  name: name,
+                                  imageUrl: picture,
+                                  size: 44,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      name,
+                                      style: TextStyle(fontSize: 17),
+                                    ),
+                                       SizedBox(height: 4,),
+                                    Text(
+                                      AppLocalizations.of(context)!.viewProfile,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFF939297)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.all(14.0),
+                                child: Icon(
+                                  CupertinoIcons.forward,
+                                  color: Color(0xff3c3c43).withOpacity(0.3),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                        hasArrow: true,
                         onTap: () => NavigatorService.instance
                             .navigateToAccount(shouldShowInfo: true),
                       ),
-                      SizedBox(height: 10.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Text(
-                          AppLocalizations.of(context)!.twakeConnectInfo,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff939297),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 22.0),
+                       Spacer(),
                       SwitchField(
                         image: 'assets/images/notifications.png',
                         title: AppLocalizations.of(context)!.notifications,
@@ -163,67 +193,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                                   .unRegisterDevice();
                         },
                       ),
-                      SizedBox(height: 8.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Text(
-                          AppLocalizations.of(context)!.notificationsInfo,
-                          style: TextStyle(
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.w400,
-                            color: Color(0xff939297),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 8.0),
-
-                      /* ButtonField(
-                          image: 'assets/images/language.png',
-                          title: AppLocalizations.of(context)!.language,
-                          titleStyle: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                          hasArrow: true,
-                          arrowColor: Color(0xff3c3c43).withOpacity(0.3),
-                          trailingTitle: language,
-                          trailingTitleStyle: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black.withOpacity(0.6),
-                          ),
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(10.0),
-                            topRight: Radius.circular(10.0),
-                          ),
-                        ),
-                        Divider(
-                          height: 1.0,
-                          color: Colors.black.withOpacity(0.1),
-                        ),
-                        ButtonField(
-                          image: 'assets/images/location.png',
-                          title: 'Location',
-                          titleStyle: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
-                          ),
-                          hasArrow: true,
-                          arrowColor: Color(0xff3c3c43).withOpacity(0.3),
-                          trailingTitle: 'Paris',
-                          trailingTitleStyle: TextStyle(
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black.withOpacity(0.6),
-                          ),
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10.0),
-                            bottomRight: Radius.circular(10.0),
-                          ),
-                        ),*/
-
+                      SizedBox(height: 16.0),
+                
                       ButtonField(
                         onTap: () => NavigatorService.instance.openTwakeWebView(
                             'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
@@ -237,7 +208,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                         hasArrow: true,
                         arrowColor: Color(0xff3c3c43).withOpacity(0.3),
                       ),
-                      Spacer(),
+                      SizedBox(height: 21.0),
                       GestureDetector(
                         onTap: () => _handleLogout(context),
                         child: Container(
