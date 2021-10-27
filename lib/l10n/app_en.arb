@@ -57,6 +57,8 @@
     "settings": "Settings",
     "language": "Language",
     "customerSupport": "Customer support",
+    "twakeVersion": "Twake version",
+    "invitePeopleToTwake": "Invite people to Twake",
     "logout": "Log out",
     "newDirectChat": "New direct chat",
     "newChannel": "New channel",
