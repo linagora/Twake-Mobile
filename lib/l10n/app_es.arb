@@ -91,7 +91,7 @@
   "@connect": {},
   "changeServerInfo": "Puede conectarse con un servidor diferente o proceder con el servidor predeterminado.",
   "@changeServerInfo": {},
-  "pin": "Anclar",
+  "pin": "Fijar",
   "@pin": {},
   "archiveInfo": "Limpiar su lista actual",
   "@archiveInfo": {},
@@ -255,5 +255,11 @@
   "addMembers": "Añadir miembros",
   "@addMembers": {},
   "add": "Añadir",
-  "@add": {}
+  "@add": {},
+  "noRecents": "No hay recientes",
+  "@noRecents": {},
+  "twakeVersion": "Versión de Twake",
+  "@twakeVersion": {},
+  "invitePeopleToTwake": "Invita personas a Twake",
+  "@invitePeopleToTwake": {}
 }
