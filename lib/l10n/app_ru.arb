@@ -6,5 +6,11 @@
   "workspaces": "РАБОЧИЕ ПРОСТРАНСТВА",
   "@workspaces": {},
   "newWorkspace": "Новое рабочее пространство",
-  "@newWorkspace": {}
+  "@newWorkspace": {},
+  "messageDeleted": "Сообщение было удалено",
+  "@messageDeleted": {},
+  "internetConnection": "Отсутствует интернет",
+  "@internetConnection": {},
+  "signin": "Войти",
+  "@signin": {}
 }
