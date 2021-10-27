@@ -8,8 +8,9 @@ import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/switch_field.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
+import 'package:share/share.dart';
 
 class AccountSettings extends StatefulWidget {
   @override
@@ -17,6 +18,13 @@ class AccountSettings extends StatefulWidget {
 }
 
 class _AccountSettingsState extends State<AccountSettings> {
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+  );
   bool _canSave = false;
   bool switchVal = true;
   String email = '';
@@ -27,9 +35,14 @@ class _AccountSettingsState extends State<AccountSettings> {
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance!.addPostFrameCallback((_) {
-    //   Get.find<AccountCubit>().fetch(userId: Globals.instance.userId);
-    // });
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
   }
 
   void _handleLogout(BuildContext parentContext) async {
@@ -46,6 +59,11 @@ class _AccountSettingsState extends State<AccountSettings> {
         );
       },
     );
+  }
+
+  //TODO add the link
+  _onShareWithEmptyOrigin(BuildContext context) async {
+    await Share.share("Test");
   }
 
   @override
@@ -152,7 +170,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                                       name,
                                       style: TextStyle(fontSize: 17),
                                     ),
-                                       SizedBox(height: 4,),
+                                    SizedBox(
+                                      height: 4,
+                                    ),
                                     Text(
                                       AppLocalizations.of(context)!.viewProfile,
                                       style: TextStyle(
@@ -176,7 +196,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                         onTap: () => NavigatorService.instance
                             .navigateToAccount(shouldShowInfo: true),
                       ),
-                       Spacer(),
+                      Spacer(),
+                      /* TODO implement again when settings screen is going to be ready
                       SwitchField(
                         image: 'assets/images/notifications.png',
                         title: AppLocalizations.of(context)!.notifications,
@@ -192,13 +213,12 @@ class _AccountSettingsState extends State<AccountSettings> {
                               : Get.find<AuthenticationCubit>()
                                   .unRegisterDevice();
                         },
-                      ),
+                      ),*/
                       SizedBox(height: 16.0),
-                
                       ButtonField(
                         onTap: () => NavigatorService.instance.openTwakeWebView(
                             'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
-                        image: 'assets/images/support.png',
+                        image: 'assets/images/2.0x/support.png',
                         title: AppLocalizations.of(context)!.customerSupport,
                         titleStyle: TextStyle(
                           fontSize: 17.0,
@@ -208,7 +228,75 @@ class _AccountSettingsState extends State<AccountSettings> {
                         hasArrow: true,
                         arrowColor: Color(0xff3c3c43).withOpacity(0.3),
                       ),
-                      SizedBox(height: 21.0),
+                      SizedBox(height: 16.0),
+                      ButtonField(
+                        onTap: () => _onShareWithEmptyOrigin(context),
+                        image: 'assets/images/2.0x/invite_people.png',
+                        title:
+                            AppLocalizations.of(context)!.invitePeopleToTwake,
+                        titleStyle: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                        hasArrow: true,
+                        arrowColor: Color(0xff3c3c43).withOpacity(0.3),
+                      ),
+                      SizedBox(height: 80.0),
+                      /* ButtonField(
+                        onTap: () => NavigatorService.instance.openTwakeWebView(
+                            'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
+                        image: 'assets/images/2.0x/twake_logo.png',
+                        title: AppLocalizations.of(context)!.twakeVersion,
+                        titleStyle: TextStyle(
+                          fontSize: 17.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                        hasArrow: true,
+                        arrowColor: Color(0xff3c3c43).withOpacity(0.3),
+                      ),*/
+                      Container(
+                        height: 44,
+                        decoration: BoxDecoration(
+                            color: Color(0xFFFCFCFC),
+                            borderRadius: BorderRadius.circular(10.0)),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 14,
+                            ),
+                            SizedBox(
+                                height: 29,
+                                child: Image.asset(
+                                    'assets/images/2.0x/twake_logo.png')),
+                            SizedBox(
+                              width: 14,
+                            ),
+                            Text(
+                              AppLocalizations.of(context)!.twakeVersion,
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              _packageInfo.version,
+                              style: TextStyle(
+                                fontSize: 17.0,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black.withOpacity(0.5),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 14,
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
                       GestureDetector(
                         onTap: () => _handleLogout(context),
                         child: Container(
