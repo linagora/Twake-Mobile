@@ -148,7 +148,7 @@ flutter:
     - family: SFPro
       fonts:
         - asset: assets/fonts/SF-Pro-Text-Regular.otf
-    - family: Poboto
+    - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
     - family: PT

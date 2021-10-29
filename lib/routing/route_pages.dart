@@ -16,6 +16,8 @@ import 'package:twake/pages/channel/new_direct/new_direct_chat_widget.dart';
 import 'package:twake/pages/chat/chat.dart';
 import 'package:twake/pages/home/home_widget.dart';
 import 'package:twake/pages/initial_page.dart';
+import 'package:twake/pages/magic_link/invitation_people_by_email_page.dart';
+import 'package:twake/pages/magic_link/invitation_people_page.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/pages/member/member_management/member_management_widget.dart';
 import 'package:twake/pages/chat/thread_page.dart';
@@ -135,6 +137,18 @@ final routePages = [
         page: () => HomeWidget(),
         transition: Transition.native,
       ),
+      GetPage(
+        name: RoutePaths.invitationPeople.name,
+        page: () => InvitationPeoplePage(),
+        transition: Transition.native,
+        children: [
+          GetPage(
+            name: RoutePaths.invitationPeopleEmail.name,
+            page: () => InvitationPeopleEmailPage(),
+            transition: Transition.native,
+          )
+        ]
+      )
     ],
   ),
 ];

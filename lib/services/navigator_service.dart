@@ -228,6 +228,14 @@ class NavigatorService {
     Get.toNamed(RoutePaths.channelSettings.path, arguments: channel);
   }
 
+  Future<void> navigateToInvitationPeople(String workspaceName) async {
+    Get.toNamed(RoutePaths.invitationPeople.path, arguments: workspaceName);
+  }
+
+  Future<void> navigateToInvitationPeopleEmail(String invitationUrl) async {
+    Get.toNamed(RoutePaths.invitationPeopleEmail.path, arguments: invitationUrl);
+  }
+
   void openTwakeWebView(String url) {
     Get.to(TwakeWebView(url));
   }
