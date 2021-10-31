@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/di/home_binding.dart';
+import 'package:twake/repositories/language_repository.dart';
 import 'package:twake/routing/route_pages.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/init_service.dart';
@@ -20,7 +21,8 @@ void main() async {
   FirebaseMessaging.instance.getToken().onError((e, _) async {
     Logger().e('Error occurred when requesting Firebase Messaging token\n$e');
   });
-
+  final languagerep = LanguageRepository();
+  final Locale local = languagerep.locale;
   await InitService.preAuthenticationInit();
 
   await dotenv.load(fileName: ".env");
@@ -51,12 +53,13 @@ void main() async {
         Locale('en'),
         Locale('fr'),
         Locale('vi'),
+        Locale('es'),
         const Locale('zh'),
         const Locale('nb'),
         const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
         const Locale.fromSubtags(languageCode: 'nb', scriptCode: 'NO'),
       ],
-      locale: Locale('en'),
+      locale: local ,//Locale('vi'), 
       getPages: routePages,
       initialRoute: RoutePaths.initial,
       initialBinding: HomeBinding(),

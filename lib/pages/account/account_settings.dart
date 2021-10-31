@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -144,6 +146,29 @@ class _AccountSettingsState extends State<AccountSettings> {
                         ),
                       ),
                       SizedBox(height: 12.0),
+                      GestureDetector(
+                        onTap: () {
+                          Get.updateLocale(Locale("es"));
+                          Get.find<LanguageCubit>().swithLanguage();
+                        },
+                        child: Container(
+                          color: Colors.green,
+                          height: 100,
+                          width: 100,
+                        ),
+                      ),
+                      BlocBuilder<LanguageCubit, LanguageState>(
+                        bloc:  Get.find<LanguageCubit>(),
+                        builder: (context, state) {
+                          if(state is LanguageInitial ){
+                            return Text(state.language,style: TextStyle(fontSize: 33),) ;
+                          }
+                           if(state is LanguageNew ){
+                            return Text(state.language,style: TextStyle(fontSize: 33),) ;
+                          }
+                          return Text("h",style: TextStyle(fontSize: 33),);
+                        },
+                      ),
                       GestureDetector(
                         child: Container(
                           decoration: BoxDecoration(

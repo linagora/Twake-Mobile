@@ -19,8 +19,9 @@ class _AccountInfoState extends State<AccountInfo> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   String _name = "";
-  var _canSave = false;
-  var _picture = '';
+  bool _canSave = false;
+  String _picture = '';
+  String ?_local = '';
 
   @override
   void initState() {
@@ -57,6 +58,7 @@ class _AccountInfoState extends State<AccountInfo> {
               _lastNameController.text = accountState.account.lastName ?? '';
               _picture = accountState.account.picture ?? '';
               _name = accountState.account.fullName;
+              _local = accountState.account.language;
             } else if (accountState is AccountLoadInProgress ||
                 accountState is AccountLoadFailure) {}
 
@@ -140,6 +142,15 @@ class _AccountInfoState extends State<AccountInfo> {
                           color: Colors.black.withOpacity(0.35),
                         ),
                       ),
+                            Text(
+                        _local!,
+                        style: TextStyle(
+                          fontSize: 44.0,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black.withOpacity(0.35),
+                        ),
+                      ),
+
                       SizedBox(height: 12.0),
                       RoundedTextField(
                         controller: _firstNameController,
