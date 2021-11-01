@@ -21,3 +21,6 @@ const imageLink = '$_assetPath/ic_link.png';
 const imageSendEmail = '$_assetPath/ic_send_email.png';
 const imageCopiedClipboard = '$_assetPath/ic_copied_clipboard.png';
 const imageAddMemberEmail = '$_assetPath/ic_add.png';
+const imageInvitationSent = '$_assetPath/ic_invitation_sent.png';
+const imageValid = '$_assetPath/ic_valid.png';
+const imageInvalid = '$_assetPath/ic_invalid.png';

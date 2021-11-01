@@ -197,5 +197,7 @@
             }
         }
     },
-    "joinMeOnTwake": "Join me on Twake"
+    "joinMeOnTwake": "Join me on Twake",
+    "goToMainScreen": "Go to main screen",
+    "invitationSent": "Your invitations have\nbeen successfully sent."
 }

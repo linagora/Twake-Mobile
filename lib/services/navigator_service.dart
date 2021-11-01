@@ -7,6 +7,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/companies/company_selection_widget.dart';
+import 'package:twake/pages/home/home_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/twake_web_view.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -234,6 +235,12 @@ class NavigatorService {
 
   Future<void> navigateToInvitationPeopleEmail(String invitationUrl) async {
     Get.toNamed(RoutePaths.invitationPeopleEmail.path, arguments: invitationUrl);
+  }
+
+  Future<void> navigateToHome() async {
+    Get.offAll(() => HomeWidget(),
+      transition: Transition.native,
+    );
   }
 
   void openTwakeWebView(String url) {

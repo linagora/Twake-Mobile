@@ -4,6 +4,7 @@ import 'package:twake/di/add_member_binding.dart';
 import 'package:twake/di/add_channel_binding.dart';
 import 'package:twake/di/channel_setting_binding.dart';
 import 'package:twake/di/edit_channel_binding.dart';
+import 'package:twake/di/magic_link_binding.dart';
 import 'package:twake/di/member_management_binding.dart';
 import 'package:twake/di/new_direct_binding.dart';
 import 'package:twake/pages/account/account_info.dart';
@@ -146,6 +147,7 @@ final routePages = [
             name: RoutePaths.invitationPeopleEmail.name,
             page: () => InvitationPeopleEmailPage(),
             transition: Transition.native,
+            binding: MagicLinkBinding(),
           )
         ]
       )
