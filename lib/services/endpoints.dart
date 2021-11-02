@@ -48,6 +48,7 @@ class Endpoint {
   // API Endpoint for working with user's companies
   static const badges = '/internal/services/notifications/v1/badges';
   static const files = '/internal/services/files/v1/companies/%s/files';
+  static const magicLink = '/internal/services/workspaces/v1/workspaces/%s/users/token';
 
   static const publicMethods = const [info, reservation, signup, emailResend];
 
