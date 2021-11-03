@@ -99,70 +99,35 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        drawer: HomeDrawerWidget(),
-        appBar: AppBar(
-          leading: SizedBox.shrink(),
-          leadingWidth: 0,
-          toolbarHeight: 100,
-          bottom: TabBar(
-            tabs: [
-              BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                bloc: Get.find<WorkspacesCubit>(),
-                builder: (_s, _) => Tab(
-                  child: BadgesCount(
-                    type: BadgeType.workspace,
-                    id: Globals.instance.workspaceId!,
+    return Scaffold(
+      drawer: HomeDrawerWidget(),
+      body: SafeArea(
+        child: DefaultTabController(
+          length: 2,
+          child: Container(
+            margin: const EdgeInsets.only(top: 10),
+            child: Column(
+              children: [
+                _buildHeader(),
+                _buildTabBar(),
+                Opacity(
+                  opacity: 0.6,
+                  child: Divider(
+                    height: 4,
+                    color: Color(0xffd8d8d8),
                   ),
                 ),
-              ),
-              BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                bloc: Get.find<WorkspacesCubit>(),
-                builder: (_s, _) => Tab(
-                  child: BadgesCount(
-                    type: BadgeType.workspace,
-                    id: Globals.instance.workspaceId!,
-                    isInDirects: true,
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      HomeChannelListWidget(serchText: _searchText),
+                      HomeDirectListWidget(serchText: _searchText)
+                    ],
                   ),
-                ),
-              ),
-            ],
-            isScrollable: true,
-            indicatorColor: Color(0xff004dff),
-            unselectedLabelColor: Color(0xff8e8e93),
-            unselectedLabelStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              fontStyle: FontStyle.normal,
-            ),
-            labelStyle: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              fontStyle: FontStyle.normal,
+                )
+              ],
             ),
           ),
-          title: _buildHeader(),
-        ),
-        body: Stack(
-          children: [
-            Positioned(
-              child: Opacity(
-                opacity: 0.6,
-                child: Divider(
-                  height: 4,
-                  color: Color(0xffd8d8d8),
-                ),
-              ),
-            ),
-            TabBarView(
-              children: [
-                HomeChannelListWidget(serchText: _searchText),
-                HomeDirectListWidget(serchText: _searchText)
-              ],
-            )
-          ],
         ),
       ),
     );
@@ -170,6 +135,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
   Widget _buildHeader() {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
           Container(
@@ -224,33 +190,11 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                     height: 15,
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => push(RoutePaths.newDirect.path),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        color: Color(0xfff9f8f9),
-                        width: 40,
-                        height: 40,
-                        child: Image.asset(
-                          imageAddChannel,
-                          width: 20,
-                          height: 20,
-                          color: Color(0xff004dff),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
+                _buildHeaderActionButtons()
               ],
             ),
           ),
-          Divider(
-            color: Colors.white,
-            height: 12,
-          ),
+          SizedBox(height: 12),
           TwakeSearchTextField(
             height: 40,
             controller: _searchController,
@@ -261,4 +205,68 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       ),
     );
   }
+
+  _buildHeaderActionButtons() => Align(
+    alignment: Alignment.centerRight,
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        GestureDetector(
+          onTap: () => push(RoutePaths.newDirect.path),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              color: Color(0xfff9f8f9),
+              width: 40,
+              height: 40,
+              child: Image.asset(
+                imageAddChannel,
+                width: 20,
+                height: 20,
+                color: Color(0xff004dff),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  _buildTabBar() => TabBar(
+    tabs: [
+      BlocBuilder<WorkspacesCubit, WorkspacesState>(
+        bloc: Get.find<WorkspacesCubit>(),
+        builder: (_s, _) => Tab(
+          child: BadgesCount(
+            type: BadgeType.workspace,
+            id: Globals.instance.workspaceId ?? '',
+          ),
+        ),
+      ),
+      BlocBuilder<WorkspacesCubit, WorkspacesState>(
+        bloc: Get.find<WorkspacesCubit>(),
+        builder: (_s, _) => Tab(
+          child: BadgesCount(
+            type: BadgeType.workspace,
+            id: Globals.instance.workspaceId ?? '',
+            isInDirects: true,
+          ),
+        ),
+      ),
+    ],
+    isScrollable: true,
+    indicatorColor: Color(0xff004dff),
+    unselectedLabelColor: Color(0xff8e8e93),
+    unselectedLabelStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      fontStyle: FontStyle.normal,
+    ),
+    labelStyle: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      fontStyle: FontStyle.normal,
+    ),
+  );
 }
