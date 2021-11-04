@@ -88,13 +88,18 @@ class ChannelsRepository {
 
   Future<Channel> create(
       {required Channel channel, bool isDefault: false}) async {
+
+    final options = isDefault
+        ? {}
+        : {'members': channel.members..add(Globals.instance.userId!)};
+
     final result = await _api.post(
       endpoint: sprintf(endpoint, [channel.companyId, channel.workspaceId]),
       data: {
-        'options': {'members': channel.members..add(Globals.instance.userId!)},
+        'options': options,
         'resource': channel.toJson(stringify: false)
           ..remove('id')
-          ..addAll({'default': isDefault}),
+          ..addAll({'is_default': isDefault}),
       },
       key: 'resource',
     );
