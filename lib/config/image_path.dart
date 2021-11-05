@@ -12,3 +12,4 @@ const imageAddMember = '$_assetPath/ic_add_member.png';
 const imageMessages = '$_assetPath/ic_messages.png';
 const imageSearch = '$_assetPath/ic_search.png';
 const imageNotificationSetting = '$_assetPath/ic_notification_setting.png';
+const imageEmoji = '$_assetPath/emoji.png';
