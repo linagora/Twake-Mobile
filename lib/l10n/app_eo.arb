@@ -1,0 +1,20 @@
+{
+  "username": "Salutnomo",
+  "@username": {},
+  "internetConnection": "Sen Interreta konekto",
+  "@internetConnection": {},
+  "edit": "Redakti",
+  "@edit": {},
+  "signin": "Saluti",
+  "@signin": {},
+  "alreadyHaveAnAccount": "Ĉu vi ankoraŭ havas konton?",
+  "@alreadyHaveAnAccount": {},
+  "name": "Nomo",
+  "@name": {},
+  "copy": "Kopii",
+  "@copy": {},
+  "channelInfo": "Informoj pri kanalo",
+  "@channelInfo": {},
+  "save": "Konservi",
+  "@save": {}
+}
