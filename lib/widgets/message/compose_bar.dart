@@ -8,6 +8,7 @@ import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
@@ -508,57 +509,56 @@ class _TextInputState extends State<TextInput> {
                   color: Color(0xff979797).withOpacity(0.4),
                 ),
               ),
-              child: TextField(
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                ),
-                maxLines: 4,
-                minLines: 1,
-                autofocus: widget.autofocus!,
-                focusNode: widget.focusNode,
-                scrollController: widget.scrollController,
-                controller: widget.controller,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.fromLTRB(12.0, 9.0, 8.0, 9.0),
-                  hintText: AppLocalizations.of(context)!.newReply,
-                  hintStyle: TextStyle(
-                    fontSize: 13.0,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black.withOpacity(0.2),
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      style: BorderStyle.none,
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  TextField(
+                    style: TextStyle(
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.black,
                     ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      style: BorderStyle.none,
-                    ),
-                  ),
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  suffixIcon: GestureDetector(
-                    onTap: widget.toggleEmojiBoard as void Function()?,
-                    child: Container(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Image.asset(
-                        'assets/images/emoji.png',
+                    maxLines: 4,
+                    minLines: 1,
+                    autofocus: widget.autofocus!,
+                    focusNode: widget.focusNode,
+                    scrollController: widget.scrollController,
+                    controller: widget.controller,
+                    decoration: InputDecoration(
+                      contentPadding:
+                      const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
+                      hintText: AppLocalizations.of(context)!.newReply,
+                      hintStyle: TextStyle(
+                        fontSize: 13.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black.withOpacity(0.2),
                       ),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          style: BorderStyle.none,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          style: BorderStyle.none,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          style: BorderStyle.none,
+                        ),
+                      ),
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: widget.toggleEmojiBoard as void Function()?,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Image.asset(imageEmoji, width: 24, height: 24),
                     ), //Image.asset('assets/images/attach.png'),
-                  ),
-                  suffixIconConstraints: BoxConstraints(
-                    minHeight: 24.0,
-                    minWidth: 24.0,
-                  ),
-                ),
+                  )
+                ],
               ),
             ),
           ),
