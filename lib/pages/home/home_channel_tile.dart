@@ -39,31 +39,22 @@ class HomeChannelTile extends StatelessWidget {
       onTap: onHomeChannelTileClick,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        height: 78,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 12),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 10,
-              ),
-              ImageWidget(
-                imageType: isDirect ? ImageType.common : ImageType.channel,
-                imageUrl: imageUrl ?? '',
-                isPrivate: isPrivate,
-                name: title,
-                size: 54,
-                avatars: avatars,
-              ),
-              SizedBox(
-                width: 11,
-              ),
-              Expanded(
+        padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12),
+        child: Row(
+          children: [
+            ImageWidget(
+              imageType: isDirect ? ImageType.common : ImageType.channel,
+              imageUrl: imageUrl ?? '',
+              isPrivate: isPrivate,
+              name: title,
+              size: 54,
+              avatars: avatars,
+            ),
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 12),
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 4,
-                    ),
                     Row(
                       children: [
                         Expanded(
@@ -142,11 +133,8 @@ class HomeChannelTile extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
-                width: 10,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
