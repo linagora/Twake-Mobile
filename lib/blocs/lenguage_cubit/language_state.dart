@@ -8,20 +8,23 @@ abstract class LanguageState extends Equatable {
 }
 
 class LanguageInitial extends LanguageState {
-  final String language;
-
-  const LanguageInitial({required this.language});
-
+  const LanguageInitial();
 
   @override
   List<Object> get props => [];
 }
 
-class LanguageNew extends LanguageState {
+class NewLanguage extends LanguageState {
   final String language;
 
-  const LanguageNew({required this.language});
+  const NewLanguage({required this.language});
 
+  @override
+  List<Object> get props => [];
+}
+
+class LanguageAwaiting extends LanguageState {
+  const LanguageAwaiting();
 
   @override
   List<Object> get props => [];

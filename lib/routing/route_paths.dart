@@ -33,6 +33,8 @@ class RoutePaths {
   static final accountSettings = _RoutePathsType(initial, '/account_settings');
   static final accountInfo =
       _RoutePathsType(initial, '/account_settings/account_info');
+      static final accountLanguage =
+      _RoutePathsType(accountSettings.path, '/select_language');
 
   static final createWorkspace = _RoutePathsType(initial, '/create_workspace');
   static final homeWidget = _RoutePathsType(initial, '/homeWidget');
