@@ -154,8 +154,7 @@ class NavigatorService {
       channelMessagesCubit.reset();
       channelMessagesCubit.fetch(
         channelId: channelId,
-        isDirect: channel.isDirect,
-        empty: channel.lastMessage == null,
+        isDirect: channel.isDirect
       );
 
       if (channel.isDirect) {
