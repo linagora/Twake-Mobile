@@ -153,5 +153,7 @@
                 "example": "Bob"
             }
         }
-    }
+    },
+    "english":"English",
+    "spanish":"Spanish"
 }

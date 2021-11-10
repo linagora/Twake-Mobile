@@ -94,6 +94,18 @@ class StorageService {
     );
   }
 
+ // This function can be used for rawInserts 
+  Future<void> rawInsert(
+      {required Table table,
+      required List<String> fields,
+      required List<dynamic> values}) async {
+    final length = fields.length > 1 ? ',?' * (fields.length - 1) : '';
+    await _db.rawInsert(
+        "INSERT into $table (${fields.toString()})"
+        " VALUES (?$length)",
+        [values]);
+  }
+
   // This function is used when we need a clean table to insert the data
   Future<void> cleanInsert({
     required Table table,

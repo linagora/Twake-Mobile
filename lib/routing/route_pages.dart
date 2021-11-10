@@ -19,6 +19,7 @@ import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/pages/member/member_management/member_management_widget.dart';
 import 'package:twake/pages/chat/thread_page.dart';
+import 'package:twake/pages/select_language.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
 
@@ -104,10 +105,16 @@ final routePages = [
         transition: Transition.native,
       ),
       GetPage(
-        name: RoutePaths.accountSettings.name,
-        page: () => AccountSettings(),
-        transition: Transition.native,
-      ),
+          name: RoutePaths.accountSettings.name,
+          page: () => AccountSettings(),
+          transition: Transition.native,
+          children: [
+            GetPage(
+              name: RoutePaths.accountLanguage.name,
+              page: () => SelectLanguage(),
+              transition: Transition.native,
+            ),
+          ]),
       GetPage(
         name: RoutePaths.accountInfo.name,
         page: () => AccountInfo(),

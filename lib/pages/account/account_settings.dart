@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -215,18 +217,99 @@ class _AccountSettingsState extends State<AccountSettings> {
                         },
                       ),*/
                       SizedBox(height: 16.0),
-                      ButtonField(
+                      GestureDetector(
                         onTap: () => NavigatorService.instance.openTwakeWebView(
                             'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
-                        image: 'assets/images/2.0x/support.png',
-                        title: AppLocalizations.of(context)!.customerSupport,
-                        titleStyle: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFCFCFC),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              topRight: Radius.circular(10.0),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 14,
+                              ),
+                              SizedBox(
+                                height: 29,
+                                child: Image.asset(
+                                    'assets/images/2.0x/support.png'),
+                              ),
+                              SizedBox(
+                                width: 14,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!.customerSupport,
+                                style: TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.all(14.0),
+                                child: Icon(
+                                  CupertinoIcons.forward,
+                                  color: Color(0xff3c3c43).withOpacity(0.3),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        hasArrow: true,
-                        arrowColor: Color(0xff3c3c43).withOpacity(0.3),
+                      ),
+                      SizedBox(height: 2.0),
+                      GestureDetector(
+                        onTap: () async {
+                          push(
+                            RoutePaths.accountLanguage.path,
+                          );
+                        },
+                        child: Container(
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Color(0xFFFCFCFC),
+                            borderRadius: BorderRadius.only(
+                              bottomRight: Radius.circular(10.0),
+                              bottomLeft: Radius.circular(10.0),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 14,
+                              ),
+                              SizedBox(
+                                  height: 29,
+                                  child: Image.asset(
+                                      'assets/images/2.0x/net_global.png')),
+                              SizedBox(
+                                width: 14,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!.language,
+                                style: TextStyle(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 14, right: 14.0),
+                                child: Icon(
+                                  CupertinoIcons.forward,
+                                  color: Color(0xff3c3c43).withOpacity(0.3),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                       SizedBox(height: 16.0),
                       ButtonField(
@@ -243,19 +326,6 @@ class _AccountSettingsState extends State<AccountSettings> {
                         arrowColor: Color(0xff3c3c43).withOpacity(0.3),
                       ),
                       SizedBox(height: 80.0),
-                      /* ButtonField(
-                        onTap: () => NavigatorService.instance.openTwakeWebView(
-                            'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
-                        image: 'assets/images/2.0x/twake_logo.png',
-                        title: AppLocalizations.of(context)!.twakeVersion,
-                        titleStyle: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                        hasArrow: true,
-                        arrowColor: Color(0xff3c3c43).withOpacity(0.3),
-                      ),*/
                       Container(
                         height: 44,
                         decoration: BoxDecoration(

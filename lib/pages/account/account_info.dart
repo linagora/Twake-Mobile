@@ -19,8 +19,8 @@ class _AccountInfoState extends State<AccountInfo> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   String _name = "";
-  var _canSave = false;
-  var _picture = '';
+  bool _canSave = false;
+  String _picture = '';
 
   @override
   void initState() {

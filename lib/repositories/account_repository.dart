@@ -41,8 +41,27 @@ class AccountRepository {
 
     final account = Account.fromJson(json: remoteResult, transform: true);
 
+    final dataL = await _storage.select(
+        table: Table.account,
+        columns: ["language"],
+        where: "id = ?",
+        whereArgs: [Globals.instance.userId]);
+
     _storage.insert(table: Table.account, data: account);
 
+    _storage.update(
+        table: Table.account,
+        values: dataL[0],
+        where: "id = ?",
+        whereArgs: [Globals.instance.userId]);
+
+    /*   account.toJson().forEach((key, value) {
+      if (key != "language" && (value != "" && value != " ")) {
+        fields.add(key);
+        values.add(value);
+      }
+    });
+    _storage.rawInsert(table: Table.account, fields: fields, values: values);*/
     return account;
   }
 

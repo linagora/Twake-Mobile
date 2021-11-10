@@ -36,7 +36,7 @@ class ImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (imageType == ImageType.channel) {
       if (imageUrl != null && imageUrl != "") {
-        return channelImage(imageUrl, isPrivate,backgroundColor);
+        return channelImage(imageUrl, isPrivate, backgroundColor);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
