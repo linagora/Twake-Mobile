@@ -20,7 +20,7 @@ class NewLanguage extends LanguageState {
   const NewLanguage({required this.language});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [language];
 }
 
 class LanguageAwaiting extends LanguageState {

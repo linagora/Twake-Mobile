@@ -52,8 +52,8 @@ class HomeBinding implements Bindings {
     final registratCubit = RegistrationCubit();
     Get.put(registratCubit, permanent: true);
 
-    final lenguageCubit = LanguageCubit();
-    Get.put(lenguageCubit, permanent: true);
+    final languageCubit = LanguageCubit();
+    Get.put(languageCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

@@ -26,7 +26,6 @@ class _SelectLanguageState extends State<SelectLanguage> {
             color: Color(0xFF004DFF),
           ),
         ),
-        
         toolbarHeight: 56,
         backgroundColor: Colors.white,
         title: Text(
@@ -91,7 +90,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
             child: Row(
               children: [
                 Text(
-                  getLenguageString(
+                  getLanguageString(
                       languageCode: languageCode, context: context),
                   style: TextStyle(fontSize: 20),
                 ),
@@ -124,7 +123,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
         });
   }
 
-  String getLenguageString(
+  String getLanguageString(
       {required String languageCode, required BuildContext context}) {
     final String language;
 

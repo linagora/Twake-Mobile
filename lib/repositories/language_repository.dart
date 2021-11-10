@@ -14,7 +14,7 @@ class LanguageRepository {
   // List<Locale> systemLocales = WidgetsBinding.instance!.window.locales;
   // List<Locale> systemLocales = window.locales;
 
-  Locale get devlocale {
+  Locale get devLocale {
     String deviceLanguage = Platform.localeName;
 
     final String language = translatedLanguages.firstWhere(
