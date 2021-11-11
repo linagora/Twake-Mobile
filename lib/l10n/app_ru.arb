@@ -43,7 +43,7 @@
   "@blankAddressError": {},
   "changeServerHint": "Нажмите \"Подключиться\", если вы не знаете, о чем идет речь",
   "@changeServerHint": {},
-  "serverConnectionPreference": "Предпочтения по подключению к серверу",
+  "serverConnectionPreference": "Предпочтения по подключению",
   "@serverConnectionPreference": {},
   "alreadyHaveAnAccount": "Уже есть учётная запись?",
   "@alreadyHaveAnAccount": {},
