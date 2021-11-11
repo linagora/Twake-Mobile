@@ -30,7 +30,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
         backgroundColor: Colors.white,
         title: Text(
           AppLocalizations.of(context)!.language,
-          style: TextStyle(fontSize: 17),
+          style: TextStyle(fontSize: 17, color: Colors.black),
         ),
         centerTitle: true,
       ),
