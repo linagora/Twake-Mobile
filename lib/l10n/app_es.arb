@@ -261,5 +261,9 @@
   "twakeVersion": "Versión de Twake",
   "@twakeVersion": {},
   "invitePeopleToTwake": "Invita personas a Twake",
-  "@invitePeopleToTwake": {}
+  "@invitePeopleToTwake": {},
+  "spanish": "Español",
+  "@spanish": {},
+  "english": "Inglés",
+  "@english": {}
 }
