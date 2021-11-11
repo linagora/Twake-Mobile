@@ -55,6 +55,7 @@ void main() async {
           const Locale('fr'),
           const Locale('vi'),
           const Locale('es'),
+          const Locale('ru'),
           const Locale('zh'),
           const Locale('nb'),
           const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),

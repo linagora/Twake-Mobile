@@ -186,7 +186,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             top: 14, left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('FOUND PEOPLE',
+                          child: Text(AppLocalizations.of(context)!.foundPeople,
                               style: TextStyle(
                                 color: Color(0x59000000),
                                 fontSize: 13,

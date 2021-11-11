@@ -134,6 +134,9 @@ class _SelectLanguageState extends State<SelectLanguage> {
       case 'es':
         language = AppLocalizations.of(context)!.spanish;
         break;
+      case 'ru':
+        language = AppLocalizations.of(context)!.russian;
+        break;
       default:
         language = 'English';
     }
