@@ -265,5 +265,7 @@
     }
   },
   "registrationEmailSent": "Готово, мы отправили ссылку для верификации и\nсгенерированный пароль:",
-  "@registrationEmailSent": {}
+  "@registrationEmailSent": {},
+  "russian": "Русский",
+  "@russian": {}
 }
