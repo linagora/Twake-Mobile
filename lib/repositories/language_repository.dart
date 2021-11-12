@@ -4,7 +4,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/storage_service.dart';
 
 //TODO before the build, update the list of translated languages using weblate
-const List<String> translatedLanguages = ["en", "es"];
+const List<String> translatedLanguages = ["en", "es", "ru"];
 
 class LanguageRepository {
   final _storage = StorageService.instance;
@@ -18,7 +18,9 @@ class LanguageRepository {
     String deviceLanguage = Platform.localeName;
 
     final String language = translatedLanguages.firstWhere(
-        (language) => language == deviceLanguage.replaceAll("_US", ""),
+        (language) =>
+            language ==
+            deviceLanguage.substring(0, deviceLanguage.indexOf('_')),
         orElse: () => translatedLanguages[0]);
 
     return Locale(language);
@@ -32,7 +34,9 @@ class LanguageRepository {
     String deviceLanguage = Platform.localeName;
 
     final String language = translatedLanguages.firstWhere(
-        (language) => language == deviceLanguage.replaceAll("_US", ""),
+        (language) =>
+            language ==
+            deviceLanguage.substring(0, deviceLanguage.indexOf('_')),
         orElse: () => translatedLanguages[0]);
 
     return language;
