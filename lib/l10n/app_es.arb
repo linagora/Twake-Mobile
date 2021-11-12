@@ -265,5 +265,7 @@
   "spanish": "Español",
   "@spanish": {},
   "english": "Inglés",
-  "@english": {}
+  "@english": {},
+  "russian": "Ruso",
+  "@russian": {}
 }
