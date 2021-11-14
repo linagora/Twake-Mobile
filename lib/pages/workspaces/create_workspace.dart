@@ -169,7 +169,12 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                       }
                     }),
               ),
-              SizedBox(height: 16),
+              Flexible(
+                child: Container(
+                  height: 16,
+                  constraints: BoxConstraints(minHeight: 2),
+                ),
+              ),
               Column(
                 children: [
                   Padding(
@@ -234,22 +239,34 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                   Padding(
                     padding: const EdgeInsets.only(left: 12),
                     child: HintLine(
-                      text: AppLocalizations.of(context)!.workspaceCreationErrorInfo,
+                      text: AppLocalizations.of(context)!
+                          .workspaceCreationErrorInfo,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 40),
+              Flexible(
+                flex: 1,
+                child: Container(
+                  height: 40,
+                  constraints: BoxConstraints(minHeight: 2),
+                ),
+              ),
               HintLine(
                 text: AppLocalizations.of(context)!.addYourTeamMembers,
                 isLarge: true,
                 fontWeight: FontWeight.w500,
               ),
-              SizedBox(
-                height: 10,
+              Flexible(
+                flex: 1,
+                child: Container(
+                  height: 12,
+                  constraints: BoxConstraints(minHeight: 3),
+                ),
               ),
               Flexible(
+                flex: 3,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: _count,
