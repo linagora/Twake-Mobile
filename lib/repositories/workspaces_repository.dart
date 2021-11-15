@@ -46,7 +46,11 @@ class WorkspacesRepository {
                 transform: true,
               ))
           .toList();
-
+      final dataL = await _storage.select(
+          table: Table.account,
+          columns: ["language"],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
       _storage.multiInsert(table: Table.account, data: users);
 
       _storage.multiInsert(
@@ -57,7 +61,11 @@ class WorkspacesRepository {
               workspaceId: workspaceId!,
             ),
           ));
-
+      _storage.update(
+          table: Table.account,
+          values: dataL[0],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
       return users;
     }
   }

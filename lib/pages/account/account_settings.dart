@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:twake/pages/select_language.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -30,7 +32,6 @@ class _AccountSettingsState extends State<AccountSettings> {
   bool _canSave = false;
   bool switchVal = true;
   String email = '';
-  String language = '';
   String picture = '';
   String name = '';
 
@@ -94,7 +95,6 @@ class _AccountSettingsState extends State<AccountSettings> {
                     picture = accountState.account.picture ?? '';
                     email = account.email;
                     name = accountState.account.fullName;
-                    language = account.language ?? '';
                   }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -299,6 +299,26 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 ),
                               ),
                               Spacer(),
+                              BlocBuilder<LanguageCubit, LanguageState>(
+                                bloc: Get.find<LanguageCubit>(),
+                                builder: (context, state) {
+                                  if (state is NewLanguage) {
+                                    return Text(
+                                      getLanguageString(
+                                          languageCode: state.language,
+                                          context: context),
+                                      style: TextStyle(
+                                        fontSize: 17.0,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black.withOpacity(0.5),
+                                      ),
+                                    );
+                                  }
+                                  {
+                                    return SizedBox.shrink();
+                                  }
+                                },
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                     left: 14, right: 14.0),
