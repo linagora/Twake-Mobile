@@ -162,20 +162,6 @@
     "finnish":"Finnish",
     "italian":"Italian",
     "joinTheTeamButton": "Join the team",
-    "joinWorkspaceTitle": "Join {destination} from {workspace}!",
-    "@joinWorkspaceTitle": {
-        "description": "Welcome message to someone joining a workspace",
-        "placeholders": {
-            "destination": {
-                "type": "String",
-                "example": "Home"
-            },
-            "workspace": {
-                "type": "String",
-                "example": "Linagora"
-            }
-        }
-    },
     "joinWorkspaceSubtitle": "Twake is an open-source digital\nworkplace built to improve your team\nproductivity",
     "invitePeopleToWorkspace": "Invite people to this workspace",
     "inviteToWorkspace": "Invite people to ",
@@ -217,5 +203,22 @@
     "generateNewLinkSubtitle": "You can generate a new shareable link,\nhowever, current link will be automatically\nrevoked and become invalid.",
     "newLinkGenerated": "New link has been successfully generated",
     "contactTechnicalSupport": "Contact technical support",
-    "outOfReachTechnicalSupport": "Support team is out of reach, sorry."
+    "outOfReachTechnicalSupport": "Support team is out of reach, sorry.",
+    "joinWorkspaceIntro": "Twake is an open-source digital workspace\nbuilt to improve your team’s productivity",
+    "joinWorkspaceTitle": "Join ",
+    "joinWorkspaceSubTitle": "You have been invited to join\n{workspace} workspace on Twake!",
+    "@joinWorkspaceSubTitle": {
+        "description": "Welcome sub-title message to someone joining a workspace",
+        "placeholders": {
+            "workspace": {
+                "type": "String",
+                "example": "Twake"
+            }
+        }
+    },
+    "joinWorkspaceButton": "Join the workspace",
+    "joinWorkspaceUnAvailableTitle": "Link is no longer available",
+    "joinWorkspaceUnAvailableSubTitle": "Link to join workspace is not available\nanymore due to it’s expired or was revoked",
+    "joinWorkspaceCreateCompanyButton": "Create your company",
+    "joinWorkspaceUnAvailableNote": "You can ask your invitor to provide you with a valid link\nor you can create your own company"
 }

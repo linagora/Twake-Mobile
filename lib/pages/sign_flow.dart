@@ -4,11 +4,14 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/sign_up.dart';
 
 class SignFlow extends StatefulWidget {
+  final String? requestedMagicLinkToken;
+
+  const SignFlow({Key? key, this.requestedMagicLinkToken}) : super(key: key);
+
   @override
   _SignFlowState createState() => _SignFlowState();
 }
@@ -29,6 +32,7 @@ class _SignFlowState extends State<SignFlow> {
         onChangeServer: () => setState(() {
           _index = 1;
         }),
+        requestedMagicLinkToken: widget.requestedMagicLinkToken,
       ),
       ServerConfiguration(
         onCancel: () => setState(() {
@@ -42,6 +46,7 @@ class _SignFlowState extends State<SignFlow> {
         onCancel: () => setState(() {
           _index = 0;
         }),
+        requestedMagicLinkToken: widget.requestedMagicLinkToken,
       ),
     ];
   }
@@ -66,8 +71,10 @@ class _SignFlowState extends State<SignFlow> {
 class SignInSignUpForm extends StatelessWidget {
   final Function onChangeServer;
   final Function onSignUp;
+  final String? requestedMagicLinkToken;
+
   const SignInSignUpForm(
-      {Key? key, required this.onChangeServer, required this.onSignUp})
+      {Key? key, required this.onChangeServer, required this.onSignUp, this.requestedMagicLinkToken})
       : super(key: key);
 
   @override
@@ -108,7 +115,7 @@ class SignInSignUpForm extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      await Get.find<AuthenticationCubit>().authenticate();
+                      await Get.find<AuthenticationCubit>().authenticate(requestedMagicLinkToken: requestedMagicLinkToken);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signin,
