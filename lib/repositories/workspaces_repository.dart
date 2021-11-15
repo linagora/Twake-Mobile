@@ -46,26 +46,34 @@ class WorkspacesRepository {
                 transform: true,
               ))
           .toList();
+
+      // Select a language from the database before rewriting it
       final dataL = await _storage.select(
           table: Table.account,
           columns: ["language"],
           where: "id = ?",
           whereArgs: [Globals.instance.userId]);
+
+      // writes null to language field
       _storage.multiInsert(table: Table.account, data: users);
 
-      _storage.multiInsert(
-          table: Table.account2workspace,
-          data: users.map(
-            (u) => Account2Workspace(
-              userId: u.id,
-              workspaceId: workspaceId!,
-            ),
-          ));
+      //update the language field with the selected value dataL
       _storage.update(
           table: Table.account,
           values: dataL[0],
           where: "id = ?",
           whereArgs: [Globals.instance.userId]);
+
+      _storage.multiInsert(
+        table: Table.account2workspace,
+        data: users.map(
+          (u) => Account2Workspace(
+            userId: u.id,
+            workspaceId: workspaceId!,
+          ),
+        ),
+      );
+
       return users;
     }
   }
