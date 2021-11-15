@@ -146,7 +146,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
     bloc: invitationCubit,
     listener: (context, state) {
       if(state.status == InvitationStatus.generateLinkSuccess) {
-        _urlNotifier.value = state.link.link ?? '';
+        _urlNotifier.value = state.link;
       }
     },
     builder: (context, state) {

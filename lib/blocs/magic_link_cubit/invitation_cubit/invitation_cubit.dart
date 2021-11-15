@@ -1,9 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:twake/models/deeplink/magic_link.dart';
+import 'package:logger/logger.dart';
+import 'package:sprintf/sprintf.dart';
+import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_state.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/magic_link_repository.dart';
-import 'invitation_state.dart';
+import 'package:twake/services/endpoints.dart';
 
 class InvitationCubit extends Cubit<InvitationState> {
 
@@ -18,22 +19,22 @@ class InvitationCubit extends Cubit<InvitationState> {
 
   void generateNewLink() async {
     emit(state.copyWith(newStatus: InvitationStatus.inProcessing));
-
-    // TODO: wait API to complete
-    //final magicLink = await _repository.generateNewLink();
-    final magicLink = MagicLink(getRandomText());
-
-    if(magicLink.link == null || magicLink.link!.isEmpty) {
+    try {
+      final newToken = await _repository.generateToken();
+      if(newToken.token.isEmpty) {
+        emit(state.copyWith(newStatus: InvitationStatus.generateLinkFail));
+      } else {
+        final generatedLink = _invitationLink(newToken.token);
+        emit(state.copyWith(newStatus: InvitationStatus.generateLinkSuccess, newLink: generatedLink));
+      }
+    } catch (e) {
+      Logger().e('ERROR during generating magic link:\n$e');
       emit(state.copyWith(newStatus: InvitationStatus.generateLinkFail));
-    } else {
-      emit(state.copyWith(newStatus: InvitationStatus.generateLinkSuccess, newLink: magicLink));
     }
   }
 
-  String getRandomText() {
-    const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    Random _rnd = Random();
-    return String.fromCharCodes(Iterable.generate(15, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+  String _invitationLink(String token) {
+    return sprintf(Endpoint.magicLink, [Globals.instance.host, token]);
   }
 
 }

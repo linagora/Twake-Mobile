@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/deeplink/magic_link.dart';
 
 enum InvitationStatus {
   init,
@@ -10,16 +9,16 @@ enum InvitationStatus {
 
 class InvitationState extends Equatable {
   final InvitationStatus status;
-  final MagicLink link;
+  final String link;
 
   const InvitationState({
     this.status = InvitationStatus.init,
-    this.link = const MagicLink.init()
+    this.link = ''
   });
 
   InvitationState copyWith({
     InvitationStatus? newStatus,
-    MagicLink? newLink
+    String? newLink
   }) {
     return InvitationState(
       status: newStatus ?? this.status,
