@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:share/share.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/config/styles_config.dart';
@@ -321,7 +322,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.white,
-          margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, MediaQuery.of(context).size.height - 110),
+          margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, Dim.maxScreenHeight! - 110),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

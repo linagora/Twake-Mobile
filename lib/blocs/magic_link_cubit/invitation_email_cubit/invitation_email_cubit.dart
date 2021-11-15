@@ -1,14 +1,27 @@
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
+import 'package:twake/models/company/company_role.dart';
 import 'package:twake/models/deeplink/email_state.dart';
 import 'package:twake/models/deeplink/email_status.dart';
+import 'package:twake/models/invitation/email_invitation.dart';
+import 'package:twake/models/invitation/email_invitation_response.dart';
+import 'package:twake/models/invitation/email_invitation_response_status.dart';
+import 'package:twake/models/workspace/workspace_role.dart';
+import 'package:twake/repositories/workspaces_repository.dart';
 import 'invitation_email_state.dart';
 
 const emailListDisplayLimit = 3;
 
 class InvitationEmailCubit extends Cubit<InvitationEmailState> {
-  InvitationEmailCubit() : super(const InvitationEmailState());
+
+  late final WorkspacesRepository _workspacesRepository;
+
+  InvitationEmailCubit({WorkspacesRepository? workspacesRepository}) : super(const InvitationEmailState()) {
+    if (workspacesRepository == null) {
+      workspacesRepository = WorkspacesRepository();
+    }
+    _workspacesRepository = workspacesRepository;
+  }
 
   void addEmail(String email) {
     List<EmailState> listEmailState = [...state.listEmailState];
@@ -16,34 +29,65 @@ class InvitationEmailCubit extends Cubit<InvitationEmailState> {
     emit(state.copyWith(newStatus: InvitationEmailStatus.addEmailSuccess, newEmailStates: newEmailList));
   }
 
-  void sendEmails(String subject, String body, List<String> listEmail) async {
+  void sendEmails(List<String> listEmail) async {
     emit(state.copyWith(newStatus: InvitationEmailStatus.inProcessing));
 
     await _updateEmail(listEmail);
 
-    final isAllEmailValid = await _verifyEmail();
+    final isAllEmailValid = await _validateEmailFormat();
 
     if(isAllEmailValid) {
       final listEmails = state.listEmailState.where((e) =>
           e.status == EmailStatus.valid).map((e) =>
           e.email).toList();
+
       if (listEmails.isNotEmpty) {
-        final result = await _sendEmail(subject, body, listEmails);
-        if (result) {
-          final sentSuccessEmails = state.listEmailState.where((element) => element.status == EmailStatus.valid).toList();
-          emit(state.copyWith(newCachedSentSuccessEmails: sentSuccessEmails));
-          if(sentSuccessEmails.length > emailListDisplayLimit) {
-            final getInRangeEmailStates = sentSuccessEmails.getRange(0, emailListDisplayLimit).toList();
-            emit(state.copyWith(
-                newStatus: InvitationEmailStatus.sendEmailSuccess,
-                newEmailStates: getInRangeEmailStates));
-          } else {
-            emit(state.copyWith(
-                newStatus: InvitationEmailStatus.sendEmailSuccess,
-                newEmailStates: sentSuccessEmails));
-          }
-        } else {
+        final invitationList = listEmails
+            .map((e) => EmailInvitation(email: e, companyRole: CompanyRole.member, workspaceRole: WorkspaceRole.member))
+            .toList();
+
+        // Sent email with API
+        List<EmailInvitationResponse> resultList = [];
+        try {
+          resultList = await _workspacesRepository.inviteUser(invitationList);
+        } catch (e) {
+          Logger().e('ERROR during invite user via email:\n$e');
+        }
+        if(resultList.isEmpty) {
           emit(state.copyWith(newStatus: InvitationEmailStatus.sendEmailFail));
+          return;
+        }
+
+        // Update status of sending email to UI
+        final updatedEmailStates = resultList
+            .map((e) {
+              return e.status == EmailInvitationResponseStatus.ok
+                ? EmailState(e.email, EmailStatus.valid)
+                : EmailState(e.email, EmailStatus.invalid);
+            })
+            .toList();
+        emit(state.copyWith(newEmailStates: updatedEmailStates));
+
+        // Checking all sending email successfully or not to display result screen
+        final sentSuccessEmails = resultList
+            .where((result) => result.status == EmailInvitationResponseStatus.ok)
+            .map((e) => EmailState(e.email, EmailStatus.valid))
+            .toList();
+        if(sentSuccessEmails.isEmpty) {
+          emit(state.copyWith(newStatus: InvitationEmailStatus.sendEmailFail));
+          return;
+        }
+        emit(state.copyWith(newCachedSentSuccessEmails: sentSuccessEmails));
+
+        if(sentSuccessEmails.length > emailListDisplayLimit) {
+          final getInRangeEmailStates = sentSuccessEmails.getRange(0, emailListDisplayLimit).toList();
+          emit(state.copyWith(
+              newStatus: InvitationEmailStatus.sendEmailSuccess,
+              newEmailStates: getInRangeEmailStates));
+        } else {
+          emit(state.copyWith(
+              newStatus: InvitationEmailStatus.sendEmailSuccess,
+              newEmailStates: sentSuccessEmails));
         }
       } else {
         emit(state.copyWith(newStatus: InvitationEmailStatus.sendEmailFail));
@@ -68,7 +112,7 @@ class InvitationEmailCubit extends Cubit<InvitationEmailState> {
       newEmailStates: listEmail.map((e) => EmailState(e, EmailStatus.init)).toList()));
   }
 
-  Future<bool> _verifyEmail() async {
+  Future<bool> _validateEmailFormat() async {
     int countErrorEmail = 0;
     final emailUpdatedState = state.listEmailState.map((e) {
       if(e.email.trim().isEmpty) {
@@ -83,20 +127,6 @@ class InvitationEmailCubit extends Cubit<InvitationEmailState> {
     }).toList();
     emit(state.copyWith(newStatus: InvitationEmailStatus.verifyEmailSuccess, newEmailStates: emailUpdatedState));
     return countErrorEmail == 0;
-  }
-
-  Future<bool> _sendEmail(String subject, String body, List<String> recipientList) async {
-    final Email email = Email(
-      subject: subject,
-      body: body,
-      recipients: recipientList,
-    );
-    return await FlutterEmailSender.send(email).then((value) {
-      return true;
-    }).onError((e, stackTrace) {
-      Logger().e('Error occurred while sending invitation email: $e');
-      return false;
-    });
   }
 
 }

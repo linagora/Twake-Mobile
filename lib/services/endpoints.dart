@@ -14,8 +14,8 @@ class Endpoint {
   // API Endpoint for getting API version info + auth method
   static const info = '/internal/services/general/v1/server';
   // API Endpoint for working with user's workspaces in all companies
-  static const workspaces =
-      '/internal/services/workspaces/v1/companies/%s/workspaces';
+  static const workspaces = '/internal/services/workspaces/v1/companies/%s/workspaces';
+  static const workspaceInviteEmail = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/invite';
   // API Endpoint for working with account data
   static const account = '/internal/services/users/v1/users/%s';
   // API Endpoint for working with user's companies

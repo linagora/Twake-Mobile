@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/invitation/email_invitation.dart';
+import 'package:twake/models/invitation/email_invitation_response.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -151,4 +153,14 @@ class WorkspacesRepository {
 
     return workspace;
   }
+
+  Future<List<EmailInvitationResponse>> inviteUser(List<EmailInvitation> invitations) async {
+    final List resultList = await _api.post(
+      endpoint: sprintf(Endpoint.workspaceInviteEmail, [Globals.instance.companyId, Globals.instance.workspaceId]),
+      key: 'resources',
+      data: {'invitations' : invitations.map((e) => e.toJson()).toList()},
+    );
+    return resultList.map((e) => EmailInvitationResponse.fromJson(e)).toList();
+  }
+
 }

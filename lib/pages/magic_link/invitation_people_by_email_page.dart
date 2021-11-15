@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_email_cubit/invitation_email_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_email_cubit/invitation_email_state.dart';
 import 'package:twake/config/image_path.dart';
@@ -101,22 +102,37 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
               )
           ),
           !_isSentEmailSuccessfully(state)
-            ? Align(
-              alignment: Alignment.centerRight,
-              child: InkWell(
-                onTap: () => _handleClickOnButtonSend(),
-                child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(14)),
-                        color: Color(0xff004dff)),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 6, horizontal: 20),
-                    child: Text(AppLocalizations.of(context)?.sendButton.toUpperCase() ?? '',
-                        style: StylesConfig.commonTextStyle.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13))),
-              )
+            ? BlocBuilder(
+              bloc: Get.find<CompaniesCubit>(),
+              builder: (ctx, companyState) {
+                return Align(
+                    alignment: Alignment.centerRight,
+                    child: InkWell(
+                      onTap: () {
+                        if(state.status == InvitationEmailStatus.inProcessing)
+                          return;
+                        if(companyState is CompaniesLoadSuccess && companyState.selected.canShareMagicLink) {
+                          _handleClickOnButtonSend();
+                        }
+                      },
+                      child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(14)),
+                              color: Color(0xff004dff)),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 6, horizontal: 20),
+                          child: Text(AppLocalizations
+                              .of(context)
+                              ?.sendButton
+                              .toUpperCase() ?? '',
+                              style: StylesConfig.commonTextStyle.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13))),
+                    )
+                );
+              }
             ) : SizedBox.shrink(),
         ],
       ),
@@ -157,14 +173,19 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
       : SizedBox.shrink();
 
   List<Widget> _buildListEmail(InvitationEmailState state) {
-    final sentEmailControllers = (state.status == InvitationEmailStatus.sendEmailSuccess
-      && _textEditingControllers.length > emailListDisplayLimit)
-        ? _textEditingControllers.getRange(0, emailListDisplayLimit)
-        : _textEditingControllers;
-    return sentEmailControllers.map((controller) => _buildEmailItem(
-        controller,
-        state.listEmailState.firstWhere((emailState) => emailState.email.trim() == controller.text.trim(),
-            orElse: () => EmailState.init()))).toList();
+    List<TextEditingController> sentEmailControllers;
+    if(state.status == InvitationEmailStatus.sendEmailSuccess || state.status == InvitationEmailStatus.sendEmailSuccessShowAll) {
+      sentEmailControllers = _textEditingControllers.toList();
+      return state.listEmailState.map((emailState) => _buildEmailItem(
+          sentEmailControllers.firstWhere((controller) => emailState.email.trim() == controller.text.trim()),
+          emailState)).toList();
+    } else {
+      sentEmailControllers = _textEditingControllers.toList();
+      return sentEmailControllers.map((controller) => _buildEmailItem(
+          controller,
+          state.listEmailState.firstWhere((emailState) => emailState.email.trim() == controller.text.trim(),
+              orElse: () => EmailState.init()))).toList();
+    }
   }
 
   Widget _buildEmailItem(TextEditingController editingController, EmailState state) => Container(
@@ -256,11 +277,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
 
   void _handleClickOnButtonSend() {
     final allEmails = _textEditingControllers.map((e) => e.text.trim()).toList();
-    invitationEmailCubit.sendEmails(
-      AppLocalizations.of(context)?.joinMeOnTwake ?? '',
-      invitationUrl ?? '',
-      allEmails
-    );
+    invitationEmailCubit.sendEmails(allEmails);
   }
 
   void _handleClickOnButtonShowMore() {
