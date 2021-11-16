@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/globals/globals.dart';
 
 class ServerConfiguration extends StatefulWidget {
@@ -21,16 +20,19 @@ class ServerConfiguration extends StatefulWidget {
 class _ServerConfigurationState extends State<ServerConfiguration> {
   final _formKey = GlobalKey<FormState>();
   final _controller = TextEditingController();
+  final _hintServerUrl = ValueNotifier<String>('');
 
   @override
   void initState() {
     _controller.text = Globals.instance.host;
+    _hintServerUrl.value = _controller.text;
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _hintServerUrl.dispose();
     super.dispose();
   }
 
@@ -39,10 +41,9 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     var host = _controller.text;
     bool valid = await Globals.instance.hostSet(host);
     if (valid) {
+      _hintServerUrl.value = host;
       widget.onConfirm!();
-      //   print(Globals.instance.host);
     } else {
-      //   print(Globals.instance.host);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           margin: EdgeInsets.fromLTRB(
@@ -74,7 +75,6 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       appBar: AppBar(
         leading: CloseButton(onPressed: () {
           widget.onCancel!();
-          // print(Globals.instance.host);
           _controller.text = Globals.instance.host;
         }),
       ),
@@ -121,50 +121,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                             ),
                             Padding(
                               padding: EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 0),
-                              child: TextFormField(
-                                key: _formKey,
-                                validator: (value) => value!.isEmpty
-                                    ? AppLocalizations.of(context)!.blankAddressError
-                                    : null,
-                                controller: _controller,
-                                onFieldSubmitted: (_) => _connect(),
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: Globals.instance.host.isEmpty
-                                      ? 'https://web.twake.app'
-                                      : Globals.instance.host,
-                                  hintStyle: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: Color(0xffc8c8c8),
-                                  ),
-                                  alignLabelWithHint: true,
-                                  fillColor: Color(0xfff4f4f4),
-                                  filled: true,
-                                  suffix: Container(
-                                    width: 30,
-                                    height: 25,
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: IconButton(
-                                      padding: EdgeInsets.all(0),
-                                      onPressed: () => _controller.clear(),
-                                      iconSize: 15,
-                                      icon: Icon(CupertinoIcons.clear),
-                                    ),
-                                  ),
-                                  border: UnderlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    borderSide: BorderSide(
-                                      width: 0.0,
-                                      style: BorderStyle.none,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              child: _buildServerUrlTextField(),
                             ),
                           ],
                         ),
@@ -217,4 +174,52 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
       ),
     );
   }
+
+  Widget _buildServerUrlTextField() => ValueListenableBuilder(
+    valueListenable: _hintServerUrl,
+    builder: (BuildContext context, String hintServerUrl, Widget? child) {
+      return TextFormField(
+        key: _formKey,
+        validator: (value) => value!.isEmpty
+            ? AppLocalizations.of(context)!.blankAddressError
+            : null,
+        controller: _controller,
+        onFieldSubmitted: (_) => _connect(),
+        style: TextStyle(
+          fontSize: 17.0,
+          fontWeight: FontWeight.w400,
+          color: Colors.black,
+        ),
+        decoration: InputDecoration(
+          hintText: hintServerUrl,
+          hintStyle: TextStyle(
+            fontSize: 17.0,
+            fontWeight: FontWeight.w400,
+            color: Color(0xffc8c8c8),
+          ),
+          alignLabelWithHint: true,
+          fillColor: Color(0xfff4f4f4),
+          filled: true,
+          suffix: Container(
+            width: 30,
+            height: 25,
+            padding: EdgeInsets.only(left: 10),
+            child: IconButton(
+              padding: EdgeInsets.all(0),
+              onPressed: () => _controller.clear(),
+              iconSize: 15,
+              icon: Icon(CupertinoIcons.clear),
+            ),
+          ),
+          border: UnderlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              width: 0.0,
+              style: BorderStyle.none,
+            ),
+          ),
+        ),
+      );
+    }
+  );
 }
