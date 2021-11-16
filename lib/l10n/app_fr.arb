@@ -267,5 +267,73 @@
   "english": "anglais",
   "@english": {},
   "spanish": "espagnol",
-  "@spanish": {}
+  "@spanish": {},
+  "joinTheTeamButton": "Rejoindre l'équipe",
+  "@joinTheTeamButton": {},
+  "joinWorkspaceTitle": "Rejoignez {destination} depuis {workspace} !",
+  "@joinWorkspaceTitle": {
+    "description": "Welcome message to someone joining a workspace",
+    "placeholders": {
+      "destination": {
+        "type": "String",
+        "example": "Home"
+      },
+      "workspace": {
+        "type": "String",
+        "example": "Linagora"
+      }
+    }
+  },
+  "invitePeopleToWorkspace": "Inviter des personnes à cet espace de travail",
+  "@invitePeopleToWorkspace": {},
+  "inviteToWorkspace": "Inviter les gens à ",
+  "@inviteToWorkspace": {},
+  "inviteToWorkspaceSubtitle1": "Invitez vos collègues et collaborateurs\nà ",
+  "@inviteToWorkspaceSubtitle1": {},
+  "inviteToWorkspaceSubtitle2": " l'espace de travail en envoyant\nl'invitation par courriel ou via messagerie en utilisant le lien magique\n",
+  "@inviteToWorkspaceSubtitle2": {},
+  "sendMagicLinkToColleagues": "Envoyer le lien magique à vos collègues",
+  "@sendMagicLinkToColleagues": {},
+  "invitationCopiedToast": "Le lien de l'invitation a été copié\ndans le presse-papiers",
+  "@invitationCopiedToast": {},
+  "shareInvitationLink": "Partager le lien d'invitation",
+  "@shareInvitationLink": {},
+  "sendInvitationByEmail": "Envoyer le lien d'invitation par courriel",
+  "@sendInvitationByEmail": {},
+  "inviteByEmail": "Inviter par courriel",
+  "@inviteByEmail": {},
+  "invitationCopiedToClipboard": "Le lien de l'invitation a été copié\ndans le presse-papiers",
+  "@invitationCopiedToClipboard": {},
+  "inviteUsers": "Inviter les utilisateurs",
+  "@inviteUsers": {},
+  "sendButton": "Envoyer",
+  "@sendButton": {},
+  "inviteAnotherMember": "Inviter un autre membre",
+  "@inviteAnotherMember": {},
+  "showMoreInvites": "Afficher {number} invitations supplémentaires",
+  "@showMoreInvites": {
+    "description": "Show all invitation emails",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "7"
+      }
+    }
+  },
+  "joinMeOnTwake": "Rejoignez-moi sur Twake",
+  "@joinMeOnTwake": {},
+  "goToMainScreen": "Aller à l'écran principal",
+  "@goToMainScreen": {},
+  "invitationSent": "Vos invitations ont été\nenvoyées avec succès.",
+  "@invitationSent": {},
+  "generateNewLink": "Générer un nouveau lien",
+  "@generateNewLink": {},
+  "newLinkGenerated": "Le nouveau lien a été généré avec succès",
+  "@newLinkGenerated": {},
+  "generateNewLinkSubtitle": "Vous pouvez générer un nouveau lien partageable,\n\ncependant, le lien actuel sera automatiquement\nrévoqué et deviendra invalide.",
+  "@generateNewLinkSubtitle": {},
+  "addEmailAddress": "Ajouter une adresse électronique",
+  "@addEmailAddress": {},
+  "joinWorkspaceSubtitle": "Twake est un espace de travail numérique\nà code source ouvert conçu pour\naméliorer la productivité",
+  "@joinWorkspaceSubtitle": {}
 }
