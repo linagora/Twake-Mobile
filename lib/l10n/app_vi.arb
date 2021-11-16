@@ -2,5 +2,7 @@
   "workspaceCreate": "Tạo không gian làm việc mới",
   "@workspaceCreate": {},
   "organisationSwitch": "Chuyển đổi tổ chức",
-  "@organisationSwitch": {}
+  "@organisationSwitch": {},
+  "messageDeleted": "Tin nhắn đã bị xóa",
+  "@messageDeleted": {}
 }
