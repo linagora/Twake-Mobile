@@ -88,7 +88,7 @@ class _ComposeBar extends State<ComposeBar> {
       // Update for cache handlers
       widget.onTextUpdated(text, context);
       // Sendability  validation
-      if (text.isReallyEmpty && _canSend) {
+      if (_controller.text.isReallyEmpty && _canSend) {
         setState(() {
           _canSend = false;
         });
