@@ -120,4 +120,16 @@ class StylesConfig {
       decoration: TextDecoration.underline,
       decorationStyle: TextDecorationStyle.dotted);
 //TextStyle(color: accentColorRGB, fontSize: Dim.tm2(decimal: .15));
+
+  static final commonTextStyle = TextStyle(
+    color: Colors.black,
+    fontSize: 12.0,
+    fontWeight: FontWeight.normal,
+    fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro'
+  );
+
+  static final commonBoxDecoration = BoxDecoration(
+    color: Color(0xfff6f6f6),
+    borderRadius: BorderRadius.all(Radius.circular(12.0))
+  );
 }

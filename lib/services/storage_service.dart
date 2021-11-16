@@ -94,7 +94,7 @@ class StorageService {
     );
   }
 
- // This function can be used for rawInserts 
+  // This function can be used for rawInserts
   Future<void> rawInsert(
       {required Table table,
       required List<String> fields,

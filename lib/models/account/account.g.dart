@@ -18,7 +18,6 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
     picture: json['picture'] as String?,
     providerId: json['provider_id'] as String?,
     status: json['status'] as String?,
-    language: json['language'] as String?,
     lastActivity: json['last_activity'] as int,
   );
 }
@@ -32,7 +31,6 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'picture': instance.picture,
       'provider_id': instance.providerId,
       'status': instance.status,
-      'language': instance.language,
       'last_activity': instance.lastActivity,
       'is_verified': instance.verified,
       'deleted': instance.deleted,

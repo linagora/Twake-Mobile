@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/invitation/email_invitation.dart';
+import 'package:twake/models/invitation/email_invitation_response.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -47,16 +49,33 @@ class WorkspacesRepository {
               ))
           .toList();
 
+      // Select a language from the database before rewriting it
+      final dataL = await _storage.select(
+          table: Table.account,
+          columns: ["language"],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
+
+      // Update account info from remote to local db (with null language field)
+
       _storage.multiInsert(table: Table.account, data: users);
 
+      // Update the language field with the selected value dataL
+      _storage.update(
+          table: Table.account,
+          values: dataL[0],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
+
       _storage.multiInsert(
-          table: Table.account2workspace,
-          data: users.map(
-            (u) => Account2Workspace(
-              userId: u.id,
-              workspaceId: workspaceId!,
-            ),
-          ));
+        table: Table.account2workspace,
+        data: users.map(
+          (u) => Account2Workspace(
+            userId: u.id,
+            workspaceId: workspaceId!,
+          ),
+        ),
+      );
 
       return users;
     }
@@ -151,4 +170,14 @@ class WorkspacesRepository {
 
     return workspace;
   }
+
+  Future<List<EmailInvitationResponse>> inviteUser(List<EmailInvitation> invitations) async {
+    final List resultList = await _api.post(
+      endpoint: sprintf(Endpoint.workspaceInviteEmail, [Globals.instance.companyId, Globals.instance.workspaceId]),
+      key: 'resources',
+      data: {'invitations' : invitations.map((e) => e.toJson()).toList()},
+    );
+    return resultList.map((e) => EmailInvitationResponse.fromJson(e)).toList();
+  }
+
 }

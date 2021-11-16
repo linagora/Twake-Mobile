@@ -10,6 +10,8 @@ import 'package:twake/blocs/companies_cubit/companies_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/image_path.dart';
+import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -186,6 +188,7 @@ class HomeDrawerWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
+                      _buildInvitePeopleSection(context),
                       if ((cstate as CompaniesLoadSuccess)
                           .selected
                           .canCreateWorkspace)
@@ -295,5 +298,41 @@ class HomeDrawerWidget extends StatelessWidget {
     Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
     // close drawer
     Navigator.of(context).pop();
+  }
+
+  _buildInvitePeopleSection(BuildContext context) {
+    return BlocBuilder<WorkspacesCubit, WorkspacesState>(
+      bloc: _workspacesCubit,
+      builder: (context, workspaceState) {
+        return workspaceState is WorkspacesLoadSuccess
+          ? GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+                _handleClickOnInvitePeopleSection(workspaceState.selected?.name ?? '');
+              },
+              child: Container(
+                  margin: EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    children: [
+                      Image.asset(imageInvitePeople, width: 24, height: 24),
+                      SizedBox(width: 12),
+                      Text(
+                        AppLocalizations.of(context)?.invitePeopleToWorkspace ?? '',
+                        style: StylesConfig.commonTextStyle.copyWith(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+              ),
+          )
+          : SizedBox.shrink();
+      }
+    );
+  }
+
+  _handleClickOnInvitePeopleSection(String workspaceName) {
+    NavigatorService.instance.navigateToInvitationPeople(workspaceName);
   }
 }
