@@ -133,6 +133,14 @@ String getLanguageString(
       return AppLocalizations.of(context)!.spanish;
     case 'ru':
       return AppLocalizations.of(context)!.russian;
+    case 'de':
+      return AppLocalizations.of(context)!.german;
+    case 'it':
+      return AppLocalizations.of(context)!.italian;
+    case 'fi':
+      return AppLocalizations.of(context)!.finnish;
+    case 'fr':
+      return AppLocalizations.of(context)!.french;
     default:
       return 'English';
   }

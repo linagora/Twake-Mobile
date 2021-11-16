@@ -53,8 +53,10 @@ void main() async {
         supportedLocales: [
           const Locale('en'),
           const Locale('fr'),
-          const Locale('vi'),
+          const Locale('fi'),
           const Locale('es'),
+          const Locale('it'),
+          const Locale('de'),
           const Locale('ru'),
           const Locale('zh'),
           const Locale('nb'),

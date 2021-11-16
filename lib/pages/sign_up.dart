@@ -425,7 +425,8 @@ class _SignUpState extends State<SignUp> {
                 padding: const EdgeInsets.only(left: 25, right: 25, bottom: 20),
                 child: TextButton(
                   onPressed: () async {
-                    final registrationState = Get.find<RegistrationCubit>();
+                    final registrationState =
+                        Get.find<RegistrationCubit>().state;
                     if (registrationState is RegistrationAwaiting) {
                     } else {
                       await Get.find<RegistrationCubit>()

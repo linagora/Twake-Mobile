@@ -4,7 +4,15 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/storage_service.dart';
 
 //TODO before the build, update the list of translated languages using weblate
-const List<String> translatedLanguages = ["en", "es", "ru"];
+const List<String> translatedLanguages = [
+  "en",
+  "es",
+  "ru",
+  'de',
+  'it',
+  'fi',
+  'fr'
+];
 
 class LanguageRepository {
   final _storage = StorageService.instance;
