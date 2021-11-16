@@ -29,7 +29,7 @@
   "@newReply": {},
   "channelInfo": "Infos du canal",
   "@channelInfo": {},
-  "channelMembersPlural": "{count, pluriel, =0{Aucun membre du canal} =1{Membre du canal} autre{Membres du canal ({count})}}",
+  "channelMembersPlural": "{count, plural, =0{Aucun membre du canal} =1{Membre du canal} other{Membres du canal ({count})}}",
   "@channelMembersPlural": {
     "description": "A plural form of 'channel members' phrase",
     "placeholders": {
@@ -250,7 +250,7 @@
   "@memberRemoved": {},
   "channelSettings": "Paramètres du canal",
   "@channelSettings": {},
-  "membersPlural": "{count, plural, =0{Aucun membre} =1{1 membre} other{count} membres}}",
+  "membersPlural": "{count, plural, =0{Aucun membre} =1{1 membre} other{{count} membres}}",
   "@membersPlural": {
     "description": "A plural form of 'members' word",
     "placeholders": {
