@@ -20,6 +20,8 @@ class Account extends BaseModel {
   final String? providerId;
 
   final String? status;
+
+  @JsonKey(ignore: true)
   final String? language;
   final int lastActivity;
 

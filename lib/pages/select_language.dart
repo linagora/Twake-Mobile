@@ -122,24 +122,18 @@ class _SelectLanguageState extends State<SelectLanguage> {
           Get.updateLocale(Locale("$languageCode"));
         });
   }
+}
 
-  String getLanguageString(
-      {required String languageCode, required BuildContext context}) {
-    final String language;
-
-    switch (languageCode) {
-      case 'en':
-        language = AppLocalizations.of(context)!.english;
-        break;
-      case 'es':
-        language = AppLocalizations.of(context)!.spanish;
-        break;
-      case 'ru':
-        language = AppLocalizations.of(context)!.russian;
-        break;
-      default:
-        language = 'English';
-    }
-    return language;
+String getLanguageString(
+    {required String languageCode, required BuildContext context}) {
+  switch (languageCode) {
+    case 'en':
+      return AppLocalizations.of(context)!.english;
+    case 'es':
+      return AppLocalizations.of(context)!.spanish;
+    case 'ru':
+      return AppLocalizations.of(context)!.russian;
+    default:
+      return 'English';
   }
 }
