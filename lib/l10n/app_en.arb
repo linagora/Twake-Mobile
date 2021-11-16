@@ -156,5 +156,51 @@
     },
     "english":"English",
     "spanish":"Spanish",
-    "russian":"Russian"
+    "russian":"Russian",
+    "joinTheTeamButton": "Join the team",
+    "joinWorkspaceTitle": "Join {destination} from {workspace}!",
+    "@joinWorkspaceTitle": {
+        "description": "Welcome message to someone joining a workspace",
+        "placeholders": {
+            "destination": {
+                "type": "String",
+                "example": "Home"
+            },
+            "workspace": {
+                "type": "String",
+                "example": "Linagora"
+            }
+        }
+    },
+    "joinWorkspaceSubtitle": "Twake is an open-source digital\nworkplace built to improve your team\nproductivity",
+    "invitePeopleToWorkspace": "Invite people to this workspace",
+    "inviteToWorkspace": "Invite people to ",
+    "inviteToWorkspaceSubtitle1": "Invite your colleagues and collaborators\nto ",
+    "inviteToWorkspaceSubtitle2": " workspace by sending\nthem invititation over email or via messenger using magic link\n",
+    "sendMagicLinkToColleagues": "Send magic link to your colleagues",
+    "invitationCopiedToast": "Invitation link has been copied\nto a clipboard",
+    "shareInvitationLink": "Share invitation link",
+    "sendInvitationByEmail": "Send invitation link by email",
+    "inviteByEmail": "Invite by email",
+    "invitationCopiedToClipboard": "Invitation link has been copied\nto a clipboard",
+    "inviteUsers": "Invite users",
+    "sendButton": "Send",
+    "inviteAnotherMember": "Invite another member",
+    "addEmailAddress": "Add an email address",
+    "showMoreInvites": "Show {number} more invites",
+    "@showMoreInvites": {
+        "description": "Show all invitation emails",
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "7"
+            }
+        }
+    },
+    "joinMeOnTwake": "Join me on Twake",
+    "goToMainScreen": "Go to main screen",
+    "invitationSent": "Your invitations have\nbeen successfully sent.",
+    "generateNewLink": "Generate a new link",
+    "generateNewLinkSubtitle": "You can generate a new shareable link,\nhowever, current link will be automatically\nrevoked and become invalid.",
+    "newLinkGenerated": "New link has been successfully generated"
 }

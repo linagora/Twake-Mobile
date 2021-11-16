@@ -2,6 +2,11 @@ extension StringExtension on String {
   bool get isNotReallyEmpty => this.trim().isNotEmpty;
 
   bool get isReallyEmpty => this.trim().isEmpty;
+
+  // https://github.com/flutter/flutter/issues/18761
+  String get overflow => this
+      .replaceAll('', '\u{200B}')
+      .toString();
 }
 //
 // extension MemberExtension on List<Member?> {

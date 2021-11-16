@@ -6,6 +6,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
@@ -54,6 +55,9 @@ class HomeBinding implements Bindings {
 
     final languageCubit = LanguageCubit();
     Get.put(languageCubit, permanent: true);
+
+    final invitationCubit = InvitationCubit();
+    Get.put(invitationCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();
