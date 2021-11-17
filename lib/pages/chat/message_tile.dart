@@ -139,6 +139,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
             Flexible(
               child: Container(
                 child: Stack(
+                  alignment: Alignment.bottomLeft,
                   children: [
                     Container(
                       padding: _message.reactions.isEmpty
@@ -347,9 +348,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       ),
                     ),
                     if (!widget.hideReaction)
-                      Positioned(
-                        left: 17.0,
-                        bottom: -1.0,
+                      Transform(
+                        transform: Matrix4.translationValues(17, -1, 0.0),
                         child: Wrap(
                           runSpacing: Dim.heightMultiplier,
                           crossAxisAlignment: WrapCrossAlignment.center,
