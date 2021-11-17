@@ -157,6 +157,10 @@
     "english":"English",
     "spanish":"Spanish",
     "russian":"Russian",
+    "french":"French",
+    "german":"German",
+    "finnish":"Finnish",
+    "italian":"Italian",
     "joinTheTeamButton": "Join the team",
     "joinWorkspaceTitle": "Join {destination} from {workspace}!",
     "@joinWorkspaceTitle": {
