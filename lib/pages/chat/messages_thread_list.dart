@@ -147,21 +147,22 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
               SizedBox(
                 width: 15,
               ),
-              Wrap(
-                runSpacing: Dim.heightMultiplier,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                textDirection: TextDirection.ltr,
-                children: [
-                  ...message.reactions.map((r) {
-                    return Reaction<T>(
-                      message: message,
-                      reaction: r,
-                      isFirstInThread: true,
-                    );
-                  }),
-                ],
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ...message.reactions.map((r) {
+                        return Reaction<T>(
+                          message: message,
+                          reaction: r,
+                          isFirstInThread: true,
+                        );
+                      }),
+                    ],
+                  )
+                ),
               ),
-              Spacer(),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.0),
                 child: Text(
