@@ -335,5 +335,13 @@
   "invitationSent": "Ihre Einladungen wurden\nerfolgreich gesendet.",
   "@invitationSent": {},
   "generateNewLink": "Einen neuen Link generieren",
-  "@generateNewLink": {}
+  "@generateNewLink": {},
+  "german": "Deutsch",
+  "@german": {},
+  "french": "Französisch",
+  "@french": {},
+  "italian": "Italienisch",
+  "@italian": {},
+  "finnish": "Finnisch",
+  "@finnish": {}
 }
