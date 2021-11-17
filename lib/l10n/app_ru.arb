@@ -267,5 +267,13 @@
   "registrationEmailSent": "Готово, мы отправили ссылку для верификации и\nсгенерированный пароль:",
   "@registrationEmailSent": {},
   "russian": "Русский",
-  "@russian": {}
+  "@russian": {},
+  "french": "Французский",
+  "@french": {},
+  "german": "Немецкий",
+  "@german": {},
+  "italian": "Итальянский",
+  "@italian": {},
+  "finnish": "Финский",
+  "@finnish": {}
 }

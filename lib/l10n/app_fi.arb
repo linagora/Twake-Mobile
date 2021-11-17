@@ -267,5 +267,13 @@
   "english": "englanti",
   "@english": {},
   "spanish": "espanja",
-  "@spanish": {}
+  "@spanish": {},
+  "german": "Saksan",
+  "@german": {},
+  "french": "Ranskan",
+  "@french": {},
+  "italian": "Italian",
+  "@italian": {},
+  "finnish": "Suomalainen",
+  "@finnish": {}
 }
