@@ -23,7 +23,7 @@ class LanguageRepository {
   // List<Locale> systemLocales = window.locales;
 
   Locale get devLocale {
-    final String deviceLanguage = 'En-us'; //Platform.localeName;
+    final String deviceLanguage = Platform.localeName;
     // сhecking if it is needed to do substring
     final int checkSubstring = deviceLanguage.contains('-')
         ? deviceLanguage.indexOf('-')
