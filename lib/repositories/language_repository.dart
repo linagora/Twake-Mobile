@@ -23,12 +23,20 @@ class LanguageRepository {
   // List<Locale> systemLocales = window.locales;
 
   Locale get devLocale {
-    String deviceLanguage = Platform.localeName;
+    final String deviceLanguage = 'En-us'; //Platform.localeName;
+    // сhecking if it is needed to do substring
+    final int checkSubstring = deviceLanguage.contains('-')
+        ? deviceLanguage.indexOf('-')
+        : deviceLanguage.contains('_')
+            ? deviceLanguage.indexOf('_')
+            : 0;
 
     final String language = translatedLanguages.firstWhere(
         (language) =>
             language ==
-            deviceLanguage.substring(0, deviceLanguage.indexOf('_')),
+            (checkSubstring == 0
+                ? deviceLanguage
+                : deviceLanguage.substring(0, checkSubstring)),
         orElse: () => translatedLanguages[0]);
 
     return Locale(language);
@@ -39,12 +47,20 @@ class LanguageRepository {
   }
 
   String getDeviceLanguage() {
-    String deviceLanguage = Platform.localeName;
+    final String deviceLanguage = Platform.localeName;
+    // сhecking if it is needed to do substring
+    final int checkSubstring = deviceLanguage.contains('-')
+        ? deviceLanguage.indexOf('-')
+        : deviceLanguage.contains('_')
+            ? deviceLanguage.indexOf('_')
+            : 0;
 
     final String language = translatedLanguages.firstWhere(
         (language) =>
             language ==
-            deviceLanguage.substring(0, deviceLanguage.indexOf('_')),
+            (checkSubstring == 0
+                ? deviceLanguage
+                : deviceLanguage.substring(0, checkSubstring)),
         orElse: () => translatedLanguages[0]);
 
     return language;
