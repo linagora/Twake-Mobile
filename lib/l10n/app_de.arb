@@ -267,5 +267,73 @@
   "searchMembers": "Suche nach Mitgliedern",
   "@searchMembers": {},
   "deleteMessageInfo": "Diese Nachricht löschen",
-  "@deleteMessageInfo": {}
+  "@deleteMessageInfo": {},
+  "joinTheTeamButton": "Treten Sie dem Team bei",
+  "@joinTheTeamButton": {},
+  "joinWorkspaceTitle": "Verbinden Sie {destination} von {workspace} aus!",
+  "@joinWorkspaceTitle": {
+    "description": "Welcome message to someone joining a workspace",
+    "placeholders": {
+      "destination": {
+        "type": "String",
+        "example": "Home"
+      },
+      "workspace": {
+        "type": "String",
+        "example": "Linagora"
+      }
+    }
+  },
+  "joinWorkspaceSubtitle": "Twake ist ein digitaler quelloffener Arbeitsplatz,\nder die Produktivität Ihres Teams\nProduktivität",
+  "@joinWorkspaceSubtitle": {},
+  "invitePeopleToWorkspace": "Leute zu diesem Arbeitsbereich einladen",
+  "@invitePeopleToWorkspace": {},
+  "inviteToWorkspace": "Menschen einladen zu ",
+  "@inviteToWorkspace": {},
+  "inviteToWorkspaceSubtitle1": "Laden Sie Ihre Kollegen und Mitarbeiter ein\nzu ",
+  "@inviteToWorkspaceSubtitle1": {},
+  "inviteToWorkspaceSubtitle2": " Arbeitsbereich durch Versenden\neine Einladung per E-Mail oder über einen Messenger mit einem magischen Link\n",
+  "@inviteToWorkspaceSubtitle2": {},
+  "sendMagicLinkToColleagues": "Senden Sie den magischen Link an Ihre Kollegen",
+  "@sendMagicLinkToColleagues": {},
+  "invitationCopiedToast": "Einladungslink wurde kopiert\nin die Zwischenablage",
+  "@invitationCopiedToast": {},
+  "shareInvitationLink": "Link zur Einladung freigeben",
+  "@shareInvitationLink": {},
+  "sendInvitationByEmail": "Einladungslink per E-Mail versenden",
+  "@sendInvitationByEmail": {},
+  "inviteByEmail": "Per E-Mail einladen",
+  "@inviteByEmail": {},
+  "invitationCopiedToClipboard": "Einladungslink wurde kopiert\nin die Zwischenablage",
+  "@invitationCopiedToClipboard": {},
+  "inviteUsers": "Benutzer einladen",
+  "@inviteUsers": {},
+  "sendButton": "Senden",
+  "@sendButton": {},
+  "inviteAnotherMember": "Ein anderes Mitglied einladen",
+  "@inviteAnotherMember": {},
+  "addEmailAddress": "Eine E-Mail-Adresse hinzufügen",
+  "@addEmailAddress": {},
+  "showMoreInvites": "{number} weitere Einladungen anzeigen",
+  "@showMoreInvites": {
+    "description": "Show all invitation emails",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "7"
+      }
+    }
+  },
+  "joinMeOnTwake": "Begleiten Sie mich auf Twake",
+  "@joinMeOnTwake": {},
+  "goToMainScreen": "Zum Hauptbildschirm gehen",
+  "@goToMainScreen": {},
+  "generateNewLinkSubtitle": "Sie können einen neuen teilbaren Link erstellen,\n\njedoch wird der aktuelle Link automatisch\nwiderrufen und wird ungültig.",
+  "@generateNewLinkSubtitle": {},
+  "newLinkGenerated": "Neuer Link wurde erfolgreich erstellt",
+  "@newLinkGenerated": {},
+  "invitationSent": "Ihre Einladungen wurden\nerfolgreich gesendet.",
+  "@invitationSent": {},
+  "generateNewLink": "Einen neuen Link generieren",
+  "@generateNewLink": {}
 }
