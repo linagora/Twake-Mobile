@@ -273,5 +273,7 @@
   "german": "Alemán",
   "@german": {},
   "italian": "Italiano",
-  "@italian": {}
+  "@italian": {},
+  "french": "Francés",
+  "@french": {}
 }
