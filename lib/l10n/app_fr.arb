@@ -335,5 +335,13 @@
   "addEmailAddress": "Ajouter une adresse électronique",
   "@addEmailAddress": {},
   "joinWorkspaceSubtitle": "Twake est un espace de travail numérique\nà code source ouvert conçu pour\naméliorer la productivité",
-  "@joinWorkspaceSubtitle": {}
+  "@joinWorkspaceSubtitle": {},
+  "german": "Allemand",
+  "@german": {},
+  "italian": "Italien",
+  "@italian": {},
+  "french": "Français",
+  "@french": {},
+  "finnish": "Finlandais",
+  "@finnish": {}
 }
