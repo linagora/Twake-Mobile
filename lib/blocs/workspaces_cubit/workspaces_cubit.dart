@@ -1,8 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/company/company_role.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/invitation/email_invitation.dart';
 import 'package:twake/models/workspace/workspace.dart';
+import 'package:twake/models/workspace/workspace_role.dart';
 import 'package:twake/repositories/workspaces_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -75,6 +78,17 @@ class WorkspacesCubit extends Cubit<WorkspacesState> {
   }) async {
     final workspace = await _repository.create(
         companyId: companyId, name: name, members: members);
+
+    if (members != null && members.isNotEmpty) {
+      await _repository.inviteUser(
+        workspace.companyId,
+        workspace.id,
+        members.map((member) => EmailInvitation(
+            email: member,
+            workspaceRole: WorkspaceRole.member,
+            companyRole: CompanyRole.member))
+          .toList());
+    }
 
     final workspaces = (state as WorkspacesLoadSuccess).workspaces;
 

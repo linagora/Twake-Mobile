@@ -171,9 +171,9 @@ class WorkspacesRepository {
     return workspace;
   }
 
-  Future<List<EmailInvitationResponse>> inviteUser(List<EmailInvitation> invitations) async {
+  Future<List<EmailInvitationResponse>> inviteUser(String companyId, String workspaceId, List<EmailInvitation> invitations) async {
     final List resultList = await _api.post(
-      endpoint: sprintf(Endpoint.workspaceInviteEmail, [Globals.instance.companyId, Globals.instance.workspaceId]),
+      endpoint: sprintf(Endpoint.workspaceInviteEmail, [companyId, workspaceId]),
       key: 'resources',
       data: {'invitations' : invitations.map((e) => e.toJson()).toList()},
     );

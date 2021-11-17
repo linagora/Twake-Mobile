@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:twake/models/company/company_role.dart';
 import 'package:twake/models/deeplink/email_state.dart';
 import 'package:twake/models/deeplink/email_status.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/invitation/email_invitation.dart';
 import 'package:twake/models/invitation/email_invitation_response.dart';
 import 'package:twake/models/invitation/email_invitation_response_status.dart';
@@ -49,7 +50,7 @@ class InvitationEmailCubit extends Cubit<InvitationEmailState> {
         // Sent email with API
         List<EmailInvitationResponse> resultList = [];
         try {
-          resultList = await _workspacesRepository.inviteUser(invitationList);
+          resultList = await _workspacesRepository.inviteUser(Globals.instance.companyId!, Globals.instance.workspaceId!, invitationList);
         } catch (e) {
           Logger().e('ERROR during invite user via email:\n$e');
         }
