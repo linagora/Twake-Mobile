@@ -267,5 +267,13 @@
   "english": "inglese",
   "@english": {},
   "spanish": "spagnolo",
-  "@spanish": {}
+  "@spanish": {},
+  "german": "Tedesco",
+  "@german": {},
+  "finnish": "Finlandese",
+  "@finnish": {},
+  "french": "Francese",
+  "@french": {},
+  "italian": "Italiano",
+  "@italian": {}
 }
