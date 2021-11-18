@@ -28,7 +28,7 @@ class ImageWidget extends StatelessWidget {
       this.name = "",
       this.borderRadius = 0,
       this.avatars = const [],
-      this.stackSize = 35,
+      this.stackSize = 27,
       this.backgroundColor = Colors.transparent})
       : super(key: key);
 
@@ -45,7 +45,7 @@ class ImageWidget extends StatelessWidget {
           imageUrl != "" &&
           (avatars.length == 1 || avatars.isEmpty)) {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
-      } else if (avatars.isNotEmpty && imageUrl != "") {
+      } else if (avatars.length >= 2) {
         return stackImage(stackSize, avatars, borderRadius, backgroundColor);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
@@ -58,7 +58,7 @@ class ImageWidget extends StatelessWidget {
       Color backgroundColor) {
     List<Widget> imageAvatars = [];
 
-    final len = avatars.length > 2 ? 2 : avatars.length;
+    final len = avatars.length > 3 ? 3 : avatars.length;
     for (int i = 0; i < len; i++) {
       if (avatars[i].link != "") {
         imageAvatars.add(
@@ -84,6 +84,7 @@ class ImageWidget extends StatelessWidget {
         height: size,
         width: size,
         child: Stack(
+          alignment: Alignment.center,
           children: imageAvatars,
         ),
       ),
