@@ -41,6 +41,7 @@ class HomeChannelTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.only(left: 12, top: 12, bottom: 12),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ImageWidget(
               imageType: isDirect ? ImageType.common : ImageType.channel,

@@ -45,7 +45,7 @@ class ImageWidget extends StatelessWidget {
           imageUrl != "" &&
           (avatars.length == 1 || avatars.isEmpty)) {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
-      } else if (avatars.isNotEmpty && imageUrl != "") {
+      } else if (avatars.length >= 2) {
         return stackImage(stackSize, avatars, borderRadius, backgroundColor);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
@@ -84,6 +84,7 @@ class ImageWidget extends StatelessWidget {
         height: size,
         width: size,
         child: Stack(
+          alignment: Alignment.center,
           children: imageAvatars,
         ),
       ),

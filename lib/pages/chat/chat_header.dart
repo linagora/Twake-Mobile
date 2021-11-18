@@ -38,7 +38,7 @@ class ChatHeader extends StatelessWidget {
               size: 38,
               imageUrl: isDirect ? avatars.first.link : icon,
               avatars: avatars,
-              stackSize: 26,
+              stackSize: 24,
               name: name),
           SizedBox(width: 12.0),
           Expanded(
@@ -59,16 +59,17 @@ class ChatHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 4),
-                if (!isDirect)
-                  Text(
+                (!isDirect) ? SizedBox(height: 4) : SizedBox.shrink(),
+                (!isDirect)
+                  ? Text(
                     AppLocalizations.of(context)!.membersPlural(membersCount),
                     style: TextStyle(
                       fontSize: 10.0,
                       fontWeight: FontWeight.w400,
                       color: Color(0xff92929C),
                     ),
-                  ),
+                  )
+                  : SizedBox.shrink(),
               ],
             ),
           ),
