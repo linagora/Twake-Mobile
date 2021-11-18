@@ -28,7 +28,7 @@ class ImageWidget extends StatelessWidget {
       this.name = "",
       this.borderRadius = 0,
       this.avatars = const [],
-      this.stackSize = 27,
+      this.stackSize = 35,
       this.backgroundColor = Colors.transparent})
       : super(key: key);
 
@@ -58,7 +58,7 @@ class ImageWidget extends StatelessWidget {
       Color backgroundColor) {
     List<Widget> imageAvatars = [];
 
-    final len = avatars.length > 3 ? 3 : avatars.length;
+    final len = avatars.length > 2 ? 2 : avatars.length;
     for (int i = 0; i < len; i++) {
       if (avatars[i].link != "") {
         imageAvatars.add(

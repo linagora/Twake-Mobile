@@ -38,7 +38,7 @@ class ChatHeader extends StatelessWidget {
               size: 38,
               imageUrl: isDirect ? avatars.first.link : icon,
               avatars: avatars,
-              stackSize: 26,
+              stackSize: 24,
               name: name),
           SizedBox(width: 12.0),
           Expanded(
