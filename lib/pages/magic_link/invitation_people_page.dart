@@ -85,33 +85,37 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   );
 
   Widget _buildTitleViewSection() => Container(
-    margin: const EdgeInsets.only(top: 24),
+    margin: const EdgeInsets.only(top: 24, left: 16, right: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)?.inviteToWorkspace ?? '',
-              style: StylesConfig.commonTextStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              _workspaceName ?? '',
-              style: StylesConfig.commonTextStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff004dff)
-              ),
-            )
-          ]
+        RichText(
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          text: TextSpan(
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)?.inviteToWorkspace ?? '',
+                  style: StylesConfig.commonTextStyle.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(
+                  text: _workspaceName ?? '',
+                  style: StylesConfig.commonTextStyle.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff004dff),
+                  )
+                )
+              ]
+          ),
         ),
         SizedBox(height: 12),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 50),
+          margin: const EdgeInsets.symmetric(horizontal: 34),
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
