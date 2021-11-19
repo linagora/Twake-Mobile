@@ -322,7 +322,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.white,
-          margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, Dim.maxScreenHeight! - 110),
+          margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, Dim.maxScreenHeight! - Dim.heightPercent(16)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
