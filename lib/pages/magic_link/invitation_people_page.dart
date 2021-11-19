@@ -310,7 +310,10 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   }
 
   _handleClickOnButtonShareLink() async {
-    await Share.share(_urlNotifier.value);
+    if(_urlNotifier.value.isEmpty)
+      return;
+    final sharedContent = AppLocalizations.of(context)?.joinMeOnTwake(_urlNotifier.value) ?? '';
+    await Share.share(sharedContent);
   }
 
   _handleClickOnButtonInviteByEmail() {
@@ -332,7 +335,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
             children: [
               Image.asset(imageCopiedClipboard, width: 40, height: 40),
               SizedBox(width: 12),
-              Text(AppLocalizations.of(context)!.invitationCopiedToClipboard,
+              Text(AppLocalizations.of(context)?.invitationCopiedToClipboard ?? '',
                   style: StylesConfig.commonTextStyle.copyWith(fontSize: 15)),
             ],
           ),

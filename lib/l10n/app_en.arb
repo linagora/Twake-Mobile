@@ -201,7 +201,16 @@
             }
         }
     },
-    "joinMeOnTwake": "Join me on Twake",
+    "joinMeOnTwake": "Hey, join me on Twake: {link}",
+    "@joinMeOnTwake": {
+        "description": "Shared invitation content for magic link",
+        "placeholders": {
+            "link": {
+                "type": "String",
+                "example": "https://web.qa.twake.app?join=eyJhbGc"
+            }
+        }
+    },
     "goToMainScreen": "Go to main screen",
     "invitationSent": "Your invitations have\nbeen successfully sent.",
     "generateNewLink": "Generate a new link",
