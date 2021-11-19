@@ -85,7 +85,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   );
 
   Widget _buildTitleViewSection() => Container(
-    margin: const EdgeInsets.only(top: 24),
+    margin: const EdgeInsets.only(top: 24, left: 16, right: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -115,7 +115,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
         ),
         SizedBox(height: 12),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 50),
+          margin: const EdgeInsets.symmetric(horizontal: 34),
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
