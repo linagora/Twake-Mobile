@@ -206,5 +206,7 @@
     "invitationSent": "Your invitations have\nbeen successfully sent.",
     "generateNewLink": "Generate a new link",
     "generateNewLinkSubtitle": "You can generate a new shareable link,\nhowever, current link will be automatically\nrevoked and become invalid.",
-    "newLinkGenerated": "New link has been successfully generated"
+    "newLinkGenerated": "New link has been successfully generated",
+    "contactTechnicalSupport": "Contact technical support",
+    "outOfReachTechnicalSupport": "Support team is out of reach, sorry."
 }
