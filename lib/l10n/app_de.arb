@@ -324,7 +324,7 @@
       }
     }
   },
-  "joinMeOnTwake": "Begleiten Sie mich auf Twake",
+  "joinMeOnTwake": "Hallo, mach mit bei Twake: {link}",
   "@joinMeOnTwake": {},
   "goToMainScreen": "Zum Hauptbildschirm gehen",
   "@goToMainScreen": {},
@@ -343,5 +343,9 @@
   "italian": "Italienisch",
   "@italian": {},
   "finnish": "Finnisch",
-  "@finnish": {}
+  "@finnish": {},
+  "contactTechnicalSupport": "Technischen Support kontaktieren",
+  "@contactTechnicalSupport": {},
+  "outOfReachTechnicalSupport": "Das Support-Team ist nicht erreichbar, tut mir leid.",
+  "@outOfReachTechnicalSupport": {}
 }
