@@ -98,6 +98,7 @@ class Globals extends BaseModel {
 
   String? oidcAuthority;
 
+  @JsonKey(ignore: true)
   dynamic helpUrl;
 
   @JsonKey(ignore: true)
