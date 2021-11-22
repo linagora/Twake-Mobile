@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:share/share.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_state.dart';
-import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/config/styles_config.dart';
@@ -319,24 +318,26 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
 
   _handleClickOnLink() {
     Clipboard.setData(new ClipboardData(text: _urlNotifier.value)).then((_){
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.white,
-          margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0, Dim.maxScreenHeight! - 110),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(milliseconds: 1500),
-          content: Row(
-            children: [
-              Image.asset(imageCopiedClipboard, width: 40, height: 40),
-              SizedBox(width: 12),
-              Text(AppLocalizations.of(context)!.invitationCopiedToClipboard,
-                  style: StylesConfig.commonTextStyle.copyWith(fontSize: 15)),
-            ],
-          ),
+      Get.snackbar('', '',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.white,
+        margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
+        animationDuration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 1500),
+        icon: Image.asset(imageCopiedClipboard, width: 40, height: 40),
+        titleText: SizedBox.shrink(),
+        messageText: Container(
+          margin: const EdgeInsets.only(bottom: 4),
+          child: Text(AppLocalizations.of(context)!.invitationCopiedToClipboard,
+              style: StylesConfig.commonTextStyle.copyWith(fontSize: 15)),
         ),
+        boxShadows: [
+          BoxShadow(
+            blurRadius: 16,
+            color: Color.fromRGBO(0, 0, 0, 0.24),
+          )
+        ]
       );
     });
   }
