@@ -268,12 +268,92 @@
   "@english": {},
   "spanish": "spagnolo",
   "@spanish": {},
-  "german": "Tedesco",
+  "german": "tedesco",
   "@german": {},
-  "finnish": "Finlandese",
+  "finnish": "finlandese",
   "@finnish": {},
-  "french": "Francese",
+  "french": "francese",
   "@french": {},
-  "italian": "Italiano",
-  "@italian": {}
+  "italian": "italiano",
+  "@italian": {},
+  "joinWorkspaceSubtitle": "Twake è un posto di lavoro digitale con codice aperto\nfatto per migliorare la produttività della tua squadra",
+  "@joinWorkspaceSubtitle": {},
+  "shareInvitationLink": "Condividi il collegamento dell'invito",
+  "@shareInvitationLink": {},
+  "generateNewLinkSubtitle": "È possibile generare un nuovo collegamento condivisibile,\nTuttavia, il collegamento corrente sarà automaticamente\nrevocato e non sarà più valido.",
+  "@generateNewLinkSubtitle": {},
+  "sendMagicLinkToColleagues": "Invia il collegamento magico ai tuoi colleghi",
+  "@sendMagicLinkToColleagues": {},
+  "inviteUsers": "Invita gli utenti",
+  "@inviteUsers": {},
+  "showMoreInvites": "Mostra {number} inviti di più",
+  "@showMoreInvites": {
+    "description": "Show all invitation emails",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "7"
+      }
+    }
+  },
+  "joinTheTeamButton": "Unisciti alla squadra",
+  "@joinTheTeamButton": {},
+  "newLinkGenerated": "Il nuovo collegamento è stato generato con successo",
+  "@newLinkGenerated": {},
+  "joinWorkspaceTitle": "Raggiungi la {destination} da {workspace}!",
+  "@joinWorkspaceTitle": {
+    "description": "Welcome message to someone joining a workspace",
+    "placeholders": {
+      "destination": {
+        "type": "String",
+        "example": "Home"
+      },
+      "workspace": {
+        "type": "String",
+        "example": "Linagora"
+      }
+    }
+  },
+  "invitePeopleToWorkspace": "Invita le persone a questo spazio di lavoro",
+  "@invitePeopleToWorkspace": {},
+  "inviteToWorkspace": "Invita le persone a ",
+  "@inviteToWorkspace": {},
+  "inviteToWorkspaceSubtitle1": "Invita i tuoi colleghi e collaboratori\na ",
+  "@inviteToWorkspaceSubtitle1": {},
+  "inviteToWorkspaceSubtitle2": " di lavoro inviando loro\nl'invito via e-mail o via messaggio usando il collegamento magico\n",
+  "@inviteToWorkspaceSubtitle2": {},
+  "invitationCopiedToast": "Il collegamento dell'invito è stato copiato\nnegli appunti",
+  "@invitationCopiedToast": {},
+  "sendInvitationByEmail": "Invia il collegamento di invito via e-mail",
+  "@sendInvitationByEmail": {},
+  "inviteByEmail": "Invita via e-mail",
+  "@inviteByEmail": {},
+  "invitationCopiedToClipboard": "Il collegamento dell'invito è stato copiato\nnegli appunti",
+  "@invitationCopiedToClipboard": {},
+  "sendButton": "Invia",
+  "@sendButton": {},
+  "inviteAnotherMember": "Invita un altro membro",
+  "@inviteAnotherMember": {},
+  "addEmailAddress": "Aggiungi un indirizzo e-mail",
+  "@addEmailAddress": {},
+  "goToMainScreen": "Vai alla schermata principale",
+  "@goToMainScreen": {},
+  "generateNewLink": "Genera un nuovo collegamento",
+  "@generateNewLink": {},
+  "invitationSent": "I tuoi inviti sono stati\ninviati con successo.",
+  "@invitationSent": {},
+  "contactTechnicalSupport": "Contatta il supporto tecnico",
+  "@contactTechnicalSupport": {},
+  "outOfReachTechnicalSupport": "La squadra di aiuto non è raggiungibile, mi dispiace.",
+  "@outOfReachTechnicalSupport": {},
+  "joinMeOnTwake": "Unisciti a me su Twake: {link}",
+  "@joinMeOnTwake": {
+    "description": "Shared invitation content for magic link",
+    "placeholders": {
+      "link": {
+        "type": "String",
+        "example": "https://web.qa.twake.app?join=eyJhbGc"
+      }
+    }
+  }
 }
