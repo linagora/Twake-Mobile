@@ -1,13 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const link1 = "https://twake.app/en/terms-of-service/";
@@ -522,80 +524,141 @@ class _SignUpState extends State<SignUp> {
   }
 
   Widget registrationFailed() {
-    return Padding(
-      padding: EdgeInsets.only(
-          left: Dim.widthPercent(10), right: Dim.widthPercent(10)),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 25),
-            child: Text(
-              AppLocalizations.of(context)!.signupFailed,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 32.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Text(
-            AppLocalizations.of(context)!.signupFailedInfo,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(
-            height: Dim.heightPercent(5),
-          ),
-          Container(
-            width: Dim.widthPercent(40),
-            child: Image.asset(
-              'assets/images/3.0x/emoji_face.png',
-            ),
-          ),
-          SizedBox(
-            height: Dim.heightPercent(10),
-          ),
-          Text(
-            AppLocalizations.of(context)!.signupAgainInfo,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.normal,
-              color: Color(0xFF8A898E),
-            ),
-          ),
-          SizedBox(
-            height: Dim.heightPercent(10),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.find<RegistrationCubit>().prepare();
-            },
-            child: Container(
-              height: 50,
-              decoration: BoxDecoration(
-                color: Color(0xFF004DFF),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              alignment: Alignment.center,
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: Dim.widthPercent(10),
+          right: Dim.widthPercent(10),
+          bottom: Dim.heightPercent(15)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 25),
               child: Text(
-                AppLocalizations.of(context)!.signupAgain,
+                AppLocalizations.of(context)!.signupFailed,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 17.0,
+                  fontSize: 32.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ),
-          ),
-        ],
-      ),
+            Text(
+              AppLocalizations.of(context)!.signupFailedInfo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(
+              height: Dim.heightPercent(5),
+            ),
+            Container(
+              height: Dim.heightPercent(25),
+              child: Image.asset(
+                'assets/images/3.0x/emoji_face.png',
+              ),
+            ),
+            SizedBox(
+              height: Dim.heightPercent(10),
+            ),
+            Text(
+              AppLocalizations.of(context)!.signupAgainInfo,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight: FontWeight.normal,
+                color: Color(0xFF8A898E),
+              ),
+            ),
+            SizedBox(
+              height: Dim.heightPercent(3),
+            ),
+            GestureDetector(
+              child: Text(
+                AppLocalizations.of(context)!.contactTechnicalSupport,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 17.0,
+                  fontWeight: FontWeight.normal,
+                  color: Color(0xFF004dff)
+                ),
+              ),
+              onTap: () => _launchHelpUrl(),
+            ),
+            SizedBox(
+              height: Dim.heightPercent(3),
+            ),
+            TextButton(
+              onPressed: () {
+                Get.find<RegistrationCubit>().prepare();
+              },
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Color(0xFF004DFF),
+                  borderRadius: BorderRadius.circular(14.0),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  AppLocalizations.of(context)!.signupAgain,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      )
     );
+  }
+
+  void _launchHelpUrl() async {
+    final helpUrl = Globals.instance.helpUrl;
+    if (helpUrl != null && helpUrl is String && await canLaunch(helpUrl)) {
+      await launch(helpUrl);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          margin: EdgeInsets.fromLTRB(
+            15.0,
+            5.0,
+            15.0,
+            65.0,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.white,
+          elevation: 6,
+          duration: Duration(seconds: 15),
+          content: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 14, right: 14),
+                child: Icon(
+                  CupertinoIcons.exclamationmark_circle,
+                  color: Colors.red[400],
+                  size: 28,
+                ),
+              ),
+              Text(
+                AppLocalizations.of(context)!.outOfReachTechnicalSupport,
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
 }

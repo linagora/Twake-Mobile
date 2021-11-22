@@ -17,6 +17,10 @@ class InvitationCubit extends Cubit<InvitationState> {
     _repository = repository;
   }
 
+  void resetState() {
+    emit(state.copyWith(newStatus: InvitationStatus.init));
+  }
+
   void generateNewLink() async {
     emit(state.copyWith(newStatus: InvitationStatus.inProcessing));
     try {

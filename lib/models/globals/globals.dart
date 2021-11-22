@@ -25,6 +25,7 @@ class Globals extends BaseModel {
       final info = await ApiService.instance.get(endpoint: Endpoint.info);
       oidcAuthority = info['configuration']['accounts']['console']['authority'];
       clientId = info['configuration']['accounts']['console']['client_id'];
+      helpUrl = info['configuration']['help_url'];
     } catch (e) {
       Logger().w('Host is invalid: $val\n$e');
       host = previousHost;
@@ -98,6 +99,9 @@ class Globals extends BaseModel {
   String? oidcAuthority;
 
   @JsonKey(ignore: true)
+  dynamic helpUrl;
+
+  @JsonKey(ignore: true)
   bool isNetworkConnected = true;
 
   @JsonKey(ignore: true)
@@ -122,6 +126,7 @@ class Globals extends BaseModel {
     String? workspaceId,
     String? channelId,
     String? threadId,
+    String? helpUrl
   }) {
     if (host.endsWith('/')) {
       host = host.substring(0, host.length - 1);
@@ -139,6 +144,7 @@ class Globals extends BaseModel {
       workspaceId: workspaceId,
       channelId: channelId,
       threadId: threadId,
+      helpUrl: helpUrl
     );
 
     return _globals;
@@ -154,6 +160,7 @@ class Globals extends BaseModel {
     this.workspaceId,
     this.channelId,
     this.threadId,
+    this.helpUrl
   }) {
     // set up connection listener
     void onConnectionChange(ConnectivityResult state) {
@@ -195,6 +202,7 @@ class Globals extends BaseModel {
     threadId = null;
     token = null;
     userId = null;
+    helpUrl = null;
   }
 
   factory Globals.fromJson(Map<String, dynamic> json) {

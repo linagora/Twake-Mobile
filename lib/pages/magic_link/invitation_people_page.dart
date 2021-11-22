@@ -84,33 +84,37 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   );
 
   Widget _buildTitleViewSection() => Container(
-    margin: const EdgeInsets.only(top: 24),
+    margin: const EdgeInsets.only(top: 24, left: 16, right: 16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)?.inviteToWorkspace ?? '',
-              style: StylesConfig.commonTextStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              _workspaceName ?? '',
-              style: StylesConfig.commonTextStyle.copyWith(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff004dff)
-              ),
-            )
-          ]
+        RichText(
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+          text: TextSpan(
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)?.inviteToWorkspace ?? '',
+                  style: StylesConfig.commonTextStyle.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(
+                  text: _workspaceName ?? '',
+                  style: StylesConfig.commonTextStyle.copyWith(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff004dff),
+                  )
+                )
+              ]
+          ),
         ),
         SizedBox(height: 12),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 50),
+          margin: const EdgeInsets.symmetric(horizontal: 34),
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
@@ -249,67 +253,72 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   );
 
   _handleClickOnButtonConfig(InvitationState state) async {
+    invitationCubit.resetState();
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
       enableDrag: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(14.0), topRight: Radius.circular(14.0))),
-      builder: (context) {
-         return Padding(
-           padding: const EdgeInsets.all(16.0),
-           child: Column(
-             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-             children: [
-               Column(
-                 children: [
-                   Align(
-                       alignment: Alignment.topRight,
-                       child: GestureDetector(
-                         onTap: () => Navigator.of(context).pop(),
-                           child: Image.asset(imagePathCancel, width: 24, height: 24))),
-                   Text(AppLocalizations.of(context)?.generateNewLink ?? '',
-                       style: StylesConfig.commonTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 20)),
-                   SizedBox(height: 12),
-                   Text(AppLocalizations.of(context)?.generateNewLinkSubtitle ?? '',
-                       style: StylesConfig.commonTextStyle.copyWith(fontSize: 15), textAlign: TextAlign.center),
-                   SizedBox(height: 16),
-                   _buildLinkField(),
-                   (state.status == InvitationStatus.generateLinkSuccess)
-                   ? Container(
-                     margin: const EdgeInsets.only(top: 8),
-                     child: Row(
-                       children: [
-                         Image.asset(imageValid, width: 14, height: 14),
-                         SizedBox(width: 8),
-                         Expanded(
-                           child: Text(AppLocalizations.of(context)?.newLinkGenerated ?? '',
-                            style: StylesConfig.commonTextStyle.copyWith(color: Color(0xff4bb34b), fontSize: 13),))
-                       ],
-                     ),
-                   )
-                   : SizedBox.shrink()
-                 ],
-               ),
-               Container(
-                 margin: const EdgeInsets.only(bottom: 12),
-                 child: ButtonTextBuilder(
-                     Key('button_generate_new_link'),
-                     onButtonClick: () => _handleClickOnButtonGenerateLink())
-                     .setWidth(double.infinity)
-                     .setHeight(50)
-                     .setText(AppLocalizations.of(context)?.generateNewLink ?? '')
-                     .setTextStyle(StylesConfig.commonTextStyle.copyWith(fontSize: 17, color: Colors.white, fontWeight: FontWeight.w500))
-                   .build(),
-               )
-             ],
-           ),
+      builder: (ctxModal) {
+         return BlocBuilder<InvitationCubit, InvitationState>(
+           bloc: invitationCubit,
+           builder: (ctx, state) => Padding(
+             padding: const EdgeInsets.all(16.0),
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 Column(
+                   children: [
+                     Align(
+                         alignment: Alignment.topRight,
+                         child: GestureDetector(
+                             onTap: () => Navigator.of(context).pop(),
+                             child: Image.asset(imagePathCancel, width: 24, height: 24))),
+                     Text(AppLocalizations.of(context)?.generateNewLink ?? '',
+                         style: StylesConfig.commonTextStyle.copyWith(fontWeight: FontWeight.bold, fontSize: 20)),
+                     SizedBox(height: 12),
+                     Text(AppLocalizations.of(context)?.generateNewLinkSubtitle ?? '',
+                         style: StylesConfig.commonTextStyle.copyWith(fontSize: 15), textAlign: TextAlign.center),
+                     SizedBox(height: 16),
+                     _buildLinkField(),
+                     (state.status == InvitationStatus.generateLinkSuccess)
+                       ? Container(
+                         margin: const EdgeInsets.only(top: 8),
+                         child: Row(
+                           children: [
+                             Image.asset(imageValid, width: 14, height: 14),
+                             SizedBox(width: 8),
+                             Expanded(
+                                 child: Text(AppLocalizations.of(context)?.newLinkGenerated ?? '',
+                                   style: StylesConfig.commonTextStyle.copyWith(color: Color(0xff4bb34b), fontSize: 13)))
+                           ]))
+                       : SizedBox.shrink()
+                   ],
+                 ),
+                 Container(
+                   margin: const EdgeInsets.only(bottom: 12),
+                   child: ButtonTextBuilder(
+                       Key('button_generate_new_link'),
+                       onButtonClick: () => _handleClickOnButtonGenerateLink())
+                       .setWidth(double.infinity)
+                       .setHeight(50)
+                       .setText(AppLocalizations.of(context)?.generateNewLink ?? '')
+                       .setTextStyle(StylesConfig.commonTextStyle.copyWith(fontSize: 17, color: Colors.white, fontWeight: FontWeight.w500))
+                       .build(),
+                 )
+               ],
+             ),
+           )
          );
       });
   }
 
   _handleClickOnButtonShareLink() async {
-    await Share.share(_urlNotifier.value);
+    if(_urlNotifier.value.isEmpty)
+      return;
+    final sharedContent = AppLocalizations.of(context)?.joinMeOnTwake(_urlNotifier.value) ?? '';
+    await Share.share(sharedContent);
   }
 
   _handleClickOnButtonInviteByEmail() {
@@ -331,6 +340,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
           margin: const EdgeInsets.only(bottom: 4),
           child: Text(AppLocalizations.of(context)!.invitationCopiedToClipboard,
               style: StylesConfig.commonTextStyle.copyWith(fontSize: 15)),
+
         ),
         boxShadows: [
           BoxShadow(
