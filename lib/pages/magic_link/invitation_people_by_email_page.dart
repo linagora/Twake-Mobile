@@ -111,9 +111,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                       onTap: () {
                         if(state.status == InvitationEmailStatus.inProcessing)
                           return;
-                        if(companyState is CompaniesLoadSuccess && companyState.selected.canShareMagicLink) {
-                          _handleClickOnButtonSend();
-                        }
+                        _handleClickOnButtonSend();
                       },
                       child: Container(
                           decoration: BoxDecoration(

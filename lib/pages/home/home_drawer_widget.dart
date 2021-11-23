@@ -188,7 +188,9 @@ class HomeDrawerWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      _buildInvitePeopleSection(context),
+                      if (cstate is CompaniesLoadSuccess
+                        && cstate.selected.canShareMagicLink)
+                          _buildInvitePeopleSection(context),
                       if ((cstate as CompaniesLoadSuccess)
                           .selected
                           .canCreateWorkspace)
