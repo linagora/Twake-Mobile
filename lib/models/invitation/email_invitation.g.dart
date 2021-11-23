@@ -55,7 +55,6 @@ const _$CompanyRoleEnumMap = {
 };
 
 const _$WorkspaceRoleEnumMap = {
-  WorkspaceRole.admin: 'admin',
   WorkspaceRole.moderator: 'moderator',
   WorkspaceRole.member: 'member',
 };

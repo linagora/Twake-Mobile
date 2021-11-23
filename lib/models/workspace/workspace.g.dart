@@ -65,7 +65,6 @@ K? _$enumDecodeNullable<K, V>(
 }
 
 const _$WorkspaceRoleEnumMap = {
-  WorkspaceRole.admin: 'admin',
   WorkspaceRole.moderator: 'moderator',
   WorkspaceRole.member: 'member',
 };
