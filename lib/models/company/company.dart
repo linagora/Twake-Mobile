@@ -33,7 +33,7 @@ class Company extends BaseModel {
 
   bool get canUpdateChannel => role != CompanyRole.guest;
 
-  bool get canGenerateMagicLink => role == CompanyRole.admin;
+  bool get canReGenerateMagicLink => role == CompanyRole.owner || role == CompanyRole.admin;
 
   bool get canShareMagicLink => role != CompanyRole.guest;
 

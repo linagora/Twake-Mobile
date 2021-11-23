@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_state.dart';
 import 'package:twake/config/image_path.dart';
@@ -173,12 +174,24 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                   child: _buildLinkField(),
                 ),
                 SizedBox(width: 8),
-                GestureDetector(
-                    onTap: () => _handleClickOnButtonConfig(state),
+                BlocBuilder<CompaniesCubit, CompaniesState>(
+                  bloc: Get.find<CompaniesCubit>(),
+                  builder: (context, compState) => GestureDetector(
+                    onTap: () => _handleClickOnButtonConfig(state, compState),
                     child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 22),
                         decoration: StylesConfig.commonBoxDecoration,
-                        child: Image.asset(imageConfig, width: 16, height: 16)))
+                        child: Image.asset(
+                          imageConfig,
+                          width: 16,
+                          height: 16,
+                          color: (compState is CompaniesLoadSuccess && compState.selected.canReGenerateMagicLink)
+                            ? Colors.black
+                            : Colors.black12
+                        ),
+                    ),
+                  ),
+                )
               ],
             ),
             SizedBox(height: 8),
@@ -252,7 +265,9 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
     ),
   );
 
-  _handleClickOnButtonConfig(InvitationState state) async {
+  _handleClickOnButtonConfig(InvitationState state, CompaniesState companiesState) async {
+    if(!(companiesState is CompaniesLoadSuccess) || !companiesState.selected.canReGenerateMagicLink)
+      return;
     invitationCubit.resetState();
     showModalBottomSheet(
       context: context,
