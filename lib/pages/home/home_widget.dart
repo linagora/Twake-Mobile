@@ -212,32 +212,42 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        BlocBuilder<WorkspacesCubit, WorkspacesState>(
-          bloc: Get.find<WorkspacesCubit>(),
-          builder: (context, workspaceState) {
-            return workspaceState is WorkspacesLoadSuccess
-              ? GestureDetector(
-                onTap: () => push(RoutePaths.invitationPeople.path,
-                    arguments: workspaceState.selected?.name ?? ''),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    color: Color(0xfff9f8f9),
-                    width: 40,
-                    height: 40,
-                    child: Image.asset(
-                      imageInvitePeople,
-                      width: 20,
-                      height: 20,
-                      color: Color(0xff004dff),
-                    ),
+        BlocBuilder(
+          bloc: Get.find<CompaniesCubit>(),
+          builder: (ctx, cstate) =>
+            (cstate is CompaniesLoadSuccess && cstate.selected.canShareMagicLink)
+              ? Row(
+                children: [
+                  BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                    bloc: Get.find<WorkspacesCubit>(),
+                    builder: (context, workspaceState) {
+                      return workspaceState is WorkspacesLoadSuccess
+                          ? GestureDetector(
+                              onTap: () => push(RoutePaths.invitationPeople.path,
+                                    arguments: workspaceState.selected?.name ?? ''),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  color: Color(0xfff9f8f9),
+                                  width: 40,
+                                  height: 40,
+                                  child: Image.asset(
+                                    imageInvitePeople,
+                                    width: 20,
+                                    height: 20,
+                                    color: Color(0xff004dff),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : SizedBox.shrink();
+                    },
                   ),
-                ),
+                  SizedBox(width: 16),
+                ],
               )
-              : SizedBox.shrink();
-          },
+              : SizedBox.shrink()
         ),
-        SizedBox(width: 16),
         GestureDetector(
           onTap: () => push(RoutePaths.newDirect.path),
           child: ClipRRect(
