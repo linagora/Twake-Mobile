@@ -30,12 +30,14 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     required String email,
     required String secretToken,
     required String code,
+    bool createAccountOnly = false
   }) async {
     emit(RegistrationAwaiting());
     final status = await _repository.signup(
       email: email,
       secretToken: secretToken,
       code: code,
+      createAccountOnly: createAccountOnly
     );
 
     switch (status) {

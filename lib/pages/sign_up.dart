@@ -17,10 +17,12 @@ const link2 = "https://twake.app/en/privacy/";
 
 class SignUp extends StatefulWidget {
   final Function? onCancel;
+  final String? requestedMagicLinkToken;
 
   const SignUp({
     Key? key,
     this.onCancel,
+    this.requestedMagicLinkToken,
   }) : super(key: key);
 
   @override
@@ -70,7 +72,9 @@ class _SignUpState extends State<SignUp> {
         await Get.find<RegistrationCubit>().signup(
             email: email,
             secretToken: stateReg.secretToken,
-            code: stateReg.code);
+            code: stateReg.code,
+            createAccountOnly: widget.requestedMagicLinkToken != null
+        );
       }
     } else {
       setState(() {
@@ -329,7 +333,7 @@ class _SignUpState extends State<SignUp> {
               widget.onCancel!();
               _controller.clear();
               Get.find<RegistrationCubit>().emit(RegistrationInitial());
-              await Get.find<AuthenticationCubit>().authenticate();
+              await Get.find<AuthenticationCubit>().authenticate(requestedMagicLinkToken: widget.requestedMagicLinkToken);
             },
             child: Text(
               AppLocalizations.of(context)!.signin,
@@ -507,7 +511,7 @@ class _SignUpState extends State<SignUp> {
             widget.onCancel!();
             _controller.clear();
             Get.find<RegistrationCubit>().emit(RegistrationInitial());
-            await Get.find<AuthenticationCubit>().authenticate();
+            await Get.find<AuthenticationCubit>().authenticate(requestedMagicLinkToken: widget.requestedMagicLinkToken);
           },
           child: Text(
             AppLocalizations.of(context)!.signin,

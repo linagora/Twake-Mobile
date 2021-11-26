@@ -19,10 +19,11 @@ class LogoutInProgress extends AuthenticationState {
 }
 
 class AuthenticationSuccess extends AuthenticationState {
-  const AuthenticationSuccess();
+  final WorkspaceJoinResponse? magicLinkJoinResponse;
+  const AuthenticationSuccess({this.magicLinkJoinResponse});
 
   @override
-  List<Object?> get props => const [];
+  List<Object?> get props => [magicLinkJoinResponse];
 }
 
 class AuthenticationFailure extends AuthenticationState {
@@ -61,8 +62,62 @@ class PostAuthenticationSyncFailed extends AuthenticationState {
 }
 
 class PostAuthenticationSyncSuccess extends AuthenticationState {
-  const PostAuthenticationSyncSuccess();
+  final WorkspaceJoinResponse? magicLinkJoinResponse;
+
+  const PostAuthenticationSyncSuccess({this.magicLinkJoinResponse});
+
+  @override
+  List<Object?> get props => [magicLinkJoinResponse];
+}
+
+// --------- MAGIC LINK
+
+class AuthenticationInvitationPending extends AuthenticationState {
+  final WorkspaceJoinResponse? magicLinkJoinResponse;
+  final String? requestedToken;
+  const AuthenticationInvitationPending({this.magicLinkJoinResponse, this.requestedToken});
+
+  @override
+  List<Object?> get props => [magicLinkJoinResponse, requestedToken];
+}
+
+class InvitationJoinCheckingInit extends AuthenticationState {
+  const InvitationJoinCheckingInit();
 
   @override
   List<Object?> get props => const [];
+}
+
+class InvitationJoinCheckingTokenFinished extends AuthenticationState {
+  final String requestedToken;
+  final WorkspaceJoinResponse? joinResponse;
+
+  const InvitationJoinCheckingTokenFinished({required this.requestedToken, this.joinResponse});
+
+  @override
+  List<Object?> get props => [joinResponse, requestedToken];
+}
+
+class InvitationJoinInit extends AuthenticationState {
+  const InvitationJoinInit();
+
+  @override
+  List<Object?> get props => const [];
+}
+
+class InvitationJoinSuccess extends AuthenticationState {
+  final String requestedToken;
+  final WorkspaceJoinResponse? joinResponse;
+  final bool needCheckAuthentication;
+  const InvitationJoinSuccess({required this.requestedToken, required this.needCheckAuthentication, this.joinResponse});
+
+  @override
+  List<Object?> get props => [requestedToken, joinResponse, needCheckAuthentication];
+}
+
+class InvitationJoinFailed extends AuthenticationState {
+  const InvitationJoinFailed();
+
+  @override
+  List<Object?> get props => [];
 }

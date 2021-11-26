@@ -24,3 +24,5 @@ const imageInvitationSent = '$_assetPath/ic_invitation_sent.png';
 const imageValid = '$_assetPath/ic_valid.png';
 const imageInvalid = '$_assetPath/ic_invalid.png';
 const imageConfig = '$_assetPath/ic_config.png';
+const imageSmileFace = '$_assetPath/ic_smile.png';
+const imageShrugging = '$_assetPath/ic_shrugging.png';

@@ -43,9 +43,9 @@ class RoutePaths {
   static final signInUpScreen = _RoutePathsType(initial, '/sign_flow');
 
   // magic link
-  static final joinWorkspace = _RoutePathsType(initial, '/join_workspace');
   static final invitationPeople = _RoutePathsType(initial, '/invitation_people');
   static final invitationPeopleEmail = _RoutePathsType(invitationPeople.path, '/invitation_people_email');
+  static final joinWorkspaceByMagicLink = _RoutePathsType(initial, '/join_workspace_by_magic_link');
 
 }
 

@@ -24,6 +24,7 @@ class RegistrationRepository {
     required String email,
     required String secretToken,
     required String code,
+    bool createAccountOnly = false
   }) async {
     try {
       final prefix = email.split('@').first;
@@ -38,6 +39,7 @@ class RegistrationRepository {
           'locale': 'en',
           'secretToken': secretToken,
           'captchaResponseToken': code,
+          'createAccountOnly' : createAccountOnly
         },
         key: 'email',
       );

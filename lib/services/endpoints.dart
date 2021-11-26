@@ -54,6 +54,7 @@ class Endpoint {
   static const magicLinkJoin = '/internal/services/workspaces/v1/join';
 
   static const magicLink = '%s?join=%s';
+  static const consolePage = 'https://console.%s';
 
   static const publicMethods = const [info, reservation, signup, emailResend];
 
