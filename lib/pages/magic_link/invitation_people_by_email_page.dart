@@ -41,13 +41,13 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfff2f2f6),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10.0),
-              topRight: Radius.circular(10.0))),
+        child: ClipRRect(
+          borderRadius:BorderRadius.only(
+            topLeft: Radius.circular(10.0),
+            topRight: Radius.circular(10.0)),
           child: BlocConsumer<InvitationEmailCubit, InvitationEmailState>(
             bloc: invitationEmailCubit,
             listener: (context, state) {
@@ -61,6 +61,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
               return Column(
                 children: [
                   _buildHeaderViewSection(state),
+                  Divider(height: 0.5),
                   Expanded(child: _buildBodyViewSection(state)),
                 ],
               );
@@ -145,7 +146,6 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
         controller: _scrollController,
         child: Column(
           children: [
-            Divider(height: 0.5),
             _buildInvitationSentHeader(state),
             ..._buildListEmail(state),
             _buildButtonAddMoreMember(state),
@@ -163,7 +163,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
         child: Column(
           children: [
             Text(AppLocalizations.of(context)?.invitationSent ?? '',
-                style: StylesConfig.commonTextStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold)),
+                style: StylesConfig.commonTextStyle.copyWith(fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
             SizedBox(height: 12),
             Image.asset(imageInvitationSent, fit: BoxFit.contain)
           ],
