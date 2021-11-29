@@ -270,7 +270,7 @@
   "@deleteMessageInfo": {},
   "joinTheTeamButton": "Treten Sie dem Team bei",
   "@joinTheTeamButton": {},
-  "joinWorkspaceTitle": "Verbinden Sie {destination} von {workspace} aus!",
+  "joinWorkspaceTitle": "Beitreten ",
   "@joinWorkspaceTitle": {
     "description": "Welcome message to someone joining a workspace",
     "placeholders": {
@@ -347,5 +347,25 @@
   "contactTechnicalSupport": "Technischen Support kontaktieren",
   "@contactTechnicalSupport": {},
   "outOfReachTechnicalSupport": "Das Support-Team ist nicht erreichbar, tut mir leid.",
-  "@outOfReachTechnicalSupport": {}
+  "@outOfReachTechnicalSupport": {},
+  "joinWorkspaceSubTitle": "Du wurdest eingeladen, dem\n{Arbeitsbereich} Arbeitsberiach auf Twake beizutreten!",
+  "@joinWorkspaceSubTitle": {
+    "description": "Welcome sub-title message to someone joining a workspace",
+    "placeholders": {
+      "workspace": {
+        "type": "String",
+        "example": "Twake"
+      }
+    }
+  },
+  "joinWorkspaceUnAvailableTitle": "Link ist nicht mehr verfügbar",
+  "@joinWorkspaceUnAvailableTitle": {},
+  "joinWorkspaceUnAvailableSubTitle": "Der Link zum Beitritt zum Arbeitsbereich ist nicht mehr verfügbar,\nda er abgelaufen ist oder widerrufen wurde",
+  "@joinWorkspaceUnAvailableSubTitle": {},
+  "joinWorkspaceButton": "Dem Arbeitsbereich beitreten",
+  "@joinWorkspaceButton": {},
+  "joinWorkspaceIntro": "Twake ist ein digitaler Open-Source-Arbeitsbereich\nzur Verbesserung der Produktivität Ihres Teams",
+  "@joinWorkspaceIntro": {},
+  "joinWorkspaceCreateCompanyButton": "Erstellen Sie Ihr Unternehmen",
+  "@joinWorkspaceCreateCompanyButton": {}
 }
