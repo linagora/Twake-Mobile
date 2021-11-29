@@ -111,8 +111,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment:
-              _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+          mainAxisAlignment: _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
           children: [
             SizedBox(width: 6.0),
             Padding(
@@ -125,332 +124,13 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           imageType: ImageType.common,
                           imageUrl: _message.picture ?? '',
                           name: _message.sender,
-                          size: 28,
-                        )
+                          size: 28)
                       : SizedBox(width: 28.0, height: 28.0),
             ),
             _isMyMessage
-                ? SizedBox(
-                    width: Dim.widthPercent(8),
-                  )
-                : SizedBox(
-                    width: 6,
-                  ),
-            Flexible(
-              child: Container(
-                child: Stack(
-                  alignment: Alignment.bottomLeft,
-                  children: [
-                    Container(
-                      padding: _message.reactions.isEmpty
-                          ? widget.downBubbleSide
-                              ? const EdgeInsets.only(bottom: 12.0, top: 3)
-                              : const EdgeInsets.only(bottom: 1.0)
-                          : const EdgeInsets.only(bottom: 22.0),
-                      color: Colors.white,
-                      child: ClipRRect(
-                        borderRadius: _isMyMessage
-                            ? (widget.upBubbleSide && widget.downBubbleSide
-                                ? (BorderRadius.circular(18))
-                                : (widget.upBubbleSide || widget.downBubbleSide
-                                    ? (widget.upBubbleSide == true
-                                        ? (BorderRadius.only(
-                                            bottomRight: Radius.circular(4),
-                                            topRight: Radius.circular(18),
-                                            topLeft: Radius.circular(18),
-                                            bottomLeft: Radius.circular(18)))
-                                        : (BorderRadius.only(
-                                            topRight: Radius.circular(4),
-                                            bottomRight: Radius.circular(18),
-                                            topLeft: Radius.circular(18),
-                                            bottomLeft: Radius.circular(18))))
-                                    : (BorderRadius.only(
-                                        bottomRight: Radius.circular(4),
-                                        topRight: Radius.circular(4),
-                                        topLeft: Radius.circular(18),
-                                        bottomLeft: Radius.circular(18)))))
-                            : (widget.upBubbleSide && widget.downBubbleSide
-                                ? (BorderRadius.circular(18))
-                                : (widget.upBubbleSide || widget.downBubbleSide
-                                    ? (widget.upBubbleSide == true
-                                        ? (BorderRadius.only(
-                                            bottomLeft: Radius.circular(4),
-                                            topLeft: Radius.circular(18),
-                                            topRight: Radius.circular(18),
-                                            bottomRight: Radius.circular(18)))
-                                        : (BorderRadius.only(
-                                            topLeft: Radius.circular(4),
-                                            bottomLeft: Radius.circular(18),
-                                            topRight: Radius.circular(18),
-                                            bottomRight: Radius.circular(18))))
-                                    : (BorderRadius.only(
-                                        bottomLeft: Radius.circular(4),
-                                        topLeft: Radius.circular(4),
-                                        topRight: Radius.circular(18),
-                                        bottomRight: Radius.circular(18))))),
-                        child: Bubble(
-                          style: BubbleStyle(
-                            nip: BubbleNip.no,
-                            radius: Radius.circular(0),
-                            elevation: 0,
-                            color: _isMyMessage
-                                ? Color(0xff007AFF)
-                                : Color(0xFFF0F1F5),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (!widget.channel.isDirect &&
-                                  !_isMyMessage &&
-                                  widget.upBubbleSide)
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                                  child: Text(
-                                    '${_message.sender}',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: HSLColor.fromAHSL(
-                                              1,
-                                              _message.username.hashCode % 360,
-                                              0.9,
-                                              0.3)
-                                          .toColor(),
-                                    ),
-                                  ),
-                                ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(12.0, 5.0, 6.0, 0.0),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Flexible(
-                                                    child: _message.subtype ==
-                                                            MessageSubtype
-                                                                .deleted
-                                                        ? Text(
-                                                            AppLocalizations.of(
-                                                                    context)!
-                                                                .messageDeleted,
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontStyle:
-                                                                  FontStyle
-                                                                      .italic,
-                                                              color: _isMyMessage
-                                                                  ? Color(
-                                                                      0xFFB3C9FF)
-                                                                  : Color(
-                                                                      0xFF7A7A7A),
-                                                            ),
-                                                          )
-                                                        : TwacodeRenderer(
-                                                            twacode:
-                                                                _message.blocks,
-                                                            parentStyle:
-                                                                TextStyle(
-                                                              fontSize: 15.0,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400,
-                                                              color: _isMyMessage
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                            ),
-                                                            userUniqueColor:
-                                                                _message.username
-                                                                        .hashCode %
-                                                                    360,
-                                                            isSwipe: false,
-                                                          ).message,
-                                                  ),
-                                                  SizedBox(
-                                                      width: (_message.responsesCount >
-                                                                  0 &&
-                                                              !_message
-                                                                  .inThread &&
-                                                              !_hideShowReplies)
-                                                          ? sizeOfReplyBox
-                                                          : 0),
-                                                ],
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 3),
-                                                child: Text(
-                                                  _message.inThread ||
-                                                          _hideShowReplies
-                                                      ? DateFormatter
-                                                          .getVerboseDateTime(
-                                                          _message.createdAt,
-                                                        )
-                                                      : DateFormatter
-                                                          .getVerboseTime(
-                                                          _message.createdAt,
-                                                        ),
-                                                  textAlign: TextAlign.end,
-                                                  style: TextStyle(
-                                                    fontSize: 11.0,
-                                                    fontWeight: FontWeight.w400,
-                                                    fontStyle: FontStyle.italic,
-                                                    color: _isMyMessage
-                                                        ? Color(0xffffffff)
-                                                            .withOpacity(0.58)
-                                                        : Color(0xFF8E8E93),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    if (_message.responsesCount > 0 &&
-                                        !_message.inThread &&
-                                        !_hideShowReplies)
-                                      Container(
-                                        padding: EdgeInsets.only(
-                                            top: 15.0, bottom: 15.0),
-                                        child: Text(
-                                          '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
-                                          style: TextStyle(
-                                            color: _isMyMessage
-                                                ? Colors.white
-                                                : Color(0xFF004DFF),
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (!widget.hideReaction)
-                      Transform(
-                        transform: Matrix4.translationValues(17, -1, 0.0),
-                        child: Wrap(
-                          runSpacing: Dim.heightMultiplier,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          textDirection: TextDirection.ltr,
-                          children: [
-                            ..._message.reactions.map((r) {
-                              return Reaction<T>(
-                                message: _message,
-                                reaction: r,
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(width: 3.0),
-            _isMyMessage == true
-                ? _message.delivery == Delivery.inProgress
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              CupertinoIcons.time_solid,
-                              color: Colors.grey[400],
-                              size: 20,
-                            ),
-                          ),
-                          if (widget.downBubbleSide)
-                            _message.reactions.isEmpty
-                                ? SizedBox(height: 10.0)
-                                : SizedBox(height: 18.0),
-                          if (_message.reactions.isNotEmpty &&
-                              !widget.downBubbleSide)
-                            SizedBox(height: 18.0)
-                        ],
-                      )
-                    : _message.delivery == Delivery.delivered
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.check_circle_outline_rounded,
-                                color: Color(0xFF004DFF),
-                                size: 20,
-                              ),
-                              if (widget.downBubbleSide)
-                                _message.reactions.isEmpty
-                                    ? SizedBox(height: 10.0)
-                                    : SizedBox(height: 18.0),
-                              if (_message.reactions.isNotEmpty &&
-                                  !widget.downBubbleSide)
-                                SizedBox(height: 18.0)
-                            ],
-                          )
-                        : _message.delivery == Delivery.failed
-                            ? GestureDetector(
-                                onTap: () async {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    backgroundColor: Colors.transparent,
-                                    builder: (_) {
-                                      return ResendModalSheet(
-                                        message: _message,
-                                        isThread: widget.isThread,
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 10,
-                                      backgroundColor: Colors.white,
-                                      child: Icon(
-                                        CupertinoIcons
-                                            .exclamationmark_circle_fill,
-                                        color: Colors.red[400],
-                                        size: 20,
-                                      ),
-                                    ),
-                                    if (widget.downBubbleSide)
-                                      _message.reactions.isEmpty
-                                          ? SizedBox(height: 10.0)
-                                          : SizedBox(height: 18.0),
-                                    if (_message.reactions.isNotEmpty &&
-                                        !widget.downBubbleSide)
-                                      SizedBox(height: 18.0)
-                                  ],
-                                ),
-                              )
-                            : Container()
-                : Container(),
-            SizedBox(width: 6.0),
+                ? SizedBox(width: Dim.widthPercent(8))
+                : SizedBox(width: 6),
+            _buildMessageContent(_isMyMessage, sizeOfReplyBox),
             if (!_isMyMessage)
               SizedBox(
                 width: Dim.widthPercent(10),
@@ -461,6 +141,279 @@ class _MessageTileState<T extends BaseMessagesCubit>
     } else {
       return CircularProgressIndicator();
     }
+  }
+
+  _buildMessageContent(bool _isMyMessage, double sizeOfReplyBox) => Flexible(
+    child: Column(
+      crossAxisAlignment: _isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Flexible(child: _buildMessageTextAndTime(_isMyMessage, sizeOfReplyBox)),
+            Container(
+              margin: const EdgeInsets.only(left: 3.0, right: 6.0),
+              child: _buildMessageSentStatus(_isMyMessage),
+            )
+          ],
+        ),
+        _buildReactions(_isMyMessage)
+      ],
+    ),
+  );
+
+  _buildMessageTextAndTime(bool _isMyMessage, double sizeOfReplyBox) {
+    return Container(
+      color: Colors.white,
+      child: ClipRRect(
+        borderRadius: _isMyMessage
+            ? (widget.upBubbleSide && widget.downBubbleSide
+                ? (BorderRadius.circular(18))
+                : (widget.upBubbleSide || widget.downBubbleSide
+                    ? (widget.upBubbleSide == true
+                        ? (BorderRadius.only(
+                            bottomRight: Radius.circular(4),
+                            topRight: Radius.circular(18),
+                            topLeft: Radius.circular(18),
+                            bottomLeft: Radius.circular(18)))
+                        : (BorderRadius.only(
+                            topRight: Radius.circular(4),
+                            bottomRight: Radius.circular(18),
+                            topLeft: Radius.circular(18),
+                            bottomLeft: Radius.circular(18))))
+                    : (BorderRadius.only(
+                        bottomRight: Radius.circular(4),
+                        topRight: Radius.circular(4),
+                        topLeft: Radius.circular(18),
+                        bottomLeft: Radius.circular(18)))))
+            : (widget.upBubbleSide && widget.downBubbleSide
+                ? (BorderRadius.circular(18))
+                : (widget.upBubbleSide || widget.downBubbleSide
+                    ? (widget.upBubbleSide == true
+                        ? (BorderRadius.only(
+                            bottomLeft: Radius.circular(4),
+                            topLeft: Radius.circular(18),
+                            topRight: Radius.circular(18),
+                            bottomRight: Radius.circular(18)))
+                        : (BorderRadius.only(
+                            topLeft: Radius.circular(4),
+                            bottomLeft: Radius.circular(18),
+                            topRight: Radius.circular(18),
+                            bottomRight: Radius.circular(18))))
+                    : (BorderRadius.only(
+                        bottomLeft: Radius.circular(4),
+                        topLeft: Radius.circular(4),
+                        topRight: Radius.circular(18),
+                        bottomRight: Radius.circular(18))))),
+        child: Bubble(
+          style: BubbleStyle(
+            nip: BubbleNip.no,
+            radius: Radius.circular(0),
+            elevation: 0,
+            color: _isMyMessage ? Color(0xff007AFF) : Color(0xFFF0F1F5),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (!widget.channel.isDirect &&
+                  !_isMyMessage &&
+                  widget.upBubbleSide)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                  child: Text(
+                    '${_message.sender}',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: HSLColor.fromAHSL(
+                              1, _message.username.hashCode % 360, 0.9, 0.3)
+                          .toColor(),
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(12.0, 5.0, 6.0, 0.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Flexible(
+                                    child: _message.subtype ==
+                                            MessageSubtype.deleted
+                                        ? Text(
+                                            AppLocalizations.of(context)!
+                                                .messageDeleted,
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontStyle: FontStyle.italic,
+                                                color: _isMyMessage
+                                                    ? Color(0xFFB3C9FF)
+                                                    : Color(0xFF7A7A7A)))
+                                        : TwacodeRenderer(
+                                                twacode: _message.blocks,
+                                                parentStyle: TextStyle(
+                                                  fontSize: 15.0,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: _isMyMessage
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                                userUniqueColor:
+                                                    _message.username.hashCode %
+                                                        360,
+                                                isSwipe: false)
+                                            .message,
+                                  ),
+                                  SizedBox(
+                                      width: (_message.responsesCount > 0 &&
+                                              !_message.inThread &&
+                                              !_hideShowReplies)
+                                          ? sizeOfReplyBox
+                                          : 0),
+                                ],
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 3),
+                                child: Text(
+                                  _message.inThread || _hideShowReplies
+                                      ? DateFormatter.getVerboseDateTime(
+                                          _message.createdAt)
+                                      : DateFormatter.getVerboseTime(
+                                          _message.createdAt),
+                                  textAlign: TextAlign.end,
+                                  style: TextStyle(
+                                    fontSize: 11.0,
+                                    fontWeight: FontWeight.w400,
+                                    fontStyle: FontStyle.italic,
+                                    color: _isMyMessage
+                                        ? Color(0xffffffff).withOpacity(0.58)
+                                        : Color(0xFF8E8E93),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (_message.responsesCount > 0 &&
+                        !_message.inThread &&
+                        !_hideShowReplies)
+                      Container(
+                        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                        child: Text(
+                            '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
+                            style: TextStyle(
+                                color: _isMyMessage
+                                    ? Colors.white
+                                    : Color(0xFF004DFF),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13)),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _buildMessageSentStatus(bool _isMyMessage) {
+    return _isMyMessage == true
+        ? _message.delivery == Delivery.inProgress
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 10,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      CupertinoIcons.time_solid,
+                      color: Colors.grey[400],
+                      size: 20,
+                    ),
+                  )
+                ],
+              )
+            : _message.delivery == Delivery.delivered
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline_rounded,
+                        color: Color(0xFF004DFF),
+                        size: 20,
+                      )
+                    ],
+                  )
+                : _message.delivery == Delivery.failed
+                    ? GestureDetector(
+                        onTap: () async {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (_) {
+                              return ResendModalSheet(
+                                message: _message,
+                                isThread: widget.isThread,
+                              );
+                            },
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              radius: 10,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                CupertinoIcons.exclamationmark_circle_fill,
+                                color: Colors.red[400],
+                                size: 20,
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    : Container()
+        : Container();
+  }
+
+  _buildReactions(bool _isMyMessage) {
+    if (!widget.hideReaction) {
+      return Transform(
+        transform: Matrix4.translationValues(_isMyMessage ? -28 : 16, -4, 0.0),
+        child: Wrap(
+          runSpacing: Dim.heightMultiplier,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          textDirection: TextDirection.ltr,
+          children: [
+            ..._message.reactions.map((r) {
+              return Reaction<T>(
+                message: _message,
+                reaction: r,
+              );
+            }),
+          ],
+        ),
+      );
+    }
+    return SizedBox.shrink();
   }
 
   @override
