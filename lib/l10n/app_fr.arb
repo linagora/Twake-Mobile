@@ -320,7 +320,7 @@
       }
     }
   },
-  "joinMeOnTwake": "Rejoignez-moi sur Twake",
+  "joinMeOnTwake": "Hé, rejoignez-moi sur Twake : {link}",
   "@joinMeOnTwake": {},
   "goToMainScreen": "Aller à l'écran principal",
   "@goToMainScreen": {},
@@ -343,5 +343,9 @@
   "french": "Français",
   "@french": {},
   "finnish": "Finlandais",
-  "@finnish": {}
+  "@finnish": {},
+  "contactTechnicalSupport": "Contacter l'assistance technique",
+  "@contactTechnicalSupport": {},
+  "outOfReachTechnicalSupport": "L'équipe d'assistance est injoignable, désolés.",
+  "@outOfReachTechnicalSupport": {}
 }
