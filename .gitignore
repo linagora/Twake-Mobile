@@ -46,3 +46,7 @@ app.*.map.json
 /android/app/google-services.json
 /android/key.properties
 /android/android.jks
+
+# Weblate related
+lib/l10n/app_nb.arb
+lib/l10n/app_zh.arb
