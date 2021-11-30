@@ -71,6 +71,9 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
   }
 
   _onUpdate(int index, String text) {
+    if (text.indexOf(" ") != -1) {
+      text = text.substring(0, text.indexOf(" "));
+    }
     int foundIndex = -1;
     for (var map in _membersList) {
       if (map.containsKey("index")) {
@@ -93,6 +96,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       var _list = map.values.toList();
       _members.add(_list[1]);
     });
+    _members.removeWhere((e) => e == "");
   }
 
   _createWorksapce() async {
@@ -345,6 +349,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               suffix: IconButton(
                 onPressed: () {
                   controller.clear();
+                  _onUpdate(index, " ");
                 },
                 iconSize: 17,
                 icon: Icon(CupertinoIcons.clear_thick_circled),
