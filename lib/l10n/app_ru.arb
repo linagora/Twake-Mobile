@@ -275,5 +275,9 @@
   "italian": "Итальянский",
   "@italian": {},
   "finnish": "Финский",
-  "@finnish": {}
+  "@finnish": {},
+  "joinTheTeamButton": "Войти в команду",
+  "@joinTheTeamButton": {},
+  "joinWorkspaceSubtitle": "Twake - это рабочая среда с открытым исходным кодом,\nсозданная для повышения производительности\nвашей команды",
+  "@joinWorkspaceSubtitle": {}
 }
