@@ -19,7 +19,7 @@
   "@resendEmail": {},
   "emailSent": "Email đã được gửi",
   "@emailSent": {},
-  "signupAgainInfo": "Vui lòng thử đăng ký lại sau    \n  hoặc liên hệ với kỹ thuật của chúng tôi    \n  đội hỗ trợ",
+  "signupAgainInfo": "Vui lòng đăng ký lại\nhoặc liên hệ đội hỗ trợ\ncủa chúng tôi",
   "@signupAgainInfo": {},
   "signupAgain": "Đăng ký lại một lần nữa",
   "@signupAgain": {},
@@ -49,7 +49,7 @@
       }
     }
   },
-  "joinMeOnTwake": "Tham gia cùng tôi trên Twake",
+  "joinMeOnTwake": "Xin chào, mời bạn tham gia Twake tại: {link}",
   "@joinMeOnTwake": {},
   "goToMainScreen": "Chuyển đến màn hình chính",
   "@goToMainScreen": {},
@@ -69,7 +69,7 @@
   "@finnish": {},
   "italian": "Tiếng Ý",
   "@italian": {},
-  "joinWorkspaceTitle": "Tham gia {destination} từ {workspace}!",
+  "joinWorkspaceTitle": "Tham gia ",
   "@joinWorkspaceTitle": {
     "description": "Welcome message to someone joining a workspace",
     "placeholders": {
@@ -117,7 +117,7 @@
   "@archive": {},
   "signupAgreement": "Để tiếp tục, bạn đồng ý với Điều khoản và Chính sách bảo mật của chúng tôi",
   "@signupAgreement": {},
-  "registrationEmailSent": "Xong, chúng tôi đã gửi một liên kết xác minh và     \n mật khẩu đã tạo tới:",
+  "registrationEmailSent": "Hoàn thành!\nChúng tôi đã gửi đường dẫn xác nhận và password tới:",
   "@registrationEmailSent": {},
   "save": "Lưu",
   "@save": {},
@@ -181,7 +181,7 @@
   "@mute": {},
   "logoutConfirmation": "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản của mình không?",
   "@logoutConfirmation": {},
-  "chatLoading": "Chúng tôi đang tải trò chuyện,    \nlàm ơn, hãy kiên nhẫn 😊😕",
+  "chatLoading": "Đang tải lịch sử chat,\nvui lòng chờ trong giây lát 😊😕",
   "@chatLoading": {},
   "membersPlural": "{count, plural, =0{Không có thành viên} =1{1 thành viên} other{{count} thành viên}}",
   "@membersPlural": {
@@ -238,7 +238,7 @@
   "@edit": {},
   "sendDirect": "Gửi tin nhắn trực tiếp",
   "@sendDirect": {},
-  "channelSettings": "Cài đặt kênh",
+  "channelSettings": "Cài đặt",
   "@channelSettings": {},
   "channelMembersPlural": "{count, plural, =0{Không có thành viên nào} =1{Thành viên} other{Thành viên ({count})}}",
   "@channelMembersPlural": {
@@ -257,7 +257,7 @@
   "@pinInfo": {},
   "notifications": "Thông báo",
   "@notifications": {},
-  "signupFailedInfo": "Thật không may, một cái gì đó   \n  đã xảy ra lỗi trong quá trình đăng ký của bạn",
+  "signupFailedInfo": "Thật không may, có lỗi xảy ra\ntrong quá trình đăng ký của bạn",
   "@signupFailedInfo": {},
   "viewProfile": "Xem trang cá nhân",
   "@viewProfile": {},
@@ -322,7 +322,7 @@
   "@firstName": {},
   "notAssigned": "Chưa được giao",
   "@notAssigned": {},
-  "messageCopiedInfo": "Tin nhắn đã được sao chép vào vùng nhớ tạm",
+  "messageCopiedInfo": "Đã sao chép",
   "@messageCopiedInfo": {},
   "view": "Lượt xem",
   "@view": {},
@@ -343,5 +343,31 @@
   "spanish": "Tiếng Tây Ban Nha",
   "@spanish": {},
   "lastName": "Họ đệm",
-  "@lastName": {}
+  "@lastName": {},
+  "contactTechnicalSupport": "Hỗ trợ",
+  "@contactTechnicalSupport": {},
+  "outOfReachTechnicalSupport": "Rất tiếc vì không thể trợ giúp.",
+  "@outOfReachTechnicalSupport": {},
+  "joinWorkspaceButton": "Tham gia",
+  "@joinWorkspaceButton": {},
+  "joinWorkspaceUnAvailableTitle": "Đường dẫn không còn tồn tại",
+  "@joinWorkspaceUnAvailableTitle": {},
+  "joinWorkspaceUnAvailableSubTitle": "Đường dẫn tham gia không gian làm việc hiện không tồn tại\ndo đã hết hạn hoặc bị thu hồi",
+  "@joinWorkspaceUnAvailableSubTitle": {},
+  "joinWorkspaceCreateCompanyButton": "Tạo Công Ty",
+  "@joinWorkspaceCreateCompanyButton": {},
+  "joinWorkspaceUnAvailableNote": "Bạn có thể yêu cầu Người mời cung cấp đường dẫn hợp lệ\nhoặc bạn có thể tạo một Công ty mới",
+  "@joinWorkspaceUnAvailableNote": {},
+  "joinWorkspaceIntro": "Twake là một không gian làm việc số mã nguồn mở\nđược xây dựng để tăng hiệu quả hoạt động nhóm",
+  "@joinWorkspaceIntro": {},
+  "joinWorkspaceSubTitle": "Bạn đã được mời tham gia\nkhông gian làm việc {workspace} trên Twake!",
+  "@joinWorkspaceSubTitle": {
+    "description": "Welcome sub-title message to someone joining a workspace",
+    "placeholders": {
+      "workspace": {
+        "type": "String",
+        "example": "Twake"
+      }
+    }
+  }
 }
