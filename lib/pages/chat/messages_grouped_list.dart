@@ -83,7 +83,11 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       groupComparator: (DateTime value1, DateTime value2) =>
           value1.compareTo(value2),
       itemComparator: (Message m1, Message m2) {
-        return m1.createdAt.compareTo(m2.createdAt);
+        if (m1.createdAt.compareTo(m2.createdAt) == -1) {
+          return m1.createdAt.compareTo(m2.createdAt);
+        } else {
+          return m2.createdAt.compareTo(m1.createdAt);
+        }
       },
       separator: SizedBox(height: 1.0),
       groupSeparatorBuilder: (DateTime dt) {
