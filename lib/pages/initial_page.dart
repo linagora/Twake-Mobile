@@ -193,7 +193,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
             body: BlocConsumer<AuthenticationCubit, AuthenticationState>(
               bloc: Get.find<AuthenticationCubit>(),
               builder: (ctx, state) {
-                print('initial_page state: $state');
                 if (state is AuthenticationInProgress) {
                   return buildSplashScreen();
                 } else if (state is AuthenticationInitial

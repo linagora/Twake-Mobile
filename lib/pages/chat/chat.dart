@@ -189,7 +189,9 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                           Container(
                             width: Dim.widthPercent(80),
                             child: TwacodeRenderer(
+                              key: ValueKey('twacode-${_message.hash}'),
                               twacode: _message.blocks,
+                              files: _message.files,
                               parentStyle: TextStyle(
                                 fontSize: 14.0,
                                 //fontWeight: FontWeight.w400,

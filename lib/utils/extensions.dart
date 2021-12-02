@@ -7,6 +7,15 @@ extension StringExtension on String {
   String get overflow => this
       .replaceAll('', '\u{200B}')
       .toString();
+
+  bool get isImageMimeType {
+    if(this.isEmpty || !this.contains('/'))
+      return false;
+    final mimeArr = this.split('/');
+    if(mimeArr.isEmpty)
+      return false;
+    return mimeArr.first.contains('image');
+  }
 }
 //
 // extension MemberExtension on List<Member?> {

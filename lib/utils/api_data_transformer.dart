@@ -172,11 +172,4 @@ class ApiDataTransformer {
     return badgeCollection.values.toList();
   }
 
-  static Map<String, dynamic> file({required Map<String, dynamic> json}) {
-    json['name'] = json['metadata']['name'];
-    json['size'] = json['upload_data']['size'];
-    json['preview'] = json['thumbmail'];
-
-    return json;
-  }
 }

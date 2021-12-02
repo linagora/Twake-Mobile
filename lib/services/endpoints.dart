@@ -47,7 +47,11 @@ class Endpoint {
       '/internal/services/channels/v1/companies/%s/workspaces/%s/channels/%s/read';
   // API Endpoint for working with user's companies
   static const badges = '/internal/services/notifications/v1/badges';
+
+  // API Endpoint for working with file in chat
   static const files = '/internal/services/files/v1/companies/%s/files';
+  static const fileMetadata = '/internal/services/files/v1/companies/%s/files/%s';
+
   // API Endpoint for magic links
   static const magicLinkTokens = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/tokens';
   static const magicLinkDeleteToken = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/tokens/%s';
@@ -55,6 +59,9 @@ class Endpoint {
 
   static const magicLink = '%s?join=%s';
   static const consolePage = 'https://console.%s';
+  static const downloadFile = '%s/internal/services/files/v1/companies/%s/files/%s/download';
+  static const downloadFileThumbnail = '%s/internal/services/files/v1/companies/%s/files/%s/thumbnails/%s';
+
 
   static const publicMethods = const [info, reservation, signup, emailResend];
 

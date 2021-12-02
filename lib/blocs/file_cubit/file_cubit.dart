@@ -47,10 +47,14 @@ class FileCubit extends Cubit<FileState> {
     emit(FileUploadSuccess(files: uploadedFiles));
   }
 
-  Future<File> getById({required String id}) async {
-    final file = await _repository.getById(id: id);
-
-    return file;
+  Future<File?> getFileData({required String id}) async {
+    try {
+      final file = await _repository.getFileData(id: id);
+      return file;
+    } catch (e) {
+      Logger().e('Error occurred during retrieving file metadata:\n$e');
+      return null;
+    }
   }
 
   void download({required File file}) async {
