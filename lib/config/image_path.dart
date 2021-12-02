@@ -26,3 +26,4 @@ const imageInvalid = '$_assetPath/ic_invalid.png';
 const imageConfig = '$_assetPath/ic_config.png';
 const imageSmileFace = '$_assetPath/ic_smile.png';
 const imageShrugging = '$_assetPath/ic_shrugging.png';
+const imageFile = '$_assetPath/file.png';

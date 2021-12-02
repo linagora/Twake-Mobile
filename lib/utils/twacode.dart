@@ -579,14 +579,18 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
+  List<String>? files = [];
+  final Key key;
 
   TwacodeRenderer({
+    required this.key,
     required this.twacode,
+    required this.files,
     required TextStyle parentStyle,
     double userUniqueColor = 0.0,
     bool isSwipe: false,
   }) {
-    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe);
+    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe, fileIds: this.files);
   }
 
   TextStyle getStyle(
@@ -737,9 +741,24 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render(List<dynamic> twacode, TextStyle parentStyle,
-      double userUniqueColor, bool isSwipe) {
+  List<InlineSpan> render(List<dynamic> twacode,TextStyle parentStyle,
+      double userUniqueColor, bool isSwipe, {List<String>? fileIds}) {
     List<InlineSpan> spans = [];
+
+    if(fileIds != null && fileIds.isNotEmpty) {
+      final listFileTile = Container(
+        key: ValueKey('file-tile-${fileIds.join('-')}'),
+        margin: const EdgeInsets.only(bottom: 16.0),
+        child: Column(
+          children: fileIds
+              .map((id) => (id.isNotEmpty)
+              ? FileTile(fileId: id)
+              : SizedBox.shrink())
+              .toList(),
+        ),
+      );
+      spans.add(WidgetSpan(child: listFileTile));
+    }
 
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {

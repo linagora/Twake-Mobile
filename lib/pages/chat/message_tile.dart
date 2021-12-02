@@ -108,34 +108,37 @@ class _MessageTileState<T extends BaseMessagesCubit>
             onReply(_message);
           }
         },
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-          children: [
-            SizedBox(width: 6.0),
-            Padding(
-              padding: _message.reactions.isEmpty
-                  ? const EdgeInsets.only(bottom: 15.0)
-                  : const EdgeInsets.only(bottom: 22.0),
-              child:
-                  (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
-                      ? ImageWidget(
-                          imageType: ImageType.common,
-                          imageUrl: _message.picture ?? '',
-                          name: _message.sender,
-                          size: 28)
-                      : SizedBox(width: 28.0, height: 28.0),
-            ),
-            _isMyMessage
-                ? SizedBox(width: Dim.widthPercent(8))
-                : SizedBox(width: 6),
-            _buildMessageContent(_isMyMessage, sizeOfReplyBox),
-            if (!_isMyMessage)
-              SizedBox(
-                width: Dim.widthPercent(10),
-              )
-          ],
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: !_isMyMessage ? 6 : 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              SizedBox(width: 6.0),
+              Padding(
+                padding: _message.reactions.isEmpty
+                    ? const EdgeInsets.only(bottom: 15.0)
+                    : const EdgeInsets.only(bottom: 22.0),
+                child:
+                    (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
+                        ? ImageWidget(
+                            imageType: ImageType.common,
+                            imageUrl: _message.picture ?? '',
+                            name: _message.sender,
+                            size: 28)
+                        : SizedBox(width: 28.0, height: 28.0),
+              ),
+              _isMyMessage
+                  ? SizedBox(width: Dim.widthPercent(8))
+                  : SizedBox(width: 6),
+              _buildMessageContent(_isMyMessage, sizeOfReplyBox),
+              if (!_isMyMessage)
+                SizedBox(
+                  width: Dim.widthPercent(10),
+                )
+            ],
+          ),
         ),
       );
     } else {
@@ -216,9 +219,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!widget.channel.isDirect &&
-                  !_isMyMessage &&
-                  widget.upBubbleSide)
+              if (!widget.channel.isDirect && !_isMyMessage && widget.upBubbleSide)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
                   child: Text(
@@ -234,7 +235,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   ),
                 ),
               Padding(
-                padding: EdgeInsets.fromLTRB(12.0, 5.0, 6.0, 0.0),
+                padding: EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
                 child: Column(
                   children: [
                     Row(
@@ -250,31 +251,24 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
-                                    child: _message.subtype ==
-                                            MessageSubtype.deleted
-                                        ? Text(
-                                            AppLocalizations.of(context)!
-                                                .messageDeleted,
+                                    child: _message.subtype == MessageSubtype.deleted
+                                        ? Text(AppLocalizations.of(context)!.messageDeleted,
                                             style: TextStyle(
-                                                fontSize: 15,
-                                                fontStyle: FontStyle.italic,
-                                                color: _isMyMessage
-                                                    ? Color(0xFFB3C9FF)
-                                                    : Color(0xFF7A7A7A)))
+                                              fontSize: 15,
+                                              fontStyle: FontStyle.italic,
+                                              color: _isMyMessage ? Color(0xFFB3C9FF) : Color(0xFF7A7A7A)))
                                         : TwacodeRenderer(
-                                                twacode: _message.blocks,
-                                                parentStyle: TextStyle(
-                                                  fontSize: 15.0,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: _isMyMessage
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                                userUniqueColor:
-                                                    _message.username.hashCode %
-                                                        360,
-                                                isSwipe: false)
-                                            .message,
+                                            key: ValueKey('twacode-${_message.hash}'),
+                                            twacode: _message.blocks,
+                                            files: _message.files,
+                                            parentStyle: TextStyle(
+                                              fontSize: 15.0,
+                                              fontWeight: FontWeight.w400,
+                                              color: _isMyMessage
+                                                ? Colors.white
+                                                : Colors.black),
+                                            userUniqueColor: _message.username.hashCode % 360,
+                                            isSwipe: false).message,
                                   ),
                                   SizedBox(
                                       width: (_message.responsesCount > 0 &&
@@ -288,10 +282,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 padding: const EdgeInsets.only(top: 3),
                                 child: Text(
                                   _message.inThread || _hideShowReplies
-                                      ? DateFormatter.getVerboseDateTime(
-                                          _message.createdAt)
-                                      : DateFormatter.getVerboseTime(
-                                          _message.createdAt),
+                                      ? DateFormatter.getVerboseDateTime(_message.createdAt)
+                                      : DateFormatter.getVerboseTime(_message.createdAt),
                                   textAlign: TextAlign.end,
                                   style: TextStyle(
                                     fontSize: 11.0,

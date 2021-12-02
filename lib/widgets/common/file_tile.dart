@@ -1,82 +1,112 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:open_file/open_file.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/config/image_path.dart';
+import 'package:twake/utils/extensions.dart';
+import 'package:twake/utils/utilities.dart';
+import 'package:twake/widgets/common/shimmer_loading.dart';
 
-class FileTile extends StatefulWidget {
+const _fileTileHeight = 76.0;
+
+class FileTile extends StatelessWidget {
   final String fileId;
 
   FileTile({required this.fileId}) : super(key: ValueKey(fileId));
 
   @override
-  _FileTileState createState() => _FileTileState();
-}
-
-class _FileTileState extends State<FileTile> {
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: Get.find<FileCubit>().getById(id: widget.fileId),
-        builder: (ctx, snapshot) {
+      return FutureBuilder(
+        future: Get.find<FileCubit>().getFileData(id: fileId),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.data == null) {
-              return Text('Old file format is not supported');
+              return _buildLoadingLayout();
             }
             final file = (snapshot.data as File);
-            InlineSpan text;
-            text = TextSpan(
-              text: file.name,
-              style: TextStyle(fontStyle: FontStyle.italic),
-            );
-            return Container(
-              margin: EdgeInsets.all(4),
-              padding: EdgeInsets.all(3),
-              child: Row(children: [
-                InkWell(
-                  child: SizedBox(
-                    child: file.preview != null && file.preview!.isNotEmpty
-                        ? ClipRRect(
-                            child: Image.network(file.preview!),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                          )
-                        : CircleAvatar(
-                            child: Icon(Icons.cloud_download),
-                            backgroundColor: Colors.indigo[100],
-                          ),
-                    width: 40,
-                    height: 40,
-                  ),
-                ),
-                SizedBox(width: 10),
-                Flexible(
-                  // fit: FlexFit.tight,
-                  child: Column(
-                    children: [
-                      RichText(
-                        text: text,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        // softWrap: true,
-                      ),
-                      Text(
-                        file.sizeStr,
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                            fontSize: 11.0,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.italic,
-                            color: Color(0xff8e8e93)),
-                      ),
-                    ],
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                  ),
-                ),
-              ]),
-            );
-          } else {
-            return LinearProgressIndicator();
+            return _buildFileWidget(file);
           }
-        });
+          return _buildLoadingLayout();
+        },
+      );
   }
+
+  _buildLoadingLayout() => ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(8)),
+      child: ShimmerLoading(
+        width: double.maxFinite,
+        height: _fileTileHeight,
+        isLoading: true,
+        child: Container(),
+      ),
+  );
+
+  _buildFileWidget(File file) => Row(
+        children: [
+          _buildThumbnail(file),
+          SizedBox(width: 12.0),
+          Flexible(
+            child: _buildInfo(file),
+          ),
+        ]
+  );
+
+  _buildThumbnail(File file) => SizedBox(
+      width: _fileTileHeight,
+      height: _fileTileHeight,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildFilePreview(file),
+        ],
+      ),
+  );
+
+  _buildFilePreview(File file) => GestureDetector(
+      onTap: () async {
+        final imageCachedPath = await Utilities.getCachedImagePath(file.thumbnailUrl);
+        await OpenFile.open(imageCachedPath, type: file.metadata.mime);
+      },
+      child: file.metadata.mime.isImageMimeType
+          ? ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              child: CachedNetworkImage(
+                width: double.maxFinite,
+                height: double.maxFinite,
+                fit: BoxFit.cover,
+                imageUrl: file.thumbnailUrl,
+                progressIndicatorBuilder: (context, url, progress) {
+                  return ShimmerLoading(
+                      isLoading: true,
+                      width: double.maxFinite,
+                      height: double.maxFinite,
+                      child: Container());
+                },
+              ),
+          )
+          : Image.asset(imageFile, width: 32, height: 32)
+  );
+
+  _buildInfo(File file) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        RichText(
+            text: TextSpan(text: file.metadata.name,
+                style: TextStyle(fontSize: 16.0, color: Colors.white)),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2
+        ),
+        Text(
+          filesize(file.uploadData.size),
+          textAlign: TextAlign.start,
+          style: TextStyle(
+              fontSize: 11.0,
+              fontWeight: FontWeight.w400,
+              fontStyle: FontStyle.italic,
+              color: Color.fromRGBO(255, 255, 255, 0.58)),
+        ),
+      ],
+  );
 }
