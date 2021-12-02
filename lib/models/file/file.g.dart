@@ -9,17 +9,22 @@ part of 'file.dart';
 File _$FileFromJson(Map<String, dynamic> json) {
   return File(
     id: json['id'] as String,
-    name: json['name'] as String,
     companyId: json['company_id'] as String,
-    size: json['size'] as int,
-    preview: json['preview'] as String?,
+    userId: json['user_id'] as String,
+    metadata: FileMetadata.fromJson(json['metadata'] as Map<String, dynamic>),
+    thumbnails: (json['thumbnails'] as List<dynamic>)
+        .map((e) => FileThumbnails.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    uploadData:
+        FileUploadData.fromJson(json['upload_data'] as Map<String, dynamic>),
   );
 }
 
 Map<String, dynamic> _$FileToJson(File instance) => <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
       'company_id': instance.companyId,
-      'preview': instance.preview,
-      'size': instance.size,
+      'user_id': instance.userId,
+      'metadata': instance.metadata,
+      'thumbnails': instance.thumbnails,
+      'upload_data': instance.uploadData,
     };

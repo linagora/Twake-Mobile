@@ -10,23 +10,6 @@ class FileRepository {
 
   FileRepository();
 
-  Future<String> uploadForWS({
-    required String path,
-    String? name,
-  }) async {
-    final multipartFile = await MultipartFile.fromFile(path, filename: name);
-    final formData = FormData.fromMap({
-      'file': multipartFile,
-    });
-    final result = await _api.post(
-      endpoint: Endpoint.files,
-      data: formData,
-      key: 'resource',
-    );
-
-    return File.fromJson(json: result, transform: true).download;
-  }
-
   Future<List<File>> upload({
     required String path,
     String? name,
@@ -43,22 +26,19 @@ class FileRepository {
       key: 'resource',
     );
 
-    final file = File.fromJson(json: result, transform: true);
+    final file = File.fromJson(json: result);
 
     _files.add(file);
 
     return _files;
   }
 
-  Future<File> getById({required String id}) async {
+  Future<File> getFileData({required String id}) async {
     final result = await _api.get(
-      endpoint: sprintf(Endpoint.files, [Globals.instance.companyId]) + '/$id',
+      endpoint: sprintf(Endpoint.fileMetadata, [Globals.instance.companyId, id]),
       key: 'resource',
     );
-
-    // Logger().w('Requested file for $id\n$result');
-
-    return File.fromJson(json: result, transform: true);
+    return File.fromJson(json: result);
   }
 
   void clearFiles() {
