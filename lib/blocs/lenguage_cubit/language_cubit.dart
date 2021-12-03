@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
+import 'package:get/get.dart';
 import 'package:twake/repositories/language_repository.dart';
 
 part 'language_state.dart';
@@ -21,6 +23,8 @@ class LanguageCubit extends Cubit<LanguageState> {
 
     await _repository.updateLanguageDB(language: language);
     final newLanguage = await _repository.getLanguage();
+
+    Get.updateLocale(Locale("$language"));
 
     emit(NewLanguage(language: newLanguage));
   }

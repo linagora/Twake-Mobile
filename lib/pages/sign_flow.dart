@@ -74,7 +74,10 @@ class SignInSignUpForm extends StatelessWidget {
   final String? requestedMagicLinkToken;
 
   const SignInSignUpForm(
-      {Key? key, required this.onChangeServer, required this.onSignUp, this.requestedMagicLinkToken})
+      {Key? key,
+      required this.onChangeServer,
+      required this.onSignUp,
+      this.requestedMagicLinkToken})
       : super(key: key);
 
   @override
@@ -115,7 +118,8 @@ class SignInSignUpForm extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      await Get.find<AuthenticationCubit>().authenticate(requestedMagicLinkToken: requestedMagicLinkToken);
+                      await Get.find<AuthenticationCubit>().authenticate(
+                          requestedMagicLinkToken: requestedMagicLinkToken);
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signin,

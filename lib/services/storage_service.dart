@@ -205,8 +205,11 @@ class StorageService {
 
   Future<void> truncateAll() async {
     final batch = _db.batch();
+    //TODO Remove when API for editing user profile is ready,integrate it into LanguageRepository
     for (final table in Table.values) {
-      batch.delete(table.name);
+      if (table.name != 'account') {
+        batch.delete(table.name);
+      }
     }
     await batch.commit(noResult: true);
   }
