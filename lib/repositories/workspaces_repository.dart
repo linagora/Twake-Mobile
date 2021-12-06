@@ -49,6 +49,7 @@ class WorkspacesRepository {
               ))
           .toList();
 
+      //TODO Remove when API for editing user profile is ready,integrate it into LanguageRepository
       // Select a language from the database before rewriting it
       final dataL = await _storage.select(
           table: Table.account,
@@ -171,13 +172,14 @@ class WorkspacesRepository {
     return workspace;
   }
 
-  Future<List<EmailInvitationResponse>> inviteUser(String companyId, String workspaceId, List<EmailInvitation> invitations) async {
+  Future<List<EmailInvitationResponse>> inviteUser(String companyId,
+      String workspaceId, List<EmailInvitation> invitations) async {
     final List resultList = await _api.post(
-      endpoint: sprintf(Endpoint.workspaceInviteEmail, [companyId, workspaceId]),
+      endpoint:
+          sprintf(Endpoint.workspaceInviteEmail, [companyId, workspaceId]),
       key: 'resources',
-      data: {'invitations' : invitations.map((e) => e.toJson()).toList()},
+      data: {'invitations': invitations.map((e) => e.toJson()).toList()},
     );
     return resultList.map((e) => EmailInvitationResponse.fromJson(e)).toList();
   }
-
 }

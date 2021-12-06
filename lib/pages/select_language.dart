@@ -119,7 +119,6 @@ class _SelectLanguageState extends State<SelectLanguage> {
         ),
         onTap: () async {
           Get.find<LanguageCubit>().changeLanguage(language: "$languageCode");
-          Get.updateLocale(Locale("$languageCode"));
         });
   }
 }

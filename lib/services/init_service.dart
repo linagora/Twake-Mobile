@@ -1,10 +1,13 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/company/company.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/models/workspace/workspace.dart';
+import 'package:twake/repositories/language_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
 
@@ -43,10 +46,23 @@ class InitService {
     // 0. Fetch and save the user's id into Globals
     await _apiService
         .get(endpoint: sprintf(Endpoint.account, ['me']), key: 'resource')
-        .then((userData) {
+        .then((userData) async {
       final currentAccount = Account.fromJson(json: userData, transform: true);
       Globals.instance.userIdSet = currentAccount.id;
-      _storageService.insert(table: Table.account, data: currentAccount);
+      //TODO Remove when API for editing user profile is ready,integrate API into LanguageRepository
+      final dataL = await _storageService.select(
+          table: Table.account,
+          columns: ["language"],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
+
+      await _storageService.insert(table: Table.account, data: currentAccount);
+
+      _storageService.update(
+          table: Table.account,
+          values: dataL[0],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
     });
 
     yield 5;
@@ -134,7 +150,7 @@ class InitService {
 
       return channels;
     });
-
+    yield 85;
     final accountFutures = workspaces.map((w) async {
       // 5. For each workspace fetch members
       remoteResult = await _apiService.get(
@@ -151,8 +167,20 @@ class InitService {
           workspaceId: w.id,
         ),
       );
+      //TODO Remove when API for editing user profile is ready,integrate it into LanguageRepository
+      final dataL = await _storageService.select(
+          table: Table.account,
+          columns: ["language"],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
 
-      _storageService.multiInsert(table: Table.account, data: accounts);
+      await _storageService.multiInsert(table: Table.account, data: accounts);
+
+      _storageService.update(
+          table: Table.account,
+          values: dataL[0],
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
 
       _storageService.multiInsert(
         table: Table.account2workspace,
@@ -202,6 +230,9 @@ class InitService {
         .forEach((f) async {
           await Future.wait(f);
         });
+    final language = await LanguageRepository().getLanguage();
+    Get.find<LanguageCubit>().changeLanguage(language: language);
+
     yield 100;
   }
 }
