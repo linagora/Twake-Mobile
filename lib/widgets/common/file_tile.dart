@@ -13,8 +13,9 @@ const _fileTileHeight = 76.0;
 
 class FileTile extends StatelessWidget {
   final String fileId;
+  final bool isMyMessage;
 
-  FileTile({required this.fileId}) : super(key: ValueKey(fileId));
+  FileTile({required this.fileId, required this.isMyMessage}) : super(key: ValueKey(fileId));
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +87,7 @@ class FileTile extends StatelessWidget {
                 },
               ),
           )
-          : Image.asset(imageFile, width: 32, height: 32)
+          : Image.asset(imageFile, width: 32, height: 32, color: isMyMessage ? null : Colors.grey)
   );
 
   _buildInfo(File file) => Column(
@@ -94,7 +95,7 @@ class FileTile extends StatelessWidget {
       children: [
         RichText(
             text: TextSpan(text: file.metadata.name,
-                style: TextStyle(fontSize: 16.0, color: Colors.white)),
+                style: TextStyle(fontSize: 16.0, color: isMyMessage ? Colors.white : Colors.black)),
             overflow: TextOverflow.ellipsis,
             maxLines: 2
         ),
@@ -105,7 +106,9 @@ class FileTile extends StatelessWidget {
               fontSize: 11.0,
               fontWeight: FontWeight.w400,
               fontStyle: FontStyle.italic,
-              color: Color.fromRGBO(255, 255, 255, 0.58)),
+              color: isMyMessage
+                  ? Color.fromRGBO(255, 255, 255, 0.58)
+                  : Color.fromRGBO(0, 0, 0, 0.58)),
         ),
       ],
   );

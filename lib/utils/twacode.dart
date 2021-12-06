@@ -752,7 +752,7 @@ class TwacodeRenderer {
         child: Column(
           children: fileIds
               .map((id) => (id.isNotEmpty)
-              ? FileTile(fileId: id)
+              ? FileTile(fileId: id, isMyMessage: parentStyle.color == Colors.black ? false : true)
               : SizedBox.shrink())
               .toList(),
         ),
