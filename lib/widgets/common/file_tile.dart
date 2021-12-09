@@ -6,9 +6,10 @@ import 'package:open_file/open_file.dart';
 import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/utils/extensions.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
+import 'package:twake/utils/extensions.dart';
 
 const _fileTileHeight = 76.0;
 
@@ -50,13 +51,18 @@ class FileTile extends StatelessWidget {
         ),
       );
 
-  _buildFileWidget(File file) => Row(children: [
-        _buildThumbnail(file),
-        SizedBox(width: 12.0),
-        Flexible(
-          child: _buildInfo(file),
-        ),
-      ]);
+  _buildFileWidget(File file) => Container(
+    margin: const EdgeInsets.only(bottom: 4.0),
+    child: Row(
+          children: [
+            _buildThumbnail(file),
+            SizedBox(width: 12.0),
+            Flexible(
+              child: _buildInfo(file),
+            ),
+          ]
+    ),
+  );
 
   _buildThumbnail(File file) => SizedBox(
         width: _fileTileHeight,

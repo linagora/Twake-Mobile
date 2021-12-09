@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
@@ -38,6 +39,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
     final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
 
     Get.create<FileCubit>(() => FileCubit(), permanent: false);
+    Get.create<FileUploadCubit>(() => FileUploadCubit(), permanent: false);
 
     return BlocBuilder<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
@@ -141,15 +143,27 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               ? messagesState.message.text
                               : '',
                           onMessageSend: (content, context) async {
-                            if (messagesState is MessageEditInProgress)
+                            final uploadState = Get.find<FileUploadCubit>().state;
+                            if (messagesState is MessageEditInProgress) {
+                              List<File> attachments = const [];
+                              if (uploadState.listFileUploading.isNotEmpty) {
+                                attachments = uploadState.listFileUploading
+                                    .where((fileUploading) => fileUploading.file != null)
+                                    .map((e) => e.file!)
+                                    .toList();
+                              }
                               Get.find<ThreadMessagesCubit>().edit(
                                   message: messagesState.message,
-                                  editedText: content);
-                            else {
-                              final uploadState = Get.find<FileCubit>().state;
+                                  editedText: content,
+                                  newAttachments: attachments
+                              );
+                            } else {
                               List<File> attachments = const [];
-                              if (uploadState is FileUploadSuccess) {
-                                attachments = uploadState.files;
+                              if (uploadState.listFileUploading.isNotEmpty) {
+                                attachments = uploadState.listFileUploading
+                                    .where((fileUploading) => fileUploading.file != null)
+                                    .map((e) => e.file!)
+                                    .toList();
                               }
                               Get.find<ThreadMessagesCubit>().send(
                                 originalStr: content,
