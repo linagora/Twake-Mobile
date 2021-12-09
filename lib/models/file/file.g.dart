@@ -17,6 +17,8 @@ File _$FileFromJson(Map<String, dynamic> json) {
         .toList(),
     uploadData:
         FileUploadData.fromJson(json['upload_data'] as Map<String, dynamic>),
+    createdAt: json['created_at'] as int,
+    updatedAt: json['updated_at'] as int,
   );
 }
 
@@ -27,4 +29,6 @@ Map<String, dynamic> _$FileToJson(File instance) => <String, dynamic>{
       'metadata': instance.metadata,
       'thumbnails': instance.thumbnails,
       'upload_data': instance.uploadData,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
     };

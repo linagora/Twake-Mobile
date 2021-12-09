@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -162,13 +164,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     bool isDirect: false,
   }) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
-    if (attachments.isNotEmpty) {
-      final nop = {
-        'type': 'nop',
-        'content': attachments.map((f) => f.toMap()).toList(),
-      };
-      prepared.add(nop);
-    }
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
 
     _sendInProgress += 1;
@@ -181,6 +176,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       threadId: threadId ?? fakeId,
       isDirect: isDirect,
       now: DateTime.now().millisecondsSinceEpoch,
+      files: attachments
     );
 
     final state = this.state as MessagesLoadSuccess;
@@ -215,10 +211,13 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _sendInProgress -= 1;
   }
 
-  void startEdit({required Message message}) {
+  void startEdit({required Message message}) async {
     if (state is! MessagesLoadSuccess) return;
 
     final s = (state as MessagesLoadSuccess);
+
+    // reinstate files from message for editing
+    await Get.find<FileUploadCubit>().startEditingFile(message.files);
 
     emit(MessageEditInProgress(
       messages: s.messages,
@@ -236,19 +235,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final prepared = TwacodeParser(editedText).message;
 
     if (newAttachments.isNotEmpty) {
-      final oldPrepared = message.blocks;
-      final content = newAttachments.map((f) => f.toMap()).toList();
-      Map<String, dynamic> nop = {};
-      if (oldPrepared.last['type'] == 'nop') {
-        // if it already has attachments, then merge them
-        nop = oldPrepared.last;
-        nop['content'] = nop['content'] + content;
-      } else {
-        // else create new attachments
-        nop['type'] = 'nop';
-        nop['content'] = content;
-      }
-      prepared.add(nop);
+      message.files = newAttachments;
     }
 
     if (this.state is! MessagesLoadSuccess) return;
