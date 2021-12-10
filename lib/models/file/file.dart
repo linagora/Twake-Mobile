@@ -16,34 +16,35 @@ class File extends Equatable {
   final FileMetadata metadata;
   final List<FileThumbnails> thumbnails;
   final FileUploadData uploadData;
+  final int createdAt;
+  final int updatedAt;
 
-  const File({
+  File({
     required this.id,
     required this.companyId,
     required this.userId,
     required this.metadata,
     required this.thumbnails,
-    required this.uploadData
+    required this.uploadData,
+    required this.createdAt,
+    required this.updatedAt
   });
 
-  Map<String, Object?> toMap() {
-    return {
-      "type": "file",
-      "mode": "preview",
-      "content": id,
-      "metadata": {
-        "size": uploadData.size,
-        "name": metadata.name,
-      }
-    };
-  }
-
-  factory File.fromJson({required Map<String, dynamic> json}) => _$FileFromJson(json);
+  factory File.fromJson(Map<String, dynamic> json) => _$FileFromJson(json);
 
   Map<String, dynamic> toJson() => _$FileToJson(this);
 
   @override
-  List<Object?> get props => [id, companyId, userId, metadata, thumbnails, uploadData];
+  List<Object?> get props => [
+    id,
+    companyId,
+    userId,
+    metadata,
+    thumbnails,
+    uploadData,
+    createdAt,
+    updatedAt
+  ];
 }
 
 extension FileExtenstion on File {

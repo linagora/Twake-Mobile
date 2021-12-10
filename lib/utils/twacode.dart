@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/file_tile.dart';
 import 'package:twake/widgets/common/user_mention.dart';
@@ -579,18 +580,16 @@ class Delim {
 class TwacodeRenderer {
   List<dynamic> twacode;
   List<InlineSpan> spans = [];
-  List<String>? files = [];
-  final Key key;
+  List<dynamic>? fileIds = [];
 
   TwacodeRenderer({
-    required this.key,
     required this.twacode,
-    required this.files,
+    required this.fileIds,
     required TextStyle parentStyle,
     double userUniqueColor = 0.0,
     bool isSwipe: false,
   }) {
-    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe, fileIds: this.files);
+    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe, fileIds: this.fileIds);
   }
 
   TextStyle getStyle(
@@ -742,21 +741,11 @@ class TwacodeRenderer {
   }
 
   List<InlineSpan> render(List<dynamic> twacode,TextStyle parentStyle,
-      double userUniqueColor, bool isSwipe, {List<String>? fileIds}) {
+      double userUniqueColor, bool isSwipe, {List<dynamic>? fileIds}) {
     List<InlineSpan> spans = [];
 
     if(fileIds != null && fileIds.isNotEmpty) {
-      final listFileTile = Container(
-        key: ValueKey('file-tile-${fileIds.join('-')}'),
-        margin: const EdgeInsets.only(bottom: 16.0),
-        child: Column(
-          children: fileIds
-              .map((id) => (id.isNotEmpty)
-              ? FileTile(fileId: id, isMyMessage: parentStyle.color == Colors.black ? false : true)
-              : SizedBox.shrink())
-              .toList(),
-        ),
-      );
+      final listFileTile = appendFile(fileIds, parentStyle);
       spans.add(WidgetSpan(child: listFileTile));
     }
 
@@ -1109,6 +1098,29 @@ class TwacodeRenderer {
       }
     }
     return spans;
+  }
+
+  Widget appendFile(List<dynamic> fileIds, TextStyle parentStyle) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        children: fileIds.map((element) {
+          // element may be a string when loaded from local DB first time
+          // or it could be a File after editing
+          if (element is String && element.isNotEmpty) {
+            return FileTile(
+                fileId: element,
+                isMyMessage: parentStyle.color == Colors.black ? false : true);
+          } else if(element is File) {
+            return FileTile(
+                fileId: element.id,
+                isMyMessage: parentStyle.color == Colors.black ? false : true);
+          } else {
+            return SizedBox.shrink();
+          }
+        }).toList(),
+      ),
+    );
   }
 }
 

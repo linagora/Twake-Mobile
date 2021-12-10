@@ -258,9 +258,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                               fontStyle: FontStyle.italic,
                                               color: _isMyMessage ? Color(0xFFB3C9FF) : Color(0xFF7A7A7A)))
                                         : TwacodeRenderer(
-                                            key: ValueKey('twacode-${_message.hash}'),
                                             twacode: _message.blocks,
-                                            files: _message.files,
+                                            fileIds: _message.files,
                                             parentStyle: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.w400,

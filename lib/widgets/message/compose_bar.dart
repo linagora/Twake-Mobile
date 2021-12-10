@@ -4,14 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
+import 'package:twake/widgets/common/file_uploading_tile.dart';
 
 // const _categoryHeaderHeight = 40.0;
 // const _categoryTitleHeight = _categoryHeaderHeight; // to
@@ -39,7 +42,6 @@ class _ComposeBar extends State<ComposeBar> {
   var _mentionsVisible = false;
   var _forceLooseFocus = false;
   var _canSend = false;
-  var _fileNumber = 0;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -121,7 +123,7 @@ class _ComposeBar extends State<ComposeBar> {
   @override
   void didUpdateWidget(covariant ComposeBar oldWidget) {
     if (oldWidget.initialText != widget.initialText) {
-      _controller.text = widget.initialText!;
+      _controller.text = widget.initialText ?? '';
     }
     // print('FORCE LOOSE FOCUS: $_forceLooseFocus');
     if (widget.autofocus && !_forceLooseFocus) {
@@ -187,45 +189,35 @@ class _ComposeBar extends State<ComposeBar> {
           ?.files;
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
+      return;
     } catch (ex) {
       print(ex);
+      return;
     }
     if (!mounted) return;
-    //final path = _paths.map((e) => e.path).toList()[0].toString();
-    // final name = _paths.map((e) => e.name).toList()[0].toString();
-    //if possible to send the list of paths
-    //listPath when will it be possible to send the sheet
-    // final List<String> listPath = [];
-    // _paths.forEach((element) {
-    //   listPath.add(element.path.toString());
-    //  });
 
-    _paths!.forEach((element) {
-      Get.find<FileCubit>().upload(path: element.path!);
-    });
-
-    setState(() {
-      _fileNumber += _paths!.length;
-    });
-
-    /* Get.find<FileCubit>().stream.listen((state) {
-      if (state is FileUploadSuccess) {
-        setState(() {
-          _canSend = true;
-        });
+    _paths?.forEach((element) {
+      if(element.path != null) {
+        Get.find<FileUploadCubit>().upload(sourcePath: element.path!);
       }
-    });*/
+    });
 
-    final stateFileCubit = Get.find<FileCubit>().state;
-    if (stateFileCubit is FileUploadSuccess) {
-      setState(() {
-        _canSend = true;
-      });
-    }
+    Get.find<FileUploadCubit>().stream.listen((state) {
+       if (state.listFileUploading.isNotEmpty) {
+         final hasUploadedFileInStack = state.listFileUploading.any(
+                 (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+         if(hasUploadedFileInStack) {
+           if(!mounted)
+             return;
+           setState(() {
+             _canSend = true;
+           });
+         }
+       }
+    });
   }
 
   void _fileNumClear() async {
-    _fileNumber = 0;
     _paths = [];
   }
 
@@ -355,7 +347,6 @@ class _ComposeBar extends State<ComposeBar> {
               onMessageSend: widget.onMessageSend,
               canSend: _canSend,
               openFileExplorer: _openFileExplorer,
-              fileNumber: _fileNumber,
               fileNumClear: _fileNumClear,
             ),
             Offstage(
@@ -409,7 +400,6 @@ class TextInput extends StatefulWidget {
   final Function onMessageSend;
   final Function? openFileExplorer;
   final Function? fileNumClear;
-  final int? fileNumber;
 
   TextInput({
     required this.onMessageSend,
@@ -421,7 +411,6 @@ class TextInput extends StatefulWidget {
     this.toggleEmojiBoard,
     this.openFileExplorer,
     this.canSend = false,
-    this.fileNumber,
     this.fileNumClear,
   });
 
@@ -430,29 +419,11 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
-  int? _fileNumber = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _fileNumber = widget.fileNumber;
-  }
-
-  @override
-  void didUpdateWidget(covariant TextInput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.fileNumber != widget.fileNumber) {
-      _fileNumber = widget.fileNumber;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        top: 11.0,
-        bottom: 11.0,
-      ),
+      padding: EdgeInsets.only(top: 11.0, bottom: 11.0),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1.5)),
         color: Color(0xfff6f6f6),
@@ -461,142 +432,146 @@ class _TextInputState extends State<TextInput> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(width: 14.0),
-          // TODO: implement this functionality
-          /*BlocBuilder<FileCubit, FileState>(
-            bloc: Get.find<FileCubit>(),
-            builder: (context, state) {
-              if (state is FileInitial) {
-                return IconButton(
-                  constraints: BoxConstraints(
-                    minHeight: 24.0,
-                    minWidth: 24.0,
-                  ),
-                  padding: EdgeInsets.zero,
-                  icon: Icon(Icons.attachment),
-                  onPressed: widget.openFileExplorer as void Function()?,
-                  color: Color(0xff8a898e),
-                );
-              } else if (state is FileUploadInProgress) {
-                return CircularProgressIndicator();
-              } else if (state is FileUploadSuccess) {
-                return InkWell(
-                  child: CircleAvatar(
-                    child: (Text('$_fileNumber')),
-                    //  await fileNumClear;
-                    backgroundColor: Colors.indigo[50],
-                  ),
-                  onTap: widget.openFileExplorer!(),
-                );
-              }
-              return CircleAvatar(
-                backgroundColor: Colors.indigo[50],
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  icon: Icon(Icons.attachment),
-                  onPressed: widget.openFileExplorer!(),
-                  color: Colors.black54,
-                ),
-              );
-            },
-          ),*/
+          _buildAttachment(),
           SizedBox(width: 14.0),
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                border: Border.all(
-                  color: Color(0xff979797).withOpacity(0.4),
-                ),
-              ),
-              child: Stack(
-                alignment: Alignment.centerRight,
-                children: [
-                  TextField(
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black,
-                    ),
-                    maxLines: 4,
-                    minLines: 1,
-                    autofocus: widget.autofocus!,
-                    focusNode: widget.focusNode,
-                    scrollController: widget.scrollController,
-                    controller: widget.controller,
-                    decoration: InputDecoration(
-                      contentPadding:
-                      const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
-                      hintText: AppLocalizations.of(context)!.newReply,
-                      hintStyle: TextStyle(
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black.withOpacity(0.2),
-                      ),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          style: BorderStyle.none,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          style: BorderStyle.none,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          style: BorderStyle.none,
-                        ),
-                      ),
-                      floatingLabelBehavior: FloatingLabelBehavior.always,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: widget.toggleEmojiBoard as void Function()?,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Image.asset(imageEmoji, width: 24, height: 24),
-                    ), //Image.asset('assets/images/attach.png'),
-                  )
-                ],
-              ),
-            ),
+            child: _buildMessageContent(),
           ),
-          // IconButton(
-          //   padding: EdgeInsets.zero,
-          //   icon: Icon(widget.emojiVisible ? Icons.keyboard : Icons.tag_faces),
-          //   onPressed: widget.toggleEmojiBoard,
-          //   color: Colors.black54,
-          // ),
-          GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: widget.canSend
-                ? () async {
-                    widget.onMessageSend(
-                      await Get.find<MentionsCubit>()
-                          .completeMentions(widget.controller!.text),
-                      context,
-                    );
-                    widget.controller!.clear();
-                    widget.fileNumClear!();
-                  }
-                : null,
-            child: widget.canSend
-                ? Container(
-                    padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-                    child: Image.asset(
-                      'assets/images/send_blue.png',
-                    ),
-                  )
-                : Container(
-                    padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-                    child: Image.asset(
-                      'assets/images/send.png',
-                    ),
-                  ),
-          ),
+          _buildSendButton(),
         ],
       ),
     );
   }
+
+  _buildAttachment() => IconButton(
+      constraints: BoxConstraints(
+        minHeight: 24.0,
+        minWidth: 24.0,
+      ),
+      padding: EdgeInsets.zero,
+      icon: Image.asset(imageAttachment),
+      onPressed: () => _handleOpenFilePicker(),
+      color: Color(0xff8a898e),
+    );
+
+  _buildMessageContent() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.0),
+        border: Border.all(
+          color: Color(0xff979797).withOpacity(0.4),
+        ),
+      ),
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
+          Column(
+            children: [
+              _buildMessageTextField(),
+              BlocBuilder<FileUploadCubit, FileUploadState>(
+                bloc: Get.find<FileUploadCubit>(),
+                builder: (context, state) {
+                    return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: state.listFileUploading.length,
+                    itemBuilder: (context, index) {
+                      final fileUploading = state.listFileUploading[index];
+                      return FileUploadingTile(
+                        fileUploading: fileUploading,
+                        onCancel: () {
+                          Get.find<FileUploadCubit>().cancelFileUploading(fileUploading);
+                        }
+                      );
+                    });
+                }
+              )
+            ],
+          ),
+          GestureDetector(
+            onTap: widget.toggleEmojiBoard as void Function()?,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(imageEmoji, width: 24, height: 24),
+            ), //Image.asset('assets/images/attach.png'),
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildMessageTextField() {
+    return TextField(
+      style: TextStyle(
+        fontSize: 17.0,
+        fontWeight: FontWeight.w400,
+        color: Colors.black,
+      ),
+      maxLines: 4,
+      minLines: 1,
+      autofocus: widget.autofocus!,
+      focusNode: widget.focusNode,
+      scrollController: widget.scrollController,
+      controller: widget.controller,
+      decoration: InputDecoration(
+        contentPadding:
+        const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
+        hintText: AppLocalizations.of(context)!.newReply,
+        hintStyle: TextStyle(
+          fontSize: 13.0,
+          fontWeight: FontWeight.w500,
+          color: Colors.black.withOpacity(0.2),
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            style: BorderStyle.none,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            style: BorderStyle.none,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            style: BorderStyle.none,
+          ),
+        ),
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+      ),
+    );
+  }
+
+  _buildSendButton() {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: widget.canSend
+          ? () async {
+              widget.onMessageSend(
+                await Get.find<MentionsCubit>().completeMentions(widget.controller!.text),
+                context,
+              );
+              widget.controller!.clear();
+              widget.fileNumClear!();
+              Get.find<FileUploadCubit>().updateAfterSentAllFiles();
+            }
+          : null,
+      child: widget.canSend
+          ? Container(
+              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+              child: Image.asset(
+                'assets/images/send_blue.png',
+              ),
+            )
+          : Container(
+              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
+              child: Image.asset(
+                'assets/images/send.png',
+              ),
+            ),
+    );
+  }
+
+  _handleOpenFilePicker() => widget.openFileExplorer?.call();
 }

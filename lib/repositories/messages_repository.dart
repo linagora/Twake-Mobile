@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:mutex/mutex.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -183,7 +184,7 @@ class MessagesRepository {
     required String id,
     required String channelId,
     required List<dynamic> prepared,
-    List<String> files: const [],
+    List<File> files: const [],
     String? originalStr,
     required String threadId,
     bool isDirect: false,

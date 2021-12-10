@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
-import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
@@ -39,7 +39,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           onTap: () {
             popBack();
             Get.find<ThreadMessagesCubit>().reset();
-            Get.find<CacheFileCubit>().cleanCachedFiles();
+            // TODO: Currently, no need to clean cached files.
+            // Once there are some related performance bugs occur in the future,
+            // just un-comment this and test
+            // Get.find<CacheFileCubit>().cleanCachedFiles();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -95,10 +98,13 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     : draft,
                 onMessageSend: (content, context) async {
                   final stateThread = Get.find<ThreadMessagesCubit>().state;
-                  final uploadState = Get.find<FileCubit>().state;
+                  final uploadState = Get.find<FileUploadCubit>().state;
                   List<File> attachments = const [];
-                  if (uploadState is FileUploadSuccess) {
-                    attachments = uploadState.files;
+                  if (uploadState.listFileUploading.isNotEmpty) {
+                    attachments = uploadState.listFileUploading
+                        .where((fileUploading) => fileUploading.file != null)
+                        .map((e) => e.file!)
+                        .toList();
                   }
                   if (stateThread is MessagesLoadSuccessSwipeToReply) {
                     await Get.find<ThreadMessagesCubit>().send(
@@ -109,14 +115,26 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     );
                     Get.find<ThreadMessagesCubit>().reset();
                   } else {
-                    if (messagesState is MessageEditInProgress)
-                      Get.find<ChannelMessagesCubit>().edit(
-                          message: messagesState.message, editedText: content);
-                    else {
-                      final uploadState = Get.find<FileCubit>().state;
+                    if (messagesState is MessageEditInProgress) {
                       List<File> attachments = const [];
-                      if (uploadState is FileUploadSuccess) {
-                        attachments = uploadState.files;
+                      if (uploadState.listFileUploading.isNotEmpty) {
+                        attachments = uploadState.listFileUploading
+                            .where((fileUploading) => fileUploading.file != null)
+                            .map((e) => e.file!)
+                            .toList();
+                      }
+                      Get.find<ChannelMessagesCubit>().edit(
+                          message: messagesState.message,
+                          editedText: content,
+                          newAttachments: attachments
+                      );
+                    } else {
+                      List<File> attachments = const [];
+                      if (uploadState.listFileUploading.isNotEmpty) {
+                        attachments = uploadState.listFileUploading
+                            .where((fileUploading) => fileUploading.file != null)
+                            .map((e) => e.file!)
+                            .toList();
                       }
                       Get.find<ChannelMessagesCubit>().send(
                         originalStr: content,
@@ -191,9 +209,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                           Container(
                             width: Dim.widthPercent(80),
                             child: TwacodeRenderer(
-                              key: ValueKey('twacode-${_message.hash}'),
                               twacode: _message.blocks,
-                              files: _message.files,
+                              fileIds: _message.files,
                               parentStyle: TextStyle(
                                 fontSize: 14.0,
                                 //fontWeight: FontWeight.w400,
