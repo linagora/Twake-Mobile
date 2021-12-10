@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
@@ -38,6 +39,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           onTap: () {
             popBack();
             Get.find<ThreadMessagesCubit>().reset();
+            Get.find<CacheFileCubit>().cleanCachedFiles();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),

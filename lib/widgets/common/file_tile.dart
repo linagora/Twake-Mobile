@@ -16,22 +16,12 @@ class FileTile extends StatelessWidget {
   final String fileId;
   final bool isMyMessage;
 
-<<<<<<< HEAD
-  FileTile({required this.fileId, required this.isMyMessage}) : super(key: ValueKey(fileId));
-=======
   FileTile({required this.fileId, required this.isMyMessage})
       : super(key: ValueKey(fileId));
->>>>>>> c803baa1 (fix #1135 sender chat text color inside file)
 
   @override
   Widget build(BuildContext context) {
-    Get.find<CacheFileCubit>().findCacheFile(fileId: fileId);
-    File? cacheFile;
-    final cacheFileState = Get.find<CacheFileCubit>().state;
-    (cacheFileState is CacheFileFound)
-        ? cacheFile = cacheFileState.cacheFile
-        : cacheFile = null;
-
+    File? cacheFile = Get.find<CacheFileCubit>().findCachedFile(fileId: fileId);
     return cacheFile == null
         ? FutureBuilder(
             future: Get.find<FileCubit>().getFileData(id: fileId),
@@ -41,7 +31,7 @@ class FileTile extends StatelessWidget {
                   return _buildLoadingLayout();
                 }
                 final file = (snapshot.data as File);
-                Get.find<CacheFileCubit>().setFile(file: file);
+                Get.find<CacheFileCubit>().cacheFile(file: file);
                 return _buildFileWidget(file);
               }
               return _buildLoadingLayout();
@@ -80,58 +70,31 @@ class FileTile extends StatelessWidget {
       );
 
   _buildFilePreview(File file) => GestureDetector(
-      onTap: () async {
-        final imageCachedPath =
-            await Utilities.getCachedImagePath(file.thumbnailUrl);
-        await OpenFile.open(imageCachedPath, type: file.metadata.mime);
-      },
-      child: file.metadata.mime.isImageMimeType
-          ? ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              child: CachedNetworkImage(
-                width: double.maxFinite,
-                height: double.maxFinite,
-                fit: BoxFit.cover,
-                imageUrl: file.thumbnailUrl,
-                progressIndicatorBuilder: (context, url, progress) {
-                  return ShimmerLoading(
-                      isLoading: true,
-                      width: double.maxFinite,
-                      height: double.maxFinite,
-                      child: Container());
-                },
-              ),
-<<<<<<< HEAD
-          )
-          : Image.asset(imageFile, width: 32, height: 32, color: isMyMessage ? null : Colors.grey)
-  );
-
-  _buildInfo(File file) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-            text: TextSpan(text: file.metadata.name,
-                style: TextStyle(fontSize: 16.0, color: isMyMessage ? Colors.white : Colors.black)),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2
-        ),
-        Text(
-          filesize(file.uploadData.size),
-          textAlign: TextAlign.start,
-          style: TextStyle(
-              fontSize: 11.0,
-              fontWeight: FontWeight.w400,
-              fontStyle: FontStyle.italic,
-              color: isMyMessage
-                  ? Color.fromRGBO(255, 255, 255, 0.58)
-                  : Color.fromRGBO(0, 0, 0, 0.58)),
-        ),
-      ],
-  );
-=======
-            )
-          : Image.asset(imageFile,
-              width: 32, height: 32, color: isMyMessage ? null : Colors.grey));
+        onTap: () async {
+          final imageCachedPath =
+              await Utilities.getCachedImagePath(file.thumbnailUrl);
+          await OpenFile.open(imageCachedPath, type: file.metadata.mime);
+        },
+        child: file.metadata.mime.isImageMimeType
+            ? ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                child: CachedNetworkImage(
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  fit: BoxFit.cover,
+                  imageUrl: file.thumbnailUrl,
+                  progressIndicatorBuilder: (context, url, progress) {
+                    return ShimmerLoading(
+                        isLoading: true,
+                        width: double.maxFinite,
+                        height: double.maxFinite,
+                        child: Container());
+                  },
+                ),
+              )
+            : Image.asset(imageFile,
+                width: 32, height: 32, color: isMyMessage ? null : Colors.grey),
+      );
 
   _buildInfo(File file) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,5 +120,4 @@ class FileTile extends StatelessWidget {
           ),
         ],
       );
->>>>>>> c803baa1 (fix #1135 sender chat text color inside file)
 }
