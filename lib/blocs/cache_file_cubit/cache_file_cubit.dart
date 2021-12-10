@@ -6,25 +6,22 @@ import 'package:twake/models/file/file.dart';
 part 'cache_file_state.dart';
 
 class CacheFileCubit extends Cubit<CacheFileState> {
-  CacheFileCubit() : super(CacheFilesInitial(fileList: []));
-  List<File> fileList = [];
+  CacheFileCubit() : super(CacheFileState(fileList: []));
 
-  void setFile({required File file}) async {
-    fileList.firstWhereOrNull((cacheFile) => cacheFile.id == file.id) == null
-        ? fileList.add(file)
-        : null;
+  void cacheFile({required File file}) async {
+    List<File> cachedList = [...state.fileList];
+    final cachedFile = state.fileList.firstWhereOrNull((cacheFile) => cacheFile.id == file.id);
+    if(cachedFile == null) {
+      cachedList.add(file);
+    }
+    emit(CacheFileState(fileList: cachedList));
   }
 
-  void findCacheFile({required String fileId}) async {
-    final cacheFile = fileList.firstWhereOrNull((file) => file.id == fileId);
-    cacheFile == null
-        ? emit(CacheFileNotFoun())
-        : emit(CacheFileFound(cacheFile: cacheFile));
+  File? findCachedFile({required String fileId}) {
+    return state.fileList.firstWhereOrNull((file) => file.id == fileId);
   }
 
-  void cleanCacheFiles({required File file}) async {
-    fileList = [];
-
-    emit(CacheFilesInitial(fileList: fileList));
+  void cleanCachedFiles() async {
+    emit(CacheFileState(fileList: []));
   }
 }
