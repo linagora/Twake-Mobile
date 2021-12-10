@@ -39,7 +39,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           onTap: () {
             popBack();
             Get.find<ThreadMessagesCubit>().reset();
-            Get.find<CacheFileCubit>().cleanCachedFiles();
+            // TODO: Currently, no need to clean cached files.
+            // Once there are some related performance bugs occur in the future,
+            // just un-comment this and test
+            // Get.find<CacheFileCubit>().cleanCachedFiles();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0),
