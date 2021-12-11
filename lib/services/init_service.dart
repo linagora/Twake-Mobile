@@ -58,11 +58,13 @@ class InitService {
 
       await _storageService.insert(table: Table.account, data: currentAccount);
 
-      _storageService.update(
-          table: Table.account,
-          values: dataL[0],
-          where: "id = ?",
-          whereArgs: [Globals.instance.userId]);
+      if (dataL.isNotEmpty) {
+        _storageService.update(
+            table: Table.account,
+            values: dataL[0],
+            where: "id = ?",
+            whereArgs: [Globals.instance.userId]);
+      }
     });
 
     yield 5;
