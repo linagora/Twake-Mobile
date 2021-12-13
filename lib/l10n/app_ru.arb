@@ -279,5 +279,91 @@
   "joinTheTeamButton": "Войти в команду",
   "@joinTheTeamButton": {},
   "joinWorkspaceSubtitle": "Twake - это рабочая среда с открытым исходным кодом,\nсозданная для повышения производительности\nвашей команды",
-  "@joinWorkspaceSubtitle": {}
+  "@joinWorkspaceSubtitle": {},
+  "inviteToWorkspace": "Пригласить пользователей в ",
+  "@inviteToWorkspace": {},
+  "inviteToWorkspaceSubtitle2": " рабочее пространство, направив\nпригласительную ссылку по электронной почте или с помощью мессенджеров\n",
+  "@inviteToWorkspaceSubtitle2": {},
+  "inviteByEmail": "Пригласить по электронной почте",
+  "@inviteByEmail": {},
+  "joinMeOnTwake": "Привет! Я использую Twake: {link}",
+  "@joinMeOnTwake": {
+    "description": "Shared invitation content for magic link",
+    "placeholders": {
+      "link": {
+        "type": "String",
+        "example": "https://web.qa.twake.app?join=eyJhbGc"
+      }
+    }
+  },
+  "invitationSent": "Приглашение\nуспешно отправлено.",
+  "@invitationSent": {},
+  "generateNewLinkSubtitle": "Вы можете создать новую пригласительную ссылку,\nоднако уже существующая ссылка будет автоматически\nаннулирована и потеряет силу.",
+  "@generateNewLinkSubtitle": {},
+  "joinWorkspaceIntro": "Twake - это цифровая рабочая среда с открытым исходным кодом,\nсозданная для повышения продуктивности вашей команды",
+  "@joinWorkspaceIntro": {},
+  "joinWorkspaceSubTitle": "Вас пригласили присоединиться к\nрабочей среде {workspace} в Twake!",
+  "@joinWorkspaceSubTitle": {
+    "description": "Welcome sub-title message to someone joining a workspace",
+    "placeholders": {
+      "workspace": {
+        "type": "String",
+        "example": "Twake"
+      }
+    }
+  },
+  "sendButton": "Отправить",
+  "@sendButton": {},
+  "inviteAnotherMember": "Пригласить другого участника",
+  "@inviteAnotherMember": {},
+  "addEmailAddress": "Добавить адрес электронной почты",
+  "@addEmailAddress": {},
+  "showMoreInvites": "Показать еще {number} приглашений",
+  "@showMoreInvites": {
+    "description": "Show all invitation emails",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "7"
+      }
+    }
+  },
+  "sendMagicLinkToColleagues": "Отправить ссылку сотрудникам",
+  "@sendMagicLinkToColleagues": {},
+  "invitePeopleToWorkspace": "Пригласить пользователей в данное рабочее пространство",
+  "@invitePeopleToWorkspace": {},
+  "inviteToWorkspaceSubtitle1": "Пригласить коллег и сотрудников\nв ",
+  "@inviteToWorkspaceSubtitle1": {},
+  "invitationCopiedToast": "Пригласительная ссылка скопирована\nв буфер обмена",
+  "@invitationCopiedToast": {},
+  "shareInvitationLink": "Поделиться пригласительной ссылкой",
+  "@shareInvitationLink": {},
+  "sendInvitationByEmail": "Отправить пригласительную ссылку по электронной почте",
+  "@sendInvitationByEmail": {},
+  "invitationCopiedToClipboard": "Пригласительная ссылка скопирована\nв буфер обмена",
+  "@invitationCopiedToClipboard": {},
+  "inviteUsers": "Пригласить пользователей",
+  "@inviteUsers": {},
+  "goToMainScreen": "Перейти к основному экрану",
+  "@goToMainScreen": {},
+  "generateNewLink": "Сгенерировать новую ссылку",
+  "@generateNewLink": {},
+  "newLinkGenerated": "Новая ссылка успешно сгенерирована",
+  "@newLinkGenerated": {},
+  "contactTechnicalSupport": "Связаться со службой поддержки",
+  "@contactTechnicalSupport": {},
+  "outOfReachTechnicalSupport": "К сожалению, служба поддержки временно недоступна.",
+  "@outOfReachTechnicalSupport": {},
+  "joinWorkspaceTitle": "Присоединиться ",
+  "@joinWorkspaceTitle": {},
+  "joinWorkspaceButton": "Присоединиться к рабочей среде",
+  "@joinWorkspaceButton": {},
+  "joinWorkspaceUnAvailableTitle": "Ссылка больше не доступна",
+  "@joinWorkspaceUnAvailableTitle": {},
+  "joinWorkspaceUnAvailableSubTitle": "Пригласительная ссылка для данной рабочей среды\nбольше не доступна. Она истекла или была аннулирована",
+  "@joinWorkspaceUnAvailableSubTitle": {},
+  "joinWorkspaceCreateCompanyButton": "Создать свою компанию",
+  "@joinWorkspaceCreateCompanyButton": {},
+  "joinWorkspaceUnAvailableNote": "Попросите человека, который пригласил вас присоединиться к этой компании,\nвыслать новую ссылку или создайте собственную компанию",
+  "@joinWorkspaceUnAvailableNote": {}
 }
