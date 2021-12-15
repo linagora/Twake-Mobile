@@ -300,7 +300,7 @@
   "@joinTheTeamButton": {},
   "newLinkGenerated": "Il nuovo collegamento è stato generato con successo",
   "@newLinkGenerated": {},
-  "joinWorkspaceTitle": "Raggiungi la {destination} da {workspace}!",
+  "joinWorkspaceTitle": "Unisciti ",
   "@joinWorkspaceTitle": {
     "description": "Welcome message to someone joining a workspace",
     "placeholders": {
@@ -355,5 +355,27 @@
         "example": "https://web.qa.twake.app?join=eyJhbGc"
       }
     }
-  }
+  },
+  "joinWorkspaceIntro": "Twake è uno spazio di lavoro digitale open source\ncostruito per migliorare la produttività del tuo team",
+  "@joinWorkspaceIntro": {},
+  "joinWorkspaceSubTitle": "Sei stato invitato a partecipare\n{workspace} spazio di lavoro su Twake!",
+  "@joinWorkspaceSubTitle": {
+    "description": "Welcome sub-title message to someone joining a workspace",
+    "placeholders": {
+      "workspace": {
+        "type": "String",
+        "example": "Twake"
+      }
+    }
+  },
+  "joinWorkspaceButton": "Unisciti allo spazio di lavoro",
+  "@joinWorkspaceButton": {},
+  "joinWorkspaceUnAvailableTitle": "Il link non è più disponibile",
+  "@joinWorkspaceUnAvailableTitle": {},
+  "joinWorkspaceUnAvailableSubTitle": "Il link per unirsi allo spazio di lavoro non è più disponibile\nperché è scaduto o è stato revocato",
+  "@joinWorkspaceUnAvailableSubTitle": {},
+  "joinWorkspaceCreateCompanyButton": "Crea la tua azienda",
+  "@joinWorkspaceCreateCompanyButton": {},
+  "joinWorkspaceUnAvailableNote": "Puoi chiedere al tuo invitante di fornirti un link valido\no puoi creare la propria azienda",
+  "@joinWorkspaceUnAvailableNote": {}
 }
