@@ -4,17 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/config/styles_config.dart';
+import 'package:twake/models/file/local_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
+import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
-import 'package:twake/widgets/common/file_uploading_tile.dart';
+import 'package:twake/widgets/common/button_text_builder.dart';
+import 'package:twake/widgets/message/attachment_tile_builder.dart';
 
 // const _categoryHeaderHeight = 40.0;
 // const _categoryTitleHeight = _categoryHeaderHeight; // to
@@ -46,10 +49,6 @@ class _ComposeBar extends State<ComposeBar> {
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
-
-  List<PlatformFile>? _paths;
-  String? _extension;
-  FileType _pickingType = FileType.any;
 
   @override
   void initState() {
@@ -98,6 +97,26 @@ class _ComposeBar extends State<ComposeBar> {
         setState(() {
           _canSend = true;
         });
+      }
+    });
+
+    Get.find<FileUploadCubit>().stream.listen((state) {
+      if (state.listFileUploading.isNotEmpty) {
+        final hasUploadedFileInStack = state.listFileUploading.any(
+          (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+        if(hasUploadedFileInStack) {
+          if(!mounted)
+            return;
+          setState(() {
+            _canSend = true;
+          });
+        }
+      } else {
+        if (_controller.text.isReallyEmpty && _canSend) {
+          setState(() {
+            _canSend = false;
+          });
+        }
       }
     });
   }
@@ -178,15 +197,11 @@ class _ComposeBar extends State<ComposeBar> {
   }
 
   void _openFileExplorer() async {
+    List<PlatformFile>? _paths;
     try {
       _paths = (await FilePicker.platform.pickFiles(
-        type: _pickingType,
-        allowMultiple: true,
-        allowedExtensions: (_extension?.isNotEmpty ?? false)
-            ? _extension!.replaceAll(' ', '').split(',')
-            : null,
-      ))
-          ?.files;
+        type: FileType.any,
+        allowMultiple: true))?.files;
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
       return;
@@ -195,30 +210,20 @@ class _ComposeBar extends State<ComposeBar> {
       return;
     }
     if (!mounted) return;
+    if (_paths == null) return;
 
-    _paths?.forEach((element) {
-      if(element.path != null) {
-        Get.find<FileUploadCubit>().upload(sourcePath: element.path!);
-      }
+    final currentUploadingFilesLength =
+        Get.find<FileUploadCubit>().state.listFileUploading.length;
+    final remainingAllowFile = MAX_FILE_UPLOADING - currentUploadingFilesLength;
+    if(_paths.length > remainingAllowFile) {
+      _paths = _paths.getRange(0, remainingAllowFile).toList();
+    }
+    _paths.forEach((element) {
+      LocalFile localFile = element.toLocalFile().copyWith(
+          updatedAt: DateTime.now().millisecondsSinceEpoch);
+      Get.find<FileUploadCubit>().upload(sourceFile: localFile);
     });
 
-    Get.find<FileUploadCubit>().stream.listen((state) {
-       if (state.listFileUploading.isNotEmpty) {
-         final hasUploadedFileInStack = state.listFileUploading.any(
-                 (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
-         if(hasUploadedFileInStack) {
-           if(!mounted)
-             return;
-           setState(() {
-             _canSend = true;
-           });
-         }
-       }
-    });
-  }
-
-  void _fileNumClear() async {
-    _paths = [];
   }
 
   @override
@@ -347,7 +352,6 @@ class _ComposeBar extends State<ComposeBar> {
               onMessageSend: widget.onMessageSend,
               canSend: _canSend,
               openFileExplorer: _openFileExplorer,
-              fileNumClear: _fileNumClear,
             ),
             Offstage(
               offstage: !_emojiVisible,
@@ -399,7 +403,6 @@ class TextInput extends StatefulWidget {
   final bool canSend;
   final Function onMessageSend;
   final Function? openFileExplorer;
-  final Function? fileNumClear;
 
   TextInput({
     required this.onMessageSend,
@@ -411,7 +414,6 @@ class TextInput extends StatefulWidget {
     this.toggleEmojiBoard,
     this.openFileExplorer,
     this.canSend = false,
-    this.fileNumClear,
   });
 
   @override
@@ -419,6 +421,8 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
+
+  final _imagePicker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -464,31 +468,9 @@ class _TextInputState extends State<TextInput> {
         ),
       ),
       child: Stack(
-        alignment: Alignment.topRight,
+        alignment: Alignment.centerRight,
         children: [
-          Column(
-            children: [
-              _buildMessageTextField(),
-              BlocBuilder<FileUploadCubit, FileUploadState>(
-                bloc: Get.find<FileUploadCubit>(),
-                builder: (context, state) {
-                    return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: state.listFileUploading.length,
-                    itemBuilder: (context, index) {
-                      final fileUploading = state.listFileUploading[index];
-                      return FileUploadingTile(
-                        fileUploading: fileUploading,
-                        onCancel: () {
-                          Get.find<FileUploadCubit>().cancelFileUploading(fileUploading);
-                        }
-                      );
-                    });
-                }
-              )
-            ],
-          ),
+          _buildMessageTextField(),
           GestureDetector(
             onTap: widget.toggleEmojiBoard as void Function()?,
             child: Padding(
@@ -553,8 +535,7 @@ class _TextInputState extends State<TextInput> {
                 context,
               );
               widget.controller!.clear();
-              widget.fileNumClear!();
-              Get.find<FileUploadCubit>().updateAfterSentAllFiles();
+              Get.find<FileUploadCubit>().clearFileUploadingState();
             }
           : null,
       child: widget.canSend
@@ -573,5 +554,113 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _handleOpenFilePicker() => widget.openFileExplorer?.call();
+  _handleOpenFilePicker() {
+    final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
+    if(fileLen == MAX_FILE_UPLOADING)
+      return;
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctxModal) {
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(14.0))),
+                child: Column(
+                  children: [
+                    AttachmentTileBuilder(
+                        onClick: () {
+                          _handleTakePicture();
+                          Navigator.of(context).pop();
+                        },
+                        leadingIcon: imageCamera,
+                        title: AppLocalizations.of(context)?.takePicture ?? '',
+                        subtitle: AppLocalizations.of(context)?.takePictureSubtitle ?? '')
+                        .build(),
+                    Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
+                    AttachmentTileBuilder(
+                        onClick: () {
+                          _handlePickMedia();
+                          Navigator.of(context).pop();
+                        },
+                        leadingIcon: imagePhoto,
+                        title: AppLocalizations.of(context)?.photoOrVideo ?? '',
+                        subtitle: AppLocalizations.of(context)?.photoOrVideoSubtitle ?? '')
+                        .build(),
+                    Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
+                    AttachmentTileBuilder(
+                        onClick: () {
+                          _handlePickFile();
+                          Navigator.of(context).pop();
+                        },
+                        leadingIcon: imageDocument,
+                        title: AppLocalizations.of(context)?.file ?? '',
+                        subtitle: AppLocalizations.of(context)?.fileSubtitle ?? '')
+                        .build(),
+                  ],
+                ),
+              ),
+              SizedBox(height: 6.0),
+              ButtonTextBuilder(
+                Key('button_cancel_attachment'),
+                onButtonClick: () => Navigator.of(context).pop())
+              .setWidth(double.maxFinite)
+              .setBackgroundColor(Colors.white)
+              .setTextStyle(
+                  StylesConfig.commonTextStyle.copyWith(
+                    color: const Color(0xff004dff),
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.w500
+                  ),
+              )
+              .setText(AppLocalizations.of(context)?.cancel ?? '')
+              .build(),
+              SizedBox(height: 12.0),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _handleTakePicture() async {
+    XFile? pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.camera);
+    if (!mounted) return;
+    if(pickedFile != null) {
+      LocalFile localFile = await pickedFile.toLocalFile();
+      localFile =
+          localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+      Get.find<FileUploadCubit>().upload(sourceFile: localFile);
+    }
+  }
+
+  void _handlePickMedia() async {
+    List<XFile>? pickedFiles = await _imagePicker.pickMultiImage();
+    if (!mounted) return;
+    if(pickedFiles != null) {
+      final len = Get.find<FileUploadCubit>().state.listFileUploading.length;
+      final remainingAllowFile = MAX_FILE_UPLOADING - len;
+      if(pickedFiles.length > remainingAllowFile) {
+        pickedFiles = pickedFiles.getRange(0, remainingAllowFile).toList();
+      }
+      for (var i = 0; i < pickedFiles.length; i++) {
+        LocalFile localFile = await pickedFiles[i].toLocalFile();
+        localFile = localFile.copyWith(
+            updatedAt: DateTime.now().millisecondsSinceEpoch);
+        Get.find<FileUploadCubit>().upload(sourceFile: localFile);
+      }
+    }
+  }
+
+  void _handlePickFile() {
+    widget.openFileExplorer?.call();
+  }
 }

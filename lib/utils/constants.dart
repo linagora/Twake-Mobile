@@ -1,0 +1,1 @@
+const int MAX_FILE_UPLOADING = 10;

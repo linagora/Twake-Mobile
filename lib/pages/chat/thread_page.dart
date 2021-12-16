@@ -144,27 +144,20 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               : '',
                           onMessageSend: (content, context) async {
                             final uploadState = Get.find<FileUploadCubit>().state;
+                            List<File> attachments = const [];
+                            if (uploadState.listFileUploading.isNotEmpty) {
+                              attachments = uploadState.listFileUploading
+                                  .where((fileUploading) => fileUploading.file != null)
+                                  .map((e) => e.file!)
+                                  .toList();
+                            }
                             if (messagesState is MessageEditInProgress) {
-                              List<File> attachments = const [];
-                              if (uploadState.listFileUploading.isNotEmpty) {
-                                attachments = uploadState.listFileUploading
-                                    .where((fileUploading) => fileUploading.file != null)
-                                    .map((e) => e.file!)
-                                    .toList();
-                              }
                               Get.find<ThreadMessagesCubit>().edit(
                                   message: messagesState.message,
                                   editedText: content,
                                   newAttachments: attachments
                               );
                             } else {
-                              List<File> attachments = const [];
-                              if (uploadState.listFileUploading.isNotEmpty) {
-                                attachments = uploadState.listFileUploading
-                                    .where((fileUploading) => fileUploading.file != null)
-                                    .map((e) => e.file!)
-                                    .toList();
-                              }
                               Get.find<ThreadMessagesCubit>().send(
                                 originalStr: content,
                                 attachments: attachments,
