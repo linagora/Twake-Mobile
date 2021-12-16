@@ -227,7 +227,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
               color: Color(0xfffcfcfc)),
           child: Row(
             children: [
-              Image.asset(imageAddMemberEmail, width: 24, height: 24),
+              Image.asset(imageAddBlueBg, width: 24, height: 24),
               SizedBox(width: 8),
               Text(AppLocalizations.of(context)?.inviteAnotherMember ?? '',
                 style: StylesConfig.commonTextStyle.copyWith(color: Color(0xff004dff), fontSize: 15),
