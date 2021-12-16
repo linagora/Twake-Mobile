@@ -1,27 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/local_file.dart';
 
 class FileUploading extends Equatable {
 
   final int id;
   final File? file; // will available when it was uploaded/editing
-  final String? sourcePath;
-  final String? sourceName;
+  final LocalFile? sourceFile;
   final FileItemUploadStatus uploadStatus;
   final CancelToken? cancelToken;
 
   FileUploading(
       {this.file,
       required this.id,
-      this.sourcePath,
-      this.sourceName,
+      this.sourceFile,
       required this.uploadStatus,
       this.cancelToken});
 
   FileUploading copyWith({
     File? file,
-    String? sourcePath,
+    LocalFile? sourceFile,
     String? sourceName,
     FileItemUploadStatus? uploadStatus,
     CancelToken? cancelToken,
@@ -29,8 +28,7 @@ class FileUploading extends Equatable {
     return FileUploading(
       id: this.id,
       file: file ?? this.file,
-      sourcePath: sourcePath ?? this.sourcePath,
-      sourceName: sourceName ?? this.sourceName,
+      sourceFile: sourceFile ?? this.sourceFile,
       uploadStatus: uploadStatus ?? this.uploadStatus,
       cancelToken: cancelToken ?? this.cancelToken,
     );
@@ -38,7 +36,7 @@ class FileUploading extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, file, sourcePath, sourceName, uploadStatus, cancelToken];
+      [id, file, sourceFile, uploadStatus, cancelToken];
 }
 
 enum FileItemUploadStatus {
