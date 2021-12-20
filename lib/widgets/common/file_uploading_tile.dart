@@ -1,6 +1,11 @@
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/utils/extensions.dart';
 
 class FileUploadingTile extends StatefulWidget {
   final FileUploading fileUploading;
@@ -17,73 +22,127 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
   Widget build(BuildContext context) {
       return Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: Color(0xff979797).withOpacity(0.2),
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(10.0))
         ),
-        padding: const EdgeInsets.all(12.0),
-        margin: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
+        padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),
+        margin: const EdgeInsets.symmetric(vertical: 2.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _buildPreviewFile(),
-            SizedBox(width: 16.0),
+            _buildFileTypeIcon(),
+            SizedBox(width: 17.0),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(getFileName(),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 16.0)),
-                  SizedBox(height: 4),
-                  _buildUploadingFileSize()
-                ],
-              ),
+              child: _buildFileInfo()
             ),
-            GestureDetector(
-              onTap: () => widget.onCancel?.call(),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Icon(Icons.close),
-              ),
-            )
+            SizedBox(width: 20.0),
+            _buildUploadStatus(),
+            SizedBox(width: 20.0),
+            _buildRemoveAction(),
           ],
         ),
       );
   }
 
+  Widget _buildFileTypeIcon() {
+    String extension = '';
+    if(widget.fileUploading.sourceFile != null) {
+      extension = widget.fileUploading.sourceFile!.extension ?? '';
+    } else if(widget.fileUploading.file != null) {
+      extension = widget.fileUploading.file!.metadata.name.fileExtension;
+    }
+    return Image.asset(
+      extension.imageAssetByFileExtension,
+      width: 24.0,
+      height: 24.0,
+      color: extension.imageAssetByFileExtension == imageFile
+          ? Colors.blue
+          : null,
+      );
+  }
+
+  Widget _buildFileInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(_getFileName(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 17.0)),
+        SizedBox(height: 2),
+        Text(_getFileMetadata(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: StylesConfig.commonTextStyle.copyWith(
+            color: const Color(0xff99a2ad),
+            fontSize: 12.0,
+          ),
+        ),
+      ],
+    );
+  }
+
   // Select one between source name (local)
   // and metadata name (remote) inside file
-  String getFileName() {
-    if(widget.fileUploading.sourceName != null
-        && widget.fileUploading.sourceName!.isNotEmpty) {
-      return widget.fileUploading.sourceName!;
-    } else if(widget.fileUploading.file != null) {
-      return widget.fileUploading.file!.metadata.name.isNotEmpty
-        ? widget.fileUploading.file!.metadata.name
-        : '';
+  String _getFileName() {
+    if(widget.fileUploading.sourceFile != null
+        && widget.fileUploading.sourceFile!.name.isNotEmpty) {
+      return widget.fileUploading.sourceFile!.name;
+    } else if(widget.fileUploading.file != null
+        && widget.fileUploading.file!.metadata.name.isNotEmpty) {
+      return widget.fileUploading.file!.metadata.name;
     }
     return '';
   }
 
-  _buildPreviewFile() {
-    if(widget.fileUploading.uploadStatus == FileItemUploadStatus.uploading) {
-      return SizedBox(
-        width: 32,
-        height: 32,
-        child: CircularProgressIndicator());
-    } else {
-      return Image.asset(imageFile, width: 32, height: 32);
+  String _getFileMetadata() {
+    if(widget.fileUploading.sourceFile != null) {
+      return AppLocalizations.of(context)?.fileUploadingMetadata(
+          filesize(widget.fileUploading.sourceFile!.size),
+          DateFormatter.getVerboseDateTime(
+              widget.fileUploading.sourceFile!.updatedAt)) ??
+          '';
+    } else if(widget.fileUploading.file != null) {
+      return AppLocalizations.of(context)?.fileUploadingMetadata(
+          filesize(widget.fileUploading.file!.uploadData.size),
+          DateFormatter.getVerboseDateTime(
+              widget.fileUploading.file!.updatedAt)) ??
+          '';
+    }
+    return '';
+  }
+
+  Widget _buildUploadStatus() {
+    switch (widget.fileUploading.uploadStatus) {
+      case FileItemUploadStatus.uploading:
+        return SizedBox(
+          width: 18.0,
+          height: 18.0,
+          child: CircularProgressIndicator(
+            backgroundColor: const Color.fromRGBO(153, 162, 173, 0.4),
+            color: const Color(0xff004dff),
+            strokeWidth: 1.0,
+          ),
+        );
+      case FileItemUploadStatus.uploaded:
+        return Image.asset(imageSelectedRoundBlue, width: 18.0, height: 18.0);
+      case FileItemUploadStatus.uploaded:
+        return Image.asset(imageError, width: 18.0, height: 18.0);
+      default:
+        return SizedBox(width: 18.0, height: 18.0);
     }
   }
 
-  _buildUploadingFileSize() {
-    if(widget.fileUploading.uploadStatus == FileItemUploadStatus.uploading) {
-      return Text('File uploading...',
-          style: TextStyle(fontSize: 12.0));
-    } else {
-      return Text('File uploaded',
-          style: TextStyle(fontSize: 12.0));
-    }
+  Widget _buildRemoveAction() {
+    return GestureDetector(
+      onTap: () => widget.onCancel?.call(),
+      child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: widget.fileUploading.uploadStatus ==
+              FileItemUploadStatus.uploading
+              ? Icon(Icons.close, size: 14.0)
+              : Image.asset(imageRemove, width: 14.0, height: 14.0)),
+    );
   }
+
 }

@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:open_file/open_file.dart';
 import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
-import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
@@ -79,7 +78,7 @@ class FileTile extends StatelessWidget {
         onTap: () async {
           final imageCachedPath =
               await Utilities.getCachedImagePath(file.thumbnailUrl);
-          await OpenFile.open(imageCachedPath, type: file.metadata.mime);
+          await OpenFile.open(imageCachedPath);
         },
         child: file.metadata.mime.isImageMimeType
             ? ClipRRect(
@@ -98,9 +97,18 @@ class FileTile extends StatelessWidget {
                   },
                 ),
               )
-            : Image.asset(imageFile,
-                width: 32, height: 32, color: isMyMessage ? null : Colors.grey),
+            : _buildFileTypeIcon(file),
       );
+
+  _buildFileTypeIcon(File file) {
+    final extension = file.metadata.name.fileExtension;
+    return Image.asset(
+      extension.imageAssetByFileExtension,
+      width: 32.0,
+      height: 32.0,
+      color: isMyMessage ? null : Colors.grey,
+    );
+  }
 
   _buildInfo(File file) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,

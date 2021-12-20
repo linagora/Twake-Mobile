@@ -220,5 +220,37 @@
     "joinWorkspaceUnAvailableTitle": "Link is no longer available",
     "joinWorkspaceUnAvailableSubTitle": "Link to join workspace is not available\nanymore due to it’s expired or was revoked",
     "joinWorkspaceCreateCompanyButton": "Create your company",
-    "joinWorkspaceUnAvailableNote": "You can ask your invitor to provide you with a valid link\nor you can create your own company"
+    "joinWorkspaceUnAvailableNote": "You can ask your invitor to provide you with a valid link\nor you can create your own company",
+    "takePicture": "Take a picture",
+    "takePictureSubtitle": "Send a photo just taken",
+    "photoOrVideo": "Photo or video",
+    "photoOrVideoSubtitle": "Send an element from your gallery",
+    "file": "File",
+    "fileSubtitle": "Attach document from your local drive",
+    "attachedFiles": "ATTACHED FILES",
+    "attachedFilesHint": "You can add up to {number} files",
+    "@attachedFilesHint": {
+        "description": "File uploading limitation notice",
+        "placeholders": {
+            "number": {
+                "type": "String",
+                "example": "10"
+            }
+        }
+    },
+    "fileUploadingMetadata": "{size} • {date}",
+    "@fileUploadingMetadata": {
+        "description": "File uploading metadata",
+        "placeholders": {
+            "size": {
+                "type": "String",
+                "example": "104KB"
+            },
+            "date": {
+                "type": "String",
+                "example": "Dec 7, 2021 at 13:13"
+            }
+        }
+    },
+    "fileUploadFailed": "File upload failed"
 }
