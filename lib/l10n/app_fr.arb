@@ -270,7 +270,7 @@
   "@spanish": {},
   "joinTheTeamButton": "Rejoindre l'équipe",
   "@joinTheTeamButton": {},
-  "joinWorkspaceTitle": "Rejoignez {destination} depuis {workspace} !",
+  "joinWorkspaceTitle": "Rejoignez-nous ",
   "@joinWorkspaceTitle": {
     "description": "Welcome message to someone joining a workspace",
     "placeholders": {
@@ -347,5 +347,27 @@
   "contactTechnicalSupport": "Contacter l'assistance technique",
   "@contactTechnicalSupport": {},
   "outOfReachTechnicalSupport": "L'équipe d'assistance est injoignable, désolés.",
-  "@outOfReachTechnicalSupport": {}
+  "@outOfReachTechnicalSupport": {},
+  "joinWorkspaceIntro": "Twake est un espace de travail numérique libre\nconçu pour améliorer la productivité de votre équipe",
+  "@joinWorkspaceIntro": {},
+  "joinWorkspaceUnAvailableTitle": "Le lien n'est plus disponible",
+  "@joinWorkspaceUnAvailableTitle": {},
+  "joinWorkspaceUnAvailableSubTitle": "Le lien pour rejoindre l'espace de travail n'est plus disponible\nparce qu'il a expiré ou a été révoqué",
+  "@joinWorkspaceUnAvailableSubTitle": {},
+  "joinWorkspaceSubTitle": "Vous avez été invité(e) à rejoindre\nl'espace de travail {workspace} sur Twake !",
+  "@joinWorkspaceSubTitle": {
+    "description": "Welcome sub-title message to someone joining a workspace",
+    "placeholders": {
+      "workspace": {
+        "type": "String",
+        "example": "Twake"
+      }
+    }
+  },
+  "joinWorkspaceButton": "Rejoindre l'espace de travail",
+  "@joinWorkspaceButton": {},
+  "joinWorkspaceCreateCompanyButton": "Créer votre entreprise",
+  "@joinWorkspaceCreateCompanyButton": {},
+  "joinWorkspaceUnAvailableNote": "Vous pouvez demander à votre invitant de vous fournir un lien valide\nou vous pouvez créer votre propre entreprise",
+  "@joinWorkspaceUnAvailableNote": {}
 }
