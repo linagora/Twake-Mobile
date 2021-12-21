@@ -377,5 +377,45 @@
   "joinWorkspaceCreateCompanyButton": "Crea la tua azienda",
   "@joinWorkspaceCreateCompanyButton": {},
   "joinWorkspaceUnAvailableNote": "Puoi chiedere al tuo invitante di fornirti un link valido\no puoi creare la propria azienda",
-  "@joinWorkspaceUnAvailableNote": {}
+  "@joinWorkspaceUnAvailableNote": {},
+  "photoOrVideoSubtitle": "Invia un elemento della tua galleria",
+  "@photoOrVideoSubtitle": {},
+  "file": "File",
+  "@file": {},
+  "fileUploadFailed": "Caricamento del file fallito",
+  "@fileUploadFailed": {},
+  "fileSubtitle": "Allega un documento dal tuo disco locale",
+  "@fileSubtitle": {},
+  "takePictureSubtitle": "Invia una foto appena scattata",
+  "@takePictureSubtitle": {},
+  "photoOrVideo": "Foto o video",
+  "@photoOrVideo": {},
+  "takePicture": "Scatta una foto",
+  "@takePicture": {},
+  "attachedFiles": "FILE ALLEGATI",
+  "@attachedFiles": {},
+  "fileUploadingMetadata": "{size} • {date}",
+  "@fileUploadingMetadata": {
+    "description": "File uploading metadata",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "104KB"
+      },
+      "date": {
+        "type": "String",
+        "example": "Dec 7, 2021 at 13:13"
+      }
+    }
+  },
+  "attachedFilesHint": "Puoi aggiungere fino a {number} file",
+  "@attachedFilesHint": {
+    "description": "File uploading limitation notice",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  }
 }
