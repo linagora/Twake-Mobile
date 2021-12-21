@@ -365,5 +365,45 @@
   "joinWorkspaceCreateCompanyButton": "Создать свою компанию",
   "@joinWorkspaceCreateCompanyButton": {},
   "joinWorkspaceUnAvailableNote": "Попросите человека, который пригласил вас присоединиться к этой компании,\nвыслать новую ссылку или создайте собственную компанию",
-  "@joinWorkspaceUnAvailableNote": {}
+  "@joinWorkspaceUnAvailableNote": {},
+  "photoOrVideo": "Фото или видео",
+  "@photoOrVideo": {},
+  "file": "Файл",
+  "@file": {},
+  "fileUploadFailed": "Ошибка загрузки файла",
+  "@fileUploadFailed": {},
+  "photoOrVideoSubtitle": "Отправить элемент из галереи",
+  "@photoOrVideoSubtitle": {},
+  "takePictureSubtitle": "Отправить только что сделанную фотографию",
+  "@takePictureSubtitle": {},
+  "takePicture": "Сделать фотографию",
+  "@takePicture": {},
+  "attachedFiles": "ПРИКРЕПЛЕННЫЕ ФАЙЛЫ",
+  "@attachedFiles": {},
+  "fileSubtitle": "Прикрепить документ с локального диска",
+  "@fileSubtitle": {},
+  "attachedFilesHint": "Вы можете добавить до {number} файлов",
+  "@attachedFilesHint": {
+    "description": "File uploading limitation notice",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "fileUploadingMetadata": "{size} • {date}",
+  "@fileUploadingMetadata": {
+    "description": "File uploading metadata",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "104KB"
+      },
+      "date": {
+        "type": "String",
+        "example": "Dec 7, 2021 at 13:13"
+      }
+    }
+  }
 }
