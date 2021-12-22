@@ -369,5 +369,45 @@
   "joinWorkspaceCreateCompanyButton": "Créer votre entreprise",
   "@joinWorkspaceCreateCompanyButton": {},
   "joinWorkspaceUnAvailableNote": "Vous pouvez demander à votre invitant de vous fournir un lien valide\nou vous pouvez créer votre propre entreprise",
-  "@joinWorkspaceUnAvailableNote": {}
+  "@joinWorkspaceUnAvailableNote": {},
+  "file": "Fichier",
+  "@file": {},
+  "fileSubtitle": "Joindre un document à partir de votre disque local",
+  "@fileSubtitle": {},
+  "attachedFiles": "FICHIERS JOINTS",
+  "@attachedFiles": {},
+  "fileUploadingMetadata": "{size} • {date}",
+  "@fileUploadingMetadata": {
+    "description": "File uploading metadata",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "104KB"
+      },
+      "date": {
+        "type": "String",
+        "example": "Dec 7, 2021 at 13:13"
+      }
+    }
+  },
+  "takePicture": "Prendre une photo",
+  "@takePicture": {},
+  "takePictureSubtitle": "Envoyer une photo qui vient d'être prise",
+  "@takePictureSubtitle": {},
+  "photoOrVideo": "Photo ou vidéo",
+  "@photoOrVideo": {},
+  "attachedFilesHint": "Vous pouvez ajouter jusqu'à {number} fichiers",
+  "@attachedFilesHint": {
+    "description": "File uploading limitation notice",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "photoOrVideoSubtitle": "Envoyer un élément de votre galerie",
+  "@photoOrVideoSubtitle": {},
+  "fileUploadFailed": "Le téléversement du fichier a échoué",
+  "@fileUploadFailed": {}
 }
