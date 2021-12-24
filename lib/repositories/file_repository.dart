@@ -1,15 +1,28 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:ext_storage/ext_storage.dart';
 import 'package:mime/mime.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:tuple/tuple.dart';
+import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/upload/file_uploading_option.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:twake/utils/file_download_manager.dart';
 
 class FileRepository {
   final _api = ApiService.instance;
+  late final FileDownloadManager _fileDownloadManager;
 
-  FileRepository();
+  FileRepository({FileDownloadManager? fileDownloadManager}) {
+    if (fileDownloadManager == null) {
+      fileDownloadManager = FileDownloadManager();
+    }
+    _fileDownloadManager = fileDownloadManager;
+  }
 
   Future<File> upload({
     required String sourcePath,
@@ -53,4 +66,28 @@ class FileRepository {
     return File.fromJson(result);
   }
 
+  Future<Tuple2<String?, String>> downloadFile({required FileDownloading fileDownloading}) async {
+    var externalStorageDirPath;
+    if (Platform.isAndroid) {
+      externalStorageDirPath =
+      await ExtStorage.getExternalStoragePublicDirectory(ExtStorage.DIRECTORY_DOWNLOADS);
+    } else if (Platform.isIOS) {
+      externalStorageDirPath = (await getApplicationDocumentsDirectory()).absolute.path;
+    }
+    final fileDestinationPath = '$externalStorageDirPath/${fileDownloading.file.metadata.name}';
+    final taskId = await _fileDownloadManager.downloadFile(
+      downloadUrl: fileDownloading.file.downloadUrl,
+      savedDir: externalStorageDirPath,
+      fileName: fileDownloading.file.metadata.name
+    );
+    return Tuple2(taskId, fileDestinationPath);
+  }
+
+  void cancelDownloadingFile({required String downloadTaskId}) {
+    _fileDownloadManager.cancelDownloadingFile(downloadTaskId: downloadTaskId);
+  }
+
+  Future<bool> openDownloadedFile({required String downloadTaskId}) async {
+    return await _fileDownloadManager.openDownloadedFile(downloadTaskId: downloadTaskId);
+  }
 }

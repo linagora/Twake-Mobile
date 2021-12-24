@@ -48,20 +48,14 @@ class File extends Equatable {
 }
 
 extension FileExtenstion on File {
-  String get thumbnailUrl => sprintf(Endpoint.downloadFileThumbnail,
-      [Globals.instance.host, Globals.instance.companyId, this.id, this.thumbnails.first.id]);
+  String get thumbnailUrl {
+    if(thumbnails.isEmpty) {
+      return '';
+    }
+    return sprintf(Endpoint.downloadFileThumbnail,
+      [Globals.instance.host, Globals.instance.companyId, this.id, this.thumbnails.last.id]);
+  }
 
   String get downloadUrl => sprintf(Endpoint.downloadFile,
       [Globals.instance.host, Globals.instance.companyId, this.id]);
-
-  String get sizeStr {
-    const MB = 1024 * 1024;
-    const KB = 1024;
-    return uploadData.size > MB
-        ? '${(uploadData.size / MB).toStringAsFixed(2)} MB'
-        : uploadData.size > KB
-        ? '${(uploadData.size / KB).toStringAsFixed(2)} KB'
-        : '$uploadData.size B';
-  }
-
 }

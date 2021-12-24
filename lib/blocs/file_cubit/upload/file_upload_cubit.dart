@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
@@ -58,6 +59,12 @@ class FileUploadCubit extends Cubit<FileUploadState> {
           : file;
       }).toList();
       emit(state.copyWith(listFileUploading: updatedStateList));
+
+      // Update to file download state
+      // (any user own uploaded file no need to download again)
+      Get.find<FileDownloadCubit>().addToDownloadStateAfterUploaded(
+          file: uploadedFile,
+          localPath: newFileUploading.sourceFile!.path!);
 
     } catch (e) {
       Logger().e('Error occurred during file upload:\n$e');
