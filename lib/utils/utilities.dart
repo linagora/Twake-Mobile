@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:share/share.dart';
+import 'package:twake/utils/constants.dart';
 
 class Utilities {
 
@@ -8,5 +13,15 @@ class Utilities {
     var file = await DefaultCacheManager().getSingleFile(imageUrl);
     return file.path;
   }
+
+  static void shareApp() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    var appUrl = 'https://play.google.com/store/apps/details?id=${packageInfo.packageName}';
+    if(Platform.isIOS) {
+      appUrl = 'https://itunes.apple.com/app/$IOS_APPSTORE_ID';
+    }
+    await Share.share(appUrl);
+  }
+
 
 }
