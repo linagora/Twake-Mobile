@@ -5,6 +5,7 @@ import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
@@ -36,6 +37,9 @@ class HomeBinding implements Bindings {
 
     final fileUploadCubit = FileUploadCubit();
     Get.put(fileUploadCubit, permanent: true);
+
+    final fileDownloadCubit = FileDownloadCubit();
+    Get.put(fileDownloadCubit, permanent: true);
 
     final channelsCubit = ChannelsCubit();
     Get.put(channelsCubit, permanent: true);

@@ -15,6 +15,7 @@ import 'package:twake/pages/channel/edit_channel/edit_channel_widget.dart';
 import 'package:twake/pages/channel/new_channel/new_channel_widget.dart';
 import 'package:twake/pages/channel/new_direct/new_direct_chat_widget.dart';
 import 'package:twake/pages/chat/chat.dart';
+import 'package:twake/pages/chat/file_preview.dart';
 import 'package:twake/pages/home/home_widget.dart';
 import 'package:twake/pages/initial_page.dart';
 import 'package:twake/pages/magic_link/invitation_people_by_email_page.dart';
@@ -150,7 +151,17 @@ final routePages = [
             binding: MagicLinkBinding(),
           )
         ]
-      )
+      ),
+      GetPage(
+        name: RoutePaths.channelFilePreview.name,
+        page: () => FilePreview<ChannelsCubit>(),
+        transition: Transition.native,
+      ),
+      GetPage(
+        name: RoutePaths.directFilePreview.name,
+        page: () => FilePreview<DirectsCubit>(),
+        transition: Transition.native,
+      ),
     ],
   ),
 ];

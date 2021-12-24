@@ -13,9 +13,9 @@ extension StringExtension on String {
       .replaceAll('', '\u{200B}')
       .toString();
 
-  bool get isImageMimeType {
-    return this.startsWith('image/');
-  }
+  bool get isImageMimeType => this.startsWith('image/');
+
+  bool get isVideoMimeType => this.startsWith('video/');
 
   String get fileExtension {
     if(this.isEmpty || !this.contains('.'))
