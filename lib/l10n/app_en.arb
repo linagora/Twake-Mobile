@@ -252,5 +252,8 @@
             }
         }
     },
-    "fileUploadFailed": "File upload failed"
+    "fileUploadFailed": "File upload failed",
+    "cantOpenFile": "Can not open this file",
+    "fileDownloadedInGallery": "File downloaded in Gallery",
+    "openIt": "Open it"
 }
