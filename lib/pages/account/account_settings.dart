@@ -10,11 +10,11 @@ import 'package:twake/pages/select_language.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/button_field.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:twake/widgets/common/warning_dialog.dart';
-import 'package:share/share.dart';
 
 class AccountSettings extends StatefulWidget {
   @override
@@ -64,9 +64,8 @@ class _AccountSettingsState extends State<AccountSettings> {
     );
   }
 
-  //TODO add the link
   _onShareWithEmptyOrigin(BuildContext context) async {
-    await Share.share("Test");
+    Utilities.shareApp();
   }
 
   @override
