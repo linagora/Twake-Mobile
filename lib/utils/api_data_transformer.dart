@@ -93,7 +93,14 @@ class ApiDataTransformer {
       json['responses_count'] = json['stats']['replies'] - 1;
     if (json['files'] != null) {
       json['files'] =
-          (json['files'] as List<dynamic>).map((f) => f['id']).toList();
+          (json['files'] as List<dynamic>).map((f) {
+            try {
+              final externalFileId = f['metadata']['external_id']['id'];
+              return externalFileId;
+            } catch (e) {
+              return '';
+            }
+          }).toList();
     } else {
       json['files'] = <String>[];
     }

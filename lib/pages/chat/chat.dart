@@ -222,11 +222,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
       onMessageSend: (content, context) async {
         final stateThread = Get.find<ThreadMessagesCubit>().state;
         final uploadState = Get.find<FileUploadCubit>().state;
-        List<File> attachments = const [];
+        List<dynamic> attachments = const [];
         if (uploadState.listFileUploading.isNotEmpty) {
           attachments = uploadState.listFileUploading
               .where((fileUploading) => fileUploading.file != null)
-              .map((e) => e.file!)
+              .map((e) => e.file!.toAttachment())
               .toList();
         }
         if (stateThread is MessagesLoadSuccessSwipeToReply) {

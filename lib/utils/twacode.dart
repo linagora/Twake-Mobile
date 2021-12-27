@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
-import 'package:twake/models/file/file.dart';
+import 'package:twake/models/attachment/attachment.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/file_tile.dart';
 import 'package:twake/widgets/common/user_mention.dart';
@@ -1111,9 +1111,9 @@ class TwacodeRenderer {
             return FileTile(
                 fileId: element,
                 isMyMessage: parentStyle.color == Colors.black ? false : true);
-          } else if(element is File) {
+          } else if(element is Attachment) {
             return FileTile(
-                fileId: element.id,
+                fileId: element.metadata.externalId.id,
                 isMyMessage: parentStyle.color == Colors.black ? false : true);
           } else {
             return SizedBox.shrink();

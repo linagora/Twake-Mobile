@@ -144,11 +144,11 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               : '',
                           onMessageSend: (content, context) async {
                             final uploadState = Get.find<FileUploadCubit>().state;
-                            List<File> attachments = const [];
+                            List<dynamic> attachments = const [];
                             if (uploadState.listFileUploading.isNotEmpty) {
                               attachments = uploadState.listFileUploading
                                   .where((fileUploading) => fileUploading.file != null)
-                                  .map((e) => e.file!)
+                                  .map((e) => e.file!.toAttachment())
                                   .toList();
                             }
                             if (messagesState is MessageEditInProgress) {
