@@ -14,6 +14,7 @@ FileThumbnails _$FileThumbnailsFromJson(Map<String, dynamic> json) {
     type: json['type'] as String,
     width: json['width'] as int,
     height: json['height'] as int,
+    url: json['url'] as String,
   );
 }
 
@@ -25,4 +26,5 @@ Map<String, dynamic> _$FileThumbnailsToJson(FileThumbnails instance) =>
       'type': instance.type,
       'width': instance.width,
       'height': instance.height,
+      'url': instance.url,
     };

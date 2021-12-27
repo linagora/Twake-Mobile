@@ -4,10 +4,12 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/models/attachment/attachment.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/models/file/upload/file_uploading_option.dart';
+import 'package:twake/models/message/message.dart';
 import 'package:twake/repositories/file_repository.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 
@@ -152,15 +154,18 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     ));
   }
 
-  Future<void> startEditingFile(List<dynamic> uploadedFiles) async {
+  Future<void> startEditingFile(Message message) async {
+    List<dynamic> uploadedFiles = message.files;
     if(uploadedFiles.isEmpty)
       return;
     List<FileUploading> listUploading = [];
     // Note: don't replace `for` to `forEach` here by `await` might not work
     // as expected
     for (var i = 0; i < uploadedFiles.length; i++) {
-      final oldFileUploading = await _getFileUploaded(i, uploadedFiles[i]);
-      listUploading.add(oldFileUploading);
+      final oldFileUploading = await _getFileUploaded(i, uploadedFiles[i], message);
+      if(oldFileUploading != null) {
+        listUploading.add(oldFileUploading);
+      }
     }
     emit(state.copyWith(
       fileUploadStatus: FileUploadStatus.inProcessing,
@@ -185,13 +190,24 @@ class FileUploadCubit extends Cubit<FileUploadState> {
 
   // In case the message is loaded from local DB (no connection),
   // the file will be a string of ID. Otherwise, it's file from remote
-  Future<FileUploading> _getFileUploaded(int index, dynamic fileDynamic) async {
-    var sentFile;
-    if(fileDynamic is File) {
-      sentFile = fileDynamic;
+  Future<FileUploading?> _getFileUploaded(
+      int index, dynamic fileDynamic, Message message) async {
+    File? sentFile;
+
+    /// TODO: Remove extracting data from [message] when attachment response has datetime, userId
+    /// Currently attachment response does not have [createdAt], [updatedAt] and [userId]
+    /// So, temporary get file's datetime from message's datetime
+    int createdAt = message.createdAt;
+    int updatedAt = message.updatedAt;
+    String userId = message.userId;
+
+    if(fileDynamic is Attachment) {
+      sentFile = fileDynamic.toFile(userId: userId, createdAt: createdAt, updatedAt: updatedAt);
     } else if(fileDynamic is String) {
       sentFile = await Get.find<FileCubit>().getFileData(id: fileDynamic);
     }
+    if(sentFile == null)
+      return null;
     final oldFileUploading = FileUploading(
       id: index,
       uploadStatus: FileItemUploadStatus.uploaded,
