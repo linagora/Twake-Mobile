@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/image_path.dart';
 
 class EmptyChatContainer extends StatelessWidget {
   final bool isDirect;
@@ -28,28 +29,28 @@ class EmptyChatContainer extends StatelessWidget {
             width: Dim.widthPercent(80),
             padding: const EdgeInsets.only(top: 16.0, left: 5, right: 5),
             decoration: BoxDecoration(
-              color: Color(0xfff6f6f6),
+              color: Theme.of(context).colorScheme.secondaryVariant,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(18.0),
                 topRight: Radius.circular(18.0),
               ),
             ),
             child: Container(
-              width: 32.0,
-              height: 32.0,
+              width: 50.0,
+              height: 50.0,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  transform: GradientRotation(2.79253), // 160 degrees
-                  tileMode: TileMode.mirror,
-                  colors: [
-                    Color(0xff4838b7),
-                    Color(0xff3840f7),
-                  ],
-                ),
+                color: Theme.of(context).colorScheme.primary,
               ),
               alignment: Alignment.center,
-              child: Image.asset('assets/images/twake.png'),
+              child: SizedBox(
+                height: 32,
+                width: 32,
+                child: Image.asset(
+                  twake,
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+              ),
             ),
           ),
           Container(
@@ -57,7 +58,7 @@ class EmptyChatContainer extends StatelessWidget {
                 top: 12.0, bottom: 16.0, left: 5, right: 5),
             width: Dim.widthPercent(80),
             decoration: BoxDecoration(
-              color: Color(0xfff6f6f6),
+              color: Theme.of(context).colorScheme.secondaryVariant,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(18.0),
                 bottomRight: Radius.circular(18.0),
@@ -72,10 +73,10 @@ class EmptyChatContainer extends StatelessWidget {
               maxLines: 15,
               textAlign: TextAlign.center,
               softWrap: true,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.w400,
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
           ),
           Spacer(),
@@ -97,19 +98,26 @@ class MessagesLoadingAnimation extends StatelessWidget {
             SizedBox(
               height: 50,
             ),
-            SizedBox(
-              height: 160,
-              width: 160,
-              child: Image.asset(
-                'assets/animations/messages_loading.gif',
+            ClipRRect(
+              borderRadius: BorderRadius.circular(35),
+              child: SizedBox(
+                height: 150,
+                width: 150,
+                child: Image.asset(
+                  'assets/animations/messages_loading.gif',
+                  colorBlendMode: BlendMode.multiply,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
             ),
-            Text(
-              AppLocalizations.of(context)!.chatLoading,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-                fontWeight: FontWeight.w900,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                AppLocalizations.of(context)!.chatLoading,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
               ),
             ),
           ],

@@ -67,11 +67,11 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
           verticalSpacing: 0,
           horizontalSpacing: 0,
           initCategory: Category.RECENT,
-          bgColor: Color(0xFFF2F2F2),
-          indicatorColor: Colors.blue,
-          iconColor: Colors.grey,
-          iconColorSelected: Colors.blue,
-          progressIndicatorColor: Colors.blue,
+          bgColor: Theme.of(context).colorScheme.secondaryVariant,
+          indicatorColor: Theme.of(context).colorScheme.surface,
+          iconColor: Theme.of(context).colorScheme.secondary,
+          iconColorSelected: Theme.of(context).colorScheme.surface,
+          progressIndicatorColor: Theme.of(context).colorScheme.surface,
           showRecentsTab: true,
           recentsLimit: 28,
           noRecentsText: "No Recents",
@@ -93,7 +93,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.secondaryVariant,
                     borderRadius: BorderRadius.circular(22.0),
                   ),
                   child: EmojiLine(
@@ -112,7 +112,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Color(0xFFF2F2F6),
+                    color: Theme.of(context).colorScheme.secondaryVariant,
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(15),
                       topLeft: Radius.circular(15),
@@ -134,7 +134,10 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     width: 55,
                                     height: 45,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
                                     child: Padding(
@@ -143,7 +146,9 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                         children: [
                                           Icon(
                                             Icons.delete,
-                                            color: Color(0xffFF5154),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .error,
                                           ),
                                         ],
                                       ),
@@ -152,14 +157,13 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                   SizedBox(
                                     height: 5,
                                   ),
-                                  Text(
-                                    AppLocalizations.of(context)!.delete,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFFFF3347),
-                                    ),
-                                  )
+                                  Text(AppLocalizations.of(context)!.delete,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline5!
+                                          .copyWith(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500))
                                 ],
                               ),
                               onTap: () {
@@ -181,7 +185,10 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                         width: 55,
                                         height: 45,
                                         decoration: BoxDecoration(
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary
+                                              .withOpacity(0.3),
                                           borderRadius:
                                               BorderRadius.circular(16.0),
                                         ),
@@ -191,7 +198,9 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                             children: [
                                               Icon(
                                                 Icons.copy_outlined,
-                                                color: Color(0xFF004DFF),
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .surface,
                                               ),
                                             ],
                                           ),
@@ -202,11 +211,12 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                       ),
                                       Text(
                                         AppLocalizations.of(context)!.copy,
-                                        style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF004DFF),
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline4!
+                                            .copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
                                       )
                                     ],
                                   ),
@@ -230,15 +240,22 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     width: 55,
                                     height: 45,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10.0),
                                       child: Column(
                                         children: [
-                                          Icon(Icons.reply_sharp,
-                                              color: Color(0xFF004DFF)),
+                                          Icon(
+                                            Icons.reply_sharp,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          )
                                         ],
                                       ),
                                     ),
@@ -248,11 +265,12 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                   ),
                                   Text(
                                     AppLocalizations.of(context)!.reply,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF004DFF),
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
                                   )
                                 ],
                               ),
@@ -275,15 +293,22 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     width: 55,
                                     height: 45,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(10.0),
                                       child: Column(
                                         children: [
-                                          Icon(Icons.edit,
-                                              color: Color(0xFF004DFF)),
+                                          Icon(
+                                            Icons.edit,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -293,11 +318,12 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                   ),
                                   Text(
                                     AppLocalizations.of(context)!.edit,
-                                    style: TextStyle(
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF004DFF),
-                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
                                   )
                                 ],
                               ),
@@ -366,14 +392,14 @@ class EmojiLine extends StatelessWidget {
               )),
           Container(
             decoration: BoxDecoration(
-              color: Color(0xFFF6F6F6),
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: IconButton(
               padding: EdgeInsets.zero,
               icon: Icon(
                 Icons.more_horiz,
-                color: Color(0xFF99A2AD),
+                color: Theme.of(context).colorScheme.secondary,
               ),
               onPressed: showEmojiBoard as void Function()?,
               iconSize: fontSize + 3,

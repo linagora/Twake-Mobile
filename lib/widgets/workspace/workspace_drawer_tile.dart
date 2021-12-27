@@ -48,21 +48,16 @@ class WorkspaceDrawerTile extends StatelessWidget {
                   imageUrl: logo ?? '',
                   name: name ?? '',
                   size: 44,
-                  backgroundColor: Color(0xfff5f5f5),
+                  backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
                 ),
                 SizedBox(width: 16.0),
                 Expanded(
                   child: Text(
                     name ?? '',
-                    style: TextStyle(
-                      color: Color(0xff000000),
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      fontStyle: FontStyle.normal,
-                    ),
+                    style: Theme.of(context).textTheme.headline1
                   ),
                 ),
-                BadgesCount(type: BadgeType.workspace, id: workspaceId!),
+                BadgesCount(type: BadgeType.workspace, id: workspaceId!,isTitleVisible: false,),
                 SizedBox(width: 30),
               ],
             ),

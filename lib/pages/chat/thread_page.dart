@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -59,7 +61,11 @@ class _ThreadPageState<T extends BaseChannelsCubit>
             return Scaffold(
               appBar: AppBar(
                 titleSpacing: 0.0,
-                shadowColor: Colors.grey[300],
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                shadowColor: MediaQuery.of(context).platformBrightness ==
+                        Brightness.dark
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.primary.withOpacity(0.3),
                 toolbarHeight:
                     Dim.heightPercent((kToolbarHeight * 0.15).round()),
                 leading: GestureDetector(
@@ -71,7 +77,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                     padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
                     child: Icon(
                       Icons.arrow_back_ios,
-                      color: Color(0xff004dff),
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                   ),
                 ),
@@ -84,15 +90,15 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         Row(
                           children: [
                             Text(
-                              AppLocalizations.of(context)!
-                                  .someonesMessages(name),
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xff444444),
-                              ),
-                            ),
+                                AppLocalizations.of(context)!
+                                    .someonesMessages(name),
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w800)),
                             SizedBox(
                               width: 44,
                             ),
@@ -105,11 +111,12 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               channel.isDirect
                                   ? AppLocalizations.of(context)!.threadReplies
                                   : channel.name,
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xff92929C),
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400),
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
                             ),
@@ -143,11 +150,13 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               ? messagesState.message.text
                               : '',
                           onMessageSend: (content, context) async {
-                            final uploadState = Get.find<FileUploadCubit>().state;
+                            final uploadState =
+                                Get.find<FileUploadCubit>().state;
                             List<File> attachments = const [];
                             if (uploadState.listFileUploading.isNotEmpty) {
                               attachments = uploadState.listFileUploading
-                                  .where((fileUploading) => fileUploading.file != null)
+                                  .where((fileUploading) =>
+                                      fileUploading.file != null)
                                   .map((e) => e.file!)
                                   .toList();
                             }
@@ -155,8 +164,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               Get.find<ThreadMessagesCubit>().edit(
                                   message: messagesState.message,
                                   editedText: content,
-                                  newAttachments: attachments
-                              );
+                                  newAttachments: attachments);
                             } else {
                               Get.find<ThreadMessagesCubit>().send(
                                 originalStr: content,

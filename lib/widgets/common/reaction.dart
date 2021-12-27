@@ -26,8 +26,9 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               // waiting for accurate colors in the upcoming design
-              color: Color(0xFFE8E8E8),
-              border: Border.all(color: Color(0xFFE8E8E8), width: 1),
+              color: Theme.of(context).colorScheme.background,
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.background, width: 1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
@@ -37,21 +38,19 @@ class Reaction<T extends BaseMessagesCubit> extends StatelessWidget {
                   Text(
                     '${Emojis.getByName(reaction.name)}',
                     style: TextStyle(
-                      fontSize: isFirstInThread ? 20 : 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey,
-                    ),
+                        fontSize: isFirstInThread ? 20 : 15,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.headline3!.color),
                   ),
                   SizedBox(
                     width: 3,
                   ),
                   Text(
                     '${reaction.count}',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF818C99),
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline2!
+                        .copyWith(fontWeight: FontWeight.w600, fontSize: 12),
                   ),
                   SizedBox(
                     width: 3,

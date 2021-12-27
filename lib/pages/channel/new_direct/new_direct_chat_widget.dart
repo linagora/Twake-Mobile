@@ -51,7 +51,6 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          color: Colors.white,
           child: Column(
             children: [
               SizedBox(
@@ -66,10 +65,10 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         padding: const EdgeInsets.only(left: 12.0),
                         child: Text(
                           AppLocalizations.of(context)!.cancel,
-                          style: TextStyle(
-                              fontSize: 17,
-                              color: Color(0xFF004DFF),
-                              fontWeight: FontWeight.w500),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(fontSize: 17),
                         ),
                       ),
                     )
@@ -100,12 +99,12 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                                       child: Text(
                                         AppLocalizations.of(context)!
                                             .createNewChannel,
-                                        style: TextStyle(
-                                          color: Color(0xff000000),
-                                          fontSize: 17,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle: FontStyle.normal,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .copyWith(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ),
@@ -113,7 +112,10 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                                     padding: const EdgeInsets.only(right: 12.0),
                                     child: Icon(
                                       Icons.keyboard_arrow_right,
-                                      color: Color(0xff004dff),
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline4!
+                                          .color,
                                     ),
                                   )
                                 ],
@@ -135,6 +137,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         ),
                         child: Divider(
                           thickness: 0.5,
+                          color: Theme.of(context).colorScheme.secondaryVariant,
                         ),
                       );
                     } else
@@ -156,19 +159,19 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                       children: [
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Image.asset(imageGroup),
+                          child: Image.asset(imageChat),
                         ),
                         Expanded(
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               AppLocalizations.of(context)!.newChat,
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .copyWith(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),
@@ -176,7 +179,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                           padding: const EdgeInsets.only(right: 12.0),
                           child: Icon(
                             Icons.keyboard_arrow_right,
-                            color: Color(0xff004dff),
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                         )
                       ],
@@ -190,11 +193,10 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       AppLocalizations.of(context)!.directChats,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w500,
-                        fontStyle: FontStyle.normal,
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -211,20 +213,22 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         child: TextField(
                           focusNode: _searchFocusNode,
                           controller: _searchController,
-                          cursorColor: Color(0xff004dff),
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          ),
+                          cursorColor: Theme.of(context)
+                                            .textSelectionTheme
+                                            .cursorColor,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(
+                                  fontSize: 17, fontWeight: FontWeight.w400),
                           decoration: new InputDecoration(
                             contentPadding:
                                 EdgeInsets.only(top: 10, bottom: 10, left: 0),
-                            prefixIcon: Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                            ),
+                            prefixIcon: Icon(Icons.search,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline3!
+                                    .color),
                             suffixIcon: showClearButton
                                 ? Padding(
                                     padding: const EdgeInsets.only(
@@ -261,15 +265,15 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                               ),
                             ),
                             filled: true,
-                            hintStyle: TextStyle(
-                              color: Color(0xff8e8e93),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                            ),
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                    fontSize: 17, fontWeight: FontWeight.w400),
                             hintText:
                                 AppLocalizations.of(context)!.searchForMembers,
-                            fillColor: Color(0xfff9f8f9),
+                            fillColor:
+                                Theme.of(context).colorScheme.secondaryVariant,
                           ),
                         ),
                       ),
@@ -280,10 +284,12 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Text(
                               AppLocalizations.of(context)!.cancel,
-                              style: TextStyle(
-                                  fontSize: 17,
-                                  color: Color(0xFF004DFF),
-                                  fontWeight: FontWeight.w500),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline4!
+                                  .copyWith(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w400),
                             ),
                           ),
                         ),
@@ -310,6 +316,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         padding: const EdgeInsets.only(left: 70, right: 14),
                         child: Divider(
                           height: 1,
+                          color: Theme.of(context).colorScheme.secondaryVariant,
                         ),
                       ),
                       itemCount: members.length,
@@ -371,12 +378,10 @@ class _RecentChatTile extends StatelessWidget {
                     maxLines: 1,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.clip,
-                    style: TextStyle(
-                      color: Color(0x59000000),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                    )),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 17, fontWeight: FontWeight.normal)),
               ),
             )
           ],
@@ -420,12 +425,10 @@ class _FoundPeopleDirectTile extends StatelessWidget {
             Container(
               constraints: BoxConstraints(maxWidth: Dim.widthPercent(70)),
               child: Text(name,
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    fontStyle: FontStyle.normal,
-                  )),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.normal)),
             )
           ],
         ),

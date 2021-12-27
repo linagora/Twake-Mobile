@@ -52,24 +52,21 @@ class ChatHeader extends StatelessWidget {
                   height: 10.0,
                   child: Text(
                     name,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black,
-                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 17, fontWeight: FontWeight.w700),
                   ),
                 ),
                 (!isDirect) ? SizedBox(height: 4) : SizedBox.shrink(),
                 (!isDirect)
-                  ? Text(
-                    AppLocalizations.of(context)!.membersPlural(membersCount),
-                    style: TextStyle(
-                      fontSize: 10.0,
-                      fontWeight: FontWeight.w400,
-                      color: Color(0xff92929C),
-                    ),
-                  )
-                  : SizedBox.shrink(),
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .membersPlural(membersCount),
+                        style: Theme.of(context).textTheme.headline2!.copyWith(
+                            fontSize: 10, fontWeight: FontWeight.w400),
+                      )
+                    : SizedBox.shrink(),
               ],
             ),
           ),

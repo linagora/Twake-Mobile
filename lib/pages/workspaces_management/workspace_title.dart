@@ -26,7 +26,7 @@ class WorkspaceTile extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
@@ -40,7 +40,8 @@ class WorkspaceTile extends StatelessWidget {
                   borderRadius: 16,
                   imageUrl: image,
                   name: title,
-                  backgroundColor: Color(0xfff5f5f5),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.secondaryVariant,
                 ),
                 SizedBox(width: 16.0),
                 Expanded(
@@ -51,21 +52,19 @@ class WorkspaceTile extends StatelessWidget {
                       Text(
                         title,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline1!
+                            .copyWith(fontWeight: FontWeight.w500),
                       ),
                       if (subtitle.isNotEmpty)
                         Text(
                           subtitle,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xff949494),
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(fontWeight: FontWeight.w500),
                         ),
                     ],
                   ),
@@ -73,7 +72,7 @@ class WorkspaceTile extends StatelessWidget {
                 if (selected)
                   Icon(
                     CupertinoIcons.check_mark_circled_solid,
-                    color: Color(0xff3840F7),
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 SizedBox(width: 19.0),
               ],
@@ -82,7 +81,7 @@ class WorkspaceTile extends StatelessWidget {
             Divider(
               thickness: 1.0,
               height: 1.0,
-              color: Color(0xfff4f4f4),
+              color: Theme.of(context).colorScheme.secondaryVariant,
             ),
           ],
         ),

@@ -25,7 +25,6 @@ class InitialPage extends StatefulWidget {
 }
 
 class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
-
   StreamSubscription? _magicLinkStreamSub;
 
   @override
@@ -65,8 +64,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
     // Prevent checking incoming url when logout
     final currentAuthState = Get.find<AuthenticationCubit>().state;
-    if(currentAuthState is LogoutInProgress)
-      return;
+    if (currentAuthState is LogoutInProgress) return;
 
     try {
       final uri = await getInitialUri();
@@ -83,7 +81,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   _handleIncomingLink(Uri? uri) {
     final token = uri?.queryParameters['join'];
-    if(token != null && token.isNotEmpty) {
+    if (token != null && token.isNotEmpty) {
       Get.find<AuthenticationCubit>().checkTokenAvailable(token);
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
@@ -106,7 +104,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                 borderRadius: BorderRadius.circular(14),
               ),
               behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               elevation: 6,
               duration: Duration(days: 365),
               content: Row(
@@ -119,10 +117,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                       size: 28,
                     ),
                   ),
-                  Text(
-                    AppLocalizations.of(context)!.internetConnection,
-                    style: TextStyle(color: Colors.black, fontSize: 16),
-                  ),
+                  Text(AppLocalizations.of(context)!.internetConnection,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16)),
                 ],
               ),
             ),
@@ -195,44 +194,46 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
               builder: (ctx, state) {
                 if (state is AuthenticationInProgress) {
                   return buildSplashScreen();
-                } else if (state is AuthenticationInitial
-                    || state is AuthenticationFailure
-                    || state is InvitationJoinFailed
-                    || state is AuthenticationInvitationPending) {
-                  if(state is AuthenticationInvitationPending) {
-                    return SignFlow(requestedMagicLinkToken: state.requestedToken);
+                } else if (state is AuthenticationInitial ||
+                    state is AuthenticationFailure ||
+                    state is InvitationJoinFailed ||
+                    state is AuthenticationInvitationPending) {
+                  if (state is AuthenticationInvitationPending) {
+                    return SignFlow(
+                        requestedMagicLinkToken: state.requestedToken);
                   }
                   return SignFlow();
                 } else if (state is PostAuthenticationSyncInProgress) {
                   return SyncingDataScreen(state.progress.toDouble());
                 } else if (state is PostAuthenticationSyncFailed) {
                   return SyncDataFailed();
-                } else if (state is PostAuthenticationSyncSuccess || state is AuthenticationSuccess) {
+                } else if (state is PostAuthenticationSyncSuccess ||
+                    state is AuthenticationSuccess) {
                   var magicLinkJoinResponse;
-                  if(state is PostAuthenticationSyncSuccess) {
+                  if (state is PostAuthenticationSyncSuccess) {
                     magicLinkJoinResponse = state.magicLinkJoinResponse;
-                  } else if(state is AuthenticationSuccess) {
+                  } else if (state is AuthenticationSuccess) {
                     magicLinkJoinResponse = state.magicLinkJoinResponse;
                   }
-                  if(magicLinkJoinResponse == null) {
+                  if (magicLinkJoinResponse == null) {
                     return HomeWidget();
                   }
                   _selectWorkspaceAfterJoin(magicLinkJoinResponse);
                   return HomeWidget();
                 } else if (state is InvitationJoinCheckingTokenFinished) {
                   return JoinWorkSpaceMagicLinkPage(
-                    workspaceJoinResponse: state.joinResponse,
-                    requestedToken: state.requestedToken);
+                      workspaceJoinResponse: state.joinResponse,
+                      requestedToken: state.requestedToken);
                 } else {
                   return buildSplashScreen();
                 }
               },
               listener: (context, state) {
-                if(state is InvitationJoinSuccess && state.needCheckAuthentication) {
+                if (state is InvitationJoinSuccess &&
+                    state.needCheckAuthentication) {
                   Get.find<AuthenticationCubit>().checkAuthentication(
-                    workspaceJoinResponse: state.joinResponse,
-                    pendingRequestedToken: state.requestedToken
-                  );
+                      workspaceJoinResponse: state.joinResponse,
+                      pendingRequestedToken: state.requestedToken);
                 }
               },
             ),
@@ -243,12 +244,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   }
 
   void _selectWorkspaceAfterJoin(WorkspaceJoinResponse? workspaceJoinResponse) {
-    if(workspaceJoinResponse?.company.id != null) {
+    if (workspaceJoinResponse?.company.id != null) {
       Globals.instance.companyId = workspaceJoinResponse!.company.id;
     }
-    if(workspaceJoinResponse?.workspace.id != null) {
+    if (workspaceJoinResponse?.workspace.id != null) {
       Globals.instance.workspaceId = workspaceJoinResponse?.workspace.id;
     }
   }
-
 }

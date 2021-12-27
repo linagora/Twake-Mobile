@@ -43,7 +43,9 @@ void main() async {
       enableBallisticLoad: true, // trigger load more by BallisticScrollActivity
 
       child: GetMaterialApp(
+      
         theme: StylesConfig.lightTheme,
+        darkTheme: StylesConfig.darkTheme,
         title: 'Twake',
         localizationsDelegates: [
           AppLocalizations.delegate,

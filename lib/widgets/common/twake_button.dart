@@ -9,7 +9,7 @@ class TwakeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: InkWell(
         onTap: onTap,
         child: child,

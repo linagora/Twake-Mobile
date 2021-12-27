@@ -56,12 +56,36 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
   @override
   Widget build(BuildContext context) {
-    final double sizeOfReplyBox = _message.text.length.toDouble() < 15
+    final double _sizeOfReplyBox = _message.text.length.toDouble() < 15
         ? 80 - _message.text.length.toDouble() * 5.5
         : 5;
     final messageState = Get.find<ChannelMessagesCubit>().state;
+
+    final bool _isDarkTheme =
+        MediaQuery.of(context).platformBrightness == Brightness.dark
+            ? true
+            : false;
+
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
+
+      final TextStyle _parentStyle = _isDarkTheme
+          ? _isMyMessage
+              ? (Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 15, fontWeight: FontWeight.w400))
+              : (Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 15, fontWeight: FontWeight.w400))
+          : _isMyMessage
+              ? Theme.of(context).textTheme.bodyText1!
+              : (Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 15, fontWeight: FontWeight.w400));
+
       return InkWell(
         onLongPress: () {
           if (_message.subtype != MessageSubtype.deleted &&
@@ -113,26 +137,28 @@ class _MessageTileState<T extends BaseMessagesCubit>
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment:
+                _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
             children: [
               SizedBox(width: 6.0),
               Padding(
                 padding: _message.reactions.isEmpty
                     ? const EdgeInsets.only(bottom: 15.0)
                     : const EdgeInsets.only(bottom: 22.0),
-                child:
-                    (!_isMyMessage && _shouldShowSender && widget.downBubbleSide)
-                        ? ImageWidget(
-                            imageType: ImageType.common,
-                            imageUrl: _message.picture ?? '',
-                            name: _message.sender,
-                            size: 28)
-                        : SizedBox(width: 28.0, height: 28.0),
+                child: (!_isMyMessage &&
+                        _shouldShowSender &&
+                        widget.downBubbleSide)
+                    ? ImageWidget(
+                        imageType: ImageType.common,
+                        imageUrl: _message.picture ?? '',
+                        name: _message.sender,
+                        size: 28)
+                    : SizedBox(width: 28.0, height: 28.0),
               ),
               _isMyMessage
                   ? SizedBox(width: Dim.widthPercent(8))
                   : SizedBox(width: 6),
-              _buildMessageContent(_isMyMessage, sizeOfReplyBox),
+              _buildMessageContent(_isMyMessage, _sizeOfReplyBox, _parentStyle),
               if (!_isMyMessage)
                 SizedBox(
                   width: Dim.widthPercent(10),
@@ -146,29 +172,37 @@ class _MessageTileState<T extends BaseMessagesCubit>
     }
   }
 
-  _buildMessageContent(bool _isMyMessage, double sizeOfReplyBox) => Flexible(
-    child: Column(
-      crossAxisAlignment: _isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
+  _buildMessageContent(
+          bool _isMyMessage, double _sizeOfReplyBox, TextStyle _parentStyle) =>
+      Flexible(
+        child: Column(
+          crossAxisAlignment:
+              _isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Flexible(child: _buildMessageTextAndTime(_isMyMessage, sizeOfReplyBox)),
-            Container(
-              margin: const EdgeInsets.only(left: 3.0, right: 6.0),
-              child: _buildMessageSentStatus(_isMyMessage),
-            )
+            Row(
+              mainAxisAlignment: _isMyMessage
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Flexible(
+                    child: _buildMessageTextAndTime(
+                        _isMyMessage, _sizeOfReplyBox, _parentStyle)),
+                Container(
+                  margin: const EdgeInsets.only(left: 3.0, right: 6.0),
+                  child: _buildMessageSentStatus(_isMyMessage),
+                )
+              ],
+            ),
+            _buildReactions(_isMyMessage)
           ],
         ),
-        _buildReactions(_isMyMessage)
-      ],
-    ),
-  );
+      );
 
-  _buildMessageTextAndTime(bool _isMyMessage, double sizeOfReplyBox) {
+  _buildMessageTextAndTime(
+      bool _isMyMessage, double _sizeOfReplyBox, TextStyle _parentStyle) {
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: ClipRRect(
         borderRadius: _isMyMessage
             ? (widget.upBubbleSide && widget.downBubbleSide
@@ -214,12 +248,20 @@ class _MessageTileState<T extends BaseMessagesCubit>
             nip: BubbleNip.no,
             radius: Radius.circular(0),
             elevation: 0,
-            color: _isMyMessage ? Color(0xff007AFF) : Color(0xFFF0F1F5),
+            color: MediaQuery.of(context).platformBrightness == Brightness.dark
+                ? _isMyMessage
+                    ? Theme.of(context).colorScheme.surface
+                    : Theme.of(context).colorScheme.secondaryVariant
+                : _isMyMessage
+                    ? Theme.of(context).colorScheme.surface
+                    : Theme.of(context).iconTheme.color,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!widget.channel.isDirect && !_isMyMessage && widget.upBubbleSide)
+              if (!widget.channel.isDirect &&
+                  !_isMyMessage &&
+                  widget.upBubbleSide)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
                   child: Text(
@@ -251,48 +293,46 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Flexible(
-                                    child: _message.subtype == MessageSubtype.deleted
-                                        ? Text(AppLocalizations.of(context)!.messageDeleted,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontStyle: FontStyle.italic,
-                                              color: _isMyMessage ? Color(0xFFB3C9FF) : Color(0xFF7A7A7A)))
+                                    child: _message.subtype ==
+                                            MessageSubtype.deleted
+                                        ? Text(
+                                            AppLocalizations.of(context)!
+                                                .messageDeleted,
+                                            style: _parentStyle.copyWith(
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500))
                                         : TwacodeRenderer(
-                                            twacode: _message.blocks,
-                                            fileIds: _message.files,
-                                            parentStyle: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w400,
-                                              color: _isMyMessage
-                                                ? Colors.white
-                                                : Colors.black),
-                                            userUniqueColor: _message.username.hashCode % 360,
-                                            isSwipe: false).message,
+                                                twacode: _message.blocks,
+                                                fileIds: _message.files,
+                                                parentStyle: _parentStyle,
+                                                userUniqueColor:
+                                                    _message.username.hashCode %
+                                                        360,
+                                                isSwipe: false)
+                                            .message,
                                   ),
                                   SizedBox(
                                       width: (_message.responsesCount > 0 &&
                                               !_message.inThread &&
                                               !_hideShowReplies)
-                                          ? sizeOfReplyBox
+                                          ? _sizeOfReplyBox
                                           : 0),
                                 ],
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 3),
                                 child: Text(
-                                  _message.inThread || _hideShowReplies
-                                      ? DateFormatter.getVerboseDateTime(_message.createdAt)
-                                      : DateFormatter.getVerboseTime(_message.createdAt),
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontSize: 11.0,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.italic,
-                                    color: _isMyMessage
-                                        ? Color(0xffffffff).withOpacity(0.58)
-                                        : Color(0xFF8E8E93),
-                                  ),
-                                ),
+                                    _message.inThread || _hideShowReplies
+                                        ? DateFormatter.getVerboseDateTime(
+                                            _message.createdAt)
+                                        : DateFormatter.getVerboseTime(
+                                            _message.createdAt),
+                                    textAlign: TextAlign.end,
+                                    style: _parentStyle.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w400)),
                               ),
                             ],
                           ),
@@ -306,12 +346,35 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                         child: Text(
                             '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
-                            style: TextStyle(
-                                color: _isMyMessage
-                                    ? Colors.white
-                                    : Color(0xFF004DFF),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13)),
+                            style: _isMyMessage &&
+                                    MediaQuery.of(context).platformBrightness ==
+                                        Brightness.dark
+                                ? _isMyMessage
+                                    ? Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .copyWith(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold)
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold)
+                                : _isMyMessage
+                                    ? Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold)
+                                    : Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold)),
                       ),
                   ],
                 ),
@@ -331,10 +394,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 children: [
                   CircleAvatar(
                     radius: 10,
-                    backgroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     child: Icon(
                       CupertinoIcons.time_solid,
-                      color: Colors.grey[400],
+                      color: Theme.of(context).colorScheme.secondary,
                       size: 20,
                     ),
                   )
@@ -346,7 +409,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     children: [
                       Icon(
                         Icons.check_circle_outline_rounded,
-                        color: Color(0xFF004DFF),
+                        color: Theme.of(context).colorScheme.surface,
                         size: 20,
                       )
                     ],
@@ -371,10 +434,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           children: [
                             CircleAvatar(
                               radius: 10,
-                              backgroundColor: Colors.white,
+                              backgroundColor:
+                                  Theme.of(context).scaffoldBackgroundColor,
                               child: Icon(
                                 CupertinoIcons.exclamationmark_circle_fill,
-                                color: Colors.red[400],
+                                color: Theme.of(context).colorScheme.error,
                                 size: 20,
                               ),
                             )
@@ -444,6 +508,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
           65.0,
           //  Dim.heightPercent(8),
         ),
+        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
@@ -451,11 +516,18 @@ class _MessageTileState<T extends BaseMessagesCubit>
         duration: Duration(milliseconds: 1500),
         content: Row(
           children: [
-            Icon(Icons.copy, color: Colors.white),
+            Icon(
+              Icons.copy,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             SizedBox(
               width: 20,
             ),
-            Text(AppLocalizations.of(context)!.messageCopiedInfo),
+            Text(AppLocalizations.of(context)!.messageCopiedInfo,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 14)),
           ],
         ),
       ),

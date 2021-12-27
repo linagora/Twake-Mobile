@@ -19,24 +19,26 @@ class _SelectLanguageState extends State<SelectLanguage> {
     final languageCode = LanguageRepository().languages;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Icon(
             Icons.arrow_back_ios,
-            color: Color(0xFF004DFF),
+            color: Theme.of(context).colorScheme.surface,
           ),
         ),
         toolbarHeight: 56,
-        backgroundColor: Colors.white,
         title: Text(
           AppLocalizations.of(context)!.language,
-          style: TextStyle(fontSize: 17, color: Colors.black),
+          style: Theme.of(context)
+              .textTheme
+              .headline1!
+              .copyWith(fontSize: 17, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
-        color: Color(0xffefeef3),
         child: SafeArea(
           bottom: false,
           child: Padding(
@@ -52,7 +54,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                 );
               },
               separatorBuilder: (context, index) => Divider(
-                color: Color(0xffefeef3),
+                color: Theme.of(context).colorScheme.secondaryVariant,
                 thickness: 0.3,
                 height: 2,
               ),
@@ -83,7 +85,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                   ? Radius.circular(12.0)
                   : Radius.circular(0),
             ),
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.secondaryVariant,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14.0),
@@ -92,7 +94,10 @@ class _SelectLanguageState extends State<SelectLanguage> {
                 Text(
                   getLanguageString(
                       languageCode: languageCode, context: context),
-                  style: TextStyle(fontSize: 20),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 15, fontWeight: FontWeight.normal),
                 ),
                 Spacer(),
                 BlocBuilder<LanguageCubit, LanguageState>(
@@ -103,7 +108,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                         return Icon(
                           Icons.check_circle_rounded,
                           size: 26,
-                          color: Color(0xFF004DFF),
+                          color: Theme.of(context).colorScheme.surface,
                         );
                       } else {
                         return SizedBox.shrink();

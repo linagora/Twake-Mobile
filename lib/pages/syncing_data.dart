@@ -32,6 +32,7 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
                 width: Dim.widthPercent(35),
                 child: Image.asset(
                   'assets/images/data_sync.png',
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               ),
               SizedBox(
@@ -39,17 +40,17 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
               ),
               Text(
                 'We are syncing your data,',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 20, fontWeight: FontWeight.w900),
               ),
               Text(
                 'please, be patient 😊 😕',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 20, fontWeight: FontWeight.w900),
               ),
               SizedBox(
                 height: 30,
@@ -63,8 +64,8 @@ class _SyncingDataScreenState extends State<SyncingDataScreen> {
                   ),
                   child: LinearProgressIndicator(
                     value: widget.progress / 100,
-                    backgroundColor: Color(0xFFF6F6F6),
-                    color: Color(0xFF004DFF),
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ),
@@ -90,29 +91,23 @@ class SyncDataFailed extends StatelessWidget {
             children: [
               Container(
                 width: Dim.widthPercent(35),
-                child: FittedBox(
-                  child: Image.asset(
-                    'assets/images/data_sync_failed.png',
-                  ),
+                child: Image.asset(
+                  'assets/images/data_sync_failed.png',
                 ),
               ),
               SizedBox(
                 height: 30,
               ),
-              Text(
-                'We have encountered an issue',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900),
-              ),
-              Text(
-                'in syncing your data😔🥺',
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontWeight: FontWeight.w900),
-              ),
+              Text('We have encountered an issue',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 20, fontWeight: FontWeight.w900)),
+              Text('in syncing your data😔🥺',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 20, fontWeight: FontWeight.w900)),
               SizedBox(
                 height: 30,
               ),
@@ -131,10 +126,10 @@ class SyncDataFailed extends StatelessWidget {
                   },
                   child: Text(
                     'Try again',
-                    style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(fontSize: 17, fontWeight: FontWeight.w600),
                   ),
                 ),
               )

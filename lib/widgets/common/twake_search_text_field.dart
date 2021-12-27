@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TwakeSearchTextField extends StatefulWidget {
@@ -47,20 +46,15 @@ class _TwakeSearchTextFieldState extends State<TwakeSearchTextField> {
       height: widget.height,
       child: TextField(
         controller: widget.controller,
-        cursorColor: Color(0xff004dff),
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: widget.fontSize,
-          fontWeight: FontWeight.w400,
-          fontStyle: FontStyle.normal,
-        ),
+        cursorColor: Theme.of(context).textSelectionTheme.cursorColor,
+        style: Theme.of(context).textTheme.headline1,
         decoration: new InputDecoration(
           contentPadding: EdgeInsets.only(
               top: 10, bottom: 10, left: widget.showPrefixIcon ? 0 : 30),
           prefixIcon: widget.showPrefixIcon
               ? Icon(
                   Icons.search,
-                  color: Colors.grey,
+                  color: Theme.of(context).colorScheme.secondary,
                 )
               : null,
           suffixIcon: showClearButton
@@ -84,12 +78,10 @@ class _TwakeSearchTextFieldState extends State<TwakeSearchTextField> {
             ),
           ),
           filled: true,
-          hintStyle: TextStyle(
-            color: Color(0xff8e8e93),
-            fontSize: widget.fontSize,
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .headline2!
+              .copyWith(fontSize: widget.fontSize, fontWeight: FontWeight.w400),
           hintText: widget.hintText,
           fillColor: widget.backgroundColor,
         ),

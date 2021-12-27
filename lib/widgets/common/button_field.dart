@@ -40,7 +40,7 @@ class ButtonField extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           borderRadius: borderRadius != BorderRadius.zero
               ? borderRadius
               : (isRounded ? BorderRadius.circular(10.0) : BorderRadius.zero),

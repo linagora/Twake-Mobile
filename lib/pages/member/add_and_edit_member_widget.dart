@@ -49,7 +49,6 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f6),
       body: GestureDetector(
         onTap: () {
           // dismiss keyboard when tap outside
@@ -57,11 +56,10 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
         },
         child: SafeArea(
           child: Container(
-            color: Color(0xfff2f2f6),
             child: Column(
               children: [
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 56,
                   child: Stack(
                     children: [
@@ -71,7 +69,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           onPressed: () => popBack(),
                           child: Icon(
                             Icons.arrow_back_ios,
-                            color: Color(0xff000000),
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                         ),
                       ),
@@ -122,18 +120,17 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           alignment: Alignment.center,
                           child: Text(
                             AppLocalizations.of(context)!.addMembers,
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontWeight: FontWeight.w600, fontSize: 17),
                           ))
                     ],
                   ),
                 ),
                 Divider(
-                  color: Color(0x1e000000),
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 1,
                 ),
                 Padding(
@@ -144,7 +141,8 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                   child: TwakeSearchTextField(
                     controller: _searchController,
                     hintText: AppLocalizations.of(context)!.searchMembers,
-                    backgroundColor: Color(0xfffcfcfc),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryVariant,
                     fontSize: 15,
                   ),
                 ),
@@ -186,13 +184,14 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                             top: 14, left: 16, bottom: 12),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(AppLocalizations.of(context)!.foundPeople,
-                              style: TextStyle(
-                                color: Color(0x59000000),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                fontStyle: FontStyle.normal,
-                              )),
+                          child: Text(
+                            AppLocalizations.of(context)!.foundPeople,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontWeight: FontWeight.w600, fontSize: 13),
+                          ),
                         ),
                       );
                     }),
@@ -213,7 +212,9 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
-                              color: Colors.white,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                               child: ListView.separated(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
@@ -222,7 +223,9 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                             const EdgeInsets.only(left: 46),
                                         child: Divider(
                                           height: 1,
-                                          color: Color(0x1e000000),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryVariant,
                                         ),
                                       ),
                                   itemCount: users.length,

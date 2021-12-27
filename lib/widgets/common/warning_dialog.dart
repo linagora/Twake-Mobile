@@ -24,7 +24,7 @@ class WarningDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
       ),
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
       child: Container(
         width: 296.0,
         height: 142.0,
@@ -40,10 +40,10 @@ class WarningDialog extends StatelessWidget {
                   minFontSize: 12,
                   maxFontSize: 16,
                   textAlign: TextAlign.start,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xff6d7885),
-                  ),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontWeight: FontWeight.normal),
                 ),
               ),
             ),
@@ -62,11 +62,10 @@ class WarningDialog extends StatelessWidget {
                     child: Text(
                       leadingActionTitle!,
                       textAlign: TextAlign.end,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xff837eff),
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),
@@ -79,11 +78,10 @@ class WarningDialog extends StatelessWidget {
                     child: Text(
                       trailingActionTitle!,
                       textAlign: TextAlign.end,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xfff04820),
-                      ),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline5!
+                          .copyWith(fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                   ),
                 ),

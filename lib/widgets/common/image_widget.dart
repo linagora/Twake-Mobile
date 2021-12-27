@@ -149,12 +149,8 @@ class ImageWidget extends StatelessWidget {
       Container(
         width: size,
         height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: backgroundColor == Colors.white
-              ? Colors.transparent
-              : Color(0xfff5f5f5),
-        ),
+        decoration:
+            BoxDecoration(shape: BoxShape.circle, color: backgroundColor),
         child: Container(
           width: size - 10,
           height: size - 10,
@@ -226,9 +222,11 @@ class ImageWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: backgroundColor == Colors.transparent ? 26 : 20,
                 fontWeight: FontWeight.bold,
-                color: backgroundColor == Colors.transparent
-                    ? Colors.white
-                    : Colors.black,
+                color: backgroundColor == Color(0xFF2C2D2F)
+                    ? Colors.white.withOpacity(0.9)
+                    : backgroundColor == Colors.transparent
+                        ? Colors.white
+                        : Colors.black,
               ),
             ),
           ),

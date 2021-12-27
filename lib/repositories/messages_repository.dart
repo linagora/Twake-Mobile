@@ -257,7 +257,6 @@ class MessagesRepository {
       }
       _sendGuard.release();
     }
-
     try {
       final remoteResult = await _api.post(
         endpoint: endpoint,

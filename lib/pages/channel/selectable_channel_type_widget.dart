@@ -9,7 +9,8 @@ class SelectableChannelTypeWidget extends StatefulWidget {
   final OnSelectableChannelTypeClick onSelectableChannelTypeClick;
 
   const SelectableChannelTypeWidget(
-      {required this.channelVisibility, required this.onSelectableChannelTypeClick})
+      {required this.channelVisibility,
+      required this.onSelectableChannelTypeClick})
       : super();
 
   @override
@@ -17,7 +18,8 @@ class SelectableChannelTypeWidget extends StatefulWidget {
       _SelectableChannelTypeWidgetState();
 }
 
-class _SelectableChannelTypeWidgetState extends State<SelectableChannelTypeWidget> {
+class _SelectableChannelTypeWidgetState
+    extends State<SelectableChannelTypeWidget> {
   late ChannelVisibility _selectedChannelVisibility;
 
   @override
@@ -30,12 +32,11 @@ class _SelectableChannelTypeWidgetState extends State<SelectableChannelTypeWidge
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           border: Border.all(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.secondaryVariant,
           ),
-          borderRadius: BorderRadius.all(Radius.circular(12))
-      ),
+          borderRadius: BorderRadius.all(Radius.circular(12))),
       child: Column(
         children: [
           GestureDetector(
@@ -46,27 +47,27 @@ class _SelectableChannelTypeWidgetState extends State<SelectableChannelTypeWidge
               widget.onSelectableChannelTypeClick(ChannelVisibility.public);
             },
             child: Container(
-              height: 48,
-              child: Row(
-                children: [
-                  SizedBox(width: 16,),
+                height: 48,
+                child: Row(children: [
+                  SizedBox(
+                    width: 16,
+                  ),
                   Expanded(
                     child: Text("Public",
-                        style: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                        )
-                    ),
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontWeight: FontWeight.w400, fontSize: 17)),
                   ),
-                  _buildSelectedImage(_selectedChannelVisibility == ChannelVisibility.public),
-                  SizedBox(width: 16,)
-                ]
-              )
-            ),
+                  _buildSelectedImage(
+                      _selectedChannelVisibility == ChannelVisibility.public),
+                  SizedBox(
+                    width: 16,
+                  )
+                ])),
           ),
-          Divider(height: 1, color: Color(0x1e000000),),
+          Divider(
+            height: 1,
+            color: Theme.of(context).colorScheme.secondaryVariant,
+          ),
           GestureDetector(
             onTap: () {
               setState(() {
@@ -76,24 +77,21 @@ class _SelectableChannelTypeWidgetState extends State<SelectableChannelTypeWidge
             },
             child: Container(
                 height: 48,
-                child: Row(
-                    children: [
-                      SizedBox(width: 16,),
-                      Expanded(
-                        child: Text("Private",
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                            )
-                        ),
-                      ),
-                      _buildSelectedImage(_selectedChannelVisibility == ChannelVisibility.private),
-                      SizedBox(width: 16,)
-                    ]
-                )
-            ),
+                child: Row(children: [
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Text("Private",
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontWeight: FontWeight.w400, fontSize: 17)),
+                  ),
+                  _buildSelectedImage(
+                      _selectedChannelVisibility == ChannelVisibility.private),
+                  SizedBox(
+                    width: 16,
+                  )
+                ])),
           ),
         ],
       ),
@@ -118,12 +116,9 @@ class _UnselectedChanelTypeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color: Color(0x1e000000),
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(12))
-      ),
+          color: Theme.of(context).colorScheme.secondaryVariant,
+          border: Border.all(color: Theme.of(context).colorScheme.secondary),
+          borderRadius: BorderRadius.all(Radius.circular(12))),
       height: 24,
       width: 24,
     );

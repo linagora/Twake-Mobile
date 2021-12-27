@@ -11,10 +11,12 @@ class BadgesCount extends StatelessWidget {
   final BadgeType type;
   final String id;
   final bool isInDirects;
+  final bool isTitleVisible;
   BadgesCount({
     ValueKey? key,
     required this.type,
     required this.id,
+    required this.isTitleVisible,
     this.isInDirects = false,
   }) : super(key: key);
 
@@ -22,9 +24,11 @@ class BadgesCount extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        isInDirects
-            ? Text(AppLocalizations.of(context)!.chats)
-            : Text(AppLocalizations.of(context)!.channels),
+        isTitleVisible
+            ? isInDirects
+                ? Text(AppLocalizations.of(context)!.chats)
+                : Text(AppLocalizations.of(context)!.channels)
+            : SizedBox.shrink(),
         SizedBox(
           width: 5,
           height: 5,

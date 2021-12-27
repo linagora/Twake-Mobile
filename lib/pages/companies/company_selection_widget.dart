@@ -25,7 +25,7 @@ class CompanySelectionWidget extends StatelessWidget {
     return RoundedWidget(
       roundedTopOnly: true,
       child: Container(
-        color: Color(0xffefeef3),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: BlocBuilder<CompaniesCubit, CompaniesState>(
           bloc: _companiesCubit,
           buildWhen: (previousState, currentState) =>
@@ -52,7 +52,9 @@ class CompanySelectionWidget extends StatelessWidget {
                                 borderRadius: 16,
                                 imageUrl: companiesState.selected.logo ?? '',
                                 name: companiesState.selected.name,
-                                backgroundColor: Color(0xfff5f5f5),
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -61,14 +63,14 @@ class CompanySelectionWidget extends StatelessWidget {
                                   left: 16,
                                   right: 16,
                                 ),
-                                child: Text(
-                                  companiesState.selected.name,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
+                                child: Text(companiesState.selected.name,
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 17)),
                               )
                             ],
                           ),
@@ -79,6 +81,7 @@ class CompanySelectionWidget extends StatelessWidget {
                         child: IconButton(
                           icon: Image.asset(imagePathCancel),
                           onPressed: () => popBack(),
+                          color: Theme.of(context).colorScheme.primaryVariant,
                         ),
                       )
                     ],

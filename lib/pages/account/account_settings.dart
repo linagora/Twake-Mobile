@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -81,7 +82,6 @@ class _AccountSettingsState extends State<AccountSettings> {
       child: Scaffold(
         body: Container(
           height: MediaQuery.of(context).size.height,
-          color: Color(0xffefeef3),
           child: SafeArea(
             bottom: false,
             child: Padding(
@@ -110,7 +110,10 @@ class _AccountSettingsState extends State<AccountSettings> {
                               onTap: () => NavigatorService.instance.back(),
                               child: Icon(
                                 Icons.arrow_back_ios,
-                                color: Color(0xff3840f7),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline4!
+                                    .color,
                               ),
                             ),
                           ),
@@ -135,20 +138,20 @@ class _AccountSettingsState extends State<AccountSettings> {
                       SizedBox(height: 32.0),
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
-                        child: Text(
-                          AppLocalizations.of(context)!.settings,
-                          style: TextStyle(
-                            fontSize: 34.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
+                        child: Text(AppLocalizations.of(context)!.settings,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontWeight: FontWeight.bold, fontSize: 34)),
                       ),
                       SizedBox(height: 12.0),
                       GestureDetector(
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Color(0xFFFCFCFC),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                               borderRadius: BorderRadius.circular(14.0)),
                           child: Row(
                             children: [
@@ -167,19 +170,22 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      name,
-                                      style: TextStyle(fontSize: 17),
-                                    ),
+                                    Text(name,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16)),
                                     SizedBox(
                                       height: 4,
                                     ),
                                     Text(
-                                      AppLocalizations.of(context)!.viewProfile,
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          color: Color(0xFF939297)),
-                                    ),
+                                        AppLocalizations.of(context)!
+                                            .viewProfile,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline2),
                                   ],
                                 ),
                               ),
@@ -188,7 +194,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                                 padding: const EdgeInsets.all(14.0),
                                 child: Icon(
                                   CupertinoIcons.forward,
-                                  color: Color(0xff3c3c43).withOpacity(0.3),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               )
                             ],
@@ -222,7 +229,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                         child: Container(
                           height: 44,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFCFCFC),
+                            color:
+                                Theme.of(context).colorScheme.secondaryVariant,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(10.0),
                               topRight: Radius.circular(10.0),
@@ -243,19 +251,20 @@ class _AccountSettingsState extends State<AccountSettings> {
                               ),
                               Text(
                                 AppLocalizations.of(context)!.customerSupport,
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 17),
                               ),
                               Spacer(),
                               Padding(
                                 padding: const EdgeInsets.all(14.0),
-                                child: Icon(
-                                  CupertinoIcons.forward,
-                                  color: Color(0xff3c3c43).withOpacity(0.3),
-                                ),
+                                child: Icon(CupertinoIcons.forward,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary),
                               ),
                             ],
                           ),
@@ -271,7 +280,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                         child: Container(
                           height: 44,
                           decoration: BoxDecoration(
-                            color: Color(0xFFFCFCFC),
+                            color:
+                                Theme.of(context).colorScheme.secondaryVariant,
                             borderRadius: BorderRadius.only(
                               bottomRight: Radius.circular(10.0),
                               bottomLeft: Radius.circular(10.0),
@@ -291,11 +301,12 @@ class _AccountSettingsState extends State<AccountSettings> {
                               ),
                               Text(
                                 AppLocalizations.of(context)!.language,
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: 17),
                               ),
                               Spacer(),
                               BlocBuilder<LanguageCubit, LanguageState>(
@@ -306,11 +317,10 @@ class _AccountSettingsState extends State<AccountSettings> {
                                       getLanguageString(
                                           languageCode: state.language,
                                           context: context),
-                                      style: TextStyle(
-                                        fontSize: 17.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black.withOpacity(0.5),
-                                      ),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline2!
+                                          .copyWith(fontSize: 15),
                                     );
                                   }
                                   {
@@ -323,7 +333,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                                     left: 14, right: 14.0),
                                 child: Icon(
                                   CupertinoIcons.forward,
-                                  color: Color(0xff3c3c43).withOpacity(0.3),
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
                             ],
@@ -332,23 +343,23 @@ class _AccountSettingsState extends State<AccountSettings> {
                       ),
                       SizedBox(height: 16.0),
                       ButtonField(
-                        onTap: () => _onShareWithEmptyOrigin(context),
-                        image: 'assets/images/2.0x/invite_people.png',
-                        title:
-                            AppLocalizations.of(context)!.invitePeopleToTwake,
-                        titleStyle: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                        ),
-                        hasArrow: true,
-                        arrowColor: Color(0xff3c3c43).withOpacity(0.3),
-                      ),
+                          onTap: () => _onShareWithEmptyOrigin(context),
+                          image: 'assets/images/2.0x/invite_people.png',
+                          title:
+                              AppLocalizations.of(context)!.invitePeopleToTwake,
+                          titleStyle: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(
+                                  fontWeight: FontWeight.normal, fontSize: 17),
+                          hasArrow: true,
+                          arrowColor: Theme.of(context).colorScheme.secondary),
                       SizedBox(height: 80.0),
                       Container(
                         height: 44,
                         decoration: BoxDecoration(
-                            color: Color(0xFFFCFCFC),
+                            color:
+                                Theme.of(context).colorScheme.secondaryVariant,
                             borderRadius: BorderRadius.circular(10.0)),
                         child: Row(
                           children: [
@@ -364,21 +375,19 @@ class _AccountSettingsState extends State<AccountSettings> {
                             ),
                             Text(
                               AppLocalizations.of(context)!.twakeVersion,
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 17),
                             ),
                             Spacer(),
-                            Text(
-                              _packageInfo.version,
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                            ),
+                            Text(_packageInfo.version,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(fontSize: 15)),
                             SizedBox(
                               width: 14,
                             )
@@ -391,18 +400,13 @@ class _AccountSettingsState extends State<AccountSettings> {
                         child: Container(
                           height: 44.0,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color:
+                                Theme.of(context).colorScheme.secondaryVariant,
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.logout,
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xffff3b30),
-                            ),
-                          ),
+                          child: Text(AppLocalizations.of(context)!.logout,
+                              style: Theme.of(context).textTheme.headline5),
                         ),
                       ),
                       SizedBox(height: 21.0),

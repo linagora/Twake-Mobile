@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -73,8 +74,7 @@ class _SignUpState extends State<SignUp> {
             email: email,
             secretToken: stateReg.secretToken,
             code: stateReg.code,
-            createAccountOnly: widget.requestedMagicLinkToken != null
-        );
+            createAccountOnly: widget.requestedMagicLinkToken != null);
       }
     } else {
       setState(() {
@@ -167,11 +167,10 @@ class _SignUpState extends State<SignUp> {
           padding: EdgeInsets.only(left: 25),
           child: Text(
             AppLocalizations.of(context)!.signup,
-            style: TextStyle(
-              fontFamily: 'SFProDisplayHeavy',
-              fontSize: 28.0,
-              fontWeight: FontWeight.w900,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontSize: 28, fontWeight: FontWeight.w900),
           ),
         ),
         Padding(
@@ -179,11 +178,12 @@ class _SignUpState extends State<SignUp> {
           child: RichText(
             text: TextSpan(children: [
               TextSpan(
-                  text: signupAgreement[0],
-                  style: TextStyle(
-                    fontSize: 13.0,
-                    color: Color(0xFF969698),
-                  )),
+                text: signupAgreement[0],
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2!
+                    .copyWith(fontSize: 13, fontWeight: FontWeight.normal),
+              ),
               TextSpan(
                   text: signupAgreement[1],
                   recognizer: _tapGestureRecognizerF
@@ -194,24 +194,34 @@ class _SignUpState extends State<SignUp> {
                         );
                       }
                     },
-                  style: StylesConfig.signupAgreement),
+                  style: Theme.of(context).textTheme.headline2!.copyWith(
+                      fontSize: 13,
+                      fontWeight: FontWeight.normal,
+                      decoration: TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.dotted)),
               TextSpan(
-                  text: signupAgreement[2],
-                  style: TextStyle(
-                    fontSize: 13.0,
-                    color: Color(0xFF969698),
-                  )),
+                text: signupAgreement[2],
+                style: Theme.of(context)
+                    .textTheme
+                    .headline2!
+                    .copyWith(fontSize: 13, fontWeight: FontWeight.normal),
+              ),
               TextSpan(
-                  text: signupAgreement[3],
-                  recognizer: _tapGestureRecognizerS
-                    ..onTap = () async {
-                      if (await canLaunch(link2)) {
-                        await launch(
-                          link2,
-                        );
-                      }
-                    },
-                  style: StylesConfig.signupAgreement)
+                text: signupAgreement[3],
+                recognizer: _tapGestureRecognizerS
+                  ..onTap = () async {
+                    if (await canLaunch(link2)) {
+                      await launch(
+                        link2,
+                      );
+                    }
+                  },
+                style: Theme.of(context).textTheme.headline2!.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.normal,
+                    decoration: TextDecoration.underline,
+                    decorationStyle: TextDecorationStyle.dotted),
+              )
             ]),
           ),
         ),
@@ -246,20 +256,18 @@ class _SignUpState extends State<SignUp> {
                       }
                       */
               },
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w400,
-                color: Colors.black,
-              ),
+              style: Theme.of(context).textTheme.headline1!.copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w400,
+                  ),
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.email,
-                hintStyle: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xffc8c8c8),
-                ),
+                hintStyle: Theme.of(context).textTheme.headline2!.copyWith(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w400,
+                    ),
                 alignLabelWithHint: true,
-                fillColor: Color(0xfff4f4f4),
+                fillColor: Theme.of(context).colorScheme.secondaryVariant,
                 filled: true,
                 suffix: _formKey.currentState == null
                     ? Container(
@@ -287,10 +295,11 @@ class _SignUpState extends State<SignUp> {
                           )
                         : CircleAvatar(
                             radius: 10,
-                            backgroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.secondaryVariant,
                             child: Icon(
                               CupertinoIcons.exclamationmark_circle_fill,
-                              color: Colors.red[400],
+                              color: Theme.of(context).colorScheme.error,
                               size: 20,
                             ),
                           ),
@@ -301,6 +310,10 @@ class _SignUpState extends State<SignUp> {
                     style: BorderStyle.none,
                   ),
                 ),
+                errorStyle: Theme.of(context).textTheme.headline5!.copyWith(
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal,
+                    ),
               ),
             ),
           ),
@@ -310,7 +323,10 @@ class _SignUpState extends State<SignUp> {
             padding: const EdgeInsets.only(left: 35),
             child: Text(
               AppLocalizations.of(context)!.emailAlreadyInUse,
-              style: TextStyle(fontSize: 12, color: Colors.red),
+              style: Theme.of(context).textTheme.headline5!.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.normal,
+                  ),
             ),
           ),
         SizedBox(
@@ -320,10 +336,10 @@ class _SignUpState extends State<SignUp> {
           alignment: Alignment.center,
           child: Text(
             AppLocalizations.of(context)!.alreadyHaveAnAccount,
-            style: TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF969698)),
+            style: Theme.of(context).textTheme.headline2!.copyWith(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
         ),
         Align(
@@ -333,16 +349,16 @@ class _SignUpState extends State<SignUp> {
               widget.onCancel!();
               _controller.clear();
               Get.find<RegistrationCubit>().emit(RegistrationInitial());
-              await Get.find<AuthenticationCubit>().authenticate(requestedMagicLinkToken: widget.requestedMagicLinkToken);
+              await Get.find<AuthenticationCubit>().authenticate(
+                  requestedMagicLinkToken: widget.requestedMagicLinkToken);
             },
             child: Text(
               AppLocalizations.of(context)!.signin,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff3840f7),
-              ),
+              style: Theme.of(context).textTheme.headline4!.copyWith(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
           ),
         ),
@@ -367,7 +383,7 @@ class _SignUpState extends State<SignUp> {
             child: Container(
               height: 50,
               decoration: BoxDecoration(
-                color: Color(0xFF004DFF),
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(14.0),
               ),
               alignment: Alignment.center,
@@ -380,11 +396,16 @@ class _SignUpState extends State<SignUp> {
                   return Text(
                     AppLocalizations.of(context)!.startUsingTwake,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                    style: MediaQuery.of(context).platformBrightness ==
+                            Brightness.dark
+                        ? Theme.of(context).textTheme.headline1!.copyWith(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            )
+                        : Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
                   );
                 },
               ),
@@ -409,10 +430,7 @@ class _SignUpState extends State<SignUp> {
           child: Text(
             AppLocalizations.of(context)!.registrationEmailSent,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 13.0,
-                fontWeight: FontWeight.normal,
-                color: Color(0xFF969698)),
+            style: Theme.of(context).textTheme.bodyText2,
           ),
         ),
         Padding(
@@ -420,10 +438,10 @@ class _SignUpState extends State<SignUp> {
           child: Text(
             _controller.text,
             textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w600,
-                color: Colors.black),
+            style: Theme.of(context).textTheme.headline2!.copyWith(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
         emailResendSuccess == null
@@ -442,7 +460,7 @@ class _SignUpState extends State<SignUp> {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Color(0xFF004DFF),
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(14.0),
                     ),
                     alignment: Alignment.center,
@@ -455,11 +473,22 @@ class _SignUpState extends State<SignUp> {
                           return Text(
                             AppLocalizations.of(context)!.resendEmail,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
+                            style: MediaQuery.of(context).platformBrightness ==
+                                    Brightness.dark
+                                ? Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    )
+                                : Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           );
                         }
                       },
@@ -498,11 +527,10 @@ class _SignUpState extends State<SignUp> {
                       Text(
                         AppLocalizations.of(context)!.emailResendFailed,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 17.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red[400],
-                        ),
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                            ),
                       ),
                     ],
                   ),
@@ -511,16 +539,16 @@ class _SignUpState extends State<SignUp> {
             widget.onCancel!();
             _controller.clear();
             Get.find<RegistrationCubit>().emit(RegistrationInitial());
-            await Get.find<AuthenticationCubit>().authenticate(requestedMagicLinkToken: widget.requestedMagicLinkToken);
+            await Get.find<AuthenticationCubit>().authenticate(
+                requestedMagicLinkToken: widget.requestedMagicLinkToken);
           },
           child: Text(
             AppLocalizations.of(context)!.signin,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 15.0,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff3840f7),
-            ),
+            style: Theme.of(context).textTheme.headline4!.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
           ),
         ),
       ],
@@ -529,100 +557,99 @@ class _SignUpState extends State<SignUp> {
 
   Widget registrationFailed() {
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(
+        child: Padding(
+      padding: EdgeInsets.only(
           left: Dim.widthPercent(10),
           right: Dim.widthPercent(10),
           bottom: Dim.heightPercent(15)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 25),
-              child: Text(
-                AppLocalizations.of(context)!.signupFailed,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-              ),
-            ),
-            Text(
-              AppLocalizations.of(context)!.signupFailedInfo,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 25),
+            child: Text(
+              AppLocalizations.of(context)!.signupFailed,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(
-              height: Dim.heightPercent(5),
-            ),
-            Container(
-              height: Dim.heightPercent(25),
-              child: Image.asset(
-                'assets/images/3.0x/emoji_face.png',
-              ),
-            ),
-            SizedBox(
-              height: Dim.heightPercent(10),
-            ),
-            Text(
-              AppLocalizations.of(context)!.signupAgainInfo,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.normal,
-                color: Color(0xFF8A898E),
-              ),
-            ),
-            SizedBox(
-              height: Dim.heightPercent(3),
-            ),
-            GestureDetector(
-              child: Text(
-                AppLocalizations.of(context)!.contactTechnicalSupport,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF004dff)
-                ),
-              ),
-              onTap: () => _launchHelpUrl(),
-            ),
-            SizedBox(
-              height: Dim.heightPercent(3),
-            ),
-            TextButton(
-              onPressed: () {
-                Get.find<RegistrationCubit>().prepare();
-              },
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Color(0xFF004DFF),
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  AppLocalizations.of(context)!.signupAgain,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              style: Theme.of(context).textTheme.headline1!.copyWith(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w600,
                   ),
+            ),
+          ),
+          Text(
+            AppLocalizations.of(context)!.signupFailedInfo,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline1!.copyWith(
+                  fontSize: 17,
+                  fontWeight: FontWeight.normal,
                 ),
+          ),
+          SizedBox(
+            height: Dim.heightPercent(5),
+          ),
+          Container(
+            height: Dim.heightPercent(25),
+            child: Image.asset(
+              'assets/images/3.0x/emoji_face.png',
+            ),
+          ),
+          SizedBox(
+            height: Dim.heightPercent(10),
+          ),
+          Text(
+            AppLocalizations.of(context)!.signupAgainInfo,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline2!.copyWith(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          SizedBox(
+            height: Dim.heightPercent(3),
+          ),
+          GestureDetector(
+            child: Text(
+              AppLocalizations.of(context)!.contactTechnicalSupport,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline1!.copyWith(
+                  fontSize: 17,
+                  fontWeight: FontWeight.normal,
+                  decoration: TextDecoration.underline,
+                  decorationStyle: TextDecorationStyle.dotted),
+            ),
+            onTap: () => _launchHelpUrl(),
+          ),
+          SizedBox(
+            height: Dim.heightPercent(3),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.find<RegistrationCubit>().prepare();
+            },
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(14.0),
               ),
-            )
-          ],
-        ),
-      )
-    );
+              alignment: Alignment.center,
+              child: Text(AppLocalizations.of(context)!.signupAgain,
+                  textAlign: TextAlign.center,
+                  style: MediaQuery.of(context).platformBrightness ==
+                          Brightness.dark
+                      ? Theme.of(context).textTheme.headline1!.copyWith(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          )
+                      : Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          )),
+            ),
+          )
+        ],
+      ),
+    ));
   }
 
   void _launchHelpUrl() async {
@@ -642,22 +669,25 @@ class _SignUpState extends State<SignUp> {
             borderRadius: BorderRadius.circular(14),
           ),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
           elevation: 6,
-          duration: Duration(seconds: 15),
+          duration: Duration(seconds: 5),
           content: Row(
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 14, right: 14),
                 child: Icon(
                   CupertinoIcons.exclamationmark_circle,
-                  color: Colors.red[400],
+                  color: Theme.of(context).colorScheme.error,
                   size: 28,
                 ),
               ),
               Text(
                 AppLocalizations.of(context)!.outOfReachTechnicalSupport,
-                style: TextStyle(color: Colors.black, fontSize: 16),
+                style: Theme.of(context).textTheme.headline1!.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
               ),
             ],
           ),

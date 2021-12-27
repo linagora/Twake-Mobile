@@ -36,7 +36,6 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f6),
       body: GestureDetector(
         onTap: () {
           // dismiss keyboard when tap outside
@@ -45,7 +44,6 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
         },
         child: SafeArea(
           child: Container(
-            color: Color(0xfff2f2f6),
             child: Column(
               children: [
                 BlocListener<AddChannelCubit, AddChannelState>(
@@ -65,7 +63,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   child: SizedBox.shrink(),
                 ),
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 56,
                   child: Stack(
                     children: [
@@ -73,15 +71,13 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         alignment: Alignment.centerLeft,
                         child: CupertinoButton(
                           onPressed: () => popBack(),
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w400,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ),
+                          child: Text('Cancel',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w400)),
                         ),
                       ),
                       Align(
@@ -90,39 +86,36 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           bloc: Get.find<AddChannelCubit>(),
                           builder: (context, addChannelState) {
                             return EnableButtonWidget(
-                                onEnableButtonWidgetClick: () =>
-                                    Get.find<AddChannelCubit>().create(
-                                        name: _nameEditingController.text,
-                                        description:
-                                            _descriptionEditingController.text,
-                                        isDefault: addAllUsers,
-                                    ),
-                                text: AppLocalizations.of(context)!.create,
-                                isEnable: (addChannelState
-                                            is AddChannelValidation &&
-                                        addChannelState.validToCreateChannel)
-                                    ? true
-                                    : false,
+                              onEnableButtonWidgetClick: () =>
+                                  Get.find<AddChannelCubit>().create(
+                                name: _nameEditingController.text,
+                                description: _descriptionEditingController.text,
+                                isDefault: addAllUsers,
+                              ),
+                              text: AppLocalizations.of(context)!.create,
+                              isEnable:
+                                  (addChannelState is AddChannelValidation &&
+                                          addChannelState.validToCreateChannel)
+                                      ? true
+                                      : false,
                             );
                           },
                         ),
                       ),
                       Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.newChannel,
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ))
+                        alignment: Alignment.center,
+                        child: Text(AppLocalizations.of(context)!.newChannel,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontSize: 17, fontWeight: FontWeight.w600)),
+                      )
                     ],
                   ),
                 ),
                 Divider(
-                  color: Color(0x1e000000),
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 1,
                 ),
                 Expanded(
@@ -134,14 +127,17 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                             left: 16, right: 16, top: 16, bottom: 8),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                               border: Border.all(
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
                           height: 80,
-                          // color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
@@ -185,11 +181,18 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                                 .validateAddChannelData(
                                                     name: text),
                                         controller: _nameEditingController,
-                                        cursorColor: Colors.black,
+                                        cursorColor: Theme.of(context)
+                                            .textSelectionTheme
+                                            .cursorColor,
                                         inputFormatters: [
                                           LengthLimitingTextInputFormatter(30)
                                         ],
-                                        style: _getTextFieldTextStyle(),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 15),
                                         decoration: _getTextFieldDecoration(
                                             AppLocalizations.of(context)!
                                                 .channelName),
@@ -210,12 +213,12 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           child: Text(
                               AppLocalizations.of(context)!
                                   .channelNameAndIconSuggestion,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12)),
                         ),
                       ),
                       Padding(
@@ -223,9 +226,13 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                             left: 16, right: 16, bottom: 8),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                               border: Border.all(
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
@@ -243,8 +250,15 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                   },
                                   child: TextFormField(
                                       controller: _descriptionEditingController,
-                                      cursorColor: Colors.black,
-                                      style: _getTextFieldTextStyle(),
+                                      cursorColor: Theme.of(context)
+                                          .textSelectionTheme
+                                          .cursorColor,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .copyWith(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15),
                                       decoration: _getTextFieldDecoration(
                                         AppLocalizations.of(context)!
                                             .channelDescription,
@@ -261,12 +275,12 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           child: Text(
                               AppLocalizations.of(context)!
                                   .channelDescriptionSuggestion,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12)),
                         ),
                       ),
                       Padding(
@@ -274,12 +288,12 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(AppLocalizations.of(context)!.channelType,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13)),
                         ),
                       ),
                       Padding(
@@ -306,12 +320,12 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                               AppLocalizations.of(context)!.channelTypeInfo,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12)),
                         ),
                       ),
                       Padding(
@@ -323,12 +337,12 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                 alignment: Alignment.centerLeft,
                                 child: Text(
                                   "${AppLocalizations.of(context)!.invitedMembers} (${addChannelState.selectedMembers.length})",
-                                  style: TextStyle(
-                                    color: Color(0xff969ca4),
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    fontStyle: FontStyle.normal,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline2!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 13),
                                 ),
                               );
                             }),
@@ -340,7 +354,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           borderRadius: BorderRadius.circular(10),
                           child: Container(
                             height: 44,
-                            color: Colors.white,
+                            color:
+                                Theme.of(context).colorScheme.secondaryVariant,
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
@@ -354,12 +369,15 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                   ),
                                   Spacer(),
                                   CupertinoSwitch(
-                                    activeColor: Color(0xFF004DFF),
+                                    activeColor: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .color,
                                     value: addAllUsers,
                                     onChanged: (bool value) {
                                       setState(() {
                                         addAllUsers = value;
-                                        print(addAllUsers);
+                                        //print(addAllUsers);
                                       });
                                     },
                                   )
@@ -376,12 +394,12 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                               'Automatically invite all workspace users to this channel',
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12)),
                         ),
                       ),
                       _buildAddMemberRow(),
@@ -437,11 +455,17 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               verticalSpacing: 0,
                               horizontalSpacing: 0,
                               initCategory: Category.RECENT,
-                              bgColor: Color(0xFFF2F2F2),
-                              indicatorColor: Colors.blue,
-                              iconColor: Colors.grey,
-                              iconColorSelected: Colors.blue,
-                              progressIndicatorColor: Colors.blue,
+                              bgColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
+                              indicatorColor:
+                                  Theme.of(context).colorScheme.surface,
+                              iconColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              iconColorSelected:
+                                  Theme.of(context).colorScheme.surface,
+                              progressIndicatorColor:
+                                  Theme.of(context).colorScheme.surface,
                               showRecentsTab: true,
                               recentsLimit: 28,
                               noRecentsText:
@@ -488,24 +512,23 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   height: 44,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   child: Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Icon(
                           Icons.add_circle,
-                          color: Color(0xff004dff),
+                          color: Theme.of(context).colorScheme.surface,
                           size: 24,
                         ),
                       ),
                       Text(AppLocalizations.of(context)!.addMember,
-                          style: TextStyle(
-                            color: Color(0xff004dff),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            fontStyle: FontStyle.normal,
-                          ))
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline4!
+                              .copyWith(
+                                  fontSize: 15, fontWeight: FontWeight.w400))
                     ],
                   ),
                 ),
@@ -542,17 +565,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
       disabledBorder: InputBorder.none,
       contentPadding: EdgeInsets.all(0),
       hintText: hintText,
-      hintStyle: TextStyle(
-        color: Color(0xffc8c8c8),
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      ));
-
-  TextStyle _getTextFieldTextStyle() => const TextStyle(
-        color: Colors.black,
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      );
+      hintStyle: Theme.of(context)
+          .textTheme
+          .headline2!
+          .copyWith(fontSize: 15, fontWeight: FontWeight.w400));
 }

@@ -16,7 +16,6 @@ class ChannelDetailWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Color(0xFFF2F2F6),
         child: SafeArea(
           child: Column(
             children: [
@@ -28,7 +27,7 @@ class ChannelDetailWidget extends StatelessWidget {
                         onPressed: () => popBack(),
                         icon: Icon(
                           Icons.arrow_back_ios,
-                          color: Color(0xff004dff),
+                          color: Theme.of(context).colorScheme.surface,
                         )),
                   ),
                   // Align(
@@ -52,18 +51,21 @@ class ChannelDetailWidget extends StatelessWidget {
                                   ? channelState.selected
                                   : null;
                           return ImageWidget(
-                              imageType: ImageType.channel,
-                              isPrivate: selectedChannel != null
-                                  ? selectedChannel.isPrivate
-                                  : false,
-                              imageUrl: (selectedChannel != null &&
-                                      selectedChannel.icon != null)
-                                  ? Emojis.getByName(selectedChannel.icon ?? '')
-                                  : '',
-                              name: selectedChannel != null
-                                  ? selectedChannel.name
-                                  : '',
-                              size: 100);
+                            imageType: ImageType.channel,
+                            isPrivate: selectedChannel != null
+                                ? selectedChannel.isPrivate
+                                : false,
+                            imageUrl: (selectedChannel != null &&
+                                    selectedChannel.icon != null)
+                                ? Emojis.getByName(selectedChannel.icon ?? '')
+                                : '',
+                            name: selectedChannel != null
+                                ? selectedChannel.name
+                                : '',
+                            size: 100,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.secondaryVariant,
+                          );
                         },
                       ),
                     ),
@@ -79,12 +81,8 @@ class ChannelDetailWidget extends StatelessWidget {
                         (channelState is ChannelsLoadedSuccess)
                             ? channelState.selected?.name ?? ''
                             : '',
-                        style: TextStyle(
-                          color: Color(0xff000000),
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          fontStyle: FontStyle.normal,
-                        ));
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontSize: 17, fontWeight: FontWeight.w700));
                   },
                 ),
               ),
@@ -92,17 +90,16 @@ class ChannelDetailWidget extends StatelessWidget {
                 bloc: Get.find<ChannelsCubit>(),
                 builder: (ctx, channelState) {
                   return Text(
-                      AppLocalizations.of(context)!.membersPlural(
-                        (channelState as ChannelsLoadedSuccess)
-                            .selected!
-                            .membersCount,
-                      ),
-                      style: TextStyle(
-                        color: Color(0x59000000),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        fontStyle: FontStyle.normal,
-                      ));
+                    AppLocalizations.of(context)!.membersPlural(
+                      (channelState as ChannelsLoadedSuccess)
+                          .selected!
+                          .membersCount,
+                    ),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(fontSize: 13, fontWeight: FontWeight.w500),
+                  );
                 },
               ),
               SizedBox(
@@ -198,9 +195,9 @@ class ChannelDetailWidget extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.secondaryVariant,
                       border: Border.all(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.secondaryVariant,
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(12))),
                   child: Column(
@@ -222,7 +219,7 @@ class ChannelDetailWidget extends StatelessWidget {
                                   top: 16.0, bottom: 16, left: 10, right: 20),
                               child: Icon(
                                 Icons.edit,
-                                color: Colors.black,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 16,
                               ),
                             ),
@@ -231,12 +228,12 @@ class ChannelDetailWidget extends StatelessWidget {
                                 AppLocalizations.of(context)!.edit +
                                     ' ' +
                                     AppLocalizations.of(context)!.channelInfo,
-                                style: TextStyle(
-                                  color: Color(0xff000000),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                  fontStyle: FontStyle.normal,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15),
                               ),
                             ),
                             Padding(
@@ -244,7 +241,7 @@ class ChannelDetailWidget extends StatelessWidget {
                                   const EdgeInsets.only(right: 10.0, left: 4),
                               child: Icon(
                                 Icons.keyboard_arrow_right,
-                                color: Color(0x4c3c3c43),
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             )
                           ],
@@ -252,7 +249,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                       Divider(
                         height: 1,
-                        color: Color(0x1e000000),
+                        color: Theme.of(context).colorScheme.secondaryVariant,
                       ),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -271,26 +268,27 @@ class ChannelDetailWidget extends StatelessWidget {
                                   top: 16.0, bottom: 16, left: 10, right: 20),
                               child: Icon(
                                 Icons.settings,
-                                color: Colors.black,
+                                color: Theme.of(context).colorScheme.secondary,
                                 size: 16,
                               ),
                             ),
                             Expanded(
                               child: Text(
-                                  AppLocalizations.of(context)!.channelSettings,
-                                  style: TextStyle(
-                                    color: Color(0xff000000),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                  )),
+                                AppLocalizations.of(context)!.channelSettings,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15),
+                              ),
                             ),
                             Padding(
                               padding:
                                   const EdgeInsets.only(right: 10.0, left: 4),
                               child: Icon(
                                 Icons.keyboard_arrow_right,
-                                color: Color(0x4c3c3c43),
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             )
                           ],
@@ -298,7 +296,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                       Divider(
                         height: 1,
-                        color: Color(0x1e000000),
+                        color: Theme.of(context).colorScheme.secondaryVariant,
                       ),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -318,41 +316,42 @@ class ChannelDetailWidget extends StatelessWidget {
                                   top: 16.0, bottom: 16, left: 10, right: 20),
                               child: Image.asset(
                                 imageGroupBlack,
+                                color: Theme.of(context).colorScheme.secondary,
                                 width: 16,
                                 height: 16,
                               ),
                             ),
                             Expanded(
                               child: Text(
-                                  AppLocalizations.of(context)!
-                                      .memberManagement,
-                                  style: TextStyle(
-                                    color: Color(0xff000000),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                  )),
+                                AppLocalizations.of(context)!.memberManagement,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 15),
+                              ),
                             ),
                             BlocBuilder<ChannelsCubit, ChannelsState>(
                               bloc: Get.find<ChannelsCubit>(),
                               builder: (ctx, channelState) {
                                 return Text(
-                                    '${(channelState as ChannelsLoadedSuccess).selected!.membersCount}',
-                                    style: TextStyle(
-                                      color: Color(0xff004dff),
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FontStyle.normal,
-                                    ));
+                                  '${(channelState as ChannelsLoadedSuccess).selected!.membersCount}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline4!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15),
+                                );
                               },
                             ),
                             Padding(
                               padding: const EdgeInsets.only(right: 10.0),
-                              child: Icon(
-                                Icons.keyboard_arrow_right,
-                                color: Color(0x4c3c3c43),
-                              ),
-                            )
+                              child: Icon(Icons.keyboard_arrow_right,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
                           ],
                         ),
                       )

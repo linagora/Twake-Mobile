@@ -18,7 +18,7 @@ class SelectedMemberTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           height: 44,
-          color: Color(0xfffcfcfc),
+          color: Theme.of(context).colorScheme.secondaryVariant,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -28,27 +28,24 @@ class SelectedMemberTile extends StatelessWidget {
                   onTap: onSelectedMemberTileClick,
                   child: Icon(
                     Icons.remove_circle,
-                    color: Color(0xffff3347),
+                    color: Theme.of(context).colorScheme.error,
                   ),
                 ),
               ),
               Flexible(
-                  child: Container(
-                constraints: BoxConstraints(
-                  maxWidth: Dim.widthPercent(72),
-                ),
-                child: Text(
-                  memberName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.normal,
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: Dim.widthPercent(72),
                   ),
+                  child: Text(memberName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 15, fontWeight: FontWeight.w400)),
                 ),
-              )),
+              ),
               SizedBox(
                 width: 12,
               )

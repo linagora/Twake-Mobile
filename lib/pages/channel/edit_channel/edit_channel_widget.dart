@@ -53,7 +53,6 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
         child: SafeArea(
           bottom: false,
           child: Container(
-            color: Color(0xfff2f2f6),
             child: Column(
               children: [
                 BlocListener<EditChannelCubit, EditChannelState>(
@@ -73,7 +72,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                   child: SizedBox.shrink(),
                 ),
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 56,
                   child: Stack(
                     children: [
@@ -83,7 +82,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                             onPressed: () => popBack(),
                             icon: Icon(
                               Icons.arrow_back_ios,
-                              color: Color(0xff004dff),
+                              color: Theme.of(context).colorScheme.surface,
                             )),
                       ),
                       Align(
@@ -113,20 +112,18 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                       ),
                       Align(
                           alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.channelInfo,
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ))
+                          child: Text(AppLocalizations.of(context)!.channelInfo,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 17)))
                     ],
                   ),
                 ),
                 Divider(
-                  color: Color(0x1e000000),
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 1,
                 ),
                 Expanded(
@@ -140,12 +137,11 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             AppLocalizations.of(context)!.channelName,
-                            style: TextStyle(
-                              color: Color(0xff969ca4),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              fontStyle: FontStyle.normal,
-                            ),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline2!
+                                .copyWith(
+                                    fontWeight: FontWeight.w500, fontSize: 14),
                           ),
                         ),
                       ),
@@ -154,14 +150,17 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                             left: 16, right: 16, top: 5, bottom: 8),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                               border: Border.all(
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
                           height: 80,
-                          // color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 10),
@@ -206,8 +205,15 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                                 .validateEditChannelData(
                                                     name: text),
                                         controller: _nameEditingController,
-                                        cursorColor: Colors.black,
-                                        style: _getTextFieldTextStyle(),
+                                        cursorColor: Theme.of(context)
+                                            .textSelectionTheme
+                                            .cursorColor,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .copyWith(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w400),
                                         decoration: _getTextFieldDecoration(
                                           AppLocalizations.of(context)!
                                               .channelName,
@@ -229,12 +235,12 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                           child: Text(
                               AppLocalizations.of(context)!
                                   .channelNameAndIconSuggestion,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500)),
                         ),
                       ),
                       Padding(
@@ -244,12 +250,12 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                               AppLocalizations.of(context)!.channelDescription,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600)),
                         ),
                       ),
                       Padding(
@@ -257,9 +263,13 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                             left: 16, right: 16, bottom: 8),
                         child: Container(
                           decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                               border: Border.all(
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
@@ -277,8 +287,15 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                                   },
                                   child: TextFormField(
                                     controller: _descriptionEditingController,
-                                    cursorColor: Colors.black,
-                                    style: _getTextFieldTextStyle(),
+                                    cursorColor: Theme.of(context)
+                                        .textSelectionTheme
+                                        .cursorColor,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .copyWith(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400),
                                     decoration: _getTextFieldDecoration(
                                       AppLocalizations.of(context)!
                                           .channelDescription,
@@ -296,12 +313,12 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                           child: Text(
                               AppLocalizations.of(context)!
                                   .channelDescriptionSuggestion,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500)),
                         ),
                       ),
                     ],
@@ -329,11 +346,17 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                               verticalSpacing: 0,
                               horizontalSpacing: 0,
                               initCategory: Category.RECENT,
-                              bgColor: Color(0xFFF2F2F2),
-                              indicatorColor: Colors.blue,
-                              iconColor: Colors.grey,
-                              iconColorSelected: Colors.blue,
-                              progressIndicatorColor: Colors.blue,
+                              bgColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
+                              indicatorColor:
+                                  Theme.of(context).colorScheme.surface,
+                              iconColor:
+                                  Theme.of(context).colorScheme.secondary,
+                              iconColorSelected:
+                                  Theme.of(context).colorScheme.surface,
+                              progressIndicatorColor:
+                                  Theme.of(context).colorScheme.surface,
                               showRecentsTab: true,
                               recentsLimit: 28,
                               noRecentsText:
@@ -374,17 +397,8 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
       disabledBorder: InputBorder.none,
       contentPadding: EdgeInsets.all(0),
       hintText: hintText,
-      hintStyle: TextStyle(
-        color: Color(0xffc8c8c8),
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      ));
-
-  TextStyle _getTextFieldTextStyle() => const TextStyle(
-        color: Colors.black,
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      );
+      hintStyle: Theme.of(context).textTheme.headline2!.copyWith(
+            fontWeight: FontWeight.w400,
+            fontStyle: FontStyle.normal,
+          ));
 }

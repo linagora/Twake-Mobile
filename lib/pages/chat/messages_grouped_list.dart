@@ -100,11 +100,10 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             alignment: Alignment.center,
             child: Text(
               DateFormatter.getVerboseDate(dt.millisecondsSinceEpoch),
-              style: TextStyle(
-                fontSize: 11.0,
-                fontWeight: FontWeight.w500,
-                color: Color(0xff8f9498),
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
           ),

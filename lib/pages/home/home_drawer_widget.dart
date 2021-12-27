@@ -33,7 +33,7 @@ class HomeDrawerWidget extends StatelessWidget {
     return Drawer(
       child: SafeArea(
         child: Container(
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: Column(
             children: [
               SizedBox(height: 20),
@@ -53,7 +53,7 @@ class HomeDrawerWidget extends StatelessWidget {
                               borderRadius: 16,
                               imageUrl: companyState.selected.logo ?? '',
                               name: companyState.selected.name,
-                              backgroundColor: Color(0xfff5f5f5),
+                              backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
                             ),
                           ),
                           Positioned.fill(
@@ -64,12 +64,9 @@ class HomeDrawerWidget extends StatelessWidget {
                                 Align(
                                   child: Text(companyState.selected.name,
                                       maxLines: 2,
-                                      style: TextStyle(
-                                        color: Color(0xff000000),
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        fontStyle: FontStyle.normal,
-                                      )),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline1),
                                   alignment: Alignment.topLeft,
                                 ),
                                 SizedBox(
@@ -82,22 +79,21 @@ class HomeDrawerWidget extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Text(
-                                        AppLocalizations.of(context)!
-                                            .organisationSwitch,
-                                        style: TextStyle(
-                                          color: Color(0xff004dff),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          fontStyle: FontStyle.normal,
-                                        ),
-                                      ),
+                                          AppLocalizations.of(context)!
+                                              .organisationSwitch,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline4),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 2),
                                         child: Icon(
                                           Icons.arrow_forward_ios_sharp,
                                           size: 8,
-                                          color: Color(0xff004dff),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .headline4!
+                                              .color,
                                         ),
                                       ),
                                       Expanded(child: SizedBox.shrink())
@@ -118,15 +114,11 @@ class HomeDrawerWidget extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 16, top: 20, bottom: 12),
-                  child: Text(
-                    AppLocalizations.of(context)!.workspaces,
-                    style: TextStyle(
-                      color: Color(0x59000000),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      fontStyle: FontStyle.normal,
-                    ),
-                  ),
+                  child: Text(AppLocalizations.of(context)!.workspaces,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline2!
+                          .copyWith(fontWeight: FontWeight.w600, fontSize: 13)),
                 ),
               ),
               Expanded(
@@ -179,8 +171,9 @@ class HomeDrawerWidget extends StatelessWidget {
                 ),
               ),
               Divider(
-                color: Colors.grey,
-                height: 1,
+                thickness: 1,
+                color: Theme.of(context).colorScheme.secondaryVariant,
+           
               ),
               BlocBuilder(
                 bloc: Get.find<CompaniesCubit>(),
@@ -188,9 +181,9 @@ class HomeDrawerWidget extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      if (cstate is CompaniesLoadSuccess
-                        && cstate.selected.canShareMagicLink)
-                          _buildInvitePeopleSection(context),
+                      if (cstate is CompaniesLoadSuccess &&
+                          cstate.selected.canShareMagicLink)
+                        _buildInvitePeopleSection(context),
                       if ((cstate as CompaniesLoadSuccess)
                           .selected
                           .canCreateWorkspace)
@@ -199,19 +192,20 @@ class HomeDrawerWidget extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.add_circle_sharp,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .color,
                                 ),
                                 SizedBox(
                                   width: 12,
                                 ),
                                 Text(
                                   AppLocalizations.of(ctx)!.workspaceCreate,
-                                  style: TextStyle(
-                                    color: Color(0xff000000),
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w400,
-                                    fontStyle: FontStyle.normal,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .copyWith(fontWeight: FontWeight.normal),
                                 ),
                               ],
                             ),
@@ -253,21 +247,25 @@ class HomeDrawerWidget extends StatelessWidget {
                                     constraints: BoxConstraints(
                                       maxWidth: Dim.widthPercent(55),
                                     ),
-                                    child:
-                                        Text('${accountState.account.fullName}',
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              color: Color(0xff000000),
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w400,
-                                              fontStyle: FontStyle.normal,
-                                            )),
+                                    child: Text(
+                                      '${accountState.account.fullName}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .copyWith(
+                                              fontWeight: FontWeight.normal),
+                                    ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 2),
                                     child: Icon(Icons.arrow_forward_ios_sharp,
-                                        size: 10, color: Colors.black),
+                                        size: 10,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .color),
                                   ),
                                   Expanded(child: SizedBox.shrink())
                                 ],
@@ -304,34 +302,40 @@ class HomeDrawerWidget extends StatelessWidget {
 
   _buildInvitePeopleSection(BuildContext context) {
     return BlocBuilder<WorkspacesCubit, WorkspacesState>(
-      bloc: _workspacesCubit,
-      builder: (context, workspaceState) {
-        return workspaceState is WorkspacesLoadSuccess
-          ? GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-                _handleClickOnInvitePeopleSection(workspaceState.selected?.name ?? '');
-              },
-              child: Container(
-                  margin: EdgeInsets.only(bottom: 20),
-                  child: Row(
-                    children: [
-                      Image.asset(imageInvitePeople, width: 24, height: 24),
-                      SizedBox(width: 12),
-                      Text(
-                        AppLocalizations.of(context)?.invitePeopleToWorkspace ?? '',
-                        style: StylesConfig.commonTextStyle.copyWith(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400,
+        bloc: _workspacesCubit,
+        builder: (context, workspaceState) {
+          return workspaceState is WorkspacesLoadSuccess
+              ? GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleClickOnInvitePeopleSection(
+                        workspaceState.selected?.name ?? '');
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 20),
+                    child: Row(
+                      children: [
+                        Image.asset(imageInvitePeople,
+                            width: 24,
+                            height: 24,
+                            color:
+                                Theme.of(context).textTheme.headline1!.color),
+                        SizedBox(width: 12),
+                        Text(
+                          AppLocalizations.of(context)
+                                  ?.invitePeopleToWorkspace ??
+                              '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(fontWeight: FontWeight.normal),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-              ),
-          )
-          : SizedBox.shrink();
-      }
-    );
+                )
+              : SizedBox.shrink();
+        });
   }
 
   _handleClickOnInvitePeopleSection(String workspaceName) {
