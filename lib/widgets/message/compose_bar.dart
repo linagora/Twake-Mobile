@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -16,6 +17,7 @@ import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/message/attachment_tile_builder.dart';
 
@@ -196,36 +198,6 @@ class _ComposeBar extends State<ComposeBar> {
     return false;
   }
 
-  void _openFileExplorer() async {
-    List<PlatformFile>? _paths;
-    try {
-      _paths = (await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        allowMultiple: true))?.files;
-    } on PlatformException catch (e) {
-      print("Unsupported operation" + e.toString());
-      return;
-    } catch (ex) {
-      print(ex);
-      return;
-    }
-    if (!mounted) return;
-    if (_paths == null) return;
-
-    final currentUploadingFilesLength =
-        Get.find<FileUploadCubit>().state.listFileUploading.length;
-    final remainingAllowFile = MAX_FILE_UPLOADING - currentUploadingFilesLength;
-    if(_paths.length > remainingAllowFile) {
-      _paths = _paths.getRange(0, remainingAllowFile).toList();
-    }
-    _paths.forEach((element) {
-      LocalFile localFile = element.toLocalFile().copyWith(
-          updatedAt: DateTime.now().millisecondsSinceEpoch);
-      Get.find<FileUploadCubit>().upload(sourceFile: localFile);
-    });
-
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<ThreadMessagesCubit, MessagesState>(
@@ -351,7 +323,6 @@ class _ComposeBar extends State<ComposeBar> {
               emojiVisible: _emojiVisible,
               onMessageSend: widget.onMessageSend,
               canSend: _canSend,
-              openFileExplorer: _openFileExplorer,
             ),
             Offstage(
               offstage: !_emojiVisible,
@@ -402,7 +373,6 @@ class TextInput extends StatefulWidget {
   final bool? emojiVisible;
   final bool canSend;
   final Function onMessageSend;
-  final Function? openFileExplorer;
 
   TextInput({
     required this.onMessageSend,
@@ -412,7 +382,6 @@ class TextInput extends StatefulWidget {
     this.emojiVisible,
     this.scrollController,
     this.toggleEmojiBoard,
-    this.openFileExplorer,
     this.canSend = false,
   });
 
@@ -587,7 +556,7 @@ class _TextInputState extends State<TextInput> {
                     Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
                     AttachmentTileBuilder(
                         onClick: () {
-                          _handlePickMedia();
+                          _handlePickFile(fileType: FileType.media);
                           Navigator.of(context).pop();
                         },
                         leadingIcon: imagePhoto,
@@ -597,7 +566,7 @@ class _TextInputState extends State<TextInput> {
                     Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
                     AttachmentTileBuilder(
                         onClick: () {
-                          _handlePickFile();
+                          _handlePickFile(fileType: FileType.any);
                           Navigator.of(context).pop();
                         },
                         leadingIcon: imageDocument,
@@ -631,36 +600,35 @@ class _TextInputState extends State<TextInput> {
   }
 
   void _handleTakePicture() async {
-    XFile? pickedFile =
-        await _imagePicker.pickImage(source: ImageSource.camera);
+    try {
+      XFile? pickedFile =
+              await _imagePicker.pickImage(source: ImageSource.camera);
+      if (!mounted) return;
+      if(pickedFile != null) {
+            LocalFile localFile = await pickedFile.toLocalFile();
+            localFile =
+                localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+            Get.find<FileUploadCubit>().upload(sourceFile: localFile);
+          }
+    } catch (e) {
+      Logger().e('Error occurred during taking picture:\n$e');
+    }
+  }
+
+  void _handlePickFile({required FileType fileType}) async {
+    List<PlatformFile>? _paths = await Utilities.pickFiles(fileType: fileType);
     if (!mounted) return;
-    if(pickedFile != null) {
-      LocalFile localFile = await pickedFile.toLocalFile();
-      localFile =
-          localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+    if (_paths == null) return;
+    final len = Get.find<FileUploadCubit>().state.listFileUploading.length;
+    final remainingAllowFile = MAX_FILE_UPLOADING - len;
+    if (_paths.length > remainingAllowFile) {
+      _paths = _paths.getRange(0, remainingAllowFile).toList();
+    }
+    for (var i = 0; i < _paths.length; i++) {
+      LocalFile localFile = _paths[i].toLocalFile();
+      localFile = localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
       Get.find<FileUploadCubit>().upload(sourceFile: localFile);
     }
   }
 
-  void _handlePickMedia() async {
-    List<XFile>? pickedFiles = await _imagePicker.pickMultiImage();
-    if (!mounted) return;
-    if(pickedFiles != null) {
-      final len = Get.find<FileUploadCubit>().state.listFileUploading.length;
-      final remainingAllowFile = MAX_FILE_UPLOADING - len;
-      if(pickedFiles.length > remainingAllowFile) {
-        pickedFiles = pickedFiles.getRange(0, remainingAllowFile).toList();
-      }
-      for (var i = 0; i < pickedFiles.length; i++) {
-        LocalFile localFile = await pickedFiles[i].toLocalFile();
-        localFile = localFile.copyWith(
-            updatedAt: DateTime.now().millisecondsSinceEpoch);
-        Get.find<FileUploadCubit>().upload(sourceFile: localFile);
-      }
-    }
-  }
-
-  void _handlePickFile() {
-    widget.openFileExplorer?.call();
-  }
 }
