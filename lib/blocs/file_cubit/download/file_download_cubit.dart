@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_state.dart';
@@ -18,10 +19,13 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
     _repository = repository;
   }
 
-  void download({required File file}) async {
+  void download({required BuildContext context, required File file}) async {
 
     // make sure storage permission is granted before downloading
-    final isGranted = await Utilities.checkAndRequestPermission();
+    final isGranted = await Utilities.checkAndRequestPermission(
+        permissionType: PermissionStorageType.WriteExternalStorage,
+        onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context)
+    );
     if(!isGranted)
       return;
 

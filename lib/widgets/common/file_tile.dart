@@ -268,7 +268,7 @@ class _FileTileState extends State<FileTile> {
   }
 
   _handleDownloadFile(File file) {
-    Get.find<FileDownloadCubit>().download(file: file);
+    Get.find<FileDownloadCubit>().download(context: context, file: file);
   }
 
   _handleCancelDownloadFile(FileDownloading fileDownloading) {

@@ -255,5 +255,8 @@
     "fileUploadFailed": "File upload failed",
     "cantOpenFile": "Can not open this file",
     "fileDownloadedInGallery": "File downloaded in Gallery",
-    "openIt": "Open it"
+    "openIt": "Open it",
+    "openSettings": "Open Settings",
+    "deny": "Deny",
+    "openSettingsMessage": "You need to open Settings to grant permission"
 }
