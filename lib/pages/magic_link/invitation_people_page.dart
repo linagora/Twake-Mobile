@@ -229,7 +229,8 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                   child: Image.asset(imageSendEmail, width: 20, height: 20),
                 )
               ],
-            )
+            ),
+            SizedBox(height: 16),
           ],
         ),
       );
