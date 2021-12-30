@@ -24,7 +24,4 @@ class FileCubit extends Cubit<FileState> {
     }
   }
 
-  void download({required File file}) async {
-    // TODO: implement download functionality
-  }
 }

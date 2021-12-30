@@ -1,7 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
@@ -26,6 +28,8 @@ void main() async {
   await dotenv.load(fileName: ".env");
 
   final language = await LanguageRepository().getLanguage();
+
+  await FlutterDownloader.initialize(debug: kDebugMode);
 
   runApp(
     RefreshConfiguration(
