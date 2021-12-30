@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/attachment/attachment_metadata.dart';
 
 part 'file_metadata.g.dart';
 
@@ -22,11 +23,4 @@ class FileMetadata extends Equatable {
 
   @override
   List<Object> get props => [name, mime, thumbnailsStatus];
-}
-
-enum ThumbnailStatus {
-  @JsonValue('done')
-  done,
-  @JsonValue('waiting')
-  waiting
 }

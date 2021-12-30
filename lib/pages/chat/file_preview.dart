@@ -13,6 +13,7 @@ import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/pages/chat/file_preview_header.dart';
+import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:collection/collection.dart';
@@ -50,7 +51,9 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
               isDirect: channel.isDirect,
               channelName: channel.name,
               avatars: channel.isDirect ? channel.avatars : const [],
-              fileName: file.metadata.name),
+              fileName: file.metadata.name,
+              channelIcon: Emojis.getByName(channel.icon ?? ''),
+          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -66,7 +69,7 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
                 child: CachedNetworkImage(
                   width: double.maxFinite,
                   height: double.maxFinite,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   imageUrl: file.thumbnailUrl,
                   progressIndicatorBuilder: (context, url, progress) {
                     return ShimmerLoading(

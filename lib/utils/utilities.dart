@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:device_info/device_info.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share/share.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/config/styles_config.dart';
 
@@ -83,6 +86,22 @@ class Utilities {
     } else {
       return true;
     }
+  }
+
+  static Future<List<PlatformFile>?> pickFiles({required FileType fileType}) async {
+    List<PlatformFile>? _paths;
+    try {
+      _paths = (await FilePicker.platform.pickFiles(
+          type: fileType,
+          allowMultiple: true))?.files;
+    } on PlatformException catch (e) {
+      print("Unsupported operation" + e.toString());
+      return null;
+    } catch (e) {
+      Logger().e('Error occurred during picking file:\n$e');
+      return null;
+    }
+    return _paths;
   }
 
 }

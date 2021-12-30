@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/attachment/attachment.dart';
+import 'package:twake/models/attachment/attachment_metadata.dart';
+import 'package:twake/models/attachment/external_id.dart';
 import 'package:twake/models/file/file_metadata.dart';
 import 'package:twake/models/file/file_thumbnails.dart';
 import 'package:twake/models/file/file_upload_data.dart';
@@ -58,4 +61,18 @@ extension FileExtenstion on File {
 
   String get downloadUrl => sprintf(Endpoint.downloadFile,
       [Globals.instance.host, Globals.instance.companyId, this.id]);
+
+  Attachment toAttachment() => Attachment(
+      id: id,
+      companyId: companyId,
+      metadata: AttachmentMetadata(
+        source: Source.internal,
+        externalId: ExternalId(id: id, companyId: companyId),
+        name: metadata.name,
+        mime: metadata.mime,
+        thumbnailsStatus: metadata.thumbnailsStatus,
+        size: uploadData.size,
+        thumbnails: thumbnails,
+      ),
+    );
 }
