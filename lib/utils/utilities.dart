@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/widgets/common/confirm_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Utilities {
 
@@ -55,40 +57,68 @@ class Utilities {
     );
   }
 
-  static Future<bool> _isNeedRequestStoragePermissionOnAndroid() async {
+  static Future<bool> _isNeedRequestStoragePermissionOnAndroid(
+      {required PermissionStorageType permissionType}) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     final androidInfo = await deviceInfo.androidInfo;
-    return androidInfo.version.sdkInt <= 28;
-  }
-
-  static Future<bool> checkAndRequestPermission() async {
-    if(Platform.isIOS) {
+    if(permissionType == PermissionStorageType.WriteExternalStorage) {
+      return androidInfo.version.sdkInt <= 28;
+    }
+    if(permissionType == PermissionStorageType.ReadExternalStorage) {
       return true;
     }
-    final needRequestPermission = await _isNeedRequestStoragePermissionOnAndroid();
+    return false;
+  }
+
+  static Future<bool> checkAndRequestPermission({
+    required PermissionStorageType permissionType,
+    Function? onGranted,
+    Function? onDenied,
+    Function? onPermanentlyDenied,
+  }) async {
+    if(Platform.isIOS) {
+      onGranted?.call();
+      return true;
+    }
+    final needRequestPermission =
+        await _isNeedRequestStoragePermissionOnAndroid(permissionType: permissionType);
     if(Platform.isAndroid && needRequestPermission) {
       final status = await Permission.storage.status;
       switch (status) {
         case PermissionStatus.granted:
+          onGranted?.call();
           return true;
         case PermissionStatus.permanentlyDenied:
+          onPermanentlyDenied?.call();
           return false;
         default: {
           final requested = await Permission.storage.request();
           switch (requested) {
             case PermissionStatus.granted:
+              onGranted?.call();
               return true;
+            case PermissionStatus.permanentlyDenied:
+              onPermanentlyDenied?.call();
+              return false;
             default:
+              onDenied?.call();
               return false;
           }
         }
       }
     } else {
+      onGranted?.call();
       return true;
     }
   }
 
-  static Future<List<PlatformFile>?> pickFiles({required FileType fileType}) async {
+  static Future<List<PlatformFile>?> pickFiles({required BuildContext context, required FileType fileType}) async {
+    final isGranted = await Utilities.checkAndRequestPermission(
+      permissionType: PermissionStorageType.ReadExternalStorage,
+      onPermanentlyDenied: () => showOpenSettingsDialog(context: context)
+    );
+    if(!isGranted)
+      return null;
     List<PlatformFile>? _paths;
     try {
       _paths = (await FilePicker.platform.pickFiles(
@@ -104,4 +134,31 @@ class Utilities {
     return _paths;
   }
 
+  static showOpenSettingsDialog({required BuildContext context}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ConfirmDialog(
+          body: Text(
+            AppLocalizations.of(context)?.openSettingsMessage ?? '',
+            style: StylesConfig.commonTextStyle.copyWith(
+              color: Colors.black,
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          cancelActionTitle: AppLocalizations.of(context)?.deny ?? '',
+          okActionTitle: AppLocalizations.of(context)?.openSettings ?? '',
+          okAction: () => openAppSettings(),
+        );
+      },
+    );
+  }
+
+}
+
+enum PermissionStorageType {
+  ReadExternalStorage,
+  WriteExternalStorage,
 }

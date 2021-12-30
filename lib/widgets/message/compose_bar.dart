@@ -616,7 +616,7 @@ class _TextInputState extends State<TextInput> {
   }
 
   void _handlePickFile({required FileType fileType}) async {
-    List<PlatformFile>? _paths = await Utilities.pickFiles(fileType: fileType);
+    List<PlatformFile>? _paths = await Utilities.pickFiles(context: context, fileType: fileType);
     if (!mounted) return;
     if (_paths == null) return;
     final len = Get.find<FileUploadCubit>().state.listFileUploading.length;
