@@ -9,20 +9,16 @@ extension StringExtension on String {
   bool get isReallyEmpty => this.trim().isEmpty;
 
   // https://github.com/flutter/flutter/issues/18761
-  String get overflow => this
-      .replaceAll('', '\u{200B}')
-      .toString();
+  String get overflow => this.replaceAll('', '\u{200B}').toString();
 
-  bool get isImageMimeType {
-    return this.startsWith('image/');
-  }
+  bool get isImageMimeType => this.startsWith('image/');
+
+  bool get isVideoMimeType => this.startsWith('video/');
 
   String get fileExtension {
-    if(this.isEmpty || !this.contains('.'))
-      return '';
+    if (this.isEmpty || !this.contains('.')) return '';
     final arrFragment = this.split('.');
-    if(arrFragment.length < 2)
-      return '';
+    if (arrFragment.length < 2) return '';
     return this.split('.').last;
   }
 
@@ -31,7 +27,7 @@ extension StringExtension on String {
   // - Office: https://docs.microsoft.com/en-us/deployoffice/compat/office-file-format-reference
   // - Image: https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Image_types
   String get imageAssetByFileExtension {
-    switch(this) {
+    switch (this) {
       case 'png':
       case 'jpg':
       case 'jpeg':

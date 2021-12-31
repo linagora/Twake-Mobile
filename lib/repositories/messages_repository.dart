@@ -184,7 +184,7 @@ class MessagesRepository {
     required String id,
     required String channelId,
     required List<dynamic> prepared,
-    List<File> files: const [],
+    List<dynamic> files: const [],
     String? originalStr,
     required String threadId,
     bool isDirect: false,

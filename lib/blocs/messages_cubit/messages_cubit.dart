@@ -159,7 +159,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
   Future<void> send({
     String? originalStr,
-    List<File> attachments: const [],
+    List<dynamic> attachments: const [],
     String? threadId,
     bool isDirect: false,
   }) async {
@@ -217,7 +217,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final s = (state as MessagesLoadSuccess);
 
     // reinstate files from message for editing
-    await Get.find<FileUploadCubit>().startEditingFile(message.files);
+    await Get.find<FileUploadCubit>().startEditingFile(message);
 
     emit(MessageEditInProgress(
       messages: s.messages,
@@ -229,7 +229,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   Future<void> edit({
     required Message message,
     required String editedText,
-    List<File> newAttachments: const [],
+    List<dynamic> newAttachments: const [],
     String? threadId,
   }) async {
     final prepared = TwacodeParser(editedText).message;

@@ -1,5 +1,9 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -7,6 +11,7 @@ import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
@@ -33,6 +38,8 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   final _searchController = TextEditingController();
   String _searchText = "";
+  ReceivePort _fileDownloaderPort = ReceivePort();
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +54,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
         _searchText = _searchController.text.toLowerCase();
       });
     });
+
+    _initFileDownloader();
   }
 
   @override
@@ -94,6 +103,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
     super.dispose();
   }
 
@@ -318,4 +328,39 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
             .headline3!
             .copyWith(fontSize: 16, fontWeight: FontWeight.w500),
       );
+
+  void _initFileDownloader() {
+    _bindFileDownloadBackgroundIsolate();
+    FlutterDownloader.registerCallback(downloadCallback);
+  }
+
+  void _bindFileDownloadBackgroundIsolate() {
+    bool isSuccess = IsolateNameServer.registerPortWithName(
+        _fileDownloaderPort.sendPort, 'downloader_send_port');
+    if (!isSuccess) {
+      _unbindFileDownloadBackgroundIsolate();
+      _bindFileDownloadBackgroundIsolate();
+      return;
+    }
+    _fileDownloaderPort.listen((dynamic data) {
+      String id = data[0];
+      DownloadTaskStatus status = data[1];
+      if (status == DownloadTaskStatus.complete) {
+        Get.find<FileDownloadCubit>().handleAfterDownloaded(taskId: id);
+      } else if (status == DownloadTaskStatus.failed) {
+        Get.find<FileDownloadCubit>().handleDownloadFailed(taskId: id);
+      }
+    });
+  }
+
+  void _unbindFileDownloadBackgroundIsolate() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+  }
+
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
+  }
 }

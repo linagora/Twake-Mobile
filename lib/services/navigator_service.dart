@@ -5,6 +5,7 @@ import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/companies/company_selection_widget.dart';
 import 'package:twake/pages/home/home_widget.dart';
@@ -235,6 +236,15 @@ class NavigatorService {
 
   Future<void> navigateToInvitationPeopleEmail(String invitationUrl) async {
     Get.toNamed(RoutePaths.invitationPeopleEmail.path, arguments: invitationUrl);
+  }
+
+  Future<void> navigateToFilePreview({required String channelId, required File file}) async {
+    final channel = await directsCubit.getChannel(channelId: channelId);
+    if (channel.isDirect) {
+      Get.toNamed(RoutePaths.directFilePreview.path, arguments: file);
+    } else {
+      Get.toNamed(RoutePaths.channelFilePreview.path, arguments: file);
+    }
   }
 
   Future<void> navigateToHome() async {

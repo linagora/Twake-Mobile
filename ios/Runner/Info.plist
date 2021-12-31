@@ -49,5 +49,23 @@
     <array>
       <string>https</string>
     </array>
+
+    <!--image_picker-->
+    <key>NSCameraUsageDescription</key>
+    <string>Allow application to access to your phone’s camera</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Allow application to access to your phone’s Microphone</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Allow application to access to your phone’s Photo Library</string>
+
+    <!--file downloader-->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <key>FDMaximumConcurrentTasks</key>
+	<integer>5</integer>
+
 </dict>
 </plist>

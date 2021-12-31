@@ -42,6 +42,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      backgroundColor: Color(0xfff2f2f6),
       body: SafeArea(
         child: ClipRRect(
             borderRadius: BorderRadius.only(

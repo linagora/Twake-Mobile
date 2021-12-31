@@ -8,6 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
@@ -243,12 +246,38 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     );
   }
 
-  void _selectWorkspaceAfterJoin(WorkspaceJoinResponse? workspaceJoinResponse) {
-    if (workspaceJoinResponse?.company.id != null) {
-      Globals.instance.companyId = workspaceJoinResponse!.company.id;
-    }
-    if (workspaceJoinResponse?.workspace.id != null) {
-      Globals.instance.workspaceId = workspaceJoinResponse?.workspace.id;
+  void _selectWorkspaceAfterJoin(
+      WorkspaceJoinResponse? workspaceJoinResponse) async {
+    try {
+      if (workspaceJoinResponse?.company.id != null) {
+        // fetch and select company
+        await Get.find<CompaniesCubit>().fetch();
+        Get.find<CompaniesCubit>()
+            .selectCompany(companyId: workspaceJoinResponse!.company.id!);
+
+        // fetch and select workspace
+        if (workspaceJoinResponse.workspace.id != null) {
+          await Get.find<WorkspacesCubit>()
+              .fetch(companyId: workspaceJoinResponse.company.id);
+          Get.find<WorkspacesCubit>().selectWorkspace(
+              workspaceId: workspaceJoinResponse.workspace.id!);
+          Get.find<CompaniesCubit>().selectWorkspace(
+              workspaceId: workspaceJoinResponse.workspace.id!);
+        }
+
+        // fetch channel and direct
+        await Get.find<ChannelsCubit>().fetch(
+          workspaceId: workspaceJoinResponse.workspace.id!,
+          companyId: workspaceJoinResponse.company.id!,
+        );
+        await Get.find<DirectsCubit>().fetch(
+          workspaceId: 'direct',
+          companyId: workspaceJoinResponse.company.id!,
+        );
+      }
+    } catch (e) {
+      Logger().e(
+          'Error occurred during select workspace after joining from Magic Link:\n$e');
     }
   }
 }

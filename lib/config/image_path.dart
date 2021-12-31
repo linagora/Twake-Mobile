@@ -42,3 +42,5 @@ const imageSendTo = '$_assetPath/ic_sendto.png';
 const imageError = '$_assetPath/ic_error.png';
 const imageClose = '$_assetPath/ic_close.png';
 const twake = '$_assetPath/3.0x//twake.png';
+const imageCancelDownload = '$_assetPath/ic_cancel_download.png';
+const imageDownload = '$_assetPath/ic_download.png';

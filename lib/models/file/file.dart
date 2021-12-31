@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/models/attachment/attachment.dart';
+import 'package:twake/models/attachment/attachment_metadata.dart';
+import 'package:twake/models/attachment/external_id.dart';
 import 'package:twake/models/file/file_metadata.dart';
 import 'package:twake/models/file/file_thumbnails.dart';
 import 'package:twake/models/file/file_upload_data.dart';
@@ -48,20 +51,28 @@ class File extends Equatable {
 }
 
 extension FileExtenstion on File {
-  String get thumbnailUrl => sprintf(Endpoint.downloadFileThumbnail,
-      [Globals.instance.host, Globals.instance.companyId, this.id, this.thumbnails.first.id]);
+  String get thumbnailUrl {
+    if(thumbnails.isEmpty) {
+      return '';
+    }
+    return sprintf(Endpoint.downloadFileThumbnail,
+      [Globals.instance.host, Globals.instance.companyId, this.id, this.thumbnails.last.id]);
+  }
 
   String get downloadUrl => sprintf(Endpoint.downloadFile,
       [Globals.instance.host, Globals.instance.companyId, this.id]);
 
-  String get sizeStr {
-    const MB = 1024 * 1024;
-    const KB = 1024;
-    return uploadData.size > MB
-        ? '${(uploadData.size / MB).toStringAsFixed(2)} MB'
-        : uploadData.size > KB
-        ? '${(uploadData.size / KB).toStringAsFixed(2)} KB'
-        : '$uploadData.size B';
-  }
-
+  Attachment toAttachment() => Attachment(
+      id: id,
+      companyId: companyId,
+      metadata: AttachmentMetadata(
+        source: Source.internal,
+        externalId: ExternalId(id: id, companyId: companyId),
+        name: metadata.name,
+        mime: metadata.mime,
+        thumbnailsStatus: metadata.thumbnailsStatus,
+        size: uploadData.size,
+        thumbnails: thumbnails,
+      ),
+    );
 }

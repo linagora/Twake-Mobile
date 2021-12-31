@@ -11,6 +11,7 @@ class FileThumbnails extends Equatable {
   final String type;
   final int width;
   final int height;
+  final String url;
 
   FileThumbnails({
     required this.id,
@@ -18,7 +19,8 @@ class FileThumbnails extends Equatable {
     required this.size,
     required this.type,
     required this.width,
-    required this.height
+    required this.height,
+    required this.url,
   });
 
   factory FileThumbnails.fromJson(Map<String, dynamic> json) =>
@@ -28,5 +30,5 @@ class FileThumbnails extends Equatable {
   Map<String, dynamic> toJson() => _$FileThumbnailsToJson(this);
 
   @override
-  List<Object> get props => [id, index, size, type, width, height];
+  List<Object> get props => [id, index, size, type, width, height, url];
 }
