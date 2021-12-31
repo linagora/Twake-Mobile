@@ -111,6 +111,9 @@ class Globals extends BaseModel {
   final _connection = StreamController<Connection>.broadcast();
   Stream<Connection> get connection => _connection.stream;
 
+  @JsonKey(ignore: true)
+  bool magicLinkInitialUriIsHandled = false;
+
   // Make sure to call the factory constructor before accessing instance
   static Globals get instance {
     return _globals;
