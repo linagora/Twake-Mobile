@@ -239,13 +239,13 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
               Stack(
                 alignment: Alignment.centerRight,
                 children: [
-                  ButtonTextBuilder(
-                    Key('button_invite_by_email'),
-<<<<<<< HEAD
-                    onButtonClick: () => _handleClickOnButtonInviteByEmail(),
-                    backgroundColor:
-                        Theme.of(context).colorScheme.surface.withOpacity(0.25),
-                  )
+                  ButtonTextBuilder(Key('button_invite_by_email'),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withOpacity(0.25),
+                          onButtonClick: () =>
+                              _handleClickOnButtonInviteByEmail())
                       .setWidth(double.infinity)
                       .setHeight(50)
                       .setText(
@@ -257,40 +257,15 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                       .build(),
                   Container(
                     margin: const EdgeInsets.only(right: 15),
-                    child: Image.asset(
-                      imageSendEmail,
-                      width: 20,
-                      height: 20,
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
+                    child: Image.asset(imageSendEmail, width: 20, height: 20),
                   )
                 ],
-              )
+              ),
+              SizedBox(height: 16),
             ],
           ),
         );
       });
-=======
-                    onButtonClick: () => _handleClickOnButtonInviteByEmail())
-                    .setWidth(double.infinity)
-                    .setHeight(50)
-                    .setBackgroundColor(Color.fromRGBO(0, 77, 255, 0.08))
-                    .setText(AppLocalizations.of(context)?.inviteByEmail ?? '')
-                    .setTextStyle(StylesConfig.commonTextStyle.copyWith(fontSize: 17, color: Color(0xff004dff), fontWeight: FontWeight.w600))
-                    .build(),
-                Container(
-                  margin: const EdgeInsets.only(right: 15),
-                  child: Image.asset(imageSendEmail, width: 20, height: 20),
-                )
-              ],
-            ),
-            SizedBox(height: 16),
-          ],
-        ),
-      );
-    }
-  );
->>>>>>> 8b49c8150f16b372a3a1ee28339aa1ca7d35ae52
 
   Widget _buildLinkField() => GestureDetector(
         onTap: () => _handleClickOnLink(),
