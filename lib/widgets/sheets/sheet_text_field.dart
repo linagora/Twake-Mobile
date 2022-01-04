@@ -35,7 +35,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.secondaryVariant,
         borderRadius: widget.borderRadius != 0
             ? BorderRadius.circular(widget.borderRadius)
             : BorderRadius.zero,
@@ -49,18 +49,16 @@ class _SheetTextFieldState extends State<SheetTextField> {
         controller: widget.controller,
         focusNode: widget.focusNode,
         keyboardType: widget.textInputType,
-        style: TextStyle(
-          fontSize: 17.0,
-          fontWeight: FontWeight.w400,
-          color: Colors.black,
-        ),
+        style: Theme.of(context)
+            .textTheme
+            .headline1!
+            .copyWith(fontWeight: FontWeight.w400, fontSize: 17),
         decoration: InputDecoration(
           hintText: widget.hint,
-          hintStyle: TextStyle(
-            fontSize: 17.0,
-            fontWeight: FontWeight.w400,
-            color: Color(0xffc8c8c8),
-          ),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .headline1!
+              .copyWith(fontWeight: FontWeight.w400, fontSize: 17),
           alignLabelWithHint: true,
           // contentPadding: widget.leadingAction != null
           //     ? EdgeInsets.only(left: 14, bottom: 5)

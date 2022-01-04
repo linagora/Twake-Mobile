@@ -46,6 +46,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
           margin: EdgeInsets.fromLTRB(
             15.0,
             5.0,
@@ -61,7 +62,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
           content: Text(
             AppLocalizations.of(context)!.invalidHost,
             style: TextStyle(
-              color: Colors.red,
+              color: Theme.of(context).colorScheme.error,
             ),
           ),
         ),
@@ -72,12 +73,6 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: CloseButton(onPressed: () {
-          widget.onCancel!();
-          _controller.text = Globals.instance.host;
-        }),
-      ),
       body: SafeArea(
         child: GestureDetector(
             onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -91,32 +86,45 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          height: 50,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CloseButton(
+                                color: Theme.of(context).colorScheme.secondary,
+                                onPressed: () {
+                                  widget.onCancel!();
+                                  _controller.text = Globals.instance.host;
+                                }),
+                          ),
+                        ),
                         Column(
                           children: [
-                            Image.asset('assets/images/server.png'),
-                            SizedBox(height: 15.0),
-                            Text(
-                              AppLocalizations.of(context)!.serverConnectionPreference,
-                              textAlign: TextAlign.center,
-                              softWrap: true,
-                              maxLines: 2,
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black,
-                              ),
+                            Image.asset(
+                              'assets/images/server.png',
+                              color: Theme.of(context).colorScheme.secondary,
                             ),
+                            SizedBox(height: 25.0),
+                            Text(
+                                AppLocalizations.of(context)!
+                                    .serverConnectionPreference,
+                                textAlign: TextAlign.center,
+                                softWrap: true,
+                                maxLines: 2,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline2!
+                                    .copyWith(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold)),
                             SizedBox(height: 36.0),
                             Padding(
                               padding: EdgeInsets.only(left: 16, right: 36.0),
                               child: Text(
                                 AppLocalizations.of(context)!
                                     .serverConnectionPreferenceInfo,
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black.withOpacity(0.6),
-                                ),
+                                style: Theme.of(context).textTheme.headline2,
                               ),
                             ),
                             Padding(
@@ -132,36 +140,30 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                               child: Text(
                                 AppLocalizations.of(context)!.changeServerHint,
                                 textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black,
-                                ),
+                                style: Theme.of(context).textTheme.headline2,
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
+                              padding:
+                                  EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 22.0),
                               child: TextButton(
-                                onPressed: () => _connect(),
-                                child: Container(
-                                  width: Size.infinite.width,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff3840f7),
-                                    borderRadius: BorderRadius.circular(14.0),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    AppLocalizations.of(context)!.connect,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 17.0,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                  onPressed: () => _connect(),
+                                  child: Container(
+                                    width: Size.infinite.width,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          Theme.of(context).colorScheme.surface,
+                                      borderRadius: BorderRadius.circular(14.0),
                                     ),
-                                  ),
-                                ),
-                              ),
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      AppLocalizations.of(context)!.connect,
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
+                                    ),
+                                  )),
                             ),
                           ],
                         )
@@ -176,50 +178,44 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
   }
 
   Widget _buildServerUrlTextField() => ValueListenableBuilder(
-    valueListenable: _hintServerUrl,
-    builder: (BuildContext context, String hintServerUrl, Widget? child) {
-      return TextFormField(
-        key: _formKey,
-        validator: (value) => value!.isEmpty
-            ? AppLocalizations.of(context)!.blankAddressError
-            : null,
-        controller: _controller,
-        onFieldSubmitted: (_) => _connect(),
-        style: TextStyle(
-          fontSize: 17.0,
-          fontWeight: FontWeight.w400,
-          color: Colors.black,
-        ),
-        decoration: InputDecoration(
-          hintText: hintServerUrl,
-          hintStyle: TextStyle(
-            fontSize: 17.0,
-            fontWeight: FontWeight.w400,
-            color: Color(0xffc8c8c8),
-          ),
-          alignLabelWithHint: true,
-          fillColor: Color(0xfff4f4f4),
-          filled: true,
-          suffix: Container(
-            width: 30,
-            height: 25,
-            padding: EdgeInsets.only(left: 10),
-            child: IconButton(
-              padding: EdgeInsets.all(0),
-              onPressed: () => _controller.clear(),
-              iconSize: 15,
-              icon: Icon(CupertinoIcons.clear),
+      valueListenable: _hintServerUrl,
+      builder: (BuildContext context, String hintServerUrl, Widget? child) {
+        return TextFormField(
+          key: _formKey,
+          validator: (value) => value!.isEmpty
+              ? AppLocalizations.of(context)!.blankAddressError
+              : null,
+          controller: _controller,
+          onFieldSubmitted: (_) => _connect(),
+          style: Theme.of(context)
+              .textTheme
+              .headline1!
+              .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
+          decoration: InputDecoration(
+            hintText: hintServerUrl,
+            hintStyle: Theme.of(context).textTheme.headline2,
+            alignLabelWithHint: true,
+            fillColor: Theme.of(context).colorScheme.secondaryVariant,
+            filled: true,
+            suffix: Container(
+              width: 30,
+              height: 25,
+              padding: EdgeInsets.only(left: 10),
+              child: IconButton(
+                padding: EdgeInsets.all(0),
+                onPressed: () => _controller.clear(),
+                iconSize: 15,
+                icon: Icon(CupertinoIcons.clear),
+              ),
+            ),
+            border: UnderlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                width: 0.0,
+                style: BorderStyle.none,
+              ),
             ),
           ),
-          border: UnderlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide(
-              width: 0.0,
-              style: BorderStyle.none,
-            ),
-          ),
-        ),
-      );
-    }
-  );
+        );
+      });
 }

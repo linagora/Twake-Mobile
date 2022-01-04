@@ -7,14 +7,15 @@ class ButtonTextBuilder {
   final Key key;
   double widthButton = Dim.widthPercent(90);
   double heightButton = 60.0;
-  Color backgroundColor = Color(0xff004dff);
+  Color backgroundColor;
   String text = '';
-  TextStyle textStyle = StylesConfig.commonTextStyle.copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 17);
+  TextStyle textStyle = StylesConfig.commonTextStyle
+      .copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 17);
   BorderRadius borderRadius = BorderRadius.all(Radius.circular(16));
   Function? onButtonClick;
 
-  ButtonTextBuilder(this.key, {required this.onButtonClick});
-
+  ButtonTextBuilder(this.key,
+      {required this.onButtonClick, required this.backgroundColor});
 
   ButtonTextBuilder setWidth(double widthSize) {
     widthButton = widthSize;
@@ -48,15 +49,13 @@ class ButtonTextBuilder {
 
   Widget build() {
     return Container(
-      width: widthButton,
-      height: heightButton,
-      child: TextButton(
-        onPressed: () => onButtonClick?.call(),
-        child: Text(text, style: textStyle), style: TextButton.styleFrom(
-          backgroundColor: backgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: borderRadius))
-        )
-      );
+        width: widthButton,
+        height: heightButton,
+        child: TextButton(
+            onPressed: () => onButtonClick?.call(),
+            child: Text(text, style: textStyle),
+            style: TextButton.styleFrom(
+                backgroundColor: backgroundColor,
+                shape: RoundedRectangleBorder(borderRadius: borderRadius))));
   }
-
 }

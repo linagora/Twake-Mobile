@@ -19,11 +19,7 @@ class HintLine extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.start,
-        style: TextStyle(
-          fontSize: isLarge ? 13.0 : 12.0,
-          fontWeight: fontWeight,
-          color: Colors.black.withOpacity(0.4),
-        ),
+       style: Theme.of(context).textTheme.headline1!.copyWith(fontWeight: FontWeight.w500,fontSize: 14),
       ),
     );
   }

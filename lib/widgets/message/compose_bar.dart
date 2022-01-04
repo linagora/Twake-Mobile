@@ -1,4 +1,5 @@
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -105,10 +106,9 @@ class _ComposeBar extends State<ComposeBar> {
     Get.find<FileUploadCubit>().stream.listen((state) {
       if (state.listFileUploading.isNotEmpty) {
         final hasUploadedFileInStack = state.listFileUploading.any(
-          (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
-        if(hasUploadedFileInStack) {
-          if(!mounted)
-            return;
+            (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+        if (hasUploadedFileInStack) {
+          if (!mounted) return;
           setState(() {
             _canSend = true;
           });
@@ -238,9 +238,13 @@ class _ComposeBar extends State<ComposeBar> {
                                         child: state.accounts[i].picture! == ""
                                             ? CircleAvatar(
                                                 child: Icon(Icons.person,
-                                                    color: Colors.grey),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary),
                                                 backgroundColor:
-                                                    Colors.blue[50],
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .secondaryVariant,
                                               )
                                             : Image.network(
                                                 state.accounts[i].picture!,
@@ -253,9 +257,13 @@ class _ComposeBar extends State<ComposeBar> {
 
                                                   return CircleAvatar(
                                                     child: Icon(Icons.person,
-                                                        color: Colors.grey),
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .secondary),
                                                     backgroundColor:
-                                                        Colors.blue[50],
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .secondaryVariant,
                                                   );
                                                 },
                                               ),
@@ -266,9 +274,12 @@ class _ComposeBar extends State<ComposeBar> {
                                     ),
                                     Text(
                                       '${state.accounts[i].fullName} ',
-                                      style: TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w300),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .copyWith(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w300),
                                     ),
                                     Expanded(child: SizedBox()),
                                     // Icon(
@@ -341,11 +352,12 @@ class _ComposeBar extends State<ComposeBar> {
                     verticalSpacing: 0,
                     horizontalSpacing: 0,
                     initCategory: Category.RECENT,
-                    bgColor: Color(0xFFF2F2F2),
-                    indicatorColor: Colors.blue,
-                    iconColor: Colors.grey,
-                    iconColorSelected: Colors.blue,
-                    progressIndicatorColor: Colors.blue,
+                    bgColor: Theme.of(context).colorScheme.secondaryVariant,
+                    indicatorColor: Theme.of(context).colorScheme.surface,
+                    iconColor: Theme.of(context).colorScheme.secondary,
+                    iconColorSelected: Theme.of(context).colorScheme.surface,
+                    progressIndicatorColor:
+                        Theme.of(context).colorScheme.surface,
                     showRecentsTab: true,
                     recentsLimit: 28,
                     noRecentsText: AppLocalizations.of(context)!.noRecents,
@@ -390,7 +402,6 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
-
   final _imagePicker = ImagePicker();
 
   @override
@@ -398,8 +409,14 @@ class _TextInputState extends State<TextInput> {
     return Container(
       padding: EdgeInsets.only(top: 11.0, bottom: 11.0),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.grey[300]!, width: 1.5)),
-        color: Color(0xfff6f6f6),
+        border: Border(
+            top: BorderSide(
+                color:
+                    MediaQuery.of(context).platformBrightness == Brightness.dark
+                        ? Theme.of(context).scaffoldBackgroundColor
+                        : Theme.of(context).colorScheme.secondaryVariant,
+                width: 1.5)),
+        color: Theme.of(context).scaffoldBackgroundColor,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -417,23 +434,23 @@ class _TextInputState extends State<TextInput> {
   }
 
   _buildAttachment() => IconButton(
-      constraints: BoxConstraints(
-        minHeight: 24.0,
-        minWidth: 24.0,
-      ),
-      padding: EdgeInsets.zero,
-      icon: Image.asset(imageAttachment),
-      onPressed: () => _handleOpenFilePicker(),
-      color: Color(0xff8a898e),
-    );
+        constraints: BoxConstraints(
+          minHeight: 24.0,
+          minWidth: 24.0,
+        ),
+        padding: EdgeInsets.zero,
+        icon: Image.asset(imageAttachment),
+        onPressed: () => _handleOpenFilePicker(),
+        color: Theme.of(context).colorScheme.surface,
+      );
 
   _buildMessageContent() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.secondaryVariant,
         borderRadius: BorderRadius.circular(16.0),
         border: Border.all(
-          color: Color(0xff979797).withOpacity(0.4),
+          color: Theme.of(context).colorScheme.secondaryVariant,
         ),
       ),
       child: Stack(
@@ -453,27 +470,37 @@ class _TextInputState extends State<TextInput> {
   }
 
   _buildMessageTextField() {
+    return //MediaQuery.of(context).platformBrightness == Brightness.dark
+        ClipRRect(
+      borderRadius: BorderRadius.circular(17),
+      child: _buildTextField(),
+    );
+    // :
+    // _buildTextField();
+  }
+
+  _buildTextField() {
     return TextField(
-      style: TextStyle(
-        fontSize: 17.0,
-        fontWeight: FontWeight.w400,
-        color: Colors.black,
-      ),
+      style: Theme.of(context)
+          .textTheme
+          .headline1!
+          .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
       maxLines: 4,
       minLines: 1,
       autofocus: widget.autofocus!,
       focusNode: widget.focusNode,
       scrollController: widget.scrollController,
       controller: widget.controller,
+      keyboardAppearance: Theme.of(context).colorScheme.brightness,
       decoration: InputDecoration(
-        contentPadding:
-        const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.secondaryVariant,
+        contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
         hintText: AppLocalizations.of(context)!.newReply,
-        hintStyle: TextStyle(
-          fontSize: 13.0,
-          fontWeight: FontWeight.w500,
-          color: Colors.black.withOpacity(0.2),
-        ),
+        hintStyle: Theme.of(context)
+            .textTheme
+            .headline2!
+            .copyWith(fontSize: 13, fontWeight: FontWeight.w500),
         border: OutlineInputBorder(
           borderSide: BorderSide(
             style: BorderStyle.none,
@@ -500,7 +527,8 @@ class _TextInputState extends State<TextInput> {
       onTap: widget.canSend
           ? () async {
               widget.onMessageSend(
-                await Get.find<MentionsCubit>().completeMentions(widget.controller!.text),
+                await Get.find<MentionsCubit>()
+                    .completeMentions(widget.controller!.text),
                 context,
               );
               widget.controller!.clear();
@@ -512,12 +540,17 @@ class _TextInputState extends State<TextInput> {
               padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
               child: Image.asset(
                 'assets/images/send_blue.png',
+                color: Theme.of(context).colorScheme.surface,
               ),
             )
           : Container(
               padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
               child: Image.asset(
                 'assets/images/send.png',
+                color:
+                    MediaQuery.of(context).platformBrightness == Brightness.dark
+                        ? Colors.grey
+                        : Colors.black,
               ),
             ),
     );
@@ -525,8 +558,7 @@ class _TextInputState extends State<TextInput> {
 
   _handleOpenFilePicker() {
     final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
-    if(fileLen == MAX_FILE_UPLOADING)
-      return;
+    if (fileLen == MAX_FILE_UPLOADING) return;
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
@@ -540,57 +572,67 @@ class _TextInputState extends State<TextInput> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.secondaryVariant,
                     borderRadius: BorderRadius.all(Radius.circular(14.0))),
                 child: Column(
                   children: [
                     AttachmentTileBuilder(
-                        onClick: () {
-                          _handleTakePicture();
-                          Navigator.of(context).pop();
-                        },
-                        leadingIcon: imageCamera,
-                        title: AppLocalizations.of(context)?.takePicture ?? '',
-                        subtitle: AppLocalizations.of(context)?.takePictureSubtitle ?? '')
+                            onClick: () {
+                              _handleTakePicture();
+                              Navigator.of(context).pop();
+                            },
+                            leadingIcon: imageCamera,
+                            title:
+                                AppLocalizations.of(context)?.takePicture ?? '',
+                            subtitle: AppLocalizations.of(context)
+                                    ?.takePictureSubtitle ??
+                                '')
                         .build(),
                     Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
                     AttachmentTileBuilder(
-                        onClick: () {
-                          _handlePickFile(fileType: FileType.media);
-                          Navigator.of(context).pop();
-                        },
-                        leadingIcon: imagePhoto,
-                        title: AppLocalizations.of(context)?.photoOrVideo ?? '',
-                        subtitle: AppLocalizations.of(context)?.photoOrVideoSubtitle ?? '')
+                            onClick: () {
+                              _handlePickFile(fileType: FileType.media);
+                              Navigator.of(context).pop();
+                            },
+                            leadingIcon: imagePhoto,
+                            title: AppLocalizations.of(context)?.photoOrVideo ??
+                                '',
+                            subtitle: AppLocalizations.of(context)
+                                    ?.photoOrVideoSubtitle ??
+                                '')
                         .build(),
                     Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
                     AttachmentTileBuilder(
-                        onClick: () {
-                          _handlePickFile(fileType: FileType.any);
-                          Navigator.of(context).pop();
-                        },
-                        leadingIcon: imageDocument,
-                        title: AppLocalizations.of(context)?.file ?? '',
-                        subtitle: AppLocalizations.of(context)?.fileSubtitle ?? '')
+                            onClick: () {
+                              _handlePickFile(fileType: FileType.any);
+                              Navigator.of(context).pop();
+                            },
+                            leadingIcon: imageDocument,
+                            title: AppLocalizations.of(context)?.file ?? '',
+                            subtitle:
+                                AppLocalizations.of(context)?.fileSubtitle ??
+                                    '')
                         .build(),
                   ],
                 ),
               ),
               SizedBox(height: 6.0),
-              ButtonTextBuilder(
-                Key('button_cancel_attachment'),
-                onButtonClick: () => Navigator.of(context).pop())
-              .setWidth(double.maxFinite)
-              .setBackgroundColor(Colors.white)
-              .setTextStyle(
-                  StylesConfig.commonTextStyle.copyWith(
-                    color: const Color(0xff004dff),
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500
-                  ),
-              )
-              .setText(AppLocalizations.of(context)?.cancel ?? '')
-              .build(),
+              ButtonTextBuilder(Key('button_cancel_attachment'),
+                      backgroundColor: Theme.of(context)
+                          .colorScheme
+                          .surface
+                          .withOpacity(0.5),
+                      onButtonClick: () => Navigator.of(context).pop())
+                  .setWidth(double.maxFinite)
+                  .setBackgroundColor(Colors.white)
+                  .setTextStyle(
+                    StylesConfig.commonTextStyle.copyWith(
+                        color: const Color(0xff004dff),
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.w500),
+                  )
+                  .setText(AppLocalizations.of(context)?.cancel ?? '')
+                  .build(),
               SizedBox(height: 12.0),
             ],
           ),
@@ -602,21 +644,22 @@ class _TextInputState extends State<TextInput> {
   void _handleTakePicture() async {
     try {
       XFile? pickedFile =
-              await _imagePicker.pickImage(source: ImageSource.camera);
+          await _imagePicker.pickImage(source: ImageSource.camera);
       if (!mounted) return;
-      if(pickedFile != null) {
-            LocalFile localFile = await pickedFile.toLocalFile();
-            localFile =
-                localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
-            Get.find<FileUploadCubit>().upload(sourceFile: localFile);
-          }
+      if (pickedFile != null) {
+        LocalFile localFile = await pickedFile.toLocalFile();
+        localFile = localFile.copyWith(
+            updatedAt: DateTime.now().millisecondsSinceEpoch);
+        Get.find<FileUploadCubit>().upload(sourceFile: localFile);
+      }
     } catch (e) {
       Logger().e('Error occurred during taking picture:\n$e');
     }
   }
 
   void _handlePickFile({required FileType fileType}) async {
-    List<PlatformFile>? _paths = await Utilities.pickFiles(context: context, fileType: fileType);
+    List<PlatformFile>? _paths =
+        await Utilities.pickFiles(context: context, fileType: fileType);
     if (!mounted) return;
     if (_paths == null) return;
     final len = Get.find<FileUploadCubit>().state.listFileUploading.length;
@@ -626,9 +669,9 @@ class _TextInputState extends State<TextInput> {
     }
     for (var i = 0; i < _paths.length; i++) {
       LocalFile localFile = _paths[i].toLocalFile();
-      localFile = localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+      localFile =
+          localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
       Get.find<FileUploadCubit>().upload(sourceFile: localFile);
     }
   }
-
 }

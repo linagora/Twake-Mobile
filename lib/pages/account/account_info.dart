@@ -46,7 +46,6 @@ class _AccountInfoState extends State<AccountInfo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff2f2f6),
       body: SafeArea(
         child: BlocBuilder<AccountCubit, AccountState>(
           bloc: Get.find<AccountCubit>(),
@@ -82,7 +81,10 @@ class _AccountInfoState extends State<AccountInfo> {
                               onTap: () => NavigatorService.instance.back(),
                               child: Icon(
                                 Icons.arrow_back_ios,
-                                color: Color(0xff3840f7),
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .headline4!
+                                    .color,
                               ),
                             ),
                             // SizedBox(width: 24.0),
@@ -134,11 +136,7 @@ class _AccountInfoState extends State<AccountInfo> {
                       SizedBox(height: 43.0),
                       Text(
                         AppLocalizations.of(context)!.name,
-                        style: TextStyle(
-                          fontSize: 13.0,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black.withOpacity(0.35),
-                        ),
+                        style: Theme.of(context).textTheme.headline2,
                       ),
                       SizedBox(height: 12.0),
                       RoundedTextField(

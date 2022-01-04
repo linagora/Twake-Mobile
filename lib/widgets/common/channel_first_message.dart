@@ -59,11 +59,10 @@ class ChannelFirstMessage extends StatelessWidget {
           Text(
             '${channel.name}',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.w800,
-              color: Color(0xff444444),
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontSize: 17, fontWeight: FontWeight.w800),
           ),
           Container(
             width: 150,
@@ -72,10 +71,10 @@ class ChannelFirstMessage extends StatelessWidget {
               AppLocalizations.of(context)!.firstMessageInChannelInfo,
               maxLines: 2,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.0,
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(fontSize: 12, fontWeight: FontWeight.normal),
             ),
           ),
         ],

@@ -36,14 +36,14 @@ class FoundMemberTile extends StatelessWidget {
               ),
             ),
             Expanded(
-                child: Text(name,
-                    style: TextStyle(
-                      fontFamily: 'SFProText',
-                      color: Color(0xff000000),
-                      fontSize: 17,
-                      fontWeight: FontWeight.w400,
-                      fontStyle: FontStyle.normal,
-                    ))),
+              child: Text(
+                name,
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
+              ),
+            ),
             Padding(
                 padding: const EdgeInsets.only(right: 16, left: 12),
                 child: _buildSelectedImage(isSelected))
@@ -71,9 +71,9 @@ class _UnselectedChanelTypeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           border: Border.all(
-            color: Color(0x1e000000),
+            color: Theme.of(context).colorScheme.secondary,
           ),
           borderRadius: BorderRadius.all(Radius.circular(12))),
       height: 24,

@@ -9,7 +9,9 @@ class EnableButtonWidget extends StatelessWidget {
   final OnEnableButtonWidgetClick? onEnableButtonWidgetClick;
 
   const EnableButtonWidget(
-      {required this.text, required this.isEnable, this.onEnableButtonWidgetClick})
+      {required this.text,
+      required this.isEnable,
+      this.onEnableButtonWidgetClick})
       : super();
 
   @override
@@ -18,12 +20,15 @@ class EnableButtonWidget extends StatelessWidget {
       onPressed: isEnable ? onEnableButtonWidgetClick : null,
       child: Text(
         text,
-        style: TextStyle(
-          color: isEnable ? Color(0xff004dff) : Color(0xff969ca4),
-          fontSize: 17,
-          fontWeight: FontWeight.w500,
-          fontStyle: FontStyle.normal,
-        ),
+        style: isEnable
+            ? Theme.of(context)
+                .textTheme
+                .headline4!
+                .copyWith(fontWeight: FontWeight.w500, fontSize: 17)
+            : Theme.of(context)
+                .textTheme
+                .headline2!
+                .copyWith(fontWeight: FontWeight.w500, fontSize: 17),
       ),
     );
   }

@@ -45,19 +45,24 @@ class ConfirmDialog extends StatelessWidget {
                 Flexible(
                   flex: 1,
                   child: Container(
-                    alignment: Alignment.center,
-                    child: ButtonTextBuilder(Key('confirm_dialog_button_cancel'),
-                          onButtonClick: () {
-                            cancelAction?.call();
-                            Navigator.of(context).pop();
-                          })
-                      .setText(cancelActionTitle)
-                      .setTextStyle(StylesConfig.commonTextStyle
-                          .copyWith(color: const Color(0xffff3347), fontSize: 17.0))
-                      .setHeight(44.0)
-                      .setBackgroundColor(const Color(0xfff2f3f5))
-                      .setBorderRadius(BorderRadius.all(Radius.circular(10.0)))
-                      .build()),
+                      alignment: Alignment.center,
+                      child: ButtonTextBuilder(
+                              Key('confirm_dialog_button_cancel'),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withOpacity(0.5), onButtonClick: () {
+                        cancelAction?.call();
+                        Navigator.of(context).pop();
+                      })
+                          .setText(cancelActionTitle)
+                          .setTextStyle(StylesConfig.commonTextStyle.copyWith(
+                              color: const Color(0xffff3347), fontSize: 17.0))
+                          .setHeight(44.0)
+                          .setBackgroundColor(const Color(0xfff2f3f5))
+                          .setBorderRadius(
+                              BorderRadius.all(Radius.circular(10.0)))
+                          .build()),
                 ),
                 SizedBox(width: 12.0),
                 Flexible(
@@ -65,17 +70,21 @@ class ConfirmDialog extends StatelessWidget {
                   child: Container(
                     alignment: Alignment.center,
                     child: ButtonTextBuilder(Key('confirm_dialog_button_ok'),
-                          onButtonClick: () {
-                            okAction?.call();
-                            Navigator.of(context).pop();
-                          })
-                      .setText(okActionTitle)
-                      .setTextStyle(StylesConfig.commonTextStyle
-                          .copyWith(color: Colors.white, fontSize: 17.0))
-                      .setHeight(44.0)
-                      .setBackgroundColor(const Color(0xff004dff))
-                      .setBorderRadius(BorderRadius.all(Radius.circular(10.0)))
-                      .build(),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surface
+                                .withOpacity(0.5), onButtonClick: () {
+                      okAction?.call();
+                      Navigator.of(context).pop();
+                    })
+                        .setText(okActionTitle)
+                        .setTextStyle(StylesConfig.commonTextStyle
+                            .copyWith(color: Colors.white, fontSize: 17.0))
+                        .setHeight(44.0)
+                        .setBackgroundColor(const Color(0xff004dff))
+                        .setBorderRadius(
+                            BorderRadius.all(Radius.circular(10.0)))
+                        .build(),
                   ),
                 ),
               ],

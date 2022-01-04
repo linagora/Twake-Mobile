@@ -40,7 +40,6 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
         child: SafeArea(
           bottom: false,
           child: Container(
-            color: Color(0xfff2f2f6),
             child: Column(
               children: [
                 BlocListener<ChannelSettingCubit, ChannelSettingState>(
@@ -57,7 +56,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                   child: SizedBox.shrink(),
                 ),
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 56,
                   child: Stack(
                     children: [
@@ -67,7 +66,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                             onPressed: () => popBack(),
                             icon: Icon(
                               Icons.arrow_back_ios,
-                              color: Color(0xff004dff),
+                              color: Theme.of(context).colorScheme.surface,
                             )),
                       ),
                       Align(
@@ -89,21 +88,21 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                         ),
                       ),
                       Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.channelSettings,
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ))
+                        alignment: Alignment.center,
+                        child: Text(
+                          AppLocalizations.of(context)!.channelSettings,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(
+                                  fontWeight: FontWeight.w600, fontSize: 17),
+                        ),
+                      )
                     ],
                   ),
                 ),
                 Divider(
-                  color: Color(0x1e000000),
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 1,
                 ),
                 Expanded(
@@ -115,15 +114,13 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                             left: 16, bottom: 12, top: 16),
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            AppLocalizations.of(context)!.channelType,
-                            style: TextStyle(
-                              color: Color(0xff969ca4),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ),
+                          child: Text(AppLocalizations.of(context)!.channelType,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13)),
                         ),
                       ),
                       Padding(
@@ -152,12 +149,12 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                           alignment: Alignment.centerLeft,
                           child: Text(
                               AppLocalizations.of(context)!.channelTypeInfo,
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                fontStyle: FontStyle.normal,
-                              )),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline2!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 12)),
                         ),
                       ),
                     ],

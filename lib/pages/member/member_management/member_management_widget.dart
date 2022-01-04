@@ -53,11 +53,9 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
         child: SafeArea(
           bottom: false,
           child: Container(
-            color: Color(0xfff2f2f6),
             child: Column(
               children: [
                 Container(
-                  color: Colors.white,
                   height: 56,
                   child: Stack(
                     children: [
@@ -67,25 +65,24 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                             onPressed: () => popBack(),
                             child: Icon(
                               Icons.arrow_back_ios,
-                              color: Color(0xff004dff),
+                              color: Theme.of(context).colorScheme.surface,
                             )),
                       ),
                       Align(
                           alignment: Alignment.center,
                           child: Text(
-                            AppLocalizations.of(context)!.memberManagement,
-                            style: TextStyle(
-                              color: Color(0xff000000),
-                              fontSize: 17,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ))
+                              AppLocalizations.of(context)!.memberManagement,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 17)))
                     ],
                   ),
                 ),
                 Divider(
-                  color: Color(0x1e000000),
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   height: 1,
                 ),
                 BlocBuilder<MemberManagementCubit, MemberManagementState>(
@@ -97,15 +94,14 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              AppLocalizations.of(context)!
-                                  .channelMembersPlural(
-                                      memberManagementState.allMembers.length),
-                              style: TextStyle(
-                                color: Color(0xff969ca4),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                fontStyle: FontStyle.normal,
-                              )),
+                            AppLocalizations.of(context)!.channelMembersPlural(
+                                memberManagementState.allMembers.length),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline2!
+                                .copyWith(
+                                    fontSize: 13, fontWeight: FontWeight.w600),
+                          ),
                         ),
                       );
                     }),
@@ -115,7 +111,8 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                   child: TwakeSearchTextField(
                     controller: _searchController,
                     hintText: AppLocalizations.of(context)!.searchMembers,
-                    backgroundColor: Color(0xfff9f8f9),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryVariant,
                   ),
                 ),
                 BlocBuilder<MemberManagementCubit, MemberManagementState>(
@@ -136,7 +133,9 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Container(
-                                color: Colors.white,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondaryVariant,
                                 child: Column(
                                   children: [
                                     GestureDetector(
@@ -174,24 +173,30 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                                 child: Container(
                                                   width: 34,
                                                   height: 34,
-                                                  color: Color(0x14969ca4),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .secondaryVariant,
                                                   child: Icon(
                                                     Icons.add,
-                                                    color: Color(0xff004dff),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .surface,
                                                     size: 24,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Text(
-                                                AppLocalizations.of(context)!
-                                                    .addMember,
-                                                style: TextStyle(
-                                                  color: Color(0xff004dff),
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontStyle: FontStyle.normal,
-                                                ))
+                                              AppLocalizations.of(context)!
+                                                  .addMember,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4!
+                                                  .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 15),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -200,7 +205,9 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                       padding:
                                           const EdgeInsets.only(left: 46.0),
                                       child: Divider(
-                                        color: Color(0x1e000000),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondaryVariant,
                                         height: 1,
                                       ),
                                     ),
@@ -211,7 +218,9 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                         padding:
                                             const EdgeInsets.only(left: 46.0),
                                         child: Divider(
-                                          color: Color(0x1e000000),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryVariant,
                                           height: 1,
                                         ),
                                       ),
@@ -265,15 +274,14 @@ class _MemberManagementTile extends StatelessWidget {
                   imageUrl: user.picture ?? '',
                   name: user.fullName,
                   size: 34,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                 )),
             Expanded(
               child: Text(user.fullName,
-                  style: TextStyle(
-                    color: Color(0xff000000),
-                    fontSize: 17,
-                    fontWeight: FontWeight.w400,
-                    fontStyle: FontStyle.normal,
-                  )),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w400)),
             ),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
@@ -284,7 +292,7 @@ class _MemberManagementTile extends StatelessWidget {
                   fit: BoxFit.contain,
                   child: Icon(
                     Icons.arrow_forward_ios_rounded,
-                    color: Colors.grey[300],
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               ),
@@ -345,7 +353,7 @@ Widget modalSheet(
       ),
       Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           borderRadius: BorderRadius.circular(22.0),
         ),
         child: Container(
@@ -362,16 +370,15 @@ Widget modalSheet(
                     imageUrl: logo,
                     name: name,
                     size: 70,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                Text(
-                  name,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                Text(name,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 17.0, fontWeight: FontWeight.w700)),
                 Padding(
                   padding: const EdgeInsets.only(top: 45),
                   child: GestureDetector(
@@ -385,14 +392,17 @@ Widget modalSheet(
                           padding: const EdgeInsets.only(right: 20),
                           child: Icon(
                             CupertinoIcons.text_bubble_fill,
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.primaryVariant,
                           ),
                         ),
                         Text(
                           AppLocalizations.of(context)!.sendDirect,
-                          style: TextStyle(
-                            fontSize: 17.0,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline1!
+                              .copyWith(
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.normal),
                         ),
                       ],
                     ),
@@ -425,6 +435,12 @@ Widget modalSheet(
                             duration: Duration(seconds: 3),
                             content: Text(
                               AppLocalizations.of(context)!.memberRemoved,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline5!
+                                  .copyWith(
+                                      fontSize: 17.0,
+                                      fontWeight: FontWeight.w700),
                             ),
                           ),
                         );
@@ -436,17 +452,15 @@ Widget modalSheet(
                           padding: const EdgeInsets.only(right: 20),
                           child: Icon(
                             CupertinoIcons.minus_circle_fill,
-                            color: Color(0xFFFF3347),
+                            color: Theme.of(context).colorScheme.error,
                           ),
                         ),
-                        Text(
-                          AppLocalizations.of(context)!.removeFromChannel,
-                          style: TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFFFF3347),
-                          ),
-                        ),
+                        Text(AppLocalizations.of(context)!.removeFromChannel,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline5!
+                                .copyWith(
+                                    fontWeight: FontWeight.w500, fontSize: 17)),
                       ],
                     ),
                   ),

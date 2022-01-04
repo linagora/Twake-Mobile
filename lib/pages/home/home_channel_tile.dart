@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/channel/channel.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -50,6 +51,7 @@ class HomeChannelTile extends StatelessWidget {
               name: title,
               size: 54,
               avatars: avatars,
+              backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
             ),
             Expanded(
               child: Container(
@@ -59,26 +61,18 @@ class HomeChannelTile extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              fontStyle: FontStyle.normal,
-                            ),
-                          ),
+                          child: Text(title,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: Theme.of(context).textTheme.headline1),
                         ),
                         Text(
                           DateFormatter.getVerboseTimeForHomeTile(dateTime),
-                          style: TextStyle(
-                            color: Color(0xffc2c6cc),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.normal,
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline2!
+                              .copyWith(
+                                  fontWeight: FontWeight.w500, fontSize: 13),
                         )
                       ],
                     ),
@@ -97,12 +91,7 @@ class HomeChannelTile extends StatelessWidget {
                               name ?? 'This channel is empty',
                               overflow: TextOverflow.ellipsis,
                               maxLines: 1,
-                              style: TextStyle(
-                                color: Color(0xb2000000),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                fontStyle: FontStyle.normal,
-                              ),
+                              style: Theme.of(context).textTheme.headline2,
                             ),
                           ),
                           Spacer(),
@@ -110,6 +99,7 @@ class HomeChannelTile extends StatelessWidget {
                             type: BadgeType.channel,
                             id: channelId,
                             key: ValueKey(channelId),
+                            isTitleVisible: false,
                           )
                         ],
                       ),
@@ -123,12 +113,7 @@ class HomeChannelTile extends StatelessWidget {
                         content ?? '',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
-                        style: TextStyle(
-                          color: Color(0x7f000000),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                        ),
+                        style: Theme.of(context).textTheme.headline3,
                       ),
                     )
                   ],

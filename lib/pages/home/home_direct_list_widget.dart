@@ -59,7 +59,7 @@ class HomeDirectListWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 78),
                     child: Container(
                       height: 1,
-                      color: Color(0xfff6f6f6),
+                      color:  Theme.of(context).colorScheme.secondaryVariant
                     ),
                   );
                 },

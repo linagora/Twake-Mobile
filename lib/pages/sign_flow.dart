@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/pages/server_configuration.dart';
 import 'package:twake/pages/sign_up.dart';
 
@@ -97,10 +98,13 @@ class SignInSignUpForm extends StatelessWidget {
                 Container(
                   width: 88,
                   height: 22,
-                  color: Colors.white,
                   child: Image.asset(
                     'assets/images/3.0x/twake_home_logo.png',
                     fit: BoxFit.contain,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primaryVariant
+                        .withOpacity(0.9),
                   ),
                 ),
                 Spacer(),
@@ -112,7 +116,8 @@ class SignInSignUpForm extends StatelessWidget {
                   height: 60,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: Color(0xFFF2F3F5),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryVariant,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
@@ -123,10 +128,10 @@ class SignInSignUpForm extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signin,
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: Color(0xFF004DFF),
-                          fontWeight: FontWeight.w600),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -138,7 +143,7 @@ class SignInSignUpForm extends StatelessWidget {
                   height: 60,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: Color(0xFF004DFF),
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
@@ -149,17 +154,22 @@ class SignInSignUpForm extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signup,
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600),
+                      style: MediaQuery.of(context).platformBrightness ==
+                              Brightness.dark
+                          ? Theme.of(context).textTheme.headline1!.copyWith(
+                              fontSize: 17, fontWeight: FontWeight.w600)
+                          : Theme.of(context).textTheme.bodyText1!.copyWith(
+                              fontSize: 17, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
                 Spacer(),
                 Text(
                   AppLocalizations.of(context)!.serverConnectionPreference,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w900),
                 ),
                 SizedBox(
                   height: 15,
@@ -169,7 +179,8 @@ class SignInSignUpForm extends StatelessWidget {
                   height: 60,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      backgroundColor: Color(0xFFF2F3F5),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryVariant,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
@@ -179,10 +190,10 @@ class SignInSignUpForm extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.changeServer,
-                      style: TextStyle(
-                          fontSize: 17,
-                          color: Color(0xFF004DFF),
-                          fontWeight: FontWeight.w600),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -194,7 +205,8 @@ class SignInSignUpForm extends StatelessWidget {
                     width: Dim.widthPercent(85),
                     child: Text(
                       AppLocalizations.of(context)!.changeServerInfo,
-                      style: TextStyle(fontSize: 13),
+                      style: Theme.of(context).textTheme.headline1!.copyWith(
+                          fontSize: 13, fontWeight: FontWeight.normal),
                     ),
                   ),
                 ),

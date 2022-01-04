@@ -149,30 +149,28 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      ...message.reactions.map((r) {
-                        return Reaction<T>(
-                          message: message,
-                          reaction: r,
-                          isFirstInThread: true,
-                        );
-                      }),
-                    ],
-                  )
-                ),
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...message.reactions.map((r) {
+                          return Reaction<T>(
+                            message: message,
+                            reaction: r,
+                            isFirstInThread: true,
+                          );
+                        }),
+                      ],
+                    )),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 1),
                 child: Text(
-                  AppLocalizations.of(ctx)!
-                      .replyPlural(state.messages.length - 1),
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Color(0xFF818C99),
-                  ),
-                ),
+                    AppLocalizations.of(ctx)!
+                        .replyPlural(state.messages.length - 1),
+                    style: Theme.of(ctx)
+                        .textTheme
+                        .headline2!
+                        .copyWith(fontWeight: FontWeight.normal, fontSize: 15)),
               ),
             ],
           ),
@@ -182,7 +180,7 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
         Divider(
           thickness: 5.0,
           height: 2.0,
-          color: Color(0xFFF6F6F6),
+          color: Theme.of(ctx).colorScheme.secondaryVariant,
         ),
         SizedBox(
           height: 12.0,

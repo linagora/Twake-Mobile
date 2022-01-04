@@ -120,12 +120,10 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
               children: [
                 _buildHeader(),
                 _buildTabBar(),
-                Opacity(
-                  opacity: 0.6,
-                  child: Divider(
-                    height: 4,
-                    color: Color(0xffd8d8d8),
-                  ),
+                Divider(
+                  thickness: 1,
+                  height: 4,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                 ),
                 Expanded(
                   child: TabBarView(
@@ -168,18 +166,23 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                             child: Row(
                               children: [
                                 ImageWidget(
-                                    imageType: ImageType.common,
-                                    imageUrl:
-                                        workspaceState.selected?.logo ?? '',
-                                    size: 42,
-                                    name: workspaceState.selected?.name ?? '',
-                                    backgroundColor: Color(0xfff5f5f5)),
+                                  imageType: ImageType.common,
+                                  imageUrl: workspaceState.selected?.logo ?? '',
+                                  size: 42,
+                                  name: workspaceState.selected?.name ?? '',
+                                  backgroundColor: Theme.of(context)
+                                      .colorScheme
+                                      .secondaryVariant,
+                                ),
                                 SizedBox(
                                   width: 5,
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_down_rounded,
-                                  color: Colors.black,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryVariant
+                                      .withOpacity(0.9),
                                   size: 24,
                                 ),
                               ],
@@ -198,6 +201,10 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                     imageTwakeHomeLogo,
                     width: 63,
                     height: 15,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primaryVariant
+                        .withOpacity(0.9),
                   ),
                 ),
                 _buildHeaderActionButtons()
@@ -209,7 +216,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
             height: 40,
             controller: _searchController,
             hintText: AppLocalizations.of(context)!.search,
-            backgroundColor: Color(0xfff9f8f9),
+            backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
           ),
         ],
       ),
@@ -217,104 +224,110 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   }
 
   _buildHeaderActionButtons() => Align(
-    alignment: Alignment.centerRight,
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        BlocBuilder(
-          bloc: Get.find<CompaniesCubit>(),
-          builder: (ctx, cstate) =>
-            (cstate is CompaniesLoadSuccess && cstate.selected.canShareMagicLink)
-              ? Row(
-                children: [
-                  BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                    bloc: Get.find<WorkspacesCubit>(),
-                    builder: (context, workspaceState) {
-                      return workspaceState is WorkspacesLoadSuccess
-                          ? GestureDetector(
-                              onTap: () => push(RoutePaths.invitationPeople.path,
-                                    arguments: workspaceState.selected?.name ?? ''),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Container(
-                                  color: Color(0xfff9f8f9),
-                                  width: 40,
-                                  height: 40,
-                                  child: Image.asset(
-                                    imageInvitePeople,
-                                    width: 20,
-                                    height: 20,
-                                    color: Color(0xff004dff),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : SizedBox.shrink();
-                    },
+        alignment: Alignment.centerRight,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            BlocBuilder(
+                bloc: Get.find<CompaniesCubit>(),
+                builder: (ctx, cstate) => (cstate is CompaniesLoadSuccess &&
+                        cstate.selected.canShareMagicLink)
+                    ? Row(
+                        children: [
+                          BlocBuilder<WorkspacesCubit, WorkspacesState>(
+                            bloc: Get.find<WorkspacesCubit>(),
+                            builder: (context, workspaceState) {
+                              return workspaceState is WorkspacesLoadSuccess
+                                  ? GestureDetector(
+                                      onTap: () => push(
+                                          RoutePaths.invitationPeople.path,
+                                          arguments:
+                                              workspaceState.selected?.name ??
+                                                  ''),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Container(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondaryVariant,
+                                          width: 40,
+                                          height: 40,
+                                          child: Image.asset(
+                                            imageInvitePeople,
+                                            width: 20,
+                                            height: 20,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : SizedBox.shrink();
+                            },
+                          ),
+                          SizedBox(width: 16),
+                        ],
+                      )
+                    : SizedBox.shrink()),
+            GestureDetector(
+              onTap: () => push(RoutePaths.newDirect.path),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  width: 40,
+                  height: 40,
+                  child: Image.asset(
+                    imageAddChannel,
+                    width: 20,
+                    height: 20,
+                    color: Theme.of(context).colorScheme.surface,
                   ),
-                  SizedBox(width: 16),
-                ],
-              )
-              : SizedBox.shrink()
+                ),
+              ),
+            ),
+          ],
         ),
-        GestureDetector(
-          onTap: () => push(RoutePaths.newDirect.path),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Container(
-              color: Color(0xfff9f8f9),
-              width: 40,
-              height: 40,
-              child: Image.asset(
-                imageAddChannel,
-                width: 20,
-                height: 20,
-                color: Color(0xff004dff),
+      );
+
+  _buildTabBar() => TabBar(
+        tabs: [
+          BlocBuilder<WorkspacesCubit, WorkspacesState>(
+            bloc: Get.find<WorkspacesCubit>(),
+            builder: (_s, _) => Tab(
+              child: BadgesCount(
+                type: BadgeType.workspace,
+                id: Globals.instance.workspaceId ?? '',
+                isTitleVisible: true,
               ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-
-  _buildTabBar() => TabBar(
-    tabs: [
-      BlocBuilder<WorkspacesCubit, WorkspacesState>(
-        bloc: Get.find<WorkspacesCubit>(),
-        builder: (_s, _) => Tab(
-          child: BadgesCount(
-            type: BadgeType.workspace,
-            id: Globals.instance.workspaceId ?? '',
+          BlocBuilder<WorkspacesCubit, WorkspacesState>(
+            bloc: Get.find<WorkspacesCubit>(),
+            builder: (_s, _) => Tab(
+              child: BadgesCount(
+                type: BadgeType.workspace,
+                id: Globals.instance.workspaceId ?? '',
+                isInDirects: true,
+                isTitleVisible: true,
+              ),
+            ),
           ),
-        ),
-      ),
-      BlocBuilder<WorkspacesCubit, WorkspacesState>(
-        bloc: Get.find<WorkspacesCubit>(),
-        builder: (_s, _) => Tab(
-          child: BadgesCount(
-            type: BadgeType.workspace,
-            id: Globals.instance.workspaceId ?? '',
-            isInDirects: true,
-          ),
-        ),
-      ),
-    ],
-    isScrollable: true,
-    indicatorColor: Color(0xff004dff),
-    unselectedLabelColor: Color(0xff8e8e93),
-    unselectedLabelStyle: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      fontStyle: FontStyle.normal,
-    ),
-    labelStyle: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      fontStyle: FontStyle.normal,
-    ),
-  );
+        ],
+        isScrollable: true,
+        indicatorColor: Theme.of(context).colorScheme.surface,
+        unselectedLabelColor: Theme.of(context).colorScheme.secondary,
+        unselectedLabelStyle: Theme.of(context).textTheme.headline1!.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+        labelStyle: Theme.of(context)
+            .textTheme
+            .headline3!
+            .copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+      );
 
   void _initFileDownloader() {
     _bindFileDownloadBackgroundIsolate();
@@ -332,9 +345,9 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     _fileDownloaderPort.listen((dynamic data) {
       String id = data[0];
       DownloadTaskStatus status = data[1];
-      if(status == DownloadTaskStatus.complete) {
+      if (status == DownloadTaskStatus.complete) {
         Get.find<FileDownloadCubit>().handleAfterDownloaded(taskId: id);
-      } else if(status == DownloadTaskStatus.failed) {
+      } else if (status == DownloadTaskStatus.failed) {
         Get.find<FileDownloadCubit>().handleDownloadFailed(taskId: id);
       }
     });
@@ -344,9 +357,10 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     IsolateNameServer.removePortNameMapping('downloader_send_port');
   }
 
-  static void downloadCallback(String id, DownloadTaskStatus status, int progress) {
-    final SendPort? send = IsolateNameServer.lookupPortByName('downloader_send_port');
+  static void downloadCallback(
+      String id, DownloadTaskStatus status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
     send?.send([id, status, progress]);
   }
-
 }

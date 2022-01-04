@@ -9,6 +9,7 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/widgets/common/pick_image_widget.dart';
 import 'package:twake/widgets/sheets/hint_line.dart';
 import 'package:twake/widgets/sheets/sheet_text_field.dart';
 import 'package:twake/widgets/sheets/sheet_title_bar.dart';
@@ -54,12 +55,15 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text(AppLocalizations.of(context)!.invitationLimit),
+          title: Text(AppLocalizations.of(context)!.invitationLimit,
+              style: Theme.of(context).textTheme.headline2),
           content: Text(
-              '${AppLocalizations.of(context)!.invitationLimitInfo} ${user!.email}'),
+              '${AppLocalizations.of(context)!.invitationLimitInfo} ${user!.email}',
+              style: Theme.of(context).textTheme.headline2),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text(AppLocalizations.of(context)!.ok),
+              child: Text(AppLocalizations.of(context)!.ok,
+                  style: Theme.of(context).textTheme.headline2),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -115,7 +119,8 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           ),
           behavior: SnackBarBehavior.floating,
           duration: Duration(seconds: 3),
-          content: Text(AppLocalizations.of(context)!.processing),
+          content: Text(AppLocalizations.of(context)!.processing,
+              style: Theme.of(context).textTheme.headline2),
         ),
       );
 
@@ -148,6 +153,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
           duration: Duration(seconds: 3),
           content: Text(
             AppLocalizations.of(context)!.workspaceCreationErrorInfo,
+            style: Theme.of(context).textTheme.headline2,
           ),
         ),
       );
@@ -161,11 +167,10 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         child: SingleChildScrollView(
           child: Container(
             constraints: BoxConstraints(minHeight: Dim.heightPercent(100)),
-            color: Color(0xFFF2F2F6),
             child: Column(
               children: [
                 Container(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   child: SheetTitleBar(
                       title: AppLocalizations.of(context)!.newWorkspace,
                       leadingTitle: AppLocalizations.of(context)!.cancel,
@@ -189,7 +194,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                       child: Container(
                         height: 80,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.secondaryVariant,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Padding(
@@ -197,21 +202,27 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                           child: Container(
                             child: Row(
                               children: [
-                                GestureDetector(
-                                  child: Container(
+                                PickImageWidget(onPickImageWidgetClick: () {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                }),
+                                /*Container(
                                     decoration: BoxDecoration(
-                                      color: Color(0xFFF5F5F5),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondaryVariant,
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: Icon(
                                       Icons.camera_alt_rounded,
-                                      color: Color(0xFF969CA4),
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .headline2!
+                                          .color,
                                     ),
                                     height: 44,
                                     width: 44,
-                                  ),
-                                  onTap: () async {},
-                                ),
+                                  ),*/
+
                                 Flexible(
                                   child: Center(
                                     child: Form(
@@ -290,7 +301,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         child: Container(
           height: 44,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.secondaryVariant,
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Padding(
@@ -299,7 +310,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
               children: [
                 Icon(
                   CupertinoIcons.add_circled_solid,
-                  color: Color(0xFF004DFF),
+                  color: Theme.of(context).colorScheme.surface,
                   size: 25,
                 ),
                 SizedBox(
@@ -307,7 +318,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                 ),
                 Text(
                   AppLocalizations.of(context)!.addEmail,
-                  style: TextStyle(color: Color(0xFF004DFF), fontSize: 14),
+                  style: Theme.of(context).textTheme.headline4,
                 ),
               ],
             ),
@@ -330,7 +341,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         height: 44,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Form(
@@ -339,11 +350,10 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
             maxLines: 1,
             controller: controller,
             //    validator: _validate,
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.w400,
-              color: Colors.black,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontSize: 18, fontWeight: FontWeight.w400),
             decoration: InputDecoration(
               contentPadding: const EdgeInsets.only(left: 15),
               suffix: IconButton(
@@ -353,7 +363,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                 },
                 iconSize: 17,
                 icon: Icon(CupertinoIcons.clear_thick_circled),
-                color: Color(0xffeeeeef),
+                color: Theme.of(context).colorScheme.secondary,
               ),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(

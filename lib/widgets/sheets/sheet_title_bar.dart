@@ -45,13 +45,15 @@ class SheetTitleBar extends StatelessWidget {
                   ),
                 Text(
                   leadingTitle ?? '',
-                  style: TextStyle(
-                    color: leadingAction != null
-                        ? Color(0xff3840F7)
-                        : Color(0xffa2a2a2),
-                    fontSize: 17.0,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: leadingAction != null
+                      ? Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w500)
+                      : Theme.of(context)
+                          .textTheme
+                          .headline2!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
                   textAlign:
                       leadingTitle != 'Back' ? TextAlign.start : TextAlign.end,
                 ),
@@ -60,24 +62,25 @@ class SheetTitleBar extends StatelessWidget {
           ),
           Text(
             title!,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 17.0,
-              fontWeight: FontWeight.w600,
-            ),
+            style: Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontSize: 17, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
           TextButton(
             onPressed: trailingAction as void Function()?,
             child: Text(
               trailingTitle ?? '',
-              style: TextStyle(
-                color: trailingAction != null
-                    ? Color(0xff3840F7)
-                    : Color(0xffa2a2a2),
-                fontSize: 17.0,
-                fontWeight: FontWeight.w500,
-              ),
+              style: leadingAction != null
+                  ? Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w500)
+                  : Theme.of(context)
+                      .textTheme
+                      .headline2!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
               textAlign: TextAlign.end,
             ),
           ),

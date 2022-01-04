@@ -81,6 +81,7 @@ class InitService {
     );
     _storageService.multiInsert(table: Table.company, data: companies);
     // Set company id in Globals if not set already
+
     if (Globals.instance.companyId == null) {
       Globals.instance.companyIdSet = companies.first.id;
     }

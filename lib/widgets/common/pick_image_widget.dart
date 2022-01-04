@@ -7,7 +7,9 @@ class PickImageWidget extends StatelessWidget {
   final double height;
   final OnPickImageWidgetClick? onPickImageWidgetClick;
 
-  const PickImageWidget({this.width = 56, this.height = 56, this.onPickImageWidgetClick}) : super();
+  const PickImageWidget(
+      {this.width = 56, this.height = 56, this.onPickImageWidgetClick})
+      : super();
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +20,11 @@ class PickImageWidget extends StatelessWidget {
         child: Container(
             width: width,
             height: height,
-            color: Color(0xfff2f2f6),
+            color: Theme.of(context).colorScheme.secondary,
             child: Icon(
               Icons.photo_camera_rounded,
               size: 24,
-              color: Color(0xff969ca4),
+              color: Theme.of(context).colorScheme.secondaryVariant,
             )),
       ),
     );

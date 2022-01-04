@@ -40,7 +40,8 @@ class FileTile extends StatefulWidget {
 class _FileTileState extends State<FileTile> {
   @override
   Widget build(BuildContext context) {
-    File? cacheFile = Get.find<CacheFileCubit>().findCachedFile(fileId: widget.fileId);
+    File? cacheFile =
+        Get.find<CacheFileCubit>().findCachedFile(fileId: widget.fileId);
     return cacheFile == null
         ? FutureBuilder(
             future: Get.find<FileCubit>().getFileData(id: widget.fileId),
@@ -70,29 +71,27 @@ class _FileTileState extends State<FileTile> {
       );
 
   _buildFileWidget(File file) => Container(
-    margin: const EdgeInsets.only(bottom: 4.0),
-    child: Row(
-          children: [
-            _buildFileHeader(file),
-            SizedBox(width: 12.0),
-            Flexible(
-              child: _buildFileInfo(file),
-            ),
-          ]
-    ),
-  );
+        margin: const EdgeInsets.only(bottom: 4.0),
+        child: Row(children: [
+          _buildFileHeader(file),
+          SizedBox(width: 12.0),
+          Flexible(
+            child: _buildFileInfo(file),
+          ),
+        ]),
+      );
 
   _buildFileHeader(File file) {
     return SizedBox(
-        width: _fileTileHeight,
-        height: _fileTileHeight,
-        child: BlocBuilder<FileDownloadCubit, FileDownloadState>(
+      width: _fileTileHeight,
+      height: _fileTileHeight,
+      child: BlocBuilder<FileDownloadCubit, FileDownloadState>(
           bloc: Get.find<FileDownloadCubit>(),
           builder: (context, state) {
             FileDownloading? selectedFile;
             if (state.listFileDownloading.isNotEmpty) {
-              selectedFile = state.listFileDownloading
-                  .firstWhereOrNull((fileDownloading) => fileDownloading.file.id == file.id);
+              selectedFile = state.listFileDownloading.firstWhereOrNull(
+                  (fileDownloading) => fileDownloading.file.id == file.id);
             }
             return Stack(
               alignment: Alignment.center,
@@ -101,46 +100,46 @@ class _FileTileState extends State<FileTile> {
                 _buildDownloadIcon(file, selectedFile)
               ],
             );
-          }
-        ),
-      );
+          }),
+    );
   }
 
   _buildThumbnail(File file, FileDownloading? fileDownloading) {
     return GestureDetector(
       onTap: () {
         /// Read [1] for the detail
-        if(file.metadata.mime.isImageMimeType) {
+        if (file.metadata.mime.isImageMimeType) {
           NavigatorService.instance.navigateToFilePreview(
-            channelId: Globals.instance.channelId!, file: file);
+              channelId: Globals.instance.channelId!, file: file);
           return;
         }
-        if(fileDownloading == null) return;
-        if (fileDownloading.downloadStatus != FileItemDownloadStatus.downloadSuccessful) return;
-        if(fileDownloading.downloadTaskId != null) {
+        if (fileDownloading == null) return;
+        if (fileDownloading.downloadStatus !=
+            FileItemDownloadStatus.downloadSuccessful) return;
+        if (fileDownloading.downloadTaskId != null) {
           _handleOpenFile(taskId: fileDownloading.downloadTaskId!);
           return;
         }
-        if(fileDownloading.savedPath != null) {
+        if (fileDownloading.savedPath != null) {
           _handleOpenFile(savedPath: fileDownloading.savedPath);
           return;
         }
       },
       child: file.thumbnailUrl.isNotEmpty
-        ? _buildFilePreview(file.thumbnailUrl)
-        : _buildFileTypeIcon(file),
+          ? _buildFilePreview(file.thumbnailUrl)
+          : _buildFileTypeIcon(file),
     );
   }
 
   _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
     /// Read [1] for the detail
-    if(file.metadata.mime.isImageMimeType) {
+    if (file.metadata.mime.isImageMimeType) {
       return SizedBox.shrink();
     }
-    if(fileDownloading == null) {
+    if (fileDownloading == null) {
       return _initDownloadIcon(file);
     }
-    switch(fileDownloading.downloadStatus) {
+    switch (fileDownloading.downloadStatus) {
       case FileItemDownloadStatus.downloadSuccessful:
         return SizedBox.shrink();
       case FileItemDownloadStatus.downloadInProgress:
@@ -192,21 +191,21 @@ class _FileTileState extends State<FileTile> {
   }
 
   _buildFilePreview(String thumbUrl) => ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(8)),
-      child: CachedNetworkImage(
-        width: double.maxFinite,
-        height: double.maxFinite,
-        fit: BoxFit.cover,
-        imageUrl: thumbUrl,
-        progressIndicatorBuilder: (context, url, progress) {
-          return ShimmerLoading(
-              isLoading: true,
-              width: double.maxFinite,
-              height: double.maxFinite,
-              child: Container());
-        },
-      ),
-    );
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        child: CachedNetworkImage(
+          width: double.maxFinite,
+          height: double.maxFinite,
+          fit: BoxFit.cover,
+          imageUrl: thumbUrl,
+          progressIndicatorBuilder: (context, url, progress) {
+            return ShimmerLoading(
+                isLoading: true,
+                width: double.maxFinite,
+                height: double.maxFinite,
+                child: Container());
+          },
+        ),
+      );
 
   _buildFileTypeIcon(File file) {
     final extension = file.metadata.name.fileExtension;
@@ -246,17 +245,17 @@ class _FileTileState extends State<FileTile> {
   // Open file either by [taskId] or [savedPath]
   _handleOpenFile({String? taskId, String? savedPath}) async {
     try {
-      if(taskId != null) {
-        final result =
-        await Get.find<FileDownloadCubit>().openDownloadedFile(downloadTaskId: taskId);
-        if(!result) {
+      if (taskId != null) {
+        final result = await Get.find<FileDownloadCubit>()
+            .openDownloadedFile(downloadTaskId: taskId);
+        if (!result) {
           _handleCanNotOpenFile();
         }
         return;
       }
-      if(savedPath != null) {
+      if (savedPath != null) {
         final result = await OpenFile.open(savedPath);
-        if(result.type != ResultType.done) {
+        if (result.type != ResultType.done) {
           _handleCanNotOpenFile();
         }
         return;
@@ -272,7 +271,7 @@ class _FileTileState extends State<FileTile> {
   }
 
   _handleCancelDownloadFile(FileDownloading fileDownloading) {
-    if(fileDownloading.downloadTaskId != null) {
+    if (fileDownloading.downloadTaskId != null) {
       Get.find<FileDownloadCubit>().cancelDownloadingFile(
           downloadTaskId: fileDownloading.downloadTaskId!);
     }
