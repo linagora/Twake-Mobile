@@ -10,6 +10,7 @@ import 'package:logger/logger.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -18,6 +19,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/magic_link/join_workspace_magic_link_page.dart';
 import 'package:twake/pages/sign_flow.dart';
 import 'package:twake/pages/syncing_data.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:uni_links/uni_links.dart';
 
 import 'home/home_widget.dart';
@@ -62,29 +64,35 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     });
   }
 
+  // Handle app links while the app was started,
+  // this should be handled ONLY ONCE in app's lifetime,
+  // go to use a flag variable called [Globals.instance.magicLinkInitialUriIsHandled] to check this
   Future<void> _handleIncomingLinkInitial() async {
-    // Handle app links while the app was started
 
     // Prevent checking incoming url when logout
     final currentAuthState = Get.find<AuthenticationCubit>().state;
-    if (currentAuthState is LogoutInProgress) return;
+    if(currentAuthState is LogoutInProgress)
+      return;
 
-    try {
-      final uri = await getInitialUri();
-      if (!mounted) {
-        return;
+    if(!Globals.instance.magicLinkInitialUriIsHandled) {
+      Globals.instance.magicLinkInitialUriIsHandled = true;
+      try {
+        final uri = await getInitialUri();
+        if (!mounted) {
+          return;
+        }
+        _handleIncomingLink(uri);
+      } on PlatformException {
+        throw Exception('ERROR during receiving magic link');
+      } on FormatException catch (e) {
+        throw Exception('ERROR during receiving magic link:\n$e');
       }
-      _handleIncomingLink(uri);
-    } on PlatformException {
-      throw Exception('ERROR during receiving magic link');
-    } on FormatException catch (e) {
-      throw Exception('ERROR during receiving magic link:\n$e');
     }
   }
 
   _handleIncomingLink(Uri? uri) {
     final token = uri?.queryParameters['join'];
-    if (token != null && token.isNotEmpty) {
+    if(token != null && token.isNotEmpty) {
       Get.find<AuthenticationCubit>().checkTokenAvailable(token);
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
@@ -224,6 +232,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   _selectWorkspaceAfterJoin(magicLinkJoinResponse);
                   return HomeWidget();
                 } else if (state is InvitationJoinCheckingTokenFinished) {
+                  popWhenOpenMagicLinkFromChat();
                   return JoinWorkSpaceMagicLinkPage(
                       workspaceJoinResponse: state.joinResponse,
                       requestedToken: state.requestedToken);
@@ -280,4 +289,21 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
           'Error occurred during select workspace after joining from Magic Link:\n$e');
     }
   }
+
+  void popWhenOpenMagicLinkFromChat() async {
+    try {
+      if (Get.currentRoute == RoutePaths.channelMessages.path ||
+          Get.currentRoute == RoutePaths.channelMessageThread.path ||
+          Get.currentRoute == RoutePaths.directMessages.path ||
+          Get.currentRoute == RoutePaths.directMessageThread.path) {
+        await Future.delayed(Duration.zero, () async {
+          Get.find<ThreadMessagesCubit>().reset();
+          Get.offNamedUntil(RoutePaths.initial, (route) => false);
+        });
+      }
+    } catch (e) {
+      Logger().e('Error occurred during open Magic Link from chat screen:\n$e');
+    }
+  }
+
 }
