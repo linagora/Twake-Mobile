@@ -139,6 +139,12 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
+  Future<bool> isAuthenticated() async => await _repository.isAuthenticated();
+
+  Future<void> resetAuthenticationState() async {
+    emit(AuthenticationInitial());
+  }
+
   @override
   Future<void> close() {
     _networkSubscription.cancel();

@@ -137,17 +137,22 @@ class _JoinWorkSpaceMagicLinkPageState
   void _handleClickOnJoinButton() async {
     await Get.find<AuthenticationCubit>()
         .joinWorkspace(widget.requestedToken, needCheckAuthentication: true);
-    if (!mounted) return;
-    Navigator.of(context).pop();
   }
 
   void _handleClickOnCreateCompanyButton() async {
     try {
-      final consolePage = sprintf(Endpoint.consolePage,
-          [Globals.instance.host.split('.').skip(1).join('.')]);
-      await canLaunch(consolePage)
-          ? await launch(consolePage)
-          : throw 'Could not launch $consolePage';
+      final isAuthenticated = await Get.find<AuthenticationCubit>().isAuthenticated();
+      if(isAuthenticated) {
+        // Open console page in browser
+        final consolePage = sprintf(Endpoint.consolePage,
+            [Globals.instance.host.split('.').skip(1).join('.')]);
+        await canLaunch(consolePage)
+            ? await launch(consolePage)
+            : throw 'Could not launch $consolePage';
+      } else {
+        // Open Sign-In/Sign-Up page
+        await Get.find<AuthenticationCubit>().resetAuthenticationState();
+      }
     } catch (e) {
       Logger().e('ERROR during opening console page:\n$e');
     }
