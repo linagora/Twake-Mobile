@@ -160,8 +160,18 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                                     child: Text(
                                       AppLocalizations.of(context)!.connect,
                                       textAlign: TextAlign.center,
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
+                                      style: MediaQuery.of(context)
+                                                  .platformBrightness ==
+                                              Brightness.dark
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headline1
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodyText1!
+                                              .copyWith(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w600),
                                     ),
                                   )),
                             ),

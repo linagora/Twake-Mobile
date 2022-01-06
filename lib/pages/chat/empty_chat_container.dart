@@ -47,7 +47,7 @@ class EmptyChatContainer extends StatelessWidget {
                 height: 32,
                 width: 32,
                 child: Image.asset(
-                  twake,
+                  imageTwake,
                   color: Theme.of(context).colorScheme.surface,
                 ),
               ),

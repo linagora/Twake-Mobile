@@ -361,8 +361,10 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                               recentsLimit: 28,
                               noRecentsText:
                                   AppLocalizations.of(context)!.noRecents,
-                              noRecentsStyle: const TextStyle(
-                                  fontSize: 20, color: Colors.black26),
+                              noRecentsStyle: Theme.of(context)
+                                  .textTheme
+                                  .headline3!
+                                  .copyWith(fontSize: 20),
                               categoryIcons: const CategoryIcons(),
                               buttonMode: ButtonMode.MATERIAL,
                             ),

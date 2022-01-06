@@ -74,8 +74,9 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
           progressIndicatorColor: Theme.of(context).colorScheme.surface,
           showRecentsTab: true,
           recentsLimit: 28,
-          noRecentsText: "No Recents",
-          noRecentsStyle: const TextStyle(fontSize: 20, color: Colors.black26),
+          noRecentsText: AppLocalizations.of(context)!.noRecents,
+          noRecentsStyle:
+              Theme.of(context).textTheme.headline3!.copyWith(fontSize: 20),
           categoryIcons: const CategoryIcons(),
           buttonMode: ButtonMode.MATERIAL,
         ),
