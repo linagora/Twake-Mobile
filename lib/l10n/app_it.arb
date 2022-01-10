@@ -417,5 +417,17 @@
         "example": "10"
       }
     }
-  }
+  },
+  "cantOpenFile": "Impossibile aprire questo file",
+  "@cantOpenFile": {},
+  "fileDownloadedInGallery": "File scaricato in Galleria",
+  "@fileDownloadedInGallery": {},
+  "openSettings": "Apri Impostazioni",
+  "@openSettings": {},
+  "deny": "Negare",
+  "@deny": {},
+  "openIt": "Aprilo",
+  "@openIt": {},
+  "openSettingsMessage": "È necessario aprire Impostazioni per concedere il permesso",
+  "@openSettingsMessage": {}
 }
