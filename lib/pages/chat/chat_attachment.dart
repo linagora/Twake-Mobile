@@ -19,7 +19,6 @@ class ChatAttachment extends StatefulWidget {
 }
 
 class _ChatAttachmentState extends State<ChatAttachment> {
-
   @override
   void initState() {
     super.initState();
@@ -29,9 +28,9 @@ class _ChatAttachmentState extends State<ChatAttachment> {
             .where((element) =>
                 element.uploadStatus == FileItemUploadStatus.failed)
             .toList();
-        if(listUploadFailed.isNotEmpty) {
-          final listName = listUploadFailed.map(
-              (e) => e.sourceFile?.name).toList();
+        if (listUploadFailed.isNotEmpty) {
+          final listName =
+              listUploadFailed.map((e) => e.sourceFile?.name).toList();
           _showUploadFailedPopup(
             listName.join(',').toString(),
             listUploadFailed,
@@ -41,28 +40,27 @@ class _ChatAttachmentState extends State<ChatAttachment> {
     });
   }
 
-  _showUploadFailedPopup(String fileName, List<FileUploading> listUploadFailed) {
+  _showUploadFailedPopup(
+      String fileName, List<FileUploading> listUploadFailed) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
         margin: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         animationDuration: Duration(milliseconds: 500),
-        duration: const Duration(milliseconds: 1500),
+        duration: const Duration(milliseconds: 3000),
         icon: Image.asset(imageError, width: 24, height: 24),
-        titleText: Text(
-          fileName,
-          maxLines: 1,
-          style: StylesConfig.commonTextStyle.copyWith(
-            fontSize: 17,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        messageText: Text(
-          AppLocalizations.of(context)?.fileUploadFailed ?? '',
-          style: StylesConfig.commonTextStyle
-              .copyWith(fontSize: 12, color: const Color(0xffe64646)),
-        ),
+        titleText: Text(fileName,
+            maxLines: 1,
+            style: Theme.of(context).textTheme.headline1!.copyWith(
+                fontSize: 17,
+                fontWeight: FontWeight.normal,
+                overflow: TextOverflow.ellipsis)),
+        messageText: Text(AppLocalizations.of(context)?.fileUploadFailed ?? '',
+            style: Theme.of(context)
+                .textTheme
+                .headline5!
+                .copyWith(fontSize: 16, fontWeight: FontWeight.normal)),
         boxShadows: [
           BoxShadow(
             blurRadius: 16,
@@ -74,12 +72,10 @@ class _ChatAttachmentState extends State<ChatAttachment> {
             Get.find<FileUploadCubit>().retryUpload(listUploadFailed);
           },
           child: Text(AppLocalizations.of(context)?.tryAgain ?? '',
-            style: StylesConfig.commonTextStyle.copyWith(
-              fontSize: 14.0,
-              color: const Color(0xff004dff),
-              fontWeight: FontWeight.w500
-            ),
-          ),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline4!
+                  .copyWith(fontSize: 15, fontWeight: FontWeight.normal)),
         ));
   }
 
@@ -87,7 +83,9 @@ class _ChatAttachmentState extends State<ChatAttachment> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      color: const Color(0xffF2F2F6),
+      color: MediaQuery.of(context).platformBrightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : Theme.of(context).colorScheme.secondaryVariant,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -108,9 +106,8 @@ class _ChatAttachmentState extends State<ChatAttachment> {
   _buildCloseButton() {
     return GestureDetector(
       onTap: () {
-        Get.find<FileUploadCubit>().clearFileUploadingState(
-          needToCancelInProcessingFile: true
-        );
+        Get.find<FileUploadCubit>()
+            .clearFileUploadingState(needToCancelInProcessingFile: true);
       },
       child: Image.asset(
         imageClose,
@@ -126,19 +123,20 @@ class _ChatAttachmentState extends State<ChatAttachment> {
       children: [
         Text(
           AppLocalizations.of(context)?.attachedFiles ?? '',
-          style: StylesConfig.commonTextStyle.copyWith(
-              color: const Color.fromRGBO(0, 0, 0, 0.35),
-              fontSize: 13.0,
-              fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context)
+              .textTheme
+              .headline2!
+              .copyWith(fontSize: 13, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 8.0),
         Text(
-          AppLocalizations.of(context)?.attachedFilesHint(MAX_FILE_UPLOADING.toString()) ?? '',
-          style: StylesConfig.commonTextStyle.copyWith(
-              color: const Color(0xff969ca4),
-              fontSize: 12.0
-          ),
+          AppLocalizations.of(context)
+                  ?.attachedFilesHint(MAX_FILE_UPLOADING.toString()) ??
+              '',
+          style: Theme.of(context)
+              .textTheme
+              .headline3!
+              .copyWith(fontSize: 12, fontWeight: FontWeight.normal),
         ),
         SizedBox(height: 16.0),
         Flexible(
@@ -153,19 +151,18 @@ class _ChatAttachmentState extends State<ChatAttachment> {
                       return FileUploadingTile(
                           fileUploading: fileUploading,
                           onCancel: () {
-                            Get.find<FileUploadCubit>().removeFileUploading(fileUploading);
-                          }
-                      );
+                            Get.find<FileUploadCubit>()
+                                .removeFileUploading(fileUploading);
+                          });
                     });
-              }
-          ),
+              }),
         )
       ],
     );
   }
 
   _buildDestination() {
-    if(widget.senderName.isEmpty) {
+    if (widget.senderName.isEmpty) {
       return SizedBox.shrink();
     }
     return Row(
@@ -173,15 +170,16 @@ class _ChatAttachmentState extends State<ChatAttachment> {
       children: [
         Image.asset(imageSendTo),
         SizedBox(width: 4.0),
-        Text(
-          widget.senderName,
-          style: StylesConfig.commonTextStyle.copyWith(
-              color: const Color(0xff4a4a4a),
-              fontSize: 11.0
+        Flexible(
+          child: Text(
+            widget.senderName,
+            style: Theme.of(context).textTheme.headline3!.copyWith(
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+                overflow: TextOverflow.ellipsis),
           ),
         ),
       ],
     );
   }
-
 }

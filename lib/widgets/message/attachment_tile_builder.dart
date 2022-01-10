@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:twake/config/styles_config.dart';
 
 class AttachmentTileBuilder {
@@ -18,22 +19,23 @@ class AttachmentTileBuilder {
     return ListTile(
       onTap: () => onClick?.call(),
       leading: Container(
-        height: double.infinity,
-        child: Image.asset(leadingIcon, width: 32, height: 32)),
-      title: Text(
-        this.title,
-        style: StylesConfig.commonTextStyle.copyWith(
-          color: const Color(0xff004dff),
-          fontSize: 17.0,
-        ),
-      ),
-      subtitle: Text(
-        this.subtitle,
-        style: StylesConfig.commonTextStyle.copyWith(
-          color: const Color(0xff818c99),
-          fontSize: 14.0,
-        ),
-      ),
+          height: double.infinity,
+          child: Image.asset(
+            leadingIcon,
+            width: 32,
+            height: 32,
+            color: Get.theme.colorScheme.surface,
+          )),
+      title: Get.theme.brightness == Brightness.dark
+          ? Text(this.title,
+              style: Get.theme.textTheme.headline1!
+                  .copyWith(fontSize: 17, fontWeight: FontWeight.normal))
+          : Text(this.title,
+              style: Get.theme.textTheme.headline4!
+                  .copyWith(fontSize: 17, fontWeight: FontWeight.normal)),
+      subtitle: Text(this.subtitle,
+          style: Get.theme.textTheme.headline3!
+              .copyWith(fontSize: 14, fontWeight: FontWeight.normal)),
     );
   }
 }

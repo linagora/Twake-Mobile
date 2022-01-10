@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
@@ -361,8 +362,10 @@ class _ComposeBar extends State<ComposeBar> {
                     showRecentsTab: true,
                     recentsLimit: 28,
                     noRecentsText: AppLocalizations.of(context)!.noRecents,
-                    noRecentsStyle:
-                        const TextStyle(fontSize: 20, color: Colors.black26),
+                    noRecentsStyle: Theme.of(context)
+                        .textTheme
+                        .headline3!
+                        .copyWith(fontSize: 20),
                     categoryIcons: const CategoryIcons(),
                     buttonMode: ButtonMode.MATERIAL,
                   ),
@@ -433,16 +436,23 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _buildAttachment() => IconButton(
-        constraints: BoxConstraints(
-          minHeight: 24.0,
-          minWidth: 24.0,
-        ),
-        padding: EdgeInsets.zero,
-        icon: Image.asset(imageAttachment),
-        onPressed: () => _handleOpenFilePicker(),
-        color: Theme.of(context).colorScheme.surface,
-      );
+  _buildAttachment() {
+    final fileUploadStatus =
+        Get.find<FileUploadCubit>().state.fileUploadStatus.index;
+
+    return IconButton(
+      constraints: BoxConstraints(
+        minHeight: 24.0,
+        minWidth: 24.0,
+      ),
+      padding: EdgeInsets.zero,
+      icon: fileUploadStatus == 0
+          ? Image.asset(imageAttachmentNew)
+          : Image.asset(imageAttachment),
+      onPressed: () => _handleOpenFilePicker(),
+      color: Theme.of(context).colorScheme.surface,
+    );
+  }
 
   _buildMessageContent() {
     return Container(
@@ -588,7 +598,8 @@ class _TextInputState extends State<TextInput> {
                                     ?.takePictureSubtitle ??
                                 '')
                         .build(),
-                    Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
+                    Divider(
+                        color: Theme.of(context).colorScheme.secondaryVariant),
                     AttachmentTileBuilder(
                             onClick: () {
                               _handlePickFile(fileType: FileType.media);
@@ -601,7 +612,8 @@ class _TextInputState extends State<TextInput> {
                                     ?.photoOrVideoSubtitle ??
                                 '')
                         .build(),
-                    Divider(color: const Color.fromRGBO(0, 0, 0, 0.12)),
+                    Divider(
+                        color: Theme.of(context).colorScheme.secondaryVariant),
                     AttachmentTileBuilder(
                             onClick: () {
                               _handlePickFile(fileType: FileType.any);
@@ -618,19 +630,14 @@ class _TextInputState extends State<TextInput> {
               ),
               SizedBox(height: 6.0),
               ButtonTextBuilder(Key('button_cancel_attachment'),
-                      backgroundColor: Theme.of(context)
-                          .colorScheme
-                          .surface
-                          .withOpacity(0.5),
+                      backgroundColor:
+                          Theme.of(context).colorScheme.secondaryVariant,
                       onButtonClick: () => Navigator.of(context).pop())
                   .setWidth(double.maxFinite)
-                  .setBackgroundColor(Colors.white)
-                  .setTextStyle(
-                    StylesConfig.commonTextStyle.copyWith(
-                        color: const Color(0xff004dff),
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.w500),
-                  )
+                  .setTextStyle(Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontSize: 20, fontWeight: FontWeight.w500))
                   .setText(AppLocalizations.of(context)?.cancel ?? '')
                   .build(),
               SizedBox(height: 12.0),
