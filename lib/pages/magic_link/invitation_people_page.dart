@@ -222,12 +222,16 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                   .setHeight(50)
                   .setText(
                       AppLocalizations.of(context)?.shareInvitationLink ?? '')
-                  .setTextStyle(
-                    Theme.of(context)
-                        .textTheme
-                        .headline1!
-                        .copyWith(fontSize: 17, fontWeight: FontWeight.normal),
-                  )
+                  .setTextStyle(MediaQuery.of(context).platformBrightness ==
+                          Brightness.dark
+                      ? Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.normal)
+                      : Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w600))
                   .build(),
               SizedBox(height: 54),
               Text(AppLocalizations.of(context)?.sendInvitationByEmail ?? '',
