@@ -405,5 +405,17 @@
         "example": "Dec 7, 2021 at 13:13"
       }
     }
-  }
+  },
+  "cantOpenFile": "Невозможно открыть этот файл",
+  "@cantOpenFile": {},
+  "fileDownloadedInGallery": "Файл загружен в галерею",
+  "@fileDownloadedInGallery": {},
+  "openSettings": "Открыть настройки",
+  "@openSettings": {},
+  "openSettingsMessage": "Вам необходимо открыть Настройки, чтобы предоставить разрешение",
+  "@openSettingsMessage": {},
+  "openIt": "Открыть",
+  "@openIt": {},
+  "deny": "Отклонить",
+  "@deny": {}
 }
