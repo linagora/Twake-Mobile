@@ -165,7 +165,7 @@
   "@memberRemoved": {},
   "sendDirect": "Отправить личное сообщение",
   "@sendDirect": {},
-  "membersPlural": "{count, plural, =0{Нет участников} =1{1 участник} other{{count} членов}}}",
+  "membersPlural": "{count, plural, =0{Нет участников} =1{1 участник} other{{count} участников}}",
   "@membersPlural": {
     "description": "A plural form of 'members' word",
     "placeholders": {
@@ -238,7 +238,7 @@
   "@messageCopiedInfo": {},
   "channelSettings": "Настройки канала",
   "@channelSettings": {},
-  "replyPlural": "{count, plural, =0{нет ответов} =1{1 ответ} other{{count} ответов}}}",
+  "replyPlural": "{count, plural, =0{нет ответов} =1{1 ответ} other{{count} ответов}}",
   "@replyPlural": {
     "description": "A plural form of 'reply' word",
     "placeholders": {
@@ -328,7 +328,7 @@
       }
     }
   },
-  "sendMagicLinkToColleagues": "Отправить ссылку сотрудникам",
+  "sendMagicLinkToColleagues": "Отправить ссылку коллегам",
   "@sendMagicLinkToColleagues": {},
   "invitePeopleToWorkspace": "Пригласить пользователей в данную рабочую среду",
   "@invitePeopleToWorkspace": {},
