@@ -133,7 +133,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
           }
         },
         child: Container(
-          margin: EdgeInsets.symmetric(vertical: !_isMyMessage ? 6 : 0),
+          margin: EdgeInsets.symmetric(vertical: !_isMyMessage ? 6 : 1),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisSize: MainAxisSize.max,
