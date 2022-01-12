@@ -83,7 +83,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      color: MediaQuery.of(context).platformBrightness == Brightness.dark
+      color: Get.isDarkMode
           ? Theme.of(context).scaffoldBackgroundColor
           : Theme.of(context).colorScheme.secondaryVariant,
       child: Column(

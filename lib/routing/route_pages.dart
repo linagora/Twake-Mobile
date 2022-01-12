@@ -9,6 +9,7 @@ import 'package:twake/di/member_management_binding.dart';
 import 'package:twake/di/new_direct_binding.dart';
 import 'package:twake/pages/account/account_info.dart';
 import 'package:twake/pages/account/account_settings.dart';
+import 'package:twake/pages/account/select_theme.dart';
 import 'package:twake/pages/channel/channel_detail/channel_detail_widget.dart';
 import 'package:twake/pages/channel/channel_settings/channel_settings_widget.dart';
 import 'package:twake/pages/channel/edit_channel/edit_channel_widget.dart';
@@ -23,7 +24,7 @@ import 'package:twake/pages/magic_link/invitation_people_page.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/pages/member/member_management/member_management_widget.dart';
 import 'package:twake/pages/chat/thread_page.dart';
-import 'package:twake/pages/select_language.dart';
+import 'package:twake/pages/account/select_language.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
 
@@ -118,6 +119,11 @@ final routePages = [
               page: () => SelectLanguage(),
               transition: Transition.native,
             ),
+            GetPage(
+              name: RoutePaths.accountTheme.name,
+              page: () => SelectTheme(),
+              transition: Transition.native,
+            ),
           ]),
       GetPage(
         name: RoutePaths.accountInfo.name,
@@ -140,18 +146,17 @@ final routePages = [
         transition: Transition.native,
       ),
       GetPage(
-        name: RoutePaths.invitationPeople.name,
-        page: () => InvitationPeoplePage(),
-        transition: Transition.native,
-        children: [
-          GetPage(
-            name: RoutePaths.invitationPeopleEmail.name,
-            page: () => InvitationPeopleEmailPage(),
-            transition: Transition.native,
-            binding: MagicLinkBinding(),
-          )
-        ]
-      ),
+          name: RoutePaths.invitationPeople.name,
+          page: () => InvitationPeoplePage(),
+          transition: Transition.native,
+          children: [
+            GetPage(
+              name: RoutePaths.invitationPeopleEmail.name,
+              page: () => InvitationPeopleEmailPage(),
+              transition: Transition.native,
+              binding: MagicLinkBinding(),
+            )
+          ]),
       GetPage(
         name: RoutePaths.channelFilePreview.name,
         page: () => FilePreview<ChannelsCubit>(),

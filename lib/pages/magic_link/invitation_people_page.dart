@@ -222,8 +222,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                   .setHeight(50)
                   .setText(
                       AppLocalizations.of(context)?.shareInvitationLink ?? '')
-                  .setTextStyle(MediaQuery.of(context).platformBrightness ==
-                          Brightness.dark
+                  .setTextStyle(Get.isDarkMode
                       ? Theme.of(context)
                           .textTheme
                           .headline1!

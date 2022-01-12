@@ -26,7 +26,7 @@ class AttachmentTileBuilder {
             height: 32,
             color: Get.theme.colorScheme.surface,
           )),
-      title: Get.theme.brightness == Brightness.dark
+      title: Get.isDarkMode
           ? Text(this.title,
               style: Get.theme.textTheme.headline1!
                   .copyWith(fontSize: 17, fontWeight: FontWeight.normal))
