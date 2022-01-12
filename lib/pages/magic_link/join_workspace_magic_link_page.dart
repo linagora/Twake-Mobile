@@ -10,16 +10,21 @@ import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/endpoints.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JoinWorkSpaceMagicLinkPage extends StatefulWidget {
   final WorkspaceJoinResponse? workspaceJoinResponse;
   final String requestedToken;
+  final bool? isDifferenceServer;
 
-  const JoinWorkSpaceMagicLinkPage(
-      {Key? key, this.workspaceJoinResponse, required this.requestedToken})
-      : super(key: key);
+  const JoinWorkSpaceMagicLinkPage({
+    Key? key,
+    required this.requestedToken,
+    this.workspaceJoinResponse,
+    this.isDifferenceServer,
+  }) : super(key: key);
 
   @override
   _JoinWorkSpaceMagicLinkPageState createState() =>
@@ -28,6 +33,30 @@ class JoinWorkSpaceMagicLinkPage extends StatefulWidget {
 
 class _JoinWorkSpaceMagicLinkPageState
     extends State<JoinWorkSpaceMagicLinkPage> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Handle when joining with diff server from Magic Link,
+    if (widget.isDifferenceServer == true) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) async {
+        final incomingHost = Globals.instance.host; // this is updated host from incoming link
+        Utilities.showSimpleSnackBar(
+          message: AppLocalizations.of(context)?.youHaveBeenDisconnected(incomingHost) ?? '',
+          iconPath: imageInvalid,
+          duration: const Duration(milliseconds: 3000),
+        );
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Globals.instance.handlingMagicLink = false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

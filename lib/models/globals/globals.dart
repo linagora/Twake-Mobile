@@ -114,6 +114,9 @@ class Globals extends BaseModel {
   @JsonKey(ignore: true)
   bool magicLinkInitialUriIsHandled = false;
 
+  @JsonKey(ignore: true)
+  bool handlingMagicLink = false;
+
   // Make sure to call the factory constructor before accessing instance
   static Globals get instance {
     return _globals;

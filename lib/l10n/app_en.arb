@@ -258,5 +258,15 @@
     "openIt": "Open it",
     "openSettings": "Open Settings",
     "deny": "Deny",
-    "openSettingsMessage": "You need to open Settings to grant permission"
+    "openSettingsMessage": "You need to open Settings to grant permission",
+    "youHaveBeenDisconnected": "You have been disconnected and directed to {url}",
+    "@youHaveBeenDisconnected": {
+        "description": "Force logout when join workspace from magic link with difference server",
+        "placeholders": {
+            "url": {
+                "type": "String",
+                "example": "web.twake.app"
+            }
+        }
+    }
 }

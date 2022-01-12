@@ -91,11 +91,16 @@ class InvitationJoinCheckingInit extends AuthenticationState {
 class InvitationJoinCheckingTokenFinished extends AuthenticationState {
   final String requestedToken;
   final WorkspaceJoinResponse? joinResponse;
+  final bool? isDifferenceServer;
 
-  const InvitationJoinCheckingTokenFinished({required this.requestedToken, this.joinResponse});
+  const InvitationJoinCheckingTokenFinished({
+    required this.requestedToken,
+    this.joinResponse,
+    this.isDifferenceServer,
+  });
 
   @override
-  List<Object?> get props => [joinResponse, requestedToken];
+  List<Object?> get props => [joinResponse, requestedToken, isDifferenceServer];
 }
 
 class InvitationJoinInit extends AuthenticationState {

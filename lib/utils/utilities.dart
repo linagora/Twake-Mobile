@@ -32,14 +32,14 @@ class Utilities {
     await Share.share(appUrl);
   }
 
-  static void showSimpleSnackBar({required String message, String? iconPath}) {
+  static void showSimpleSnackBar({required String message, String? iconPath, Duration? duration}) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.white,
         margin: const EdgeInsets.all(16.0),
         padding: const EdgeInsets.all(16.0),
         animationDuration: Duration(milliseconds: 300),
-        duration: const Duration(milliseconds: 1500),
+        duration: duration ?? const Duration(milliseconds: 1500),
         icon: iconPath != null
             ? Image.asset(iconPath, width: 40, height: 40)
             : null,

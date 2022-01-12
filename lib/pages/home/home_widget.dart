@@ -63,6 +63,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
 
     if (Globals.instance.token == null) return;
+    if (Globals.instance.handlingMagicLink) return;
 
     if (state == AppLifecycleState.resumed) {
       SocketIOService.instance.connect();

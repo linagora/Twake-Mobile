@@ -100,6 +100,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(AuthenticationInitial());
   }
 
+  Future<void> logoutWithoutEmittingState() async {
+    await _repository.logout();
+    SocketIOService.instance.disconnect();
+  }
+
   void registerDevice() async {
     await _repository.registerDevice();
   }
@@ -108,14 +113,34 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     await _repository.registerDevice();
   }
 
-  void checkTokenAvailable(String token) async {
+  void checkTokenAvailable(String token, {required String incomingHost}) async {
     emit(InvitationJoinCheckingInit());
+    Globals.instance.handlingMagicLink = true;
     try {
-      final checkTokenResponse = await _magicLinkRepository.joinWorkspace(WorkspaceJoinRequest(false, token));
-      emit(InvitationJoinCheckingTokenFinished(joinResponse: checkTokenResponse, requestedToken: token));
+      // Additional handle the incoming link from another supported server
+      // Look at story #1155 for more detail
+      final currentHost = Globals.instance.host;
+      bool isDifferenceServer = incomingHost != currentHost;
+      if (incomingHost != currentHost) {
+        await _handleDifferenceServer();
+        await Globals.instance.hostSet(incomingHost);
+      }
+
+      final checkTokenResponse =
+          await _magicLinkRepository.joinWorkspace(WorkspaceJoinRequest(false, token));
+
+      emit(InvitationJoinCheckingTokenFinished(
+        joinResponse: checkTokenResponse,
+        requestedToken: token,
+        isDifferenceServer: isDifferenceServer,
+      ));
     } catch (e) {
       Logger().e('ERROR during checking magic link token:\n$e');
-      emit(InvitationJoinCheckingTokenFinished(joinResponse: null, requestedToken: token));
+      emit(InvitationJoinCheckingTokenFinished(
+        joinResponse: null,
+        requestedToken: token,
+        isDifferenceServer: null,
+      ));
     }
   }
 
@@ -143,6 +168,13 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   Future<void> resetAuthenticationState() async {
     emit(AuthenticationInitial());
+  }
+
+  Future<void> _handleDifferenceServer() async {
+    final authenticated = await isAuthenticated();
+    if (authenticated) {
+      await logoutWithoutEmittingState();
+    }
   }
 
   @override
