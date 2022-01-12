@@ -90,10 +90,15 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     }
   }
 
-  _handleIncomingLink(Uri? uri) {
-    final token = uri?.queryParameters['join'];
-    if(token != null && token.isNotEmpty) {
-      Get.find<AuthenticationCubit>().checkTokenAvailable(token);
+  _handleIncomingLink(Uri? uri) async {
+    if (uri == null) {
+      Get.find<AuthenticationCubit>().checkAuthentication();
+      return;
+    }
+    final token = uri.queryParameters['join'];
+    final incomingHost = uri.origin;
+    if (token != null && token.isNotEmpty) {
+      Get.find<AuthenticationCubit>().checkTokenAvailable(token, incomingHost: incomingHost);
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
     }
@@ -232,10 +237,12 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   _selectWorkspaceAfterJoin(magicLinkJoinResponse);
                   return HomeWidget();
                 } else if (state is InvitationJoinCheckingTokenFinished) {
-                  popWhenOpenMagicLinkFromChat();
+                  _popWhenOpenMagicLinkFromChat();
                   return JoinWorkSpaceMagicLinkPage(
                       workspaceJoinResponse: state.joinResponse,
-                      requestedToken: state.requestedToken);
+                      requestedToken: state.requestedToken,
+                      isDifferenceServer: state.isDifferenceServer,
+                  );
                 } else {
                   return buildSplashScreen();
                 }
@@ -290,7 +297,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     }
   }
 
-  void popWhenOpenMagicLinkFromChat() async {
+  void _popWhenOpenMagicLinkFromChat() async {
     try {
       if (Get.currentRoute == RoutePaths.channelMessages.path ||
           Get.currentRoute == RoutePaths.channelMessageThread.path ||
