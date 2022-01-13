@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef OnSelectableChannelTypeClick = void Function(ChannelVisibility);
 
@@ -53,7 +54,7 @@ class _SelectableChannelTypeWidgetState
                     width: 16,
                   ),
                   Expanded(
-                    child: Text("Public",
+                    child: Text(AppLocalizations.of(context)!.public,
                         style: Theme.of(context).textTheme.headline1!.copyWith(
                             fontWeight: FontWeight.w400, fontSize: 17)),
                   ),
@@ -82,7 +83,7 @@ class _SelectableChannelTypeWidgetState
                     width: 16,
                   ),
                   Expanded(
-                    child: Text("Private",
+                    child: Text(AppLocalizations.of(context)!.private,
                         style: Theme.of(context).textTheme.headline1!.copyWith(
                             fontWeight: FontWeight.w400, fontSize: 17)),
                   ),
