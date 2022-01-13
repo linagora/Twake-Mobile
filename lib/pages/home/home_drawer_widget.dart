@@ -53,7 +53,9 @@ class HomeDrawerWidget extends StatelessWidget {
                               borderRadius: 16,
                               imageUrl: companyState.selected.logo ?? '',
                               name: companyState.selected.name,
-                              backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryVariant,
                             ),
                           ),
                           Positioned.fill(
@@ -173,7 +175,6 @@ class HomeDrawerWidget extends StatelessWidget {
               Divider(
                 thickness: 1,
                 color: Theme.of(context).colorScheme.secondaryVariant,
-           
               ),
               BlocBuilder(
                 bloc: Get.find<CompaniesCubit>(),
@@ -314,6 +315,8 @@ class HomeDrawerWidget extends StatelessWidget {
                   child: Container(
                     margin: EdgeInsets.only(bottom: 20),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(imageInvitePeople,
                             width: 24,
@@ -321,14 +324,18 @@ class HomeDrawerWidget extends StatelessWidget {
                             color:
                                 Theme.of(context).textTheme.headline1!.color),
                         SizedBox(width: 12),
-                        Text(
-                          AppLocalizations.of(context)
-                                  ?.invitePeopleToWorkspace ??
-                              '',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline1!
-                              .copyWith(fontWeight: FontWeight.normal),
+                        Flexible(
+                          child: Text(
+                            AppLocalizations.of(context)
+                                    ?.invitePeopleToWorkspace ??
+                                '',
+                            maxLines: 2,
+                            textAlign: TextAlign.left,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(fontWeight: FontWeight.normal),
+                          ),
                         ),
                       ],
                     ),
