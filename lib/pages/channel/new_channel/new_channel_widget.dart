@@ -71,7 +71,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         alignment: Alignment.centerLeft,
                         child: CupertinoButton(
                           onPressed: () => popBack(),
-                          child: Text('Cancel',
+                          child: Text(AppLocalizations.of(context)!.cancel,
                               style: Theme.of(context)
                                   .textTheme
                                   .headline2!
@@ -362,7 +362,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               child: Row(
                                 children: [
                                   Text(
-                                    "Invite all workspace users",
+                                    AppLocalizations.of(context)!
+                                        .inviteAllWorkspaceUsers,
                                     style: TextStyle(
                                       fontSize: 17,
                                     ),
@@ -393,7 +394,8 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                              'Automatically invite all workspace users to this channel',
+                              AppLocalizations.of(context)!
+                                  .automaticallyInviteAllWorkspaceUsers,
                               style: Theme.of(context)
                                   .textTheme
                                   .headline2!
