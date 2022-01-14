@@ -7,10 +7,12 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/di/home_binding.dart';
 import 'package:twake/repositories/language_repository.dart';
+import 'package:twake/repositories/theme_repository.dart';
 import 'package:twake/routing/route_pages.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/init_service.dart';
@@ -26,9 +28,11 @@ void main() async {
   await InitService.preAuthenticationInit();
 
   await dotenv.load(fileName: ".env");
+  //TODO Do refactoring when UserProfile API will be ready, remove get_storage dep
+  await GetStorage.init();
 
   final language = await LanguageRepository().getLanguage();
-
+  final themeMode = await ThemeRepository().getInitTheme();
   await FlutterDownloader.initialize(debug: kDebugMode);
 
   runApp(
@@ -47,9 +51,9 @@ void main() async {
       enableBallisticLoad: true, // trigger load more by BallisticScrollActivity
 
       child: GetMaterialApp(
-      
         theme: StylesConfig.lightTheme,
         darkTheme: StylesConfig.darkTheme,
+        themeMode: themeMode,
         title: 'Twake',
         localizationsDelegates: [
           AppLocalizations.delegate,

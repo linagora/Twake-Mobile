@@ -34,8 +34,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               ? AppBar(
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   titleSpacing: 0.0,
-                  shadowColor: MediaQuery.of(context).platformBrightness ==
-                          Brightness.dark
+                  shadowColor: Get.isDarkMode
                       ? Theme.of(context).colorScheme.primary
                       : Theme.of(context).colorScheme.primary.withOpacity(0.3),
                   toolbarHeight: 60.0,
@@ -109,8 +108,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               Divider(
                   thickness: 1.0,
                   height: 1.0,
-                  color: MediaQuery.of(context).platformBrightness ==
-                          Brightness.dark
+                  color: Get.isDarkMode
                       ? Theme.of(context).colorScheme.primary
                       : Color(0xFFEEEEEE)),
               _buildLoading(messagesState),

@@ -33,8 +33,10 @@ class RoutePaths {
   static final accountSettings = _RoutePathsType(initial, '/account_settings');
   static final accountInfo =
       _RoutePathsType(initial, '/account_settings/account_info');
-      static final accountLanguage =
+  static final accountLanguage =
       _RoutePathsType(accountSettings.path, '/select_language');
+  static final accountTheme =
+      _RoutePathsType(accountSettings.path, '/select_theme');
 
   static final createWorkspace = _RoutePathsType(initial, '/create_workspace');
   static final homeWidget = _RoutePathsType(initial, '/homeWidget');
@@ -43,14 +45,18 @@ class RoutePaths {
   static final signInUpScreen = _RoutePathsType(initial, '/sign_flow');
 
   // magic link
-  static final invitationPeople = _RoutePathsType(initial, '/invitation_people');
-  static final invitationPeopleEmail = _RoutePathsType(invitationPeople.path, '/invitation_people_email');
-  static final joinWorkspaceByMagicLink = _RoutePathsType(initial, '/join_workspace_by_magic_link');
+  static final invitationPeople =
+      _RoutePathsType(initial, '/invitation_people');
+  static final invitationPeopleEmail =
+      _RoutePathsType(invitationPeople.path, '/invitation_people_email');
+  static final joinWorkspaceByMagicLink =
+      _RoutePathsType(initial, '/join_workspace_by_magic_link');
 
   // file
-  static final channelFilePreview = _RoutePathsType(initial, '/channel_file_preview');
-  static final directFilePreview = _RoutePathsType(initial, '/direct_file_preview');
-
+  static final channelFilePreview =
+      _RoutePathsType(initial, '/channel_file_preview');
+  static final directFilePreview =
+      _RoutePathsType(initial, '/direct_file_preview');
 }
 
 class _RoutePathsType {

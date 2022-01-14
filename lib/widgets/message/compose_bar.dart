@@ -414,10 +414,9 @@ class _TextInputState extends State<TextInput> {
       decoration: BoxDecoration(
         border: Border(
             top: BorderSide(
-                color:
-                    MediaQuery.of(context).platformBrightness == Brightness.dark
-                        ? Theme.of(context).scaffoldBackgroundColor
-                        : Theme.of(context).colorScheme.secondaryVariant,
+                color: Get.isDarkMode
+                    ? Theme.of(context).scaffoldBackgroundColor
+                    : Theme.of(context).colorScheme.secondaryVariant,
                 width: 1.5)),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -557,10 +556,7 @@ class _TextInputState extends State<TextInput> {
               padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
               child: Image.asset(
                 'assets/images/send.png',
-                color:
-                    MediaQuery.of(context).platformBrightness == Brightness.dark
-                        ? Colors.grey
-                        : Colors.black,
+                color: Get.isDarkMode ? Colors.grey : Colors.black,
               ),
             ),
     );

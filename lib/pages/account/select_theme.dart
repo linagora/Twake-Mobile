@@ -1,22 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
-import 'package:twake/repositories/language_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/repositories/theme_repository.dart';
 
-class SelectLanguage extends StatefulWidget {
-  SelectLanguage({Key? key}) : super(key: key);
+class SelectTheme extends StatefulWidget {
+  SelectTheme({Key? key}) : super(key: key);
 
   @override
-  State<SelectLanguage> createState() => _SelectLanguageState();
+  State<SelectTheme> createState() => _SelectThemeState();
 }
 
-class _SelectLanguageState extends State<SelectLanguage> {
+class _SelectThemeState extends State<SelectTheme> {
+  final themeRep = ThemeRepository();
   @override
   Widget build(BuildContext context) {
-    final languageCode = LanguageRepository().languages;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -29,7 +29,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
         ),
         toolbarHeight: 56,
         title: Text(
-          AppLocalizations.of(context)!.language,
+          AppLocalizations.of(context)!.appearance,
           style: Theme.of(context)
               .textTheme
               .headline1!
@@ -43,21 +43,38 @@ class _SelectLanguageState extends State<SelectLanguage> {
           bottom: false,
           child: Padding(
             padding: const EdgeInsets.only(left: 14, right: 14.0, top: 25),
-            child: ListView.separated(
-              itemCount: languageCode.length,
-              itemBuilder: (context, index) {
-                return languageTile(
-                  languageCode: languageCode[index],
-                  index: index,
-                  length: languageCode.length,
-                  context: context,
-                );
-              },
-              separatorBuilder: (context, index) => Divider(
-                color: Theme.of(context).colorScheme.secondaryVariant,
-                thickness: 0.3,
-                height: 2,
-              ),
+            child: Column(
+              children: [
+                ListView.separated(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  itemCount: themeList.length,
+                  itemBuilder: (context, index) {
+                    return themeTile(
+                      theme: themeList[index],
+                      index: index,
+                      length: themeList.length,
+                    );
+                  },
+                  separatorBuilder: (context, index) => Divider(
+                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    thickness: 0.3,
+                    height: 2,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      vertical: 8, horizontal: Dim.widthPercent(4)),
+                  child: Text(
+                    AppLocalizations.of(context)!.appearanceDescription,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline2!
+                        .copyWith(fontSize: 12, fontWeight: FontWeight.normal),
+                  ),
+                ),
+                Spacer(),
+              ],
             ),
           ),
         ),
@@ -65,11 +82,10 @@ class _SelectLanguageState extends State<SelectLanguage> {
     );
   }
 
-  Widget languageTile({
-    required String languageCode,
+  Widget themeTile({
+    required String theme,
     required int index,
     required int length,
-    required BuildContext context,
   }) {
     return GestureDetector(
         child: Container(
@@ -92,19 +108,18 @@ class _SelectLanguageState extends State<SelectLanguage> {
             child: Row(
               children: [
                 Text(
-                  getLanguageString(
-                      languageCode: languageCode, context: context),
+                  getThemeLocalizationString(theme: theme, ctx: context),
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
                       .copyWith(fontSize: 15, fontWeight: FontWeight.normal),
                 ),
                 Spacer(),
-                BlocBuilder<LanguageCubit, LanguageState>(
-                  bloc: Get.find<LanguageCubit>(),
+                BlocBuilder<ThemeCubit, ThemeState>(
+                  bloc: Get.find<ThemeCubit>(),
                   builder: (context, state) {
-                    if (state is NewLanguage) {
-                      if (state.language == languageCode) {
+                    if (state.themeStatus == ThemeStatus.done) {
+                      if (state.theme == theme) {
                         return Icon(
                           Icons.check_circle_rounded,
                           size: 26,
@@ -123,29 +138,21 @@ class _SelectLanguageState extends State<SelectLanguage> {
           ),
         ),
         onTap: () async {
-          Get.find<LanguageCubit>().changeLanguage(language: "$languageCode");
+          Get.find<ThemeCubit>().changeTheme(theme: theme);
         });
   }
 }
 
-String getLanguageString(
-    {required String languageCode, required BuildContext context}) {
-  switch (languageCode) {
-    case 'en':
-      return AppLocalizations.of(context)!.english;
-    case 'es':
-      return AppLocalizations.of(context)!.spanish;
-    case 'ru':
-      return AppLocalizations.of(context)!.russian;
-    case 'de':
-      return AppLocalizations.of(context)!.german;
-    case 'it':
-      return AppLocalizations.of(context)!.italian;
-    case 'fi':
-      return AppLocalizations.of(context)!.finnish;
-    case 'fr':
-      return AppLocalizations.of(context)!.french;
+String getThemeLocalizationString(
+    {required String theme, required BuildContext ctx}) {
+  switch (theme) {
+    case 'Light':
+      return AppLocalizations.of(ctx)!.light;
+    case 'Dark':
+      return AppLocalizations.of(ctx)!.dark;
+    case 'System':
+      return AppLocalizations.of(ctx)!.system;
     default:
-      return 'English';
+      return AppLocalizations.of(ctx)!.system;
   }
 }

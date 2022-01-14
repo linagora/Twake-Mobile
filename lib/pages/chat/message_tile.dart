@@ -61,10 +61,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
         : 5;
     final messageState = Get.find<ChannelMessagesCubit>().state;
 
-    final bool _isDarkTheme =
-        MediaQuery.of(context).platformBrightness == Brightness.dark
-            ? true
-            : false;
+    final bool _isDarkTheme = Get.isDarkMode ? true : false;
 
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
@@ -248,7 +245,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
             nip: BubbleNip.no,
             radius: Radius.circular(0),
             elevation: 0,
-            color: MediaQuery.of(context).platformBrightness == Brightness.dark
+            color: Get.isDarkMode
                 ? _isMyMessage
                     ? Theme.of(context).colorScheme.surface
                     : Theme.of(context).colorScheme.secondaryVariant
@@ -346,9 +343,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                         child: Text(
                             '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
-                            style: _isMyMessage &&
-                                    MediaQuery.of(context).platformBrightness ==
-                                        Brightness.dark
+                            style: _isMyMessage && Get.isDarkMode
                                 ? _isMyMessage
                                     ? Theme.of(context)
                                         .textTheme

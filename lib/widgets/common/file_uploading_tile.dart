@@ -1,5 +1,6 @@
 import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
@@ -22,7 +23,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: MediaQuery.of(context).platformBrightness == Brightness.dark
+          color: Get.isDarkMode
               ? Theme.of(context).colorScheme.secondaryVariant
               : Theme.of(context).primaryColor,
           borderRadius: BorderRadius.all(Radius.circular(10.0))),

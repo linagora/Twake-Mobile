@@ -154,8 +154,7 @@ class SignInSignUpForm extends StatelessWidget {
                     },
                     child: Text(
                       AppLocalizations.of(context)!.signup,
-                      style: MediaQuery.of(context).platformBrightness ==
-                              Brightness.dark
+                      style: Get.isDarkMode
                           ? Theme.of(context).textTheme.headline1!.copyWith(
                               fontSize: 17, fontWeight: FontWeight.w600)
                           : Theme.of(context).textTheme.bodyText1!.copyWith(

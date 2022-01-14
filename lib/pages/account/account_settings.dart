@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
-import 'package:twake/pages/select_language.dart';
+import 'package:twake/pages/account/select_language.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -146,66 +145,298 @@ class _AccountSettingsState extends State<AccountSettings> {
                                     fontWeight: FontWeight.bold, fontSize: 34)),
                       ),
                       SizedBox(height: 12.0),
-                      GestureDetector(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondaryVariant,
-                              borderRadius: BorderRadius.circular(14.0)),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 16.0, top: 18, bottom: 18),
-                                child: ImageWidget(
-                                  imageType: ImageType.common,
-                                  name: name,
-                                  imageUrl: picture,
-                                  size: 44,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1!
-                                            .copyWith(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16)),
-                                    SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                        AppLocalizations.of(context)!
-                                            .viewProfile,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline2),
-                                  ],
-                                ),
-                              ),
-                              Spacer(),
-                              Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Icon(
-                                  CupertinoIcons.forward,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        onTap: () => NavigatorService.instance
-                            .navigateToAccount(shouldShowInfo: true),
-                      ),
+                      _buildViewProfile(),
                       Spacer(),
-                      /* TODO implement again when settings screen is going to be ready
+                      SizedBox(height: 16.0),
+                      _buildThemeSupportLanguage(),
+                      SizedBox(height: 16.0),
+                      _buildInvitePeople(),
+                      Flexible(child: SizedBox(height: 80.0)),
+                      _buildTwakeVersion(),
+                      SizedBox(height: 16.0),
+                      _buildLogOut(),
+                      SizedBox(height: 21.0),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  _buildViewProfile() {
+    return GestureDetector(
+      child: Container(
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondaryVariant,
+            borderRadius: BorderRadius.circular(14.0)),
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0, top: 18, bottom: 18),
+              child: ImageWidget(
+                imageType: ImageType.common,
+                name: name,
+                imageUrl: picture,
+                size: 44,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontWeight: FontWeight.w600, fontSize: 16)),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(AppLocalizations.of(context)!.viewProfile,
+                      style: Theme.of(context).textTheme.headline2),
+                ],
+              ),
+            ),
+            Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Icon(
+                CupertinoIcons.forward,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            )
+          ],
+        ),
+      ),
+      onTap: () =>
+          NavigatorService.instance.navigateToAccount(shouldShowInfo: true),
+    );
+  }
+
+  _buildThemeSupportLanguage() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => push(
+            RoutePaths.accountTheme.path,
+          ),
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryVariant,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                topRight: Radius.circular(10.0),
+              ),
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 14,
+                ),
+                SizedBox(
+                  height: 29,
+                  child: Image.asset('assets/images/2.0x/appearance.png'),
+                ),
+                SizedBox(
+                  width: 14,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.appearance,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontWeight: FontWeight.normal, fontSize: 17),
+                ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Icon(CupertinoIcons.forward,
+                      color: Theme.of(context).colorScheme.secondary),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 2.0),
+        GestureDetector(
+          onTap: () => NavigatorService.instance.openTwakeWebView(
+              'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryVariant,
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 14,
+                ),
+                SizedBox(
+                  height: 29,
+                  child: Image.asset('assets/images/2.0x/support.png'),
+                ),
+                SizedBox(
+                  width: 14,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.customerSupport,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontWeight: FontWeight.normal, fontSize: 17),
+                ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Icon(CupertinoIcons.forward,
+                      color: Theme.of(context).colorScheme.secondary),
+                ),
+              ],
+            ),
+          ),
+        ),
+        SizedBox(height: 2.0),
+        GestureDetector(
+          onTap: () async {
+            push(
+              RoutePaths.accountLanguage.path,
+            );
+          },
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.secondaryVariant,
+              borderRadius: BorderRadius.only(
+                bottomRight: Radius.circular(10.0),
+                bottomLeft: Radius.circular(10.0),
+              ),
+            ),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 14,
+                ),
+                SizedBox(
+                    height: 29,
+                    child: Image.asset('assets/images/2.0x/net_global.png')),
+                SizedBox(
+                  width: 14,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.language,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontWeight: FontWeight.normal, fontSize: 17),
+                ),
+                Spacer(),
+                BlocBuilder<LanguageCubit, LanguageState>(
+                  bloc: Get.find<LanguageCubit>(),
+                  builder: (context, state) {
+                    if (state is NewLanguage) {
+                      return Text(
+                        getLanguageString(
+                            languageCode: state.language, context: context),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline2!
+                            .copyWith(fontSize: 15),
+                      );
+                    }
+                    {
+                      return SizedBox.shrink();
+                    }
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 14, right: 14.0),
+                  child: Icon(
+                    CupertinoIcons.forward,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  _buildInvitePeople() {
+    return ButtonField(
+        onTap: () => _onShareWithEmptyOrigin(context),
+        image: 'assets/images/2.0x/invite_people.png',
+        title: AppLocalizations.of(context)!.invitePeopleToTwake,
+        titleStyle: Theme.of(context)
+            .textTheme
+            .headline1!
+            .copyWith(fontWeight: FontWeight.normal, fontSize: 17),
+        hasArrow: true,
+        arrowColor: Theme.of(context).colorScheme.secondary);
+  }
+
+  _buildTwakeVersion() {
+    return Container(
+      height: 44,
+      decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryVariant,
+          borderRadius: BorderRadius.circular(10.0)),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 14,
+          ),
+          SizedBox(
+              height: 29,
+              child: Image.asset('assets/images/2.0x/twake_logo.png')),
+          SizedBox(
+            width: 14,
+          ),
+          Text(
+            AppLocalizations.of(context)!.twakeVersion,
+            style: Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontWeight: FontWeight.normal, fontSize: 17),
+          ),
+          Spacer(),
+          Text(_packageInfo.version,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(fontSize: 15)),
+          SizedBox(
+            width: 14,
+          )
+        ],
+      ),
+    );
+  }
+
+  _buildLogOut() {
+    return GestureDetector(
+      onTap: () => _handleLogout(context),
+      child: Container(
+        height: 44.0,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.secondaryVariant,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        alignment: Alignment.center,
+        child: Text(AppLocalizations.of(context)!.logout,
+            style: Theme.of(context).textTheme.headline5),
+      ),
+    );
+  }
+}
+   /* TODO implement again when settings screen is going to be ready
                       SwitchField(
                         image: 'assets/images/notifications.png',
                         title: AppLocalizations.of(context)!.notifications,
@@ -222,202 +453,3 @@ class _AccountSettingsState extends State<AccountSettings> {
                                   .unRegisterDevice();
                         },
                       ),*/
-                      SizedBox(height: 16.0),
-                      GestureDetector(
-                        onTap: () => NavigatorService.instance.openTwakeWebView(
-                            'https://go.crisp.chat/chat/embed/?website_id=9ef1628b-1730-4044-b779-72ca48893161&user_email=$email'),
-                        child: Container(
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.secondaryVariant,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              topRight: Radius.circular(10.0),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 14,
-                              ),
-                              SizedBox(
-                                height: 29,
-                                child: Image.asset(
-                                    'assets/images/2.0x/support.png'),
-                              ),
-                              SizedBox(
-                                width: 14,
-                              ),
-                              Text(
-                                AppLocalizations.of(context)!.customerSupport,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .copyWith(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 17),
-                              ),
-                              Spacer(),
-                              Padding(
-                                padding: const EdgeInsets.all(14.0),
-                                child: Icon(CupertinoIcons.forward,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 2.0),
-                      GestureDetector(
-                        onTap: () async {
-                          push(
-                            RoutePaths.accountLanguage.path,
-                          );
-                        },
-                        child: Container(
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.secondaryVariant,
-                            borderRadius: BorderRadius.only(
-                              bottomRight: Radius.circular(10.0),
-                              bottomLeft: Radius.circular(10.0),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 14,
-                              ),
-                              SizedBox(
-                                  height: 29,
-                                  child: Image.asset(
-                                      'assets/images/2.0x/net_global.png')),
-                              SizedBox(
-                                width: 14,
-                              ),
-                              Text(
-                                AppLocalizations.of(context)!.language,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .copyWith(
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 17),
-                              ),
-                              Spacer(),
-                              BlocBuilder<LanguageCubit, LanguageState>(
-                                bloc: Get.find<LanguageCubit>(),
-                                builder: (context, state) {
-                                  if (state is NewLanguage) {
-                                    return Text(
-                                      getLanguageString(
-                                          languageCode: state.language,
-                                          context: context),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline2!
-                                          .copyWith(fontSize: 15),
-                                    );
-                                  }
-                                  {
-                                    return SizedBox.shrink();
-                                  }
-                                },
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 14, right: 14.0),
-                                child: Icon(
-                                  CupertinoIcons.forward,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
-                      ButtonField(
-                          onTap: () => _onShareWithEmptyOrigin(context),
-                          image: 'assets/images/2.0x/invite_people.png',
-                          title:
-                              AppLocalizations.of(context)!.invitePeopleToTwake,
-                          titleStyle: Theme.of(context)
-                              .textTheme
-                              .headline1!
-                              .copyWith(
-                                  fontWeight: FontWeight.normal, fontSize: 17),
-                          hasArrow: true,
-                          arrowColor: Theme.of(context).colorScheme.secondary),
-                      SizedBox(height: 80.0),
-                      Container(
-                        height: 44,
-                        decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.secondaryVariant,
-                            borderRadius: BorderRadius.circular(10.0)),
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 14,
-                            ),
-                            SizedBox(
-                                height: 29,
-                                child: Image.asset(
-                                    'assets/images/2.0x/twake_logo.png')),
-                            SizedBox(
-                              width: 14,
-                            ),
-                            Text(
-                              AppLocalizations.of(context)!.twakeVersion,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline1!
-                                  .copyWith(
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 17),
-                            ),
-                            Spacer(),
-                            Text(_packageInfo.version,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline2!
-                                    .copyWith(fontSize: 15)),
-                            SizedBox(
-                              width: 14,
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 16.0),
-                      GestureDetector(
-                        onTap: () => _handleLogout(context),
-                        child: Container(
-                          height: 44.0,
-                          decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).colorScheme.secondaryVariant,
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(AppLocalizations.of(context)!.logout,
-                              style: Theme.of(context).textTheme.headline5),
-                        ),
-                      ),
-                      SizedBox(height: 21.0),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -62,8 +62,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
               appBar: AppBar(
                 titleSpacing: 0.0,
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                shadowColor: MediaQuery.of(context).platformBrightness ==
-                        Brightness.dark
+                shadowColor: Get.isDarkMode
                     ? Theme.of(context).colorScheme.primary
                     : Theme.of(context).colorScheme.primary.withOpacity(0.3),
                 toolbarHeight:

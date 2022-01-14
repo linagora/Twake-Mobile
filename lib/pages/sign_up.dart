@@ -396,8 +396,7 @@ class _SignUpState extends State<SignUp> {
                   return Text(
                     AppLocalizations.of(context)!.startUsingTwake,
                     textAlign: TextAlign.center,
-                    style: MediaQuery.of(context).platformBrightness ==
-                            Brightness.dark
+                    style: Get.isDarkMode
                         ? Theme.of(context).textTheme.headline1!.copyWith(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
@@ -473,8 +472,7 @@ class _SignUpState extends State<SignUp> {
                           return Text(
                             AppLocalizations.of(context)!.resendEmail,
                             textAlign: TextAlign.center,
-                            style: MediaQuery.of(context).platformBrightness ==
-                                    Brightness.dark
+                            style: Get.isDarkMode
                                 ? Theme.of(context)
                                     .textTheme
                                     .headline1!
@@ -635,8 +633,7 @@ class _SignUpState extends State<SignUp> {
               alignment: Alignment.center,
               child: Text(AppLocalizations.of(context)!.signupAgain,
                   textAlign: TextAlign.center,
-                  style: MediaQuery.of(context).platformBrightness ==
-                          Brightness.dark
+                  style: Get.isDarkMode
                       ? Theme.of(context).textTheme.headline1!.copyWith(
                             fontSize: 17,
                             fontWeight: FontWeight.bold,

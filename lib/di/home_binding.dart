@@ -13,6 +13,7 @@ import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.d
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
+import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -68,8 +69,11 @@ class HomeBinding implements Bindings {
     final invitationCubit = InvitationCubit();
     Get.put(invitationCubit, permanent: true);
 
-     final cacheFileCubit = CacheFileCubit();
+    final cacheFileCubit = CacheFileCubit();
     Get.put(cacheFileCubit, permanent: true);
+
+    final themeCubit = ThemeCubit();
+    Get.put(themeCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();
