@@ -8,11 +8,9 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/local_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/utils/constants.dart';
@@ -22,9 +20,6 @@ import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/message/attachment_tile_builder.dart';
-
-// const _categoryHeaderHeight = 40.0;
-// const _categoryTitleHeight = _categoryHeaderHeight; // to
 
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
@@ -49,6 +44,7 @@ class _ComposeBar extends State<ComposeBar> {
   var _mentionsVisible = false;
   var _forceLooseFocus = false;
   var _canSend = false;
+  var _existUploadedFiles = false;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -93,11 +89,11 @@ class _ComposeBar extends State<ComposeBar> {
       // Update for cache handlers
       widget.onTextUpdated(text, context);
       // Sendability  validation
-      if (_controller.text.isReallyEmpty && _canSend) {
+      if (_controller.text.isReallyEmpty && _canSend && !_existUploadedFiles) {
         setState(() {
           _canSend = false;
         });
-      } else if (text.isNotReallyEmpty && !_canSend) {
+      } else if ((text.isNotReallyEmpty || _existUploadedFiles) && !_canSend) {
         setState(() {
           _canSend = true;
         });
@@ -111,15 +107,21 @@ class _ComposeBar extends State<ComposeBar> {
         if (hasUploadedFileInStack) {
           if (!mounted) return;
           setState(() {
+            _existUploadedFiles = true;
             _canSend = true;
+          });
+        } else {
+          setState(() {
+            _existUploadedFiles = false;
           });
         }
       } else {
-        if (_controller.text.isReallyEmpty && _canSend) {
-          setState(() {
+        setState(() {
+          _existUploadedFiles = false;
+          if (_controller.text.isReallyEmpty && _canSend) {
             _canSend = false;
-          });
-        }
+          }
+        });
       }
     });
   }
