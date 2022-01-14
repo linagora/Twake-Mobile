@@ -36,7 +36,7 @@
       "count": {}
     }
   },
-  "russian": "russe",
+  "russian": "Russe",
   "@russian": {},
   "noConversationInChat": "Il n'y a aucun message dans\ncette discussion ! Commencez la conversation\navec {username} en envoyant\ndu texte, une image ou un document",
   "@noConversationInChat": {
@@ -264,9 +264,9 @@
       "count": {}
     }
   },
-  "english": "anglais",
+  "english": "Anglais",
   "@english": {},
-  "spanish": "espagnol",
+  "spanish": "Espagnol",
   "@spanish": {},
   "joinTheTeamButton": "Rejoindre l'équipe",
   "@joinTheTeamButton": {},
@@ -336,13 +336,13 @@
   "@addEmailAddress": {},
   "joinWorkspaceSubtitle": "Twake est un espace de travail numérique\nà code source ouvert conçu pour\naméliorer la productivité",
   "@joinWorkspaceSubtitle": {},
-  "german": "allemand",
+  "german": "Allemand",
   "@german": {},
-  "italian": "italien",
+  "italian": "Italien",
   "@italian": {},
-  "french": "français",
+  "french": "Français",
   "@french": {},
-  "finnish": "finnois",
+  "finnish": "Finnois",
   "@finnish": {},
   "contactTechnicalSupport": "Contacter l'assistance technique",
   "@contactTechnicalSupport": {},
