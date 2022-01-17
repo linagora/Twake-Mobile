@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -16,6 +18,30 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 class FileUploadCubit extends Cubit<FileUploadState> {
   late final FileRepository _repository;
 
+  /// Use a StreamController to keep it separate from bloc's stream
+  /// To have better management for the state (uploaded/failed) of File Uploading item
+  late StreamController<FileUploading> _listUploadingStreamController;
+  late StreamSink<FileUploading> listUploadingSink;
+  late Stream<FileUploading> streamListUploading;
+
+  void addFileUploadingToStream(FileUploading? fileUploading) {
+    if(fileUploading == null)
+      return;
+    if(_listUploadingStreamController.isClosed)
+      return;
+    listUploadingSink.add(fileUploading);
+  }
+
+  void initFileUploadingStream() {
+    _listUploadingStreamController = StreamController<FileUploading>.broadcast();
+    listUploadingSink = _listUploadingStreamController.sink;
+    streamListUploading = _listUploadingStreamController.stream;
+  }
+
+  void closeListUploadingStream() {
+    _listUploadingStreamController.close();
+  }
+
   FileUploadCubit({FileRepository? repository}) : super(FileUploadState()) {
     if (repository == null) {
       repository = FileRepository();
@@ -24,9 +50,6 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }
 
   void upload({required LocalFile sourceFile}) async {
-    // cache new local/picked file to bloc state
-    _addPickedLocalFilePath(sourceFile);
-
     List<FileUploading> listFileUploading = [...state.listFileUploading];
     final newId = listFileUploading.length;
 
@@ -38,94 +61,35 @@ class FileUploadCubit extends Cubit<FileUploadState> {
         cancelToken: CancelToken());
     emit(state.copyWith(
       fileUploadStatus: FileUploadStatus.inProcessing,
-      listFileUploading: listFileUploading..add(newFileUploading)
-    ));
+      listFileUploading: listFileUploading..add(newFileUploading)));
 
-    // begin uploading file
     try {
-      final uploadedFile = await _repository.upload(
-        sourcePath: newFileUploading.sourceFile!.path!,
-        fileName: newFileUploading.sourceFile!.name,
-        cancelToken: newFileUploading.cancelToken!,
-        fileUploadingOption: FileUploadingOption(thumbnailSync: 1)
-      );
-
-      // update successful state
-      if(state.listFileUploading.isEmpty)
-        return;
-      final updatedStateList = state.listFileUploading.map((file) {
-        return file.id == newId
-          ? file.copyWith(
-              file: uploadedFile,
-              uploadStatus: FileItemUploadStatus.uploaded)
-          : file;
-      }).toList();
-      emit(state.copyWith(listFileUploading: updatedStateList));
-
-      // Update to file download state
-      // (any user own uploaded file no need to download again)
-      Get.find<FileDownloadCubit>().addToDownloadStateAfterUploaded(
-          file: uploadedFile,
-          localPath: newFileUploading.sourceFile!.path!);
-
+      await _startUploadingFile(newFileUploading);
     } catch (e) {
       Logger().e('Error occurred during file upload:\n$e');
-
-      // update failed state
-      if(state.listFileUploading.isEmpty)
-        return;
-      final updatedStateList = state.listFileUploading.map((file) {
-        return file.id == newId
-            ? file.copyWith(uploadStatus: FileItemUploadStatus.failed)
-            : file;
-      }).toList();
-      emit(state.copyWith(listFileUploading: updatedStateList));
+      _handleUploadFileError(fileErrorId: newId);
     }
   }
 
   void retryUpload(List<FileUploading> listFileUploading) async {
     for (var i = 0; i < listFileUploading.length; i++) {
 
+      // update state of file uploading in list
       final fileUploading = listFileUploading[i];
-
-      // begin uploading file
       final updatedStateList = state.listFileUploading.map((file) {
         return file.id == fileUploading.id
             ? file.copyWith(uploadStatus: FileItemUploadStatus.uploading)
             : file;
       }).toList();
-      emit(state.copyWith(listFileUploading: updatedStateList));
+      emit(state.copyWith(
+          fileUploadStatus: FileUploadStatus.inProcessing,
+          listFileUploading: updatedStateList));
 
       try {
-        final uploadedFile = await _repository.upload(
-            sourcePath: fileUploading.sourceFile!.path!,
-            fileName: fileUploading.sourceFile!.name,
-            cancelToken: fileUploading.cancelToken!,
-            fileUploadingOption: FileUploadingOption(thumbnailSync: 1)
-        );
-        // update successful state
-        if (state.listFileUploading.isEmpty)
-          return;
-        final updatedStateList = state.listFileUploading.map((file) {
-          return file.id == fileUploading.id
-              ? file.copyWith(
-                  file: uploadedFile,
-                  uploadStatus: FileItemUploadStatus.uploaded)
-              : file;
-        }).toList();
-        emit(state.copyWith(listFileUploading: updatedStateList));
+        await _startUploadingFile(fileUploading);
       } catch (e) {
-        Logger().e('Error occurred during file upload:\n$e');
-
-        // update failed state
-        if (state.listFileUploading.isEmpty)
-          return;
-        final updatedStateList = state.listFileUploading.map((file) {
-          return file.id == fileUploading.id
-              ? file.copyWith(uploadStatus: FileItemUploadStatus.failed)
-              : file;
-        }).toList();
-        emit(state.copyWith(listFileUploading: updatedStateList));
+        Logger().e('Error occurred during file upload retrying:\n$e');
+        _handleUploadFileError(fileErrorId: fileUploading.id);
       }
     }
   }
@@ -150,7 +114,6 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     emit(state.copyWith(
       fileUploadStatus: FileUploadStatus.init,
       listFileUploading: [],
-      localFilePaths: [],
     ));
   }
 
@@ -173,6 +136,59 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     ));
   }
 
+  Future<void> _startUploadingFile(FileUploading fileUploading) async {
+    // start uploading
+    final uploadedFile = await _repository.upload(
+        sourcePath: fileUploading.sourceFile!.path!,
+        fileName: fileUploading.sourceFile!.name,
+        cancelToken: fileUploading.cancelToken!,
+        fileUploadingOption: FileUploadingOption(thumbnailSync: 1)
+    );
+
+    // update successful state
+    if(state.listFileUploading.isEmpty)
+      return;
+    late FileUploading fileUploadingUpdated;
+    final updatedStateList = state.listFileUploading.map((file) {
+      if(file.id == fileUploading.id) {
+        fileUploadingUpdated = file.copyWith(
+            file: uploadedFile,
+            uploadStatus: FileItemUploadStatus.uploaded);
+        return fileUploadingUpdated;
+      }
+      return file;
+    }).toList();
+    emit(state.copyWith(listFileUploading: updatedStateList));
+
+    // add to uploaded file to file uploading stream
+    addFileUploadingToStream(fileUploadingUpdated);
+
+    // Update to file download state
+    // (any user own uploaded file no need to download again)
+    Get.find<FileDownloadCubit>().addToDownloadStateAfterUploaded(
+        file: uploadedFile,
+        localPath: fileUploading.sourceFile!.path!);
+  }
+
+  _handleUploadFileError({required int fileErrorId}) {
+    // update failed state
+    if(state.listFileUploading.isEmpty)
+      return;
+    late FileUploading fileUploadingUpdated;
+    final updatedStateList = state.listFileUploading.map((file) {
+      if(file.id == fileErrorId) {
+        fileUploadingUpdated = file.copyWith(
+            uploadStatus: FileItemUploadStatus.failed);
+        return fileUploadingUpdated;
+      }
+      return file;
+    }).toList();
+    emit(state.copyWith(listFileUploading: updatedStateList));
+
+    // add to uploaded file to file uploading stream
+    addFileUploadingToStream(fileUploadingUpdated);
+  }
+
   void _cancelFileUploading(FileUploading cancellingFile) {
     if(cancellingFile.uploadStatus == FileItemUploadStatus.uploading) {
       try {
@@ -181,11 +197,6 @@ class FileUploadCubit extends Cubit<FileUploadState> {
         Logger().e('Error occurred during cancel uploading:\n$e');
       }
     }
-  }
-
-  void _addPickedLocalFilePath(LocalFile newFile) {
-    final currentListPaths = [...state.listLocalPickedFile];
-    emit(state.copyWith(localFilePaths: currentListPaths..add(newFile)));
   }
 
   // In case the message is loaded from local DB (no connection),
