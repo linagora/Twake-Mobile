@@ -106,7 +106,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final endOfHistory = prevLen == messages.length;
 
     if (endOfHistory) {
-      messages.add(dummy(messages.first.createdAt - 1));
+      // insert the dummy message for the endOfHistory widget
+      messages.insert(0, dummy(messages.first.createdAt - 1));
     }
 
     final newState = MessagesLoadSuccess(
@@ -169,15 +170,14 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _sendInProgress += 1;
 
     final sendStream = _repository.send(
-      id: fakeId,
-      channelId: Globals.instance.channelId!,
-      prepared: prepared,
-      originalStr: originalStr,
-      threadId: threadId ?? fakeId,
-      isDirect: isDirect,
-      now: DateTime.now().millisecondsSinceEpoch,
-      files: attachments
-    );
+        id: fakeId,
+        channelId: Globals.instance.channelId!,
+        prepared: prepared,
+        originalStr: originalStr,
+        threadId: threadId ?? fakeId,
+        isDirect: isDirect,
+        now: DateTime.now().millisecondsSinceEpoch,
+        files: attachments);
 
     final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
