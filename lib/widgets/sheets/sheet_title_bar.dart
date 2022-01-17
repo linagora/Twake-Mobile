@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -43,8 +44,11 @@ class SheetTitleBar extends StatelessWidget {
                     CupertinoIcons.back,
                     color: Color(0xff3840F7),
                   ),
-                Text(
+                AutoSizeText(
                   leadingTitle ?? '',
+                  minFontSize: 14,
+                  maxFontSize: 17,
+                  maxLines: 1,
                   style: leadingAction != null
                       ? Theme.of(context)
                           .textTheme
@@ -60,18 +64,26 @@ class SheetTitleBar extends StatelessWidget {
               ],
             ),
           ),
-          Text(
-            title!,
-            style: Theme.of(context)
-                .textTheme
-                .headline1!
-                .copyWith(fontSize: 17, fontWeight: FontWeight.w600),
-            textAlign: TextAlign.center,
+          Flexible(
+            child: AutoSizeText(
+              title!,
+              minFontSize: 14,
+              maxFontSize: 17,
+              maxLines: 1,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 17, fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            ),
           ),
           TextButton(
             onPressed: trailingAction as void Function()?,
-            child: Text(
+            child: AutoSizeText(
               trailingTitle ?? '',
+              minFontSize: 14,
+              maxFontSize: 17,
+              maxLines: 1,
               style: leadingAction != null
                   ? Theme.of(context)
                       .textTheme

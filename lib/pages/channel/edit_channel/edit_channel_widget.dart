@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,35 +91,49 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                         child: BlocBuilder<EditChannelCubit, EditChannelState>(
                           bloc: Get.find<EditChannelCubit>(),
                           builder: (context, editChannelState) {
-                            return EnableButtonWidget(
-                                onEnableButtonWidgetClick: () {
-                                  if (_currentChannel != null) {
-                                    Get.find<EditChannelCubit>().editChannel(
-                                        currentChannel: _currentChannel!,
-                                        name: _nameEditingController.text,
-                                        description:
-                                            _descriptionEditingController.text,
-                                        icon: editChannelState.emoijIcon);
-                                  }
-                                },
-                                text: AppLocalizations.of(context)!.save,
-                                isEnable: (editChannelState
-                                            is EditChannelValidation &&
-                                        editChannelState.validToEditChannel)
-                                    ? true
-                                    : false);
+                            return Container(
+                              alignment: Alignment.centerRight,
+                              width: 120,
+                              child: EnableButtonWidget(
+                                  onEnableButtonWidgetClick: () {
+                                    if (_currentChannel != null) {
+                                      Get.find<EditChannelCubit>().editChannel(
+                                          currentChannel: _currentChannel!,
+                                          name: _nameEditingController.text,
+                                          description:
+                                              _descriptionEditingController
+                                                  .text,
+                                          icon: editChannelState.emoijIcon);
+                                    }
+                                  },
+                                  text: AppLocalizations.of(context)!.save,
+                                  isEnable: (editChannelState
+                                              is EditChannelValidation &&
+                                          editChannelState.validToEditChannel)
+                                      ? true
+                                      : false),
+                            );
                           },
                         ),
                       ),
                       Align(
                           alignment: Alignment.center,
-                          child: Text(AppLocalizations.of(context)!.channelInfo,
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 170,
+                            child: AutoSizeText(
+                              AppLocalizations.of(context)!.channelInfo,
+                              maxFontSize: 17,
+                              minFontSize: 12,
+                              maxLines: 1,
                               style: Theme.of(context)
                                   .textTheme
                                   .headline1!
                                   .copyWith(
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 17)))
+                                      fontSize: 17),
+                            ),
+                          ))
                     ],
                   ),
                 ),

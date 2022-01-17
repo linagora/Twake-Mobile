@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -75,27 +76,40 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                             ChannelSettingState>(
                           bloc: Get.find<ChannelSettingCubit>(),
                           builder: (context, editChannelState) {
-                            return EnableButtonWidget(
-                                onEnableButtonWidgetClick: () {
-                                  if (_currentChannel != null) {
-                                    Get.find<ChannelSettingCubit>().editChannel(
-                                        currentChannel: _currentChannel!);
-                                  }
-                                },
-                                text: AppLocalizations.of(context)!.save,
-                                isEnable: editChannelState.validToEditChannel);
+                            return Container(
+                              alignment: Alignment.centerRight,
+                              width: 120,
+                              child: EnableButtonWidget(
+                                  onEnableButtonWidgetClick: () {
+                                    if (_currentChannel != null) {
+                                      Get.find<ChannelSettingCubit>()
+                                          .editChannel(
+                                              currentChannel: _currentChannel!);
+                                    }
+                                  },
+                                  text: AppLocalizations.of(context)!.save,
+                                  isEnable:
+                                      editChannelState.validToEditChannel),
+                            );
                           },
                         ),
                       ),
                       Align(
                         alignment: Alignment.center,
-                        child: Text(
-                          AppLocalizations.of(context)!.channelSettings,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline1!
-                              .copyWith(
-                                  fontWeight: FontWeight.w600, fontSize: 17),
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: 170,
+                          child: AutoSizeText(
+                            AppLocalizations.of(context)!.channelSettings,
+                            maxLines: 1,
+                            maxFontSize: 17,
+                            minFontSize: 12,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontWeight: FontWeight.w600, fontSize: 17),
+                          ),
                         ),
                       )
                     ],

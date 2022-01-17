@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,8 +19,10 @@ class EnableButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoButton(
       onPressed: isEnable ? onEnableButtonWidgetClick : null,
-      child: Text(
+      child: AutoSizeText(
         text,
+        maxFontSize: 17,
+        minFontSize: 12,
         style: isEnable
             ? Theme.of(context)
                 .textTheme

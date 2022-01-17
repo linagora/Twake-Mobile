@@ -498,6 +498,7 @@ class _TextInputState extends State<TextInput> {
           .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
       maxLines: 4,
       minLines: 1,
+      textCapitalization: TextCapitalization.sentences,
       autofocus: widget.autofocus!,
       focusNode: widget.focusNode,
       scrollController: widget.scrollController,
