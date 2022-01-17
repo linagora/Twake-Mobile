@@ -190,6 +190,7 @@ class HomeDrawerWidget extends StatelessWidget {
                           .canCreateWorkspace)
                         GestureDetector(
                             child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.add_circle_sharp,
@@ -201,12 +202,17 @@ class HomeDrawerWidget extends StatelessWidget {
                                 SizedBox(
                                   width: 12,
                                 ),
-                                Text(
-                                  AppLocalizations.of(ctx)!.workspaceCreate,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline1!
-                                      .copyWith(fontWeight: FontWeight.normal),
+                                Flexible(
+                                  child: Text(
+                                    AppLocalizations.of(ctx)!.workspaceCreate,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .copyWith(
+                                            fontWeight: FontWeight.normal),
+                                  ),
                                 ),
                               ],
                             ),
@@ -315,7 +321,6 @@ class HomeDrawerWidget extends StatelessWidget {
                   child: Container(
                     margin: EdgeInsets.only(bottom: 20),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Image.asset(imageInvitePeople,
@@ -329,8 +334,8 @@ class HomeDrawerWidget extends StatelessWidget {
                             AppLocalizations.of(context)
                                     ?.invitePeopleToWorkspace ??
                                 '',
+                            overflow: TextOverflow.ellipsis,
                             maxLines: 2,
-                            textAlign: TextAlign.left,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline1!

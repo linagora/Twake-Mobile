@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
@@ -361,14 +362,18 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                                   const EdgeInsets.symmetric(horizontal: 12),
                               child: Row(
                                 children: [
-                                  Text(
-                                    AppLocalizations.of(context)!
-                                        .inviteAllWorkspaceUsers,
-                                    style: TextStyle(
-                                      fontSize: 17,
+                                  Flexible(
+                                    child: AutoSizeText(
+                                      AppLocalizations.of(context)!
+                                          .inviteAllWorkspaceUsers,
+                                      maxLines: 1,
+                                      minFontSize: 15,
+                                      maxFontSize: 17,
+                                      style: TextStyle(
+                                        fontSize: 17,
+                                      ),
                                     ),
                                   ),
-                                  Spacer(),
                                   CupertinoSwitch(
                                     activeColor: Theme.of(context)
                                         .textTheme

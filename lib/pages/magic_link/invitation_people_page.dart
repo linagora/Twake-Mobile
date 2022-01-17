@@ -204,9 +204,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                             color: (compState is CompaniesLoadSuccess &&
                                     compState.selected.canReGenerateMagicLink)
                                 ? Theme.of(context).colorScheme.surface
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .secondaryVariant),
+                                : Theme.of(context).colorScheme.secondary),
                       ),
                     ),
                   )
@@ -247,6 +245,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                               .colorScheme
                               .surface
                               .withOpacity(0.25),
+                          paddingEdgeInsets: EdgeInsets.only(right: 20),
                           onButtonClick: () =>
                               _handleClickOnButtonInviteByEmail())
                       .setWidth(double.infinity)

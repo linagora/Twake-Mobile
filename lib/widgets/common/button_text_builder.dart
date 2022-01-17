@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -8,6 +9,7 @@ class ButtonTextBuilder {
   double widthButton = Dim.widthPercent(90);
   double heightButton = 60.0;
   Color backgroundColor;
+  EdgeInsets paddingEdgeInsets;
   String text = '';
   TextStyle textStyle = StylesConfig.commonTextStyle
       .copyWith(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 17);
@@ -15,7 +17,9 @@ class ButtonTextBuilder {
   Function? onButtonClick;
 
   ButtonTextBuilder(this.key,
-      {required this.onButtonClick, required this.backgroundColor});
+      {required this.onButtonClick,
+      required this.backgroundColor,
+      this.paddingEdgeInsets = EdgeInsets.zero});
 
   ButtonTextBuilder setWidth(double widthSize) {
     widthButton = widthSize;
@@ -53,7 +57,11 @@ class ButtonTextBuilder {
         height: heightButton,
         child: TextButton(
             onPressed: () => onButtonClick?.call(),
-            child: Text(text, style: textStyle),
+            child: Padding(
+              padding: paddingEdgeInsets,
+              child: AutoSizeText(text,
+                  maxLines: 1, minFontSize: 12, style: textStyle),
+            ),
             style: TextButton.styleFrom(
                 backgroundColor: backgroundColor,
                 shape: RoundedRectangleBorder(borderRadius: borderRadius))));

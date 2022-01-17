@@ -56,7 +56,7 @@
     "logoutConfirmation": "Are you sure you want to log out of your account?",
     "settings": "Settings",
     "appearance": "Appearance",
-    "appearanceDescription": "If system is selected, Twake will automatically change its apperance based on the your device’s system settings.",
+    "appearanceDescription": "If system is selected, Twake will automatically change its apperance based on your device’s system settings.",
     "light": "Light",
     "dark": "Dark",
     "system": "System",

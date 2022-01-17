@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -118,13 +119,21 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                       ),
                       Align(
                           alignment: Alignment.center,
-                          child: Text(
-                            AppLocalizations.of(context)!.addMembers,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline1!
-                                .copyWith(
-                                    fontWeight: FontWeight.w600, fontSize: 17),
+                          child: Container(
+                            alignment: Alignment.center,
+                            width: 170,
+                            child: AutoSizeText(
+                              AppLocalizations.of(context)!.addMembers,
+                              maxFontSize: 17,
+                              minFontSize: 12,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 17),
+                            ),
                           ))
                     ],
                   ),
