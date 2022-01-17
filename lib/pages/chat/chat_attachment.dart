@@ -5,7 +5,6 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/widgets/common/file_uploading_tile.dart';
@@ -19,25 +18,26 @@ class ChatAttachment extends StatefulWidget {
 }
 
 class _ChatAttachmentState extends State<ChatAttachment> {
+
+  bool _isFailedPopupShown = false;
+
   @override
   void initState() {
     super.initState();
-    Get.find<FileUploadCubit>().stream.listen((state) {
-      if (state.listFileUploading.isNotEmpty) {
-        final listUploadFailed = state.listFileUploading
-            .where((element) =>
-                element.uploadStatus == FileItemUploadStatus.failed)
-            .toList();
-        if (listUploadFailed.isNotEmpty) {
-          final listName =
-              listUploadFailed.map((e) => e.sourceFile?.name).toList();
-          _showUploadFailedPopup(
-            listName.join(',').toString(),
-            listUploadFailed,
-          );
-        }
+    Get.find<FileUploadCubit>().initFileUploadingStream();
+    Get.find<FileUploadCubit>().streamListUploading.listen((file) {
+      if(file.uploadStatus == FileItemUploadStatus.failed
+          && !_isFailedPopupShown) {
+        final fileName = file.sourceFile?.name ?? '';
+        _showUploadFailedPopup(fileName, [file]);
       }
     });
+  }
+
+  @override
+  void dispose() {
+    Get.find<FileUploadCubit>().closeListUploadingStream();
+    super.dispose();
   }
 
   _showUploadFailedPopup(
@@ -48,7 +48,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
         margin: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         animationDuration: Duration(milliseconds: 500),
-        duration: const Duration(milliseconds: 3000),
+        duration: const Duration(milliseconds: 4000),
         icon: Image.asset(imageError, width: 24, height: 24),
         titleText: Text(fileName,
             maxLines: 1,
@@ -69,6 +69,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
         ],
         mainButton: TextButton(
           onPressed: () {
+            Get.back(); // dismiss this snackbar
             Get.find<FileUploadCubit>().retryUpload(listUploadFailed);
           },
           child: Text(AppLocalizations.of(context)?.tryAgain ?? '',
@@ -76,7 +77,13 @@ class _ChatAttachmentState extends State<ChatAttachment> {
                   .textTheme
                   .headline4!
                   .copyWith(fontSize: 15, fontWeight: FontWeight.normal)),
-        ));
+        ),
+        snackbarStatus: (status) {
+          if(status == SnackbarStatus.CLOSED) {
+            _isFailedPopupShown = false;
+          }
+        },
+    );
   }
 
   @override
