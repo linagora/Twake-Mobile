@@ -409,5 +409,45 @@
   "photoOrVideoSubtitle": "Envoyer un élément de votre galerie",
   "@photoOrVideoSubtitle": {},
   "fileUploadFailed": "Le téléversement du fichier a échoué",
-  "@fileUploadFailed": {}
+  "@fileUploadFailed": {},
+  "appearance": "Apparence",
+  "@appearance": {},
+  "dark": "Sombre",
+  "@dark": {},
+  "public": "Public",
+  "@public": {},
+  "openSettingsMessage": "Vous devez ouvrir les paramètres pour accorder la permission",
+  "@openSettingsMessage": {},
+  "appearanceDescription": "Si le système est sélectionné, Twake changera automatiquement son apparence en fonction des paramètres système de votre appareil.",
+  "@appearanceDescription": {},
+  "inviteAllWorkspaceUsers": "Inviter tous les utilisateurs de l’espace de travail",
+  "@inviteAllWorkspaceUsers": {},
+  "automaticallyInviteAllWorkspaceUsers": "Inviter automatiquement tous les utilisateurs de l’espace de travail à ce canal",
+  "@automaticallyInviteAllWorkspaceUsers": {},
+  "light": "Light",
+  "@light": {},
+  "system": "Système",
+  "@system": {},
+  "private": "Privé",
+  "@private": {},
+  "openIt": "Ouvrir",
+  "@openIt": {},
+  "cantOpenFile": "Impossible d'ouvrir ce fichier",
+  "@cantOpenFile": {},
+  "fileDownloadedInGallery": "Fichier téléchargé dans la galerie",
+  "@fileDownloadedInGallery": {},
+  "openSettings": "Ouvrir les paramètres",
+  "@openSettings": {},
+  "deny": "Refuser",
+  "@deny": {},
+  "youHaveBeenDisconnected": "Vous avez été déconnecté et dirigé vers {url}",
+  "@youHaveBeenDisconnected": {
+    "description": "Force logout when join workspace from magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
+  }
 }
