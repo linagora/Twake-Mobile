@@ -2,7 +2,6 @@ import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/utils/dateformatter.dart';
@@ -131,7 +130,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
         );
       case FileItemUploadStatus.uploaded:
         return Image.asset(imageSelectedRoundBlue, width: 18.0, height: 18.0);
-      case FileItemUploadStatus.uploaded:
+      case FileItemUploadStatus.failed:
         return Image.asset(imageError, width: 18.0, height: 18.0);
       default:
         return SizedBox(width: 18.0, height: 18.0);
