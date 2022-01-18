@@ -104,8 +104,8 @@ class _ComposeBar extends State<ComposeBar> {
       if (state.listFileUploading.isNotEmpty) {
         final hasUploadedFileInStack = state.listFileUploading.any(
             (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+        if (!mounted) return;
         if (hasUploadedFileInStack) {
-          if (!mounted) return;
           setState(() {
             _existUploadedFiles = true;
             _canSend = true;
@@ -116,6 +116,7 @@ class _ComposeBar extends State<ComposeBar> {
           });
         }
       } else {
+        if (!mounted) return;
         setState(() {
           _existUploadedFiles = false;
           if (_controller.text.isReallyEmpty && _canSend) {
