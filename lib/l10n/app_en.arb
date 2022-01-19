@@ -277,5 +277,8 @@
                 "example": "web.twake.app"
             }
         }
-    }
+    },
+    "reachedLimitFileUploading": "Upload limit reached",
+    "reachedLimitFileUploadingSub": "You have reached the limit\nof file uploading",
+    "gotIt": "Got it"
 }

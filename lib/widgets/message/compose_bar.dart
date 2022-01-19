@@ -18,6 +18,7 @@ import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:twake/widgets/common/twake_alert_dialog.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/message/attachment_tile_builder.dart';
 
@@ -567,7 +568,10 @@ class _TextInputState extends State<TextInput> {
 
   _handleOpenFilePicker() {
     final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
-    if (fileLen == MAX_FILE_UPLOADING) return;
+    if (fileLen == MAX_FILE_UPLOADING) {
+      displayLimitationAlertDialog();
+      return;
+    }
     showModalBottomSheet(
       context: context,
       useRootNavigator: true,
@@ -679,5 +683,36 @@ class _TextInputState extends State<TextInput> {
           localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
       Get.find<FileUploadCubit>().upload(sourceFile: localFile);
     }
+  }
+
+  void displayLimitationAlertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TwakeAlertDialog(
+          header: Text(
+            AppLocalizations.of(context)?.reachedLimitFileUploading ?? '',
+            style: Theme.of(context)
+                .textTheme
+                .headline4!
+                .copyWith(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primaryVariant,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          body: Text(
+            AppLocalizations.of(context)?.reachedLimitFileUploadingSub ?? '',
+            style: Theme.of(context)
+                .textTheme
+                .headline6!
+                .copyWith(fontSize: 14.0, color: const Color(0xff6d7885)),
+            textAlign: TextAlign.center,
+          ),
+          okActionTitle: AppLocalizations.of(context)?.gotIt ?? '',
+        );
+      },
+    );
   }
 }

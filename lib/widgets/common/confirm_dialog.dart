@@ -1,4 +1,3 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
