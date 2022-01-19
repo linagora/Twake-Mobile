@@ -93,7 +93,7 @@ class ChannelDetailWidget extends StatelessWidget {
                     AppLocalizations.of(context)!.membersPlural(
                       (channelState as ChannelsLoadedSuccess)
                           .selected!
-                          .membersCount,
+                          .stats?.members ?? 0,
                     ),
                     style: Theme.of(context)
                         .textTheme
@@ -336,7 +336,7 @@ class ChannelDetailWidget extends StatelessWidget {
                               bloc: Get.find<ChannelsCubit>(),
                               builder: (ctx, channelState) {
                                 return Text(
-                                  '${(channelState as ChannelsLoadedSuccess).selected!.membersCount}',
+                                  '${(channelState as ChannelsLoadedSuccess).selected!.stats?.members ?? 0}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .headline4!
