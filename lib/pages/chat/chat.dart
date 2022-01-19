@@ -57,24 +57,30 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                       ),
                     ),
                   ),
-                  title: ChatHeader(
-                      isDirect: channel.isDirect,
-                      isPrivate: channel.isPrivate,
-                      userId: channel.members.isNotEmpty
-                          ? channel.members.first
-                          : null,
-                      name: channel.name,
-                      icon: Emojis.getByName(channel.icon ?? ''),
-                      avatars: channel.isDirect ? channel.avatars : const [],
-                      membersCount: channel.membersCount,
-                      onTap: () {
-                        final cstate = Get.find<CompaniesCubit>().state
+                  title: BlocBuilder<ChannelsCubit, ChannelsState>(
+                    bloc: Get.find<ChannelsCubit>(),
+                    builder: (ctx, channelState) {
+                        final selectedChannel = (channelState as ChannelsLoadedSuccess).selected ?? channel;
+                        return ChatHeader(
+                          isDirect: selectedChannel.isDirect,
+                          isPrivate: selectedChannel.isPrivate,
+                          userId: selectedChannel.members.isNotEmpty
+                              ? selectedChannel.members.first
+                              : null,
+                          name: selectedChannel.name,
+                          icon: Emojis.getByName(selectedChannel.icon ?? ''),
+                          avatars: selectedChannel.isDirect ? selectedChannel.avatars : const [],
+                          membersCount: selectedChannel.stats?.members ?? 0,
+                          onTap: () {
+                            final cstate = Get.find<CompaniesCubit>().state
                             as CompaniesLoadSuccess;
-                        if (T == ChannelsCubit &&
-                            cstate.selected.canUpdateChannel) {
-                          NavigatorService.instance.navigateToChannelDetail();
-                        }
-                      }),
+                            if (T == ChannelsCubit &&
+                                cstate.selected.canUpdateChannel) {
+                              NavigatorService.instance.navigateToChannelDetail();
+                            }
+                          });
+                    }
+                  ),
                 )
               : null,
           body: SafeArea(

@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/channel/channel_role.dart';
+import 'package:twake/models/channel/channel_stats.dart';
 import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/models/message/message_summary.dart';
 import 'package:twake/utils/api_data_transformer.dart';
@@ -13,7 +14,7 @@ part 'channel.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Channel extends BaseModel {
-  static const COMPOSITE_FIELDS = ['members', 'last_message'];
+  static const COMPOSITE_FIELDS = ['members', 'last_message', 'stats'];
 
   final String id;
 
@@ -47,6 +48,8 @@ class Channel extends BaseModel {
 
   @JsonKey(defaultValue: ChannelRole.member)
   final ChannelRole role;
+
+  final ChannelStats? stats;
 
   bool get hasUnread => userLastAccess < lastActivity;
 
@@ -94,6 +97,7 @@ class Channel extends BaseModel {
     required this.role,
     this.userLastAccess: 0,
     this.draft,
+    this.stats
   });
 
   factory Channel.fromJson({
@@ -123,6 +127,7 @@ class Channel extends BaseModel {
     MessageSummary? lastMessage,
     int? userLastAccess,
     int? membersCount,
+    ChannelStats? stats
   }) {
     final copy = Channel(
       id: id,
@@ -139,6 +144,7 @@ class Channel extends BaseModel {
       role: this.role,
       userLastAccess: userLastAccess ?? this.userLastAccess,
       draft: draft,
+      stats: stats ?? this.stats,
     );
 
     return copy;

@@ -86,6 +86,18 @@ class ChannelsRepository {
     return channels;
   }
 
+  Future<Channel> fetchChannelRemote({
+    required String companyId,
+    required String workspaceId,
+    required String channelId,
+  }) async {
+    final remoteResult = await _api.get(
+      endpoint: sprintf(endpoint, [companyId, workspaceId]) + '/$channelId',
+      key: 'resource',
+    );
+    return Channel.fromJson(json: remoteResult);
+  }
+
   Future<Channel> create(
       {required Channel channel, bool isDefault: false}) async {
 

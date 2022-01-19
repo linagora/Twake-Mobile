@@ -28,6 +28,9 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
         ChannelRole.member,
     userLastAccess: json['user_last_access'] as int? ?? 0,
     draft: json['draft'] as String?,
+    stats: json['stats'] == null
+        ? null
+        : ChannelStats.fromJson(json['stats'] as Map<String, dynamic>),
   );
 }
 
@@ -46,6 +49,7 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'user_last_access': instance.userLastAccess,
       'draft': instance.draft,
       'role': _$ChannelRoleEnumMap[instance.role],
+      'stats': instance.stats?.toJson(),
     };
 
 K _$enumDecode<K, V>(
