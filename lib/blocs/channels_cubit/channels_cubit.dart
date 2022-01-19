@@ -156,15 +156,28 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         usersToAdd: usersToAdd,
       );
     } catch (e) {
-      Logger().e('Error occured while adding members to channel:\n$e');
+      Logger().e('Error occurred while adding members to channel:\n$e');
       return false;
     }
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
+    // TODO: Due to Add members API return code 204 (success without data) now,
+    // need to fetch updated channel manually, then member counter will correctly displaying
+    Channel? updatedChannel;
+    try {
+      updatedChannel = await _repository.fetchChannelRemote(
+        companyId: Globals.instance.companyId!,
+        workspaceId: Globals.instance.workspaceId!,
+        channelId: channel.id,
+      );
+    } catch (e) {
+      Logger().e('Error occurred while fetching updated channel from remote:\n$e');
+    }
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
-      selected: channel,
+      selected: updatedChannel ?? channel,
       hash: hash - oldHash + channel.hash,
     ));
 
@@ -183,15 +196,28 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
         userId: userId,
       );
     } catch (e) {
-      Logger().e('Error occured while removing members from channel:\n$e');
+      Logger().e('Error occurred while removing members from channel:\n$e');
       return false;
     }
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
+    // TODO: Due to Remove members API return code 204 (success without data) now,
+    // need to fetch updated channel manually, then member counter will correctly displaying
+    Channel? updatedChannel;
+    try {
+      updatedChannel = await _repository.fetchChannelRemote(
+        companyId: Globals.instance.companyId!,
+        workspaceId: Globals.instance.workspaceId!,
+        channelId: channel.id,
+      );
+    } catch (e) {
+      Logger().e('Error occurred while fetching updated channel from remote:\n$e');
+    }
+
     emit(ChannelsLoadedSuccess(
       channels: channels,
-      selected: channel,
+      selected: updatedChannel ?? channel,
       hash: hash - oldHash + channel.hash,
     ));
 
