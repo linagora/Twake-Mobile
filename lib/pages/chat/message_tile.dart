@@ -300,7 +300,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w500))
                                         : TwacodeRenderer(
-                                                twacode: _message.blocks,
+                                                twacode:
+                                                    _message.blocks.length == 0
+                                                        ? [_message.text]
+                                                        : _message.blocks,
                                                 fileIds: _message.files,
                                                 parentStyle: _parentStyle,
                                                 userUniqueColor:
