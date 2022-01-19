@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 import 'package:twake/models/globals/globals.dart';
 
 class ServerConfiguration extends StatefulWidget {
@@ -160,9 +161,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
                                     child: Text(
                                       AppLocalizations.of(context)!.connect,
                                       textAlign: TextAlign.center,
-                                      style: MediaQuery.of(context)
-                                                  .platformBrightness ==
-                                              Brightness.dark
+                                      style: Get.isDarkMode
                                           ? Theme.of(context)
                                               .textTheme
                                               .headline1
