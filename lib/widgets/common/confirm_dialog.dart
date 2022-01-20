@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 
@@ -49,20 +50,25 @@ class ConfirmDialog extends StatelessWidget {
                   flex: 1,
                   child: Container(
                       alignment: Alignment.center,
-                      child: ButtonTextBuilder(Key('confirm_dialog_button_cancel'),
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .surface
-                              .withOpacity(0.5),
-                          onButtonClick: () {
-                            cancelAction?.call();
-                            Navigator.of(context).pop();
-                          })
+                      child: ButtonTextBuilder(
+                              Key('confirm_dialog_button_cancel'),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withOpacity(0.5), onButtonClick: () {
+                        cancelAction?.call();
+                        Navigator.of(context).pop();
+                      })
                           .setText(cancelActionTitle)
-                          .setTextStyle(Theme.of(context).textTheme.button!.copyWith(
-                              color: const Color(0xffff3347), fontSize: 17.0))
+                          .setTextStyle(
+                            Theme.of(context).textTheme.headline5!.copyWith(
+                                fontSize: 17.0, fontWeight: FontWeight.w500),
+                          )
                           .setHeight(44.0)
-                          .setBackgroundColor(const Color(0xfff2f3f5))
+                          .setBackgroundColor(Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.3))
                           .setBorderRadius(
                               BorderRadius.all(Radius.circular(10.0)))
                           .build()),
@@ -72,21 +78,23 @@ class ConfirmDialog extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     alignment: Alignment.center,
-                    child: ButtonTextBuilder(
-                        Key('confirm_dialog_button_ok'),
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .surface
-                            .withOpacity(0.5),
-                        onButtonClick: () {
-                          okAction?.call();
-                          Navigator.of(context).pop();
-                        })
+                    child: ButtonTextBuilder(Key('confirm_dialog_button_ok'),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .surface
+                                .withOpacity(0.5), onButtonClick: () {
+                      okAction?.call();
+                      Navigator.of(context).pop();
+                    })
                         .setText(okActionTitle)
-                        .setTextStyle(Theme.of(context).textTheme.button!.copyWith(
-                            color: Colors.white, fontSize: 17.0))
+                        .setTextStyle(Get.isDarkMode
+                            ? Theme.of(context).textTheme.headline1!.copyWith(
+                                fontSize: 17.0, fontWeight: FontWeight.normal)
+                            : Theme.of(context).textTheme.bodyText1!.copyWith(
+                                fontSize: 17.0, fontWeight: FontWeight.normal))
                         .setHeight(44.0)
-                        .setBackgroundColor(const Color(0xff004dff))
+                        .setBackgroundColor(
+                            Theme.of(context).colorScheme.surface)
                         .setBorderRadius(
                             BorderRadius.all(Radius.circular(10.0)))
                         .build(),
@@ -112,5 +120,4 @@ class ConfirmDialog extends StatelessWidget {
       ),
     );
   }
-
 }

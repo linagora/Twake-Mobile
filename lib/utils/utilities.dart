@@ -32,7 +32,8 @@ class Utilities {
     await Share.share(appUrl);
   }
 
-  static void showSimpleSnackBar({required String message, String? iconPath, Duration? duration}) {
+  static void showSimpleSnackBar(
+      {required String message, String? iconPath, Duration? duration}) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.white,
@@ -179,14 +180,10 @@ class Utilities {
         return ConfirmDialog(
           body: Text(
             AppLocalizations.of(context)?.openSettingsMessage ?? '',
-            style: Theme.of(context)
-                .textTheme
-                .headline4!
-                .copyWith(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primaryVariant,
-            ),
+            style: Theme.of(context).textTheme.headline1!.copyWith(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
             textAlign: TextAlign.center,
           ),
           cancelActionTitle: AppLocalizations.of(context)?.deny ?? '',
