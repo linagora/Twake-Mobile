@@ -70,7 +70,7 @@ class Utilities {
     return false;
   }
 
-  static Future<bool> checkAndRequestPermission({
+  static Future<bool> checkAndRequestStoragePermission({
     required PermissionStorageType permissionType,
     Function? onGranted,
     Function? onDenied,
@@ -114,9 +114,46 @@ class Utilities {
     }
   }
 
+  static Future<bool> checkAndRequestCameraPermission({
+    Function? onGranted,
+    Function? onDenied,
+    Function? onPermanentlyDenied,
+  }) async {
+    // Due to no need Camera permission anymore:
+    // https://pub.dev/packages/image_picker/changelog#0801
+    if (Platform.isAndroid) {
+      onGranted?.call();
+      return true;
+    }
+    final status = await Permission.camera.status;
+    switch (status) {
+      case PermissionStatus.granted:
+        onGranted?.call();
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        onPermanentlyDenied?.call();
+        return false;
+      default:
+        {
+          final requested = await Permission.camera.request();
+          switch (requested) {
+            case PermissionStatus.granted:
+              onGranted?.call();
+              return true;
+            case PermissionStatus.permanentlyDenied:
+              onPermanentlyDenied?.call();
+              return false;
+            default:
+              onDenied?.call();
+              return false;
+          }
+        }
+    }
+  }
+
   static Future<List<PlatformFile>?> pickFiles(
       {required BuildContext context, required FileType fileType}) async {
-    final isGranted = await Utilities.checkAndRequestPermission(
+    final isGranted = await Utilities.checkAndRequestStoragePermission(
         permissionType: PermissionStorageType.ReadExternalStorage,
         onPermanentlyDenied: () => showOpenSettingsDialog(context: context));
     if (!isGranted) return null;
@@ -142,10 +179,13 @@ class Utilities {
         return ConfirmDialog(
           body: Text(
             AppLocalizations.of(context)?.openSettingsMessage ?? '',
-            style: StylesConfig.commonTextStyle.copyWith(
-              color: Colors.black,
+            style: Theme.of(context)
+                .textTheme
+                .headline4!
+                .copyWith(
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primaryVariant,
             ),
             textAlign: TextAlign.center,
           ),

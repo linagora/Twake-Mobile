@@ -22,7 +22,7 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
   void download({required BuildContext context, required File file}) async {
 
     // make sure storage permission is granted before downloading
-    final isGranted = await Utilities.checkAndRequestPermission(
+    final isGranted = await Utilities.checkAndRequestStoragePermission(
         permissionType: PermissionStorageType.WriteExternalStorage,
         onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context)
     );

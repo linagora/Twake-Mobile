@@ -654,6 +654,9 @@ class _TextInputState extends State<TextInput> {
 
   void _handleTakePicture() async {
     try {
+      final isGranted = await Utilities.checkAndRequestCameraPermission(
+          onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context));
+      if (!isGranted) return;
       XFile? pickedFile =
           await _imagePicker.pickImage(source: ImageSource.camera);
       if (!mounted) return;
