@@ -41,7 +41,7 @@ class TwakeAlertDialog extends StatelessWidget {
             SizedBox(height: 44),
             Container(
               alignment: Alignment.center,
-              child: ButtonTextBuilder(Key('confirm_dialog_button_ok'),
+              child: ButtonTextBuilder(Key('alert_dialog_button_ok'),
                   backgroundColor: Theme.of(context)
                       .colorScheme
                       .surface
@@ -52,7 +52,7 @@ class TwakeAlertDialog extends StatelessWidget {
                   },
               )
               .setText(okActionTitle)
-              .setTextStyle(StylesConfig.commonTextStyle
+              .setTextStyle(Theme.of(context).textTheme.button!
                   .copyWith(color: Colors.white, fontSize: 17.0))
               .setHeight(44.0)
               .setBackgroundColor(const Color(0xff004dff))

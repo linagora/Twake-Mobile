@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:twake/config/styles_config.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 
 class ConfirmDialog extends StatelessWidget {
@@ -27,17 +27,21 @@ class ConfirmDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(18.0),
       ),
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
       child: Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Align(
+              alignment: Alignment.topRight,
+              child: _buildCloseButton(context),
+            ),
             header ?? SizedBox.shrink(),
-            SizedBox(height: 22),
+            SizedBox(height: 8),
             body,
-            SizedBox(height: 56),
+            SizedBox(height: 44),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -45,17 +49,17 @@ class ConfirmDialog extends StatelessWidget {
                   flex: 1,
                   child: Container(
                       alignment: Alignment.center,
-                      child: ButtonTextBuilder(
-                              Key('confirm_dialog_button_cancel'),
-                              backgroundColor: Theme.of(context)
-                                  .colorScheme
-                                  .surface
-                                  .withOpacity(0.5), onButtonClick: () {
-                        cancelAction?.call();
-                        Navigator.of(context).pop();
-                      })
+                      child: ButtonTextBuilder(Key('confirm_dialog_button_cancel'),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surface
+                              .withOpacity(0.5),
+                          onButtonClick: () {
+                            cancelAction?.call();
+                            Navigator.of(context).pop();
+                          })
                           .setText(cancelActionTitle)
-                          .setTextStyle(StylesConfig.commonTextStyle.copyWith(
+                          .setTextStyle(Theme.of(context).textTheme.button!.copyWith(
                               color: const Color(0xffff3347), fontSize: 17.0))
                           .setHeight(44.0)
                           .setBackgroundColor(const Color(0xfff2f3f5))
@@ -68,17 +72,19 @@ class ConfirmDialog extends StatelessWidget {
                   flex: 1,
                   child: Container(
                     alignment: Alignment.center,
-                    child: ButtonTextBuilder(Key('confirm_dialog_button_ok'),
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .surface
-                                .withOpacity(0.5), onButtonClick: () {
-                      okAction?.call();
-                      Navigator.of(context).pop();
-                    })
+                    child: ButtonTextBuilder(
+                        Key('confirm_dialog_button_ok'),
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surface
+                            .withOpacity(0.5),
+                        onButtonClick: () {
+                          okAction?.call();
+                          Navigator.of(context).pop();
+                        })
                         .setText(okActionTitle)
-                        .setTextStyle(StylesConfig.commonTextStyle
-                            .copyWith(color: Colors.white, fontSize: 17.0))
+                        .setTextStyle(Theme.of(context).textTheme.button!.copyWith(
+                            color: Colors.white, fontSize: 17.0))
                         .setHeight(44.0)
                         .setBackgroundColor(const Color(0xff004dff))
                         .setBorderRadius(
@@ -93,4 +99,18 @@ class ConfirmDialog extends StatelessWidget {
       ),
     );
   }
+
+  _buildCloseButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pop();
+      },
+      child: Image.asset(
+        imageClose,
+        width: 24.0,
+        height: 24.0,
+      ),
+    );
+  }
+
 }
