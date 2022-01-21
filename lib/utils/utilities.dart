@@ -63,7 +63,7 @@ class Utilities {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     final androidInfo = await deviceInfo.androidInfo;
     if (permissionType == PermissionStorageType.WriteExternalStorage) {
-      return androidInfo.version.sdkInt <= 28;
+      return androidInfo.version.sdkInt <= 29;
     }
     if (permissionType == PermissionStorageType.ReadExternalStorage) {
       return true;
