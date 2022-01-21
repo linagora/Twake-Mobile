@@ -152,6 +152,46 @@ class Utilities {
     }
   }
 
+  static Future<bool> checkAndRequestPhotoPermission({
+    Function? onGranted,
+    Function? onDenied,
+    Function? onPermanentlyDenied,
+  }) async {
+    // For Android, no need grant Photo permission,
+    // because GallerySaver used MediaStore internally
+    if (Platform.isAndroid) {
+      onGranted?.call();
+      return true;
+    }
+    final status = await Permission.photos.status;
+    switch (status) {
+      case PermissionStatus.granted:
+        onGranted?.call();
+        return true;
+      case PermissionStatus.permanentlyDenied:
+        onPermanentlyDenied?.call();
+        return false;
+      default:
+        {
+          final requested = await Permission.photos.request();
+          switch (requested) {
+            case PermissionStatus.granted:
+              onGranted?.call();
+              return true;
+            case PermissionStatus.denied:
+              onDenied?.call();
+              return false;
+            case PermissionStatus.permanentlyDenied:
+              onPermanentlyDenied?.call();
+              return false;
+            default:
+              onDenied?.call();
+              return false;
+          }
+        }
+    }
+  }
+
   static Future<List<PlatformFile>?> pickFiles(
       {required BuildContext context, required FileType fileType}) async {
     final isGranted = await Utilities.checkAndRequestStoragePermission(

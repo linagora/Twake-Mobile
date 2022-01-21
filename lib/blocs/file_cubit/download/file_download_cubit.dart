@@ -85,7 +85,10 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
     }
   }
 
-  void handleAfterDownloaded({required String taskId}) async {
+  void handleAfterDownloaded({
+    required String taskId,
+    required BuildContext context
+  }) async {
     if (state.listFileDownloading.isEmpty)
       return;
     FileDownloading? fileDownloaded;
@@ -100,6 +103,11 @@ class FileDownloadCubit extends Cubit<FileDownloadState> {
     emit(state.copyWith(listFileDownloading: updatedStateList));
 
     // save to gallery if this is media
+    final isPhotoGranted = await Utilities.checkAndRequestPhotoPermission(
+        onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context)
+    );
+    if(!isPhotoGranted)
+      return;
     if(fileDownloaded != null && fileDownloaded!.savedPath!= null) {
       if (fileDownloaded!.file.metadata.mime.isImageMimeType) {
         await GallerySaver.saveImage(fileDownloaded!.savedPath!);

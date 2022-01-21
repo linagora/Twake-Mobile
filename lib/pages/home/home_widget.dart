@@ -347,7 +347,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       String id = data[0];
       DownloadTaskStatus status = data[1];
       if (status == DownloadTaskStatus.complete) {
-        Get.find<FileDownloadCubit>().handleAfterDownloaded(taskId: id);
+        Get.find<FileDownloadCubit>().handleAfterDownloaded(taskId: id, context: context);
       } else if (status == DownloadTaskStatus.failed) {
         Get.find<FileDownloadCubit>().handleDownloadFailed(taskId: id);
       }
