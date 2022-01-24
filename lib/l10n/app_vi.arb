@@ -369,5 +369,91 @@
         "example": "Twake"
       }
     }
+  },
+  "appearance": "Giao diện",
+  "@appearance": {},
+  "appearanceDescription": "Nếu hệ thống được chọn, Twake sẽ tự động thay đổi giao diện của nó dựa trên cài đặt hệ thống trên thiết bị của bạn.",
+  "@appearanceDescription": {},
+  "light": "Nhẹ",
+  "@light": {},
+  "dark": "Tối",
+  "@dark": {},
+  "system": "Hệ thống",
+  "@system": {},
+  "openSettings": "Mở cài đặt",
+  "@openSettings": {},
+  "public": "Công khai",
+  "@public": {},
+  "private": "Riêng tư",
+  "@private": {},
+  "inviteAllWorkspaceUsers": "Mời tất cả mọi người trong khôn gian làm việc",
+  "@inviteAllWorkspaceUsers": {},
+  "automaticallyInviteAllWorkspaceUsers": "Tự động mời tất cả người dùng trong không gian làm việc vào kênh này",
+  "@automaticallyInviteAllWorkspaceUsers": {},
+  "takePicture": "Chụp ảnh",
+  "@takePicture": {},
+  "takePictureSubtitle": "Gửi ảnh vừa chụp",
+  "@takePictureSubtitle": {},
+  "photoOrVideo": "Ảnh hay phim",
+  "@photoOrVideo": {},
+  "photoOrVideoSubtitle": "Gửi đến bộ sưu tập",
+  "@photoOrVideoSubtitle": {},
+  "file": "Tài liệu",
+  "@file": {},
+  "attachedFiles": "TỆP ĐÃ ĐÍNH KÈM",
+  "@attachedFiles": {},
+  "attachedFilesHint": "Bạn có thể thêm {number} tệp",
+  "@attachedFilesHint": {
+    "description": "File uploading limitation notice",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "fileUploadFailed": "Tải tệp lên không thành công",
+  "@fileUploadFailed": {},
+  "cantOpenFile": "Không thể mở tệp này",
+  "@cantOpenFile": {},
+  "fileDownloadedInGallery": "Tệp được tải về trong Bộ sưu tập",
+  "@fileDownloadedInGallery": {},
+  "reachedLimitFileUploading": "Tải lên đạt giới hạn",
+  "@reachedLimitFileUploading": {},
+  "reachedLimitFileUploadingSub": "Bạn đã đạt tới giới hạn \ntài liệu tải lên",
+  "@reachedLimitFileUploadingSub": {},
+  "gotIt": "Đã hiểu",
+  "@gotIt": {},
+  "deny": "Từ chối",
+  "@deny": {},
+  "openSettingsMessage": "Bạn cần mở cấu hình và phân quyền",
+  "@openSettingsMessage": {},
+  "fileUploadingMetadata": "{size} • {date}",
+  "@fileUploadingMetadata": {
+    "description": "File uploading metadata",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "104KB"
+      },
+      "date": {
+        "type": "String",
+        "example": "Dec 7, 2021 at 13:13"
+      }
+    }
+  },
+  "fileSubtitle": "Đính kèm tài liệu trong máy của bạn",
+  "@fileSubtitle": {},
+  "openIt": "Mở ra",
+  "@openIt": {},
+  "youHaveBeenDisconnected": "Bạn bị mất kết nối và được dẫn tới {url}",
+  "@youHaveBeenDisconnected": {
+    "description": "Force logout when join workspace from magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
   }
 }
