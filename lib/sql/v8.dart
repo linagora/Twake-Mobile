@@ -1,0 +1,6 @@
+const String ALTER_CHANNEL_ADD_STATS = '''
+ALTER TABLE channel ADD COLUMN stats TEXT; 
+''';
+
+const DB_V8 = 8;
+const MIGRATION_8 = [ALTER_CHANNEL_ADD_STATS];

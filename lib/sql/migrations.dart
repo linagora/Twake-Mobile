@@ -1,10 +1,19 @@
 import 'package:sqflite/sqflite.dart';
+import 'package:twake/sql/v8.dart';
 
-import 'v7.dart';
+import 'v6.dart';
 
-const CURRENT_MIGRATION = DDL_V7;
-const DBVER = 8;
+const CURRENT_MIGRATION = DDL_V6;
+const DBVER = DB_V8;
 
-Future<void> dbUpgrade({required Database db, required int version}) async {
-  // if (version == 5) for (final ddl in DDL_V6) db.execute(ddl);
+Future<void> dbUpgrade({required Database db, required int oldVersion, required int newVersion}) async {
+  if (newVersion > oldVersion) {
+    if(oldVersion < DB_V8) {
+      final batch = db.batch();
+      MIGRATION_8.forEach((element) {
+        batch.execute(element);
+      });
+      await batch.commit();
+    }
+  }
 }
