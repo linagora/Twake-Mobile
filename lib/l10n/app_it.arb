@@ -457,5 +457,11 @@
         "example": "web.twake.app"
       }
     }
-  }
+  },
+  "reachedLimitFileUploading": "Limite di caricamento raggiunto",
+  "@reachedLimitFileUploading": {},
+  "reachedLimitFileUploadingSub": "Hai raggiunto il limite\ndi caricamento dei file",
+  "@reachedLimitFileUploadingSub": {},
+  "gotIt": "Capito",
+  "@gotIt": {}
 }
