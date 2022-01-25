@@ -48,7 +48,8 @@ CREATE TABLE channel (
     members_count INT DEFAULT 0,
     role TEXT NOT NULL,
     last_message TEXT,
-    draft TEXT
+    draft TEXT,
+    stats TEXT
 );
 ''';
 

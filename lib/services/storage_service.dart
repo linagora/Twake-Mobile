@@ -36,17 +36,6 @@ class StorageService {
       Logger().wtf('Failed to create databases directory!\nError: $e');
       throw e;
     }
-    if (await databaseExists(path)) {
-      final oldDBVersion = await openReadOnlyDatabase(path).then((db) async {
-        final version = await db.getVersion();
-        db.close();
-        return version;
-      });
-
-      if (oldDBVersion < DBVER) {
-        await deleteDatabase(path);
-      }
-    }
 
     void onConfigure(Database db) async {
       // enable support for foreign key constraints
@@ -69,7 +58,7 @@ class StorageService {
 
     void onUpgrade(db, oldVersion, newVersion) async {
       Logger().d('Migration to twake db v.$newVersion from v.$oldVersion');
-      await dbUpgrade(db: db, version: oldVersion);
+      await dbUpgrade(db: db, oldVersion: oldVersion, newVersion: newVersion);
     }
 
     _db = await openDatabase(
