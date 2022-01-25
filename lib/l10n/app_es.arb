@@ -275,5 +275,7 @@
   "italian": "Italiano",
   "@italian": {},
   "french": "Francés",
-  "@french": {}
+  "@french": {},
+  "invitePeopleToWorkspace": "Invite a la gente a este espacio de trabajo",
+  "@invitePeopleToWorkspace": {}
 }
