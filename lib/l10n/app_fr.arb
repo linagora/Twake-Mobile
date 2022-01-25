@@ -418,7 +418,7 @@
   "@public": {},
   "openSettingsMessage": "Ouvrez les paramètres pour accorder la permission",
   "@openSettingsMessage": {},
-  "appearanceDescription": "Si \"système\" est sélectionné, Twake changera automatiquement son apparence en fonction des paramètres système de votre appareil.",
+  "appearanceDescription": "Si « système » est sélectionné, Twake modifiera automatiquement son apparence en fonction des paramètres système de votre appareil.",
   "@appearanceDescription": {},
   "inviteAllWorkspaceUsers": "Inviter tous les utilisateurs de l’espace de travail",
   "@inviteAllWorkspaceUsers": {},
