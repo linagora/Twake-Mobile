@@ -445,5 +445,11 @@
         "example": "web.twake.app"
       }
     }
-  }
+  },
+  "reachedLimitFileUploading": "Предел загрузки достигнут",
+  "@reachedLimitFileUploading": {},
+  "reachedLimitFileUploadingSub": "Вы достигли предела\nзагрузки файлов",
+  "@reachedLimitFileUploadingSub": {},
+  "gotIt": "Понятно!",
+  "@gotIt": {}
 }
