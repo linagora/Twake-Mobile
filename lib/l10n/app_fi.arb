@@ -275,5 +275,7 @@
   "italian": "Italian",
   "@italian": {},
   "finnish": "Suomalainen",
-  "@finnish": {}
+  "@finnish": {},
+  "invitePeopleToWorkspace": "Kutsu ihmisiä tähän työtilaan",
+  "@invitePeopleToWorkspace": {}
 }
