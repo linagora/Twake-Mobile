@@ -61,6 +61,7 @@ class Endpoint {
   static const consolePage = 'https://console.%s';
   static const downloadFile = '%s/internal/services/files/v1/companies/%s/files/%s/download';
   static const downloadFileThumbnail = '%s/internal/services/files/v1/companies/%s/files/%s/thumbnails/%s';
+  static const httpsScheme = 'https://%s';
 
 
   static const publicMethods = const [info, reservation, signup, emailResend];
@@ -74,4 +75,14 @@ class Endpoint {
   static bool isConsole(String method) {
     return consoleMethods.contains(method);
   }
+
+  // Supported hosts
+  static const prodHost = 'web.twake.app';
+  static const qaHost = 'web.qa.twake.app';
+  static const supportedHosts = const [prodHost, qaHost];
+  static bool inSupportedHosts(String host) {
+    return supportedHosts.contains(host);
+  }
+
+
 }

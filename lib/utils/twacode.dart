@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/models/attachment/attachment.dart';
+import 'package:twake/services/endpoints.dart';
+import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/emojis.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/file_tile.dart';
 import 'package:twake/widgets/common/user_mention.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1009,12 +1013,24 @@ class TwacodeRenderer {
               text: t['content'],
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
-                  if (await canLaunch(t['url'] ?? t['content'])) {
-                    await launch(
-                      t['url'] ?? t['content'],
-                      // forceSafariVC: true,
-                      // forceWebView: true,
-                    );
+                  final url = Utilities.preprocessString(t['url']);
+                  final content = Utilities.preprocessString(t['content']);
+                  final launchUrl = url.isNotEmpty ? url : (content.isNotEmpty ? content : '');
+                  final canOpen = await canLaunch(launchUrl);
+                  if (canOpen) {
+                    if(Platform.isIOS) {
+                      final launchUri = Uri.parse(launchUrl);
+                      final token = launchUri.queryParameters['join']?.replaceAll(' ', '+');
+                      final host = launchUri.host;
+                      if(token != null && token.isNotEmpty && Endpoint.inSupportedHosts(host)) {
+                        final newCustomUrl = '$TWAKE_MOBILE://$host/?join=$token';
+                        if(await canLaunch(newCustomUrl)) {
+                          await launch(newCustomUrl);
+                          return;
+                        }
+                      }
+                    }
+                    await launch(launchUrl);
                   }
                 }));
         } else if (type == TType.Link) {

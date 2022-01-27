@@ -104,3 +104,8 @@ extension XFileExtension on XFile {
     return LocalFile(name: name, size: len, path: path);
   }
 }
+
+extension UriExtension on Uri {
+  bool get isHttp => scheme.length == 4 && this.scheme.startsWith("http");
+  bool get isHttps => scheme.length == 5 && this.scheme.startsWith("https");
+}

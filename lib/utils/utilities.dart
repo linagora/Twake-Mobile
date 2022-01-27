@@ -233,6 +233,10 @@ class Utilities {
       },
     );
   }
+
+  static String preprocessString(dynamic input) {
+    return input != null ? input.toString() : '';
+  }
 }
 
 enum PermissionStorageType {

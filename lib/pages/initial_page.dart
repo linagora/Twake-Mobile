@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:sprintf/sprintf.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
@@ -20,6 +21,8 @@ import 'package:twake/pages/magic_link/join_workspace_magic_link_page.dart';
 import 'package:twake/pages/sign_flow.dart';
 import 'package:twake/pages/syncing_data.dart';
 import 'package:twake/routing/route_paths.dart';
+import 'package:twake/services/endpoints.dart';
+import 'package:twake/utils/extensions.dart';
 import 'package:uni_links/uni_links.dart';
 
 import 'home/home_widget.dart';
@@ -96,8 +99,18 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       return;
     }
     final token = uri.queryParameters['join'];
-    final incomingHost = uri.origin;
     if (token != null && token.isNotEmpty) {
+      // Add supports for both link types:
+      // Universal Links and Custom URL (iOS)
+      // App Links and Deep Links (Android)
+      String incomingHost;
+      if (uri.isHttp || uri.isHttps) {
+        incomingHost = uri.origin;
+      } else {
+        // Because of with custom URL (like twakemobile://host/),
+        // uri.origin is not supported, need to handle like this:
+        incomingHost = sprintf(Endpoint.httpsScheme, [uri.host]);
+      }
       Get.find<AuthenticationCubit>().checkTokenAvailable(token, incomingHost: incomingHost);
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
