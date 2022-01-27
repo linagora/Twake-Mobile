@@ -10,12 +10,22 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleURLSchemes</key>
-        <array>
-            <string>twakemobile.com</string>
-        </array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.linagora.ios.twake</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>twakemobile.com</string>
+				<string>twakemobile</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleName</key>
-	<string>ddd</string>
+	<string>Twake</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -48,6 +58,7 @@
 	<key>LSApplicationQueriesSchemes</key>
     <array>
       <string>https</string>
+      <string>twakemobile</string>
     </array>
 
     <!--image_picker-->
