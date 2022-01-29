@@ -416,7 +416,7 @@
   "@dark": {},
   "public": "Public",
   "@public": {},
-  "openSettingsMessage": "Ouvrez les paramètres pour accorder la permission",
+  "openSettingsMessage": "Vous devez ouvrir les paramètres pour accorder l’autorisation",
   "@openSettingsMessage": {},
   "appearanceDescription": "Si « système » est sélectionné, Twake modifiera automatiquement son apparence en fonction des paramètres système de votre appareil.",
   "@appearanceDescription": {},
@@ -430,7 +430,7 @@
   "@system": {},
   "private": "Privé",
   "@private": {},
-  "openIt": "Ouvrir",
+  "openIt": "L’ouvrir",
   "@openIt": {},
   "cantOpenFile": "Impossible d'ouvrir ce fichier",
   "@cantOpenFile": {},
@@ -449,5 +449,11 @@
         "example": "web.twake.app"
       }
     }
-  }
+  },
+  "reachedLimitFileUploadingSub": "Vous avez atteint la limite\nde téléversements de fichiers",
+  "@reachedLimitFileUploadingSub": {},
+  "reachedLimitFileUploading": "Limite de téléversements atteinte",
+  "@reachedLimitFileUploading": {},
+  "gotIt": "Compris",
+  "@gotIt": {}
 }
