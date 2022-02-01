@@ -23,6 +23,7 @@ import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
+import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
@@ -191,7 +192,25 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                           ),
                         );
                       } else {
-                        return SizedBox.shrink();
+                        return Container(
+                          width: 75,
+                          child: Row(
+                            children: [
+                              RoundedShimmer(size: 42),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.keyboard_arrow_down_rounded,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryVariant
+                                    .withOpacity(0.9),
+                                size: 24,
+                              ),
+                            ],
+                          ),
+                        );
                       }
                     },
                   ),
@@ -347,7 +366,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       String id = data[0];
       DownloadTaskStatus status = data[1];
       if (status == DownloadTaskStatus.complete) {
-        Get.find<FileDownloadCubit>().handleAfterDownloaded(taskId: id, context: context);
+        Get.find<FileDownloadCubit>()
+            .handleAfterDownloaded(taskId: id, context: context);
       } else if (status == DownloadTaskStatus.failed) {
         Get.find<FileDownloadCubit>().handleDownloadFailed(taskId: id);
       }
