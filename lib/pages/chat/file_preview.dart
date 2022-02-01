@@ -20,15 +20,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FilePreview<T extends BaseChannelsCubit> extends StatefulWidget {
-
   const FilePreview({Key? key}) : super(key: key);
 
   @override
   _FilePreviewState<T> createState() => _FilePreviewState<T>();
 }
 
-class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T>> {
-
+class _FilePreviewState<T extends BaseChannelsCubit>
+    extends State<FilePreview<T>> {
   late File file;
 
   @override
@@ -41,49 +40,49 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
   Widget build(BuildContext context) {
     final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          automaticallyImplyLeading: false,
-          titleSpacing: 0.0,
-          shadowColor: Colors.grey[300],
-          toolbarHeight: 60.0,
-          title: FilePreviewHeader(
-              isDirect: channel.isDirect,
-              channelName: channel.name,
-              avatars: channel.isDirect ? channel.avatars : const [],
-              fileName: file.metadata.name,
-              channelIcon: Emojis.getByName(channel.icon ?? ''),
-          ),
-          actions: [
-            IconButton(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        automaticallyImplyLeading: false,
+        titleSpacing: 0.0,
+        shadowColor: Colors.grey[300],
+        toolbarHeight: 60.0,
+        title: FilePreviewHeader(
+          isDirect: channel.isDirect,
+          channelName: channel.name,
+          avatars: channel.isDirect ? channel.avatars : const [],
+          fileName: file.metadata.name,
+          channelIcon: Emojis.getByName(channel.icon ?? ''),
+        ),
+        actions: [
+          IconButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
               icon: Icon(Icons.close, color: Colors.white))
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: CachedNetworkImage(
+                width: double.maxFinite,
+                height: double.maxFinite,
+                fit: BoxFit.contain,
+                imageUrl: file.downloadUrl,
+                progressIndicatorBuilder: (context, url, progress) {
+                  return ShimmerLoading(
+                      isLoading: true,
+                      width: double.maxFinite,
+                      height: double.maxFinite,
+                      child: Container());
+                },
+              ),
+            ),
+            _buildBottomLayout()
           ],
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: CachedNetworkImage(
-                  width: double.maxFinite,
-                  height: double.maxFinite,
-                  fit: BoxFit.contain,
-                  imageUrl: file.thumbnailUrl,
-                  progressIndicatorBuilder: (context, url, progress) {
-                    return ShimmerLoading(
-                        isLoading: true,
-                        width: double.maxFinite,
-                        height: double.maxFinite,
-                        child: Container());
-                  },
-                ),
-              ),
-              _buildBottomLayout()
-            ],
-          ),
-        ),
+      ),
     );
   }
 
@@ -93,23 +92,24 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
       padding: const EdgeInsets.all(8.0),
       alignment: Alignment.centerRight,
       child: BlocConsumer<FileDownloadCubit, FileDownloadState>(
-          bloc: Get.find<FileDownloadCubit>(),
-          builder: (context, state) {
-            FileDownloading? selectedFile;
-            if (state.listFileDownloading.isNotEmpty) {
-              selectedFile = state.listFileDownloading
-                  .firstWhereOrNull((fileDownloading) => fileDownloading.file.id == file.id);
-            }
-            return _buildDownloadIcon(file, selectedFile);
-          },
+        bloc: Get.find<FileDownloadCubit>(),
+        builder: (context, state) {
+          FileDownloading? selectedFile;
+          if (state.listFileDownloading.isNotEmpty) {
+            selectedFile = state.listFileDownloading.firstWhereOrNull(
+                (fileDownloading) => fileDownloading.file.id == file.id);
+          }
+          return _buildDownloadIcon(file, selectedFile);
+        },
         listener: (context, state) async {
           FileDownloading? selectedFile;
           if (state.listFileDownloading.isNotEmpty) {
-            selectedFile = state.listFileDownloading
-                .firstWhereOrNull((fileDownloading) => fileDownloading.file.id == file.id);
+            selectedFile = state.listFileDownloading.firstWhereOrNull(
+                (fileDownloading) => fileDownloading.file.id == file.id);
           }
-          if(selectedFile != null) {
-            if(selectedFile.downloadStatus == FileItemDownloadStatus.downloadSuccessful) {
+          if (selectedFile != null) {
+            if (selectedFile.downloadStatus ==
+                FileItemDownloadStatus.downloadSuccessful) {
               await _showDialogComplete(context, selectedFile);
               Get.find<FileDownloadCubit>().removeDownloadingFile(
                   downloadTaskId: selectedFile.downloadTaskId!);
@@ -121,10 +121,11 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
   }
 
   _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
-    if(fileDownloading == null) {
+    if (fileDownloading == null) {
       return _initDownloadIcon(file);
     }
-    if(fileDownloading.downloadStatus == FileItemDownloadStatus.downloadInProgress) {
+    if (fileDownloading.downloadStatus ==
+        FileItemDownloadStatus.downloadInProgress) {
       return _downloadInProgressIcon(fileDownloading);
     } else {
       return _initDownloadIcon(file);
@@ -177,13 +178,14 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
   }
 
   _handleCancelDownloadFile(FileDownloading fileDownloading) {
-    if(fileDownloading.downloadTaskId != null) {
+    if (fileDownloading.downloadTaskId != null) {
       Get.find<FileDownloadCubit>().cancelDownloadingFile(
           downloadTaskId: fileDownloading.downloadTaskId!);
     }
   }
 
-  Future<void> _showDialogComplete(BuildContext parentContext, FileDownloading? fileDownloading) async {
+  Future<void> _showDialogComplete(
+      BuildContext parentContext, FileDownloading? fileDownloading) async {
     showDialog(
       context: parentContext,
       barrierDismissible: false,
@@ -196,31 +198,32 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
           child: AlertDialog(
             backgroundColor: Colors.black.withOpacity(0.4),
             title: Center(
-              child: Text(AppLocalizations.of(parentContext)?.fileDownloadedInGallery ?? '',
-                style: StylesConfig.commonTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: 16.0
-                ),
+              child: Text(
+                AppLocalizations.of(parentContext)?.fileDownloadedInGallery ??
+                    '',
+                style: StylesConfig.commonTextStyle
+                    .copyWith(color: Colors.white, fontSize: 16.0),
               ),
             ),
             actions: <Widget>[
               CupertinoDialogAction(
-                child: Text(AppLocalizations.of(parentContext)?.openIt ?? '',
-                  style: StylesConfig.commonTextStyle.copyWith(
-                    color: Colors.white,
-                    fontSize: 16.0
-                  ),
+                child: Text(
+                  AppLocalizations.of(parentContext)?.openIt ?? '',
+                  style: StylesConfig.commonTextStyle
+                      .copyWith(color: Colors.white, fontSize: 16.0),
                 ),
                 onPressed: () async {
                   Navigator.of(context).pop();
 
-                  if(fileDownloading == null) return;
-                  if (fileDownloading.downloadStatus != FileItemDownloadStatus.downloadSuccessful) return;
-                  if(fileDownloading.downloadTaskId != null) {
-                    await _handleOpenFile(taskId: fileDownloading.downloadTaskId!);
+                  if (fileDownloading == null) return;
+                  if (fileDownloading.downloadStatus !=
+                      FileItemDownloadStatus.downloadSuccessful) return;
+                  if (fileDownloading.downloadTaskId != null) {
+                    await _handleOpenFile(
+                        taskId: fileDownloading.downloadTaskId!);
                     return;
                   }
-                  if(fileDownloading.savedPath != null) {
+                  if (fileDownloading.savedPath != null) {
                     await _handleOpenFile(savedPath: fileDownloading.savedPath);
                     return;
                   }
@@ -236,17 +239,17 @@ class _FilePreviewState<T extends BaseChannelsCubit> extends State<FilePreview<T
   // Open file either by [taskId] or [savedPath]
   Future<void> _handleOpenFile({String? taskId, String? savedPath}) async {
     try {
-      if(taskId != null) {
-        final result =
-            await Get.find<FileDownloadCubit>().openDownloadedFile(downloadTaskId: taskId);
-        if(!result) {
+      if (taskId != null) {
+        final result = await Get.find<FileDownloadCubit>()
+            .openDownloadedFile(downloadTaskId: taskId);
+        if (!result) {
           _handleCanNotOpenFile();
         }
         return;
       }
-      if(savedPath != null) {
+      if (savedPath != null) {
         final result = await OpenFile.open(savedPath);
-        if(result.type != ResultType.done) {
+        if (result.type != ResultType.done) {
           _handleCanNotOpenFile();
         }
         return;
