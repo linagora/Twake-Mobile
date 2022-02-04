@@ -127,7 +127,7 @@
   "@settings": {},
   "directChats": "Чаты",
   "@directChats": {},
-  "cancel": "Отменить",
+  "cancel": "Отмена",
   "@cancel": {},
   "create": "Создать",
   "@create": {},
@@ -147,7 +147,7 @@
   "@view": {},
   "firstMessageInChannelInfo": "Это первое сообщение канала",
   "@firstMessageInChannelInfo": {},
-  "reply": "Ответ",
+  "reply": "Ответить",
   "@reply": {},
   "newReply": "Новый ответ...",
   "@newReply": {},
@@ -451,5 +451,13 @@
   "reachedLimitFileUploadingSub": "Вы достигли предела\nзагрузки файлов",
   "@reachedLimitFileUploadingSub": {},
   "gotIt": "Понятно!",
-  "@gotIt": {}
+  "@gotIt": {},
+  "createPrivateChannel": "Создать частный канал",
+  "@createPrivateChannel": {},
+  "groupChatLimit": "Ограничение группового чата",
+  "@groupChatLimit": {},
+  "continueLimit": "Продолжить работу только с 10 участниками",
+  "@continueLimit": {},
+  "groupDirectLimit": "В групповой чат можно добавить не более 10 участников. Если вы хотите добавить больше, подумайте о создании частного канала",
+  "@groupDirectLimit": {}
 }
