@@ -139,15 +139,15 @@
   "@tryAgain": {},
   "deleteMessageInfo": "Elimina questo messaggio",
   "@deleteMessageInfo": {},
-  "chats": "Discussioni",
+  "chats": "Chat",
   "@chats": {},
-  "newDirectChat": "Nuova discussione diretta",
+  "newDirectChat": "Nuova chat diretta",
   "@newDirectChat": {},
-  "newChat": "Nuova discussione",
+  "newChat": "Nuova chat",
   "@newChat": {},
-  "recentChats": "DISCUSSIONI RECENTI",
+  "recentChats": "CHAT RECENTI",
   "@recentChats": {},
-  "directChats": "Discussioni dirette",
+  "directChats": "Chat dirette",
   "@directChats": {},
   "channelName": "Nome del canale",
   "@channelName": {},
@@ -252,7 +252,7 @@
       "count": {}
     }
   },
-  "noConversationInChat": "Non ci sono messaggi in\nquesta discussione! Inizia una conversazione\ncon {username} inviando\nun testo, un'immagine o un documento",
+  "noConversationInChat": "Non ci sono messaggi in\nquesta chat! Inizia una conversazione\ncon {username} inviando\nun testo, un'immagine o un documento",
   "@noConversationInChat": {
     "description": "Info message to indicate there're no messages",
     "placeholders": {
@@ -463,5 +463,13 @@
   "reachedLimitFileUploadingSub": "Hai raggiunto il limite\ndi caricamento dei file",
   "@reachedLimitFileUploadingSub": {},
   "gotIt": "Capito",
-  "@gotIt": {}
+  "@gotIt": {},
+  "groupDirectLimit": "Puoi aggiungere fino a 10 membri alla tua chat di gruppo. Se vuoi aggiungerne di più, considera la creazione di un canale privato",
+  "@groupDirectLimit": {},
+  "groupChatLimit": "Limite della chat di gruppo",
+  "@groupChatLimit": {},
+  "createPrivateChannel": "Crea un canale privato",
+  "@createPrivateChannel": {},
+  "continueLimit": "Continuare con solo 10 membri",
+  "@continueLimit": {}
 }
