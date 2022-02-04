@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:device_info/device_info.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -6,11 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share/share.dart';
+import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/config/styles_config.dart';
+import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/common/confirm_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -56,6 +60,113 @@ class Utilities {
             color: Color.fromRGBO(0, 0, 0, 0.24),
           )
         ]);
+  }
+
+  static void showLimitDialog(
+      {required BuildContext context,
+      required String message,
+      required String titleText,
+      String? iconPath,
+      String? buttonText1,
+      String? buttonText2,
+      Function? onButtonClick1,
+      Function? onButtonClick2,
+      Duration? duration}) {
+    showDialog(
+      useSafeArea: true,
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Get.theme.colorScheme.secondaryVariant,
+          insetPadding: EdgeInsets.all(
+            Dim.widthPercent(3),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: Dim.heightPercent(60),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: Dim.widthPercent(5)),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 10),
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      radius: 40,
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Image.asset(
+                          imageUsers,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: AutoSizeText(
+                      titleText,
+                      style: Get.theme.textTheme.headline1!
+                          .copyWith(fontSize: 24, fontWeight: FontWeight.w600),
+                      minFontSize: 20,
+                    ),
+                  ),
+                  AutoSizeText(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: Get.theme.textTheme.headline2!
+                        .copyWith(fontSize: 14, fontWeight: FontWeight.normal),
+                    minFontSize: 12,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    child: ButtonTextBuilder(
+                      Key('button_1'),
+                      onButtonClick: onButtonClick1,
+                      backgroundColor: Get.theme.colorScheme.surface,
+                    )
+                        .setWidth(double.infinity)
+                        .setHeight(50)
+                        .setText(buttonText1 ?? '')
+                        .setTextStyle(Get.isDarkMode
+                            ? Get.theme.textTheme.headline1!.copyWith(
+                                fontSize: 17, fontWeight: FontWeight.w600)
+                            : Get.theme.textTheme.bodyText1!.copyWith(
+                                fontSize: 17, fontWeight: FontWeight.w500))
+                        .build(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 18),
+                    child: ButtonTextBuilder(
+                      Key('button_2'),
+                      onButtonClick: onButtonClick2,
+                      backgroundColor: Get.isDarkMode
+                          ? Get.theme.backgroundColor
+                          : Get.theme.colorScheme.secondary,
+                    )
+                        .setWidth(double.infinity)
+                        .setHeight(50)
+                        .setText(buttonText2 ?? '')
+                        .setTextStyle(Get.isDarkMode
+                            ? Get.theme.textTheme.headline1!.copyWith(
+                                fontSize: 17, fontWeight: FontWeight.w600)
+                            : Get.theme.textTheme.bodyText1!.copyWith(
+                                fontSize: 17, fontWeight: FontWeight.w500))
+                        .build(),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   static Future<bool> _isNeedRequestStoragePermissionOnAndroid(

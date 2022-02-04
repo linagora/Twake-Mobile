@@ -8,6 +8,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_cubit.dart';
 import 'package:twake/blocs/channels_cubit/add_channel_cubit/add_channel_state.dart';
+import 'package:twake/models/account/account.dart';
+import 'package:twake/models/channel/channel_visibility.dart';
 import 'package:twake/pages/member/selected_member_tile.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
@@ -32,6 +34,16 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
     _nameEditingController.dispose();
     _descriptionEditingController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (Get.arguments != null && Get.arguments.runtimeType == List<Account>) {
+      Get.find<AddChannelCubit>().addSelectedMembers(Get.arguments);
+      Get.find<AddChannelCubit>()
+          .setChannelVisibility(ChannelVisibility.private);
+    }
   }
 
   @override

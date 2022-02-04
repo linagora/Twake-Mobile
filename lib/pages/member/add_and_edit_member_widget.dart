@@ -11,6 +11,8 @@ import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dar
 import 'package:twake/models/account/account.dart';
 import 'package:twake/pages/member/found_member_tile.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/enable_button_widget.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
@@ -45,6 +47,15 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
     _searchController.addListener(() {
       Get.find<AddMemberCubit>().searchMembers(_searchController.text);
     });
+  }
+
+  void routeNewChannel(List<Account> accounts) {
+    Navigator.pop(context);
+    push(RoutePaths.newChannel.path, arguments: accounts);
+  }
+
+  void closeDialog() {
+    Navigator.pop(context);
   }
 
   @override
@@ -251,9 +262,37 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                           Get.find<AddMemberCubit>()
                                               .removeMember(user);
                                         } else {
-                                          Get.find<AddMemberCubit>()
-                                              .selectMember(user);
-                                          _searchController.text = '';
+                                          if (addMemberState
+                                                      .selectedMembers.length >
+                                                  9 &&
+                                              widget.addAndEditMemberType ==
+                                                  AddAndEditMemberType
+                                                      .createDirect) {
+                                            Utilities.showLimitDialog(
+                                              context: context,
+                                              titleText:
+                                                  AppLocalizations.of(context)!
+                                                      .groupChatLimit,
+                                              buttonText1:
+                                                  AppLocalizations.of(context)!
+                                                      .createPrivateChannel,
+                                              buttonText2:
+                                                  AppLocalizations.of(context)!
+                                                      .continueLimit,
+                                              onButtonClick1: () =>
+                                                  routeNewChannel(addMemberState
+                                                      .selectedMembers),
+                                              onButtonClick2: closeDialog,
+                                              message:
+                                                  AppLocalizations.of(context)!
+                                                      .groupDirectLimit,
+                                              duration: Duration(hours: 1),
+                                            );
+                                          } else {
+                                            Get.find<AddMemberCubit>()
+                                                .selectMember(user);
+                                            _searchController.text = '';
+                                          }
                                         }
                                       },
                                       isSelected: isSelected,
