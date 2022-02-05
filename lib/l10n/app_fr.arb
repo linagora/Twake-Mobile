@@ -422,7 +422,7 @@
   "@appearanceDescription": {},
   "inviteAllWorkspaceUsers": "Inviter tous les utilisateurs de l’espace de travail",
   "@inviteAllWorkspaceUsers": {},
-  "automaticallyInviteAllWorkspaceUsers": "Inviter automatiquement tous les utilisateurs de l’espace de travail à cette chaine de discussion",
+  "automaticallyInviteAllWorkspaceUsers": "Inviter automatiquement tous les utilisateurs de l’espace de travail à ce canal",
   "@automaticallyInviteAllWorkspaceUsers": {},
   "light": "Clair",
   "@light": {},
@@ -455,5 +455,13 @@
   "reachedLimitFileUploading": "Limite de téléversements atteinte",
   "@reachedLimitFileUploading": {},
   "gotIt": "Compris",
-  "@gotIt": {}
+  "@gotIt": {},
+  "createPrivateChannel": "Créer un canal privé",
+  "@createPrivateChannel": {},
+  "groupChatLimit": "Limite des discussions de groupe",
+  "@groupChatLimit": {},
+  "continueLimit": "Continuer avec seulement 10 membres",
+  "@continueLimit": {},
+  "groupDirectLimit": "Vous pouvez ajouter jusqu'à 10 membres à votre discussion de groupe. Si vous souhaitez en ajouter davantage, envisagez de créer un canal privé",
+  "@groupDirectLimit": {}
 }
