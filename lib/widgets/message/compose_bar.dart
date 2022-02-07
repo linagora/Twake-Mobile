@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
@@ -45,7 +46,7 @@ class _ComposeBar extends State<ComposeBar> {
   var _mentionsVisible = false;
   var _forceLooseFocus = false;
   var _canSend = false;
-  var _existUploadedFiles = false;
+  var _canSendFiles = false;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -89,39 +90,37 @@ class _ComposeBar extends State<ComposeBar> {
       }
       // Update for cache handlers
       widget.onTextUpdated(text, context);
-      // Sendability  validation
-      if (_controller.text.isReallyEmpty && _canSend && !_existUploadedFiles) {
-        setState(() {
-          _canSend = false;
-        });
-      } else if ((text.isNotReallyEmpty || _existUploadedFiles) && !_canSend) {
-        setState(() {
-          _canSend = true;
-        });
-      }
+
+      // Set Send button state by combination of checking text and file uploading
+      _setSendButtonState(stateWithoutFileUploading: _controller.text.isNotReallyEmpty);
     });
 
     Get.find<FileUploadCubit>().stream.listen((state) {
       if (state.listFileUploading.isNotEmpty) {
         final hasUploadedFileInStack = state.listFileUploading.any(
             (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+        final hasUploadingFileInStack = state.listFileUploading.any(
+            (element) => element.uploadStatus == FileItemUploadStatus.uploading);
+
         if (!mounted) return;
-        if (hasUploadedFileInStack) {
+        if (hasUploadedFileInStack && !hasUploadingFileInStack) {
           setState(() {
-            _existUploadedFiles = true;
+            _canSendFiles = true;
             _canSend = true;
           });
         } else {
           setState(() {
-            _existUploadedFiles = false;
+            _canSendFiles = false;
+            _canSend = false;
           });
         }
       } else {
         if (!mounted) return;
         setState(() {
-          _existUploadedFiles = false;
-          if (_controller.text.isReallyEmpty && _canSend) {
+          if (_controller.text.isReallyEmpty) {
             _canSend = false;
+          } else {
+            _canSend = true;
           }
         });
       }
@@ -347,9 +346,7 @@ class _ComposeBar extends State<ComposeBar> {
                 child: EmojiPicker(
                   onEmojiSelected: (cat, emoji) {
                     _controller.text += emoji.emoji;
-                    setState(() {
-                      _canSend = true;
-                    });
+                    _setSendButtonState(stateWithoutFileUploading: true);
                   },
                   config: Config(
                     columns: 7,
@@ -380,6 +377,21 @@ class _ComposeBar extends State<ComposeBar> {
         ),
       ),
     );
+  }
+
+  void _setSendButtonState({bool stateWithoutFileUploading = false}) {
+    final uploadState = Get.find<FileUploadCubit>().state;
+    final listFileUploading = Get.find<FileUploadCubit>().state.listFileUploading;
+    if(uploadState.fileUploadStatus == FileUploadStatus.inProcessing
+        && listFileUploading.isNotEmpty) {
+      setState(() {
+        _canSend = _canSendFiles;
+      });
+    } else {
+      setState(() {
+        _canSend = stateWithoutFileUploading;
+      });
+    }
   }
 }
 
