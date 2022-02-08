@@ -217,7 +217,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final s = (state as MessagesLoadSuccess);
 
     // reinstate files from message for editing
-    await Get.find<FileUploadCubit>().startEditingFile(message);
+    // TODO: uncomment when enable edit file feature
+    // await Get.find<FileUploadCubit>().startEditingFile(message);
 
     emit(MessageEditInProgress(
       messages: s.messages,
