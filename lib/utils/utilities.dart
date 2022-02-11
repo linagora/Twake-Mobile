@@ -13,7 +13,6 @@ import 'package:twake/utils/constants.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/common/confirm_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -36,11 +35,15 @@ class Utilities {
     await Share.share(appUrl);
   }
 
-  static void showSimpleSnackBar(
-      {required String message, String? iconPath, Duration? duration}) {
+  static void showSimpleSnackBar({
+    required BuildContext context,
+    required String message,
+    String? iconPath,
+    Duration? duration
+  }) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
         margin: const EdgeInsets.all(16.0),
         padding: const EdgeInsets.all(16.0),
         animationDuration: Duration(milliseconds: 300),
@@ -52,7 +55,9 @@ class Utilities {
         messageText: Container(
           margin: const EdgeInsets.only(bottom: 4),
           child: Text(message,
-              style: StylesConfig.commonTextStyle.copyWith(fontSize: 15)),
+              style: Theme.of(context).textTheme.headline1?.copyWith(
+                fontWeight: FontWeight.normal
+              )),
         ),
         boxShadows: [
           BoxShadow(

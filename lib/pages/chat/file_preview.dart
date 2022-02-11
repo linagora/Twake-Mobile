@@ -262,6 +262,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
 
   _handleCanNotOpenFile() {
     Utilities.showSimpleSnackBar(
+      context: context,
       message: AppLocalizations.of(context)!.cantOpenFile,
       iconPath: imageError,
     );

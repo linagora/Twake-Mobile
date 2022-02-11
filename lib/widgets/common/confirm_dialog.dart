@@ -10,6 +10,7 @@ class ConfirmDialog extends StatelessWidget {
   final String okActionTitle;
   final Function? cancelAction;
   final Function? okAction;
+  final Function? closeDialogAction;
 
   const ConfirmDialog({
     Key? key,
@@ -19,6 +20,7 @@ class ConfirmDialog extends StatelessWidget {
     required this.okActionTitle,
     this.cancelAction,
     this.okAction,
+    this.closeDialogAction,
   }) : super(key: key);
 
   @override
@@ -111,6 +113,7 @@ class ConfirmDialog extends StatelessWidget {
   _buildCloseButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        closeDialogAction?.call();
         Navigator.of(context).pop();
       },
       child: Image.asset(
