@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:twake/models/deeplink/join/workspace_join_request.dart';
+import 'package:get/get.dart';
+import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/authentication_repository.dart';
-import 'package:twake/repositories/magic_link_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 
 part 'authentication_state.dart';
@@ -14,9 +14,8 @@ part 'authentication_state.dart';
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   late final AuthenticationRepository _repository;
   late final StreamSubscription _networkSubscription;
-  late final MagicLinkRepository _magicLinkRepository;
 
-  AuthenticationCubit({AuthenticationRepository? repository, MagicLinkRepository? magicLinkRepository})
+  AuthenticationCubit({AuthenticationRepository? repository})
       : super(AuthenticationInitial()) {
     if (repository == null) {
       repository = AuthenticationRepository();
@@ -27,11 +26,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     _networkSubscription = Globals.instance.connection.listen((connection) {
       if (connection == Connection.connected) _repository.startTokenValidator();
     });
-
-    if (magicLinkRepository == null) {
-      magicLinkRepository = MagicLinkRepository();
-    }
-    _magicLinkRepository = magicLinkRepository;
   }
 
   Future<void> checkAuthentication({WorkspaceJoinResponse? workspaceJoinResponse, String? pendingRequestedToken}) async {
@@ -47,6 +41,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     } else {
       emit(AuthenticationInitial());
     }
+    Globals.instance.handlingMagicLink = false;
   }
 
   Future<bool> authenticate({String? requestedMagicLinkToken}) async {
@@ -54,7 +49,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     final authenticated = await _repository.webviewAuthenticate();
     if (authenticated) {
       if(requestedMagicLinkToken != null && requestedMagicLinkToken.isNotEmpty) {
-        final joinResponse = await joinWorkspace(requestedMagicLinkToken, needCheckAuthentication: false);
+        final joinResponse = await Get.find<JoiningCubit>().joinWorkspace(requestedMagicLinkToken, needCheckAuthentication: false);
         _repository.startTokenValidator();
         SocketIOService.instance.connect();
         await syncData(magicLinkJoinResponse: joinResponse);
@@ -100,9 +95,15 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     emit(AuthenticationInitial());
   }
 
-  Future<void> logoutWithoutEmittingState() async {
-    await _repository.logout();
-    SocketIOService.instance.disconnect();
+  Future<bool> logoutWithoutEmittingState() async {
+    try {
+      await _repository.logout();
+      SocketIOService.instance.disconnect();
+      return true;
+    } catch (e) {
+      Logger().e('Error occurred during logout:\n$e');
+      return false;
+    }
   }
 
   void registerDevice() async {
@@ -113,68 +114,18 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     await _repository.registerDevice();
   }
 
-  void checkTokenAvailable(String token, {required String incomingHost}) async {
-    emit(InvitationJoinCheckingInit());
+  void joiningWithMagicLink(String token, {required String incomingHost}) async {
     Globals.instance.handlingMagicLink = true;
-    try {
-      // Additional handle the incoming link from another supported server
-      // Look at story #1155 for more detail
-      final currentHost = Globals.instance.host;
-      bool isDifferenceServer = incomingHost != currentHost;
-      if (incomingHost != currentHost) {
-        await _handleDifferenceServer();
-        await Globals.instance.hostSet(incomingHost);
-      }
-
-      final checkTokenResponse =
-          await _magicLinkRepository.joinWorkspace(WorkspaceJoinRequest(false, token));
-
-      emit(InvitationJoinCheckingTokenFinished(
-        joinResponse: checkTokenResponse,
-        requestedToken: token,
-        isDifferenceServer: isDifferenceServer,
-      ));
-    } catch (e) {
-      Logger().e('ERROR during checking magic link token:\n$e');
-      emit(InvitationJoinCheckingTokenFinished(
-        joinResponse: null,
-        requestedToken: token,
-        isDifferenceServer: null,
-      ));
-    }
-  }
-
-  Future<WorkspaceJoinResponse?> joinWorkspace(String requestedToken, {required bool needCheckAuthentication}) async {
-    emit(InvitationJoinInit());
-    try {
-      final joinResponse = await _magicLinkRepository.joinWorkspace(WorkspaceJoinRequest(true, requestedToken));
-      if(joinResponse != null) {
-        emit(InvitationJoinSuccess(
-            requestedToken: requestedToken,
-            joinResponse: joinResponse,
-            needCheckAuthentication: needCheckAuthentication));
-      } else {
-        emit(InvitationJoinFailed());
-      }
-      return joinResponse;
-    } catch (e) {
-      Logger().e('ERROR during joining workspace via magic link:\n$e');
-      emit(InvitationJoinFailed());
-      return null;
-    }
+    emit(JoiningMagicLinkState(
+      requestedToken: token,
+      incomingHost: incomingHost,
+    ));
   }
 
   Future<bool> isAuthenticated() async => await _repository.isAuthenticated();
 
   Future<void> resetAuthenticationState() async {
     emit(AuthenticationInitial());
-  }
-
-  Future<void> _handleDifferenceServer() async {
-    final authenticated = await isAuthenticated();
-    if (authenticated) {
-      await logoutWithoutEmittingState();
-    }
   }
 
   @override
