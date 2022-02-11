@@ -79,7 +79,8 @@ class Endpoint {
   // Supported hosts
   static const prodHost = 'web.twake.app';
   static const qaHost = 'web.qa.twake.app';
-  static const supportedHosts = const [prodHost, qaHost];
+  static const canaryHost = 'canary.twake.app';
+  static const supportedHosts = const [prodHost, qaHost, canaryHost];
   static bool inSupportedHosts(String host) {
     return supportedHosts.contains(host);
   }
