@@ -8,6 +8,7 @@
       <array>
         <string>applinks:web.qa.twake.app</string>
         <string>applinks:web.twake.app</string>
+        <string>applinks:canary.twake.app</string>
       </array>
 </dict>
 </plist>
