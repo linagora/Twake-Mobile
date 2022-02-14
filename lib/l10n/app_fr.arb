@@ -463,5 +463,15 @@
   "continueLimit": "Continuer avec seulement 10 membres",
   "@continueLimit": {},
   "groupDirectLimit": "Vous pouvez ajouter jusqu'à 10 membres à votre discussion de groupe. Si vous souhaitez en ajouter davantage, envisagez de créer un canal privé",
-  "@groupDirectLimit": {}
+  "@groupDirectLimit": {},
+  "confirmLogoutMagicLink": "Vous essayez d'ouvrir un lien d'invitation d'un autre serveur Twake. Pour l'utiliser, nous devons vous déconnecter de votre serveur actuel ({url}).\n\nVeuillez confirmer que vous voulez vous déconnecter.",
+  "@confirmLogoutMagicLink": {
+    "description": "Asking logout when using magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
+  }
 }
