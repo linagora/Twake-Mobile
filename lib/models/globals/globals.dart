@@ -114,6 +114,7 @@ class Globals extends BaseModel {
   @JsonKey(ignore: true)
   bool magicLinkInitialUriIsHandled = false;
 
+  // To prevent SynchronizationService re-fetch data on Home when resume with magic link
   @JsonKey(ignore: true)
   bool handlingMagicLink = false;
 

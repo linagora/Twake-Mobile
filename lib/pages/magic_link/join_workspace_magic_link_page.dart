@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
+import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
@@ -12,18 +15,17 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
+import 'package:twake/widgets/common/confirm_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JoinWorkSpaceMagicLinkPage extends StatefulWidget {
-  final WorkspaceJoinResponse? workspaceJoinResponse;
   final String requestedToken;
-  final bool? isDifferenceServer;
+  final String incomingHost;
 
   const JoinWorkSpaceMagicLinkPage({
     Key? key,
     required this.requestedToken,
-    this.workspaceJoinResponse,
-    this.isDifferenceServer,
+    required this.incomingHost,
   }) : super(key: key);
 
   @override
@@ -31,30 +33,16 @@ class JoinWorkSpaceMagicLinkPage extends StatefulWidget {
       _JoinWorkSpaceMagicLinkPageState();
 }
 
-class _JoinWorkSpaceMagicLinkPageState
-    extends State<JoinWorkSpaceMagicLinkPage> {
+class _JoinWorkSpaceMagicLinkPageState extends State<JoinWorkSpaceMagicLinkPage> {
+
+  final joiningCubit = Get.find<JoiningCubit>();
 
   @override
   void initState() {
     super.initState();
-
-    // Handle when joining with diff server from Magic Link,
-    if (widget.isDifferenceServer == true) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) async {
-        final incomingHost = Globals.instance.host; // this is updated host from incoming link
-        Utilities.showSimpleSnackBar(
-          message: AppLocalizations.of(context)?.youHaveBeenDisconnected(incomingHost) ?? '',
-          iconPath: imageInvalid,
-          duration: const Duration(milliseconds: 3000),
-        );
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    Globals.instance.handlingMagicLink = false;
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
+      await joiningCubit.checkServerDifference(widget.requestedToken, widget.incomingHost);
+    });
   }
 
   @override
@@ -77,9 +65,41 @@ class _JoinWorkSpaceMagicLinkPageState
                           StylesConfig.commonTextStyle.copyWith(fontSize: 15)),
                 ],
               ),
-              (widget.workspaceJoinResponse == null)
-                  ? _buildUnAvailableLayout(widget.workspaceJoinResponse)
-                  : _buildAvailableLayout(widget.workspaceJoinResponse)
+              BlocConsumer<JoiningCubit, JoiningState>(
+                bloc: joiningCubit,
+                builder: (context, state) {
+                  if(state is JoiningCheckTokenFinished) {
+                    return state.joinResponse == null
+                        ? _buildUnAvailableLayout(state.joinResponse)
+                        : _buildAvailableLayout(state.joinResponse);
+                  }
+                  return _loadingLayout();
+                },
+                listener: (context, state) async {
+                  if(state is JoiningWithDifferenceHost) {
+                    SchedulerBinding.instance?.addPostFrameCallback((timeStamp) async {
+                      await _showConfirmLogoutDialog(currentServerUrl: Globals.instance.host);
+                    });
+                  }
+                  if(state is JoiningStateForceLogout) {
+                    Utilities.showSimpleSnackBar(
+                      context: context,
+                      message: AppLocalizations.of(context)?.youHaveBeenDisconnected(widget.incomingHost) ?? '',
+                      iconPath: imageInvalid,
+                      duration: const Duration(milliseconds: 3000),
+                    );
+                  }
+                },
+                listenWhen: (previous, current) {
+                  // To make sure it will not show too many dialogs
+                  if(previous is JoiningWithDifferenceHost) {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
+                  }
+                  return true;
+                },
+              ),
             ],
           ),
         ),
@@ -164,8 +184,7 @@ class _JoinWorkSpaceMagicLinkPageState
       );
 
   void _handleClickOnJoinButton() async {
-    await Get.find<AuthenticationCubit>()
-        .joinWorkspace(widget.requestedToken, needCheckAuthentication: true);
+    await joiningCubit.joinWorkspace(widget.requestedToken, needCheckAuthentication: true);
   }
 
   void _handleClickOnCreateCompanyButton() async {
@@ -186,4 +205,55 @@ class _JoinWorkSpaceMagicLinkPageState
       Logger().e('ERROR during opening console page:\n$e');
     }
   }
+
+  Widget _loadingLayout() {
+    return Container(
+      child: CircularProgressIndicator(
+        backgroundColor: Colors.transparent,
+        color: const Color(0xff004dff),
+        strokeWidth: 1.0,
+      ),
+    );
+  }
+
+  Future<void> _showConfirmLogoutDialog({required String currentServerUrl}) async {
+    if(!mounted) return;
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: ConfirmDialog(
+            body: Text(
+              AppLocalizations.of(context)?.confirmLogoutMagicLink(currentServerUrl) ?? '',
+              style: Theme.of(context).textTheme.headline1?.copyWith(
+                fontSize: 18.0,
+                fontWeight: FontWeight.normal
+              ),
+              textAlign: TextAlign.center,
+            ),
+            cancelActionTitle: AppLocalizations.of(context)?.cancel ?? '',
+            okActionTitle: AppLocalizations.of(context)?.logout ?? '',
+            okAction: () => _handleLogoutAction(),
+            cancelAction: () => _handleCancelAction(),
+            closeDialogAction: () => _handleCancelAction(),
+          ),
+        );
+      },
+    );
+  }
+
+  void _handleLogoutAction() {
+    joiningCubit.forceLogoutCurrentServer(
+        widget.requestedToken,
+        widget.incomingHost,
+    );
+  }
+
+  void _handleCancelAction() {
+    // cancel magic link flow, back to normal authen flow
+    Get.find<AuthenticationCubit>().checkAuthentication();
+  }
+
 }

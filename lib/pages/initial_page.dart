@@ -111,7 +111,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
         // uri.origin is not supported, need to handle like this:
         incomingHost = sprintf(Endpoint.httpsScheme, [uri.host]);
       }
-      Get.find<AuthenticationCubit>().checkTokenAvailable(token, incomingHost: incomingHost);
+      Get.find<AuthenticationCubit>().joiningWithMagicLink(token, incomingHost: incomingHost);
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
     }
@@ -218,14 +218,13 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
           Dim.init(constraints, orientation);
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            body: BlocConsumer<AuthenticationCubit, AuthenticationState>(
+            body: BlocBuilder<AuthenticationCubit, AuthenticationState>(
               bloc: Get.find<AuthenticationCubit>(),
               builder: (ctx, state) {
                 if (state is AuthenticationInProgress) {
                   return buildSplashScreen();
                 } else if (state is AuthenticationInitial ||
                     state is AuthenticationFailure ||
-                    state is InvitationJoinFailed ||
                     state is AuthenticationInvitationPending) {
                   if (state is AuthenticationInvitationPending) {
                     return SignFlow(
@@ -249,25 +248,16 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   }
                   _selectWorkspaceAfterJoin(magicLinkJoinResponse);
                   return HomeWidget();
-                } else if (state is InvitationJoinCheckingTokenFinished) {
+                } else if (state is JoiningMagicLinkState) {
                   _popWhenOpenMagicLinkFromChat();
                   return JoinWorkSpaceMagicLinkPage(
-                      workspaceJoinResponse: state.joinResponse,
-                      requestedToken: state.requestedToken,
-                      isDifferenceServer: state.isDifferenceServer,
+                    requestedToken: state.requestedToken,
+                    incomingHost: state.incomingHost,
                   );
                 } else {
                   return buildSplashScreen();
                 }
-              },
-              listener: (context, state) {
-                if (state is InvitationJoinSuccess &&
-                    state.needCheckAuthentication) {
-                  Get.find<AuthenticationCubit>().checkAuthentication(
-                      workspaceJoinResponse: state.joinResponse,
-                      pendingRequestedToken: state.requestedToken);
-                }
-              },
+              }
             ),
           );
         },

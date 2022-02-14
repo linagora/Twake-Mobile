@@ -279,6 +279,7 @@ class _FileTileState extends State<FileTile> {
 
   _handleCanNotOpenFile() {
     Utilities.showSimpleSnackBar(
+      context: context,
       message: AppLocalizations.of(context)!.cantOpenFile,
       iconPath: imageError,
     );

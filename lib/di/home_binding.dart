@@ -10,6 +10,7 @@ import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
+import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
@@ -74,6 +75,9 @@ class HomeBinding implements Bindings {
 
     final themeCubit = ThemeCubit();
     Get.put(themeCubit, permanent: true);
+
+    final joiningCubit = JoiningCubit();
+    Get.put(joiningCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

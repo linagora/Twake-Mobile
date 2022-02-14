@@ -75,7 +75,11 @@ class PostAuthenticationSyncSuccess extends AuthenticationState {
 class AuthenticationInvitationPending extends AuthenticationState {
   final WorkspaceJoinResponse? magicLinkJoinResponse;
   final String? requestedToken;
-  const AuthenticationInvitationPending({this.magicLinkJoinResponse, this.requestedToken});
+
+  const AuthenticationInvitationPending({
+    this.magicLinkJoinResponse,
+    this.requestedToken,
+  });
 
   @override
   List<Object?> get props => [magicLinkJoinResponse, requestedToken];
@@ -88,41 +92,15 @@ class InvitationJoinCheckingInit extends AuthenticationState {
   List<Object?> get props => const [];
 }
 
-class InvitationJoinCheckingTokenFinished extends AuthenticationState {
+class JoiningMagicLinkState extends AuthenticationState {
   final String requestedToken;
-  final WorkspaceJoinResponse? joinResponse;
-  final bool? isDifferenceServer;
+  final String incomingHost;
 
-  const InvitationJoinCheckingTokenFinished({
+  const JoiningMagicLinkState({
     required this.requestedToken,
-    this.joinResponse,
-    this.isDifferenceServer,
+    required this.incomingHost,
   });
 
   @override
-  List<Object?> get props => [joinResponse, requestedToken, isDifferenceServer];
-}
-
-class InvitationJoinInit extends AuthenticationState {
-  const InvitationJoinInit();
-
-  @override
-  List<Object?> get props => const [];
-}
-
-class InvitationJoinSuccess extends AuthenticationState {
-  final String requestedToken;
-  final WorkspaceJoinResponse? joinResponse;
-  final bool needCheckAuthentication;
-  const InvitationJoinSuccess({required this.requestedToken, required this.needCheckAuthentication, this.joinResponse});
-
-  @override
-  List<Object?> get props => [requestedToken, joinResponse, needCheckAuthentication];
-}
-
-class InvitationJoinFailed extends AuthenticationState {
-  const InvitationJoinFailed();
-
-  @override
-  List<Object?> get props => [];
+  List<Object> get props => [requestedToken, incomingHost];
 }

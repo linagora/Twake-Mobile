@@ -284,5 +284,15 @@
     },
     "reachedLimitFileUploading": "Upload limit reached",
     "reachedLimitFileUploadingSub": "You have reached the limit\nof file uploading",
-    "gotIt": "Got it"
+    "gotIt": "Got it",
+    "confirmLogoutMagicLink": "You are trying to open a magic link from an other Twake server. To use it, we have to disconnect you from your current server ({url}).\n\nPlease confirm that you want to logout.",
+    "@confirmLogoutMagicLink": {
+        "description": "Asking logout when using magic link with difference server",
+        "placeholders": {
+            "url": {
+                "type": "String",
+                "example": "web.twake.app"
+            }
+        }
+    }
 }
