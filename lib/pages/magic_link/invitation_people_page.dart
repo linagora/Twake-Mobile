@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
@@ -13,6 +12,7 @@ import 'package:twake/config/styles_config.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:twake/widgets/common/confirm_dialog.dart';
 
 class InvitationPeoplePage extends StatefulWidget {
   const InvitationPeoplePage({Key? key}) : super(key: key);
@@ -453,6 +453,34 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
   }
 
   _handleClickOnButtonGenerateLink() {
-    invitationCubit.generateNewLink();
+    _showConfirmDialog(context: context);
+  }
+
+  _showConfirmDialog({required BuildContext context}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ConfirmDialog(
+          header: Text(
+            AppLocalizations.of(context)?.confirmGenerateNewMagicLink ?? '',
+            style: Theme.of(context).textTheme.headline1!.copyWith(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          body: Text(
+            AppLocalizations.of(context)?.confirmGenerateNewMagicLinkSubtitle ?? '',
+            style: Theme.of(context).textTheme.headline6!.copyWith(
+              fontSize: 14.0,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          cancelActionTitle: AppLocalizations.of(context)?.no ?? '',
+          okActionTitle: AppLocalizations.of(context)?.yes ?? '',
+          okAction: () => invitationCubit.generateNewLink(),
+        );
+      },
+    );
   }
 }

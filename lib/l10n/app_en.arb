@@ -294,5 +294,9 @@
                 "example": "web.twake.app"
             }
         }
-    }
+    },
+    "confirmGenerateNewMagicLink": "Are you sure you want to generate a new link?",
+    "confirmGenerateNewMagicLinkSubtitle": "The previous link won't be usable anymore",
+    "yes": "Yes",
+    "no":"No"
 }
