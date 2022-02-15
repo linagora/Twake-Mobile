@@ -331,7 +331,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                                 alignment: Alignment.topRight,
                                 child: GestureDetector(
                                     onTap: () => Navigator.of(context).pop(),
-                                    child: Image.asset(imagePathCancel,
+                                    child: Image.asset(imageClose,
                                         width: 24, height: 24))),
                             Text(
                                 AppLocalizations.of(context)?.generateNewLink ??
@@ -402,7 +402,9 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                                   .headline1!
                                   .copyWith(
                                       fontSize: 17,
-                                      fontWeight: FontWeight.normal))
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white
+                                  ))
                               .build(),
                         )
                       ],
