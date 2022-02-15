@@ -118,7 +118,7 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }
 
   Future<void> startEditingFile(Message message) async {
-    List<dynamic> uploadedFiles = message.files;
+    List<dynamic> uploadedFiles = message.files ?? [];
     if(uploadedFiles.isEmpty)
       return;
     List<FileUploading> listUploading = [];
