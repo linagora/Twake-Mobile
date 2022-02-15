@@ -266,7 +266,7 @@
         }
     },
     "fileUploadFailed": "File upload failed",
-    "cantOpenFile": "Can not open this file",
+    "cantOpenFile": "Cannot open this file",
     "fileDownloadedInGallery": "File downloaded in Gallery",
     "openIt": "Open it",
     "openSettings": "Open Settings",
