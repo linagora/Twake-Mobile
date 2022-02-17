@@ -100,7 +100,6 @@ class ChannelsRepository {
 
   Future<Channel> create(
       {required Channel channel, bool isDefault: false}) async {
-
     final options = isDefault
         ? {}
         : {'members': channel.members..add(Globals.instance.userId!)};
