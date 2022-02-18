@@ -471,5 +471,23 @@
   "createPrivateChannel": "Crea un canale privato",
   "@createPrivateChannel": {},
   "continueLimit": "Continuare con solo 10 membri",
-  "@continueLimit": {}
+  "@continueLimit": {},
+  "yes": "Sì",
+  "@yes": {},
+  "no": "No",
+  "@no": {},
+  "confirmGenerateNewMagicLink": "Sei sicuro di voler generare un nuovo link?",
+  "@confirmGenerateNewMagicLink": {},
+  "confirmGenerateNewMagicLinkSubtitle": "Il link precedente non sarà più utilizzabile",
+  "@confirmGenerateNewMagicLinkSubtitle": {},
+  "confirmLogoutMagicLink": "Stai cercando di aprire un link magico da un altro server di Twake. Per utilizzarlo, dobbiamo disconnetterti dal server corrente ({url}).\n\nConferma che desideri disconnetterti.",
+  "@confirmLogoutMagicLink": {
+    "description": "Asking logout when using magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
+  }
 }
