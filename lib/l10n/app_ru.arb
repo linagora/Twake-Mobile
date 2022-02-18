@@ -459,5 +459,23 @@
   "continueLimit": "Продолжить работу только с 10 участниками",
   "@continueLimit": {},
   "groupDirectLimit": "В групповой чат можно добавить не более 10 участников. Если вы хотите добавить больше, подумайте о создании частного канала",
-  "@groupDirectLimit": {}
+  "@groupDirectLimit": {},
+  "confirmGenerateNewMagicLinkSubtitle": "Предыдущая ссылка перестанет быть действительной",
+  "@confirmGenerateNewMagicLinkSubtitle": {},
+  "yes": "Да",
+  "@yes": {},
+  "confirmGenerateNewMagicLink": "Вы уверены, что хотите создать новую ссылку?",
+  "@confirmGenerateNewMagicLink": {},
+  "confirmLogoutMagicLink": "Вы пытаетесь открыть ссылку с другого сервера Twake. Чтобы использовать ее, нам необходимо отключить вас от вашего текущего сервера ({url}).\n\nПожалуйста, подтвердите, что вы хотите выйти из системы.",
+  "@confirmLogoutMagicLink": {
+    "description": "Asking logout when using magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
+  },
+  "no": "Нет",
+  "@no": {}
 }
