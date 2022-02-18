@@ -38,9 +38,9 @@ class RegistrationRepository {
           'password': _pass,
           'locale': 'en',
           'secretToken': secretToken,
-          'captchaResponseToken': code,
-          'createAccountOnly' : createAccountOnly
+          'captchaResponseToken': code
         },
+        queryParameters: {'createAccountOnly': createAccountOnly},
         key: 'email',
       );
     } on DioError catch (e) {

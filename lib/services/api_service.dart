@@ -108,6 +108,7 @@ class ApiService {
 
   Future<dynamic> post({
     required String endpoint,
+    Map<String, dynamic> queryParameters: const {},
     required dynamic data,
     Function(int, int)? onSendProgress,
     CancelToken? cancelToken,
@@ -115,6 +116,7 @@ class ApiService {
   }) async {
     final r = await this._dio.post(
           endpoint,
+          queryParameters: queryParameters,
           data: data,
           onSendProgress: onSendProgress,
           cancelToken: cancelToken,
