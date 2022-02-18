@@ -70,6 +70,28 @@ class PostAuthenticationSyncSuccess extends AuthenticationState {
   List<Object?> get props => [magicLinkJoinResponse];
 }
 
+class PostAuthenticationNoCompanyFound extends AuthenticationState {
+  final WorkspaceJoinResponse? magicLinkJoinResponse;
+
+  const PostAuthenticationNoCompanyFound({this.magicLinkJoinResponse});
+
+  @override
+  List<Object?> get props => [magicLinkJoinResponse];
+}
+
+class PostAuthenticationSyncFailedSomeServices extends AuthenticationState {
+  final SyncFailedSource syncFailedSource;
+  final WorkspaceJoinResponse? magicLinkJoinResponse;
+
+  const PostAuthenticationSyncFailedSomeServices({
+    required this.syncFailedSource,
+    this.magicLinkJoinResponse,
+  });
+
+  @override
+  List<Object?> get props => [syncFailedSource, magicLinkJoinResponse];
+}
+
 // --------- MAGIC LINK
 
 class AuthenticationInvitationPending extends AuthenticationState {

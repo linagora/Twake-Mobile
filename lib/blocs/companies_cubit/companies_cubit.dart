@@ -20,20 +20,24 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     _repository = repository;
   }
 
-  Future<void> fetch() async {
+  Future<bool> fetch() async {
     final streamCompanies = _repository.fetch();
 
     Company? selected;
     await for (var companies in streamCompanies) {
-      if (Globals.instance.companyId != null) {
-        selected =
-            companies.firstWhere((c) => c.id == Globals.instance.companyId);
-      } else {
-        selected = companies.first;
-        Globals.instance.companyIdSet = selected.id;
+      if (companies.isNotEmpty) {
+        if (Globals.instance.companyId != null) {
+          selected = companies.firstWhere((c) => c.id == Globals.instance.companyId);
+        } else {
+          selected = companies.first;
+          Globals.instance.companyIdSet = selected.id;
+        }
       }
-      emit(CompaniesLoadSuccess(companies: companies, selected: selected));
+      if(selected != null) {
+        emit(CompaniesLoadSuccess(companies: companies, selected: selected));
+      }
     }
+    return selected != null;
   }
 
   void selectCompany({required String companyId}) {

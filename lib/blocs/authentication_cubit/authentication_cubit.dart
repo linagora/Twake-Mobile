@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/authentication_repository.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/twake_exception.dart';
 
 part 'authentication_state.dart';
 
@@ -44,6 +46,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     Globals.instance.handlingMagicLink = false;
   }
 
+  Future<void> refetchAllAfterRetriedNoCompany({WorkspaceJoinResponse? joinResponse}) async {
+    await syncData(magicLinkJoinResponse: joinResponse);
+  }
+
   Future<bool> authenticate({String? requestedMagicLinkToken}) async {
     emit(AuthenticationInProgress());
     final authenticated = await _repository.webviewAuthenticate();
@@ -71,17 +77,24 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
     final start = DateTime.now();
 
-    final progress = InitService.syncData();
-
     try {
+      final progress = InitService.syncData();
       await for (final p in progress) {
-        emit(PostAuthenticationSyncInProgress(progress: p));
+        Logger().i("Sync data: $p");
+        if(p is SyncDataSuccessState) {
+          emit(PostAuthenticationSyncInProgress(progress: p.process));
+        } else if(p is SyncDataFailState) {
+          emit(PostAuthenticationSyncFailedSomeServices(syncFailedSource: p.failedSource));
+        }
       }
-
       emit(PostAuthenticationSyncSuccess(magicLinkJoinResponse: magicLinkJoinResponse));
     } catch (e, stt) {
       Logger().e('Error occurred during initial data sync:\n$e\n$stt');
-      emit(PostAuthenticationSyncFailed());
+      if(e is SyncFailedException) {
+        emit(PostAuthenticationSyncFailedSomeServices(syncFailedSource: e.failedSource));
+      } else {
+        emit(PostAuthenticationSyncFailed());
+      }
     }
 
     final end = DateTime.now();
@@ -126,6 +139,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   Future<void> resetAuthenticationState() async {
     emit(AuthenticationInitial());
+  }
+
+  Future<void> notifyNoCompanyBelongToUser({WorkspaceJoinResponse? magicLinkJoinResponse}) async {
+    emit(PostAuthenticationNoCompanyFound(magicLinkJoinResponse: magicLinkJoinResponse));
   }
 
   @override

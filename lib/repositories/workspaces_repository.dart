@@ -19,6 +19,9 @@ class WorkspacesRepository {
   }) async {
     workspaceId = workspaceId ?? Globals.instance.workspaceId;
 
+    if(workspaceId == null || Globals.instance.companyId == null)
+      return [];
+
     if (local) {
       final sql = '''
         SELECT DISTINCT a.id, a.* FROM ${Table.account.name} AS a JOIN

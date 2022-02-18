@@ -34,16 +34,19 @@ class SynchronizationService {
       if (authenticated) {
         // wait for the socketio service to authenticate first
         Logger().v('Resubscribing on socketio reconnect');
-        await subscribeForChannels(
+        if (Globals.instance.companyId != null) {
+          await subscribeForChannels(
             companyId: Globals.instance.companyId!,
             workspaceId: Globals.instance.workspaceId!);
-        await subscribeForChannels(
+          await subscribeForChannels(
             companyId: Globals.instance.companyId!, workspaceId: 'direct');
+        }
 
         await subscribeToBadges();
 
-        if (subscribedChannelId != null)
+        if (subscribedChannelId != null && Globals.instance.companyId != null) {
           subscribeToMessages(channelId: subscribedChannelId!);
+        }
       }
     });
   }
@@ -142,6 +145,8 @@ class SynchronizationService {
     required String companyId,
   }) async {
     if (Globals.instance.token == null) return;
+    if (Globals.instance.companyId == null) return;
+    if (Globals.instance.workspaceId == null) return;
 
     if (workspaceId != 'direct') {
       // Unsubscribe from previous workspace
