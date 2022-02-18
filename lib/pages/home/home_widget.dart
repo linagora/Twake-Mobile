@@ -1,13 +1,13 @@
 import 'dart:isolate';
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
@@ -16,6 +16,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
+import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -30,7 +31,15 @@ import 'home_direct_list_widget.dart';
 import 'home_drawer_widget.dart';
 
 class HomeWidget extends StatefulWidget {
-  const HomeWidget() : super();
+
+  // In case fetching companies inside refetchData() failed,
+  // allow user to Retry fetch again, then join magic link and
+  // select correct company/workspace after joined
+  // This [magicLinkJoinResponse] help to cache magic link token
+  // from previous state (AuthenticationSuccess)
+  final WorkspaceJoinResponse? magicLinkJoinResponse;
+
+  const HomeWidget({this.magicLinkJoinResponse}) : super();
 
   @override
   _HomeWidgetState createState() => _HomeWidgetState();
@@ -68,7 +77,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
 
     if (state == AppLifecycleState.resumed) {
       SocketIOService.instance.connect();
-      Future.delayed(Duration(seconds: 7), () {
+      Future.delayed(Duration(seconds: 7), () async {
         refetchData();
 
         SynchronizationService.instance.subscribeToBadges();
@@ -84,18 +93,29 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     }
   }
 
-  void refetchData() {
-    Get.find<CompaniesCubit>().fetch();
-    Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+  void refetchData() async {
+    final result = await Get.find<CompaniesCubit>().fetch();
+    // User can do anything when no company found, notice to them
+    if(!result) {
+      Get.find<AuthenticationCubit>().notifyNoCompanyBelongToUser(
+        magicLinkJoinResponse: widget.magicLinkJoinResponse,
+      );
+    }
 
-    Get.find<ChannelsCubit>().fetch(
-      workspaceId: Globals.instance.workspaceId!,
-      companyId: Globals.instance.companyId,
-    );
-    Get.find<DirectsCubit>().fetch(
-      workspaceId: 'direct',
-      companyId: Globals.instance.companyId,
-    );
+    if(Globals.instance.companyId != null) {
+      Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
+
+      if (Globals.instance.workspaceId != null) {
+        Get.find<ChannelsCubit>().fetch(
+          workspaceId: Globals.instance.workspaceId!,
+          companyId: Globals.instance.companyId,
+        );
+        Get.find<DirectsCubit>().fetch(
+          workspaceId: 'direct',
+          companyId: Globals.instance.companyId,
+        );
+      }
+    }
 
     Get.find<AccountCubit>().fetch();
 
