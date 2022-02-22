@@ -367,5 +367,111 @@
   "joinWorkspaceIntro": "Twake ist ein digitaler Open-Source-Arbeitsbereich\nzur Verbesserung der Produktivität Ihres Teams",
   "@joinWorkspaceIntro": {},
   "joinWorkspaceCreateCompanyButton": "Erstellen Sie Ihr Unternehmen",
-  "@joinWorkspaceCreateCompanyButton": {}
+  "@joinWorkspaceCreateCompanyButton": {},
+  "attachedFiles": "ANGEHÄNGTE DATEIEN",
+  "@attachedFiles": {},
+  "appearance": "Erscheinungsbild",
+  "@appearance": {},
+  "light": "Hell",
+  "@light": {},
+  "dark": "Dunkel",
+  "@dark": {},
+  "system": "System",
+  "@system": {},
+  "public": "Öffentlich",
+  "@public": {},
+  "private": "Privat",
+  "@private": {},
+  "openIt": "Es öffnen",
+  "@openIt": {},
+  "fileUploadingMetadata": "{size} • {date}",
+  "@fileUploadingMetadata": {
+    "description": "File uploading metadata",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "104KB"
+      },
+      "date": {
+        "type": "String",
+        "example": "Dec 7, 2021 at 13:13"
+      }
+    }
+  },
+  "openSettingsMessage": "Sie müssen die Einstellungen öffnen, um die Erlaubnis zu erteilen",
+  "@openSettingsMessage": {},
+  "appearanceDescription": "Wenn Sie „System“ auswählen, ändert Twake automatisch sein Erscheinungsbild entsprechend den Systemeinstellungen Ihres Geräts.",
+  "@appearanceDescription": {},
+  "automaticallyInviteAllWorkspaceUsers": "Alle Benutzer des Arbeitsbereichs automatisch zu diesem Kanal einladen",
+  "@automaticallyInviteAllWorkspaceUsers": {},
+  "photoOrVideoSubtitle": "Ein Element aus Ihrer Galerie senden",
+  "@photoOrVideoSubtitle": {},
+  "file": "Datei",
+  "@file": {},
+  "groupChatLimit": "Gruppenchat-Limit",
+  "@groupChatLimit": {},
+  "continueLimit": "Weiter mit nur 10 Mitgliedern",
+  "@continueLimit": {},
+  "groupDirectLimit": "Sie können bis zu 10 Mitglieder zu Ihrem Gruppenchat hinzufügen. Wenn Sie mehr hinzufügen möchten, sollten Sie einen privaten Kanal erstellen",
+  "@groupDirectLimit": {},
+  "joinWorkspaceUnAvailableNote": "Sie können Ihren Einladenden bitten, Ihnen einen gültigen Link zur Verfügung zu stellen\noder Sie können Ihr eigenes Unternehmen gründen",
+  "@joinWorkspaceUnAvailableNote": {},
+  "cantOpenFile": "Kann diese Datei nicht öffnen",
+  "@cantOpenFile": {},
+  "deny": "Verweigern",
+  "@deny": {},
+  "confirmLogoutMagicLink": "Sie versuchen, einen magischen Link von einem anderen Twake-Server zu öffnen. Um ihn zu benutzen, müssen wir die Verbindung zu Ihrem aktuellen Server trennen ({url}).\n\nBitte bestätigen Sie, dass Sie sich abmelden möchten.",
+  "@confirmLogoutMagicLink": {
+    "description": "Asking logout when using magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
+  },
+  "youHaveBeenDisconnected": "Die Verbindung wurde unterbrochen und Sie wurden an {url} weitergeleitet",
+  "@youHaveBeenDisconnected": {
+    "description": "Force logout when join workspace from magic link with difference server",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "web.twake.app"
+      }
+    }
+  },
+  "createPrivateChannel": "Privaten Kanal erstellen",
+  "@createPrivateChannel": {},
+  "inviteAllWorkspaceUsers": "Alle Benutzer des Arbeitsbereichs einladen",
+  "@inviteAllWorkspaceUsers": {},
+  "takePicture": "Foto machen",
+  "@takePicture": {},
+  "takePictureSubtitle": "Gerade aufgenommenes Foto senden",
+  "@takePictureSubtitle": {},
+  "photoOrVideo": "Foto oder Video",
+  "@photoOrVideo": {},
+  "fileSubtitle": "Dokument von Ihrem lokalen Laufwerk anhängen",
+  "@fileSubtitle": {},
+  "attachedFilesHint": "Sie können bis zu {number} Dateien hinzufügen",
+  "@attachedFilesHint": {
+    "description": "File uploading limitation notice",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "10"
+      }
+    }
+  },
+  "fileUploadFailed": "Hochladen der Datei fehlgeschlagen",
+  "@fileUploadFailed": {},
+  "fileDownloadedInGallery": "Datei in der Galerie heruntergeladen",
+  "@fileDownloadedInGallery": {},
+  "openSettings": "Einstellungen öffnen",
+  "@openSettings": {},
+  "reachedLimitFileUploading": "Hochladen-Limit erreicht",
+  "@reachedLimitFileUploading": {},
+  "reachedLimitFileUploadingSub": "Sie haben das Limit erreicht\nfür das Hochladen von Dateien",
+  "@reachedLimitFileUploadingSub": {},
+  "gotIt": "Verstanden",
+  "@gotIt": {}
 }
