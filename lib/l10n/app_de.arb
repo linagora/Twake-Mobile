@@ -348,7 +348,7 @@
   "@contactTechnicalSupport": {},
   "outOfReachTechnicalSupport": "Das Support-Team ist nicht erreichbar, tut mir leid.",
   "@outOfReachTechnicalSupport": {},
-  "joinWorkspaceSubTitle": "Du wurdest eingeladen, dem\n{Arbeitsbereich} Arbeitsberiach auf Twake beizutreten!",
+  "joinWorkspaceSubTitle": "Du wurdest eingeladen, dem\n{workspace} auf Twake!",
   "@joinWorkspaceSubTitle": {
     "description": "Welcome sub-title message to someone joining a workspace",
     "placeholders": {
@@ -360,11 +360,11 @@
   },
   "joinWorkspaceUnAvailableTitle": "Link ist nicht mehr verfügbar",
   "@joinWorkspaceUnAvailableTitle": {},
-  "joinWorkspaceUnAvailableSubTitle": "Der Link zum Beitritt zum Arbeitsbereich ist nicht mehr verfügbar,\nda er abgelaufen ist oder widerrufen wurde",
+  "joinWorkspaceUnAvailableSubTitle": "Der Link zum Beitritt zum Arbeitsbereich ist nicht mehr verfügbar\nnicht mehr verfügbar, da er abgelaufen ist oder widerrufen wurde",
   "@joinWorkspaceUnAvailableSubTitle": {},
   "joinWorkspaceButton": "Dem Arbeitsbereich beitreten",
   "@joinWorkspaceButton": {},
-  "joinWorkspaceIntro": "Twake ist ein digitaler open-source Arbeitsbereich\ngemacht dafür ihre Teamprodukrivität zu steigern",
+  "joinWorkspaceIntro": "Twake ist ein digitaler quelloffener Arbeitsbereich\ngemacht dafür ihre Teamprodukrivität zu steigern",
   "@joinWorkspaceIntro": {},
   "joinWorkspaceCreateCompanyButton": "Erstellen Sie Ihr Unternehmen",
   "@joinWorkspaceCreateCompanyButton": {},
@@ -473,5 +473,19 @@
   "reachedLimitFileUploadingSub": "Sie haben das Limit erreicht\nfür das Hochladen von Dateien",
   "@reachedLimitFileUploadingSub": {},
   "gotIt": "Verstanden",
-  "@gotIt": {}
+  "@gotIt": {},
+  "confirmGenerateNewMagicLink": "Sind Sie sicher, dass Sie einen neuen Link erstellen möchten?",
+  "@confirmGenerateNewMagicLink": {},
+  "yes": "Ja",
+  "@yes": {},
+  "no": "Nein",
+  "@no": {},
+  "confirmGenerateNewMagicLinkSubtitle": "Der vorherige Link ist nicht mehr verwendbar",
+  "@confirmGenerateNewMagicLinkSubtitle": {},
+  "youHaveNoCompanySubtitle": "Bitten Sie Ihre Kollegen, Sie einzuladen\nin ihr Unternehmen einzuladen",
+  "@youHaveNoCompanySubtitle": {},
+  "youHaveNoCompany": "Sie haben noch keine Gesellschaft",
+  "@youHaveNoCompany": {},
+  "retry": "Erneut versuchen",
+  "@retry": {}
 }
