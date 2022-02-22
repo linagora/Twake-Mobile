@@ -440,7 +440,7 @@
   "@openSettings": {},
   "deny": "Refuser",
   "@deny": {},
-  "youHaveBeenDisconnected": "Vous avez été déconnecté et dirigé vers {url}",
+  "youHaveBeenDisconnected": "Vous avez été déconnecté(e) et dirigé(e) vers {url}",
   "@youHaveBeenDisconnected": {
     "description": "Force logout when join workspace from magic link with difference server",
     "placeholders": {
@@ -464,7 +464,7 @@
   "@continueLimit": {},
   "groupDirectLimit": "Vous pouvez ajouter jusqu'à 10 membres à votre discussion de groupe. Si vous souhaitez en ajouter davantage, envisagez de créer un canal privé",
   "@groupDirectLimit": {},
-  "confirmLogoutMagicLink": "Vous essayez d'ouvrir un lien d'invitation d'un autre serveur Twake. Pour l'utiliser, nous devons vous déconnecter de votre serveur actuel ({url}).\n\nVeuillez confirmer que vous voulez vous déconnecter.",
+  "confirmLogoutMagicLink": "Vous essayez d'ouvrir un lien magique à partir d'un autre serveur Twake. Pour l'utiliser, nous devons vous déconnecter de votre serveur actuel ({url}).\n\nVeuillez confirmer que vous voulez vous déconnecter.",
   "@confirmLogoutMagicLink": {
     "description": "Asking logout when using magic link with difference server",
     "placeholders": {
@@ -473,5 +473,19 @@
         "example": "web.twake.app"
       }
     }
-  }
+  },
+  "confirmGenerateNewMagicLink": "Voulez-vous vraiment générer un nouveau lien ?",
+  "@confirmGenerateNewMagicLink": {},
+  "yes": "Oui",
+  "@yes": {},
+  "no": "Non",
+  "@no": {},
+  "youHaveNoCompany": "Vous n'avez pas encore d'entreprise",
+  "@youHaveNoCompany": {},
+  "youHaveNoCompanySubtitle": "Demandez à vos collègues de vous inviter\ndans leur entreprise",
+  "@youHaveNoCompanySubtitle": {},
+  "retry": "Réessayer",
+  "@retry": {},
+  "confirmGenerateNewMagicLinkSubtitle": "Le lien précédent ne sera plus utilisable",
+  "@confirmGenerateNewMagicLinkSubtitle": {}
 }
