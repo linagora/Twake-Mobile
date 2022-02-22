@@ -237,6 +237,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
     if (newAttachments.isNotEmpty) {
       message.files = newAttachments;
+    } else {
+      message.files = null;
     }
 
     if (this.state is! MessagesLoadSuccess) return;

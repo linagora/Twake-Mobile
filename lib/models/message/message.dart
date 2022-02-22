@@ -27,7 +27,7 @@ class Message extends BaseModel {
 
   List<dynamic> blocks;
 
-  List<dynamic> files;
+  List<dynamic>? files;
 
   MessageSubtype? subtype;
 
@@ -52,7 +52,7 @@ class Message extends BaseModel {
         this.text.hashCode +
         this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
-        this.files.fold(0, (prevFile, file) => file.hashCode + prevFile) +
+        (this.files != null ? this.files!.fold(0, (prevFile, file) => file.hashCode + prevFile) : 0) +
         this.delivery.hashCode +
         this._isRead +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
