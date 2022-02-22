@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
+import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -17,6 +18,7 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/pages/companies/no_company_widget.dart';
 import 'package:twake/pages/magic_link/join_workspace_magic_link_page.dart';
 import 'package:twake/pages/sign_flow.dart';
 import 'package:twake/pages/syncing_data.dart';
@@ -237,23 +239,17 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
                   return SyncDataFailed();
                 } else if (state is PostAuthenticationSyncSuccess ||
                     state is AuthenticationSuccess) {
-                  var magicLinkJoinResponse;
-                  if (state is PostAuthenticationSyncSuccess) {
-                    magicLinkJoinResponse = state.magicLinkJoinResponse;
-                  } else if (state is AuthenticationSuccess) {
-                    magicLinkJoinResponse = state.magicLinkJoinResponse;
-                  }
-                  if (magicLinkJoinResponse == null) {
-                    return HomeWidget();
-                  }
-                  _selectWorkspaceAfterJoin(magicLinkJoinResponse);
-                  return HomeWidget();
+                  return _authenticationSucceedWidget(state);
                 } else if (state is JoiningMagicLinkState) {
                   _popWhenOpenMagicLinkFromChat();
                   return JoinWorkSpaceMagicLinkPage(
                     requestedToken: state.requestedToken,
                     incomingHost: state.incomingHost,
                   );
+                } else if (state is PostAuthenticationNoCompanyFound ||
+                      (state is PostAuthenticationSyncFailedSomeServices &&
+                          state.syncFailedSource == SyncFailedSource.CompaniesApi)) {
+                    return _noCompanyBelongToUserWidget(state);
                 } else {
                   return buildSplashScreen();
                 }
@@ -265,14 +261,41 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     );
   }
 
+  Widget _authenticationSucceedWidget(state) {
+    var magicLinkJoinResponse;
+    if (state is PostAuthenticationSyncSuccess) {
+      magicLinkJoinResponse = state.magicLinkJoinResponse;
+    } else if (state is AuthenticationSuccess) {
+      magicLinkJoinResponse = state.magicLinkJoinResponse;
+    }
+    if (magicLinkJoinResponse == null) {
+      return HomeWidget();
+    }
+    _selectWorkspaceAfterJoin(magicLinkJoinResponse);
+    return HomeWidget(magicLinkJoinResponse: magicLinkJoinResponse);
+  }
+
+  // Note: We're trying to allow user to use app as much as possible,
+  // only display NoCompanyWidget when SyncFailedSource is CompaniesApi.
+  // And of course, we can handle more error if there is changes in the future.
+  Widget _noCompanyBelongToUserWidget(state) {
+    var magicLinkJoinResponse;
+    if (state is PostAuthenticationNoCompanyFound) {
+      magicLinkJoinResponse = state.magicLinkJoinResponse;
+    } else if (state is PostAuthenticationSyncFailedSomeServices) {
+      magicLinkJoinResponse = state.magicLinkJoinResponse;
+    }
+    return NoCompanyWidget(magicLinkJoinResponse: magicLinkJoinResponse);
+  }
+
   void _selectWorkspaceAfterJoin(
       WorkspaceJoinResponse? workspaceJoinResponse) async {
     try {
       if (workspaceJoinResponse?.company.id != null) {
         // fetch and select company
-        await Get.find<CompaniesCubit>().fetch();
-        Get.find<CompaniesCubit>()
-            .selectCompany(companyId: workspaceJoinResponse!.company.id!);
+        final result = await Get.find<CompaniesCubit>().fetch();
+        if(!result) return;
+        Get.find<CompaniesCubit>().selectCompany(companyId: workspaceJoinResponse!.company.id!);
 
         // fetch and select workspace
         if (workspaceJoinResponse.workspace.id != null) {

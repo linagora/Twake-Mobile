@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
 import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
@@ -10,6 +11,7 @@ import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/repositories/language_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:twake/utils/twake_exception.dart';
 
 class InitService {
   static late final ApiService _apiService;
@@ -42,7 +44,7 @@ class InitService {
 
   // should only be called once after successful authentication/login
   // yields numbers from 1 to 100 meaning percentage of completion
-  static Stream<int> syncData() async* {
+  static Stream<SyncDataState> syncData() async* {
     // 0. Fetch and save the user's id into Globals
     await _apiService
         .get(endpoint: sprintf(Endpoint.account, ['me']), key: 'resource')
@@ -65,16 +67,24 @@ class InitService {
             where: "id = ?",
             whereArgs: [Globals.instance.userId]);
       }
+    }).catchError((error, stackTrace) async* {
+      yield SyncDataFailState(failedSource: SyncFailedSource.AccountApi);
     });
+    yield SyncDataSuccessState(process: 5);
 
-    yield 5;
-
+    // 1. Fetch all companies by user
     List<dynamic> remoteResult = await _apiService.get(
       endpoint: sprintf(Endpoint.companies, [Globals.instance.userId]),
       key: 'resources',
     );
-
-    yield 15;
+    if(remoteResult.isEmpty) {
+      yield SyncDataFailState(failedSource: SyncFailedSource.CompaniesApi);
+      // Due to all beyond requests below are depending on companies,
+      // so once this is failed, stop all remaining stuff.
+      throw SyncFailedException(failedSource: SyncFailedSource.CompaniesApi);
+    } else {
+      yield SyncDataSuccessState(process: 15);
+    }
 
     final companies = remoteResult.map(
       (i) => Company.fromJson(json: i, tranform: true),
@@ -86,8 +96,8 @@ class InitService {
       Globals.instance.companyIdSet = companies.first.id;
     }
 
+    // 2. For each company fetch workspaces
     final workspaceFutures = companies.map((c) async {
-      // 2. For each company fetch workspaces
       remoteResult = await _apiService.get(
         endpoint: sprintf(Endpoint.workspaces, [c.id]),
         key: 'resources',
@@ -103,13 +113,15 @@ class InitService {
       return workspaces;
     });
 
+    // 3. For each company fetch direct chats
     final directFutures = companies.map((c) async {
-      // 3. For each company fetch direct chats
       remoteResult = await _apiService.get(
         endpoint: sprintf(Endpoint.channels, [c.id, 'direct']),
         queryParameters: {'mine': 1},
         key: 'resources',
-      );
+      ).catchError((error, stackTrace) async* {
+        yield SyncDataFailState(failedSource: SyncFailedSource.ChannelsDirectApi);
+      });
       final directs = remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false, transform: true),
       );
@@ -123,25 +135,31 @@ class InitService {
     final workspaces =
         (await Future.wait(workspaceFutures)).reduce((a, b) => a.followedBy(b));
 
-    yield 35;
+    if(workspaces.isEmpty) {
+      yield SyncDataFailState(failedSource: SyncFailedSource.WorkspacesApi);
+    } else {
+      yield SyncDataSuccessState(process: 35);
+    }
 
     final directs =
         (await Future.wait(directFutures)).reduce((a, b) => a.followedBy(b));
 
-    yield 70;
+    yield SyncDataSuccessState(process: 70);
 
     // Set workspace id in Globals if not set already
     if (Globals.instance.workspaceId == null) {
       Globals.instance.workspaceIdSet = workspaces.first.id;
     }
 
+    // 4. For each workspace fetch channel
     final channelFutures = workspaces.map((w) async {
-      // 4. For each workspace fetch channel
       remoteResult = await _apiService.get(
         endpoint: sprintf(Endpoint.channels, [w.companyId, w.id]),
         queryParameters: {'mine': 1},
         key: 'resources',
-      );
+      ).catchError((error, stackTrace) async* {
+        yield SyncDataFailState(failedSource: SyncFailedSource.ChannelsApi);
+      });
       final channels = remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false, transform: true),
       );
@@ -153,13 +171,16 @@ class InitService {
 
       return channels;
     });
-    yield 85;
+    yield SyncDataSuccessState(process: 85);
+
+    // 5. For each workspace fetch members
     final accountFutures = workspaces.map((w) async {
-      // 5. For each workspace fetch members
       remoteResult = await _apiService.get(
         endpoint: sprintf(Endpoint.workspaceMembers, [w.companyId, w.id]),
         key: 'resources',
-      );
+      ).catchError((error, stackTrace) async* {
+        yield SyncDataFailState(failedSource: SyncFailedSource.WorkspaceMembersApi);
+      });
       final accounts = remoteResult.map(
         (i) => Account.fromJson(json: i['user'], transform: true),
       );
@@ -194,7 +215,7 @@ class InitService {
     final channels =
         (await Future.wait(channelFutures)).reduce((a, b) => a.followedBy(b));
 
-    yield 95;
+    yield SyncDataSuccessState(process: 95);
 
     Future.wait(accountFutures);
 
@@ -214,7 +235,9 @@ class InitService {
               'direction': 'history',
             },
             key: 'resources',
-          );
+          ).catchError((error, stackTrace) async* {
+            yield SyncDataFailState(failedSource: SyncFailedSource.ThreadsApi);
+          });
           final messages = remoteResult
               .where((rm) => rm['type'] == 'message' && rm['subtype'] == null)
               .map(
@@ -236,6 +259,6 @@ class InitService {
     final language = await LanguageRepository().getLanguage();
     Get.find<LanguageCubit>().changeLanguage(language: language);
 
-    yield 100;
+    yield SyncDataSuccessState(process: 100);
   }
 }
