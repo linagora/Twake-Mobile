@@ -871,6 +871,10 @@ class TwacodeRenderer {
               ),
             );
           final style = getStyle(type, parentStyle, userUniqueColor, isSwipe);
+          final _scrollController = ScrollController(
+            initialScrollOffset: 0.0,
+            keepScrollOffset: false,
+          );
           spans.add(
             WidgetSpan(
               child: Padding(
@@ -889,12 +893,14 @@ class TwacodeRenderer {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   child: RawScrollbar(
+                    controller: _scrollController,
                     thumbColor: parentStyle.color == Colors.black
                         ? Colors.grey.withOpacity(0.5)
                         : Colors.white.withOpacity(0.7),
                     radius: Radius.circular(20),
                     thickness: 4,
                     child: SingleChildScrollView(
+                      controller: _scrollController,
                       child:
                           Text(t['content'], style: parentStyle.merge(style)),
                     ),
