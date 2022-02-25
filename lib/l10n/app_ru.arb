@@ -477,5 +477,11 @@
     }
   },
   "no": "Нет",
-  "@no": {}
+  "@no": {},
+  "youHaveNoCompany": "У вас еще нет компании",
+  "@youHaveNoCompany": {},
+  "youHaveNoCompanySubtitle": "Попросите коллег пригласить вас\nв компанию",
+  "@youHaveNoCompanySubtitle": {},
+  "retry": "Повторить попытку",
+  "@retry": {}
 }
