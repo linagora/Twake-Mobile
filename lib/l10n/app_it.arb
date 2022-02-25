@@ -489,5 +489,11 @@
         "example": "web.twake.app"
       }
     }
-  }
+  },
+  "youHaveNoCompany": "Non hai ancora un'azienda",
+  "@youHaveNoCompany": {},
+  "youHaveNoCompanySubtitle": "Chiedi ai tuoi colleghi di invitarti\nnella azienda",
+  "@youHaveNoCompanySubtitle": {},
+  "retry": "Riprova",
+  "@retry": {}
 }
