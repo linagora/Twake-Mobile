@@ -21,6 +21,7 @@
 			<array>
 				<string>twakemobile.com</string>
 				<string>twakemobile</string>
+                <string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>
