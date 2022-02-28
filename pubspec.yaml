@@ -58,7 +58,7 @@ dependencies:
   badges: ^2.0.1
   cached_network_image: ^3.0.0
   bubble: ^1.2.1
-  flutter_swipe_action_cell: ^2.1.0
+  flutter_swipe_action_cell: 2.1.0
   emoji_picker_flutter: ^1.0.6
   flutter_appauth: ^2.2.0
   package_info_plus: ^1.3.0
@@ -86,14 +86,16 @@ dependencies:
       url: git://github.com/huynguyennovem/ext_storage_ups.git
   gallery_saver: ^2.3.2
   device_info: ^2.0.3
+  receive_sharing_intent: 1.4.5
+  rxdart: ^0.27.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+#  flutter_test:
+#    sdk: flutter
   build_runner: ^2.0.4
   json_serializable: ^4.1.3
   flutter_launcher_icons: ^0.9.1
