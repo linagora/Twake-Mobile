@@ -7,6 +7,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
 import 'package:twake/pages/companies/company_selection_widget.dart';
 import 'package:twake/pages/home/home_widget.dart';
 import 'package:twake/pages/initial_page.dart';
@@ -245,6 +246,14 @@ class NavigatorService {
     } else {
       Get.toNamed(RoutePaths.channelFilePreview.path, arguments: file);
     }
+  }
+
+  Future<void> navigateToReceiveSharingFile(List<ReceiveSharingFile> listFiles) async {
+    Get.toNamed(RoutePaths.shareFile.path, arguments: listFiles);
+  }
+
+  Future<void> navigateToReceiveSharingFileList(List<ReceiveSharingFile> listFiles) async {
+    Get.toNamed(RoutePaths.shareFileList.path, arguments: listFiles);
   }
 
   Future<void> navigateToHome() async {

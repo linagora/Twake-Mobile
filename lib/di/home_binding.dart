@@ -13,11 +13,13 @@ import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.d
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/receive_sharing_file_manager.dart';
 
 class HomeBinding implements Bindings {
   @override
@@ -78,6 +80,12 @@ class HomeBinding implements Bindings {
 
     final joiningCubit = JoiningCubit();
     Get.put(joiningCubit, permanent: true);
+
+    final receiveFileCubit = ReceiveFileCubit();
+    Get.put(receiveFileCubit, permanent: true);
+
+    final receiveFileSharingManager = ReceiveSharingFileManager();
+    Get.put(receiveFileSharingManager, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

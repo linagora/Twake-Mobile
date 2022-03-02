@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
@@ -9,8 +8,8 @@ import 'package:twake/services/service_bundle.dart';
 const _filePath = 'file:///';
 
 class ReceiveSharingFileManager {
-  BehaviorSubject<List<ReceiveSharingFile?>> _pendingListFiles = BehaviorSubject.seeded([]);
-  BehaviorSubject<List<ReceiveSharingFile?>> get pendingListFiles => _pendingListFiles;
+  BehaviorSubject<List<ReceiveSharingFile>> _pendingListFiles = BehaviorSubject.seeded([]);
+  BehaviorSubject<List<ReceiveSharingFile>> get pendingListFiles => _pendingListFiles;
   StreamSubscription? _sharingFileStreamSubscription;
 
   void init() {
@@ -20,7 +19,8 @@ class ReceiveSharingFileManager {
         try {
           final listFiles = await Future.wait(listSharedFiles.map((element) {
             final rawPath = Uri.decodeFull(element.path);
-            return getFileInfoFromFilePath(rawPath);
+            final type = element.type;
+            return getFileInfoFromFilePath(rawPath, type);
           }));
           _pendingListFiles.add(listFiles);
         } catch (e) {
@@ -30,14 +30,14 @@ class ReceiveSharingFileManager {
     });
   }
 
-  Future<ReceiveSharingFile> getFileInfoFromFilePath(String filePath) async {
+  Future<ReceiveSharingFile> getFileInfoFromFilePath(String filePath, SharedMediaType type) async {
     final actualPath = filePath.startsWith(_filePath)
         ? filePath.substring(_filePath.length - 1)
         : filePath;
     final file = File(actualPath);
     final name = actualPath.split('/').last;
     final parentPath = actualPath.substring(0, actualPath.length - name.length);
-    return ReceiveSharingFile(name, parentPath, await file.length());
+    return ReceiveSharingFile(name, parentPath, await file.length(), type);
   }
 
   void clearPendingFile() {

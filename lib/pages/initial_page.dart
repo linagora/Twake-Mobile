@@ -123,7 +123,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   }
 
   _handleReceiveSharingFile() {
-    _receiveSharingFileManager = ReceiveSharingFileManager();
+    _receiveSharingFileManager = Get.find<ReceiveSharingFileManager>();
     _receiveSharingFileManager.init();
   }
 
@@ -178,7 +178,6 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       DeviceOrientation.portraitUp,
     ]);
     _magicLinkStreamSub?.cancel();
-    _receiveSharingFileManager.dispose();
     super.dispose();
   }
 

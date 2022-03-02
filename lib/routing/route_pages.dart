@@ -25,6 +25,8 @@ import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/pages/member/member_management/member_management_widget.dart';
 import 'package:twake/pages/chat/thread_page.dart';
 import 'package:twake/pages/account/select_language.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_file_list_widget.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
 
@@ -139,6 +141,20 @@ final routePages = [
         name: RoutePaths.homeWidget.name,
         page: () => HomeWidget(),
         transition: Transition.native,
+        children: [
+          GetPage(
+            name: RoutePaths.shareFile.name,
+            page: () => ReceiveSharingFileWidget(),
+            transition: Transition.native,
+            children: [
+              GetPage(
+                name: RoutePaths.shareFileList.name,
+                page: () => ReceiveSharingFileListWidget(),
+                transition: Transition.native,
+              )
+            ]
+          )
+        ]
       ),
       GetPage(
         name: RoutePaths.signInUpScreen.name,
