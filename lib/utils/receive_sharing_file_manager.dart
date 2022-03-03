@@ -48,6 +48,7 @@ class ReceiveSharingFileManager {
     }
   }
   void dispose() {
+    pendingListFiles.close();
     _pendingListFiles.close();
     _sharingFileStreamSubscription?.cancel();
   }

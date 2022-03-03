@@ -6,6 +6,9 @@ import 'package:twake/blocs/receive_file_cubit/receive_file_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_item_channel_widget.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_item_company_widget.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_item_ws_widget.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
@@ -18,17 +21,8 @@ class ReceiveSharingFileWidget extends StatefulWidget {
 }
 
 class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
-  // late List<ReceiveSharingFile> listFiles;
-  // final receiveFileCubit = Get.find<ReceiveFileCubit>();
 
-  @override
-  void initState() {
-    super.initState();
-    // listFiles = Get.arguments;
-    // WidgetsBinding.instance?.addPostFrameCallback((_) {
-    //   receiveFileCubit.addNewFiles(listFiles);
-    // });
-  }
+  final receiveFileCubit = Get.find<ReceiveFileCubit>();
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +82,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
 
   _buildFileRow() {
     return BlocBuilder<ReceiveFileCubit, ReceiveShareFileState>(
-      bloc: Get.find<ReceiveFileCubit>(),
+      bloc: receiveFileCubit,
       builder: (context, state) {
         return GestureDetector(
           onTap: () => _handleClickTitleFiles(state.listFiles),
@@ -148,123 +142,167 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
     );
   }
 
-  _buildChildListInside() => Container(
-    width: double.maxFinite,
-    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-    child: SingleChildScrollView(
-      child: Column(
+  _buildChildListInside() => BlocBuilder<ReceiveFileCubit, ReceiveShareFileState>(
+      bloc: receiveFileCubit,
+      builder: (context, state) {
+        return Container(
+          width: double.maxFinite,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChildListCompanies(state),
+                _buildChildListWorkspaces(state),
+                _buildChildListChannels(state),
+              ],
+            ),
+          ),
+        );
+      });
+
+  _buildChildListCompanies(ReceiveShareFileState state) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildChildListCompanies(),
-          _buildChildListWorkspaces(),
-          _buildChildListChannels(),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)?.companies ?? '',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontWeight: FontWeight.bold, fontSize: 17),
+              ),
+              GestureDetector(
+                  onTap: () => _handleClickShowAllCompanies(),
+                  child: Text(
+                    AppLocalizations.of(context)?.showAll ?? '',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline4!
+                        .copyWith(fontSize: 15),
+                  ),
+                ),
+            ],
+          ),
+          SizedBox(height: 12.0),
+          Container(
+            height: 148.0,
+            child: ListView.separated(
+              padding: const EdgeInsets.all(12),
+              shrinkWrap: true,
+              itemCount: state.listCompanies.length > LIMIT_ITEM
+                  ? LIMIT_ITEM
+                  : state.listCompanies.length,
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
+              itemBuilder: (context, index) {
+                final companyState = state.listCompanies[index].state;
+                final company = state.listCompanies[index].element;
+                return ReceiveSharingCompanyItemWidget(company: company, companyState: companyState);
+              },
+            ),
+          ),
         ],
-      ),
-    ),
-  );
+      );
 
-  _buildChildListCompanies() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        AppLocalizations.of(context)?.companies ?? '',
-        style: Theme.of(context)
-            .textTheme
-            .headline1!
-            .copyWith(fontWeight: FontWeight.bold, fontSize: 17),
-      ),
-      SizedBox(height: 12.0),
-      Container(
-        height: 100.0,
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: 20,
-          scrollDirection: Axis.horizontal,
-          separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
-          itemBuilder: (context, index) {
-            return SizedBox(
-              width: 100.0,
-              height: 100.0,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.all(const Radius.circular(12.0))),),
-            );
-          },
-        ),
-      ),
-    ],
-  );
-
-  _buildChildListWorkspaces() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SizedBox(height: 16.0),
-      Text(
-        AppLocalizations.of(context)?.workspaces.capitalizeFirst ?? '',
-        style: Theme.of(context)
-            .textTheme
-            .headline1!
-            .copyWith(fontWeight: FontWeight.bold, fontSize: 17, ),
-      ),
-      SizedBox(height: 12.0),
-      Container(
-        height: 48.0,
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: 20,
-          scrollDirection: Axis.horizontal,
-          separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
-          itemBuilder: (context, index) {
-            return SizedBox(
-              width: 48.0,
-              height: 48.0,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.all(const Radius.circular(12.0))),),
-            );
-          },
-        ),
-      ),
-    ],
-  );
-
-  _buildChildListChannels() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      SizedBox(height: 16.0),
-      Text(
-        AppLocalizations.of(context)?.to ?? '',
-        style: Theme.of(context)
-            .textTheme
-            .headline1!
-            .copyWith(fontWeight: FontWeight.bold, fontSize: 17, ),
-      ),
-      SizedBox(height: 12.0),
-      Container(
-        height: 48.0,
-        child: ListView.separated(
-          shrinkWrap: true,
-          itemCount: 20,
-          scrollDirection: Axis.horizontal,
-          separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
-          itemBuilder: (context, index) {
-            return SizedBox(
-              width: 48.0,
-              height: 48.0,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    shape: BoxShape.circle,
+  _buildChildListWorkspaces(ReceiveShareFileState state) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 16.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)?.workspaces.capitalizeFirst ?? '',
+                style: Theme.of(context).textTheme.headline1!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 17,
                 ),
               ),
-            );
-          },
-        ),
-      ),
-    ],
-  );
+              GestureDetector(
+                onTap: () => _handleClickShowAllWS(),
+                child: Text(
+                  AppLocalizations.of(context)?.showAll ?? '',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontSize: 15),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.0),
+          Container(
+            height: 96.0,
+            child: ListView.separated(
+              padding: const EdgeInsets.all(6),
+              shrinkWrap: true,
+              itemCount: state.listWorkspaces.length > LIMIT_ITEM
+                  ? LIMIT_ITEM
+                  : state.listWorkspaces.length,
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
+              itemBuilder: (context, index) {
+                final wsState = state.listWorkspaces[index].state;
+                final ws = state.listWorkspaces[index].element;
+                return ReceiveSharingWSItemWidget(ws: ws, wsState: wsState);
+              },
+            ),
+          ),
+        ],
+      );
+
+  _buildChildListChannels(ReceiveShareFileState state) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 8.0),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppLocalizations.of(context)?.to ?? '',
+                style: Theme.of(context).textTheme.headline1!.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                    ),
+              ),
+              GestureDetector(
+                onTap: () => _handleClickShowAllChannels(),
+                child: Text(
+                  AppLocalizations.of(context)?.showAll ?? '',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontSize: 15),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.0),
+          Container(
+            height: 96.0,
+            child: ListView.separated(
+              padding: const EdgeInsets.all(6),
+              shrinkWrap: true,
+              itemCount: state.listChannels.length > LIMIT_ITEM
+                  ? LIMIT_ITEM
+                  : state.listChannels.length,
+              scrollDirection: Axis.horizontal,
+              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
+              itemBuilder: (context, index) {
+                final channelState = state.listChannels[index].state;
+                final channel = state.listChannels[index].element;
+                return ReceiveSharingChannelItemWidget(channel: channel, channelState: channelState);
+              },
+            ),
+          ),
+        ],
+      );
 
   _buildChatTextFieldAndProgressBar() => Container(
     margin: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -340,6 +378,18 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
 
   _handleClickTitleFiles(List<ReceiveSharingFile> listFiles) {
     NavigatorService.instance.navigateToReceiveSharingFileList(listFiles);
+  }
+
+  _handleClickShowAllCompanies() {
+    NavigatorService.instance.navigateToReceiveSharingCompanyList();
+  }
+
+  _handleClickShowAllWS() {
+    NavigatorService.instance.navigateToReceiveSharingWSList();
+  }
+
+  _handleClickShowAllChannels() {
+    NavigatorService.instance.navigateToReceiveSharingChannelList();
   }
 
   _handleClickSendButton() {}
