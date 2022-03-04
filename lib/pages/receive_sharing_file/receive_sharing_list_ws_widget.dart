@@ -38,7 +38,7 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           height: 52.0,
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: Stack(
@@ -60,7 +60,7 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
-                      .copyWith(fontWeight: FontWeight.bold, fontSize: 20),
+                      .copyWith(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
             ],
@@ -99,7 +99,7 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
   }
 
   Widget buildWSItem(Workspace ws, SelectState wsState) {
-    final com = receiveFileCubit.getCurrentSelectedCompany(kind: ResourceKind.Company) as Company;
+    final com = receiveFileCubit.getCurrentSelectedResource(kind: ResourceKind.Company) as Company;
     companyName = com.name;
     return GestureDetector(
       onTap: () => receiveFileCubit.setSelectedWS(ws),

@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_state.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/channel/channel.dart';
+import 'package:twake/models/company/company.dart';
+import 'package:twake/models/file/local_file.dart';
+import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_item_channel_widget.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_item_company_widget.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_item_ws_widget.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/extensions.dart';
-import 'package:twake/widgets/common/button_text_builder.dart';
+import 'package:twake/models/file/file.dart';
 
 class ReceiveSharingFileWidget extends StatefulWidget {
   const ReceiveSharingFileWidget({Key? key}) : super(key: key);
@@ -23,6 +31,14 @@ class ReceiveSharingFileWidget extends StatefulWidget {
 class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
 
   final receiveFileCubit = Get.find<ReceiveFileCubit>();
+  final fileUploadCubit = Get.find<FileUploadCubit>();
+  final _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fileUploadCubit.initSharingFilesStream();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +52,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
             _buildFileRow(),
             Expanded(child: _buildChildListInside()),
             _buildChatTextFieldAndProgressBar(),
+            SizedBox(height: 8.0),
             _buildSendButton(),
           ],
         ),
@@ -47,7 +64,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
     return ClipRRect(
       borderRadius: BorderRadius.vertical(top: const Radius.circular(10.0)),
       child: Container(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.secondaryVariant,
         height: 52.0,
         padding: const EdgeInsets.symmetric(horizontal: 14.0),
         child: Stack(
@@ -304,17 +321,51 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
         ],
       );
 
-  _buildChatTextFieldAndProgressBar() => Container(
-    margin: const EdgeInsets.symmetric(horizontal: 24.0),
-    child: Stack(
-      children: [
-        _buildTextField()
-      ],
-    ),
+  _buildChatTextFieldAndProgressBar() => BlocBuilder<FileUploadCubit, FileUploadState>(
+    bloc: fileUploadCubit,
+    builder: (context, state) {
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: _buildLayoutByUploadingStatus(state.fileUploadStatus)
+      );
+    }
   );
+
+  _buildLayoutByUploadingStatus(FileUploadStatus status) {
+    switch(status) {
+      case FileUploadStatus.inProcessing:
+        return _buildUploadProcessingBackground(
+          childWidget: CircularProgressIndicator(
+            backgroundColor: const Color.fromRGBO(153, 162, 173, 0.4),
+            color: const Color(0xff004dff),
+            strokeWidth: 1.0,
+          ),
+        );
+      case FileUploadStatus.finished:
+        return _buildUploadProcessingBackground(
+          childWidget: Image.asset(imageDone),
+        );
+      default:
+        return _buildTextField();
+    }
+  }
+
+  _buildUploadProcessingBackground({required Widget childWidget}) {
+    return Container(
+      alignment: Alignment.center,
+      width: double.maxFinite,
+      height: 80.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(const Radius.circular(10.0)),
+        color: Theme.of(context).colorScheme.secondaryVariant,
+      ),
+      child: childWidget,
+    );
+  }
 
   _buildTextField() {
     return TextField(
+      controller: _textController,
       style: Theme.of(context)
           .textTheme
           .headline1!
@@ -332,14 +383,6 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
             .textTheme
             .headline2!
             .copyWith(fontSize: 13, fontWeight: FontWeight.w500),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(const Radius.circular(10.0)),
-          borderSide: BorderSide(
-            width: 0.5,
-            color: Colors.black.withOpacity(0.12),
-            style: BorderStyle.solid,
-          ),
-        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(const Radius.circular(10.0)),
           borderSide: BorderSide(
@@ -356,23 +399,73 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
             style: BorderStyle.solid,
           ),
         ),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
       ),
     );
   }
 
-  _buildSendButton() => Container(
-    margin: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-    child: ButtonTextBuilder(Key('button_send'),
-        onButtonClick: () => _handleClickSendButton(),
-        backgroundColor: Theme.of(context).colorScheme.surface)
-      .setText(AppLocalizations.of(context)?.sendButton ?? '')
-      .setHeight(50)
-      .setBorderRadius(BorderRadius.all(Radius.circular(14)))
-      .build(),
-  );
+  _buildSendButton() => BlocBuilder<ReceiveFileCubit, ReceiveShareFileState>(
+      bloc: receiveFileCubit,
+      builder: (context, state) {
+        return BlocBuilder<FileUploadCubit, FileUploadState>(
+          bloc: fileUploadCubit,
+          builder: (context, fileState) {
+            return GestureDetector(
+              onTap: () {
+                if(fileState.fileUploadStatus == FileUploadStatus.inProcessing)
+                  return;
+                _handleClickSendButton();
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+                child: Container(
+                  width: double.maxFinite,
+                  height: 50.0,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(14)),
+                    color: fileState.fileUploadStatus == FileUploadStatus.inProcessing
+                      ? Theme.of(context).colorScheme.secondary
+                      : Theme.of(context).colorScheme.surface,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)?.sendButton ?? '',
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Container(
+                        alignment: Alignment.center,
+                        width: 18.0,
+                        height: 18.0,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          state.listFiles.length.toString(),
+                          style: Theme.of(context).textTheme.headline4!.copyWith(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      });
 
   _handleClickCloseButton() {
+    fileUploadCubit.clearFileUploadingState(needToCancelInProcessingFile: true);
+    fileUploadCubit.closeListSharingStream();
     Navigator.of(context).pop();
   }
 
@@ -392,6 +485,61 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
     NavigatorService.instance.navigateToReceiveSharingChannelList();
   }
 
-  _handleClickSendButton() {}
+  _handleClickSendButton() async {
+    // 1. Upload file
+    final company = receiveFileCubit.getCurrentSelectedResource(
+        kind: ResourceKind.Company) as Company;
+    receiveFileCubit.state.listFiles.forEach((file) async {
+      final localFile = LocalFile(
+          name: file.name,
+          size: file.size,
+          path: file.parentPath + file.name,
+          updatedAt: DateTime.now().millisecondsSinceEpoch);
+      await fileUploadCubit.upload(
+        sourceFile: localFile,
+        companyId: company.id,
+        sourceFileUploading: SourceFileUploading.FileSharing,
+      );
+    });
+
+    // 2. Send message when the upload finished
+    int _counter = 0;
+    await for(var file in fileUploadCubit.streamListSharingFile) {
+      if(file.uploadStatus == FileItemUploadStatus.uploaded) {
+        _counter++;
+      }
+
+      print('counter: $_counter');
+      // 2.1 Check file uploading state from file stream
+      if(_counter == receiveFileCubit.state.listFiles.length) {
+        final channel = receiveFileCubit.getCurrentSelectedResource(
+            kind: ResourceKind.Channel) as Channel;
+        List<dynamic> attachments = const [];
+        if (fileUploadCubit.state.listFileUploading.isNotEmpty) {
+          attachments = fileUploadCubit.state.listFileUploading
+              .where((fileUploading) => fileUploading.file != null)
+              .map((e) => e.file!.toAttachment())
+              .toList();
+        }
+
+        // 2.2 Send message
+        final ws = receiveFileCubit.getCurrentSelectedResource(
+            kind: ResourceKind.Workspace) as Workspace;
+        await Get.find<ChannelMessagesCubit>().sendInSharing(
+          originalStr: _textController.text,
+          attachments: attachments,
+          isDirect: channel.isDirect,
+          companyId: company.id,
+          workspaceId: ws.id,
+          channelId: channel.id,
+        );
+
+        // 2.3 Close this screen
+        Future.delayed(Duration(milliseconds: 1500), () {
+          _handleClickCloseButton();
+        });
+      }
+    }
+  }
 
 }

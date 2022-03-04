@@ -32,7 +32,7 @@ class _ReceiveSharingCompanyListWidgetState extends State<ReceiveSharingCompanyL
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           height: 52.0,
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: Stack(
@@ -54,7 +54,7 @@ class _ReceiveSharingCompanyListWidgetState extends State<ReceiveSharingCompanyL
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
-                      .copyWith(fontWeight: FontWeight.bold, fontSize: 20),
+                      .copyWith(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
             ],

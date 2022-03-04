@@ -49,7 +49,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
     return Column(
       children: [
         Container(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondaryVariant,
           height: 52.0,
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: Stack(
@@ -71,7 +71,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
-                      .copyWith(fontWeight: FontWeight.bold, fontSize: 20),
+                      .copyWith(fontWeight: FontWeight.bold, fontSize: 18),
                 ),
               ),
             ],
@@ -142,7 +142,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
                 width: 48.0,
                 height: 48.0,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(const Radius.circular(12.0)),
+                    shape: BoxShape.circle,
                     border: channelState == SelectState.SELECTED
                         ? Border.all(color: const Color(0xff007AFF), width: 1.5)
                         : null),
@@ -154,9 +154,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
                 ),
               ),
               channelState == SelectState.SELECTED
-                  ? Transform(
-                      transform: Matrix4.translationValues(4, -4, 0),
-                      child: Image.asset(imageSelectedRoundBlue, width: 16.0, height: 16.0))
+                  ? Image.asset(imageSelectedRoundBlue, width: 16.0, height: 16.0)
                   : SizedBox.shrink(),
             ],
           ),

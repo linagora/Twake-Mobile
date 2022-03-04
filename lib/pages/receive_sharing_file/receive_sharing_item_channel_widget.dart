@@ -37,7 +37,7 @@ class _ReceiveSharingChannelItemWidgetState extends State<ReceiveSharingChannelI
                 width: 48.0,
                 height: 48.0,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(const Radius.circular(12.0)),
+                    shape: BoxShape.circle,
                     border: widget.channelState == SelectState.SELECTED
                         ? Border.all(color: const Color(0xff007AFF), width: 1.5)
                         : null),
@@ -49,9 +49,7 @@ class _ReceiveSharingChannelItemWidgetState extends State<ReceiveSharingChannelI
                 ),
               ),
               widget.channelState == SelectState.SELECTED
-                  ? Transform(
-                      transform: Matrix4.translationValues(4, -4, 0),
-                      child: Image.asset(imageSelectedRoundBlue, width: 16.0, height: 16.0))
+                  ? Image.asset(imageSelectedRoundBlue, width: 16.0, height: 16.0)
                   : SizedBox.shrink(),
             ],
           ),

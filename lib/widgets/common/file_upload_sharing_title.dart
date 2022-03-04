@@ -21,7 +21,7 @@ class FileUploadSharingTile extends StatelessWidget {
             child: Container(
               width: 135.0,
               height: 135.0,
-              color: Color(0xffF2F3F5),
+              color: Theme.of(context).colorScheme.secondaryVariant,
               child: _buildFileTypeIcon(),
             ),
           ),

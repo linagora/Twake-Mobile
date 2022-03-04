@@ -26,7 +26,7 @@ class _ReceiveSharingWSItemWidgetState extends State<ReceiveSharingWSItemWidget>
 
   @override
   Widget build(BuildContext context) {
-    final com = receiveFileCubit.getCurrentSelectedCompany(kind: ResourceKind.Company) as Company;
+    final com = receiveFileCubit.getCurrentSelectedResource(kind: ResourceKind.Company) as Company;
     companyName = com.name;
     return GestureDetector(
       onTap: () => receiveFileCubit.setSelectedWS(widget.ws),

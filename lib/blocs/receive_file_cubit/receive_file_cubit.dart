@@ -195,7 +195,7 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     emit(state.copyWith(newListChannels: updateList));
   }
 
-  dynamic getCurrentSelectedCompany({required ResourceKind kind}) {
+  dynamic getCurrentSelectedResource({required ResourceKind kind}) {
     switch (kind) {
       case ResourceKind.Company:
         return state.listCompanies
