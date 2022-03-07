@@ -24,26 +24,31 @@ class Account extends BaseModel {
   @JsonKey(ignore: true)
   final String? language;
   final int lastActivity;
+  @JsonKey(name: 'workspace_id')
+  final String? recentWorkspaceId;
+  @JsonKey(name: 'company_id')
+  final String? recentCompanyId;
 
   @JsonKey(name: 'is_verified')
   final int verified;
 
   final int deleted;
 
-  Account({
-    required this.id,
-    required this.email,
-    this.firstName,
-    this.lastName,
-    required this.username,
-    required this.verified,
-    required this.deleted,
-    this.picture,
-    this.providerId,
-    this.status,
-    this.language,
-    required this.lastActivity,
-  });
+  Account(
+      {required this.id,
+      required this.email,
+      this.firstName,
+      this.lastName,
+      required this.username,
+      required this.verified,
+      required this.deleted,
+      this.picture,
+      this.providerId,
+      this.status,
+      this.language,
+      required this.lastActivity,
+      this.recentWorkspaceId,
+      this.recentCompanyId});
 
   int get hash =>
       id.hashCode +

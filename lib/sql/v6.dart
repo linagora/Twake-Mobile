@@ -90,7 +90,9 @@ CREATE TABLE account (
     language TEXT,
     is_verified INT DEFAULT 0,
     deleted INT DEFAULT 0,
-    last_activity INT NOT NULL
+    last_activity INT NOT NULL,
+    workspace_id TEXT,
+    company_id TEXT
 );
 ''';
 

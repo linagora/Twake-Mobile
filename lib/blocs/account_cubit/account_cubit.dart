@@ -47,6 +47,8 @@ class AccountCubit extends Cubit<AccountState> {
           Logger().d('Error while send tracking info: $e');
         });
       }
+
+      _repository.setRecentWorkspace();
     }
   }
 
@@ -61,5 +63,10 @@ class AccountCubit extends Cubit<AccountState> {
     }
 
     return account;
+  }
+
+  // following the bloc pattern, not to call directly
+  setRecentWorkspace() {
+    _repository.setRecentWorkspace();
   }
 }

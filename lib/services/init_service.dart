@@ -51,6 +51,10 @@ class InitService {
         .then((userData) async {
       final currentAccount = Account.fromJson(json: userData, transform: true);
       Globals.instance.userIdSet = currentAccount.id;
+      if (currentAccount.recentCompanyId != null)
+        Globals.instance.companyId = currentAccount.recentCompanyId;
+      if (currentAccount.recentWorkspaceId != null)
+        Globals.instance.workspaceId = currentAccount.recentWorkspaceId;
       //TODO Remove when API for editing user profile is ready,integrate API into LanguageRepository
       final dataL = await _storageService.select(
           table: Table.account,
@@ -77,7 +81,7 @@ class InitService {
       endpoint: sprintf(Endpoint.companies, [Globals.instance.userId]),
       key: 'resources',
     );
-    if(remoteResult.isEmpty) {
+    if (remoteResult.isEmpty) {
       yield SyncDataFailState(failedSource: SyncFailedSource.CompaniesApi);
       // Due to all beyond requests below are depending on companies,
       // so once this is failed, stop all remaining stuff.
@@ -115,12 +119,15 @@ class InitService {
 
     // 3. For each company fetch direct chats
     final directFutures = companies.map((c) async {
-      remoteResult = await _apiService.get(
+      remoteResult = await _apiService
+          .get(
         endpoint: sprintf(Endpoint.channels, [c.id, 'direct']),
         queryParameters: {'mine': 1},
         key: 'resources',
-      ).catchError((error, stackTrace) async* {
-        yield SyncDataFailState(failedSource: SyncFailedSource.ChannelsDirectApi);
+      )
+          .catchError((error, stackTrace) async* {
+        yield SyncDataFailState(
+            failedSource: SyncFailedSource.ChannelsDirectApi);
       });
       final directs = remoteResult.map(
         (i) => Channel.fromJson(json: i, jsonify: false, transform: true),
@@ -135,7 +142,7 @@ class InitService {
     final workspaces =
         (await Future.wait(workspaceFutures)).reduce((a, b) => a.followedBy(b));
 
-    if(workspaces.isEmpty) {
+    if (workspaces.isEmpty) {
       yield SyncDataFailState(failedSource: SyncFailedSource.WorkspacesApi);
     } else {
       yield SyncDataSuccessState(process: 35);
@@ -153,11 +160,13 @@ class InitService {
 
     // 4. For each workspace fetch channel
     final channelFutures = workspaces.map((w) async {
-      remoteResult = await _apiService.get(
+      remoteResult = await _apiService
+          .get(
         endpoint: sprintf(Endpoint.channels, [w.companyId, w.id]),
         queryParameters: {'mine': 1},
         key: 'resources',
-      ).catchError((error, stackTrace) async* {
+      )
+          .catchError((error, stackTrace) async* {
         yield SyncDataFailState(failedSource: SyncFailedSource.ChannelsApi);
       });
       final channels = remoteResult.map(
@@ -175,11 +184,14 @@ class InitService {
 
     // 5. For each workspace fetch members
     final accountFutures = workspaces.map((w) async {
-      remoteResult = await _apiService.get(
+      remoteResult = await _apiService
+          .get(
         endpoint: sprintf(Endpoint.workspaceMembers, [w.companyId, w.id]),
         key: 'resources',
-      ).catchError((error, stackTrace) async* {
-        yield SyncDataFailState(failedSource: SyncFailedSource.WorkspaceMembersApi);
+      )
+          .catchError((error, stackTrace) async* {
+        yield SyncDataFailState(
+            failedSource: SyncFailedSource.WorkspaceMembersApi);
       });
       final accounts = remoteResult.map(
         (i) => Account.fromJson(json: i['user'], transform: true),
@@ -223,7 +235,8 @@ class InitService {
     channels
         .followedBy(directs)
         .map((c) async {
-          remoteResult = await _apiService.get(
+          remoteResult = await _apiService
+              .get(
             endpoint: sprintf(
               Endpoint.threads,
               [c.companyId, c.workspaceId, c.id],
@@ -235,7 +248,8 @@ class InitService {
               'direction': 'history',
             },
             key: 'resources',
-          ).catchError((error, stackTrace) async* {
+          )
+              .catchError((error, stackTrace) async* {
             yield SyncDataFailState(failedSource: SyncFailedSource.ThreadsApi);
           });
           final messages = remoteResult

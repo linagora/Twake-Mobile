@@ -1,0 +1,12 @@
+const String ALTER_ACCOUNT_ADD_WORKSPACE_ID = '''
+ALTER TABLE account ADD COLUMN workspace_id TEXT; 
+''';
+const String ALTER_ACCOUNT_ADD_COMPANY_ID = '''
+ALTER TABLE account ADD COLUMN company_id TEXT; 
+''';
+
+const DB_V9 = 9;
+const MIGRATION_9 = [
+  ALTER_ACCOUNT_ADD_COMPANY_ID,
+  ALTER_ACCOUNT_ADD_COMPANY_ID
+];
