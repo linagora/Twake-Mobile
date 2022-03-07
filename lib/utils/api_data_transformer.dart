@@ -25,8 +25,13 @@ class ApiDataTransformer {
   }
 
   static Map<String, dynamic> account({required Map<String, dynamic> json}) {
-    if (json['preference'] != null)
-      json['language'] = json['preference']['locale'];
+    if (json['preferences'] != null) {
+      json['language'] = json['preferences']['locale'];
+      json['workspace_id'] =
+          json['preferences']['recent_workspaces'][0]['workspace_id'];
+      json['company_id'] =
+          json['preferences']['recent_workspaces'][0]['company_id'];
+    }
     if (json['is_verified'] != null) {
       json['is_verified'] = json['is_verified'] ? 1 : 0;
     }
@@ -92,15 +97,14 @@ class ApiDataTransformer {
     if (json['stats'] != null && json['stats']['replies'] != null)
       json['responses_count'] = json['stats']['replies'] - 1;
     if (json['files'] != null) {
-      json['files'] =
-          (json['files'] as List<dynamic>).map((f) {
-            try {
-              final externalFileId = f['metadata']['external_id']['id'];
-              return externalFileId;
-            } catch (e) {
-              return '';
-            }
-          }).toList();
+      json['files'] = (json['files'] as List<dynamic>).map((f) {
+        try {
+          final externalFileId = f['metadata']['external_id']['id'];
+          return externalFileId;
+        } catch (e) {
+          return '';
+        }
+      }).toList();
     } else {
       json['files'] = <String>[];
     }
@@ -178,5 +182,4 @@ class ApiDataTransformer {
 
     return badgeCollection.values.toList();
   }
-
 }

@@ -18,6 +18,7 @@ class Endpoint {
   static const workspaceInviteEmail = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/invite';
   // API Endpoint for working with account data
   static const account = '/internal/services/users/v1/users/%s';
+  static const accountPreferences = '/internal/services/users/v1/users/me/preferences';
   // API Endpoint for working with user's companies
   static const companies = '/internal/services/users/v1/users/%s/companies';
   // API Endpoint for registering or unregistering device
