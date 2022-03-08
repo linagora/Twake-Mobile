@@ -35,9 +35,11 @@ class SynchronizationService {
         // wait for the socketio service to authenticate first
         Logger().v('Resubscribing on socketio reconnect');
         if (Globals.instance.companyId != null) {
-          await subscribeForChannels(
-            companyId: Globals.instance.companyId!,
-            workspaceId: Globals.instance.workspaceId!);
+          if (Globals.instance.workspaceId != null) {
+            await subscribeForChannels(
+              companyId: Globals.instance.companyId!,
+              workspaceId: Globals.instance.workspaceId!);
+          }
           await subscribeForChannels(
             companyId: Globals.instance.companyId!, workspaceId: 'direct');
         }
@@ -201,7 +203,7 @@ class SynchronizationService {
     bool isDirect: false,
   }) async {
     if (!Globals.instance.isNetworkConnected)
-      throw Exception('Shoud not be called with no active connection');
+      throw Exception('Should not be called with no active connection');
 
     // Unsubscribe just in case
     if (subscribedChannelId != null)

@@ -33,6 +33,33 @@ class AccountRepository {
     return Account.fromJson(json: localResult);
   }
 
+  Future<void> setRecentWorkspace() async {
+    try {
+      final result =
+          await _api.post(endpoint: Endpoint.accountPreferences, data: {
+        "recent_workspaces": [
+          {
+            "workspace_id": Globals.instance.workspaceId,
+            "company_id": Globals.instance.companyId
+          }
+        ]
+      });
+      // print(result);
+    } catch (e) {
+      Logger().e('Error occured during account preferences setup:\n$e');
+      return;
+    } finally {
+      _storage.update(
+          table: Table.account,
+          values: {
+            'workspace_id': Globals.instance.workspaceId,
+            'company_id': Globals.instance.companyId
+          },
+          where: "id = ?",
+          whereArgs: [Globals.instance.userId]);
+    }
+  }
+
   Future<Account> remoteFetch({String? userId}) async {
     final remoteResult = await _api.get(
       endpoint: sprintf(Endpoint.account, [userId ?? 'me']),

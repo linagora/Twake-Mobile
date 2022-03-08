@@ -22,7 +22,7 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
             ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
             .toList() ??
         [],
-    files: json['files'] as List<dynamic>,
+    files: json['files'] as List<dynamic>?,
     delivery: _$enumDecodeNullable(_$DeliveryEnumMap, json['delivery']) ??
         Delivery.delivered,
     firstName: json['first_name'] as String?,

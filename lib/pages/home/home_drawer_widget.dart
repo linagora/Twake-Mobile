@@ -13,6 +13,7 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/repositories/account_repository.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -303,6 +304,9 @@ class HomeDrawerWidget extends StatelessWidget {
     DefaultTabController.of(context)?.animateTo(0);
 
     Get.find<CompaniesCubit>().selectWorkspace(workspaceId: workspaceId);
+
+    Get.find<AccountCubit>().setRecentWorkspace();
+
     // close drawer
     Navigator.of(context).pop();
   }

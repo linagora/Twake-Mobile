@@ -37,9 +37,9 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
   }
 
   @override
-  void initState() {
+  void initState() {   
     super.initState();
-    if (Get.arguments != null && Get.arguments.runtimeType == List<Account>) {
+    if (Get.arguments != null && Get.arguments.runtimeType is List<Account>) {
       Get.find<AddChannelCubit>().addSelectedMembers(Get.arguments);
       Get.find<AddChannelCubit>()
           .setChannelVisibility(ChannelVisibility.private);

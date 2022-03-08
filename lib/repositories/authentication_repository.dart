@@ -33,7 +33,13 @@ class AuthenticationRepository {
           Globals.instance.tokenSet = authentication.token;
           return true;
         }
-        authentication = await prolongAuthentication(authentication);
+        try {
+          authentication = await prolongAuthentication(authentication);
+        } catch (e) {
+          // Allow by pass AuthenticationInProgress that leads to Splash loading screen
+          // when offline and token is expired (#1029)
+          return true;
+        }
         SocketIOService.instance.connect();
         idToken = authentication.idToken;
     }
