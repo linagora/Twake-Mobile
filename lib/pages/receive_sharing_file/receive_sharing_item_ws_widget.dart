@@ -39,7 +39,7 @@ class _ReceiveSharingWSItemWidgetState extends State<ReceiveSharingWSItemWidget>
                 width: 48.0,
                 height: 48.0,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(const Radius.circular(12.0)),
+                   borderRadius: BorderRadius.all(const Radius.circular(12.0)),
                     border: widget.wsState == SelectState.SELECTED
                         ? Border.all(color: const Color(0xff007AFF), width: 1.5)
                         : null),
@@ -48,6 +48,7 @@ class _ReceiveSharingWSItemWidgetState extends State<ReceiveSharingWSItemWidget>
                   imageType: ImageType.common,
                   size: 48.0,
                   imageUrl: widget.ws.logo ?? '',
+                  borderRadius: 12,
                 ),
               ),
               widget.wsState == SelectState.SELECTED

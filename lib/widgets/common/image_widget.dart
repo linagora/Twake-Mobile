@@ -116,7 +116,7 @@ class ImageWidget extends StatelessWidget {
       child: ClipRRect(
         borderRadius: borderRadius == 0
             ? BorderRadius.circular(size / 2 - 1)
-            : BorderRadius.circular(borderRadius),
+            : BorderRadius.circular(borderRadius + 1),
         child: Container(
           width: size,
           height: size,
@@ -193,7 +193,9 @@ class ImageWidget extends StatelessWidget {
         height: size,
         decoration: backgroundColor == Colors.transparent
             ? BoxDecoration(
-                shape: borderRadius == 0 ? BoxShape.circle : BoxShape.rectangle,
+                borderRadius: borderRadius == 0
+                    ? BorderRadius.circular(size / 2 - 1)
+                    : BorderRadius.circular(borderRadius),
                 border: Border.all(
                   style: BorderStyle.solid,
                   width: 2,
@@ -206,7 +208,9 @@ class ImageWidget extends StatelessWidget {
                 ), // TODO: del old randomGradient()?,
               )
             : BoxDecoration(
-                shape: borderRadius == 0 ? BoxShape.circle : BoxShape.rectangle,
+                borderRadius: borderRadius == 0
+                    ? BorderRadius.circular(size / 2 - 1)
+                    : BorderRadius.circular(borderRadius + 1),
                 color: backgroundColor,
               ),
         padding: EdgeInsets.all(5.0),

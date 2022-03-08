@@ -51,7 +51,7 @@ class HomeDrawerWidget extends StatelessWidget {
                             child: ImageWidget(
                               imageType: ImageType.common,
                               size: 56,
-                              borderRadius: 16,
+                              borderRadius: 12,
                               imageUrl: companyState.selected.logo ?? '',
                               name: companyState.selected.name,
                               backgroundColor: Theme.of(context)
