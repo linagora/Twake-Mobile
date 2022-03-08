@@ -199,6 +199,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                                   imageType: ImageType.common,
                                   imageUrl: workspaceState.selected?.logo ?? '',
                                   size: 42,
+                                  borderRadius: 10,
                                   name: workspaceState.selected?.name ?? '',
                                   backgroundColor: Theme.of(context)
                                       .colorScheme

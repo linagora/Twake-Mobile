@@ -116,12 +116,13 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
                     borderRadius: BorderRadius.all(const Radius.circular(12.0)),
                     border: wsState == SelectState.SELECTED
                         ? Border.all(color: const Color(0xff007AFF), width: 1.5)
-                        : null),
+                       : null),
                 child: ImageWidget(
                   name: ws.name,
                   imageType: ImageType.common,
                   size: 48.0,
                   imageUrl: ws.logo ?? '',
+                  borderRadius: 12,
                 ),
               ),
               wsState == SelectState.SELECTED

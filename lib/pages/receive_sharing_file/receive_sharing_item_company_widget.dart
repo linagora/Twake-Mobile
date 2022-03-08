@@ -12,14 +12,17 @@ class ReceiveSharingCompanyItemWidget extends StatefulWidget {
   final Company company;
   final SelectState companyState;
 
-  const ReceiveSharingCompanyItemWidget({Key? key, required this.company, required this.companyState})
+  const ReceiveSharingCompanyItemWidget(
+      {Key? key, required this.company, required this.companyState})
       : super(key: key);
 
   @override
-  State<ReceiveSharingCompanyItemWidget> createState() => _ReceiveSharingCompanyItemWidgetState();
+  State<ReceiveSharingCompanyItemWidget> createState() =>
+      _ReceiveSharingCompanyItemWidgetState();
 }
 
-class _ReceiveSharingCompanyItemWidgetState extends State<ReceiveSharingCompanyItemWidget> {
+class _ReceiveSharingCompanyItemWidgetState
+    extends State<ReceiveSharingCompanyItemWidget> {
   final receiveFileCubit = Get.find<ReceiveFileCubit>();
 
   @override
@@ -44,12 +47,14 @@ class _ReceiveSharingCompanyItemWidgetState extends State<ReceiveSharingCompanyI
                   imageType: ImageType.common,
                   size: 48.0,
                   imageUrl: widget.company.logo ?? '',
+                  borderRadius: 12,
                 ),
               ),
               widget.companyState == SelectState.SELECTED
                   ? Transform(
                       transform: Matrix4.translationValues(4, -4, 0),
-                      child: Image.asset(imageSelectedRoundBlue, width: 20.0, height: 20.0))
+                      child: Image.asset(imageSelectedRoundBlue,
+                          width: 20.0, height: 20.0))
                   : SizedBox.shrink(),
             ],
           ),
@@ -60,7 +65,10 @@ class _ReceiveSharingCompanyItemWidgetState extends State<ReceiveSharingCompanyI
                   : widget.company.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 14)),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 14)),
         ],
       ),
     );
