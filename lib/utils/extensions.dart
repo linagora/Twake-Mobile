@@ -1,7 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/local_file.dart';
+import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
 
 extension StringExtension on String {
   bool get isNotReallyEmpty => this.trim().isNotEmpty;
@@ -108,4 +110,10 @@ extension XFileExtension on XFile {
 extension UriExtension on Uri {
   bool get isHttp => scheme.length == 4 && this.scheme.startsWith("http");
   bool get isHttps => scheme.length == 5 && this.scheme.startsWith("https");
+}
+
+extension ListReceiveSharingFileExtension on List<ReceiveSharingFile> {
+  bool isAllImages() {
+    return this.every((file) => file.type == SharedMediaType.IMAGE);
+  }
 }

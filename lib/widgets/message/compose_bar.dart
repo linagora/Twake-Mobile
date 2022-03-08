@@ -676,7 +676,10 @@ class _TextInputState extends State<TextInput> {
         LocalFile localFile = await pickedFile.toLocalFile();
         localFile = localFile.copyWith(
             updatedAt: DateTime.now().millisecondsSinceEpoch);
-        Get.find<FileUploadCubit>().upload(sourceFile: localFile);
+        Get.find<FileUploadCubit>().upload(
+          sourceFile: localFile,
+          sourceFileUploading: SourceFileUploading.InChat,
+        );
       }
     } catch (e) {
       Logger().e('Error occurred during taking picture:\n$e');
@@ -697,7 +700,10 @@ class _TextInputState extends State<TextInput> {
       LocalFile localFile = _paths[i].toLocalFile();
       localFile =
           localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
-      Get.find<FileUploadCubit>().upload(sourceFile: localFile);
+      Get.find<FileUploadCubit>().upload(
+        sourceFile: localFile,
+        sourceFileUploading: SourceFileUploading.InChat,
+      );
     }
   }
 

@@ -28,7 +28,8 @@ class FileRepository {
     required String sourcePath,
     String? fileName,
     required CancelToken cancelToken,
-    FileUploadingOption? fileUploadingOption
+    FileUploadingOption? fileUploadingOption,
+    String? companyId,
   }) async {
     final mimeType = lookupMimeType(sourcePath) ?? 'application/octet-stream';
     final multipartFile = await MultipartFile.fromFile(
@@ -39,7 +40,7 @@ class FileRepository {
     final formData = FormData.fromMap({
       'file': multipartFile,
     });
-    String _endpoint = sprintf(Endpoint.files, [Globals.instance.companyId]);
+    String _endpoint = sprintf(Endpoint.files, [companyId ?? Globals.instance.companyId]);
     if(fileUploadingOption != null) {
       final queryParams = <String, dynamic> {
         'thumbnail_sync': fileUploadingOption.thumbnailSync.toString(),

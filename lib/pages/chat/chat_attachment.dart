@@ -70,8 +70,11 @@ class _ChatAttachmentState extends State<ChatAttachment> {
         mainButton: TextButton(
           onPressed: () {
             Get.back(); // dismiss this snackbar
-            Get.find<FileUploadCubit>().retryUpload(listUploadFailed);
-          },
+            Get.find<FileUploadCubit>().retryUpload(
+              listUploadFailed,
+              sourceFileUploading: SourceFileUploading.InChat,
+            );
+        },
           child: Text(AppLocalizations.of(context)?.tryAgain ?? '',
               style: Theme.of(context)
                   .textTheme

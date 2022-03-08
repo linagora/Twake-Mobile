@@ -189,6 +189,8 @@ class MessagesRepository {
     required String threadId,
     bool isDirect: false,
     required int now,
+    String? companyId,
+    String? workspaceId,
   }) async* {
     final result = await _storage.first(
       table: Table.account,
@@ -223,6 +225,9 @@ class MessagesRepository {
 
     yield message;
 
+    final finalCompanyId = companyId ?? Globals.instance.companyId;
+    final finalWorkspaceId = workspaceId ?? Globals.instance.workspaceId;
+
     final data = threadId == id
         ? {
             'resource': {
@@ -230,9 +235,8 @@ class MessagesRepository {
                 {
                   'type': 'channel',
                   'id': channelId,
-                  'workspace_id':
-                      isDirect ? 'direct' : Globals.instance.workspaceId,
-                  'company_id': Globals.instance.companyId,
+                  'workspace_id': isDirect ? 'direct' : finalWorkspaceId,
+                  'company_id': finalCompanyId,
                 }
               ]
             },
@@ -243,11 +247,8 @@ class MessagesRepository {
         : {'resource': ApiDataTransformer.apiMessage(message: message)};
 
     final endpoint = threadId == id
-        ? sprintf(Endpoint.threadsPost, [Globals.instance.companyId])
-        : sprintf(
-            Endpoint.threadMessages,
-            [Globals.instance.companyId, threadId],
-          );
+        ? sprintf(Endpoint.threadsPost, [finalCompanyId])
+        : sprintf(Endpoint.threadMessages, [finalCompanyId, threadId]);
 
     while (true) {
       await _sendGuard.acquire();

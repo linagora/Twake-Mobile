@@ -158,6 +158,32 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _sendInProgress -= 1;
   }
 
+  Future<void> sendInSharing({
+    String? originalStr,
+    List<dynamic> attachments: const [],
+    String? threadId,
+    bool isDirect: false,
+    String? companyId,
+    String? workspaceId,
+    String? channelId,
+  }) async {
+    final prepared = TwacodeParser(originalStr ?? '').message;
+    final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
+    final sendStream = _repository.send(
+      id: fakeId,
+      channelId: channelId ?? Globals.instance.channelId!,
+      prepared: prepared,
+      originalStr: originalStr,
+      threadId: threadId ?? fakeId,
+      isDirect: isDirect,
+      now: DateTime.now().millisecondsSinceEpoch,
+      files: attachments,
+      companyId: companyId,
+      workspaceId: workspaceId,
+    );
+    await for (final message in sendStream) {}
+  }
+
   Future<void> send({
     String? originalStr,
     List<dynamic> attachments: const [],

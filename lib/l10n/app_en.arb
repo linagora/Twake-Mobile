@@ -301,5 +301,30 @@
     "no":"No",
     "youHaveNoCompany": "You have no company yet",
     "youHaveNoCompanySubtitle": "Ask you colleagues to invite you\ninside their company",
-    "retry": "Retry"
+    "retry": "Retry",
+    "shareToTwake": "Share to Twake",
+    "shareFiles": "{count, plural, =1{Share 1 file} other{Share {count} files}}",
+    "@shareFiles": {
+        "description": "Showing number sharing files from outside app",
+        "placeholders": {
+            "count": {
+            }
+        }
+    },
+    "shareImages": "{count, plural, =1{Share 1 image} other{Share {count} images}}",
+    "@shareImages": {
+        "description": "Showing number sharing images from outside app",
+        "placeholders": {
+            "count": {
+            }
+        }
+    },
+    "companies": "Companies",
+    "to": "To",
+    "addComment": "Add a comment...",
+    "showAll": "Show all",
+    "channelAndChat": "Channels and chats",
+    "searchChannelAndChat": "Search channels and chats",
+    "files": "Files",
+    "images": "Images"
 }

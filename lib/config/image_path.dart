@@ -46,3 +46,7 @@ const imageTwake = '$_assetPath/3.0x/twake.png';
 const imageCancelDownload = '$_assetPath/ic_cancel_download.png';
 const imageDownload = '$_assetPath/ic_download.png';
 const imageUsers = '$_assetPath/3.0x/users_3x.png';
+const imageFileBlueBorder = '$_assetPath/ic_file.png';
+const imageImage = '$_assetPath/ic_image.png';
+const imageArrowForward = '$_assetPath/ic_arrow_forward.png';
+const imageDone = '$_assetPath/ic_done.png';

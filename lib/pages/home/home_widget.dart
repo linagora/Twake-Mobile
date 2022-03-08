@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:isolate';
 import 'dart:ui';
 
@@ -12,6 +13,7 @@ import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
+import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
 import 'package:twake/config/image_path.dart';
@@ -22,6 +24,7 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/receive_sharing_file_manager.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
@@ -49,6 +52,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   final _searchController = TextEditingController();
   String _searchText = "";
   ReceivePort _fileDownloaderPort = ReceivePort();
+  late ReceiveSharingFileManager _receiveSharingFileManager;
+  late StreamSubscription _receiveSharingFileSubscription;
 
   @override
   void initState() {
@@ -66,6 +71,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     });
 
     _initFileDownloader();
+    _handleReceiveSharingFile();
   }
 
   @override
@@ -126,6 +132,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
     IsolateNameServer.removePortNameMapping('downloader_send_port');
+    _receiveSharingFileSubscription.cancel();
+    _receiveSharingFileManager.dispose();
     super.dispose();
   }
 
@@ -403,5 +411,34 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     final SendPort? send =
         IsolateNameServer.lookupPortByName('downloader_send_port');
     send?.send([id, status, progress]);
+  }
+
+  _handleReceiveSharingFile() {
+    _receiveSharingFileManager = Get.find<ReceiveSharingFileManager>();
+    _receiveSharingFileSubscription =
+        _receiveSharingFileManager.pendingListFiles.stream.listen((listFiles) {
+      if (listFiles.isNotEmpty) {
+        Get.find<ReceiveFileCubit>().setNewListFiles(listFiles);
+        _popWhenIsChildOfSharingPage();
+        NavigatorService.instance.navigateToReceiveSharingFile(listFiles);
+      }
+    });
+  }
+
+  void _popWhenIsChildOfSharingPage() {
+    try {
+      if(_isChildPageOfSharingPage()) {
+        NavigatorService.instance.back();
+      }
+    } catch (e) {
+      Logger().e('Error occurred during pop child page from sharing file:\n$e');
+    }
+  }
+
+  bool _isChildPageOfSharingPage() {
+    return Get.currentRoute == RoutePaths.shareFileList.path ||
+        Get.currentRoute == RoutePaths.shareFileCompList.path ||
+        Get.currentRoute == RoutePaths.shareFileWsList.path ||
+        Get.currentRoute == RoutePaths.shareFileChannelList.path;
   }
 }

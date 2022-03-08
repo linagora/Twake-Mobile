@@ -57,6 +57,17 @@ class RoutePaths {
       _RoutePathsType(initial, '/channel_file_preview');
   static final directFilePreview =
       _RoutePathsType(initial, '/direct_file_preview');
+
+  // receive sharing file
+  static final shareFile = _RoutePathsType(homeWidget.path, '/share_file');
+  static final shareFileList =
+      _RoutePathsType(shareFile.path, '/share_file_list');
+  static final shareFileCompList =
+      _RoutePathsType(shareFile.path, '/share_file_comp_list');
+  static final shareFileWsList =
+      _RoutePathsType(shareFile.path, '/share_file_ws_list');
+  static final shareFileChannelList =
+      _RoutePathsType(shareFile.path, '/share_file_channel_list');
 }
 
 class _RoutePathsType {
