@@ -65,7 +65,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                       _buildHeaderViewSection(state),
                       Divider(
                         height: 0.5,
-                        color: Theme.of(context).colorScheme.secondaryVariant,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                       ),
                       Expanded(child: _buildBodyViewSection(state)),
                     ],
@@ -77,7 +77,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
 
   Widget _buildHeaderViewSection(InvitationEmailState state) {
     return Container(
-      color: Theme.of(context).colorScheme.secondaryVariant,
+      color: Theme.of(context).colorScheme.secondaryContainer,
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
       child: Stack(
         alignment: Alignment.center,
@@ -225,7 +225,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                 isDense: true,
                 contentPadding:
                     EdgeInsets.only(top: 16, bottom: 16, right: 42, left: 24),
-                fillColor: Theme.of(context).colorScheme.secondaryVariant,
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 errorText: null,
                 hintText: AppLocalizations.of(context)?.addEmailAddress ?? '',
                 hintStyle: Theme.of(context)
@@ -259,7 +259,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: Theme.of(context).colorScheme.secondaryVariant),
+                    color: Theme.of(context).colorScheme.secondaryContainer),
                 child: Row(
                   children: [
                     Image.asset(

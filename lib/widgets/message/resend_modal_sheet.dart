@@ -29,7 +29,7 @@ class ResendModalSheet extends StatelessWidget {
         ),
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(22.0),
           ),
           child: Container(

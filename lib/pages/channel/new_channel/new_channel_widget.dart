@@ -76,7 +76,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   child: SizedBox.shrink(),
                 ),
                 Container(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 56,
                   child: Stack(
                     children: [
@@ -128,7 +128,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                   ),
                 ),
                 Divider(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 1,
                 ),
                 Expanded(
@@ -142,11 +142,11 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               border: Border.all(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .secondaryVariant,
+                                    .secondaryContainer,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
@@ -241,11 +241,11 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               border: Border.all(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .secondaryVariant,
+                                    .secondaryContainer,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
@@ -368,7 +368,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                           child: Container(
                             height: 44,
                             color:
-                                Theme.of(context).colorScheme.secondaryVariant,
+                                Theme.of(context).colorScheme.secondaryContainer,
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
@@ -476,7 +476,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               initCategory: Category.RECENT,
                               bgColor: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               indicatorColor:
                                   Theme.of(context).colorScheme.surface,
                               iconColor:
@@ -533,7 +533,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   height: 44,
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: Row(
                     children: [
                       Padding(

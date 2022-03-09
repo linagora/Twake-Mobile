@@ -24,7 +24,7 @@ class PickImageWidget extends StatelessWidget {
             child: Icon(
               Icons.photo_camera_rounded,
               size: 24,
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
             )),
       ),
     );

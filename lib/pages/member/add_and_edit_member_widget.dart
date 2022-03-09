@@ -71,7 +71,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
             child: Column(
               children: [
                 Container(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 56,
                   child: Stack(
                     children: [
@@ -150,7 +150,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                   ),
                 ),
                 Divider(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 1,
                 ),
                 Padding(
@@ -162,7 +162,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                     controller: _searchController,
                     hintText: AppLocalizations.of(context)!.searchMembers,
                     backgroundColor:
-                        Theme.of(context).colorScheme.secondaryVariant,
+                        Theme.of(context).colorScheme.secondaryContainer,
                     fontSize: 15,
                   ),
                 ),
@@ -234,7 +234,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                           child: Container(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               child: ListView.separated(
                                   shrinkWrap: true,
                                   physics: NeverScrollableScrollPhysics(),
@@ -245,7 +245,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                           height: 1,
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondaryVariant,
+                                              .secondaryContainer,
                                         ),
                                       ),
                                   itemCount: users.length,

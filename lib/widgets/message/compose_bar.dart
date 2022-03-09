@@ -248,7 +248,7 @@ class _ComposeBar extends State<ComposeBar> {
                                                 backgroundColor:
                                                     Theme.of(context)
                                                         .colorScheme
-                                                        .secondaryVariant,
+                                                        .secondaryContainer,
                                               )
                                             : Image.network(
                                                 state.accounts[i].picture!,
@@ -267,7 +267,7 @@ class _ComposeBar extends State<ComposeBar> {
                                                     backgroundColor:
                                                         Theme.of(context)
                                                             .colorScheme
-                                                            .secondaryVariant,
+                                                            .secondaryContainer,
                                                   );
                                                 },
                                               ),
@@ -354,7 +354,7 @@ class _ComposeBar extends State<ComposeBar> {
                     verticalSpacing: 0,
                     horizontalSpacing: 0,
                     initCategory: Category.RECENT,
-                    bgColor: Theme.of(context).colorScheme.secondaryVariant,
+                    bgColor: Theme.of(context).colorScheme.secondaryContainer,
                     indicatorColor: Theme.of(context).colorScheme.surface,
                     iconColor: Theme.of(context).colorScheme.secondary,
                     iconColorSelected: Theme.of(context).colorScheme.surface,
@@ -432,7 +432,7 @@ class _TextInputState extends State<TextInput> {
             top: BorderSide(
                 color: Get.isDarkMode
                     ? Theme.of(context).scaffoldBackgroundColor
-                    : Theme.of(context).colorScheme.secondaryVariant,
+                    : Theme.of(context).colorScheme.secondaryContainer,
                 width: 1.5)),
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -472,10 +472,10 @@ class _TextInputState extends State<TextInput> {
   _buildMessageContent() {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryVariant,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(16.0),
         border: Border.all(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
       ),
       child: Stack(
@@ -520,7 +520,7 @@ class _TextInputState extends State<TextInput> {
       keyboardAppearance: Theme.of(context).colorScheme.brightness,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Theme.of(context).colorScheme.secondaryVariant,
+        fillColor: Theme.of(context).colorScheme.secondaryContainer,
         contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
         hintText: AppLocalizations.of(context)!.newReply,
         hintStyle: Theme.of(context)
@@ -598,7 +598,7 @@ class _TextInputState extends State<TextInput> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.all(Radius.circular(14.0))),
                 child: Column(
                   children: [
@@ -615,7 +615,7 @@ class _TextInputState extends State<TextInput> {
                                 '')
                         .build(),
                     Divider(
-                        color: Theme.of(context).colorScheme.secondaryVariant),
+                        color: Theme.of(context).colorScheme.secondaryContainer),
                     AttachmentTileBuilder(
                             onClick: () {
                               _handlePickFile(fileType: FileType.media);
@@ -629,7 +629,7 @@ class _TextInputState extends State<TextInput> {
                                 '')
                         .build(),
                     Divider(
-                        color: Theme.of(context).colorScheme.secondaryVariant),
+                        color: Theme.of(context).colorScheme.secondaryContainer),
                     AttachmentTileBuilder(
                             onClick: () {
                               _handlePickFile(fileType: FileType.any);
@@ -647,7 +647,7 @@ class _TextInputState extends State<TextInput> {
               SizedBox(height: 6.0),
               ButtonTextBuilder(Key('button_cancel_attachment'),
                       backgroundColor:
-                          Theme.of(context).colorScheme.secondaryVariant,
+                          Theme.of(context).colorScheme.secondaryContainer,
                       onButtonClick: () => Navigator.of(context).pop())
                   .setWidth(double.maxFinite)
                   .setTextStyle(Theme.of(context)
@@ -720,7 +720,7 @@ class _TextInputState extends State<TextInput> {
                 .copyWith(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primaryVariant,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                 ),
             textAlign: TextAlign.center,
           ),

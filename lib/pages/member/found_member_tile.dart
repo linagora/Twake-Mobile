@@ -71,7 +71,7 @@ class _UnselectedChanelTypeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           border: Border.all(
             color: Theme.of(context).colorScheme.secondary,
           ),

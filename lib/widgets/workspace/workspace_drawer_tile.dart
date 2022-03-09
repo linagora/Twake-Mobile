@@ -48,7 +48,7 @@ class WorkspaceDrawerTile extends StatelessWidget {
                   imageUrl: logo ?? '',
                   name: name ?? '',
                   size: 44,
-                  backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                   borderRadius: 10,
                 ),
                 SizedBox(width: 16.0),

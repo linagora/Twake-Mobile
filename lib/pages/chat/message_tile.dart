@@ -248,7 +248,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
             color: Get.isDarkMode
                 ? _isMyMessage
                     ? Theme.of(context).colorScheme.surface
-                    : Theme.of(context).colorScheme.secondaryVariant
+                    : Theme.of(context).colorScheme.secondaryContainer
                 : _isMyMessage
                     ? Theme.of(context).colorScheme.surface
                     : Theme.of(context).iconTheme.color,
@@ -506,7 +506,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
           65.0,
           //  Dim.heightPercent(8),
         ),
-        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

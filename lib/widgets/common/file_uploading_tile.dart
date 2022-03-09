@@ -23,7 +23,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
     return Container(
       decoration: BoxDecoration(
           color: Get.isDarkMode
-              ? Theme.of(context).colorScheme.secondaryVariant
+              ? Theme.of(context).colorScheme.secondaryContainer
               : Theme.of(context).primaryColor,
           borderRadius: BorderRadius.all(Radius.circular(10.0))),
       padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0),

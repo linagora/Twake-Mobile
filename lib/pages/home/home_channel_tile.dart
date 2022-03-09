@@ -51,7 +51,7 @@ class HomeChannelTile extends StatelessWidget {
               name: title,
               size: 54,
               avatars: avatars,
-              backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             ),
             Expanded(
               child: Container(

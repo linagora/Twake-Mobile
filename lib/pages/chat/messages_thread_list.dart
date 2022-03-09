@@ -180,7 +180,7 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
         Divider(
           thickness: 5.0,
           height: 2.0,
-          color: Theme.of(ctx).colorScheme.secondaryVariant,
+          color: Theme.of(ctx).colorScheme.secondaryContainer,
         ),
         SizedBox(
           height: 12.0,

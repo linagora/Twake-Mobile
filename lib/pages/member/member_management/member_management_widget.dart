@@ -82,7 +82,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                   ),
                 ),
                 Divider(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 1,
                 ),
                 BlocBuilder<MemberManagementCubit, MemberManagementState>(
@@ -112,7 +112,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                     controller: _searchController,
                     hintText: AppLocalizations.of(context)!.searchMembers,
                     backgroundColor:
-                        Theme.of(context).colorScheme.secondaryVariant,
+                        Theme.of(context).colorScheme.secondaryContainer,
                   ),
                 ),
                 BlocBuilder<MemberManagementCubit, MemberManagementState>(
@@ -135,7 +135,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                               child: Container(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .secondaryVariant,
+                                    .secondaryContainer,
                                 child: Column(
                                   children: [
                                     GestureDetector(
@@ -175,7 +175,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                                   height: 34,
                                                   color: Theme.of(context)
                                                       .colorScheme
-                                                      .secondaryVariant,
+                                                      .secondaryContainer,
                                                   child: Icon(
                                                     Icons.add,
                                                     color: Theme.of(context)
@@ -207,7 +207,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                       child: Divider(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondaryVariant,
+                                            .secondaryContainer,
                                         height: 1,
                                       ),
                                     ),
@@ -220,7 +220,7 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                         child: Divider(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondaryVariant,
+                                              .secondaryContainer,
                                           height: 1,
                                         ),
                                       ),
@@ -353,7 +353,7 @@ Widget modalSheet(
       ),
       Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(22.0),
         ),
         child: Container(
@@ -392,7 +392,7 @@ Widget modalSheet(
                           padding: const EdgeInsets.only(right: 20),
                           child: Icon(
                             CupertinoIcons.text_bubble_fill,
-                            color: Theme.of(context).colorScheme.primaryVariant,
+                            color: Theme.of(context).colorScheme.primaryContainer,
                           ),
                         ),
                         Text(

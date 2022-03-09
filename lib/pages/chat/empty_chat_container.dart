@@ -29,7 +29,7 @@ class EmptyChatContainer extends StatelessWidget {
             width: Dim.widthPercent(80),
             padding: const EdgeInsets.only(top: 16.0, left: 5, right: 5),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(18.0),
                 topRight: Radius.circular(18.0),
@@ -58,7 +58,7 @@ class EmptyChatContainer extends StatelessWidget {
                 top: 12.0, bottom: 16.0, left: 5, right: 5),
             width: Dim.widthPercent(80),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(18.0),
                 bottomRight: Radius.circular(18.0),

@@ -30,7 +30,7 @@ class ConfirmDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(18.0),
       ),
       elevation: 0,
-      backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       child: Container(
         padding: const EdgeInsets.all(16.0),
         child: Column(

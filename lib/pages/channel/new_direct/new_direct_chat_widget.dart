@@ -137,7 +137,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         ),
                         child: Divider(
                           thickness: 0.5,
-                          color: Theme.of(context).colorScheme.secondaryVariant,
+                          color: Theme.of(context).colorScheme.secondaryContainer,
                         ),
                       );
                     } else
@@ -273,7 +273,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                             hintText:
                                 AppLocalizations.of(context)!.searchForMembers,
                             fillColor:
-                                Theme.of(context).colorScheme.secondaryVariant,
+                                Theme.of(context).colorScheme.secondaryContainer,
                           ),
                         ),
                       ),
@@ -316,7 +316,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         padding: const EdgeInsets.only(left: 70, right: 14),
                         child: Divider(
                           height: 1,
-                          color: Theme.of(context).colorScheme.secondaryVariant,
+                          color: Theme.of(context).colorScheme.secondaryContainer,
                         ),
                       ),
                       itemCount: members.length,

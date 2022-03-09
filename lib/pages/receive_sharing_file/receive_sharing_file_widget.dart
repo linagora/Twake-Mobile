@@ -64,7 +64,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
     return ClipRRect(
       borderRadius: BorderRadius.vertical(top: const Radius.circular(10.0)),
       child: Container(
-        color: Theme.of(context).colorScheme.secondaryVariant,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         height: 52.0,
         padding: const EdgeInsets.symmetric(horizontal: 14.0),
         child: Stack(
@@ -109,7 +109,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
               children: [
                 Divider(
                   height: 0.5,
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 24.0),
@@ -149,7 +149,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
                 ),
                 Divider(
                   height: 0.5,
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                 ),
               ],
             ),
@@ -357,7 +357,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
       height: 80.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(const Radius.circular(10.0)),
-        color: Theme.of(context).colorScheme.secondaryVariant,
+        color: Theme.of(context).colorScheme.secondaryContainer,
       ),
       child: childWidget,
     );
@@ -376,7 +376,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
       keyboardAppearance: Theme.of(context).colorScheme.brightness,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Theme.of(context).colorScheme.secondaryVariant,
+        fillColor: Theme.of(context).colorScheme.secondaryContainer,
         contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         hintText: AppLocalizations.of(context)!.addComment,
         hintStyle: Theme.of(context)

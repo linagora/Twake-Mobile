@@ -267,7 +267,7 @@ class _SignUpState extends State<SignUp> {
                       fontWeight: FontWeight.w400,
                     ),
                 alignLabelWithHint: true,
-                fillColor: Theme.of(context).colorScheme.secondaryVariant,
+                fillColor: Theme.of(context).colorScheme.secondaryContainer,
                 filled: true,
                 suffix: _formKey.currentState == null
                     ? Container(
@@ -296,7 +296,7 @@ class _SignUpState extends State<SignUp> {
                         : CircleAvatar(
                             radius: 10,
                             backgroundColor:
-                                Theme.of(context).colorScheme.secondaryVariant,
+                                Theme.of(context).colorScheme.secondaryContainer,
                             child: Icon(
                               CupertinoIcons.exclamationmark_circle_fill,
                               color: Theme.of(context).colorScheme.error,
@@ -666,7 +666,7 @@ class _SignUpState extends State<SignUp> {
             borderRadius: BorderRadius.circular(14),
           ),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           elevation: 6,
           duration: Duration(seconds: 5),
           content: Row(

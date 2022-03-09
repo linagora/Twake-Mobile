@@ -43,7 +43,7 @@ class Utilities {
   }) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         margin: const EdgeInsets.all(16.0),
         padding: const EdgeInsets.all(16.0),
         animationDuration: Duration(milliseconds: 300),
@@ -82,7 +82,7 @@ class Utilities {
       context: context,
       builder: (context) {
         return Dialog(
-          backgroundColor: Get.theme.colorScheme.secondaryVariant,
+          backgroundColor: Get.theme.colorScheme.secondaryContainer,
           insetPadding: EdgeInsets.all(
             Dim.widthPercent(3),
           ),

@@ -64,7 +64,7 @@ class ChannelDetailWidget extends StatelessWidget {
                                 : '',
                             size: 100,
                             backgroundColor:
-                                Theme.of(context).colorScheme.secondaryVariant,
+                                Theme.of(context).colorScheme.secondaryContainer,
                           );
                         },
                       ),
@@ -195,9 +195,9 @@ class ChannelDetailWidget extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondaryVariant,
+                      color: Theme.of(context).colorScheme.secondaryContainer,
                       border: Border.all(
-                        color: Theme.of(context).colorScheme.secondaryVariant,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(12))),
                   child: Column(
@@ -249,7 +249,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.secondaryVariant,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                       ),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -296,7 +296,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.secondaryVariant,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                       ),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,

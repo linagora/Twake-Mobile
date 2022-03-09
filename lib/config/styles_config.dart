@@ -11,9 +11,9 @@ class StylesConfig {
 
   static const ColorScheme darkThemeColorScheme = ColorScheme(
     primary: Color(0xFF19191A),
-    primaryVariant: Colors.white,
+    primaryContainer: Colors.white,
     secondary: Color(0xFF76787A),
-    secondaryVariant: Color(0xFF2C2D2F),
+    secondaryContainer: Color(0xFF2C2D2F),
     surface: Color(0xFF276CFF),
     background: Color(0xFF424242),
     error: Color(0xFFFF3347),
@@ -41,9 +41,9 @@ class StylesConfig {
   );
   static const ColorScheme lightThemeColorScheme = ColorScheme(
     primary: Color(0xFFD2D2D2),
-    primaryVariant: Colors.black,
+    primaryContainer: Colors.black,
     secondary: Color(0xFF818C99),
-    secondaryVariant: Color(0xFFF5F5F5),
+    secondaryContainer: Color(0xFFF5F5F5),
     surface: Color(0xFF007AFF),
     background: Color(0xFFD2D2D2),
     error: Color(0xFFFF3347),

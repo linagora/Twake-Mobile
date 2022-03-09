@@ -53,7 +53,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                 );
               },
               separatorBuilder: (context, index) => Divider(
-                color: Theme.of(context).colorScheme.secondaryVariant,
+                color: Theme.of(context).colorScheme.secondaryContainer,
                 thickness: 0.3,
                 height: 2,
               ),
@@ -84,7 +84,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                   ? Radius.circular(12.0)
                   : Radius.circular(0),
             ),
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14.0),

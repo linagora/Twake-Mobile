@@ -54,7 +54,7 @@ class CompanySelectionWidget extends StatelessWidget {
                                 name: companiesState.selected.name,
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
-                                    .secondaryVariant,
+                                    .secondaryContainer,
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(
@@ -81,7 +81,7 @@ class CompanySelectionWidget extends StatelessWidget {
                         child: IconButton(
                           icon: Image.asset(imagePathCancel),
                           onPressed: () => popBack(),
-                          color: Theme.of(context).colorScheme.primaryVariant,
+                          color: Theme.of(context).colorScheme.primaryContainer,
                         ),
                       )
                     ],

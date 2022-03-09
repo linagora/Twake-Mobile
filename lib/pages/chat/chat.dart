@@ -161,7 +161,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               Divider(
                   thickness: 1,
                   height: 3,
-                  color: Theme.of(context).colorScheme.secondaryVariant),
+                  color: Theme.of(context).colorScheme.secondaryContainer),
               SizedBox(
                 height: 2,
               ),

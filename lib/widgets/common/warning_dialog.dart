@@ -24,7 +24,7 @@ class WarningDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.0),
       ),
       elevation: 0,
-      backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       child: Container(
         width: 296.0,
         height: 142.0,
