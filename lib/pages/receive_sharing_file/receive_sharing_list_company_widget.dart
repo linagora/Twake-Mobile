@@ -32,7 +32,7 @@ class _ReceiveSharingCompanyListWidgetState extends State<ReceiveSharingCompanyL
     return Column(
       children: [
         Container(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           height: 52.0,
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: Stack(
@@ -62,7 +62,7 @@ class _ReceiveSharingCompanyListWidgetState extends State<ReceiveSharingCompanyL
         ),
         Divider(
           height: 0.5,
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
       ],
     );

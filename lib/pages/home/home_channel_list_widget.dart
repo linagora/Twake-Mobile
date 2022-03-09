@@ -64,7 +64,7 @@ class HomeChannelListWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 78),
                     child: Container(
                         height: 1,
-                        color: Theme.of(context).colorScheme.secondaryVariant),
+                        color: Theme.of(context).colorScheme.secondaryContainer),
                   );
                 },
                 itemCount: channels.length,

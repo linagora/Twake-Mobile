@@ -57,7 +57,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                   child: SizedBox.shrink(),
                 ),
                 Container(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 56,
                   child: Stack(
                     children: [
@@ -116,7 +116,7 @@ class _ChannelSettingsWidgetState extends State<ChannelSettingsWidget> {
                   ),
                 ),
                 Divider(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 1,
                 ),
                 Expanded(

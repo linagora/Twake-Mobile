@@ -18,7 +18,7 @@ class SelectedMemberTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         child: Container(
           height: 44,
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

@@ -56,7 +56,7 @@ class HomeDrawerWidget extends StatelessWidget {
                               name: companyState.selected.name,
                               backgroundColor: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                             ),
                           ),
                           Positioned.fill(
@@ -175,7 +175,7 @@ class HomeDrawerWidget extends StatelessWidget {
               ),
               Divider(
                 thickness: 1,
-                color: Theme.of(context).colorScheme.secondaryVariant,
+                color: Theme.of(context).colorScheme.secondaryContainer,
               ),
               BlocBuilder(
                 bloc: Get.find<CompaniesCubit>(),

@@ -79,7 +79,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
             Align(
               alignment: Alignment.topCenter,
               child: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+                backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
                 maxRadius: 50,
                 minRadius: 50,
                 child: SizedBox(
@@ -197,7 +197,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                             vertical: 12, horizontal: 22),
                         decoration: StylesConfig.commonBoxDecoration.copyWith(
                             color:
-                                Theme.of(context).colorScheme.secondaryVariant),
+                                Theme.of(context).colorScheme.secondaryContainer),
                         child: Image.asset(imageConfig,
                             width: 16,
                             height: 16,
@@ -273,7 +273,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
         onTap: () => _handleClickOnLink(),
         child: Container(
           decoration: StylesConfig.commonBoxDecoration
-              .copyWith(color: Theme.of(context).colorScheme.secondaryVariant),
+              .copyWith(color: Theme.of(context).colorScheme.secondaryContainer),
           padding:
               const EdgeInsets.only(left: 12, top: 12, bottom: 12, right: 30),
           child: Row(
@@ -429,7 +429,7 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
     Clipboard.setData(new ClipboardData(text: _urlNotifier.value)).then((_) {
       Get.snackbar('', '',
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           margin: const EdgeInsets.only(top: 20, left: 10, right: 10),
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
           animationDuration: Duration(milliseconds: 300),

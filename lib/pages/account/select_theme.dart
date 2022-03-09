@@ -57,7 +57,7 @@ class _SelectThemeState extends State<SelectTheme> {
                     );
                   },
                   separatorBuilder: (context, index) => Divider(
-                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    color: Theme.of(context).colorScheme.secondaryContainer,
                     thickness: 0.3,
                     height: 2,
                   ),
@@ -101,7 +101,7 @@ class _SelectThemeState extends State<SelectTheme> {
                   ? Radius.circular(12.0)
                   : Radius.circular(0),
             ),
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14.0),

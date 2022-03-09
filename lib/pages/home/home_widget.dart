@@ -153,7 +153,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                 Divider(
                   thickness: 1,
                   height: 4,
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                 ),
                 Expanded(
                   child: TabBarView(
@@ -203,7 +203,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                                   name: workspaceState.selected?.name ?? '',
                                   backgroundColor: Theme.of(context)
                                       .colorScheme
-                                      .secondaryVariant,
+                                      .secondaryContainer,
                                 ),
                                 SizedBox(
                                   width: 5,
@@ -212,7 +212,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                                   Icons.keyboard_arrow_down_rounded,
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .primaryVariant
+                                      .primaryContainer
                                       .withOpacity(0.9),
                                   size: 24,
                                 ),
@@ -233,7 +233,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                                 Icons.keyboard_arrow_down_rounded,
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .primaryVariant
+                                    .primaryContainer
                                     .withOpacity(0.9),
                                 size: 24,
                               ),
@@ -252,7 +252,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                     height: 15,
                     color: Theme.of(context)
                         .colorScheme
-                        .primaryVariant
+                        .primaryContainer
                         .withOpacity(0.9),
                   ),
                 ),
@@ -265,7 +265,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
             height: 40,
             controller: _searchController,
             hintText: AppLocalizations.of(context)!.search,
-            backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           ),
         ],
       ),
@@ -299,7 +299,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
                                         child: Container(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondaryVariant,
+                                              .secondaryContainer,
                                           width: 40,
                                           height: 40,
                                           child: Image.asset(
@@ -325,7 +325,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   width: 40,
                   height: 40,
                   child: Image.asset(

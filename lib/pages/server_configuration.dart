@@ -47,7 +47,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           margin: EdgeInsets.fromLTRB(
             15.0,
             5.0,
@@ -204,7 +204,7 @@ class _ServerConfigurationState extends State<ServerConfiguration> {
             hintText: hintServerUrl,
             hintStyle: Theme.of(context).textTheme.headline2,
             alignLabelWithHint: true,
-            fillColor: Theme.of(context).colorScheme.secondaryVariant,
+            fillColor: Theme.of(context).colorScheme.secondaryContainer,
             filled: true,
             suffix: Container(
               width: 30,

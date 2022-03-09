@@ -44,7 +44,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
       String fileName, List<FileUploading> listUploadFailed) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
         margin: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         animationDuration: Duration(milliseconds: 500),
@@ -95,7 +95,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       color: Get.isDarkMode
           ? Theme.of(context).scaffoldBackgroundColor
-          : Theme.of(context).colorScheme.secondaryVariant,
+          : Theme.of(context).colorScheme.secondaryContainer,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

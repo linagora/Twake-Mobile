@@ -41,7 +41,7 @@ class WorkspaceTile extends StatelessWidget {
                   imageUrl: image,
                   name: title,
                   backgroundColor:
-                      Theme.of(context).colorScheme.secondaryVariant,
+                      Theme.of(context).colorScheme.secondaryContainer,
                 ),
                 SizedBox(width: 16.0),
                 Expanded(
@@ -81,7 +81,7 @@ class WorkspaceTile extends StatelessWidget {
             Divider(
               thickness: 1.0,
               height: 1.0,
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
             ),
           ],
         ),

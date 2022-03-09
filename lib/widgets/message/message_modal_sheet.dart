@@ -67,7 +67,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
           verticalSpacing: 0,
           horizontalSpacing: 0,
           initCategory: Category.RECENT,
-          bgColor: Theme.of(context).colorScheme.secondaryVariant,
+          bgColor: Theme.of(context).colorScheme.secondaryContainer,
           indicatorColor: Theme.of(context).colorScheme.surface,
           iconColor: Theme.of(context).colorScheme.secondary,
           iconColorSelected: Theme.of(context).colorScheme.surface,
@@ -94,7 +94,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.circular(22.0),
                   ),
                   child: EmojiLine(
@@ -113,7 +113,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                 ),
                 Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryVariant,
+                    color: Theme.of(context).colorScheme.secondaryContainer,
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(15),
                       topLeft: Radius.circular(15),

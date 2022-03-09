@@ -170,7 +170,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
             child: Column(
               children: [
                 Container(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   child: SheetTitleBar(
                       title: AppLocalizations.of(context)!.newWorkspace,
                       leadingTitle: AppLocalizations.of(context)!.cancel,
@@ -194,7 +194,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                       child: Container(
                         height: 80,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.secondaryVariant,
+                          color: Theme.of(context).colorScheme.secondaryContainer,
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Padding(
@@ -209,7 +209,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
                                     decoration: BoxDecoration(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .secondaryVariant,
+                                          .secondaryContainer,
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: Icon(
@@ -301,7 +301,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         child: Container(
           height: 44,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: Padding(
@@ -341,7 +341,7 @@ class _WorkspaceFormState extends State<WorkspaceForm> {
         height: 44,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(10.0),
         ),
         child: Form(

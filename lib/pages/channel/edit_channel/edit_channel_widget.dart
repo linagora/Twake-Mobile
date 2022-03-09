@@ -73,7 +73,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                   child: SizedBox.shrink(),
                 ),
                 Container(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 56,
                   child: Stack(
                     children: [
@@ -138,7 +138,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                   ),
                 ),
                 Divider(
-                  color: Theme.of(context).colorScheme.secondaryVariant,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
                   height: 1,
                 ),
                 Expanded(
@@ -167,11 +167,11 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                           decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               border: Border.all(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .secondaryVariant,
+                                    .secondaryContainer,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
@@ -280,11 +280,11 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                           decoration: BoxDecoration(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               border: Border.all(
                                 color: Theme.of(context)
                                     .colorScheme
-                                    .secondaryVariant,
+                                    .secondaryContainer,
                               ),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(12))),
@@ -363,7 +363,7 @@ class _EditChannelWidgetState extends State<EditChannelWidget> {
                               initCategory: Category.RECENT,
                               bgColor: Theme.of(context)
                                   .colorScheme
-                                  .secondaryVariant,
+                                  .secondaryContainer,
                               indicatorColor:
                                   Theme.of(context).colorScheme.surface,
                               iconColor:

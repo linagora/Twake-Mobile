@@ -103,7 +103,7 @@ class SignInSignUpForm extends StatelessWidget {
                     fit: BoxFit.contain,
                     color: Theme.of(context)
                         .colorScheme
-                        .primaryVariant
+                        .primaryContainer
                         .withOpacity(0.9),
                   ),
                 ),
@@ -117,7 +117,7 @@ class SignInSignUpForm extends StatelessWidget {
                   child: TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor:
-                          Theme.of(context).colorScheme.secondaryVariant,
+                          Theme.of(context).colorScheme.secondaryContainer,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),
@@ -179,7 +179,7 @@ class SignInSignUpForm extends StatelessWidget {
                   child: TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor:
-                          Theme.of(context).colorScheme.secondaryVariant,
+                          Theme.of(context).colorScheme.secondaryContainer,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(16)),
                       ),

@@ -49,7 +49,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
     return Column(
       children: [
         Container(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           height: 52.0,
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
           child: Stack(
@@ -79,7 +79,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
         ),
         Divider(
           height: 0.5,
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
         ),
       ],
     );
@@ -92,7 +92,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
         height: 40,
         controller: _searchController,
         hintText: AppLocalizations.of(context)!.searchChannelAndChat,
-        backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       ),
     );
   }

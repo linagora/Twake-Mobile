@@ -35,7 +35,7 @@ class _SheetTextFieldState extends State<SheetTextField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryVariant,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: widget.borderRadius != 0
             ? BorderRadius.circular(widget.borderRadius)
             : BorderRadius.zero,

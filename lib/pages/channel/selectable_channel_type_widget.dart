@@ -33,9 +33,9 @@ class _SelectableChannelTypeWidgetState
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           border: Border.all(
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
           ),
           borderRadius: BorderRadius.all(Radius.circular(12))),
       child: Column(
@@ -67,7 +67,7 @@ class _SelectableChannelTypeWidgetState
           ),
           Divider(
             height: 1,
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
           ),
           GestureDetector(
             onTap: () {
@@ -117,7 +117,7 @@ class _UnselectedChanelTypeImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           border: Border.all(color: Theme.of(context).colorScheme.secondary),
           borderRadius: BorderRadius.all(Radius.circular(12))),
       height: 24,

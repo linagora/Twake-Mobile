@@ -171,7 +171,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryVariant,
+            color: Theme.of(context).colorScheme.secondaryContainer,
             borderRadius: BorderRadius.circular(14.0)),
         child: Row(
           children: [
@@ -228,7 +228,7 @@ class _AccountSettingsState extends State<AccountSettings> {
           child: Container(
             height: 44,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(10.0),
                 topRight: Radius.circular(10.0),
@@ -270,7 +270,7 @@ class _AccountSettingsState extends State<AccountSettings> {
           child: Container(
             height: 44,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
             ),
             child: Row(
               children: [
@@ -311,7 +311,7 @@ class _AccountSettingsState extends State<AccountSettings> {
           child: Container(
             height: 44,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.only(
                 bottomRight: Radius.circular(10.0),
                 bottomLeft: Radius.circular(10.0),
@@ -386,7 +386,7 @@ class _AccountSettingsState extends State<AccountSettings> {
     return Container(
       height: 44,
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(10.0)),
       child: Row(
         children: [
@@ -426,7 +426,7 @@ class _AccountSettingsState extends State<AccountSettings> {
       child: Container(
         height: 44.0,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondaryVariant,
+          color: Theme.of(context).colorScheme.secondaryContainer,
           borderRadius: BorderRadius.circular(10.0),
         ),
         alignment: Alignment.center,

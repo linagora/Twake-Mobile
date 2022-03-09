@@ -28,7 +28,7 @@ class RoundedTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryVariant,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: borderRadius != BorderRadius.zero
             ? borderRadius
             : BorderRadius.circular(10.0),

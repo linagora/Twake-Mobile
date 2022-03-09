@@ -46,7 +46,7 @@ class _NoCompanyWidgetState extends State<NoCompanyWidget> {
                   children: [
                     ButtonTextBuilder(Key('button_retry'),
                           onButtonClick: () => _handleClickOnRetry(),
-                          backgroundColor: Theme.of(context).colorScheme.secondaryVariant)
+                          backgroundColor: Theme.of(context).colorScheme.secondaryContainer)
                       .setText(AppLocalizations.of(context)?.retry ?? '')
                       .setTextStyle(
                         Get.theme.textTheme.headline4!.copyWith(
