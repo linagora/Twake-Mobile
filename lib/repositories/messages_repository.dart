@@ -26,9 +26,13 @@ class MessagesRepository {
     String? workspaceId,
     required String channelId,
     String? threadId,
+    bool? withExistedFiles = false,
   }) async* {
-    var messages = await fetchLocal(channelId: channelId, threadId: threadId);
-
+    var messages = await fetchLocal(
+      channelId: channelId,
+      threadId: threadId,
+      withExistedFiles: withExistedFiles,
+    );
     yield messages;
 
     if (!Globals.instance.isNetworkConnected) return;
@@ -39,6 +43,7 @@ class MessagesRepository {
       channelId: channelId,
       threadId: threadId,
       afterMessageId: messages.isNotEmpty ? messages.last.id : null,
+      withExistedFiles: withExistedFiles,
     );
 
     if (remoteMessages.isEmpty) return;
@@ -51,6 +56,7 @@ class MessagesRepository {
   Future<List<Message>> fetchLocal({
     required String channelId,
     String? threadId,
+    bool? withExistedFiles = false,
   }) async {
     var where = 'channel_id = ?';
     if (threadId == null) {
@@ -58,10 +64,17 @@ class MessagesRepository {
     } else {
       where += ' AND thread_id = ?';
     }
+    if(withExistedFiles == true) {
+      where += ' AND files <> ?';
+    }
     final localResult = await _storage.select(
       table: Table.message,
       where: where,
-      whereArgs: [channelId, if (threadId != null) threadId],
+      whereArgs: [
+        channelId,
+        if (threadId != null) threadId,
+        if (withExistedFiles == true) '[]'
+      ],
     );
     final messages =
         localResult.map((entry) => Message.fromJson(entry)).toList();
@@ -77,6 +90,7 @@ class MessagesRepository {
     required String channelId,
     String? threadId,
     String? afterMessageId,
+    bool? withExistedFiles = false,
   }) async {
     List<dynamic> remoteResult;
     final queryParameters = <String, dynamic>{
@@ -88,6 +102,9 @@ class MessagesRepository {
     if (afterMessageId != null) {
       queryParameters['page_token'] = afterMessageId;
       queryParameters['direction'] = 'future';
+    }
+    if(withExistedFiles == true) {
+      queryParameters['filter'] = 'files';
     }
     if (threadId == null) {
       remoteResult = await _api.get(
@@ -127,7 +144,11 @@ class MessagesRepository {
 
     await _storage.multiInsert(table: Table.message, data: remoteMessages);
 
-    return await fetchLocal(channelId: channelId, threadId: threadId);
+    return await fetchLocal(
+      channelId: channelId,
+      threadId: threadId,
+      withExistedFiles: withExistedFiles,
+    );
   }
 
   Future<List<Message>> fetchBefore({
