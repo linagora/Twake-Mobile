@@ -231,6 +231,10 @@ class NavigatorService {
     Get.toNamed(RoutePaths.channelSettings.path, arguments: channel);
   }
 
+  Future<void> navigateToChannelFiles(Channel channel) async {
+    Get.toNamed(RoutePaths.channelFiles.path, arguments: channel);
+  }
+
   Future<void> navigateToInvitationPeople(String workspaceName) async {
     Get.toNamed(RoutePaths.invitationPeople.path, arguments: workspaceName);
   }
@@ -239,12 +243,23 @@ class NavigatorService {
     Get.toNamed(RoutePaths.invitationPeopleEmail.path, arguments: invitationUrl);
   }
 
-  Future<void> navigateToFilePreview({required String channelId, required File file}) async {
+  Future<void> navigateToFilePreview({
+    required String channelId,
+    required File file,
+    bool? enableDownload,
+    bool? isImage,
+  }) async {
     final channel = await directsCubit.getChannel(channelId: channelId);
     if (channel.isDirect) {
-      Get.toNamed(RoutePaths.directFilePreview.path, arguments: file);
+      Get.toNamed(
+        RoutePaths.directFilePreview.path,
+        arguments: [file, enableDownload, isImage],
+      );
     } else {
-      Get.toNamed(RoutePaths.channelFilePreview.path, arguments: file);
+      Get.toNamed(
+        RoutePaths.channelFilePreview.path,
+        arguments: [file, enableDownload, isImage],
+      );
     }
   }
 

@@ -16,7 +16,6 @@ import 'package:twake/pages/chat/file_preview_header.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FilePreview<T extends BaseChannelsCubit> extends StatefulWidget {
@@ -29,11 +28,15 @@ class FilePreview<T extends BaseChannelsCubit> extends StatefulWidget {
 class _FilePreviewState<T extends BaseChannelsCubit>
     extends State<FilePreview<T>> {
   late File file;
+  late bool? enableDownload;
+  late bool? isImageType;
 
   @override
   void initState() {
     super.initState();
-    file = Get.arguments;
+    file = Get.arguments[0];
+    enableDownload = Get.arguments[1];
+    isImageType = Get.arguments[2];
   }
 
   @override
@@ -69,7 +72,11 @@ class _FilePreviewState<T extends BaseChannelsCubit>
                 width: double.maxFinite,
                 height: double.maxFinite,
                 fit: BoxFit.contain,
-                imageUrl: file.downloadUrl,
+                errorWidget: (context, url, error) => Icon(
+                  Icons.error,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                imageUrl: (isImageType == true) ? file.downloadUrl : file.thumbnailUrl,
                 progressIndicatorBuilder: (context, url, progress) {
                   return ShimmerLoading(
                       isLoading: true,
@@ -79,7 +86,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
                 },
               ),
             ),
-            _buildBottomLayout()
+            enableDownload == true ? _buildBottomLayout() : SizedBox.shrink()
           ],
         ),
       ),

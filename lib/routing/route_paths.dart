@@ -11,6 +11,8 @@ class RoutePaths {
       _RoutePathsType(channelDetail.path, '/channel_settings');
   static final channelMemberManagement =
       _RoutePathsType(channelDetail.path, '/channel_member_management');
+  static final channelFiles =
+      _RoutePathsType(channelDetail.path, '/channel_files');
   static final addChannelMembers =
       _RoutePathsType(channelMemberManagement.path, '/add_channel_members');
   static final newDirect = _RoutePathsType(initial, '/channel/new_direct');

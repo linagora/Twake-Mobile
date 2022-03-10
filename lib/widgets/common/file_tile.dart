@@ -18,7 +18,6 @@ import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:collection/collection.dart';
 
 const _fileTileHeight = 76.0;
 
@@ -110,7 +109,9 @@ class _FileTileState extends State<FileTile> {
         /// Read [1] for the detail
         if (file.metadata.mime.isImageMimeType) {
           NavigatorService.instance.navigateToFilePreview(
-              channelId: Globals.instance.channelId!, file: file);
+            channelId: Globals.instance.channelId!, file: file,
+            enableDownload: true,
+          );
           return;
         }
         if (fileDownloading == null) return;
