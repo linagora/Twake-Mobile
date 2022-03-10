@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/utils/extensions.dart';
@@ -212,6 +213,11 @@ class ImageWidget extends StatelessWidget {
                     ? BorderRadius.circular(size / 2 - 1)
                     : BorderRadius.circular(borderRadius + 1),
                 color: backgroundColor,
+                border: Border.all(
+                  style: BorderStyle.solid,
+                  width: 2,
+                  color: Get.theme.colorScheme.primary,
+                ),
               ),
         padding: EdgeInsets.all(5.0),
         alignment: Alignment.center,
@@ -226,7 +232,9 @@ class ImageWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: backgroundColor == Colors.transparent ? 26 : 20,
                 fontWeight: FontWeight.bold,
-                color: backgroundColor == Color(0xFF2C2D2F)
+                color: backgroundColor ==
+                            Get.theme.colorScheme.secondaryContainer &&
+                        Get.isDarkMode
                     ? Colors.white.withOpacity(0.9)
                     : backgroundColor == Colors.transparent
                         ? Colors.white
