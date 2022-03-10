@@ -249,7 +249,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                       ),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
@@ -296,7 +296,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       ),
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                       ),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,

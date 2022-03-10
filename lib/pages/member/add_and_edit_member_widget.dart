@@ -243,9 +243,10 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                             const EdgeInsets.only(left: 46),
                                         child: Divider(
                                           height: 1,
+                                       
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondaryContainer,
+                                              .secondary.withOpacity(0.3),
                                         ),
                                       ),
                                   itemCount: users.length,
@@ -298,6 +299,7 @@ class _AddAndEditMemberWidgetState extends State<AddAndEditMemberWidget> {
                                       isSelected: isSelected,
                                       imageUrl: user.picture ?? '',
                                       name: '${user.fullName}',
+                                      userId: user.id,
                                     );
                                   })),
                         );

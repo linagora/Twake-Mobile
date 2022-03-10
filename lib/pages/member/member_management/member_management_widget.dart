@@ -10,6 +10,7 @@ import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_cubit.dar
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -207,7 +208,8 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                       child: Divider(
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondaryContainer,
+                                            .secondary
+                                            .withOpacity(0.3),
                                         height: 1,
                                       ),
                                     ),
@@ -220,7 +222,8 @@ class _MemberManagementWidgetState extends State<MemberManagementWidget> {
                                         child: Divider(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondaryContainer,
+                                              .secondary
+                                              .withOpacity(0.3),
                                           height: 1,
                                         ),
                                       ),
@@ -283,6 +286,15 @@ class _MemberManagementTile extends StatelessWidget {
                       .headline1!
                       .copyWith(fontSize: 17, fontWeight: FontWeight.w400)),
             ),
+            user.id == Globals.instance.userId
+                ? Text(
+                    AppLocalizations.of(context)!.youRespectful,
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline2!
+                        .copyWith(fontSize: 13, fontWeight: FontWeight.w400),
+                  )
+                : SizedBox.shrink(),
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               child: Padding(

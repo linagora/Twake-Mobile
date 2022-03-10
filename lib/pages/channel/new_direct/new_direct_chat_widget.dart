@@ -7,6 +7,7 @@ import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dar
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/member/add_and_edit_member_widget.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -137,7 +138,12 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         ),
                         child: Divider(
                           thickness: 0.5,
-                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          color: Get.isDarkMode
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.3),
                         ),
                       );
                     } else
@@ -316,7 +322,12 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                         padding: const EdgeInsets.only(left: 70, right: 14),
                         child: Divider(
                           height: 1,
-                          color: Theme.of(context).colorScheme.secondaryContainer,
+                          color: Get.isDarkMode
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.3),
                         ),
                       ),
                       itemCount: members.length,
@@ -328,6 +339,7 @@ class _NewDirectChatWidgetState extends State<NewDirectChatWidget> {
                           },
                           name: member.fullName,
                           imageUrl: member.picture ?? '',
+                          userId: member.id,
                         );
                       },
                     );
@@ -396,12 +408,14 @@ typedef OnFoundPeopleDirectTileClick = void Function();
 class _FoundPeopleDirectTile extends StatelessWidget {
   final String name;
   final String imageUrl;
+  final String userId;
   final OnFoundPeopleDirectTileClick? onFoundPeopleDirectTileClick;
 
   const _FoundPeopleDirectTile(
       {Key? key,
       this.onFoundPeopleDirectTileClick,
       required this.name,
+      required this.userId,
       required this.imageUrl})
       : super(key: key);
 
@@ -422,14 +436,30 @@ class _FoundPeopleDirectTile extends StatelessWidget {
                 name: name,
               ),
             ),
-            Container(
-              constraints: BoxConstraints(maxWidth: Dim.widthPercent(70)),
-              child: Text(name,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Text(
+                  name,
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
-                      .copyWith(fontSize: 17, fontWeight: FontWeight.normal)),
-            )
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
+                ),
+              ),
+            ),
+            userId == Globals.instance.userId
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Text(
+                        AppLocalizations.of(context)!.youRespectful,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline2!
+                          .copyWith(fontSize: 13, fontWeight: FontWeight.w400),
+                    ),
+                  )
+                : SizedBox.shrink(),
           ],
         ),
       ),
