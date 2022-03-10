@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/globals/globals.dart';
 import 'package:twake/widgets/common/image_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 typedef OnFoundMemberTileClick = void Function();
 
@@ -8,6 +10,7 @@ class FoundMemberTile extends StatelessWidget {
   final bool isSelected;
   final String name;
   final String imageUrl;
+  final String userId;
   final OnFoundMemberTileClick? onFoundMemberTileClick;
 
   const FoundMemberTile(
@@ -15,6 +18,7 @@ class FoundMemberTile extends StatelessWidget {
       required this.isSelected,
       required this.name,
       required this.imageUrl,
+      required this.userId,
       this.onFoundMemberTileClick})
       : super(key: key);
 
@@ -44,6 +48,12 @@ class FoundMemberTile extends StatelessWidget {
                     .copyWith(fontSize: 17, fontWeight: FontWeight.w400),
               ),
             ),
+            userId == Globals.instance.userId
+                ? Text(
+                    AppLocalizations.of(context)!.youRespectful,
+                    style: Theme.of(context).textTheme.headline2!.copyWith(fontSize: 13, fontWeight: FontWeight.w400),
+                  )
+                : SizedBox.shrink(),
             Padding(
                 padding: const EdgeInsets.only(right: 16, left: 12),
                 child: _buildSelectedImage(isSelected))
