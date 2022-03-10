@@ -268,14 +268,14 @@ class _MemberManagementTile extends StatelessWidget {
         child: Row(
           children: [
             Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: ImageWidget(
-                  imageType: ImageType.common,
-                  imageUrl: user.picture ?? '',
-                  name: user.fullName,
-                  size: 34,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                )),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: ImageWidget(
+                imageType: ImageType.common,
+                imageUrl: user.picture ?? '',
+                name: user.fullName,
+                size: 34,
+              ),
+            ),
             Expanded(
               child: Text(user.fullName,
                   style: Theme.of(context)
@@ -392,7 +392,8 @@ Widget modalSheet(
                           padding: const EdgeInsets.only(right: 20),
                           child: Icon(
                             CupertinoIcons.text_bubble_fill,
-                            color: Theme.of(context).colorScheme.primaryContainer,
+                            color:
+                                Theme.of(context).colorScheme.primaryContainer,
                           ),
                         ),
                         Text(
