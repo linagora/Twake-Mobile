@@ -95,7 +95,7 @@ class ChannelsRepository {
       endpoint: sprintf(endpoint, [companyId, workspaceId]) + '/$channelId',
       key: 'resource',
     );
-    return Channel.fromJson(json: remoteResult);
+    return Channel.fromJson(json: remoteResult, transform: true);
   }
 
   Future<Channel> create(
