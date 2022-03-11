@@ -327,5 +327,14 @@
     "searchChannelAndChat": "Search channels and chats",
     "files": "Files",
     "images": "Images",
+    "sentBy": "Sent by {sender}",
+    "@sentBy": {
+        "description": "The file in channel is sent by someone",
+        "placeholders": {
+            "sender": {
+            }
+        }
+    },
+    "noFileInChannel": "No file in channel",
     "youRespectful": "You"  
 }
