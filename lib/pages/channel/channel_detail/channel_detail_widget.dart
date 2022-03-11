@@ -116,7 +116,7 @@ class ChannelDetailWidget extends StatelessWidget {
                       _buildChannelSettings(context),
                       Divider(
                         height: 1,
-                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                       ),
                       _buildMemberManagement(context),
                       Divider(

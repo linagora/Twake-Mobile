@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channel_file_cubit/channel_file_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/blocs/channels_cubit/channel_file_cubit/channel_file_state.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/routing/app_router.dart';
@@ -18,7 +19,6 @@ class ChannelFilesWidget extends StatefulWidget {
 }
 
 class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
-
   late final Channel? _currentChannel;
   final channelFileCubit = Get.find<ChannelFileCubit>();
 
@@ -100,7 +100,16 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
                 padding: const EdgeInsets.all(12),
                 shrinkWrap: true,
                 itemCount: channels.length,
-                separatorBuilder: (BuildContext context, int index) => SizedBox(height: 12.0),
+                separatorBuilder: (BuildContext context, int index) => Padding(
+                  padding:  EdgeInsets.only(left: Dim.widthPercent(25), top: 6, bottom: 6),
+                  child: Divider(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .secondary
+                        .withOpacity(0.3),
+                    height: 1,
+                  ),
+                ),
                 itemBuilder: (context, index) {
                   return _buildChannelFileItem(channels[index]);
                 },
