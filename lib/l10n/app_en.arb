@@ -335,5 +335,6 @@
             }
         }
     },
-    "noFileInChannel": "No file in channel"
+    "noFileInChannel": "No file in channel",
+    "youRespectful": "You"  
 }

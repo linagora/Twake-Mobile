@@ -60,7 +60,9 @@ class ApiDataTransformer {
         (json['last_message'] as Map<String, dynamic>).isEmpty) {
       json['last_message'] = null;
     }
-
+    if (json['members'] != null) {
+      json['members'] = json['workspace_id'] == 'direct' ? json['members'] : [];
+    }
     if (json['user_member'] != null) {
       json['user_last_access'] = json['user_member']['last_access'];
     }
