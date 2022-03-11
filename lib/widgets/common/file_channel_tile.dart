@@ -80,7 +80,7 @@ class _FileTileState extends State<FileChannelTile> {
         NavigatorService.instance.navigateToFilePreview(
           channelId: Globals.instance.channelId!,
           file: file,
-          enableDownload: false,
+          enableDownload: true,
           isImage: file.metadata.mime.isImageMimeType,
         );
       },
