@@ -316,8 +316,6 @@ class _MemberManagementTile extends StatelessWidget {
                   builder: (_) {
                     return modalSheet(
                         context: context,
-                        name: user.fullName,
-                        logo: user.picture,
                         currentChannel: currentChannel,
                         user: user);
                   },
@@ -334,11 +332,7 @@ class _MemberManagementTile extends StatelessWidget {
           backgroundColor: Colors.transparent,
           builder: (_) {
             return modalSheet(
-                context: context,
-                name: user.fullName,
-                logo: user.picture,
-                currentChannel: currentChannel,
-                user: user);
+                context: context, currentChannel: currentChannel, user: user);
           },
         );
       },
@@ -348,8 +342,6 @@ class _MemberManagementTile extends StatelessWidget {
 
 Widget modalSheet(
     {required BuildContext context,
-    required String name,
-    required String? logo,
     required Channel? currentChannel,
     required Account user}) {
   return Column(
@@ -369,7 +361,6 @@ Widget modalSheet(
           borderRadius: BorderRadius.circular(22.0),
         ),
         child: Container(
-          height: 325,
           width: Dim.widthPercent(94),
           child: Padding(
             padding: const EdgeInsets.only(left: 25, right: 25),
@@ -379,20 +370,19 @@ Widget modalSheet(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
                   child: ImageWidget(
                     imageType: ImageType.common,
-                    imageUrl: logo,
-                    name: name,
+                    imageUrl: user.picture,
+                    name: user.fullName,
                     size: 70,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                Text(name,
+                Text(user.fullName,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context)
                         .textTheme
                         .headline1!
                         .copyWith(fontSize: 17.0, fontWeight: FontWeight.w700)),
                 Padding(
-                  padding: const EdgeInsets.only(top: 45),
+                  padding: const EdgeInsets.only(top: 35, bottom: 15),
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
@@ -421,8 +411,13 @@ Widget modalSheet(
                     ),
                   ),
                 ),
+                Divider(
+                  height: 1,
+                  color:
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 35, bottom: 15),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () async {
@@ -439,8 +434,10 @@ Widget modalSheet(
                               5.0,
                               15.0,
                               65.0,
-                              //  Dim.heightPercent(8),
                             ),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -453,7 +450,7 @@ Widget modalSheet(
                                   .headline5!
                                   .copyWith(
                                       fontSize: 17.0,
-                                      fontWeight: FontWeight.w700),
+                                      fontWeight: FontWeight.w500),
                             ),
                           ),
                         );
@@ -468,7 +465,11 @@ Widget modalSheet(
                             color: Theme.of(context).colorScheme.error,
                           ),
                         ),
-                        Text(AppLocalizations.of(context)!.removeFromChannel,
+                        Text(
+                            user.id == Globals.instance.userId
+                                ? AppLocalizations.of(context)!.leaveChannel
+                                : AppLocalizations.of(context)!
+                                    .removeFromChannel,
                             style: Theme.of(context)
                                 .textTheme
                                 .headline5!
@@ -488,7 +489,7 @@ Widget modalSheet(
         child: GestureDetector(
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.secondaryContainer,
               borderRadius: BorderRadius.circular(22.0),
             ),
             child: Container(
@@ -498,7 +499,7 @@ Widget modalSheet(
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF004DFF),
+                    color: Theme.of(context).colorScheme.surface,
                   ),
                 ),
               ),
