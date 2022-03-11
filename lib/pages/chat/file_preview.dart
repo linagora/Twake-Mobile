@@ -76,7 +76,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
                   Icons.error,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                imageUrl: (isImageType == true) ? file.downloadUrl : file.thumbnailUrl,
+                imageUrl: file.downloadUrl,
                 progressIndicatorBuilder: (context, url, progress) {
                   return ShimmerLoading(
                       isLoading: true,
