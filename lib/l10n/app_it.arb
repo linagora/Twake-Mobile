@@ -495,5 +495,50 @@
   "youHaveNoCompanySubtitle": "Chiedi ai tuoi colleghi di invitarti\nnella azienda",
   "@youHaveNoCompanySubtitle": {},
   "retry": "Riprova",
-  "@retry": {}
+  "@retry": {},
+  "noFileInChannel": "Nessun file nel canale",
+  "@noFileInChannel": {},
+  "youRespectful": "Tu",
+  "@youRespectful": {},
+  "leaveChannel": "Lascia il canale",
+  "@leaveChannel": {},
+  "companies": "Aziende",
+  "@companies": {},
+  "sentBy": "Inviato da {sender}",
+  "@sentBy": {
+    "description": "The file in channel is sent by someone",
+    "placeholders": {
+      "sender": {}
+    }
+  },
+  "shareFiles": "{count, plural, =1{Condividi 1 file} other{Condividi {count} files}}",
+  "@shareFiles": {
+    "description": "Showing number sharing files from outside app",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "shareToTwake": "Condividi su Twake",
+  "@shareToTwake": {},
+  "shareImages": "{count, plural, =1{Condividi 1 immagine} other{Condividi {count} immagini}}",
+  "@shareImages": {
+    "description": "Showing number sharing images from outside app",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "to": "A",
+  "@to": {},
+  "addComment": "Aggiungere un commento...",
+  "@addComment": {},
+  "showAll": "Mostra tutti",
+  "@showAll": {},
+  "channelAndChat": "Canali e chat",
+  "@channelAndChat": {},
+  "searchChannelAndChat": "Cerca canali e chat",
+  "@searchChannelAndChat": {},
+  "files": "File",
+  "@files": {},
+  "images": "Immagini",
+  "@images": {}
 }
