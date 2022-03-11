@@ -483,5 +483,50 @@
   "youHaveNoCompanySubtitle": "Попросите коллег пригласить вас\nв компанию",
   "@youHaveNoCompanySubtitle": {},
   "retry": "Повторить попытку",
-  "@retry": {}
+  "@retry": {},
+  "youRespectful": "Вы",
+  "@youRespectful": {},
+  "leaveChannel": "Покинуть канал",
+  "@leaveChannel": {},
+  "addComment": "Добавить комментарий...",
+  "@addComment": {},
+  "shareToTwake": "Поделиться в Twake",
+  "@shareToTwake": {},
+  "shareFiles": "{count, plural, =1{Поделиться 1 файлом} other{Поделиться {count} файлами}}",
+  "@shareFiles": {
+    "description": "Showing number sharing files from outside app",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "images": "Изображения",
+  "@images": {},
+  "noFileInChannel": "Файла нет в канале",
+  "@noFileInChannel": {},
+  "sentBy": "Отправлено {sender}",
+  "@sentBy": {
+    "description": "The file in channel is sent by someone",
+    "placeholders": {
+      "sender": {}
+    }
+  },
+  "shareImages": "{count, plural, =1{Поделиться 1 изображением} other{Поделиться {count} изображениями}}",
+  "@shareImages": {
+    "description": "Showing number sharing images from outside app",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "companies": "Компании",
+  "@companies": {},
+  "to": "Кому",
+  "@to": {},
+  "showAll": "Показать все",
+  "@showAll": {},
+  "channelAndChat": "Каналы и чаты",
+  "@channelAndChat": {},
+  "searchChannelAndChat": "Поиск по каналам и чатам",
+  "@searchChannelAndChat": {},
+  "files": "Файлы",
+  "@files": {}
 }
