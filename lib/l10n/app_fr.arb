@@ -23,7 +23,7 @@
   "@notAssigned": {},
   "messageCopiedInfo": "Le message a été copié dans le presse-papier",
   "@messageCopiedInfo": {},
-  "view": "Affichage",
+  "view": "Voir",
   "@view": {},
   "newReply": "Nouvelle réponse…",
   "@newReply": {},
@@ -487,5 +487,50 @@
   "retry": "Réessayer",
   "@retry": {},
   "confirmGenerateNewMagicLinkSubtitle": "Le lien précédent ne sera plus utilisable",
-  "@confirmGenerateNewMagicLinkSubtitle": {}
+  "@confirmGenerateNewMagicLinkSubtitle": {},
+  "youRespectful": "Vous",
+  "@youRespectful": {},
+  "sentBy": "Envoyé par {sender}",
+  "@sentBy": {
+    "description": "The file in channel is sent by someone",
+    "placeholders": {
+      "sender": {}
+    }
+  },
+  "leaveChannel": "Quitter le canal",
+  "@leaveChannel": {},
+  "to": "À",
+  "@to": {},
+  "noFileInChannel": "Aucun fichier dans le canal",
+  "@noFileInChannel": {},
+  "shareToTwake": "Partager avec Twake",
+  "@shareToTwake": {},
+  "shareFiles": "{count, plural, =1{Partage 1 fichier} other{Partage {count} fichiers}}",
+  "@shareFiles": {
+    "description": "Showing number sharing files from outside app",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "addComment": "Ajouter un commentaire…",
+  "@addComment": {},
+  "showAll": "Tout afficher",
+  "@showAll": {},
+  "channelAndChat": "Canaux et discussions",
+  "@channelAndChat": {},
+  "searchChannelAndChat": "Recherche de canaux et de discussions",
+  "@searchChannelAndChat": {},
+  "files": "Fichiers",
+  "@files": {},
+  "images": "Images",
+  "@images": {},
+  "shareImages": "{count, plural, =1{Partager 1 image} other{Partager {count} images}}",
+  "@shareImages": {
+    "description": "Showing number sharing images from outside app",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "companies": "Entreprises",
+  "@companies": {}
 }
