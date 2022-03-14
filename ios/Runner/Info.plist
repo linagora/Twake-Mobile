@@ -4,12 +4,22 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Twake</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Twake</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -21,22 +31,32 @@
 			<array>
 				<string>twakemobile.com</string>
 				<string>twakemobile</string>
-                <string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+				<string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>
-	<key>CFBundleName</key>
-	<string>Twake</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FDMaximumConcurrentTasks</key>
+	<integer>5</integer>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>twakemobile</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow application to access to your phone’s camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow application to access to your phone’s Microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Allow application to access to your phone’s Photo Library</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -56,28 +76,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>LSApplicationQueriesSchemes</key>
-    <array>
-      <string>https</string>
-      <string>twakemobile</string>
-    </array>
-
-    <!--image_picker-->
-    <key>NSCameraUsageDescription</key>
-    <string>Allow application to access to your phone’s camera</string>
-    <key>NSMicrophoneUsageDescription</key>
-    <string>Allow application to access to your phone’s Microphone</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Allow application to access to your phone’s Photo Library</string>
-
-    <!--file downloader-->
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
-    <key>FDMaximumConcurrentTasks</key>
-	<integer>5</integer>
-
 </dict>
 </plist>
