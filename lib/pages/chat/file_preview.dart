@@ -208,8 +208,9 @@ class _FilePreviewState<T extends BaseChannelsCubit>
             backgroundColor: Colors.black.withOpacity(0.4),
             title: Center(
               child: Text(
-                AppLocalizations.of(parentContext)?.fileDownloadedInGallery ??
-                    '',
+                (isImageType == true)
+                  ? AppLocalizations.of(parentContext)?.fileDownloadedInGallery ?? ''
+                  : AppLocalizations.of(parentContext)?.fileDownloadedInStorage ?? '',
                 style: StylesConfig.commonTextStyle
                     .copyWith(color: Colors.white, fontSize: 16.0),
               ),
