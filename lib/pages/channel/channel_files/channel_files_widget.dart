@@ -28,7 +28,7 @@ class _ChannelFilesWidgetState extends State<ChannelFilesWidget> {
     _currentChannel = Get.arguments;
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       if(_currentChannel != null) {
-        channelFileCubit.loadFilesInChannel(_currentChannel!.id);
+        channelFileCubit.loadFilesInChannel(_currentChannel!);
       }
     });
   }
