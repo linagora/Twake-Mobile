@@ -197,6 +197,58 @@ class NavigatorService {
     }
   }
 
+  Future<void> navigateToChannelAfterSharedFile({
+    required String companyId,
+    required String workspaceId,
+    required String channelId,
+  }) async {
+    if (companyId != Globals.instance.companyId) {
+      final result = await Get.find<CompaniesCubit>().fetch();
+      if(!result) return;
+      companiesCubit.selectCompany(companyId: companyId);
+
+      await workspacesCubit.fetch(companyId: companyId, localOnly: true);
+      await directsCubit.fetch(
+        companyId: companyId,
+        workspaceId: 'direct',
+        localOnly: true,
+      );
+    }
+
+    workspacesCubit.selectWorkspace(workspaceId: workspaceId);
+    companiesCubit.selectWorkspace(workspaceId: workspaceId);
+
+    await channelsCubit.fetch(
+      companyId: companyId,
+      workspaceId: workspaceId,
+      localOnly: true,
+    );
+    SynchronizationService.instance.subscribeToBadges();
+
+    final channel = await directsCubit.getChannel(channelId: channelId);
+    if (channel.isDirect) {
+      directsCubit.selectChannel(channelId: channelId);
+    } else {
+      channelsCubit.selectChannel(channelId: channelId);
+    }
+    channelMessagesCubit.reset();
+    await channelMessagesCubit.fetch(
+        channelId: channelId,
+        isDirect: channel.isDirect
+    );
+
+    if (channel.isDirect) {
+      Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
+        directsCubit.clearSelection();
+      });
+    } else {
+      Get.toNamed(RoutePaths.channelMessages.path)?.then((_) {
+        channelsCubit.clearSelection();
+      });
+    }
+    badgesCubit.reset(channelId: channelId);
+  }
+
   Future<void> navigateToAccount({bool shouldShowInfo = false}) async {
     accountCubit.fetch();
     Get.toNamed(
