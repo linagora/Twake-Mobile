@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -17,6 +18,7 @@ import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_item_channel_widget.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_item_company_widget.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_item_ws_widget.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/models/file/file.dart';
@@ -536,11 +538,25 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
           channelId: channel.id,
         );
 
-        // 2.3 Close this screen
-        Future.delayed(Duration(milliseconds: 1500), () {
+        // 2.3 Close this screen & navigate to shared channel
+        Future.delayed(Duration(milliseconds: 500), () async {
           _handleClickCloseButton();
+          _popWhenIsChildOfChatPage();
+          await NavigatorService.instance.navigateToChannelAfterSharedFile(
+            companyId: company.id,
+            workspaceId: ws.id,
+            channelId: channel.id,
+          );
         });
       }
+    }
+  }
+
+  void _popWhenIsChildOfChatPage() async {
+    try {
+      Navigator.popUntil(context, ModalRoute.withName(RoutePaths.initial));
+    } catch (e) {
+      Logger().e('Error occurred during pop all pages in stack:\n$e');
     }
   }
 
