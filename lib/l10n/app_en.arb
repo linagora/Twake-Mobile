@@ -337,5 +337,6 @@
     },
     "noFileInChannel": "No file in channel",
     "youRespectful": "You",
-    "leaveChannel": "Leave channel" 
+    "leaveChannel": "Leave channel",
+    "fileDownloadedInStorage": "File is downloaded and saved in device Storage"
 }
