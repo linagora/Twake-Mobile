@@ -52,7 +52,6 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
             _buildFileRow(),
             Expanded(child: _buildChildListInside()),
             _buildChatTextFieldAndProgressBar(),
-            SizedBox(height: 8.0),
             _buildSendButton(),
           ],
         ),
@@ -321,19 +320,19 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
         ],
       );
 
-  _buildChatTextFieldAndProgressBar() => BlocBuilder<FileUploadCubit, FileUploadState>(
-    bloc: fileUploadCubit,
+  _buildChatTextFieldAndProgressBar() => BlocBuilder<ReceiveFileCubit, ReceiveShareFileState>(
+    bloc: receiveFileCubit,
     builder: (context, state) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: _buildLayoutByUploadingStatus(state.fileUploadStatus)
+        child: _buildLayoutByUploadingStatus(state.status)
       );
     }
   );
 
-  _buildLayoutByUploadingStatus(FileUploadStatus status) {
+  _buildLayoutByUploadingStatus(ReceiveShareFileStatus status) {
     switch(status) {
-      case FileUploadStatus.inProcessing:
+      case ReceiveShareFileStatus.uploadingFiles:
         return _buildUploadProcessingBackground(
           childWidget: CircularProgressIndicator(
             backgroundColor: const Color.fromRGBO(153, 162, 173, 0.4),
@@ -341,7 +340,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
             strokeWidth: 1.0,
           ),
         );
-      case FileUploadStatus.finished:
+      case ReceiveShareFileStatus.uploadFilesSuccessful:
         return _buildUploadProcessingBackground(
           childWidget: Image.asset(imageDone),
         );
@@ -487,6 +486,8 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
 
   _handleClickSendButton() async {
     // 1. Upload file
+    receiveFileCubit.updateStartUploadingStatus();
+
     final company = receiveFileCubit.getCurrentSelectedResource(
         kind: ResourceKind.Company) as Company;
     receiveFileCubit.state.listFiles.forEach((file) async {
@@ -509,9 +510,10 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
         _counter++;
       }
 
-      print('counter: $_counter');
       // 2.1 Check file uploading state from file stream
       if(_counter == receiveFileCubit.state.listFiles.length) {
+        receiveFileCubit.updateFinishedUploadingStatus();
+
         final channel = receiveFileCubit.getCurrentSelectedResource(
             kind: ResourceKind.Channel) as Channel;
         List<dynamic> attachments = const [];

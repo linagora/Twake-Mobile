@@ -40,7 +40,7 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
   }
 
   void setNewListFiles(List<ReceiveSharingFile> listFiles) async {
-    emit(state.copyWith(newStatus: ReceiveShareFileStatus.inProcessing, newListFiles: listFiles));
+    emit(state.copyWith(newListFiles: listFiles));
 
     final selectedComp = await fetchCompanies();
     if (selectedComp != null) {
@@ -210,6 +210,14 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
             .firstWhere((element) => element.state == SelectState.SELECTED)
             .element;
     }
+  }
+
+  void updateStartUploadingStatus() {
+    emit(state.copyWith(newStatus: ReceiveShareFileStatus.uploadingFiles));
+  }
+
+  void updateFinishedUploadingStatus() {
+    emit(state.copyWith(newStatus: ReceiveShareFileStatus.uploadFilesSuccessful));
   }
 }
 
