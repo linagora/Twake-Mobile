@@ -7,9 +7,8 @@ import 'package:twake/models/workspace/workspace.dart';
 
 enum ReceiveShareFileStatus {
   init,
-  inProcessing,
-  successful,
-  failed
+  uploadingFiles,
+  uploadFilesSuccessful
 }
 
 class ReceiveShareFileState extends Equatable {
