@@ -13,6 +13,7 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
+import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_widget.dart';
 import 'package:twake/widgets/common/twake_circular_progress_indicator.dart';
@@ -344,6 +345,14 @@ Widget modalSheet(
     {required BuildContext context,
     required Channel? currentChannel,
     required Account user}) {
+  final memberManagementCubit = Get.find<MemberManagementCubit>().state;
+  final bool canLeave = currentChannel == null
+      ? false
+      : (currentChannel.isPrivate &&
+              user.id == Globals.instance.userId &&
+              memberManagementCubit.allMembers.length == 1)
+          ? false
+          : true;
   return Column(
     children: [
       Expanded(
@@ -416,69 +425,44 @@ Widget modalSheet(
                   color:
                       Theme.of(context).colorScheme.secondary.withOpacity(0.3),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 15, bottom: 15),
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () async {
-                      if (currentChannel != null) {
-                        await Get.find<ChannelsCubit>().removeMembers(
-                            channel: currentChannel, userId: user.id);
-                        Get.find<MemberManagementCubit>()
-                            .getMembersFromIds(channel: currentChannel);
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            margin: EdgeInsets.fromLTRB(
-                              15.0,
-                              5.0,
-                              15.0,
-                              65.0,
-                            ),
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .secondaryContainer,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            duration: Duration(seconds: 3),
-                            content: Text(
-                              AppLocalizations.of(context)!.memberRemoved,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline5!
-                                  .copyWith(
-                                      fontSize: 17.0,
-                                      fontWeight: FontWeight.w500),
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20),
-                          child: Icon(
-                            CupertinoIcons.minus_circle_fill,
-                            color: Theme.of(context).colorScheme.error,
+                canLeave
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 15, bottom: 15),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () async {
+                            if (currentChannel != null) {
+                              user.id == Globals.instance.userId
+                                  ? leaveChannel(currentChannel, user, context)
+                                  : removeMember(currentChannel, user, context);
+                            }
+                          },
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: Icon(
+                                  CupertinoIcons.minus_circle_fill,
+                                  color: Theme.of(context).colorScheme.error,
+                                ),
+                              ),
+                              Text(
+                                  user.id == Globals.instance.userId
+                                      ? AppLocalizations.of(context)!
+                                          .leaveChannel
+                                      : AppLocalizations.of(context)!
+                                          .removeFromChannel,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline5!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 17)),
+                            ],
                           ),
                         ),
-                        Text(
-                            user.id == Globals.instance.userId
-                                ? AppLocalizations.of(context)!.leaveChannel
-                                : AppLocalizations.of(context)!
-                                    .removeFromChannel,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline5!
-                                .copyWith(
-                                    fontWeight: FontWeight.w500, fontSize: 17)),
-                      ],
-                    ),
-                  ),
-                ),
+                      )
+                    : SizedBox.shrink(),
               ],
             ),
           ),
@@ -513,5 +497,103 @@ Widget modalSheet(
         ),
       ),
     ],
+  );
+}
+
+leaveChannel(Channel currentChannel, Account user, BuildContext context) async {
+  showDialog<String>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      backgroundColor: Get.theme.colorScheme.secondaryContainer,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(18.0))),
+      title: Text(
+        '${AppLocalizations.of(context)!.leaveChannel}  ${currentChannel.name}',
+        style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 16),
+      ),
+      content: Text(
+        AppLocalizations.of(context)!.leaveChannelWarning,
+        style: Theme.of(context)
+            .textTheme
+            .headline1!
+            .copyWith(fontSize: 15, fontWeight: FontWeight.normal),
+      ),
+      actions: <Widget>[
+        SizedBox(
+          height: 45,
+          width: 80,
+          child: ButtonTextBuilder(
+            Key('button_2'),
+            onButtonClick: () => Navigator.pop(context),
+            backgroundColor: Get.isDarkMode
+                ? Get.theme.backgroundColor
+                : Get.theme.colorScheme.secondary,
+          )
+              .setWidth(double.infinity)
+              .setHeight(50)
+              .setText(AppLocalizations.of(context)!.cancel)
+              .setTextStyle(Get.isDarkMode
+                  ? Get.theme.textTheme.headline1!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w600)
+                  : Get.theme.textTheme.bodyText1!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w500))
+              .build(),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            height: 45,
+            width: 80,
+            child: ButtonTextBuilder(
+              Key('button_1'),
+              onButtonClick: () async {
+                await Get.find<ChannelsCubit>()
+                    .removeMembers(channel: currentChannel, userId: user.id);
+              },
+              backgroundColor: Get.theme.colorScheme.surface,
+            )
+                .setWidth(double.infinity)
+                .setHeight(50)
+                .setText(AppLocalizations.of(context)!.ok)
+                .setTextStyle(Get.isDarkMode
+                    ? Get.theme.textTheme.headline1!
+                        .copyWith(fontSize: 17, fontWeight: FontWeight.w600)
+                    : Get.theme.textTheme.bodyText1!
+                        .copyWith(fontSize: 17, fontWeight: FontWeight.w500))
+                .build(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+removeMember(Channel currentChannel, Account user, BuildContext context) async {
+  await Get.find<ChannelsCubit>()
+      .removeMembers(channel: currentChannel, userId: user.id);
+  Get.find<MemberManagementCubit>().getMembersFromIds(channel: currentChannel);
+  Navigator.pop(context);
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      margin: EdgeInsets.fromLTRB(
+        15.0,
+        5.0,
+        15.0,
+        65.0,
+      ),
+      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      behavior: SnackBarBehavior.floating,
+      duration: Duration(seconds: 3),
+      content: Text(
+        AppLocalizations.of(context)!.memberRemoved,
+        style: Theme.of(context)
+            .textTheme
+            .headline5!
+            .copyWith(fontSize: 17.0, fontWeight: FontWeight.w500),
+      ),
+    ),
   );
 }

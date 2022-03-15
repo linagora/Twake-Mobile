@@ -337,5 +337,6 @@
     },
     "noFileInChannel": "No file in channel",
     "youRespectful": "You",
-    "leaveChannel": "Leave channel" 
+    "leaveChannel": "Leave channel", 
+    "leaveChannelWarning": "Are you sure you want to leave this channel?"
 }
