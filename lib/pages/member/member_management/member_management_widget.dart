@@ -449,7 +449,7 @@ Widget modalSheet(
                               Text(
                                   user.id == Globals.instance.userId
                                       ? AppLocalizations.of(context)!
-                                          .leaveChannel
+                                          .leaveChannel("")
                                       : AppLocalizations.of(context)!
                                           .removeFromChannel,
                                   style: Theme.of(context)
@@ -508,7 +508,7 @@ leaveChannel(Channel currentChannel, Account user, BuildContext context) async {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(18.0))),
       title: Text(
-        '${AppLocalizations.of(context)!.leaveChannel}  ${currentChannel.name}',
+        AppLocalizations.of(context)!.leaveChannel(currentChannel.name),
         style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 16),
       ),
       content: Text(
@@ -523,7 +523,7 @@ leaveChannel(Channel currentChannel, Account user, BuildContext context) async {
           height: 45,
           width: 80,
           child: ButtonTextBuilder(
-            Key('button_2'),
+            Key('cancel'),
             onButtonClick: () => Navigator.pop(context),
             backgroundColor: Get.isDarkMode
                 ? Get.theme.backgroundColor
@@ -545,7 +545,7 @@ leaveChannel(Channel currentChannel, Account user, BuildContext context) async {
             height: 45,
             width: 80,
             child: ButtonTextBuilder(
-              Key('button_1'),
+              Key('OK'),
               onButtonClick: () async {
                 await Get.find<ChannelsCubit>()
                     .removeMembers(channel: currentChannel, userId: user.id);
