@@ -4,6 +4,7 @@ import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/services/service_bundle.dart';
 
 export 'package:twake/models/channel/channel.dart';
@@ -29,11 +30,11 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     listenToMembershipChanges();
   }
 
-  Future<void> fetch({
-    String? companyId,
-    required String workspaceId,
-    bool localOnly: false,
-  }) async {
+  Future<void> fetch(
+      {String? companyId,
+      required String workspaceId,
+      bool localOnly: false,
+      bool isSelected: true}) async {
     final channelsStream = _repository.fetch(
       companyId: companyId ?? Globals.instance.companyId!,
       workspaceId: workspaceId,
@@ -53,7 +54,7 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
       final newState = ChannelsLoadedSuccess(
         channels: channels,
-        selected: selected,
+        selected: isSelected ? selected : channels.first,
         hash: channels.fold(0, (acc, c) => acc + c.hash),
       );
 
@@ -199,6 +200,14 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
       Logger().e('Error occurred while removing members from channel:\n$e');
       return false;
     }
+    if (userId == Globals.instance.userId) {
+      fetch(
+          companyId: Globals.instance.companyId!,
+          workspaceId: Globals.instance.workspaceId!,
+          isSelected: false);
+      NavigatorService.instance.navigateTohomeWidget();
+      return true;
+    }
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
@@ -305,26 +314,28 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
           emit(newState);
           break;
         case ResourceAction.deleted:
-          // fill up required fields with dummy data
-          change.resource['name'] = '';
-          change.resource['permissions'] = const [];
+          if (change.resource['id'] != Globals.instance.channelId) {
+            // fill up required fields with dummy data
+            change.resource['name'] = '';
+            change.resource['permissions'] = const [];
 
-          Logger().w('DELETED: ${change.resource}');
-          final deleted =
-              Channel.fromJson(json: change.resource, jsonify: false);
+            Logger().w('DELETED: ${change.resource}');
+            final deleted =
+                Channel.fromJson(json: change.resource, jsonify: false);
 
-          _repository.delete(
-            channel: deleted,
-            syncRemote: false,
-          );
+            _repository.delete(
+              channel: deleted,
+              syncRemote: false,
+            );
 
-          channels.removeWhere((c) => c.id == deleted.id);
+            channels.removeWhere((c) => c.id == deleted.id);
 
-          emit(ChannelsLoadedSuccess(
-            channels: channels,
-            hash: channels.fold(0, (acc, c) => acc + c.hash),
-            selected: selected,
-          ));
+            emit(ChannelsLoadedSuccess(
+              channels: channels,
+              hash: channels.fold(0, (acc, c) => acc + c.hash),
+              selected: selected,
+            ));
+          }
           break;
         case ResourceAction.event:
           // ignore it for now
