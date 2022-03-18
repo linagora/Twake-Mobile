@@ -273,24 +273,21 @@ class _ComposeBar extends State<ComposeBar> {
                                               ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 15,
+                                    SizedBox(width: 15),
+                                    Expanded(
+                                      child: Text(
+                                        '${state.accounts[i].fullName} ',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w300),
+                                      ),
                                     ),
-                                    Text(
-                                      '${state.accounts[i].fullName} ',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline1!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w300),
-                                    ),
-                                    Expanded(child: SizedBox()),
-                                    // Icon(
-                                    // Icons.message_rounded,
-                                    // color: Colors.grey,
-                                    // ),
-                                    // SizedBox(width: 15),
+                                    SizedBox(width: 15),
                                   ],
                                 ),
                               ),
