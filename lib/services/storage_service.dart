@@ -41,7 +41,7 @@ class StorageService {
       // enable support for foreign key constraints
       await db.execute("PRAGMA foreign_keys = ON");
       // enable support for LIKE searches case sensitively
-      await db.execute("PRAGMA case_sensitive_like = ON");
+      await db.execute("PRAGMA case_sensitive_like = OFF");
     }
 
     void onCreate(Database db, int version) async {
