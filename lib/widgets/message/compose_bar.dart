@@ -92,15 +92,16 @@ class _ComposeBar extends State<ComposeBar> {
       widget.onTextUpdated(text, context);
 
       // Set Send button state by combination of checking text and file uploading
-      _setSendButtonState(stateWithoutFileUploading: _controller.text.isNotReallyEmpty);
+      _setSendButtonState(
+          stateWithoutFileUploading: _controller.text.isNotReallyEmpty);
     });
 
     Get.find<FileUploadCubit>().stream.listen((state) {
       if (state.listFileUploading.isNotEmpty) {
         final hasUploadedFileInStack = state.listFileUploading.any(
             (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
-        final hasUploadingFileInStack = state.listFileUploading.any(
-            (element) => element.uploadStatus == FileItemUploadStatus.uploading);
+        final hasUploadingFileInStack = state.listFileUploading.any((element) =>
+            element.uploadStatus == FileItemUploadStatus.uploading);
 
         if (!mounted) return;
         if (hasUploadedFileInStack && !hasUploadingFileInStack) {
@@ -306,6 +307,7 @@ class _ComposeBar extends State<ComposeBar> {
                           if (i < state.accounts.length - 1) {
                             _listW.add(Divider(thickness: 1));
                           }
+                          _listW.add(const SizedBox(height: 6));
                         }
                         return ConstrainedBox(
                           constraints: BoxConstraints(
@@ -378,9 +380,10 @@ class _ComposeBar extends State<ComposeBar> {
 
   void _setSendButtonState({bool stateWithoutFileUploading = false}) {
     final uploadState = Get.find<FileUploadCubit>().state;
-    final listFileUploading = Get.find<FileUploadCubit>().state.listFileUploading;
-    if(uploadState.fileUploadStatus == FileUploadStatus.inProcessing
-        && listFileUploading.isNotEmpty) {
+    final listFileUploading =
+        Get.find<FileUploadCubit>().state.listFileUploading;
+    if (uploadState.fileUploadStatus == FileUploadStatus.inProcessing &&
+        listFileUploading.isNotEmpty) {
       setState(() {
         _canSend = _canSendFiles;
       });
@@ -612,7 +615,8 @@ class _TextInputState extends State<TextInput> {
                                 '')
                         .build(),
                     Divider(
-                        color: Theme.of(context).colorScheme.secondaryContainer),
+                        color:
+                            Theme.of(context).colorScheme.secondaryContainer),
                     AttachmentTileBuilder(
                             onClick: () {
                               _handlePickFile(fileType: FileType.media);
@@ -626,7 +630,8 @@ class _TextInputState extends State<TextInput> {
                                 '')
                         .build(),
                     Divider(
-                        color: Theme.of(context).colorScheme.secondaryContainer),
+                        color:
+                            Theme.of(context).colorScheme.secondaryContainer),
                     AttachmentTileBuilder(
                             onClick: () {
                               _handlePickFile(fileType: FileType.any);
@@ -664,7 +669,8 @@ class _TextInputState extends State<TextInput> {
   void _handleTakePicture() async {
     try {
       final isGranted = await Utilities.checkAndRequestCameraPermission(
-          onPermanentlyDenied: () => Utilities.showOpenSettingsDialog(context: context));
+          onPermanentlyDenied: () =>
+              Utilities.showOpenSettingsDialog(context: context));
       if (!isGranted) return;
       XFile? pickedFile =
           await _imagePicker.pickImage(source: ImageSource.camera);
@@ -711,10 +717,7 @@ class _TextInputState extends State<TextInput> {
         return TwakeAlertDialog(
           header: Text(
             AppLocalizations.of(context)?.reachedLimitFileUploading ?? '',
-            style: Theme.of(context)
-                .textTheme
-                .headline4!
-                .copyWith(
+            style: Theme.of(context).textTheme.headline4!.copyWith(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primaryContainer,
