@@ -323,16 +323,16 @@ class NavigatorService {
     Get.toNamed(RoutePaths.shareFileList.path, arguments: listFiles);
   }
 
-  Future<void> navigateToReceiveSharingCompanyList() async {
-    Get.toNamed(RoutePaths.shareFileCompList.path);
+  Future<dynamic> navigateToReceiveSharingCompanyList() async {
+    return await Get.toNamed(RoutePaths.shareFileCompList.path);
   }
 
-  Future<void> navigateToReceiveSharingWSList() async {
-    Get.toNamed(RoutePaths.shareFileWsList.path);
+  Future<dynamic> navigateToReceiveSharingWSList() async {
+    return await Get.toNamed(RoutePaths.shareFileWsList.path);
   }
 
-  Future<void> navigateToReceiveSharingChannelList() async {
-    Get.toNamed(RoutePaths.shareFileChannelList.path);
+  Future<dynamic> navigateToReceiveSharingChannelList() async {
+    return await Get.toNamed(RoutePaths.shareFileChannelList.path);
   }
 
   Future<void> navigateToHome() async {

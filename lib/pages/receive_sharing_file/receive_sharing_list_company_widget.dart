@@ -89,7 +89,10 @@ class _ReceiveSharingCompanyListWidgetState extends State<ReceiveSharingCompanyL
                   final companyState = state.listCompanies[index].state;
                   final company = state.listCompanies[index].element;
                   return ReceiveSharingCompanyItemWidget(
-                      company: company, companyState: companyState);
+                    company: company,
+                    companyState: companyState,
+                    onItemSelected: () => Navigator.of(context).pop(index),
+                  );
                 }),
           ),
         );

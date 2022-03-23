@@ -10,8 +10,6 @@ import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/repositories/companies_repository.dart';
 import 'package:twake/repositories/workspaces_repository.dart';
 
-const int LIMIT_ITEM = 8;
-
 class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
   late final CompaniesRepository _companyRepository;
   late final WorkspacesRepository _workspaceRepository;
@@ -218,6 +216,44 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
 
   void updateFinishedUploadingStatus() {
     emit(state.copyWith(newStatus: ReceiveShareFileStatus.uploadFilesSuccessful));
+  }
+
+  void updateNewLimitSize({
+    required ResourceKind kind,
+    required int newLimitSize,
+    required int updatedIndex,
+  }) {
+    // 1. swap selected item (over limited - 8) with new extended position - 9
+    // 2. set new size for horizontal list on main screen
+    switch (kind) {
+      case ResourceKind.Company:
+        final comList = state.listCompanies;
+        final removedItem = comList.removeAt(updatedIndex);
+        comList.insert(limitItems, removedItem);
+        emit(state.copyWith(newLimitCompanyList: newLimitSize, newListCompanies: comList));
+        break;
+      case ResourceKind.Workspace:
+        final wsList = state.listWorkspaces;
+        final removedItem = wsList.removeAt(updatedIndex);
+        wsList.insert(limitItems, removedItem);
+        emit(state.copyWith(newLimitWorkspaceList: newLimitSize, newListWorkspaces: wsList));
+        break;
+      case ResourceKind.Channel:
+        final channelList = state.listChannels;
+        final removedItem = channelList.removeAt(updatedIndex);
+        channelList.insert(limitItems, removedItem);
+        emit(state.copyWith(newLimitChannelList: newLimitSize, newListChannels: channelList));
+        break;
+    }
+  }
+
+  void resetStateData() {
+    emit(state.copyWith(
+      newStatus: ReceiveShareFileStatus.init,
+      newLimitCompanyList: limitItems,
+      newLimitWorkspaceList: limitItems,
+      newLimitChannelList: limitItems,
+    ));
   }
 }
 
