@@ -4,18 +4,21 @@ import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/common/selectable_item.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-const int MAX_TEXT_LEN = 10;
 
 class ReceiveSharingChannelItemWidget extends StatefulWidget {
   final Channel channel;
   final SelectState channelState;
+  final Function? onItemSelected;
 
-  const ReceiveSharingChannelItemWidget(
-      {Key? key, required this.channel, required this.channelState})
-      : super(key: key);
+  const ReceiveSharingChannelItemWidget({
+    Key? key,
+    required this.channel,
+    required this.channelState,
+    this.onItemSelected,
+  }) : super(key: key);
 
   @override
   State<ReceiveSharingChannelItemWidget> createState() => _ReceiveSharingChannelItemWidgetState();
@@ -27,7 +30,10 @@ class _ReceiveSharingChannelItemWidgetState extends State<ReceiveSharingChannelI
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => receiveFileCubit.setSelectedChannel(widget.channel),
+      onTap: () {
+        receiveFileCubit.setSelectedChannel(widget.channel);
+        widget.onItemSelected?.call();
+      },
       child: Column(
         children: [
           Stack(
@@ -54,8 +60,8 @@ class _ReceiveSharingChannelItemWidgetState extends State<ReceiveSharingChannelI
             ],
           ),
           SizedBox(height: 4.0),
-          Text (widget.channel.name.length > MAX_TEXT_LEN
-                  ? widget.channel.name.substring(0, MAX_TEXT_LEN)
+          Text (widget.channel.name.length > maxTextLength
+                  ? widget.channel.name.substring(0, maxTextLength)
                   : widget.channel.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

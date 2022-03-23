@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -30,11 +31,21 @@ class ReceiveSharingFileWidget extends StatefulWidget {
   _ReceiveSharingFileWidgetState createState() => _ReceiveSharingFileWidgetState();
 }
 
+const int maxTextLength = 10;
+const double companyItemSize = 100.0;
+const double wsItemSize = 48.0;
+const double channelItemSize = 48.0;
+const double deltaTextItemSize = 12.0;
+const _separatorItemHorizontal = 16.0;
+
 class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
 
   final receiveFileCubit = Get.find<ReceiveFileCubit>();
   final fileUploadCubit = Get.find<FileUploadCubit>();
   final _textController = TextEditingController();
+  final _scrollControllerCompanies = ScrollController();
+  final _scrollControllerWorkspaces = ScrollController();
+  final _scrollControllerChannels = ScrollController();
 
   @override
   void initState() {
@@ -209,17 +220,25 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
           Container(
             height: 148.0,
             child: ListView.separated(
+              controller: _scrollControllerCompanies,
               padding: const EdgeInsets.all(12),
               shrinkWrap: true,
-              itemCount: state.listCompanies.length > LIMIT_ITEM
-                  ? LIMIT_ITEM
+              itemCount: state.listCompanies.length > state.limitCompanyList
+                  ? state.limitCompanyList
                   : state.listCompanies.length,
               scrollDirection: Axis.horizontal,
-              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
+              separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  width: _separatorItemHorizontal),
               itemBuilder: (context, index) {
                 final companyState = state.listCompanies[index].state;
                 final company = state.listCompanies[index].element;
-                return ReceiveSharingCompanyItemWidget(company: company, companyState: companyState);
+                return ReceiveSharingCompanyItemWidget(
+                  company: company,
+                  companyState: companyState,
+                  onItemSelected: () async {
+                    _scrollToPosition(ResourceKind.Company, index);
+                  },
+                );
               },
             ),
           ),
@@ -257,17 +276,25 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
           Container(
             height: 96.0,
             child: ListView.separated(
+              controller: _scrollControllerWorkspaces,
               padding: const EdgeInsets.all(6),
               shrinkWrap: true,
-              itemCount: state.listWorkspaces.length > LIMIT_ITEM
-                  ? LIMIT_ITEM
+              itemCount: state.listWorkspaces.length > state.limitWorkspaceList
+                  ? state.limitWorkspaceList
                   : state.listWorkspaces.length,
               scrollDirection: Axis.horizontal,
-              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
+              separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  width: _separatorItemHorizontal),
               itemBuilder: (context, index) {
                 final wsState = state.listWorkspaces[index].state;
                 final ws = state.listWorkspaces[index].element;
-                return ReceiveSharingWSItemWidget(ws: ws, wsState: wsState);
+                return ReceiveSharingWSItemWidget(
+                  ws: ws,
+                  wsState: wsState,
+                  onItemSelected: () async {
+                    _scrollToPosition(ResourceKind.Workspace, index);
+                  },
+                );
               },
             ),
           ),
@@ -305,17 +332,25 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
           Container(
             height: 96.0,
             child: ListView.separated(
+              controller: _scrollControllerChannels,
               padding: const EdgeInsets.all(6),
               shrinkWrap: true,
-              itemCount: state.listChannels.length > LIMIT_ITEM
-                  ? LIMIT_ITEM
+              itemCount: state.listChannels.length > state.limitChannelList
+                  ? state.limitChannelList
                   : state.listChannels.length,
               scrollDirection: Axis.horizontal,
-              separatorBuilder: (BuildContext context, int index) => SizedBox(width: 16.0),
+              separatorBuilder: (BuildContext context, int index) => SizedBox(
+                  width: _separatorItemHorizontal),
               itemBuilder: (context, index) {
                 final channelState = state.listChannels[index].state;
                 final channel = state.listChannels[index].element;
-                return ReceiveSharingChannelItemWidget(channel: channel, channelState: channelState);
+                return ReceiveSharingChannelItemWidget(
+                  channel: channel,
+                  channelState: channelState,
+                  onItemSelected: () async {
+                    _scrollToPosition(ResourceKind.Channel, index);
+                  },
+                );
               },
             ),
           ),
@@ -467,6 +502,7 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
   _handleClickCloseButton() {
     fileUploadCubit.clearFileUploadingState(needToCancelInProcessingFile: true);
     fileUploadCubit.closeListSharingStream();
+    receiveFileCubit.resetStateData();
     Navigator.of(context).pop();
   }
 
@@ -474,16 +510,22 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
     NavigatorService.instance.navigateToReceiveSharingFileList(listFiles);
   }
 
-  _handleClickShowAllCompanies() {
-    NavigatorService.instance.navigateToReceiveSharingCompanyList();
+  _handleClickShowAllCompanies() async {
+    final selectedIndex =
+      await NavigatorService.instance.navigateToReceiveSharingCompanyList();
+    _scrollToPosition(ResourceKind.Company, selectedIndex);
   }
 
-  _handleClickShowAllWS() {
-    NavigatorService.instance.navigateToReceiveSharingWSList();
+  _handleClickShowAllWS() async {
+    final selectedIndex =
+        await NavigatorService.instance.navigateToReceiveSharingWSList();
+    _scrollToPosition(ResourceKind.Workspace, selectedIndex);
   }
 
-  _handleClickShowAllChannels() {
-    NavigatorService.instance.navigateToReceiveSharingChannelList();
+  _handleClickShowAllChannels() async {
+    final selectedIndex =
+        await NavigatorService.instance.navigateToReceiveSharingChannelList();
+    _scrollToPosition(ResourceKind.Channel, selectedIndex);
   }
 
   _handleClickSendButton() async {
@@ -557,6 +599,42 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
       Navigator.popUntil(context, ModalRoute.withName(RoutePaths.initial));
     } catch (e) {
       Logger().e('Error occurred during pop all pages in stack:\n$e');
+    }
+  }
+
+  void _scrollToPosition(ResourceKind kind, int index) async {
+    // in general, the horizontal list is limited in limitItems(8) items,
+    // once user selects item outside limitation, expand the horizontal list one more item
+    if(index >= limitItems) {
+      receiveFileCubit.updateNewLimitSize(
+        kind: kind,
+        newLimitSize: limitItems + 1,
+        updatedIndex: index,
+      );
+    }
+    // scroll the list into position
+    switch (kind) {
+      case ResourceKind.Company:
+        await _scrollControllerCompanies.animateTo(
+          (index * (companyItemSize + _separatorItemHorizontal)).toDouble(),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn,
+        );
+        break;
+      case ResourceKind.Workspace:
+        await _scrollControllerWorkspaces.animateTo(
+          (index * (wsItemSize + deltaTextItemSize + _separatorItemHorizontal)).toDouble(),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn,
+        );
+        break;
+      case ResourceKind.Channel:
+        await _scrollControllerChannels.animateTo(
+          (index * (channelItemSize + deltaTextItemSize + _separatorItemHorizontal)).toDouble(),
+          duration: Duration(milliseconds: 500),
+          curve: Curves.fastOutSlowIn,
+        );
+        break;
     }
   }
 

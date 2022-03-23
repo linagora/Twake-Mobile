@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/common/selectable_item.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dart';
 import 'package:twake/utils/translit.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
@@ -121,7 +122,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
               itemBuilder: (context, index) {
                 final channelState = channels[index].state;
                 final channel = channels[index].element;
-                return buildChannelItem(channel, channelState);
+                return buildChannelItem(channel, channelState, index);
               },
             ),
           ),
@@ -130,17 +131,20 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
     );
   }
 
-  Widget buildChannelItem(Channel channel, SelectState channelState) {
+  Widget buildChannelItem(Channel channel, SelectState channelState, int index) {
     return GestureDetector(
-      onTap: () => receiveFileCubit.setSelectedChannel(channel),
+      onTap: () {
+        receiveFileCubit.setSelectedChannel(channel);
+        Navigator.of(context).pop(index);
+      },
       child: Row(
         children: [
           Stack(
             alignment: Alignment.topRight,
             children: [
               Container(
-                width: 48.0,
-                height: 48.0,
+                width: channelItemSize,
+                height: channelItemSize,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: channelState == SelectState.SELECTED
@@ -149,7 +153,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
                 child: ImageWidget(
                   name: channel.name,
                   imageType: ImageType.common,
-                  size: 48.0,
+                  size: channelItemSize,
                   imageUrl: channel.icon ?? '',
                 ),
               ),
