@@ -582,6 +582,11 @@ class _ReceiveSharingFileWidgetState extends State<ReceiveSharingFileWidget> {
 
         // 2.3 Close this screen & navigate to shared channel
         Future.delayed(Duration(milliseconds: 500), () async {
+          receiveFileCubit.saveLatestSharedLocation(
+            companyId: company.id,
+            workspaceId: ws.id,
+            channelId: channel.id,
+          );
           _handleClickCloseButton();
           _popWhenIsChildOfChatPage();
           await NavigatorService.instance.navigateToChannelAfterSharedFile(

@@ -5,20 +5,24 @@ import 'package:twake/blocs/receive_file_cubit/receive_file_state.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/common/selectable_item.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
+import 'package:twake/models/receive_sharing/shared_location.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/repositories/companies_repository.dart';
+import 'package:twake/repositories/receive_file_repository.dart';
 import 'package:twake/repositories/workspaces_repository.dart';
 
 class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
   late final CompaniesRepository _companyRepository;
   late final WorkspacesRepository _workspaceRepository;
   late final ChannelsRepository _channelRepository;
+  late final ReceiveFileRepository _receiveFileRepository;
 
   ReceiveFileCubit({
     CompaniesRepository? compRepository,
     WorkspacesRepository? workspacesRepository,
     ChannelsRepository? channelRepository,
+    ReceiveFileRepository? receiveFileRepository,
   }) : super(const ReceiveShareFileState()) {
     if (compRepository == null) {
       _companyRepository = CompaniesRepository();
@@ -35,32 +39,47 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     } else {
       _channelRepository = channelRepository;
     }
+    if (receiveFileRepository == null) {
+      _receiveFileRepository = ReceiveFileRepository();
+    } else {
+      _receiveFileRepository = receiveFileRepository;
+    }
   }
 
   void setNewListFiles(List<ReceiveSharingFile> listFiles) async {
     emit(state.copyWith(newListFiles: listFiles));
 
-    final selectedComp = await fetchCompanies();
+    // fetch previous shared resources (shared from last time - see #1309 for detail)
+    final sharedLocation = await _receiveFileRepository.fetchLastSharedLocation();
+    final selectedComp = await fetchCompanies(sharedLocation: sharedLocation);
     if (selectedComp != null) {
-      final selectedWS = await fetchWorkspaces(companyId: selectedComp.id);
+      final selectedWS = await fetchWorkspaces(
+        companyId: selectedComp,
+        sharedLocation: sharedLocation,
+      );
       if (selectedWS != null) {
         await fetchChannels(
-          companyId: selectedComp.id,
-          workspaceId: selectedWS.id,
+          companyId: selectedComp,
+          workspaceId: selectedWS,
+          sharedLocation: sharedLocation,
         );
       }
     }
   }
 
-  Future<Company?> fetchCompanies({int? limit}) async {
+  Future<String?> fetchCompanies({int? limit, SharedLocation? sharedLocation}) async {
     final streamCompanies = _companyRepository.fetch();
-    Company? selected;
+    String? selected;
     await for (var companies in streamCompanies) {
       if (companies.isNotEmpty) {
-        selected = companies.first;
+        selected = sharedLocation != null ? sharedLocation.companyId : companies.first.id;
+        final isContainSavedLoc = companies.any((element) => element.id == selected);
+        if(!isContainSavedLoc) {
+          selected = companies.first.id;
+        }
         final companiesLimited = (limit != null) ? companies.take(limit) : companies;
         final selectableList = companiesLimited.map((e) {
-          return e.id == companies.first.id
+          return e.id == selected
               ? SelectableItem(e, SelectState.SELECTED)
               : SelectableItem(e, SelectState.NONE);
         }).toList();
@@ -72,18 +91,23 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     return selected;
   }
 
-  Future<Workspace?> fetchWorkspaces({
+  Future<String?> fetchWorkspaces({
     required String companyId,
     int? limit,
+    SharedLocation? sharedLocation,
   }) async {
     final streamWS = _workspaceRepository.fetch(companyId: companyId);
-    Workspace? selected;
+    String? selected;
     await for (var workspaces in streamWS) {
       if (workspaces.isNotEmpty) {
-        selected = workspaces.first;
+        selected = sharedLocation != null ? sharedLocation.workspaceId : workspaces.first.id;
+        final isContainSavedLoc = workspaces.any((element) => element.id == selected);
+        if(!isContainSavedLoc) {
+          selected = workspaces.first.id;
+        }
         final workspacesLimited = (limit != null) ? workspaces.take(limit) : workspaces;
         final selectableList = workspacesLimited.map((e) {
-          return e.id == workspaces.first.id
+          return e.id == selected
               ? SelectableItem(e, SelectState.SELECTED)
               : SelectableItem(e, SelectState.NONE);
         }).toList();
@@ -95,10 +119,11 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     return selected;
   }
 
-  Future<Channel?> fetchChannels({
+  Future<String?> fetchChannels({
     required String companyId,
     required String workspaceId,
     int? limit,
+    SharedLocation? sharedLocation,
   }) async {
     final streamGroupChannel = _channelRepository.fetch(
       companyId: companyId,
@@ -111,13 +136,17 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     final allChannels = Rx.zip2(
         streamGroupChannel, streamDirectChannel, (List<Channel> a, List<Channel> b) => a + b);
 
-    Channel? selected;
+    String? selected;
     await for (var channels in allChannels) {
       if (channels.isNotEmpty) {
-        selected = channels.first;
+        selected = sharedLocation != null ? sharedLocation.channelId : channels.first.id;
+        final isContainSavedLoc = channels.any((element) => element.id == selected);
+        if(!isContainSavedLoc) {
+          selected = channels.first.id;
+        }
         final channelsLimited = (limit != null) ? channels.take(limit) : channels;
         final selectableList = channelsLimited.map((e) {
-          return e.id == channels.first.id
+          return e.id == selected
               ? SelectableItem(e, SelectState.SELECTED)
               : SelectableItem(e, SelectState.NONE);
         }).toList();
@@ -148,7 +177,7 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     if (selectedWS != null) {
       await fetchChannels(
         companyId: company.id,
-        workspaceId: selectedWS.id,
+        workspaceId: selectedWS,
       );
     }
   }
@@ -254,6 +283,20 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
       newLimitWorkspaceList: limitItems,
       newLimitChannelList: limitItems,
     ));
+  }
+
+  void saveLatestSharedLocation({
+    required String companyId,
+    required String workspaceId,
+    required String channelId,
+  }) async {
+    await _receiveFileRepository.saveSharedLocation(
+      location: SharedLocation(
+        companyId: companyId,
+        workspaceId: workspaceId,
+        channelId: channelId,
+      ),
+    );
   }
 }
 
