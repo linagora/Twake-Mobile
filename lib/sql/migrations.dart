@@ -13,11 +13,12 @@ Future<void> dbUpgrade(
     required int newVersion}) async {
   if (newVersion > oldVersion) {
     final batch = db.batch();
-    if (oldVersion < DB_V8) {
+    if(oldVersion < DB_V8) {
       MIGRATION_8.forEach((element) {
         batch.execute(element);
       });
-    } else if (oldVersion < DB_V9) {
+    }
+    if(oldVersion < DB_V9) {
       MIGRATION_9.forEach((element) {
         batch.execute(element);
       });
