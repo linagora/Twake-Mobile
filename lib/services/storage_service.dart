@@ -214,6 +214,7 @@ enum Table {
   message,
   globals,
   badge,
+  sharedLocation,
 }
 
 extension TableExtension on Table {
@@ -237,6 +238,8 @@ extension TableExtension on Table {
         return 'globals';
       case Table.badge:
         return 'badge';
+      case Table.sharedLocation:
+        return 'sharedlocation';
     }
   }
 }
