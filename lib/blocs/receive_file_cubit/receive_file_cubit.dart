@@ -178,11 +178,16 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
     );
   }
 
-  void setSelectedChannel(Channel channel) {
+  int setSelectedChannel(Channel channel) {
+    // Find index of selected channel
+    final selectedIndex =
+        state.listChannels.indexWhere((element) => element.element.id == channel.id);
+
+    // Do nothing when click on same selected channel
     final clickOnSelectedChannel = state.listChannels
         .any((e) => e.state == SelectState.SELECTED && e.element.id == channel.id);
     if (clickOnSelectedChannel)
-      return;
+      return selectedIndex;
 
     // Update selection state on UI
     final updateList = state.listChannels.map((c) {
@@ -191,6 +196,7 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
           : SelectableItem(c.element, SelectState.NONE);
     }).toList();
     emit(state.copyWith(newListChannels: updateList));
+    return selectedIndex;
   }
 
   dynamic getCurrentSelectedResource({required ResourceKind kind}) {

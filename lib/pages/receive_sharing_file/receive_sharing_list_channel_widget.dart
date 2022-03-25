@@ -122,7 +122,7 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
               itemBuilder: (context, index) {
                 final channelState = channels[index].state;
                 final channel = channels[index].element;
-                return buildChannelItem(channel, channelState, index);
+                return buildChannelItem(channel, channelState);
               },
             ),
           ),
@@ -131,11 +131,11 @@ class _ReceiveSharingChannelListWidgetState extends State<ReceiveSharingChannelL
     );
   }
 
-  Widget buildChannelItem(Channel channel, SelectState channelState, int index) {
+  Widget buildChannelItem(Channel channel, SelectState channelState) {
     return GestureDetector(
       onTap: () {
-        receiveFileCubit.setSelectedChannel(channel);
-        Navigator.of(context).pop(index);
+        final originalIndex = receiveFileCubit.setSelectedChannel(channel);
+        Navigator.of(context).pop(originalIndex);
       },
       child: Row(
         children: [
