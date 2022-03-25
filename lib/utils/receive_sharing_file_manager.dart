@@ -10,10 +10,9 @@ const _filePath = 'file:///';
 class ReceiveSharingFileManager {
   BehaviorSubject<List<ReceiveSharingFile>> _pendingListFiles = BehaviorSubject.seeded([]);
   BehaviorSubject<List<ReceiveSharingFile>> get pendingListFiles => _pendingListFiles;
-  StreamSubscription? _sharingFileStreamSubscription;
 
   void init() {
-    _sharingFileStreamSubscription = getReceivingSharingStream().listen((listSharedFiles) async {
+    getReceivingSharingStream().listen((listSharedFiles) async {
       if(listSharedFiles.isNotEmpty) {
         clearPendingFile();
         try {
@@ -48,9 +47,7 @@ class ReceiveSharingFileManager {
     }
   }
   void dispose() {
-    pendingListFiles.close();
-    _pendingListFiles.close();
-    _sharingFileStreamSubscription?.cancel();
+    clearPendingFile();
   }
 
   Stream<List<SharedMediaFile>> getReceivingSharingStream() {
