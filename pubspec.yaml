@@ -83,7 +83,7 @@ dependencies:
   image_picker: ^0.8.4+4
   ext_storage:
     git:
-      url: git://github.com/huynguyennovem/ext_storage_ups.git
+      url: https://github.com/huynguyennovem/ext_storage_ups.git
   gallery_saver: ^2.3.2
   device_info: ^2.0.3
   receive_sharing_intent: 1.4.5
