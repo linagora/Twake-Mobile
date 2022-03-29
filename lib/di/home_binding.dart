@@ -20,6 +20,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
+import 'package:twake/utils/receive_sharing_text_manager.dart';
 
 class HomeBinding implements Bindings {
   @override
@@ -86,6 +87,9 @@ class HomeBinding implements Bindings {
 
     final receiveFileSharingManager = ReceiveSharingFileManager();
     Get.put(receiveFileSharingManager, permanent: true);
+
+    final receiveTextSharingManager = ReceiveSharingTextManager();
+    Get.put(receiveTextSharingManager, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

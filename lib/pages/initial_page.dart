@@ -26,6 +26,7 @@ import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
+import 'package:twake/utils/receive_sharing_text_manager.dart';
 import 'package:uni_links/uni_links.dart';
 
 import 'home/home_widget.dart';
@@ -38,6 +39,7 @@ class InitialPage extends StatefulWidget {
 class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   StreamSubscription? _magicLinkStreamSub;
   late ReceiveSharingFileManager _receiveSharingFileManager;
+  late ReceiveSharingTextManager _receiveSharingTextManager;
 
   @override
   void initState() {
@@ -45,7 +47,7 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     WidgetsBinding.instance!.addObserver(this);
     connectionStatusSnackBar();
     _handleMagicLinkEvent();
-    _handleReceiveSharingFile();
+    _handleReceiveSharing();
   }
 
   void _handleMagicLinkEvent() {
@@ -122,9 +124,11 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
     }
   }
 
-  _handleReceiveSharingFile() {
+  _handleReceiveSharing() {
     _receiveSharingFileManager = Get.find<ReceiveSharingFileManager>();
     _receiveSharingFileManager.init();
+    _receiveSharingTextManager = Get.find<ReceiveSharingTextManager>();
+    _receiveSharingTextManager.init();
   }
 
   void connectionStatusSnackBar() async {
