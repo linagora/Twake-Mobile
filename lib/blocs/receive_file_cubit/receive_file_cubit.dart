@@ -5,6 +5,8 @@ import 'package:twake/blocs/receive_file_cubit/receive_file_state.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/common/selectable_item.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
+import 'package:twake/models/receive_sharing/receive_sharing_text.dart';
+import 'package:twake/models/receive_sharing/receive_sharing_type.dart';
 import 'package:twake/models/receive_sharing/shared_location.dart';
 import 'package:twake/models/workspace/workspace.dart';
 import 'package:twake/repositories/channels_repository.dart';
@@ -47,8 +49,24 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
   }
 
   void setNewListFiles(List<ReceiveSharingFile> listFiles) async {
-    emit(state.copyWith(newListFiles: listFiles));
+    emit(state.copyWith(
+      newText: ReceiveSharingText.initial(),
+      newListFiles: listFiles,
+      newSharingType: ReceiveSharingType.MediaFile,
+    ));
+    fetchResources();
+  }
 
+  void setNewText(ReceiveSharingText receiveSharingText) async {
+    emit(state.copyWith(
+      newText: receiveSharingText,
+      newListFiles: [],
+      newSharingType: ReceiveSharingType.Text,
+    ));
+    fetchResources();
+  }
+
+  void fetchResources() async {
     // fetch previous shared resources (shared from last time - see #1309 for detail)
     final sharedLocation = await _receiveFileRepository.fetchLastSharedLocation();
     final selectedComp = await fetchCompanies(sharedLocation: sharedLocation);
@@ -59,9 +77,9 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
       );
       if (selectedWS != null) {
         await fetchChannels(
-          companyId: selectedComp,
-          workspaceId: selectedWS,
-          sharedLocation: sharedLocation,
+            companyId: selectedComp,
+            workspaceId: selectedWS,
+            sharedLocation: sharedLocation,
         );
       }
     }
@@ -251,6 +269,14 @@ class ReceiveFileCubit extends Cubit<ReceiveShareFileState> {
 
   void updateFinishedUploadingStatus() {
     emit(state.copyWith(newStatus: ReceiveShareFileStatus.uploadFilesSuccessful));
+  }
+
+  void updateStartSendingMessageStatus() {
+    emit(state.copyWith(newStatus: ReceiveShareFileStatus.sendingMessage));
+  }
+
+  void updateSentMessageStatus() {
+    emit(state.copyWith(newStatus: ReceiveShareFileStatus.sentMessageSuccessful));
   }
 
   void updateNewLimitSize({
