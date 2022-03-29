@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_text.dart';
+import 'package:twake/utils/utilities.dart';
 
 class ReceiveSharingTextManager {
   BehaviorSubject<ReceiveSharingText> _pendingListText =
@@ -11,7 +12,12 @@ class ReceiveSharingTextManager {
 
   void init() {
     getReceivingSharingStream().listen((sharedText) async {
+      // Note: Prevent handle this when open magic link by validating raw text
+      // Can not check JoiningMagicLinkState by ReceivingSharingStream be invoked first
+      // Can not use Globals.handlingMagicLink too, by it only be assigned after
+      // this ReceivingSharingStream
       if (sharedText != null && sharedText.isNotEmpty) {
+        if (Utilities.isTwakeMagicLink(sharedText)) return;
         clearPendingText();
         _pendingListText.add(ReceiveSharingText(sharedText));
       }

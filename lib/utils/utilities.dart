@@ -9,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share/share.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
@@ -352,6 +353,13 @@ class Utilities {
 
   static String preprocessString(dynamic input) {
     return input != null ? input.toString() : '';
+  }
+
+  static bool isTwakeMagicLink(String url) {
+    final launchUri = Uri.parse(url.trim());
+    final token = launchUri.queryParameters['join'];
+    final host = launchUri.host;
+    return token != null && token.isNotEmpty && Endpoint.inSupportedHosts(host);
   }
 }
 
