@@ -35,7 +35,7 @@ dependencies:
   #   git: https://github.com/bobs4462/sticky_grouped_list.git
   grouped_list: 
     git: https://github.com/bobs4462/grouped_list.git
-  scrollable_positioned_list: ^0.2.0-nullsafety.0
+  scrollable_positioned_list: ^0.2.3
   webview_cookie_manager: ^2.0.1
   webview_flutter: ^2.0.9
   logger: ^1.0.0
