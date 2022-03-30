@@ -29,7 +29,11 @@ Message _$MessageFromJson(Map<String, dynamic> json) {
     lastName: json['last_name'] as String?,
     picture: json['picture'] as String?,
     draft: json['draft'] as String?,
-  )..subtype = _$enumDecodeNullable(_$MessageSubtypeEnumMap, json['subtype']);
+  )
+    ..subtype = _$enumDecodeNullable(_$MessageSubtypeEnumMap, json['subtype'])
+    ..pinnedInfo = json['pinned_info'] == null
+        ? null
+        : PinnedInfo.fromJson(json['pinned_info'] as Map<String, dynamic>);
 }
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -45,6 +49,7 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'files': instance.files,
       'subtype': _$MessageSubtypeEnumMap[instance.subtype],
       'reactions': instance.reactions.map((e) => e.toJson()).toList(),
+      'pinned_info': instance.pinnedInfo?.toJson(),
       'username': instance.username,
       'first_name': instance.firstName,
       'last_name': instance.lastName,

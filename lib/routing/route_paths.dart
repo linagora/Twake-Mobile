@@ -5,6 +5,8 @@ class RoutePaths {
   static final channelMessages = _RoutePathsType(initial, '/channel/messages');
   static final channelDetail =
       _RoutePathsType(channelMessages.path, '/channel_detail');
+  static final channelPinnedMessages =
+      _RoutePathsType(channelMessages.path, '/pinned_messages');
   static final editChannel =
       _RoutePathsType(channelDetail.path, '/edit_channel');
   static final channelSettings =

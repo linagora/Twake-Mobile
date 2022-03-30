@@ -1,0 +1,6 @@
+const String ALTER_MESSAGE_ADD_PINNED_INFO = '''
+ALTER TABLE message ADD COLUMN pinned_info TEXT; 
+''';
+
+const DB_V11 = 11;
+const MIGRATION_11 = [ALTER_MESSAGE_ADD_PINNED_INFO];

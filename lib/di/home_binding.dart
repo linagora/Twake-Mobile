@@ -13,6 +13,7 @@ import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.d
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
@@ -57,6 +58,9 @@ class HomeBinding implements Bindings {
     final threadMessagesCubit = ThreadMessagesCubit();
     Get.put(threadMessagesCubit, permanent: true);
 
+    final pinnedMessagesCubit = PinnedMessageCubit();
+    Get.put(pinnedMessagesCubit, permanent: true);
+
     final accountCubit = AccountCubit();
     Get.put(accountCubit, permanent: true);
 
@@ -99,6 +103,7 @@ class HomeBinding implements Bindings {
       directsCubit: directsCubit,
       channelMessagesCubit: channelMessagesCubit,
       threadMessagesCubit: threadMessagesCubit,
+      pinnedMessageCubit: pinnedMessagesCubit,
       badgesCubit: badgesCubit,
     );
   }

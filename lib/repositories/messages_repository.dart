@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:mutex/mutex.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
@@ -64,7 +65,7 @@ class MessagesRepository {
     } else {
       where += ' AND thread_id = ?';
     }
-    if(withExistedFiles == true) {
+    if (withExistedFiles == true) {
       where += ' AND files <> ?';
     }
     final localResult = await _storage.select(
@@ -103,7 +104,7 @@ class MessagesRepository {
       queryParameters['page_token'] = afterMessageId;
       queryParameters['direction'] = 'future';
     }
-    if(withExistedFiles == true) {
+    if (withExistedFiles == true) {
       queryParameters['filter'] = 'files';
     }
     if (threadId == null) {
@@ -138,7 +139,7 @@ class MessagesRepository {
         .map((entry) => Message.fromJson(
               entry,
               channelId: channelId,
-              jsonify: false,
+              jsonify: true,
               transform: true,
             ));
 
@@ -191,7 +192,7 @@ class MessagesRepository {
                 'application') // TODO remove the last condition once the support for applications has been implemented
         .map((entry) => Message.fromJson(
               entry,
-              jsonify: false,
+              jsonify: true,
               transform: true,
               channelId: channelId,
             ));
@@ -288,7 +289,7 @@ class MessagesRepository {
 
       message = Message.fromJson(
         id == threadId ? remoteResult['message'] : remoteResult,
-        jsonify: false,
+        jsonify: true,
         transform: true,
         channelId: channelId,
       );
@@ -356,7 +357,7 @@ class MessagesRepository {
       );
       final newMessage = Message.fromJson(
         message.id == message.threadId ? remoteResult['message'] : remoteResult,
-        jsonify: false,
+        jsonify: true,
         transform: true,
         channelId: message.channelId,
       );
@@ -401,7 +402,7 @@ class MessagesRepository {
 
     final edited = Message.fromJson(
       remoteResult,
-      jsonify: false,
+      jsonify: true,
       transform: true,
       channelId: message.channelId,
     );
@@ -414,6 +415,85 @@ class MessagesRepository {
     _storage.insert(table: Table.message, data: edited);
 
     return edited;
+  }
+
+  Future<bool> pinMesssage({
+    required Message message,
+  }) async {
+    if (!Globals.instance.isNetworkConnected) return false;
+    try {
+      await _api.post(
+          endpoint: sprintf(Endpoint.threadMessages,
+                  [Globals.instance.companyId, message.threadId]) +
+              '/${message.id}/pin',
+          data: {'pin': 'true'});
+    } catch (e) {
+      Logger().e('Error occured during pin a massage:\n$e');
+      return false;
+    } finally {
+      _storage.insert(table: Table.message, data: message);
+    }
+    return true;
+  }
+
+  Future<bool> unpinMesssage({
+    required Message message,
+  }) async {
+    if (!Globals.instance.isNetworkConnected) return false;
+    try {
+      await _api.post(
+          endpoint: sprintf(Endpoint.threadMessages,
+                  [Globals.instance.companyId, message.threadId]) +
+              '/${message.id}/pin',
+          data: [],
+          queryParameters: {'pin': 'false'});
+    } catch (e) {
+      Logger().e('Error occured during unpin a massage:\n$e');
+      return false;
+    } finally {
+      message.pinnedInfo = null;
+
+      _storage.insert(table: Table.message, data: message);
+    }
+
+    return true;
+  }
+
+  Future<List<Message>> fetchPinnedMesssages({String? channelId}) async {
+    final queryParameters = {
+      'include_users': 1,
+      'filter': 'pinned',
+    };
+    List<dynamic> remoteResult = [];
+    Iterable<Message> remoteMessages = [];
+    try {
+      remoteResult = await _api.get(
+        endpoint: sprintf(Endpoint.threads, [
+          Globals.instance.companyId,
+          Globals.instance.workspaceId,
+          channelId ?? Globals.instance.channelId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      );
+    } catch (e) {
+      Logger().e('Error occured during fetch pin massages:\n$e');
+      return [];
+    } finally {
+      remoteMessages = remoteResult
+          .where((rm) =>
+              rm['type'] == 'message' &&
+              rm['subtype'] != 'system' &&
+              rm['subtype'] != 'application')
+          .map((entry) => Message.fromJson(
+                entry,
+                channelId: Globals.instance.channelId,
+                jsonify: true,
+                transform: true,
+              ));
+    }
+
+    return remoteMessages.toList();
   }
 
   Future<Message> react({
@@ -474,7 +554,7 @@ class MessagesRepository {
       whereArgs: [messageId],
     );
 
-    final message = Message.fromJson(result);
+    final message = Message.fromJson(result, jsonify: true, transform: true);
 
     return message;
   }
@@ -495,7 +575,7 @@ class MessagesRepository {
 
     final message = Message.fromJson(
       remoteResult,
-      jsonify: false,
+      jsonify: true,
       transform: true,
       channelId: Globals.instance.channelId,
     );

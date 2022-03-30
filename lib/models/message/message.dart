@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:twake/models/base_model/base_model.dart';
+import 'package:twake/models/message/pinned_info.dart';
 import 'package:twake/utils/api_data_transformer.dart';
 import 'package:twake/utils/json.dart' as jsn;
 
@@ -9,7 +10,12 @@ part 'message.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class Message extends BaseModel {
-  static const COMPOSITE_FIELDS = ['blocks', 'reactions', 'files'];
+  static const COMPOSITE_FIELDS = [
+    'blocks',
+    'reactions',
+    'files',
+    'pinned_info'
+  ];
 
   final String id;
   final String threadId;
@@ -34,6 +40,9 @@ class Message extends BaseModel {
   @JsonKey(defaultValue: const [])
   List<Reaction> reactions;
 
+  @JsonKey(name: 'pinned_info')
+  PinnedInfo? pinnedInfo;
+
   String? username;
   String? firstName;
   String? lastName;
@@ -52,7 +61,9 @@ class Message extends BaseModel {
         this.text.hashCode +
         this.responsesCount +
         this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
-        (this.files != null ? this.files!.fold(0, (prevFile, file) => file.hashCode + prevFile) : 0) +
+        (this.files != null
+            ? this.files!.fold(0, (prevFile, file) => file.hashCode + prevFile)
+            : 0) +
         this.delivery.hashCode +
         this._isRead +
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
