@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
-import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
+import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
@@ -21,6 +21,7 @@ import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
+import 'package:twake/utils/receive_sharing_text_manager.dart';
 
 class HomeBinding implements Bindings {
   @override
@@ -76,8 +77,8 @@ class HomeBinding implements Bindings {
     final invitationCubit = InvitationCubit();
     Get.put(invitationCubit, permanent: true);
 
-    final cacheFileCubit = CacheFileCubit();
-    Get.put(cacheFileCubit, permanent: true);
+    final cacheInChatCubit = CacheInChatCubit();
+    Get.put(cacheInChatCubit, permanent: true);
 
     final themeCubit = ThemeCubit();
     Get.put(themeCubit, permanent: true);
@@ -90,6 +91,9 @@ class HomeBinding implements Bindings {
 
     final receiveFileSharingManager = ReceiveSharingFileManager();
     Get.put(receiveFileSharingManager, permanent: true);
+
+    final receiveTextSharingManager = ReceiveSharingTextManager();
+    Get.put(receiveTextSharingManager, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

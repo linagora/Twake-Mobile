@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
+import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -26,7 +26,7 @@ class FileChannelTile extends StatefulWidget {
 class _FileTileState extends State<FileChannelTile> {
   @override
   Widget build(BuildContext context) {
-    File? cacheFile = Get.find<CacheFileCubit>().findCachedFile(fileId: widget.fileId);
+    File? cacheFile = Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
     return cacheFile == null
         ? FutureBuilder(
             future: Get.find<FileCubit>().getFileData(id: widget.fileId),
@@ -36,7 +36,7 @@ class _FileTileState extends State<FileChannelTile> {
                   return SizedBox.shrink();
                 }
                 final file = (snapshot.data as File);
-                Get.find<CacheFileCubit>().cacheFile(file: file);
+                Get.find<CacheInChatCubit>().cacheFile(file: file);
                 return _buildFileWidget(file);
               }
               return _buildLoadingLayout();

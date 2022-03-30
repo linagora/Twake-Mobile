@@ -20,11 +20,13 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/receive_sharing/receive_sharing_type.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
+import 'package:twake/utils/receive_sharing_text_manager.dart';
 import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
@@ -54,6 +56,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   ReceivePort _fileDownloaderPort = ReceivePort();
   late ReceiveSharingFileManager _receiveSharingFileManager;
   late StreamSubscription _receiveSharingFileSubscription;
+  late ReceiveSharingTextManager _receiveSharingTextManager;
+  late StreamSubscription _receiveSharingTextSubscription;
 
   @override
   void initState() {
@@ -71,7 +75,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     });
 
     _initFileDownloader();
-    _handleReceiveSharingFile();
+    _handleReceiveSharing();
   }
 
   @override
@@ -134,6 +138,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     IsolateNameServer.removePortNameMapping('downloader_send_port');
     _receiveSharingFileSubscription.cancel();
     _receiveSharingFileManager.dispose();
+    _receiveSharingTextSubscription.cancel();
+    _receiveSharingTextManager.dispose();
     super.dispose();
   }
 
@@ -414,14 +420,26 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
     send?.send([id, status, progress]);
   }
 
-  _handleReceiveSharingFile() {
+  _handleReceiveSharing() {
+    // handle file sharing
     _receiveSharingFileManager = Get.find<ReceiveSharingFileManager>();
     _receiveSharingFileSubscription =
         _receiveSharingFileManager.pendingListFiles.stream.listen((listFiles) {
       if (listFiles.isNotEmpty) {
         Get.find<ReceiveFileCubit>().setNewListFiles(listFiles);
         _popWhenIsChildOfSharingPage();
-        NavigatorService.instance.navigateToReceiveSharingFile(listFiles);
+        NavigatorService.instance.navigateToReceiveSharing(fileType: ReceiveSharingType.MediaFile);
+      }
+    });
+
+    // handle text sharing
+    _receiveSharingTextManager = Get.find<ReceiveSharingTextManager>();
+    _receiveSharingTextSubscription =
+        _receiveSharingTextManager.pendingListText.stream.listen((receivedText) {
+      if (receivedText.text.isNotEmpty) {
+        Get.find<ReceiveFileCubit>().setNewText(receivedText);
+        _popWhenIsChildOfSharingPage();
+        NavigatorService.instance.navigateToReceiveSharing(fileType: ReceiveSharingType.Text);
       }
     });
   }

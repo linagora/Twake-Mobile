@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:open_file/open_file.dart';
-import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
+import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_state.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
@@ -40,7 +40,7 @@ class _FileTileState extends State<FileTile> {
   @override
   Widget build(BuildContext context) {
     File? cacheFile =
-        Get.find<CacheFileCubit>().findCachedFile(fileId: widget.fileId);
+        Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
     return cacheFile == null
         ? FutureBuilder(
             future: Get.find<FileCubit>().getFileData(id: widget.fileId),
@@ -50,7 +50,7 @@ class _FileTileState extends State<FileTile> {
                   return _buildLoadingLayout();
                 }
                 final file = (snapshot.data as File);
-                Get.find<CacheFileCubit>().cacheFile(file: file);
+                Get.find<CacheInChatCubit>().cacheFile(file: file);
                 return _buildFileWidget(file);
               }
               return _buildLoadingLayout();

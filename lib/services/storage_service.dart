@@ -41,7 +41,7 @@ class StorageService {
       // enable support for foreign key constraints
       await db.execute("PRAGMA foreign_keys = ON");
       // enable support for LIKE searches case sensitively
-      await db.execute("PRAGMA case_sensitive_like = ON");
+      await db.execute("PRAGMA case_sensitive_like = OFF");
     }
 
     void onCreate(Database db, int version) async {
@@ -214,6 +214,7 @@ enum Table {
   message,
   globals,
   badge,
+  sharedLocation,
 }
 
 extension TableExtension on Table {
@@ -237,6 +238,8 @@ extension TableExtension on Table {
         return 'globals';
       case Table.badge:
         return 'badge';
+      case Table.sharedLocation:
+        return 'sharedlocation';
     }
   }
 }

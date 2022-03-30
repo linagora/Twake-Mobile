@@ -8,7 +8,7 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/common/selectable_item.dart';
 import 'package:twake/models/company/company.dart';
 import 'package:twake/models/workspace/workspace.dart';
-import 'package:twake/pages/receive_sharing_file/receive_sharing_item_company_widget.dart';
+import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 
 class ReceiveSharingWSListWidget extends StatefulWidget {
@@ -89,7 +89,7 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
               itemBuilder: (context, index) {
                 final wsState = state.listWorkspaces[index].state;
                 final ws = state.listWorkspaces[index].element;
-                return buildWSItem(ws, wsState);
+                return buildWSItem(ws, wsState, index);
               },
             ),
           ),
@@ -98,11 +98,14 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
     );
   }
 
-  Widget buildWSItem(Workspace ws, SelectState wsState) {
+  Widget buildWSItem(Workspace ws, SelectState wsState, int index) {
     final com = receiveFileCubit.getCurrentSelectedResource(kind: ResourceKind.Company) as Company;
     companyName = com.name;
     return GestureDetector(
-      onTap: () => receiveFileCubit.setSelectedWS(ws),
+      onTap: () {
+        receiveFileCubit.setSelectedWS(ws);
+        Navigator.of(context).pop(index);
+      },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -110,8 +113,8 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
             alignment: Alignment.topRight,
             children: [
               Container(
-                width: 48.0,
-                height: 48.0,
+                width: wsItemSize,
+                height: wsItemSize,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(const Radius.circular(12.0)),
                     border: wsState == SelectState.SELECTED
@@ -120,7 +123,7 @@ class _ReceiveSharingWSListWidgetState extends State<ReceiveSharingWSListWidget>
                 child: ImageWidget(
                   name: ws.name,
                   imageType: ImageType.common,
-                  size: 48.0,
+                  size: wsItemSize,
                   imageUrl: ws.logo ?? '',
                   borderRadius: 12,
                 ),
