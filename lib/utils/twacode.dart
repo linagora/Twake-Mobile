@@ -9,6 +9,7 @@ import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/file_tile.dart';
+import 'package:twake/widgets/common/url_preview.dart';
 import 'package:twake/widgets/common/user_mention.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -1014,31 +1015,17 @@ class TwacodeRenderer {
           //
           // spans.add(WidgetSpan(child: widget));
         } else if (type == TType.Url) {
-          spans.add(TextSpan(
-              style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
-              text: t['content'],
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  final url = Utilities.preprocessString(t['url']);
-                  final content = Utilities.preprocessString(t['content']);
-                  final launchUrl = url.isNotEmpty ? url : (content.isNotEmpty ? content : '');
-                  final canOpen = await canLaunch(launchUrl);
-                  if (canOpen) {
-                    if(Platform.isIOS) {
-                      final launchUri = Uri.parse(launchUrl);
-                      final token = launchUri.queryParameters['join']?.replaceAll(' ', '+');
-                      final host = launchUri.host;
-                      if(token != null && token.isNotEmpty && Endpoint.inSupportedHosts(host)) {
-                        final newCustomUrl = '$TWAKE_MOBILE://$host/?join=$token';
-                        if(await canLaunch(newCustomUrl)) {
-                          await launch(newCustomUrl);
-                          return;
-                        }
-                      }
-                    }
-                    await launch(launchUrl);
-                  }
-                }));
+          final url = Utilities.preprocessString(t['url']);
+          final content = Utilities.preprocessString(t['content']);
+          final launchUrl = url.isNotEmpty ? url : (content.isNotEmpty ? content : '');
+          spans.add(
+            WidgetSpan(
+              child: UrlPreview(
+                url: launchUrl,
+                textStyle: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              ),
+            ),
+          );
         } else if (type == TType.Link) {
           final url = (t['content'] as String).split('(').last;
           spans.add(TextSpan(
