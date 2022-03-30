@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
-import 'package:twake/blocs/cache_file_cubit/cache_file_cubit.dart';
+import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
@@ -73,8 +73,8 @@ class HomeBinding implements Bindings {
     final invitationCubit = InvitationCubit();
     Get.put(invitationCubit, permanent: true);
 
-    final cacheFileCubit = CacheFileCubit();
-    Get.put(cacheFileCubit, permanent: true);
+    final cacheInChatCubit = CacheInChatCubit();
+    Get.put(cacheInChatCubit, permanent: true);
 
     final themeCubit = ThemeCubit();
     Get.put(themeCubit, permanent: true);
