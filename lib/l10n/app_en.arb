@@ -351,5 +351,18 @@
     "fileDownloadedInStorage": "File is downloaded and saved in device Storage",
     "pinMesssage": "pin",
     "unpinMesssage": "unpin",
-    "pinnedMessages": "Pinned messages"
+    "pinnedMessages": "Pinned messages",
+    "unpinAllMessages":"Unpin all messages",
+    "somethingWentWrong":"Sorry, something went wrong",
+    "noPinnedMessages":"There are no pinned messages yet",
+    "unpinnedNumber": "{unpinnedNumber} messages unpinned",
+    "@unpinnedNumber": {
+        "description": "Number of unpinned messages",
+        "placeholders": {
+            "unpinnedNumber": {
+                "type": "int",
+                "example": "5"
+            }
+        }
+    }                     
 }

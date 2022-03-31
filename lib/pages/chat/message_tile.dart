@@ -125,15 +125,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     Navigator.of(context).pop();
                   },
                   onPinMessage: () async {
-                    // final bool pin = await Get.find<PinnedMessageCubit>()
-                    //     .pinMessage(message: _message);
                     Get.find<PinnedMessageCubit>()
                         .pinMessage(message: _message);
-
-                    // if (!pin)
-                    //   Utilities.showSimpleSnackBar(
-                    //       context: context,
-                    //       message: "Failed to pin, something went wrong");
                     Navigator.of(context).pop();
                   },
                   onUnpinMessage: () async {
@@ -143,7 +136,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     if (!result)
                       Utilities.showSimpleSnackBar(
                           context: context,
-                          message: "Sorry, something went wrong");
+                          message:
+                              AppLocalizations.of(context)!.somethingWentWrong);
                   },
                 );
               },

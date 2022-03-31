@@ -172,7 +172,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         await Get.find<PinnedMessageCubit>().unpinMessage(message: message);
     if (!result)
       Utilities.showSimpleSnackBar(
-          context: context, message: "Sorry, something went wrong");
+          context: context, message: AppLocalizations.of(context)!
+                                    .somethingWentWrong);
   }
 
   Widget _pinnedMessagesSheet(BuildContext context, Channel channel) {
@@ -439,20 +440,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 ),
               ),
             ),
-            /*  Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: Text(
-                  '${message.username}',
-                  style: Get.theme.textTheme.headline3!
-                      .copyWith(fontSize: 10, fontWeight: FontWeight.w300),
-                ),
-              ),
-            ],
-          ),*/
           ],
         ),
       ),

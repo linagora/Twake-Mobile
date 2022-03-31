@@ -85,7 +85,6 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
     messages.add(message);
     final bool isPin = await _messageRepository.pinMesssage(message: message);
     if (isPin) {
-      //   Get.find<ChannelMessagesCubit>().pinMessage(message: message);
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
