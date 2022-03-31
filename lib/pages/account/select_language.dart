@@ -90,13 +90,27 @@ class _SelectLanguageState extends State<SelectLanguage> {
             padding: const EdgeInsets.symmetric(horizontal: 14.0),
             child: Row(
               children: [
-                Text(
-                  getLanguageString(
-                      languageCode: languageCode),
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline1!
-                      .copyWith(fontSize: 15, fontWeight: FontWeight.w400),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      getLanguageStringInNative(
+                          languageCode: languageCode),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 15, fontWeight: FontWeight.w400),
+                    ),
+                    Text(
+                      getLanguageStringInCurrent(
+                          languageCode: languageCode, context: context),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(fontSize: 12, fontWeight: FontWeight.w300),
+                    ),
+                  ],
                 ),
                 Spacer(),
                 BlocBuilder<LanguageCubit, LanguageState>(
@@ -117,7 +131,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                     }
                   },
                 )
-              ],
+              ],    
             ),
           ),
         ),
@@ -127,11 +141,9 @@ class _SelectLanguageState extends State<SelectLanguage> {
   }
 }
 
-String getLanguageString(
+String getLanguageStringInNative(
     {required String languageCode}) {
   switch (languageCode) {
-    case 'en':
-      return 'English';
     case 'es':
       return 'Español';
     case 'ru':
@@ -145,6 +157,30 @@ String getLanguageString(
     case 'fr':
       return 'Français';
     default:
+      // default is english
       return 'English';
+  }
+}
+
+String getLanguageStringInCurrent({
+  required String languageCode, 
+  required BuildContext context 
+}) {
+  switch (languageCode) {
+    case 'es':
+      return AppLocalizations.of(context)!.spanish;
+    case 'ru':
+      return AppLocalizations.of(context)!.russian;
+    case 'de':
+      return AppLocalizations.of(context)!.german;
+    case 'it':
+      return AppLocalizations.of(context)!.italian;
+    case 'fi':
+      return AppLocalizations.of(context)!.finnish;
+    case 'fr':
+      return AppLocalizations.of(context)!.french;
+    default:
+      // default is english
+      return AppLocalizations.of(context)!.english;
   }
 }
