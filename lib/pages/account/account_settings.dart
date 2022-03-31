@@ -341,7 +341,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                   builder: (context, state) {
                     if (state is NewLanguage) {
                       return Text(
-                        getLanguageString(
+                        getLanguageStringInNative(
                             languageCode: state.language),
                         style: Theme.of(context)
                             .textTheme
