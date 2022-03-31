@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/routes/circular_reveal_clipper.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
@@ -11,6 +10,7 @@ import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PinnedMessages extends StatefulWidget {
   const PinnedMessages({Key? key}) : super(key: key);
@@ -37,7 +37,7 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                   width: 34,
                 ),
                 Spacer(),
-                Text("Pinned messages",
+                Text(AppLocalizations.of(context)!.pinnedMessages,
                     style: Theme.of(context)
                         .textTheme
                         .headline1!
@@ -131,7 +131,8 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                       SizedBox(
                         height: 25,
                       ),
-                      Text("There are no pinned messages yet",
+                      Text(AppLocalizations.of(context)!
+                                      .noPinnedMessages,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
@@ -150,7 +151,7 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                         PinnedMessageStatus.finished ||
                     state.pinnedMesssageStatus == PinnedMessageStatus.loading) {
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
+                    padding: const EdgeInsets.only(bottom: 10.0),
                     child: Container(
                       width: Dim.widthPercent(90),
                       height: 60,
@@ -170,12 +171,14 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                             Get.back();
                             Utilities.showSimpleSnackBar(
                                 context: context,
-                                message: "$pinnedMessages messages unpinned",
+                                message: AppLocalizations.of(context)!
+                                      .unpinnedNumber(pinnedMessages),
                                 duration: Duration(seconds: 2));
                           } else {
                             Utilities.showSimpleSnackBar(
                                 context: context,
-                                message: "Sorry, something went wrong");
+                                message: AppLocalizations.of(context)!
+                                    .somethingWentWrong);
                           }
                         },
                         child:
@@ -186,7 +189,8 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                                 PinnedMessageStatus.finished) {
                               return Center(
                                 child: Text(
-                                  'Unpin all messages',
+                                  AppLocalizations.of(context)!
+                                      .unpinAllMessages,
                                   style: Theme.of(context)
                                       .textTheme
                                       .headline4!
