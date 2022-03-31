@@ -92,11 +92,11 @@ class _SelectLanguageState extends State<SelectLanguage> {
               children: [
                 Text(
                   getLanguageString(
-                      languageCode: languageCode, context: context),
+                      languageCode: languageCode),
                   style: Theme.of(context)
                       .textTheme
                       .headline1!
-                      .copyWith(fontSize: 15, fontWeight: FontWeight.normal),
+                      .copyWith(fontSize: 15, fontWeight: FontWeight.w400),
                 ),
                 Spacer(),
                 BlocBuilder<LanguageCubit, LanguageState>(
@@ -128,22 +128,22 @@ class _SelectLanguageState extends State<SelectLanguage> {
 }
 
 String getLanguageString(
-    {required String languageCode, required BuildContext context}) {
+    {required String languageCode}) {
   switch (languageCode) {
     case 'en':
-      return AppLocalizations.of(context)!.english;
+      return 'English';
     case 'es':
-      return AppLocalizations.of(context)!.spanish;
+      return 'Español';
     case 'ru':
-      return AppLocalizations.of(context)!.russian;
+      return 'Pусский язык';
     case 'de':
-      return AppLocalizations.of(context)!.german;
+      return 'Deutsch';
     case 'it':
-      return AppLocalizations.of(context)!.italian;
+      return 'Lingua Italiana';
     case 'fi':
-      return AppLocalizations.of(context)!.finnish;
+      return 'Suomen Kieli';
     case 'fr':
-      return AppLocalizations.of(context)!.french;
+      return 'Français';
     default:
       return 'English';
   }

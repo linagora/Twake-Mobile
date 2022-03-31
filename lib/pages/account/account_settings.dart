@@ -342,7 +342,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                     if (state is NewLanguage) {
                       return Text(
                         getLanguageString(
-                            languageCode: state.language, context: context),
+                            languageCode: state.language),
                         style: Theme.of(context)
                             .textTheme
                             .headline2!
