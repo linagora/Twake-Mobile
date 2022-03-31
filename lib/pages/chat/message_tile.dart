@@ -8,13 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/image_path.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/message_modal_sheet.dart';
@@ -29,6 +32,7 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool upBubbleSide;
   final bool downBubbleSide;
   final bool isThread;
+  final bool isPinned;
 
   MessageTile({
     required this.message,
@@ -39,6 +43,7 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
     this.shouldShowSender = true,
     this.hideReaction = false,
     this.isThread = false,
+    this.isPinned = false,
     Key? key,
   }) : super(key: key);
 
@@ -119,6 +124,27 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     onCopy(context: context, text: _message.text);
                     Navigator.of(context).pop();
                   },
+                  onPinMessage: () async {
+                    // final bool pin = await Get.find<PinnedMessageCubit>()
+                    //     .pinMessage(message: _message);
+                    Get.find<PinnedMessageCubit>()
+                        .pinMessage(message: _message);
+
+                    // if (!pin)
+                    //   Utilities.showSimpleSnackBar(
+                    //       context: context,
+                    //       message: "Failed to pin, something went wrong");
+                    Navigator.of(context).pop();
+                  },
+                  onUnpinMessage: () async {
+                    final bool result = await Get.find<PinnedMessageCubit>()
+                        .unpinMessage(message: _message);
+                    Navigator.of(context).pop();
+                    if (!result)
+                      Utilities.showSimpleSnackBar(
+                          context: context,
+                          message: "Sorry, something went wrong");
+                  },
                 );
               },
             );
@@ -152,7 +178,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         size: 28)
                     : SizedBox(width: 28.0, height: 28.0),
               ),
-              _isMyMessage
+              _isMyMessage && !widget.isPinned
                   ? SizedBox(width: Dim.widthPercent(8))
                   : SizedBox(width: 6),
               _buildMessageContent(_isMyMessage, _sizeOfReplyBox, _parentStyle),
@@ -172,6 +198,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
   _buildMessageContent(
           bool _isMyMessage, double _sizeOfReplyBox, TextStyle _parentStyle) =>
       Flexible(
+        //  flex: widget.isPinned ? 0 : 1,
         child: Column(
           crossAxisAlignment:
               _isMyMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
@@ -182,6 +209,18 @@ class _MessageTileState<T extends BaseMessagesCubit>
                   : MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
+                widget.isPinned && _isMyMessage
+                    ? Padding(
+                        padding: _message.reactions.isEmpty
+                            ? const EdgeInsets.only(bottom: 15.0, right: 6)
+                            : const EdgeInsets.only(bottom: 22.0, right: 6),
+                        child: ImageWidget(
+                            imageType: ImageType.common,
+                            imageUrl: _message.picture ?? '',
+                            name: _message.sender,
+                            size: 28),
+                      )
+                    : SizedBox.shrink(),
                 Flexible(
                     child: _buildMessageTextAndTime(
                         _isMyMessage, _sizeOfReplyBox, _parentStyle)),
@@ -256,23 +295,42 @@ class _MessageTileState<T extends BaseMessagesCubit>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!widget.channel.isDirect &&
-                  !_isMyMessage &&
-                  widget.upBubbleSide)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                  child: Text(
-                    '${_message.sender}',
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: HSLColor.fromAHSL(
-                              1, _message.username.hashCode % 360, 0.9, 0.3)
-                          .toColor(),
-                    ),
-                  ),
-                ),
+              widget.isPinned
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                      child: Text(
+                        '${_message.sender}',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: HSLColor.fromAHSL(
+                                  1, _message.username.hashCode % 360, 0.9, 0.7)
+                              .toColor(),
+                        ),
+                      ),
+                    )
+                  : (!widget.channel.isDirect &&
+                          !_isMyMessage &&
+                          widget.upBubbleSide)
+                      ? Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                          child: Text(
+                            '${_message.sender}',
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: HSLColor.fromAHSL(
+                                      1,
+                                      _message.username.hashCode % 360,
+                                      0.9,
+                                      0.3)
+                                  .toColor(),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
               Padding(
                 padding: EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
                 child: Column(
@@ -322,17 +380,41 @@ class _MessageTileState<T extends BaseMessagesCubit>
                               ),
                               Padding(
                                 padding: const EdgeInsets.only(top: 3),
-                                child: Text(
-                                    _message.inThread || _hideShowReplies
-                                        ? DateFormatter.getVerboseDateTime(
-                                            _message.createdAt)
-                                        : DateFormatter.getVerboseTime(
-                                            _message.createdAt),
-                                    textAlign: TextAlign.end,
-                                    style: _parentStyle.copyWith(
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w400)),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _message.pinnedInfo != null
+                                        ? Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 4),
+                                            child: Image.asset(
+                                              imagePinned,
+                                              color: _isMyMessage
+                                                  ? Theme.of(context)
+                                                      .iconTheme
+                                                      .color!
+                                                      .withOpacity(0.7)
+                                                  : Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary,
+                                              width: 12.0,
+                                              height: 12.0,
+                                            ),
+                                          )
+                                        : SizedBox.shrink(),
+                                    Text(
+                                        _message.inThread || _hideShowReplies
+                                            ? DateFormatter.getVerboseDateTime(
+                                                _message.createdAt)
+                                            : DateFormatter.getVerboseTime(
+                                                _message.createdAt),
+                                        textAlign: TextAlign.end,
+                                        style: _parentStyle.copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w400)),
+                                  ],
+                                ),
                               ),
                             ],
                           ),

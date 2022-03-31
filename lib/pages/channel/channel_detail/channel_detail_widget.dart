@@ -3,8 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/common/image_widget.dart';
@@ -54,8 +58,9 @@ class ChannelDetailWidget extends StatelessWidget {
                                 ? selectedChannel.name
                                 : '',
                             size: 100,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondaryContainer,
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
                           );
                         },
                       ),
@@ -83,8 +88,10 @@ class ChannelDetailWidget extends StatelessWidget {
                   return Text(
                     AppLocalizations.of(context)!.membersPlural(
                       (channelState as ChannelsLoadedSuccess)
-                          .selected!
-                          .stats?.members ?? 0,
+                              .selected!
+                              .stats
+                              ?.members ??
+                          0,
                     ),
                     style: Theme.of(context)
                         .textTheme
@@ -99,33 +106,68 @@ class ChannelDetailWidget extends StatelessWidget {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.secondaryContainer,
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          border: Border.all(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                      child: Column(
+                        children: [
+                          _buildEditChannel(context),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.3),
+                          ),
+                          _buildChannelSettings(context),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.3),
+                          ),
+                          _buildMemberManagement(context),
+                        ],
                       ),
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
-                  child: Column(
-                    children: [
-                      _buildEditChannel(context),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                    ),
+                    SizedBox(
+                      height: Dim.heightPercent(3),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          border: Border.all(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(12))),
+                      child: Column(
+                        children: [
+                          _buildFileTile(context),
+                          Divider(
+                            height: 1,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.3),
+                          ),
+                          _buildPinnedMessagesTile(context)
+                        ],
                       ),
-                      _buildChannelSettings(context),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                      ),
-                      _buildMemberManagement(context),
-                      Divider(
-                        height: 1,
-                        color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                      ),
-                      _buildFileTile(context),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -165,14 +207,11 @@ class ChannelDetailWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline1!
-                  .copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15),
+                  .copyWith(fontWeight: FontWeight.w400, fontSize: 15),
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets.only(right: 10.0, left: 4),
+            padding: const EdgeInsets.only(right: 10.0, left: 4),
             child: Icon(
               Icons.keyboard_arrow_right,
               color: Theme.of(context).colorScheme.secondary,
@@ -190,8 +229,8 @@ class ChannelDetailWidget extends StatelessWidget {
         final currentState = Get.find<ChannelsCubit>().state;
         if (currentState is ChannelsLoadedSuccess &&
             currentState.selected != null) {
-          NavigatorService.instance.navigateToChannelSetting(
-              currentState.selected!);
+          NavigatorService.instance
+              .navigateToChannelSetting(currentState.selected!);
         }
       },
       child: Row(
@@ -211,14 +250,11 @@ class ChannelDetailWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline1!
-                  .copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15),
+                  .copyWith(fontWeight: FontWeight.w400, fontSize: 15),
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets.only(right: 10.0, left: 4),
+            padding: const EdgeInsets.only(right: 10.0, left: 4),
             child: Icon(
               Icons.keyboard_arrow_right,
               color: Theme.of(context).colorScheme.secondary,
@@ -237,8 +273,7 @@ class ChannelDetailWidget extends StatelessWidget {
         if (currentState is ChannelsLoadedSuccess &&
             currentState.selected != null) {
           NavigatorService.instance
-              .navigateToChannelMemberManagement(
-              currentState.selected!);
+              .navigateToChannelMemberManagement(currentState.selected!);
         }
       },
       child: Row(
@@ -259,9 +294,7 @@ class ChannelDetailWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline1!
-                  .copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15),
+                  .copyWith(fontWeight: FontWeight.w400, fontSize: 15),
             ),
           ),
           BlocBuilder<ChannelsCubit, ChannelsState>(
@@ -272,17 +305,14 @@ class ChannelDetailWidget extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .headline4!
-                    .copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15),
+                    .copyWith(fontWeight: FontWeight.w600, fontSize: 15),
               );
             },
           ),
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
             child: Icon(Icons.keyboard_arrow_right,
-                color:
-                Theme.of(context).colorScheme.secondary),
+                color: Theme.of(context).colorScheme.secondary),
           ),
         ],
       ),
@@ -294,8 +324,10 @@ class ChannelDetailWidget extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () {
         final currentState = Get.find<ChannelsCubit>().state;
-        if (currentState is ChannelsLoadedSuccess && currentState.selected != null) {
-          NavigatorService.instance.navigateToChannelFiles(currentState.selected!);
+        if (currentState is ChannelsLoadedSuccess &&
+            currentState.selected != null) {
+          NavigatorService.instance
+              .navigateToChannelFiles(currentState.selected!);
         }
       },
       child: Row(
@@ -315,14 +347,11 @@ class ChannelDetailWidget extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .headline1!
-                  .copyWith(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 15),
+                  .copyWith(fontWeight: FontWeight.w400, fontSize: 15),
             ),
           ),
           Padding(
-            padding:
-            const EdgeInsets.only(right: 10.0, left: 4),
+            padding: const EdgeInsets.only(right: 10.0, left: 4),
             child: Icon(
               Icons.keyboard_arrow_right,
               color: Theme.of(context).colorScheme.secondary,
@@ -333,4 +362,66 @@ class ChannelDetailWidget extends StatelessWidget {
     );
   }
 
+  _buildPinnedMessagesTile(context) {
+    final state = Get.find<ChannelsCubit>().state;
+    final channel = (state as ChannelsLoadedSuccess).selected;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        if (channel != null)
+          push(RoutePaths.channelPinnedMessages.path, arguments: channel);
+      },
+      child: Row(
+        children: [
+          Padding(
+              padding: const EdgeInsets.only(
+                  top: 16.0, bottom: 16, left: 10, right: 20),
+              child: Image.asset(
+                imagePinned,
+                color: Theme.of(context).colorScheme.secondary,
+                height: 16,
+                width: 16,
+              )),
+          Expanded(
+            child: Text(
+              AppLocalizations.of(context)!.pinnedMessages,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontWeight: FontWeight.w400, fontSize: 15),
+            ),
+          ),
+          BlocBuilder<PinnedMessageCubit, PinnedMessageState>(
+            bloc: Get.find<PinnedMessageCubit>(),
+            builder: (context, state) {
+              if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
+                return Text(
+                  '${state.pinnedMessageList.length}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontWeight: FontWeight.w600, fontSize: 15),
+                );
+              } else {
+                return Text(
+                  '0',
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontWeight: FontWeight.w600, fontSize: 15),
+                );
+              }
+            },
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0, left: 4),
+            child: Icon(
+              Icons.keyboard_arrow_right,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }

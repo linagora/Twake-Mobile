@@ -257,7 +257,7 @@ class InitService {
               .map(
                 (i) => Message.fromJson(
                   i,
-                  jsonify: false,
+                  jsonify: true,
                   transform: true,
                   channelId: c.id,
                 ),

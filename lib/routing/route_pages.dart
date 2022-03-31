@@ -34,6 +34,7 @@ import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dar
 import 'package:twake/pages/receive_sharing_file/receive_sharing_list_ws_widget.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
+import 'package:twake/widgets/common/pinned_messages.dart';
 
 final routePages = [
   GetPage(
@@ -45,6 +46,11 @@ final routePages = [
           page: () => Chat<ChannelsCubit>(),
           transition: Transition.native,
           children: [
+            GetPage(
+              name: RoutePaths.channelPinnedMessages.name,
+              page: () => PinnedMessages(),
+              transition: Transition.native,
+            ),
             GetPage(
                 name: RoutePaths.channelDetail.name,
                 page: () => ChannelDetailWidget(),
@@ -76,10 +82,10 @@ final routePages = [
                             binding: AddMemberBinding())
                       ]),
                   GetPage(
-                      name: RoutePaths.channelFiles.name,
-                      page: () => ChannelFilesWidget(),
-                      transition: Transition.native,
-                      binding: ChannelFileBinding(),
+                    name: RoutePaths.channelFiles.name,
+                    page: () => ChannelFilesWidget(),
+                    transition: Transition.native,
+                    binding: ChannelFileBinding(),
                   ),
                 ]),
           ]),
@@ -149,39 +155,37 @@ final routePages = [
         transition: Transition.native,
       ),
       GetPage(
-        name: RoutePaths.homeWidget.name,
-        page: () => HomeWidget(),
-        transition: Transition.native,
-        children: [
-          GetPage(
-            name: RoutePaths.shareFile.name,
-            page: () => ReceiveSharingFileWidget(),
-            transition: Transition.native,
-            children: [
-              GetPage(
-                name: RoutePaths.shareFileList.name,
-                page: () => ReceiveSharingFileListWidget(),
+          name: RoutePaths.homeWidget.name,
+          page: () => HomeWidget(),
+          transition: Transition.native,
+          children: [
+            GetPage(
+                name: RoutePaths.shareFile.name,
+                page: () => ReceiveSharingFileWidget(),
                 transition: Transition.native,
-              ),
-              GetPage(
-                name: RoutePaths.shareFileCompList.name,
-                page: () => ReceiveSharingCompanyListWidget(),
-                transition: Transition.native,
-              ),
-              GetPage(
-                name: RoutePaths.shareFileWsList.name,
-                page: () => ReceiveSharingWSListWidget(),
-                transition: Transition.native,
-              ),
-              GetPage(
-                name: RoutePaths.shareFileChannelList.name,
-                page: () => ReceiveSharingChannelListWidget(),
-                transition: Transition.native,
-              ),
-            ]
-          )
-        ]
-      ),
+                children: [
+                  GetPage(
+                    name: RoutePaths.shareFileList.name,
+                    page: () => ReceiveSharingFileListWidget(),
+                    transition: Transition.native,
+                  ),
+                  GetPage(
+                    name: RoutePaths.shareFileCompList.name,
+                    page: () => ReceiveSharingCompanyListWidget(),
+                    transition: Transition.native,
+                  ),
+                  GetPage(
+                    name: RoutePaths.shareFileWsList.name,
+                    page: () => ReceiveSharingWSListWidget(),
+                    transition: Transition.native,
+                  ),
+                  GetPage(
+                    name: RoutePaths.shareFileChannelList.name,
+                    page: () => ReceiveSharingChannelListWidget(),
+                    transition: Transition.native,
+                  ),
+                ])
+          ]),
       GetPage(
         name: RoutePaths.signInUpScreen.name,
         page: () => HomeWidget(),

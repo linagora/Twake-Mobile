@@ -73,7 +73,8 @@ CREATE TABLE message (
     last_name TEXT,
     picture TEXT,
     is_read INT DEFAULT 1,
-    delivery TEXT DEFAULT "delivered"
+    delivery TEXT DEFAULT "delivered",
+    pinned_info TEXT DEFAULT "[]"
 );
 ''';
 

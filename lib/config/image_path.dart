@@ -50,3 +50,6 @@ const imageFileBlueBorder = '$_assetPath/ic_file.png';
 const imageImage = '$_assetPath/ic_image.png';
 const imageArrowForward = '$_assetPath/ic_arrow_forward.png';
 const imageDone = '$_assetPath/ic_done.png';
+const imagePinned = '$_assetPath/2.0x/pinned.png';
+const imageUnpinned = '$_assetPath/2.0x/unpinned.png';
+const imageListPinned = '$_assetPath/2.0x/list_pinned_light.png';

@@ -4,6 +4,7 @@ import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -27,6 +28,8 @@ class NavigatorService {
   final DirectsCubit directsCubit;
   final ChannelMessagesCubit channelMessagesCubit;
   final ThreadMessagesCubit threadMessagesCubit;
+  final PinnedMessageCubit pinnedMessageCubit;
+
   final BadgesCubit badgesCubit;
 
   factory NavigatorService({
@@ -37,6 +40,7 @@ class NavigatorService {
     required DirectsCubit directsCubit,
     required ChannelMessagesCubit channelMessagesCubit,
     required ThreadMessagesCubit threadMessagesCubit,
+    required PinnedMessageCubit pinnedMessageCubit,
     required BadgesCubit badgesCubit,
   }) {
     _service = NavigatorService._(
@@ -46,6 +50,7 @@ class NavigatorService {
       channelsCubit: channelsCubit,
       directsCubit: directsCubit,
       channelMessagesCubit: channelMessagesCubit,
+      pinnedMessageCubit: pinnedMessageCubit,
       threadMessagesCubit: threadMessagesCubit,
       badgesCubit: badgesCubit,
     );
@@ -60,6 +65,7 @@ class NavigatorService {
     required this.directsCubit,
     required this.channelMessagesCubit,
     required this.threadMessagesCubit,
+    required this.pinnedMessageCubit,
     required this.badgesCubit,
   }) {
     // Run the notification click listeners
@@ -157,9 +163,8 @@ class NavigatorService {
     if (reloadThreads) {
       channelMessagesCubit.reset();
       channelMessagesCubit.fetch(
-        channelId: channelId,
-        isDirect: channel.isDirect
-      );
+          channelId: channelId, isDirect: channel.isDirect);
+      pinnedMessageCubit.getPinnedMessages(channelId);
 
       if (channel.isDirect) {
         directsCubit.selectChannel(channelId: channelId);
@@ -180,7 +185,7 @@ class NavigatorService {
 
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
-
+      pinnedMessageCubit.getPinnedMessages(channelId);
       threadMessagesCubit.fetch(
         channelId: channelId,
         threadId: threadId,
@@ -205,7 +210,7 @@ class NavigatorService {
   }) async {
     if (companyId != Globals.instance.companyId) {
       final result = await Get.find<CompaniesCubit>().fetch();
-      if(!result) return;
+      if (!result) return;
       companiesCubit.selectCompany(companyId: companyId);
 
       await workspacesCubit.fetch(companyId: companyId, localOnly: true);
@@ -234,9 +239,8 @@ class NavigatorService {
     }
     channelMessagesCubit.reset();
     await channelMessagesCubit.fetch(
-        channelId: channelId,
-        isDirect: channel.isDirect
-    );
+        channelId: channelId, isDirect: channel.isDirect);
+    pinnedMessageCubit.getPinnedMessages(channelId);
 
     if (channel.isDirect) {
       Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
@@ -293,7 +297,8 @@ class NavigatorService {
   }
 
   Future<void> navigateToInvitationPeopleEmail(String invitationUrl) async {
-    Get.toNamed(RoutePaths.invitationPeopleEmail.path, arguments: invitationUrl);
+    Get.toNamed(RoutePaths.invitationPeopleEmail.path,
+        arguments: invitationUrl);
   }
 
   Future<void> navigateToFilePreview({
@@ -316,11 +321,14 @@ class NavigatorService {
     }
   }
 
+
   Future<void> navigateToReceiveSharing({required ReceiveSharingType fileType}) async {
     Get.toNamed(RoutePaths.shareFile.path, arguments: fileType);
+
   }
 
-  Future<void> navigateToReceiveSharingFileList(List<ReceiveSharingFile> listFiles) async {
+  Future<void> navigateToReceiveSharingFileList(
+      List<ReceiveSharingFile> listFiles) async {
     Get.toNamed(RoutePaths.shareFileList.path, arguments: listFiles);
   }
 
@@ -337,7 +345,8 @@ class NavigatorService {
   }
 
   Future<void> navigateToHome() async {
-    Get.offAll(() => HomeWidget(),
+    Get.offAll(
+      () => HomeWidget(),
       transition: Transition.native,
     );
   }

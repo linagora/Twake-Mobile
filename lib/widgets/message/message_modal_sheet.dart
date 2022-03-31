@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
+import 'package:twake/config/image_path.dart';
 import 'package:twake/models/message/message.dart';
 
 class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
@@ -12,6 +13,8 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final void Function()? onDelete;
   final Function? onEdit;
   final Function? onCopy;
+  final Function? onPinMessage;
+  final Function? onUnpinMessage;
   final BuildContext? ctx;
   final bool isMe;
   final bool isThread;
@@ -22,6 +25,8 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
     this.onDelete,
     this.onEdit,
     this.onCopy,
+    this.onPinMessage,
+    this.onUnpinMessage,
     this.ctx,
     required this.isMe,
     this.isThread = false,
@@ -128,48 +133,52 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           if (widget.isMe && widget.message.responsesCount == 0)
-                            GestureDetector(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 55,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withOpacity(0.3),
-                                      borderRadius: BorderRadius.circular(16.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .error,
-                                          ),
-                                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: GestureDetector(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 55,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withOpacity(0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              Icons.delete,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .error,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(AppLocalizations.of(context)!.delete,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headline5!
-                                          .copyWith(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500))
-                                ],
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(AppLocalizations.of(context)!.delete,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5!
+                                            .copyWith(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500))
+                                  ],
+                                ),
+                                onTap: () {
+                                  widget.onDelete!();
+                                },
                               ),
-                              onTap: () {
-                                widget.onDelete!();
-                              },
                             ),
                           if (widget.isMe && widget.message.responsesCount == 0)
                             Flexible(
@@ -177,6 +186,70 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                 width: 30,
                               ),
                             ),
+                          GestureDetector(
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: 55,
+                                  height: 45,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: widget.message.pinnedInfo == null
+                                          ? Image.asset(
+                                              imagePinned,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                              height: 24,
+                                              width: 24,
+                                            )
+                                          : Image.asset(
+                                              imageUnpinned,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                              height: 24,
+                                              width: 24,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                    widget.message.pinnedInfo == null
+                                        ? AppLocalizations.of(context)!
+                                            .pinMesssage
+                                        : AppLocalizations.of(context)!
+                                            .unpinMesssage,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline4!
+                                        .copyWith(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500))
+                              ],
+                            ),
+                            onTap: () {
+                              widget.message.pinnedInfo == null
+                                  ? widget.onPinMessage!()
+                                  : widget.onUnpinMessage!();
+                            },
+                          ),
+                          Flexible(
+                            child: SizedBox(
+                              width: 30,
+                            ),
+                          ),
                           widget.message.blocks.isEmpty
                               ? Container()
                               : GestureDetector(
@@ -287,48 +360,52 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                               ),
                             ),
                           if (widget.isMe)
-                            GestureDetector(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    width: 55,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withOpacity(0.3),
-                                      borderRadius: BorderRadius.circular(16.0),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.edit,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surface,
-                                          ),
-                                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: GestureDetector(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 55,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withOpacity(0.3),
+                                        borderRadius:
+                                            BorderRadius.circular(16.0),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10.0),
+                                        child: Column(
+                                          children: [
+                                            Icon(
+                                              Icons.edit,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    AppLocalizations.of(context)!.edit,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .copyWith(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500),
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(context)!.edit,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline4!
+                                          .copyWith(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500),
+                                    )
+                                  ],
+                                ),
+                                onTap: widget.onEdit as void Function()?,
                               ),
-                              onTap: widget.onEdit as void Function()?,
                             ),
                         ],
                       ),
