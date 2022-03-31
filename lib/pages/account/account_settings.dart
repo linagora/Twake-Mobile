@@ -75,7 +75,9 @@ class _AccountSettingsState extends State<AccountSettings> {
       listenWhen: (_, current) => current is LogoutInProgress,
       listener: (context, authenticationState) {
         if (authenticationState is LogoutInProgress) {
-          if (mounted) NavigatorService.instance.back(shouldLogout: true);
+          if (mounted) {
+            Navigator.popUntil(context, ModalRoute.withName(RoutePaths.initial));
+          }
         }
       },
       child: Scaffold(
