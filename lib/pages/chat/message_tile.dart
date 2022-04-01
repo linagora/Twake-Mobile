@@ -100,6 +100,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
               builder: (_) {
                 return MessageModalSheet<T>(
                   message: _message,
+                  isDirect: widget.channel.isDirect,
                   isMe: _isMyMessage,
                   isThread: widget.isThread,
                   onReply: onReply,
