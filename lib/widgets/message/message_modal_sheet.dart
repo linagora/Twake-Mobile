@@ -18,6 +18,7 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final BuildContext? ctx;
   final bool isMe;
   final bool isThread;
+  final bool isDirect;
 
   const MessageModalSheet({
     required this.message,
@@ -30,6 +31,7 @@ class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
     this.ctx,
     required this.isMe,
     this.isThread = false,
+    this.isDirect = false,
     Key? key,
   }) : super(key: key);
 
@@ -180,12 +182,13 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                 },
                               ),
                             ),
-                          if (widget.isMe && widget.message.responsesCount == 0)
+                          if (widget.isMe && widget.message.responsesCount == 0 &&!widget.isDirect)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
                               ),
                             ),
+                            if(!widget.isDirect)
                           GestureDetector(
                             child: Column(
                               children: [

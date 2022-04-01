@@ -115,7 +115,9 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 builder: (_, messagesState) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _pinnedMessagesSheet(context, channel),
+                    // TODO: del condition when fix it for direct
+                    if (!channel.isDirect)
+                      _pinnedMessagesSheet(context, channel),
                     Flexible(child: _buildChatContent(messagesState, channel)),
                     _threadReply(context),
                     _composeBar(messagesState, draft, channel)
