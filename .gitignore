@@ -50,3 +50,4 @@ app.*.map.json
 # Weblate related
 lib/l10n/app_nb.arb
 lib/l10n/app_zh.arb
+lib/l10n/app_messages.arb
