@@ -500,7 +500,7 @@
   "@noFileInChannel": {},
   "youRespectful": "Tu",
   "@youRespectful": {},
-  "leaveChannel": "Lascia il canale",
+  "leaveChannel": "Lascia il canale {channelName}",
   "@leaveChannel": {},
   "companies": "Aziende",
   "@companies": {},
@@ -540,5 +540,31 @@
   "files": "File",
   "@files": {},
   "images": "Immagini",
-  "@images": {}
+  "@images": {},
+  "leaveChannelWarning": "Sei sicuro di voler lasciare questo canale?",
+  "@leaveChannelWarning": {},
+  "fileDownloadedInStorage": "Il file viene scaricato e salvato nella memoria del dispositivo",
+  "@fileDownloadedInStorage": {},
+  "pinMesssage": "fissare",
+  "@pinMesssage": {},
+  "unpinMesssage": "togliere",
+  "@unpinMesssage": {},
+  "pinnedMessages": "Messaggi fissati",
+  "@pinnedMessages": {},
+  "unpinAllMessages": "Togliere tutti i messaggi",
+  "@unpinAllMessages": {},
+  "somethingWentWrong": "Scusa, qualcosa è andato storto",
+  "@somethingWentWrong": {},
+  "noPinnedMessages": "Non ci sono ancora messaggi fissati",
+  "@noPinnedMessages": {},
+  "unpinnedNumber": "{unpinnedNumber} messaggi tolti",
+  "@unpinnedNumber": {
+    "description": "Number of unpinned messages",
+    "placeholders": {
+      "unpinnedNumber": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  }
 }
