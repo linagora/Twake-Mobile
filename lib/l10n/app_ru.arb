@@ -486,7 +486,7 @@
   "@retry": {},
   "youRespectful": "Вы",
   "@youRespectful": {},
-  "leaveChannel": "Покинуть канал",
+  "leaveChannel": "Покинуть канал {channelName}",
   "@leaveChannel": {},
   "addComment": "Добавить комментарий...",
   "@addComment": {},
@@ -528,5 +528,31 @@
   "searchChannelAndChat": "Поиск по каналам и чатам",
   "@searchChannelAndChat": {},
   "files": "Файлы",
-  "@files": {}
+  "@files": {},
+  "leaveChannelWarning": "Вы уверены, что хотите покинуть этот канал?",
+  "@leaveChannelWarning": {},
+  "fileDownloadedInStorage": "Файл загружен и сохранен в памяти устройства",
+  "@fileDownloadedInStorage": {},
+  "pinMesssage": "закрепить",
+  "@pinMesssage": {},
+  "unpinMesssage": "открепить",
+  "@unpinMesssage": {},
+  "pinnedMessages": "Закрепленные сообщения",
+  "@pinnedMessages": {},
+  "unpinAllMessages": "Открепить все сообщения",
+  "@unpinAllMessages": {},
+  "somethingWentWrong": "Извините, что-то пошло не так",
+  "@somethingWentWrong": {},
+  "noPinnedMessages": "Закрепленных сообщений пока нет",
+  "@noPinnedMessages": {},
+  "unpinnedNumber": "Количество открепленных сообщений: {unpinnedNumber}",
+  "@unpinnedNumber": {
+    "description": "Number of unpinned messages",
+    "placeholders": {
+      "unpinnedNumber": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  }
 }
