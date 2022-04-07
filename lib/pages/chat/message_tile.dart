@@ -288,173 +288,181 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     : Theme.of(context).iconTheme.color,
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              widget.isPinned
-                  ? Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                      child: Text(
-                        '${_message.sender}',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: HSLColor.fromAHSL(
-                                  1, _message.username.hashCode % 360, 0.9, 0.7)
-                              .toColor(),
-                        ),
-                      ),
-                    )
-                  : (!widget.channel.isDirect &&
-                          !_isMyMessage &&
-                          widget.upBubbleSide)
-                      ? Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
-                          child: Text(
-                            '${_message.sender}',
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: HSLColor.fromAHSL(
-                                      1,
-                                      _message.username.hashCode % 360,
-                                      0.9,
-                                      0.3)
-                                  .toColor(),
-                            ),
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children:[
+              Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                widget.isPinned
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                        child: Text(
+                          '${_message.sender}',
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: HSLColor.fromAHSL(
+                                    1, _message.username.hashCode % 360, 0.9, 0.7)
+                                .toColor(),
                           ),
-                        )
-                      : SizedBox.shrink(),
-              Padding(
-                padding: EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Flexible(
-                                    child: _message.subtype ==
-                                            MessageSubtype.deleted
-                                        ? Text(
-                                            AppLocalizations.of(context)!
-                                                .messageDeleted,
-                                            style: _parentStyle.copyWith(
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500))
-                                        : TwacodeRenderer(
-                                                twacode:
-                                                    _message.blocks.length == 0
-                                                        ? [_message.text]
-                                                        : _message.blocks,
-                                                fileIds: _message.files,
-                                                parentStyle: _parentStyle,
-                                                userUniqueColor:
-                                                    _message.username.hashCode %
-                                                        360,
-                                                isSwipe: false)
-                                            .message,
-                                  ),
-                                  SizedBox(
-                                      width: (_message.responsesCount > 0 &&
-                                              !_message.inThread &&
-                                              !_hideShowReplies)
-                                          ? _sizeOfReplyBox
-                                          : 0),
-                                ],
+                        ),
+                      )
+                    : (!widget.channel.isDirect &&
+                            !_isMyMessage &&
+                            widget.upBubbleSide)
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 0, 0, 0),
+                            child: Text(
+                              '${_message.sender}',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: HSLColor.fromAHSL(
+                                        1,
+                                        _message.username.hashCode % 360,
+                                        0.9,
+                                        0.3)
+                                    .toColor(),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 3),
-                                child: Row(
+                            ),
+                          )
+                        : SizedBox.shrink(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(6.0, 6.0, 6.0, 0.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    _message.pinnedInfo != null
-                                        ? Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 4),
-                                            child: Image.asset(
-                                              imagePinned,
-                                              color: _isMyMessage
-                                                  ? Theme.of(context)
-                                                      .iconTheme
-                                                      .color!
-                                                      .withOpacity(0.7)
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary,
-                                              width: 12.0,
-                                              height: 12.0,
-                                            ),
-                                          )
-                                        : SizedBox.shrink(),
-                                    Text(
-                                        _message.inThread || _hideShowReplies
-                                            ? DateFormatter.getVerboseDateTime(
-                                                _message.createdAt)
-                                            : DateFormatter.getVerboseTime(
-                                                _message.createdAt),
-                                        textAlign: TextAlign.end,
-                                        style: _parentStyle.copyWith(
-                                            fontStyle: FontStyle.italic,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w400)),
+                                    Flexible(
+                                      child: _message.subtype ==
+                                              MessageSubtype.deleted
+                                          ? Text(
+                                              AppLocalizations.of(context)!
+                                                  .messageDeleted,
+                                              style: _parentStyle.copyWith(
+                                                  fontStyle: FontStyle.italic,
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w500))
+                                          : TwacodeRenderer(
+                                                  twacode:
+                                                      _message.blocks.length == 0
+                                                          ? [_message.text]
+                                                          : _message.blocks,
+                                                  fileIds: _message.files,
+                                                  parentStyle: _parentStyle,
+                                                  userUniqueColor:
+                                                      _message.username.hashCode %
+                                                          360,
+                                                  isSwipe: false)
+                                              .message,
+                                    ),
+                                    SizedBox(
+                                        width: (_message.responsesCount > 0 &&
+                                                !_message.inThread &&
+                                                !_hideShowReplies)
+                                            ? _sizeOfReplyBox
+                                            : 0),
                                   ],
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 3),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _message.pinnedInfo != null
+                                          ? Padding(
+                                              padding:
+                                                  const EdgeInsets.only(right: 4),
+                                              child: Image.asset(
+                                                imagePinned,
+                                                color: _isMyMessage
+                                                    ? Theme.of(context)
+                                                        .iconTheme
+                                                        .color!
+                                                        .withOpacity(0.7)
+                                                    : Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary,
+                                                width: 12.0,
+                                                height: 12.0,
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    if (_message.responsesCount > 0 &&
-                        !_message.inThread &&
-                        !_hideShowReplies)
-                      Container(
-                        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                        child: Text(
-                            '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
-                            style: _isMyMessage && Get.isDarkMode
-                                ? _isMyMessage
-                                    ? Theme.of(context)
-                                        .textTheme
-                                        .headline1!
-                                        .copyWith(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold)
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .copyWith(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold)
-                                : _isMyMessage
-                                    ? Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold)
-                                    : Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .copyWith(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold)),
+                        ],
                       ),
-                  ],
+                      if (_message.responsesCount > 0 &&
+                          !_message.inThread &&
+                          !_hideShowReplies)
+                        Container(
+                          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                          child: Text(
+                              '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(_message.responsesCount)}',
+                              style: _isMyMessage && Get.isDarkMode
+                                  ? _isMyMessage
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .headline1!
+                                          .copyWith(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold)
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .headline4!
+                                          .copyWith(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold)
+                                  : _isMyMessage
+                                      ? Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold)
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .headline4!
+                                          .copyWith(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold)),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 3.0),
+              child: Text(
+                _message.inThread || _hideShowReplies
+                    ? DateFormatter.getVerboseDateTime(
+                        _message.createdAt)
+                    : DateFormatter.getVerboseTime(
+                        _message.createdAt),
+                textAlign: TextAlign.end,
+                style: _parentStyle.copyWith(
+                    fontStyle: FontStyle.italic,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400)),
+            ),
+            ] 
           ),
         ),
       ),
