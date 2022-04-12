@@ -459,18 +459,20 @@ class MessagesRepository {
     return true;
   }
 
-  Future<List<Message>> fetchPinnedMesssages({String? channelId}) async {
-    final queryParameters = {
-      'include_users': 1,
-      'filter': 'pinned',
-    };
+  Future<List<Message>> fetchPinnedMesssages(
+      {String? channelId, bool? isDirect}) async {
+    final queryParameters = {'include_users': 1, 'filter': 'pinned', 'flat': 1};
     List<dynamic> remoteResult = [];
     Iterable<Message> remoteMessages = [];
     try {
       remoteResult = await _api.get(
         endpoint: sprintf(Endpoint.threads, [
           Globals.instance.companyId,
-          Globals.instance.workspaceId,
+          isDirect == null
+              ? Globals.instance.workspaceId
+              : isDirect
+                  ? 'direct'
+                  : Globals.instance.workspaceId,
           channelId ?? Globals.instance.channelId,
         ]),
         queryParameters: queryParameters,
@@ -481,6 +483,7 @@ class MessagesRepository {
       return [];
     } finally {
       remoteMessages = remoteResult
+          .map((e) => e['message'])
           .where((rm) =>
               rm['type'] == 'message' &&
               rm['subtype'] != 'system' &&

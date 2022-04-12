@@ -100,7 +100,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
               builder: (_) {
                 return MessageModalSheet<T>(
                   message: _message,
-                  isDirect: widget.channel.isDirect,
                   isMe: _isMyMessage,
                   isThread: widget.isThread,
                   onReply: onReply,
@@ -126,8 +125,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     Navigator.of(context).pop();
                   },
                   onPinMessage: () async {
-                    Get.find<PinnedMessageCubit>()
-                        .pinMessage(message: _message);
+                    Get.find<PinnedMessageCubit>().pinMessage(
+                        message: _message, isDirect: widget.channel.isDirect);
                     Navigator.of(context).pop();
                   },
                   onUnpinMessage: () async {
@@ -287,10 +286,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     ? Theme.of(context).colorScheme.surface
                     : Theme.of(context).iconTheme.color,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children:[
-              Column(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 widget.isPinned
@@ -302,8 +299,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: HSLColor.fromAHSL(
-                                    1, _message.username.hashCode % 360, 0.9, 0.7)
+                            color: HSLColor.fromAHSL(1,
+                                    _message.username.hashCode % 360, 0.9, 0.7)
                                 .toColor(),
                           ),
                         ),
@@ -357,14 +354,15 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                                   fontWeight: FontWeight.w500))
                                           : TwacodeRenderer(
                                                   twacode:
-                                                      _message.blocks.length == 0
+                                                      _message.blocks.length ==
+                                                              0
                                                           ? [_message.text]
                                                           : _message.blocks,
                                                   fileIds: _message.files,
                                                   parentStyle: _parentStyle,
-                                                  userUniqueColor:
-                                                      _message.username.hashCode %
-                                                          360,
+                                                  userUniqueColor: _message
+                                                          .username.hashCode %
+                                                      360,
                                                   isSwipe: false)
                                               .message,
                                     ),
@@ -383,8 +381,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                     children: [
                                       _message.pinnedInfo != null
                                           ? Padding(
-                                              padding:
-                                                  const EdgeInsets.only(right: 4),
+                                              padding: const EdgeInsets.only(
+                                                  right: 4),
                                               child: Image.asset(
                                                 imagePinned,
                                                 color: _isMyMessage
@@ -451,19 +449,16 @@ class _MessageTileState<T extends BaseMessagesCubit>
             Padding(
               padding: EdgeInsets.only(top: 3.0),
               child: Text(
-                _message.inThread || _hideShowReplies
-                    ? DateFormatter.getVerboseDateTime(
-                        _message.createdAt)
-                    : DateFormatter.getVerboseTime(
-                        _message.createdAt),
-                textAlign: TextAlign.end,
-                style: _parentStyle.copyWith(
-                    fontStyle: FontStyle.italic,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400)),
+                  _message.inThread || _hideShowReplies
+                      ? DateFormatter.getVerboseDateTime(_message.createdAt)
+                      : DateFormatter.getVerboseTime(_message.createdAt),
+                  textAlign: TextAlign.end,
+                  style: _parentStyle.copyWith(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400)),
             ),
-            ] 
-          ),
+          ]),
         ),
       ),
     );

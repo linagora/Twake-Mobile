@@ -164,7 +164,7 @@ class NavigatorService {
       channelMessagesCubit.reset();
       channelMessagesCubit.fetch(
           channelId: channelId, isDirect: channel.isDirect);
-      pinnedMessageCubit.getPinnedMessages(channelId);
+      pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
 
       if (channel.isDirect) {
         directsCubit.selectChannel(channelId: channelId);
@@ -185,7 +185,7 @@ class NavigatorService {
 
     if (threadId != null && threadId.isNotEmpty) {
       channelMessagesCubit.selectThread(messageId: threadId);
-      pinnedMessageCubit.getPinnedMessages(channelId);
+      pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
       threadMessagesCubit.fetch(
         channelId: channelId,
         threadId: threadId,
@@ -240,7 +240,7 @@ class NavigatorService {
     channelMessagesCubit.reset();
     await channelMessagesCubit.fetch(
         channelId: channelId, isDirect: channel.isDirect);
-    pinnedMessageCubit.getPinnedMessages(channelId);
+    pinnedMessageCubit.getPinnedMessages(channelId, channel.isDirect);
 
     if (channel.isDirect) {
       Get.toNamed(RoutePaths.directMessages.path)?.then((_) {
@@ -321,10 +321,9 @@ class NavigatorService {
     }
   }
 
-
-  Future<void> navigateToReceiveSharing({required ReceiveSharingType fileType}) async {
+  Future<void> navigateToReceiveSharing(
+      {required ReceiveSharingType fileType}) async {
     Get.toNamed(RoutePaths.shareFile.path, arguments: fileType);
-
   }
 
   Future<void> navigateToReceiveSharingFileList(
