@@ -37,7 +37,7 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
   }
 
   @override
-  void initState() {   
+  void initState() {
     super.initState();
     if (Get.arguments != null && Get.arguments.runtimeType is List<Account>) {
       Get.find<AddChannelCubit>().addSelectedMembers(Get.arguments);
@@ -321,8 +321,11 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                             channelVisibility:
                                 addChannelState.channelVisibility,
                             onSelectableChannelTypeClick: (channelVisibility) =>
-                                Get.find<AddChannelCubit>()
-                                    .setChannelVisibility(channelVisibility),
+                                {
+                              Get.find<AddChannelCubit>()
+                                  .setChannelVisibility(channelVisibility),
+                              addAllUsers = false
+                            },
                           ),
                         ),
                       ),
@@ -360,66 +363,80 @@ class _NewChannelWidgetState extends State<NewChannelWidget> {
                               );
                             }),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 16, right: 16, bottom: 8),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(
-                            height: 44,
-                            color:
-                                Theme.of(context).colorScheme.secondaryContainer,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12),
-                              child: Row(
-                                children: [
-                                  Flexible(
-                                    child: AutoSizeText(
-                                      AppLocalizations.of(context)!
-                                          .inviteAllWorkspaceUsers,
-                                      maxLines: 1,
-                                      minFontSize: 15,
-                                      maxFontSize: 17,
-                                      style: TextStyle(
-                                        fontSize: 17,
+                      BlocBuilder<AddChannelCubit, AddChannelState>(
+                        bloc: Get.find<AddChannelCubit>(),
+                        builder: (context, state) {
+                          if (state.channelVisibility ==
+                              ChannelVisibility.public) {
+                            return Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, bottom: 8),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                      height: 44,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondaryContainer,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        child: Row(
+                                          children: [
+                                            Flexible(
+                                              child: AutoSizeText(
+                                                AppLocalizations.of(context)!
+                                                    .inviteAllWorkspaceUsers,
+                                                maxLines: 1,
+                                                minFontSize: 15,
+                                                maxFontSize: 17,
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                ),
+                                              ),
+                                            ),
+                                            CupertinoSwitch(
+                                              activeColor: Theme.of(context)
+                                                  .textTheme
+                                                  .headline4!
+                                                  .color,
+                                              value: addAllUsers,
+                                              onChanged: (bool value) {
+                                                setState(() {
+                                                  addAllUsers = value;
+                                                  //print(addAllUsers);
+                                                });
+                                              },
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  CupertinoSwitch(
-                                    activeColor: Theme.of(context)
-                                        .textTheme
-                                        .headline4!
-                                        .color,
-                                    value: addAllUsers,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        addAllUsers = value;
-                                        //print(addAllUsers);
-                                      });
-                                    },
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 28, right: 28, bottom: 24),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                              AppLocalizations.of(context)!
-                                  .automaticallyInviteAllWorkspaceUsers,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline2!
-                                  .copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12)),
-                        ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 28, right: 28, bottom: 24),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                        AppLocalizations.of(context)!
+                                            .automaticallyInviteAllWorkspaceUsers,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline2!
+                                            .copyWith(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 12)),
+                                  ),
+                                ),
+                              ],
+                            );
+                          } else
+                            return SizedBox.shrink();
+                        },
                       ),
                       _buildAddMemberRow(),
                       Padding(
