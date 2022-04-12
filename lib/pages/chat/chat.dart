@@ -115,9 +115,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 builder: (_, messagesState) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // TODO: del condition when fix it for direct
-                    if (!channel.isDirect)
-                      _pinnedMessagesSheet(context, channel),
+                    _pinnedMessagesSheet(context, channel),
                     Flexible(child: _buildChatContent(messagesState, channel)),
                     _threadReply(context),
                     _composeBar(messagesState, draft, channel)
@@ -174,8 +172,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         await Get.find<PinnedMessageCubit>().unpinMessage(message: message);
     if (!result)
       Utilities.showSimpleSnackBar(
-          context: context, message: AppLocalizations.of(context)!
-                                    .somethingWentWrong);
+          context: context,
+          message: AppLocalizations.of(context)!.somethingWentWrong);
   }
 
   Widget _pinnedMessagesSheet(BuildContext context, Channel channel) {

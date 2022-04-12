@@ -47,9 +47,9 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
     return false;
   }
 
-  Future<void> getPinnedMessages(String channelId) async {
-    final messages =
-        await _messageRepository.fetchPinnedMesssages(channelId: channelId);
+  Future<void> getPinnedMessages(String channelId, bool? isDirect) async {
+    final messages = await _messageRepository.fetchPinnedMesssages(
+        channelId: channelId, isDirect: isDirect);
     if (messages.isNotEmpty) {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
@@ -75,7 +75,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
     return false;
   }
 
-  Future<bool> pinMessage({required Message message}) async {
+  Future<bool> pinMessage({required Message message, bool? isDirect}) async {
     List<Message> messages = [];
 
     if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
@@ -90,7 +90,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           newPinnedMessageList: messages,
           newSelected: 0));
 
-      final newMessages = await _messageRepository.fetchPinnedMesssages();
+      final newMessages =
+          await _messageRepository.fetchPinnedMesssages(isDirect: isDirect);
 
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
