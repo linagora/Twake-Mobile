@@ -208,11 +208,7 @@ class _ComposeBar extends State<ComposeBar> {
     return BlocListener<ThreadMessagesCubit, MessagesState>(
       bloc: Get.find<ThreadMessagesCubit>(),
       listener: (context, state) {
-        if (state is MessagesLoadSuccessSwipeToReply) {
-          swipeRequestFocus(true);
-        } else if (state is MessagesInitial) {
-          swipeRequestFocus(false);
-        }
+        swipeRequestFocus(false);
       },
       child: WillPopScope(
         onWillPop: onBackPress,

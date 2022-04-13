@@ -9,6 +9,7 @@ import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
@@ -23,6 +24,8 @@ class MessagesGroupedList extends StatefulWidget {
 }
 
 class _MessagesGroupedListState extends State<MessagesGroupedList> {
+  final SwipeActionController swipeController = SwipeActionController();
+  
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChannelMessagesCubit, MessagesState>(
@@ -113,9 +116,10 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
         //conditions for determining the shape of the bubble sides
         final List<bool> bubbleSides = bubbleSide(messages, index, true);
         return SwipeActionCell(
+          controller: swipeController,
           key: ObjectKey(messages[index]),
           performsFirstActionWithFullSwipe: true,
-          fullSwipeFactor: 0.15,
+          fullSwipeFactor: 0.1,
           trailingActions: <SwipeAction>[
             SwipeAction(
                 content: Column(
@@ -136,9 +140,12 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                 onTap: (CompletionHandler handler) async {
                   Get.find<ThreadMessagesCubit>().reset();
 
-                  Get.find<ThreadMessagesCubit>().swipeReply(message);
-
-                  setState(() {});
+                  await NavigatorService.instance.navigate(
+                    channelId: message.channelId,
+                    threadId: message.id,
+                    reloadThreads: false,
+                  );
+                  swipeController.closeAllOpenCell();
                 },
                 color: Colors.transparent),
           ],

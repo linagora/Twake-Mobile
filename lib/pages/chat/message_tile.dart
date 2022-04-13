@@ -435,7 +435,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold)
                                       : Theme.of(context)
-                                          .textTheme
+                                          .textTheme 
                                           .headline4!
                                           .copyWith(
                                               fontSize: 13,
