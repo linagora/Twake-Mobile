@@ -374,33 +374,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             : 0),
                                   ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 3),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      _message.pinnedInfo != null
-                                          ? Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 4),
-                                              child: Image.asset(
-                                                imagePinned,
-                                                color: _isMyMessage
-                                                    ? Theme.of(context)
-                                                        .iconTheme
-                                                        .color!
-                                                        .withOpacity(0.7)
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary,
-                                                width: 12.0,
-                                                height: 12.0,
-                                              ),
-                                            )
-                                          : SizedBox.shrink(),
-                                    ],
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -446,17 +419,46 @@ class _MessageTileState<T extends BaseMessagesCubit>
                 ),
               ],
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 3.0),
-              child: Text(
-                  _message.inThread || _hideShowReplies
-                      ? DateFormatter.getVerboseDateTime(_message.createdAt)
-                      : DateFormatter.getVerboseTime(_message.createdAt),
-                  textAlign: TextAlign.end,
-                  style: _parentStyle.copyWith(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400)),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 3),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _message.pinnedInfo != null
+                          ? Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Image.asset(
+                                imagePinned,
+                                color: _isMyMessage
+                                    ? Theme.of(context)
+                                        .iconTheme
+                                        .color!
+                                        .withOpacity(0.7)
+                                    : Theme.of(context).colorScheme.secondary,
+                                width: 12.0,
+                                height: 12.0,
+                              ),
+                            )
+                          : SizedBox.shrink(),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 3.0),
+                  child: Text(
+                      _message.inThread || _hideShowReplies
+                          ? DateFormatter.getVerboseDateTime(_message.createdAt)
+                          : DateFormatter.getVerboseTime(_message.createdAt),
+                      textAlign: TextAlign.end,
+                      style: _parentStyle.copyWith(
+                          fontStyle: FontStyle.italic,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400)),
+                ),
+              ],
             ),
           ]),
         ),
