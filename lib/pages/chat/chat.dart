@@ -117,7 +117,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   children: [
                     _pinnedMessagesSheet(context, channel),
                     Flexible(child: _buildChatContent(messagesState, channel)),
-                    _threadReply(context),
                     _composeBar(messagesState, draft, channel)
                   ],
                 ),
@@ -277,102 +276,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         });
   }
 
-  Widget _threadReply(BuildContext context) {
-    return BlocBuilder<ThreadMessagesCubit, MessagesState>(
-      bloc: Get.find<ThreadMessagesCubit>(),
-      builder: (ctx, state) {
-        if (state is MessagesLoadSuccessSwipeToReply) {
-          final _message = state.messages.first;
-          return Column(
-            children: [
-              Divider(
-                  thickness: 1,
-                  height: 3,
-                  color: Theme.of(context).colorScheme.secondaryContainer),
-              SizedBox(
-                height: 2,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(AppLocalizations.of(context)!.replyTo,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline1!
-                                  .copyWith(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal)),
-                          Container(
-                            constraints:
-                                BoxConstraints(maxWidth: Dim.widthPercent(70)),
-                            child: Text('${_message.sender}',
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .copyWith(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600)),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            width: Dim.widthPercent(80),
-                            child: TwacodeRenderer(
-                              twacode: _message.blocks.length == 0
-                                  ? [_message.text]
-                                  : _message.blocks,
-                              fileIds: _message.files,
-                              parentStyle: Theme.of(context)
-                                  .textTheme
-                                  .headline2!
-                                  .copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal),
-                              userUniqueColor: _message.username.hashCode % 360,
-                              isSwipe: true,
-                            ).messageOnSwipe,
-                          ),
-                          SizedBox(
-                            height: 3,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  IconButton(
-                    onPressed: () {
-                      Get.find<ThreadMessagesCubit>().reset();
-                    },
-                    iconSize: 25,
-                    icon: Icon(CupertinoIcons.clear_thick_circled),
-                    color: Colors.grey[300],
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                ],
-              ),
-            ],
-          );
-        } else
-          return Container();
-      },
-    );
-  }
-
   Widget _composeBar(messagesState, String? draft, Channel channel) {
     return ComposeBar(
       autofocus: messagesState is MessageEditInProgress,
@@ -380,7 +283,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
           ? messagesState.message.text
           : draft,
       onMessageSend: (content, context) async {
-        final stateThread = Get.find<ThreadMessagesCubit>().state;
         final uploadState = Get.find<FileUploadCubit>().state;
         List<dynamic> attachments = const [];
         if (uploadState.listFileUploading.isNotEmpty) {
@@ -389,27 +291,17 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
               .map((e) => e.file!.toAttachment())
               .toList();
         }
-        if (stateThread is MessagesLoadSuccessSwipeToReply) {
-          await Get.find<ThreadMessagesCubit>().send(
+        if (messagesState is MessageEditInProgress) {
+          Get.find<ChannelMessagesCubit>().edit(
+              message: messagesState.message,
+              editedText: content,
+              newAttachments: attachments);
+        } else {
+          Get.find<ChannelMessagesCubit>().send(
             originalStr: content,
             attachments: attachments,
-            threadId: stateThread.messages.first.id,
             isDirect: channel.isDirect,
           );
-          Get.find<ThreadMessagesCubit>().reset();
-        } else {
-          if (messagesState is MessageEditInProgress) {
-            Get.find<ChannelMessagesCubit>().edit(
-                message: messagesState.message,
-                editedText: content,
-                newAttachments: attachments);
-          } else {
-            Get.find<ChannelMessagesCubit>().send(
-              originalStr: content,
-              attachments: attachments,
-              isDirect: channel.isDirect,
-            );
-          }
         }
         // reset channels draft
         Get.find<T>().saveDraft(draft: null);
