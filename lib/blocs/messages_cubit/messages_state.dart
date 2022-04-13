@@ -37,19 +37,6 @@ class MessageSendInProgress extends MessagesLoadSuccess {
   }) : super(messages: messages, hash: hash);
 }
 
-class MessagesLoadSuccessSwipeToReply extends MessagesLoadSuccess {
-  final List<Message> messages;
-  final int hash; // sum of hash of all messages in the list
-
-  const MessagesLoadSuccessSwipeToReply({
-    required this.messages,
-    required this.hash,
-  }) : super(messages: messages, hash: hash);
-
-  @override
-  List<Object?> get props => [hash];
-}
-
 class NoMessagesFound extends MessagesLoadSuccess {
   NoMessagesFound() : super(messages: <Message>[], hash: 0);
 

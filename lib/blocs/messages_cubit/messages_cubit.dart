@@ -70,15 +70,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
-  Future<void> swipeReply(
-    Message thread,
-  ) async {
-    emit(MessagesLoadSuccessSwipeToReply(
-      messages: [thread],
-      hash: 0,
-    ));
-  }
-
   Future<void> fetchBefore({
     required String channelId,
     String? threadId,
