@@ -497,7 +497,7 @@
       "sender": {}
     }
   },
-  "leaveChannel": "Quitter le canal",
+  "leaveChannel": "Quitter le canal {channelName}",
   "@leaveChannel": {},
   "to": "À",
   "@to": {},
@@ -532,5 +532,31 @@
     }
   },
   "companies": "Entreprises",
-  "@companies": {}
+  "@companies": {},
+  "leaveChannelWarning": "Voulez-vous vraiment quitter cette chaîne ?",
+  "@leaveChannelWarning": {},
+  "fileDownloadedInStorage": "Fichier téléchargé et sauvegardé dans l'espace de stockage de votre appareil",
+  "@fileDownloadedInStorage": {},
+  "pinMesssage": "attacher",
+  "@pinMesssage": {},
+  "unpinMesssage": "détacher",
+  "@unpinMesssage": {},
+  "pinnedMessages": "Messages attachés",
+  "@pinnedMessages": {},
+  "unpinAllMessages": "Détacher tous les messages",
+  "@unpinAllMessages": {},
+  "somethingWentWrong": "Nous sommes désolé, quelque chose n'a pas fonctionné",
+  "@somethingWentWrong": {},
+  "noPinnedMessages": "Il n’y a pas encore de messages attachés",
+  "@noPinnedMessages": {},
+  "unpinnedNumber": "{unpinnedNumber} messages détachés",
+  "@unpinnedNumber": {
+    "description": "Number of unpinned messages",
+    "placeholders": {
+      "unpinnedNumber": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  }
 }
