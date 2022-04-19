@@ -22,7 +22,14 @@ import 'package:twake/widgets/common/pull_to_refresh_header.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+    await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: "AIzaSyAX6d-jWjhiYiP2RsRdWTrpKt9yCW0M5Zc",
+      appId: "1:492265884073:android:fba0d50aace57d8d",
+      messagingSenderId: "492265884073",
+      projectId: "twake-195010",
+    ),
+  );
   FirebaseMessaging.instance.getToken().onError((e, _) async {
     Logger().e('Error occurred when requesting Firebase Messaging token\n$e');
   });

@@ -2,19 +2,29 @@ import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/sql/migrations.dart';
 
+part 'storage_service_mobile.dart';
+part 'storage_service_desktop_app.dart';
+
 const String _DATABASE_FILE = 'twakesql.db';
 
-class StorageService {
+abstract class StorageService {
   static late final StorageService _service;
   late Database _db;
 
   factory StorageService({required reset}) {
     if (reset) {
-      _service = StorageService._();
+      if(Platform.isMacOS || Platform.isWindows || Platform.isLinux){
+        _service = StorageServiceDesktop._();
+      }else if(Platform.isIOS || Platform.isAndroid){
+        _service = StorageServiceMobile._();
+      }else{
+
+      }
     }
     return _service;
   }
@@ -26,50 +36,7 @@ class StorageService {
   StorageService._();
 
   // Must be called before accessing instance!
-  Future<void> init() async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, _DATABASE_FILE);
-
-    try {
-      await Directory(databasesPath).create(recursive: true);
-    } catch (e) {
-      Logger().wtf('Failed to create databases directory!\nError: $e');
-      throw e;
-    }
-
-    void onConfigure(Database db) async {
-      // enable support for foreign key constraints
-      await db.execute("PRAGMA foreign_keys = ON");
-      // enable support for LIKE searches case sensitively
-      await db.execute("PRAGMA case_sensitive_like = OFF");
-    }
-
-    void onCreate(Database db, int version) async {
-      for (var ddl in CURRENT_MIGRATION) {
-        print('Executing: $ddl');
-        await db.execute(ddl);
-      }
-    }
-
-    void onOpen(Database db) async {
-      final v = await db.getVersion();
-      Logger().d('Opened twake db v.$v');
-    }
-
-    void onUpgrade(db, oldVersion, newVersion) async {
-      Logger().d('Migration to twake db v.$newVersion from v.$oldVersion');
-      await dbUpgrade(db: db, oldVersion: oldVersion, newVersion: newVersion);
-    }
-
-    _db = await openDatabase(
-      path,
-      version: DBVER,
-      onConfigure: onConfigure,
-      onCreate: onCreate,
-      onOpen: onOpen,
-      onUpgrade: onUpgrade,
-    );
-  }
+  Future<void> init();
 
   // This function can be used both for inserts and updates
   Future<void> insert({

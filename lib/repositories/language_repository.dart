@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/services/storage_service.dart';
+import 'package:twake/services/storage_service/storage_service.dart';
 
 //TODO before the build, update the list of translated languages using weblate
 const List<String> translatedLanguages = [
