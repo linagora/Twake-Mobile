@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/storage_service.dart';
+import 'package:twake/utils/platform_detection.dart';
 
 //TODO before the build, update the list of translated languages using weblate
 const List<String> translatedLanguages = [
@@ -47,6 +48,10 @@ class LanguageRepository {
   }
 
   String getDeviceLanguage() {
+    //TODO: platform - replace with relevant solution here
+    if(!PlatformDetection.isMobileSupported()) {
+      return 'en_US';
+    }
     final String deviceLanguage = Platform.localeName;
     // сhecking if it is needed to do substring
     final int checkSubstring = deviceLanguage.contains('-')

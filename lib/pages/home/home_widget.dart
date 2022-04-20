@@ -25,6 +25,7 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/push_notifications_service.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
 import 'package:twake/utils/receive_sharing_text_manager.dart';
 import 'package:twake/widgets/common/badges.dart';
@@ -385,6 +386,8 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       );
 
   void _initFileDownloader() {
+    if(!PlatformDetection.isMobileSupported())
+      return;
     _bindFileDownloadBackgroundIsolate();
     FlutterDownloader.registerCallback(downloadCallback);
   }

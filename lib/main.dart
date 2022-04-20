@@ -12,20 +12,41 @@ import 'package:get_storage/get_storage.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:twake/config/styles_config.dart';
 import 'package:twake/di/home_binding.dart';
+import 'package:twake/di/main_bindings.dart';
 import 'package:twake/repositories/language_repository.dart';
 import 'package:twake/repositories/theme_repository.dart';
 import 'package:twake/routing/route_pages.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/init_service.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/widgets/common/pull_to_refresh_header.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  await dotenv.load(fileName: ".firebase.env");
+  try {
+    String apiKey = dotenv.get('API_KEY');
+    String appId = dotenv.get('APP_ID');
+    String messagingSenderId = dotenv.get('MESSAGE_SENDER_ID');
+    String projectId = dotenv.get('PROJECT_ID');
+    await Firebase.initializeApp(
+        options: FirebaseOptions(
+          apiKey: apiKey,
+          appId: appId,
+          messagingSenderId: messagingSenderId,
+          projectId: projectId,
+        ),
+      );
+  } catch (e) {
+    Logger().e('Error occurred while initializing firebase:\n$e');
+  }
   FirebaseMessaging.instance.getToken().onError((e, _) async {
     Logger().e('Error occurred when requesting Firebase Messaging token\n$e');
   });
+
+  await MainBindings().dependencies();
   await InitService.preAuthenticationInit();
 
   await dotenv.load(fileName: ".env");
@@ -34,7 +55,10 @@ void main() async {
 
   final language = await LanguageRepository().getLanguage();
   final themeMode = await ThemeRepository().getInitTheme();
-  await FlutterDownloader.initialize(debug: kDebugMode);
+
+  if (PlatformDetection.isMobileSupported()) {
+    await FlutterDownloader.initialize(debug: kDebugMode);
+  }
 
   runApp(
     RefreshConfiguration(
