@@ -25,6 +25,7 @@ import 'package:twake/pages/syncing_data.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/utils/extensions.dart';
+import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
 import 'package:twake/utils/receive_sharing_text_manager.dart';
 import 'package:uni_links/uni_links.dart';
@@ -51,6 +52,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   }
 
   void _handleMagicLinkEvent() {
+    if (!PlatformDetection.isMagicLinkSupported())
+      return;
     try {
       _handleIncomingLinkStream();
       _handleIncomingLinkInitial();
@@ -125,6 +128,8 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
   }
 
   _handleReceiveSharing() {
+    if (!PlatformDetection.isMobileSupported())
+      return;
     _receiveSharingFileManager = Get.find<ReceiveSharingFileManager>();
     _receiveSharingFileManager.init();
     _receiveSharingTextManager = Get.find<ReceiveSharingTextManager>();

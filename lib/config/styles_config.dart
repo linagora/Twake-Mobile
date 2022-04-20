@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class StylesConfig {
   StylesConfig._();
@@ -28,7 +27,7 @@ class StylesConfig {
   static final ThemeData darkTheme = ThemeData(
     primaryColor: Colors.black,
     colorScheme: darkThemeColorScheme,
-    fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro',
+    fontFamily: fontFamilyByPlatform(),
     textTheme: darkTextTheme,
     scaffoldBackgroundColor: Color(0xFF19191A),
     iconTheme: IconThemeData(color: Colors.white),
@@ -57,7 +56,7 @@ class StylesConfig {
   static final ThemeData lightTheme = ThemeData(
     primaryColor: Colors.white,
     colorScheme: lightThemeColorScheme,
-    fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro',
+    fontFamily: fontFamilyByPlatform(),
     textTheme: lightTextTheme,
     scaffoldBackgroundColor: Color(0xFFFFFFFF),
     iconTheme: IconThemeData(color: Color(0xFFEBEDF0)),
@@ -92,84 +91,84 @@ class StylesConfig {
       color: Colors.white.withOpacity(0.9),
       fontSize: 15.0,
       fontWeight: FontWeight.w600,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline2 = TextStyle(
       color: Color(0xFFA7A8AC),
       fontSize: 14.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline3 = TextStyle(
       color: Color(0xFF76787A),
       fontSize: 14.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline4 = TextStyle(
       color: Color(0xFF276CFF),
       fontSize: 12.0,
       fontWeight: FontWeight.w500,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
   static final TextStyle _darkHeadline5 = TextStyle(
       color: Color(0xFFFF3347),
       fontSize: 17.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darksubtitle1 = TextStyle(
       color: Colors.black,
       fontSize: 8.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkbodyText1 = TextStyle(
       color: Color(0xFF8F9498),
       fontSize: 12.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline1 = TextStyle(
       color: Colors.black,
       fontSize: 16.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline2 = TextStyle(
       color: Color(0xFF5C6268),
       fontSize: 16.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline3 = TextStyle(
       color: Color(0xFF818C99),
       fontSize: 16.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline4 = TextStyle(
       color: Color(0xFF007AFF),
       fontSize: 16.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline5 = TextStyle(
       color: Color(0xFFFF3347),
       fontSize: 16.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightSubtitle1 = TextStyle(
       color: Colors.black,
       fontSize: 8.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightBodyText1 = TextStyle(
       color: Colors.white,
       fontSize: 15.0,
       fontWeight: FontWeight.w400,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final miniPurple = TextStyle(
     color: Color(0xff837DFF),
@@ -194,9 +193,15 @@ class StylesConfig {
       color: Colors.black,
       fontSize: 12.0,
       fontWeight: FontWeight.normal,
-      fontFamily: Platform.isAndroid ? 'Roboto' : 'SFPro');
+      fontFamily: fontFamilyByPlatform());
 
   static final commonBoxDecoration = BoxDecoration(
       color: Color(0xfff6f6f6),
       borderRadius: BorderRadius.all(Radius.circular(12.0)));
+
+  static String fontFamilyByPlatform() {
+    if(kIsWeb)  return 'Roboto';
+    if(Platform.isIOS || Platform.isMacOS)  return 'SFPro';
+    return 'Roboto';
+  }
 }
