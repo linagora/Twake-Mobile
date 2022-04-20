@@ -1,4 +1,6 @@
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/data/local/type_constants.dart';
 import 'package:twake/models/base_model/base_model.dart';
 
 part 'badge.g.dart';
@@ -31,13 +33,18 @@ class Badge extends BaseModel {
   int get hash => type.hashCode + id.hashCode + count;
 }
 
+@HiveType(typeId: TypeConstant.BADGE_TYPE)
 enum BadgeType {
+  @HiveField(0)
   @JsonValue('company')
   company,
+  @HiveField(1)
   @JsonValue('workspace')
   workspace,
+  @HiveField(2)
   @JsonValue('channel')
   channel,
+  @HiveField(3)
   @JsonValue('none')
   none
 }
