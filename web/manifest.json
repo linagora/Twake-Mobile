@@ -1,11 +1,11 @@
 {
-    "name": "twake_mobile",
-    "short_name": "twake_mobile",
+    "name": "Twake",
+    "short_name": "Twake",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "The open digital workspace",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

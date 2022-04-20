@@ -15,18 +15,18 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="The open digital workspace">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="twake_mobile">
+  <meta name="apple-mobile-web-app-title" content="Twake">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>twake_mobile</title>
+  <title>Twake</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
@@ -37,6 +37,12 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('flutter-first-frame', function () {
         navigator.serviceWorker.register('flutter_service_worker.js');
+        navigator.serviceWorker.register('../firebase-messaging-sw.js')
+          .then(function(registration) {
+            console.log('Registration successful, scope is:', registration.scope);
+          }).catch(function(err) {
+            console.log('Service worker registration failed, error:', err);
+          });
       });
     }
   </script>
