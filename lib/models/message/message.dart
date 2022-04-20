@@ -1,4 +1,6 @@
+import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:twake/data/local/type_constants.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/models/message/pinned_info.dart';
 import 'package:twake/utils/api_data_transformer.dart';
@@ -141,20 +143,32 @@ class Message extends BaseModel {
   }
 }
 
+@HiveType(typeId: TypeConstant.MESSAGE_DELIVERY)
 enum Delivery {
+  @HiveField(0)
   @JsonValue('in_progress')
   inProgress,
+
+  @HiveField(1)
   @JsonValue('delivered')
   delivered,
+
+  @HiveField(2)
   @JsonValue('failed')
   failed,
 }
 
+@HiveType(typeId: TypeConstant.MESSAGE_SUBTYPE)
 enum MessageSubtype {
+  @HiveField(0)
   @JsonValue('application')
   application,
+
+  @HiveField(1)
   @JsonValue('deleted')
   deleted,
+
+  @HiveField(2)
   @JsonValue('system')
   system
 }

@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'message_summary.dart';
+part of 'message_summary_hive.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class MessageSummaryAdapter extends TypeAdapter<MessageSummary> {
+class MessageSummaryHiveAdapter extends TypeAdapter<MessageSummaryHive> {
   @override
   final int typeId = 15;
 
   @override
-  MessageSummary read(BinaryReader reader) {
+  MessageSummaryHive read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return MessageSummary(
+    return MessageSummaryHive(
       date: fields[0] as int,
       sender: fields[1] == null ? '0' : fields[1] as String,
       senderName: fields[2] == null ? 'Guest' : fields[2] as String,
@@ -26,7 +26,7 @@ class MessageSummaryAdapter extends TypeAdapter<MessageSummary> {
   }
 
   @override
-  void write(BinaryWriter writer, MessageSummary obj) {
+  void write(BinaryWriter writer, MessageSummaryHive obj) {
     writer
       ..writeByte(5)
       ..writeByte(0)
@@ -47,30 +47,7 @@ class MessageSummaryAdapter extends TypeAdapter<MessageSummary> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MessageSummaryAdapter &&
+      other is MessageSummaryHiveAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-MessageSummary _$MessageSummaryFromJson(Map<String, dynamic> json) {
-  return MessageSummary(
-    date: json['date'] as int,
-    sender: json['sender'] as String? ?? '0',
-    senderName: json['sender_name'] as String? ?? 'Guest',
-    title: json['title'] as String,
-    text: json['text'] as String?,
-  );
-}
-
-Map<String, dynamic> _$MessageSummaryToJson(MessageSummary instance) =>
-    <String, dynamic>{
-      'date': instance.date,
-      'sender': instance.sender,
-      'sender_name': instance.senderName,
-      'title': instance.title,
-      'text': instance.text,
-    };

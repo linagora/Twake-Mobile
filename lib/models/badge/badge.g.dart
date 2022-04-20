@@ -3,6 +3,59 @@
 part of 'badge.dart';
 
 // **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
+class BadgeTypeAdapter extends TypeAdapter<BadgeType> {
+  @override
+  final int typeId = 11;
+
+  @override
+  BadgeType read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return BadgeType.company;
+      case 1:
+        return BadgeType.workspace;
+      case 2:
+        return BadgeType.channel;
+      case 3:
+        return BadgeType.none;
+      default:
+        return BadgeType.company;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, BadgeType obj) {
+    switch (obj) {
+      case BadgeType.company:
+        writer.writeByte(0);
+        break;
+      case BadgeType.workspace:
+        writer.writeByte(1);
+        break;
+      case BadgeType.channel:
+        writer.writeByte(2);
+        break;
+      case BadgeType.none:
+        writer.writeByte(3);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BadgeTypeAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+// **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
