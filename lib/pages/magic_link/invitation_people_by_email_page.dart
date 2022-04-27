@@ -79,8 +79,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
     return Container(
       color: Theme.of(context).colorScheme.secondaryContainer,
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-      child: Stack(
-        alignment: Alignment.center,
+      child: Row(
         children: [
           !_isSentEmailSuccessfully(state)
               ? Align(
@@ -97,15 +96,19 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                   ),
                 )
               : SizedBox.shrink(),
-          Align(
-              alignment: Alignment.center,
-              child: Container(
-                child: Text(AppLocalizations.of(context)?.inviteUsers ?? '',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1!
-                        .copyWith(fontWeight: FontWeight.bold, fontSize: 17)),
-              )),
+          Expanded(
+            child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  child: Text(AppLocalizations.of(context)?.inviteUsers ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontWeight: FontWeight.bold, fontSize: 17)),
+                )),
+          ),
           !_isSentEmailSuccessfully(state)
               ? BlocBuilder(
                   bloc: Get.find<CompaniesCubit>(),
