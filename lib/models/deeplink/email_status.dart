@@ -1,3 +1,3 @@
 enum EmailStatus {
-  init, invalid, valid
+  init, inProcessing, invalid, valid
 }

@@ -230,6 +230,22 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                           .bodyText1!
                           .copyWith(fontSize: 17, fontWeight: FontWeight.w600))
                   .build(),
+              _buildButtonInviteByEmail(),
+            ],
+          ),
+        );
+      });
+
+  Widget _buildButtonInviteByEmail() {
+    return BlocBuilder<CompaniesCubit, CompaniesState>(
+        bloc: Get.find<CompaniesCubit>(),
+        builder: (context, compState) {
+          if (!(compState is CompaniesLoadSuccess) ||
+              !compState.selected.canShareMagicLinkByEmail) {
+            return SizedBox.shrink();
+          }
+          return Column(
+            children: [
               SizedBox(height: 54),
               Text(AppLocalizations.of(context)?.sendInvitationByEmail ?? '',
                   style: Theme.of(context)
@@ -241,22 +257,15 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
                 alignment: Alignment.centerRight,
                 children: [
                   ButtonTextBuilder(Key('button_invite_by_email'),
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .surface
-                              .withOpacity(0.25),
-                          paddingEdgeInsets: EdgeInsets.only(right: 20),
-                          onButtonClick: () =>
-                              _handleClickOnButtonInviteByEmail())
-                      .setWidth(double.infinity)
-                      .setHeight(50)
-                      .setText(
-                          AppLocalizations.of(context)?.inviteByEmail ?? '')
-                      .setTextStyle(Theme.of(context)
-                          .textTheme
-                          .headline4!
-                          .copyWith(fontSize: 17, fontWeight: FontWeight.w600))
-                      .build(),
+                    backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.25),
+                    paddingEdgeInsets: EdgeInsets.only(right: 20),
+                    onButtonClick: () => _handleClickOnButtonInviteByEmail())
+                    .setWidth(double.infinity)
+                    .setHeight(50)
+                    .setText(AppLocalizations.of(context)?.inviteByEmail ?? '')
+                    .setTextStyle(Theme.of(context).textTheme.headline4!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w600))
+                    .build(),
                   Container(
                     margin: const EdgeInsets.only(right: 15),
                     child: Image.asset(imageSendEmail, width: 20, height: 20),
@@ -265,9 +274,10 @@ class _InvitationPeoplePageState extends State<InvitationPeoplePage> {
               ),
               SizedBox(height: 16),
             ],
-          ),
-        );
-      });
+          );
+        }
+    );
+  }
 
   Widget _buildLinkField() => GestureDetector(
         onTap: () => _handleClickOnLink(),

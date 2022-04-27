@@ -364,5 +364,9 @@
                 "example": "5"
             }
         }
-    }                     
+    },
+    "emailIsNotValid": "Email format is not valid",
+    "userAlreadyInWorkspace": "User is already in workspace",
+    "unableInviteUser": "Unable to invite this user to your company",
+    "somethingWasWrong": "Something was wrong"
 }

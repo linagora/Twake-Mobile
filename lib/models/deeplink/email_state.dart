@@ -1,23 +1,30 @@
 import 'package:equatable/equatable.dart';
 import 'package:twake/models/deeplink/email_status.dart';
+import 'package:twake/utils/twake_error_messages.dart';
 
 class EmailState extends Equatable {
   final String email;
   final EmailStatus status;
+  final TwakeErrorMessage? errorMessage;
 
-  const EmailState(this.email, this.status);
+  const EmailState(this.email, this.status, this.errorMessage);
 
-  const EmailState.init() : this('', EmailStatus.init);
+  const EmailState.init() : this('', EmailStatus.init, TwakeErrorMessage.None);
 
-  EmailState copyWith({String? newEmail, EmailStatus? newStatus}) {
+  EmailState copyWith({
+    String? newEmail,
+    EmailStatus? newStatus,
+    TwakeErrorMessage? newErrorMessage,
+  }) {
     return EmailState(
         newEmail ?? this.email,
-        newStatus ?? this.status
+        newStatus ?? this.status,
+        newErrorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object> get props => [email, status];
+  List<Object?> get props => [email, status, errorMessage];
 
 }
 

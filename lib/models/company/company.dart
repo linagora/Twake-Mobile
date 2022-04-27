@@ -35,6 +35,8 @@ class Company extends BaseModel {
 
   bool get canReGenerateMagicLink => role == CompanyRole.owner || role == CompanyRole.admin;
 
+  bool get canShareMagicLinkByEmail => role == CompanyRole.owner || role == CompanyRole.admin;
+
   bool get canShareMagicLink => role != CompanyRole.guest;
 
   factory Company.fromJson({
