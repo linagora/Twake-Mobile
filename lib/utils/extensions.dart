@@ -4,6 +4,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/local_file.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
+import 'package:twake/utils/twake_error_messages.dart';
 
 extension StringExtension on String {
   bool get isNotReallyEmpty => this.trim().isNotEmpty;
@@ -68,6 +69,14 @@ extension StringExtension on String {
       default:
         return imageFile;
     }
+  }
+
+  TwakeErrorMessage get twakeErrorByStringMessage {
+    if(this.contains('User is already in workspace'))
+      return TwakeErrorMessage.UserAlreadyInWorkspace;
+    else if(this.contains('Unable to invite this user to your company'))
+      return TwakeErrorMessage.UnableInviteUser;
+    return TwakeErrorMessage.None;
   }
 }
 //

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,10 +7,11 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_email_cubit/invitation_email_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_email_cubit/invitation_email_state.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/models/deeplink/email_state.dart';
 import 'package:twake/models/deeplink/email_status.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/utils/twake_error_messages.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 
 class InvitationPeopleEmailPage extends StatefulWidget {
@@ -57,6 +57,12 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                       InvitationEmailStatus.sendEmailSuccess) {
                     _textEditingControllers
                         .removeWhere((element) => element.text.trim().isEmpty);
+                  } else if(state.status == InvitationEmailStatus.sendEmailFail) {
+                    Utilities.showSimpleSnackBar(
+                      context: context,
+                      message: AppLocalizations.of(context)!.somethingWasWrong,
+                      iconPath: imageError,
+                    );
                   }
                 },
                 builder: (context, state) {
@@ -96,6 +102,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                   ),
                 )
               : SizedBox.shrink(),
+          SizedBox(width: 4.0),
           Expanded(
             child: Align(
                 alignment: Alignment.center,
@@ -103,12 +110,14 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                   child: Text(AppLocalizations.of(context)?.inviteUsers ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
                           .headline1!
                           .copyWith(fontWeight: FontWeight.bold, fontSize: 17)),
                 )),
           ),
+          SizedBox(width: 4.0),
           !_isSentEmailSuccessfully(state)
               ? BlocBuilder(
                   bloc: Get.find<CompaniesCubit>(),
@@ -148,18 +157,21 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
   }
 
   Widget _buildBodyViewSection(InvitationEmailState state) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 24),
-      child: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          children: [
-            _buildInvitationSentHeader(state),
-            ..._buildListEmail(state),
-            _buildButtonAddMoreMember(state),
-            _buildInvitationSentActions(state),
-          ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 24),
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Column(
+            children: [
+              _buildInvitationSentHeader(state),
+              ..._buildListEmail(state),
+              _buildButtonAddMoreMember(state),
+              _buildInvitationSentActions(state),
+            ],
+          ),
         ),
       ),
     );
@@ -190,8 +202,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
 
   List<Widget> _buildListEmail(InvitationEmailState state) {
     List<TextEditingController> sentEmailControllers;
-    if (state.status == InvitationEmailStatus.sendEmailSuccess ||
-        state.status == InvitationEmailStatus.sendEmailSuccessShowAll) {
+    if (_isSentEmailSuccessfully(state)) {
       sentEmailControllers = _textEditingControllers.toList();
       return state.listEmailState
           .map((emailState) => _buildEmailItem(
@@ -213,8 +224,8 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
   }
 
   Widget _buildEmailItem(
-          TextEditingController editingController, EmailState state) =>
-      Container(
+          TextEditingController editingController, EmailState state) {
+    return Container(
         margin: const EdgeInsets.only(bottom: 8),
         child: TextField(
             controller: editingController,
@@ -241,17 +252,47 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                 ),
                 suffixIcon: state.status != EmailStatus.init
                     ? Container(
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 15, horizontal: 12),
-                        child: Image.asset(
-                            state.status == EmailStatus.valid
-                                ? imageValid
-                                : imageInvalid,
-                            width: 18,
-                            height: 18),
-                      )
+                        margin: const EdgeInsets.all(16.0),
+                        child: _buildIconState(state)
+                    )
                     : SizedBox.shrink())),
       );
+  }
+
+  Widget _buildIconState(EmailState state) {
+    switch(state.status) {
+      case EmailStatus.valid:
+        return Image.asset(imageValid, width: 18, height: 18);
+      case EmailStatus.invalid:
+        return Tooltip(
+            triggerMode: TooltipTriggerMode.tap,
+            showDuration: Duration(seconds: 2),
+            padding: EdgeInsets.all(8),
+            textStyle: Theme.of(context)
+                .textTheme
+                .headline1!
+                .copyWith(fontSize: 14.0,
+                color: Theme.of(context).colorScheme.onPrimary),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Theme.of(context).colorScheme.error),
+            message: state.errorMessage?.message(context) ?? '',
+            child: Image.asset(imageInvalid, width: 18, height: 18)
+        );
+      case EmailStatus.inProcessing:
+        return SizedBox(
+          width: 18.0,
+          height: 18.0,
+          child: CircularProgressIndicator(
+            backgroundColor: const Color.fromRGBO(153, 162, 173, 0.4),
+            color: const Color(0xff004dff),
+            strokeWidth: 1.0,
+          ),
+        );
+      default:
+        return SizedBox.shrink();
+    }
+  }
 
   Widget _buildButtonAddMoreMember(InvitationEmailState state) =>
       !_isSentEmailSuccessfully(state)
