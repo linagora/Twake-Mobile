@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:just_the_tooltip/just_the_tooltip.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_email_cubit/invitation_email_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_email_cubit/invitation_email_state.dart';
@@ -25,6 +26,7 @@ class InvitationPeopleEmailPage extends StatefulWidget {
 class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
   String? invitationUrl;
   late List<TextEditingController> _textEditingControllers;
+  late List<JustTheController> _tooltipControllers;
   final ScrollController _scrollController = ScrollController();
   final invitationEmailCubit = Get.find<InvitationEmailCubit>();
 
@@ -33,6 +35,7 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
     super.initState();
     invitationUrl = Get.arguments;
     _textEditingControllers = [];
+    _tooltipControllers = [];
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       invitationEmailCubit.addEmail('');
     });
@@ -53,10 +56,12 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                 listener: (context, state) {
                   if (state.status == InvitationEmailStatus.addEmailSuccess) {
                     _textEditingControllers.add(TextEditingController());
+                    _tooltipControllers.add(JustTheController());
                   } else if (state.status ==
                       InvitationEmailStatus.sendEmailSuccess) {
                     _textEditingControllers
                         .removeWhere((element) => element.text.trim().isEmpty);
+                    _tooltipControllers.clear();
                   } else if(state.status == InvitationEmailStatus.sendEmailFail) {
                     Utilities.showSimpleSnackBar(
                       context: context,
@@ -201,30 +206,37 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
           : SizedBox.shrink();
 
   List<Widget> _buildListEmail(InvitationEmailState state) {
-    List<TextEditingController> sentEmailControllers;
     if (_isSentEmailSuccessfully(state)) {
-      sentEmailControllers = _textEditingControllers.toList();
-      return state.listEmailState
-          .map((emailState) => _buildEmailItem(
-              sentEmailControllers.firstWhere((controller) =>
-                  emailState.email.trim() == controller.text.trim()),
-              emailState))
-          .toList();
+      return state.listEmailState.map((emailState) {
+        return _buildEmailItem(
+          _textEditingControllers.firstWhere(
+              (controller) => emailState.email.trim() == controller.text.trim()),
+          emailState,
+          null,
+        );
+      }).toList();
     } else {
-      sentEmailControllers = _textEditingControllers.toList();
-      return sentEmailControllers
-          .map((controller) => _buildEmailItem(
-              controller,
-              state.listEmailState.firstWhere(
-                  (emailState) =>
-                      emailState.email.trim() == controller.text.trim(),
-                  orElse: () => EmailState.init())))
-          .toList();
+      int counter = 0;
+      return _textEditingControllers.map((controller) {
+        final tooltipController = _tooltipControllers[counter];
+        counter++;
+        return _buildEmailItem(
+          controller,
+          state.listEmailState.firstWhere(
+              (emailState) => emailState.email.trim() == controller.text.trim(),
+              orElse: () => EmailState.init(),
+          ),
+          tooltipController,
+        );
+      }).toList();
     }
   }
 
   Widget _buildEmailItem(
-          TextEditingController editingController, EmailState state) {
+    TextEditingController editingController,
+    EmailState state,
+    JustTheController? tooltipController,
+  ) {
     return Container(
         margin: const EdgeInsets.only(bottom: 8),
         child: TextField(
@@ -253,32 +265,43 @@ class _InvitationPeopleEmailPageState extends State<InvitationPeopleEmailPage> {
                 suffixIcon: state.status != EmailStatus.init
                     ? Container(
                         margin: const EdgeInsets.all(16.0),
-                        child: _buildIconState(state)
+                        child: _buildIconState(tooltipController, state)
                     )
                     : SizedBox.shrink())),
       );
   }
 
-  Widget _buildIconState(EmailState state) {
+  Widget _buildIconState(JustTheController? controller, EmailState state) {
     switch(state.status) {
       case EmailStatus.valid:
         return Image.asset(imageValid, width: 18, height: 18);
       case EmailStatus.invalid:
-        return Tooltip(
+        if(controller != null) {
+          Future.delayed(const Duration(seconds: 1), () {
+            controller.showTooltip(immediately: false, autoClose: true);
+          });
+        }
+        return JustTheTooltip(
+            tailLength: 8.0,
+            tailBaseWidth: 8.0,
+            showDuration: const Duration(seconds: 2),
             triggerMode: TooltipTriggerMode.tap,
-            showDuration: Duration(seconds: 2),
-            padding: EdgeInsets.all(8),
-            textStyle: Theme.of(context)
-                .textTheme
-                .headline1!
-                .copyWith(fontSize: 14.0,
-                color: Theme.of(context).colorScheme.onPrimary),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Theme.of(context).colorScheme.error),
-            message: state.errorMessage?.message(context) ?? '',
-            child: Image.asset(imageInvalid, width: 18, height: 18)
-        );
+            controller: controller,
+            borderRadius: BorderRadius.circular(8),
+            content: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).colorScheme.error),
+              child: Text(
+                state.errorMessage?.message(context) ?? '',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(fontSize: 14.0, color: Colors.white),
+              ),
+            ),
+            child: Image.asset(imageInvalid, width: 18, height: 18));
       case EmailStatus.inProcessing:
         return SizedBox(
           width: 18.0,
