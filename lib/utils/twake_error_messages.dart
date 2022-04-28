@@ -6,7 +6,7 @@ enum TwakeErrorMessage {
   EmailIsNotValidFormat,
   UserAlreadyInWorkspace,
   UnableInviteUser,
-  SomethingWasWrong,
+  PendingUserIsExist,
 }
 
 extension TwakeErrorMessageExtension on TwakeErrorMessage {
@@ -19,10 +19,10 @@ extension TwakeErrorMessageExtension on TwakeErrorMessage {
         return AppLocalizations.of(context)?.userAlreadyInWorkspace ?? '';
       case TwakeErrorMessage.UnableInviteUser:
         return AppLocalizations.of(context)?.unableInviteUser ?? '';
-      case TwakeErrorMessage.SomethingWasWrong:
-        return AppLocalizations.of(context)?.somethingWasWrong ?? '';
+      case TwakeErrorMessage.PendingUserIsExist:
+        return AppLocalizations.of(context)?.pendingUserExist ?? '';
       default:
-        return '';
+        return AppLocalizations.of(context)?.somethingWasWrong ?? '';
     }
   }
 

@@ -76,6 +76,8 @@ extension StringExtension on String {
       return TwakeErrorMessage.UserAlreadyInWorkspace;
     else if(this.contains('Unable to invite this user to your company'))
       return TwakeErrorMessage.UnableInviteUser;
+    else if(this.contains('Pending user already exists'))
+      return TwakeErrorMessage.PendingUserIsExist;
     return TwakeErrorMessage.None;
   }
 }
