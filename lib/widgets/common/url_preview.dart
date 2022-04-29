@@ -82,8 +82,16 @@ class _UrlPreviewState extends State<UrlPreview> {
         final launchUri = Uri.parse(launchUrl);
         final token = launchUri.queryParameters['join'];
         final host = launchUri.host;
-        if (token != null && token.isNotEmpty && Endpoint.inSupportedHosts(host)) {
-          final newCustomUrl = '$TWAKE_MOBILE://$host/?join=$token';
+        if (Endpoint.inSupportedHosts(host)) {
+          String newCustomUrl;
+          if(token != null && token.isNotEmpty) {
+            // To handle magic link
+            newCustomUrl = '$TWAKE_MOBILE://$host/?join=$token';
+          } else {
+            // To handle twake link format:
+            // https://{twake_host}/client/{company_id}/w/{workspace_id}/c/{channel_id}
+            newCustomUrl = '$TWAKE_MOBILE://$host${launchUri.path}';
+          }
           if (await canLaunch(newCustomUrl)) {
             await launch(newCustomUrl);
             return;

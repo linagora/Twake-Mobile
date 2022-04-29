@@ -355,11 +355,10 @@ class Utilities {
     return input != null ? input.toString() : '';
   }
 
-  static bool isTwakeMagicLink(String url) {
+  static bool isTwakeLink(String url) {
     final launchUri = Uri.parse(url.trim());
-    final token = launchUri.queryParameters['join'];
     final host = launchUri.host;
-    return token != null && token.isNotEmpty && Endpoint.inSupportedHosts(host);
+    return Endpoint.inSupportedHosts(host);
   }
 }
 

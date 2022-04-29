@@ -7,6 +7,7 @@ import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/twakelink/twake_link_joining.dart';
 import 'package:twake/repositories/authentication_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/twake_exception.dart';
@@ -30,12 +31,19 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     });
   }
 
-  Future<void> checkAuthentication({WorkspaceJoinResponse? workspaceJoinResponse, String? pendingRequestedToken}) async {
+  Future<void> checkAuthentication({
+    WorkspaceJoinResponse? workspaceJoinResponse,
+    String? pendingRequestedToken,
+    TwakeLinkJoining? twakeLinkJoining,
+  }) async {
     emit(AuthenticationInProgress());
     bool authenticated = await _repository.isAuthenticated();
 
     if (authenticated) {
-      emit(AuthenticationSuccess(magicLinkJoinResponse: workspaceJoinResponse));
+      emit(AuthenticationSuccess(
+        magicLinkJoinResponse: workspaceJoinResponse,
+        twakeLinkJoining: twakeLinkJoining,
+      ));
       _repository.startTokenValidator();
       await NavigatorService.instance.navigateOnNotificationLaunch();
     } else if(workspaceJoinResponse != null) {
