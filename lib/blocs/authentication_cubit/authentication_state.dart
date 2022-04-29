@@ -20,10 +20,11 @@ class LogoutInProgress extends AuthenticationState {
 
 class AuthenticationSuccess extends AuthenticationState {
   final WorkspaceJoinResponse? magicLinkJoinResponse;
-  const AuthenticationSuccess({this.magicLinkJoinResponse});
+  final TwakeLinkJoining? twakeLinkJoining;
+  const AuthenticationSuccess({this.magicLinkJoinResponse, this.twakeLinkJoining});
 
   @override
-  List<Object?> get props => [magicLinkJoinResponse];
+  List<Object?> get props => [magicLinkJoinResponse, twakeLinkJoining];
 }
 
 class AuthenticationFailure extends AuthenticationState {

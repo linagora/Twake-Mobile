@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:short_uuids/short_uuids.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
@@ -18,12 +19,14 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/twakelink/twake_link_joining.dart';
 import 'package:twake/pages/companies/no_company_widget.dart';
 import 'package:twake/pages/magic_link/join_workspace_magic_link_page.dart';
 import 'package:twake/pages/sign_flow.dart';
 import 'package:twake/pages/syncing_data.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/endpoints.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
@@ -109,19 +112,34 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       return;
     }
     final token = uri.queryParameters['join'];
+    // Add supports for both link types:
+    // Universal Links and Custom URL (iOS)
+    // App Links and Deep Links (Android)
+    String incomingHost;
+    if (uri.isHttp || uri.isHttps) {
+      incomingHost = uri.origin;
+    } else {
+      // Because of with custom URL (like twakemobile://host/),
+      // uri.origin is not supported, need to handle like this:
+      incomingHost = sprintf(Endpoint.httpsScheme, [uri.host]);
+    }
     if (token != null && token.isNotEmpty) {
-      // Add supports for both link types:
-      // Universal Links and Custom URL (iOS)
-      // App Links and Deep Links (Android)
-      String incomingHost;
-      if (uri.isHttp || uri.isHttps) {
-        incomingHost = uri.origin;
-      } else {
-        // Because of with custom URL (like twakemobile://host/),
-        // uri.origin is not supported, need to handle like this:
-        incomingHost = sprintf(Endpoint.httpsScheme, [uri.host]);
-      }
       Get.find<AuthenticationCubit>().joiningWithMagicLink(token, incomingHost: incomingHost);
+    } else if (uri.pathSegments.length == 6) {
+      // To handle twake link format:
+      // https://{twake_host}/client/{company_id}/w/{workspace_id}/c/{channel_id}
+      if(incomingHost != Globals.instance.host) {
+        // TODO: Need to handle new story here when user clicked
+        // on other Twake server urls that is not current server.
+        return;
+      } else {
+        final translator = ShortUuid.init();
+        final companyId = translator.toUUID(uri.pathSegments[1]);
+        final workspaceId = translator.toUUID(uri.pathSegments[3]);
+        final channelId = translator.toUUID(uri.pathSegments[5]);
+        final twakeLinkJoining = TwakeLinkJoining(companyId, workspaceId, channelId);
+        Get.find<AuthenticationCubit>().checkAuthentication(twakeLinkJoining: twakeLinkJoining);
+      }
     } else {
       Get.find<AuthenticationCubit>().checkAuthentication();
     }
@@ -280,16 +298,22 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
 
   Widget _authenticationSucceedWidget(state) {
     var magicLinkJoinResponse;
+    TwakeLinkJoining? twakeLinkJoining;
     if (state is PostAuthenticationSyncSuccess) {
       magicLinkJoinResponse = state.magicLinkJoinResponse;
     } else if (state is AuthenticationSuccess) {
       magicLinkJoinResponse = state.magicLinkJoinResponse;
+      twakeLinkJoining = state.twakeLinkJoining;
     }
     if (magicLinkJoinResponse == null) {
+      if(twakeLinkJoining != null) {
+        _goToChannelWithTwakeLink(twakeLinkJoining);
+      }
       return HomeWidget();
+    } else {
+      _selectWorkspaceAfterJoin(magicLinkJoinResponse);
+      return HomeWidget(magicLinkJoinResponse: magicLinkJoinResponse);
     }
-    _selectWorkspaceAfterJoin(magicLinkJoinResponse);
-    return HomeWidget(magicLinkJoinResponse: magicLinkJoinResponse);
   }
 
   // Note: We're trying to allow user to use app as much as possible,
@@ -353,6 +377,18 @@ class _InitialPageState extends State<InitialPage> with WidgetsBindingObserver {
       }
     } catch (e) {
       Logger().e('Error occurred during open Magic Link from chat screen:\n$e');
+    }
+  }
+
+  void _goToChannelWithTwakeLink(TwakeLinkJoining twakeLinkJoining) async {
+    try {
+      await NavigatorService.instance.navigateToChannelAfterSharedFile(
+        companyId: twakeLinkJoining.companyId,
+        workspaceId: twakeLinkJoining.workspaceId,
+        channelId: twakeLinkJoining.channelId,
+      );
+    } catch (e) {
+      Logger().e('Error occurred during navigation by opening a Twake Link:\n$e');
     }
   }
 

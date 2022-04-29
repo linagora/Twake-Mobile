@@ -17,7 +17,7 @@ class ReceiveSharingTextManager {
       // Can not use Globals.handlingMagicLink too, by it only be assigned after
       // this ReceivingSharingStream
       if (sharedText != null && sharedText.isNotEmpty) {
-        if (Utilities.isTwakeMagicLink(sharedText)) return;
+        if (Utilities.isTwakeLink(sharedText)) return;
         clearPendingText();
         _pendingListText.add(ReceiveSharingText(sharedText));
       }
