@@ -92,9 +92,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="https"/>
                 <data android:scheme="http" />
-                <data android:host="web.twake.app" android:path="" tools:ignore="AppLinkUrlError"/>
-                <data android:host="web.qa.twake.app" android:path="" tools:ignore="AppLinkUrlError" />
-                <data android:host="canary.twake.app" android:path="" tools:ignore="AppLinkUrlError" />
+                <data android:host="web.twake.app"/>
+                <data android:host="web.qa.twake.app"/>
+                <data android:host="canary.twake.app"/>
             </intent-filter>
 
             <!--receive_sharing_intent-->
