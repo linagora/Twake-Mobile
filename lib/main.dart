@@ -32,16 +32,23 @@ void main() async {
     String messagingSenderId = dotenv.get('MESSAGE_SENDER_ID');
     String projectId = dotenv.get('PROJECT_ID');
     await Firebase.initializeApp(
-        options: FirebaseOptions(
-          apiKey: apiKey,
-          appId: appId,
-          messagingSenderId: messagingSenderId,
-          projectId: projectId,
-        ),
-      );
+      options: FirebaseOptions(
+        apiKey: apiKey,
+        appId: appId,
+        messagingSenderId: messagingSenderId,
+        projectId: projectId,
+      ),
+    );
+  } on FirebaseException catch (e) {
+    if (e.code == 'duplicate-app' && Firebase.apps.isNotEmpty) {
+      Logger().log(Level.info, 'Firebase initialized from persisted instance');
+    } else {
+      throw e;
+    }
   } catch (e) {
     Logger().e('Error occurred while initializing firebase:\n$e');
   }
+
   FirebaseMessaging.instance.getToken().onError((e, _) async {
     Logger().e('Error occurred when requesting Firebase Messaging token\n$e');
   });
@@ -62,18 +69,19 @@ void main() async {
 
   runApp(
     RefreshConfiguration(
-      headerBuilder: () => PullToRefreshHeader(
-          height: 100,
-          padding: EdgeInsets.only(
-              top:
-                  22)), // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
-      headerTriggerDistance: 80.0, // header trigger refresh trigger distance
-      maxUnderScrollExtent: 0, // Maximum dragging range at the bottom
-      enableScrollWhenRefreshCompleted:
-          true, //This property is incompatible with PageView and TabBarView. If you need TabBarView to slide left and right, you need to set it to true.
-      enableLoadingWhenFailed:
-          true, //In the case of load failure, users can still trigger more loads by gesture pull-up.
-      enableBallisticLoad: true, // trigger load more by BallisticScrollActivity
+      headerBuilder: () =>
+          PullToRefreshHeader(height: 100, padding: EdgeInsets.only(top: 22)),
+      // Configure the default header indicator. If you have the same header indicator for each page, you need to set this
+      headerTriggerDistance: 80.0,
+      // header trigger refresh trigger distance
+      maxUnderScrollExtent: 0,
+      // Maximum dragging range at the bottom
+      enableScrollWhenRefreshCompleted: true,
+      //This property is incompatible with PageView and TabBarView. If you need TabBarView to slide left and right, you need to set it to true.
+      enableLoadingWhenFailed: true,
+      //In the case of load failure, users can still trigger more loads by gesture pull-up.
+      enableBallisticLoad: true,
+      // trigger load more by BallisticScrollActivity
 
       child: GetMaterialApp(
         theme: StylesConfig.lightTheme,
