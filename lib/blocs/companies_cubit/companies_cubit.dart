@@ -27,13 +27,20 @@ class CompaniesCubit extends Cubit<CompaniesState> {
     await for (var companies in streamCompanies) {
       if (companies.isNotEmpty) {
         if (Globals.instance.companyId != null) {
-          selected = companies.firstWhere((c) => c.id == Globals.instance.companyId);
+          try {
+            selected =
+                companies.firstWhere((c) => c.id == Globals.instance.companyId);
+          } catch (e) {
+            Logger().log(Level.info, 'User don\'t have any company yet');
+            return false;
+          }
         } else {
           selected = companies.first;
           Globals.instance.companyIdSet = selected.id;
         }
       }
-      if(selected != null) {
+
+      if (selected != null) {
         emit(CompaniesLoadSuccess(companies: companies, selected: selected));
       }
     }
