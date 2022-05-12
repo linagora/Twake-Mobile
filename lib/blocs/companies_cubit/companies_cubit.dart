@@ -31,7 +31,7 @@ class CompaniesCubit extends Cubit<CompaniesState> {
             selected =
                 companies.firstWhere((c) => c.id == Globals.instance.companyId);
           } catch (e) {
-            Logger().log(Level.info, 'User don\'t have any company yet');
+            Logger().log(Level.info, "User doesn't have any company yet");
             return false;
           }
         } else {

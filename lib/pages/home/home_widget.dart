@@ -3,9 +3,9 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
@@ -32,6 +32,7 @@ import 'package:twake/widgets/common/badges.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/rounded_shimmer.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
+
 import 'home_channel_list_widget.dart';
 import 'home_direct_list_widget.dart';
 import 'home_drawer_widget.dart';
@@ -269,7 +270,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
           SizedBox(height: 12),
           TwakeSearchTextField(
             height: 40,
-            controller: _searchController,
+            onPress: () => push(RoutePaths.search.path),
             hintText: AppLocalizations.of(context)!.search,
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           ),

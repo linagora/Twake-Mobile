@@ -7,6 +7,7 @@ class TwakeSearchTextField extends StatefulWidget {
   final double fontSize;
   final bool showPrefixIcon;
   final double borderRadius;
+  final Function? onPress;
   late final TextEditingController? controller;
 
   TwakeSearchTextField({
@@ -16,6 +17,7 @@ class TwakeSearchTextField extends StatefulWidget {
     this.fontSize = 17,
     this.showPrefixIcon = true,
     this.borderRadius = 12,
+    this.onPress,
     TextEditingController? controller,
   }) : super() {
     this.controller = controller != null ? controller : TextEditingController();
@@ -40,12 +42,17 @@ class _TwakeSearchTextFieldState extends State<TwakeSearchTextField> {
     }
   }
 
+  void _onTextFieldTap() {
+    widget.onPress?.call();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,
       child: TextField(
         controller: widget.controller,
+        onTap: _onTextFieldTap,
         cursorColor: Theme.of(context).textSelectionTheme.cursorColor,
         style: Theme.of(context).textTheme.headline1,
         decoration: new InputDecoration(
