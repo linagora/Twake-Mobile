@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/authentication_cubit/sync_data_state.dart';
-import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:twake/blocs/language_cubit/language_cubit.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/company/company.dart';

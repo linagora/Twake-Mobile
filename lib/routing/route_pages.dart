@@ -34,6 +34,7 @@ import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dar
 import 'package:twake/pages/receive_sharing_file/receive_sharing_list_ws_widget.dart';
 import 'package:twake/pages/workspaces/create_workspace.dart';
 import 'package:twake/routing/route_paths.dart';
+import 'package:twake/utils/camera_view.dart';
 import 'package:twake/widgets/common/pinned_messages.dart';
 
 final routePages = [
@@ -49,6 +50,11 @@ final routePages = [
             GetPage(
               name: RoutePaths.channelPinnedMessages.name,
               page: () => PinnedMessages(),
+              transition: Transition.native,
+            ),
+            GetPage(
+              name: RoutePaths.cameraView.name,
+              page: () => CameraView(),
               transition: Transition.native,
             ),
             GetPage(

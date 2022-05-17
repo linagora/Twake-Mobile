@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/models/attachment/attachment.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
@@ -28,15 +29,14 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   late Stream<FileUploading> streamListUploading;
 
   void addFileUploadingToStream(FileUploading? fileUploading) {
-    if(fileUploading == null)
-      return;
-    if(_listUploadingStreamController.isClosed)
-      return;
+    if (fileUploading == null) return;
+    if (_listUploadingStreamController.isClosed) return;
     _listUploadingStreamController.add(fileUploading);
   }
 
   void initFileUploadingStream() {
-    _listUploadingStreamController = StreamController<FileUploading>.broadcast();
+    _listUploadingStreamController =
+        StreamController<FileUploading>.broadcast();
     streamListUploading = _listUploadingStreamController.stream;
   }
 
@@ -54,10 +54,8 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }
 
   void addFileSharingToStream(FileUploading? fileUploading) {
-    if(fileUploading == null)
-      return;
-    if(_listSharingStreamController.isClosed)
-      return;
+    if (fileUploading == null) return;
+    if (_listSharingStreamController.isClosed) return;
     _listSharingStreamController.add(fileUploading);
   }
 
@@ -87,8 +85,8 @@ class FileUploadCubit extends Cubit<FileUploadState> {
         uploadStatus: FileItemUploadStatus.uploading,
         cancelToken: CancelToken());
     emit(state.copyWith(
-      fileUploadStatus: FileUploadStatus.inProcessing,
-      listFileUploading: listFileUploading..add(newFileUploading)));
+        fileUploadStatus: FileUploadStatus.inProcessing,
+        listFileUploading: listFileUploading..add(newFileUploading)));
 
     try {
       await _startUploadingFile(
@@ -110,7 +108,6 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     required SourceFileUploading sourceFileUploading,
   }) async {
     for (var i = 0; i < listFileUploading.length; i++) {
-
       // update state of file uploading in list
       final fileUploading = listFileUploading[i];
       final updatedStateList = state.listFileUploading.map((file) {
@@ -138,8 +135,13 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }
 
   void removeFileUploading(FileUploading cancellingFile) {
-    if(state.listFileUploading.isEmpty)
+    if (state.listFileUploading.isEmpty) return;
+    if (state.listFileUploading.length == 1) {
+      closeListUploadingStream();
+      clearFileUploadingState(needToCancelInProcessingFile: true);
+      Get.find<GalleryCubit>().galleryInit();
       return;
+    }
     _cancelFileUploading(cancellingFile);
     final updatedStateList = [...state.listFileUploading];
     updatedStateList.removeWhere((file) => file.id == cancellingFile.id);
@@ -147,7 +149,7 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }
 
   void clearFileUploadingState({bool needToCancelInProcessingFile = false}) {
-    if(needToCancelInProcessingFile) {
+    if (needToCancelInProcessingFile) {
       state.listFileUploading.forEach((fileUploading) {
         if (fileUploading.uploadStatus == FileItemUploadStatus.uploading) {
           _cancelFileUploading(fileUploading);
@@ -162,14 +164,14 @@ class FileUploadCubit extends Cubit<FileUploadState> {
 
   Future<void> startEditingFile(Message message) async {
     List<dynamic> uploadedFiles = message.files ?? [];
-    if(uploadedFiles.isEmpty)
-      return;
+    if (uploadedFiles.isEmpty) return;
     List<FileUploading> listUploading = [];
     // Note: don't replace `for` to `forEach` here by `await` might not work
     // as expected
     for (var i = 0; i < uploadedFiles.length; i++) {
-      final oldFileUploading = await _getFileUploaded(i, uploadedFiles[i], message);
-      if(oldFileUploading != null) {
+      final oldFileUploading =
+          await _getFileUploaded(i, uploadedFiles[i], message);
+      if (oldFileUploading != null) {
         listUploading.add(oldFileUploading);
       }
     }
@@ -186,22 +188,20 @@ class FileUploadCubit extends Cubit<FileUploadState> {
   }) async {
     // start uploading
     final uploadedFile = await _repository.upload(
-        sourcePath: fileUploading.sourceFile!.path!,
-        fileName: fileUploading.sourceFile!.name,
-        cancelToken: fileUploading.cancelToken!,
-        fileUploadingOption: FileUploadingOption(thumbnailSync: 1),
-        companyId: companyId,
+      sourcePath: fileUploading.sourceFile!.path!,
+      fileName: fileUploading.sourceFile!.name,
+      cancelToken: fileUploading.cancelToken!,
+      fileUploadingOption: FileUploadingOption(thumbnailSync: 1),
+      companyId: companyId,
     );
 
     // update successful state
-    if(state.listFileUploading.isEmpty)
-      return;
+    if (state.listFileUploading.isEmpty) return;
     late FileUploading fileUploadingUpdated;
     final updatedStateList = state.listFileUploading.map((file) {
-      if(file.id == fileUploading.id) {
+      if (file.id == fileUploading.id) {
         fileUploadingUpdated = file.copyWith(
-            file: uploadedFile,
-            uploadStatus: FileItemUploadStatus.uploaded);
+            file: uploadedFile, uploadStatus: FileItemUploadStatus.uploaded);
         return fileUploadingUpdated;
       }
       return file;
@@ -209,17 +209,16 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     emit(state.copyWith(listFileUploading: updatedStateList));
 
     // add to uploaded file to file uploading stream
-    if(sourceFileUploading == SourceFileUploading.InChat) {
+    if (sourceFileUploading == SourceFileUploading.InChat) {
       addFileUploadingToStream(fileUploadingUpdated);
-    } else if(sourceFileUploading == SourceFileUploading.FileSharing) {
+    } else if (sourceFileUploading == SourceFileUploading.FileSharing) {
       addFileSharingToStream(fileUploadingUpdated);
     }
 
     // Update to file download state
     // (any user own uploaded file no need to download again)
     Get.find<FileDownloadCubit>().addToDownloadStateAfterUploaded(
-        file: uploadedFile,
-        localPath: fileUploading.sourceFile!.path!);
+        file: uploadedFile, localPath: fileUploading.sourceFile!.path!);
   }
 
   void _handleUploadFileError({
@@ -227,31 +226,32 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     required SourceFileUploading sourceFileUploading,
   }) {
     // update failed state
-    if(state.listFileUploading.isEmpty)
-      return;
+    if (state.listFileUploading.isEmpty) return;
     late FileUploading fileUploadingUpdated;
     final updatedStateList = state.listFileUploading.map((file) {
-      if(file.id == fileErrorId) {
-        fileUploadingUpdated = file.copyWith(
-            uploadStatus: FileItemUploadStatus.failed);
+      if (file.id == fileErrorId - 1) {
+        fileUploadingUpdated =
+            file.copyWith(uploadStatus: FileItemUploadStatus.failed);
         return fileUploadingUpdated;
       }
       return file;
     }).toList();
+
     emit(state.copyWith(listFileUploading: updatedStateList));
 
     // add to uploaded file to file uploading stream
-    if(sourceFileUploading == SourceFileUploading.InChat) {
+    if (sourceFileUploading == SourceFileUploading.InChat) {
       addFileUploadingToStream(fileUploadingUpdated);
-    } else if(sourceFileUploading == SourceFileUploading.FileSharing) {
+    } else if (sourceFileUploading == SourceFileUploading.FileSharing) {
       addFileSharingToStream(fileUploadingUpdated);
     }
   }
 
   void _cancelFileUploading(FileUploading cancellingFile) {
-    if(cancellingFile.uploadStatus == FileItemUploadStatus.uploading) {
+    if (cancellingFile.uploadStatus == FileItemUploadStatus.uploading) {
       try {
-        cancellingFile.cancelToken?.cancel('user cancel uploading ${cancellingFile.id}');
+        cancellingFile.cancelToken
+            ?.cancel('user cancel uploading ${cancellingFile.id}');
       } catch (e) {
         Logger().e('Error occurred during cancel uploading:\n$e');
       }
@@ -271,13 +271,13 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     int updatedAt = message.updatedAt;
     String userId = message.userId;
 
-    if(fileDynamic is Attachment) {
-      sentFile = fileDynamic.toFile(userId: userId, createdAt: createdAt, updatedAt: updatedAt);
-    } else if(fileDynamic is String) {
+    if (fileDynamic is Attachment) {
+      sentFile = fileDynamic.toFile(
+          userId: userId, createdAt: createdAt, updatedAt: updatedAt);
+    } else if (fileDynamic is String) {
       sentFile = await Get.find<FileCubit>().getFileData(id: fileDynamic);
     }
-    if(sentFile == null)
-      return null;
+    if (sentFile == null) return null;
     final oldFileUploading = FileUploading(
       id: index,
       uploadStatus: FileItemUploadStatus.uploaded,
@@ -285,10 +285,6 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     );
     return oldFileUploading;
   }
-
 }
 
-enum SourceFileUploading {
-  InChat,
-  FileSharing
-}
+enum SourceFileUploading { InChat, FileSharing }

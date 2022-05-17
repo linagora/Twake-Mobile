@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
-import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:twake/blocs/language_cubit/language_cubit.dart';
 import 'package:twake/pages/account/select_language.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
@@ -76,7 +76,8 @@ class _AccountSettingsState extends State<AccountSettings> {
       listener: (context, authenticationState) {
         if (authenticationState is LogoutInProgress) {
           if (mounted) {
-            Navigator.popUntil(context, ModalRoute.withName(RoutePaths.initial));
+            Navigator.popUntil(
+                context, ModalRoute.withName(RoutePaths.initial));
           }
         }
       },
@@ -343,8 +344,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                   builder: (context, state) {
                     if (state is NewLanguage) {
                       return Text(
-                        getLanguageStringInNative(
-                            languageCode: state.language),
+                        getLanguageStringInNative(languageCode: state.language),
                         style: Theme.of(context)
                             .textTheme
                             .headline2!

@@ -5,8 +5,11 @@ import 'package:bubble/bubble.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
+import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
@@ -68,9 +71,18 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
     final bool _isDarkTheme = Get.isDarkMode ? true : false;
 
+    final fileTransitionState = Get.find<FileUploadTransitionCubit>().state;
+    final bool _isFileUploading = Get.find<FileUploadTransitionCubit>()
+                .state
+                .fileUploadTransitionStatus ==
+            FileUploadTransitionStatus.uploadingMessageSent
+        ? fileTransitionState.messages.first.id == _message.id
+            ? true
+            : false
+        : false;
+
     if (messageState is MessagesLoadSuccess) {
       bool _isMyMessage = _message.userId == Globals.instance.userId;
-
       final TextStyle _parentStyle = _isDarkTheme
           ? _isMyMessage
               ? (Theme.of(context)
@@ -175,7 +187,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
               _isMyMessage && !widget.isPinned
                   ? SizedBox(width: Dim.widthPercent(8))
                   : SizedBox(width: 6),
-              _buildMessageContent(_isMyMessage, _sizeOfReplyBox, _parentStyle),
+              _buildMessageContent(_isMyMessage, _isFileUploading,
+                  _sizeOfReplyBox, _parentStyle),
               if (!_isMyMessage)
                 SizedBox(
                   width: Dim.widthPercent(10),
@@ -189,8 +202,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
     }
   }
 
-  _buildMessageContent(
-          bool _isMyMessage, double _sizeOfReplyBox, TextStyle _parentStyle) =>
+  _buildMessageContent(bool _isMyMessage, bool _fileUploadingThumbnail,
+          double _sizeOfReplyBox, TextStyle _parentStyle) =>
       Flexible(
         //  flex: widget.isPinned ? 0 : 1,
         child: Column(
@@ -217,7 +230,10 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     : SizedBox.shrink(),
                 Flexible(
                     child: _buildMessageTextAndTime(
-                        _isMyMessage, _sizeOfReplyBox, _parentStyle)),
+                        _isMyMessage,
+                        _fileUploadingThumbnail,
+                        _sizeOfReplyBox,
+                        _parentStyle)),
                 Container(
                   margin: const EdgeInsets.only(left: 3.0, right: 6.0),
                   child: _buildMessageSentStatus(_isMyMessage),
@@ -229,8 +245,8 @@ class _MessageTileState<T extends BaseMessagesCubit>
         ),
       );
 
-  _buildMessageTextAndTime(
-      bool _isMyMessage, double _sizeOfReplyBox, TextStyle _parentStyle) {
+  _buildMessageTextAndTime(bool _isMyMessage, bool _isFileUploading,
+      double _sizeOfReplyBox, TextStyle _parentStyle) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: ClipRRect(
@@ -337,7 +353,9 @@ class _MessageTileState<T extends BaseMessagesCubit>
                         children: [
                           Flexible(
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              crossAxisAlignment: _isFileUploading
+                                  ? CrossAxisAlignment.start
+                                  : CrossAxisAlignment.end,
                               children: [
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -374,6 +392,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                             : 0),
                                   ],
                                 ),
+                                if (_isFileUploading) _buildFileUploadingTile(),
                               ],
                             ),
                           ),
@@ -408,7 +427,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold)
                                       : Theme.of(context)
-                                          .textTheme 
+                                          .textTheme
                                           .headline4!
                                           .copyWith(
                                               fontSize: 13,
@@ -527,6 +546,78 @@ class _MessageTileState<T extends BaseMessagesCubit>
                       )
                     : Container()
         : Container();
+  }
+
+  _buildFileUploadingTile() {
+    return BlocBuilder<GalleryCubit, GalleryState>(
+      bloc: Get.find<GalleryCubit>(),
+      builder: (context, state) {
+        return Container(
+          constraints: BoxConstraints(maxHeight: 350),
+          child: Expanded(
+            child: ListView.builder(
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemCount: state.selectedFilesIndex.length,
+                itemBuilder: (_, index) {
+                  return Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(
+                        height: 220,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.memory(
+                              state.assetsList[state.selectedFilesIndex[index]],
+                              fit: BoxFit.fitWidth,
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Stack(
+                                  children: [
+                                    Positioned(
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Theme.of(context)
+                                              .iconTheme
+                                              .color!
+                                              .withOpacity(0.8),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                        left: 5,
+                                        bottom: 5,
+                                        child: SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+          ),
+        );
+      },
+    );
   }
 
   _buildReactions(bool _isMyMessage) {

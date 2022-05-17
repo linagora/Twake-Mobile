@@ -37,7 +37,6 @@ import 'home_direct_list_widget.dart';
 import 'home_drawer_widget.dart';
 
 class HomeWidget extends StatefulWidget {
-
   // In case fetching companies inside refetchData() failed,
   // allow user to Retry fetch again, then join magic link and
   // select correct company/workspace after joined
@@ -107,13 +106,13 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
   void refetchData() async {
     final result = await Get.find<CompaniesCubit>().fetch();
     // User can do anything when no company found, notice to them
-    if(!result) {
+    if (!result) {
       Get.find<AuthenticationCubit>().notifyNoCompanyBelongToUser(
         magicLinkJoinResponse: widget.magicLinkJoinResponse,
       );
     }
 
-    if(Globals.instance.companyId != null) {
+    if (Globals.instance.companyId != null) {
       Get.find<WorkspacesCubit>().fetch(companyId: Globals.instance.companyId);
 
       if (Globals.instance.workspaceId != null) {
@@ -386,8 +385,7 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       );
 
   void _initFileDownloader() {
-    if(!PlatformDetection.isMobileSupported())
-      return;
+    if (!PlatformDetection.isMobileSupported()) return;
     _bindFileDownloadBackgroundIsolate();
     FlutterDownloader.registerCallback(downloadCallback);
   }
@@ -431,25 +429,28 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       if (listFiles.isNotEmpty) {
         Get.find<ReceiveFileCubit>().setNewListFiles(listFiles);
         _popWhenIsChildOfSharingPage();
-        NavigatorService.instance.navigateToReceiveSharing(fileType: ReceiveSharingType.MediaFile);
+        NavigatorService.instance
+            .navigateToReceiveSharing(fileType: ReceiveSharingType.MediaFile);
       }
     });
 
     // handle text sharing
     _receiveSharingTextManager = Get.find<ReceiveSharingTextManager>();
-    _receiveSharingTextSubscription =
-        _receiveSharingTextManager.pendingListText.stream.listen((receivedText) {
+    _receiveSharingTextSubscription = _receiveSharingTextManager
+        .pendingListText.stream
+        .listen((receivedText) {
       if (receivedText.text.isNotEmpty) {
         Get.find<ReceiveFileCubit>().setNewText(receivedText);
         _popWhenIsChildOfSharingPage();
-        NavigatorService.instance.navigateToReceiveSharing(fileType: ReceiveSharingType.Text);
+        NavigatorService.instance
+            .navigateToReceiveSharing(fileType: ReceiveSharingType.Text);
       }
     });
   }
 
   void _popWhenIsChildOfSharingPage() {
     try {
-      if(_isChildPageOfSharingPage()) {
+      if (_isChildPageOfSharingPage()) {
         NavigatorService.instance.back();
       }
     } catch (e) {

@@ -1,19 +1,22 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
+import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
+import 'package:twake/pages/chat/gallery_view.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,7 +99,55 @@ class _ComposeBar extends State<ComposeBar> {
           stateWithoutFileUploading: _controller.text.isNotReallyEmpty);
     });
 
+    Get.find<ChannelMessagesCubit>().stream.listen((state) {
+      final uploadState = Get.find<FileUploadCubit>().state;
+      final transitionState = Get.find<FileUploadTransitionCubit>().state;
+      List<dynamic> attachments = const [];
+      final hasUploadingFilesInStack = uploadState.listFileUploading.any(
+          (element) => element.uploadStatus == FileItemUploadStatus.uploading);
+      if (!hasUploadingFilesInStack &&
+          transitionState.fileUploadTransitionStatus ==
+              FileUploadTransitionStatus.finished) {
+        Get.find<FileUploadCubit>().closeListUploadingStream();
+        Get.find<FileUploadCubit>()
+            .clearFileUploadingState(needToCancelInProcessingFile: true);
+        Get.find<GalleryCubit>().galleryInit();
+      }
+      if (uploadState.listFileUploading.isNotEmpty &&
+          transitionState.fileUploadTransitionStatus !=
+              FileUploadTransitionStatus.finished) {
+        attachments = uploadState.listFileUploading
+            .where((fileUploading) => fileUploading.file != null)
+            .map((e) => e.file!.toAttachment())
+            .toList();
+        if (state is MessagesLoadSuccess) {
+          Get.find<FileUploadTransitionCubit>()
+              .uploadingMessageSent([state.messages.last]);
+        }
+      }
+      if (state is MessageEditInProgress &&
+          transitionState.fileUploadTransitionStatus ==
+              FileUploadTransitionStatus.uploadingMessageSent) {
+        Get.find<ChannelMessagesCubit>().edit(
+            message: state.message,
+            editedText: state.message.text,
+            newAttachments: attachments);
+
+        Get.find<FileUploadTransitionCubit>().uploadingFinished();
+        Get.find<FileUploadCubit>().closeListUploadingStream();
+        Get.find<FileUploadCubit>()
+            .clearFileUploadingState(needToCancelInProcessingFile: true);
+        Get.find<GalleryCubit>().galleryInit();
+      }
+    });
+
     Get.find<FileUploadCubit>().stream.listen((state) {
+      final hasFilesInStackUploaded = state.listFileUploading.every(
+          (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
+
+      if (hasFilesInStackUploaded)
+        Get.find<FileUploadTransitionCubit>().uploadingDone();
+
       if (state.listFileUploading.isNotEmpty) {
         final hasUploadedFileInStack = state.listFileUploading.any(
             (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
@@ -111,8 +162,8 @@ class _ComposeBar extends State<ComposeBar> {
           });
         } else {
           setState(() {
-            _canSendFiles = false;
-            _canSend = false;
+            _canSendFiles = true;
+            _canSend = true;
           });
         }
       } else {
@@ -448,19 +499,14 @@ class _TextInputState extends State<TextInput> {
   }
 
   _buildAttachment() {
-    final fileUploadStatus =
-        Get.find<FileUploadCubit>().state.fileUploadStatus.index;
-
     return IconButton(
       constraints: BoxConstraints(
         minHeight: 24.0,
         minWidth: 24.0,
       ),
       padding: EdgeInsets.zero,
-      icon: fileUploadStatus == 0
-          ? Image.asset(imageAttachmentNew)
-          : Image.asset(imageAttachment),
-      onPressed: () => _handleOpenFilePicker(),
+      icon: Image.asset(imageAttachmentNew),
+      onPressed: () => _handleOpenGallery(),
       color: Theme.of(context).colorScheme.surface,
     );
   }
@@ -554,7 +600,6 @@ class _TextInputState extends State<TextInput> {
                 context,
               );
               widget.controller!.clear();
-              Get.find<FileUploadCubit>().clearFileUploadingState();
             }
           : null,
       child: widget.canSend
@@ -573,6 +618,30 @@ class _TextInputState extends State<TextInput> {
               ),
             ),
     );
+  }
+
+  _handleOpenGallery() {
+    final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
+    if (fileLen == MAX_FILE_UPLOADING) {
+      displayLimitationAlertDialog();
+      return;
+    }
+    Get.find<CameraCubit>().getCamera();
+    Get.find<GalleryCubit>().getGalleryAssets();
+    Get.find<FileUploadTransitionCubit>().uploadingMessageNotSent();
+
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(40),
+          ),
+        ),
+        builder: (context) {
+          return GalleryView();
+        });
   }
 
   _handleOpenFilePicker() {

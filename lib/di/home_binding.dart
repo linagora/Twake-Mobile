@@ -3,12 +3,16 @@ import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/authentication_cubit/authentication_cubit.dart';
 import 'package:twake/blocs/badges_cubit/badges_cubit.dart';
 import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
+import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
-import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
+import 'package:twake/blocs/language_cubit/language_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/invitation_cubit/invitation_cubit.dart';
 import 'package:twake/blocs/magic_link_cubit/joining_cubit/joining_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
@@ -94,6 +98,18 @@ class HomeBinding implements Bindings {
 
     final receiveTextSharingManager = ReceiveSharingTextManager();
     Get.put(receiveTextSharingManager, permanent: true);
+
+    final cameraCubit = CameraCubit();
+    Get.put(cameraCubit, permanent: true);
+
+    final galleryCubit = GalleryCubit();
+    Get.put(galleryCubit, permanent: true);
+
+    final companyFileCubit = CompanyFileCubit();
+    Get.put(companyFileCubit, permanent: true);
+
+    final fileUploadTransitionCubit = FileUploadTransitionCubit();
+    Get.put(fileUploadTransitionCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();
