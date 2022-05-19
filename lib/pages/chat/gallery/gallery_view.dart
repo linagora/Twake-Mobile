@@ -4,19 +4,19 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
-import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/local_file.dart';
+import 'package:twake/pages/chat/gallery/tabbar/gallery_view_tabbar.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GalleryView extends StatefulWidget {
   const GalleryView({
@@ -122,7 +122,7 @@ class GalleryViewState extends State<GalleryView> {
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
                       controller: controller,
-                      children: [_buildTabBar(context)]),
+                      children: [GalleryViewTabBar()]),
                   Expanded(
                     child: TabBarView(
                       children: [
@@ -473,176 +473,6 @@ class GalleryViewState extends State<GalleryView> {
         ),
       ),
     );
-  }
-
-  Widget _buildTabBar(BuildContext context) {
-    return Builder(builder: (context) {
-      final TabController tabController = DefaultTabController.of(context)!;
-
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0),
-            topRight: Radius.circular(20.0),
-          ),
-          color: Get.isDarkMode
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).primaryColor,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: Text('Clear',
-                        style: Theme.of(context).textTheme.headline4!.copyWith(
-                            fontWeight: FontWeight.w400, fontSize: 17)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text(
-                      "Gallery",
-                      style: Theme.of(context).textTheme.headline1!.copyWith(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 21,
-                          ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Image.asset(
-                      imageClose,
-                      width: 24.0,
-                      height: 24.0,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              SizedBox(
-                height: 38,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          tabController.animateTo(0);
-                          Get.find<GalleryCubit>().tabChange(0);
-                        },
-                        child: BlocBuilder<GalleryCubit, GalleryState>(
-                          bloc: Get.find<GalleryCubit>(),
-                          builder: (context, state) {
-                            int tab = state.selectedTab;
-                            return AnimatedContainer(
-                              duration: Duration(milliseconds: 200),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    bottomLeft: Radius.circular(12),
-                                  ),
-                                  border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                  ),
-                                  color: tab == 0
-                                      ? Theme.of(context).colorScheme.surface
-                                      : Get.isDarkMode
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                          : Theme.of(context).primaryColor),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(Icons.image),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Image",
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          tabController.animateTo(1);
-                          Get.find<CompanyFileCubit>().getCompanyFiles();
-                          Get.find<GalleryCubit>().tabChange(1);
-                        },
-                        child: BlocBuilder<GalleryCubit, GalleryState>(
-                          bloc: Get.find<GalleryCubit>(),
-                          builder: (context, state) {
-                            int tab = state.selectedTab;
-                            return AnimatedContainer(
-                              duration: Duration(milliseconds: 200),
-                              height: 50,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(12),
-                                    bottomRight: Radius.circular(12),
-                                  ),
-                                  border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                  ),
-                                  color: //tabController.index == 0
-                                      tab == 1
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .surface
-                                          : Get.isDarkMode
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .primary
-                                              : Theme.of(context).primaryColor),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(CupertinoIcons.doc),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "File",
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-    });
   }
 
   Widget _buttonBar(BuildContext context) {
