@@ -5,17 +5,32 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
-class FilesListView extends StatelessWidget {
+class FilesListView extends StatefulWidget {
   final ScrollController scrollController;
-  final _searchController = TextEditingController();
 
   FilesListView({Key? key, required this.scrollController}) : super(key: key);
 
   @override
+  State<FilesListView> createState() => _FilesListViewState();
+}
+
+class _FilesListViewState extends State<FilesListView>
+    with AutomaticKeepAliveClientMixin<FilesListView> {
+  final _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Get.find<CompanyFileCubit>().getCompanyFiles();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: ListView(
-      controller: scrollController,
+    super.build(context);
+
+    return ListView(
+      controller: widget.scrollController,
       children: [
         Container(
           color: Get.isDarkMode
@@ -104,6 +119,9 @@ class FilesListView extends StatelessWidget {
           ),
         )
       ],
-    ));
+    );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

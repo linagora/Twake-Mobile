@@ -22,7 +22,8 @@ class PicturesListView extends StatefulWidget {
   State<PicturesListView> createState() => _PicturesListViewState();
 }
 
-class _PicturesListViewState extends State<PicturesListView> {
+class _PicturesListViewState extends State<PicturesListView>
+    with AutomaticKeepAliveClientMixin<PicturesListView> {
   CameraController? _cameraController;
 
   @override
@@ -48,8 +49,9 @@ class _PicturesListViewState extends State<PicturesListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: ListView(
+    super.build(context);
+
+    return ListView(
       controller: widget.scrollController,
       children: [
         Stack(
@@ -89,7 +91,7 @@ class _PicturesListViewState extends State<PicturesListView> {
           ],
         )
       ],
-    ));
+    );
   }
 
   Widget _galleryDone(
@@ -385,4 +387,7 @@ class _PicturesListViewState extends State<PicturesListView> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

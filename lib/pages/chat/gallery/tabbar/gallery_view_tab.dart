@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 
 class GalleryViewTab extends StatelessWidget {
@@ -26,7 +25,6 @@ class GalleryViewTab extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           tabController.animateTo(tabIndex);
-          Get.find<CompanyFileCubit>().getCompanyFiles();
           Get.find<GalleryCubit>().tabChange(tabIndex);
         },
         child: BlocBuilder<GalleryCubit, GalleryState>(
