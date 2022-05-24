@@ -30,14 +30,13 @@ class _PicturesListViewState extends State<PicturesListView>
   void initState() {
     super.initState();
     final state = Get.find<CameraCubit>().state;
-    if (state.cameraStateStatus == CameraStateStatus.found) {
-      final camera = state.availableCameras.first;
+    if (state.cameraStateStatus == CameraStateStatus.found ||
+        state.cameraStateStatus == CameraStateStatus.done) {
       _cameraController = CameraController(
-        camera,
+        state.availableCameras.first,
         ResolutionPreset.high,
       );
-      _cameraController!.initialize();
-      Get.find<CameraCubit>().cameraDone();
+      _initCamera();
     }
   }
 
@@ -45,6 +44,20 @@ class _PicturesListViewState extends State<PicturesListView>
   void dispose() {
     if (_cameraController != null) _cameraController!.dispose();
     super.dispose();
+  }
+
+  void _initCamera() async {
+    await _cameraController!.initialize();
+    setState(() {});
+    Get.find<CameraCubit>().cameraDone();
+  }
+
+  void _prepareCamera(CameraState state) {
+    _cameraController = CameraController(
+      state.availableCameras.first,
+      ResolutionPreset.high,
+    );
+    _initCamera();
   }
 
   @override
@@ -87,7 +100,6 @@ class _PicturesListViewState extends State<PicturesListView>
                 },
               ),
             ),
-            //    _buttonBar(context),
           ],
         )
       ],
@@ -110,27 +122,7 @@ class _PicturesListViewState extends State<PicturesListView>
       itemCount: assetsList.length + 1,
       itemBuilder: (_, index) {
         return index == 0
-            ? BlocBuilder<CameraCubit, CameraState>(
-                bloc: Get.find<CameraCubit>(),
-                builder: (context, state) {
-                  if (state.cameraStateStatus == CameraStateStatus.done) {
-                    return _cameraStream(context, cameraController!);
-                  } else if (state.cameraStateStatus ==
-                          CameraStateStatus.loading ||
-                      state.cameraStateStatus == CameraStateStatus.found) {
-                    return Center(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    return Text('Camera is not available',
-                        style: Theme.of(context).textTheme.headline1);
-                  }
-                },
-              )
+            ? _cameraStream(context, cameraController)
             : BlocBuilder<GalleryCubit, GalleryState>(
                 bloc: Get.find<GalleryCubit>(),
                 buildWhen: (_, currentState) =>
@@ -170,30 +162,7 @@ class _PicturesListViewState extends State<PicturesListView>
       itemCount: 2,
       itemBuilder: (_, index) {
         return index == 0
-            ? BlocBuilder<CameraCubit, CameraState>(
-                bloc: Get.find<CameraCubit>(),
-                builder: (context, state) {
-                  if (state.cameraStateStatus == CameraStateStatus.done) {
-                    return _cameraStream(context, cameraController!);
-                  } else if (state.cameraStateStatus ==
-                          CameraStateStatus.loading ||
-                      state.cameraStateStatus == CameraStateStatus.found) {
-                    return Center(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Camera is not available',
-                          style: Theme.of(context).textTheme.headline1),
-                    );
-                  }
-                },
-              )
+            ? _cameraStream(context, cameraController)
             : Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text("Gallety is not available",
@@ -217,30 +186,7 @@ class _PicturesListViewState extends State<PicturesListView>
       itemCount: 8,
       itemBuilder: (_, index) {
         return index == 0
-            ? BlocBuilder<CameraCubit, CameraState>(
-                bloc: Get.find<CameraCubit>(),
-                builder: (context, state) {
-                  if (state.cameraStateStatus == CameraStateStatus.done) {
-                    return _cameraStream(context, cameraController!);
-                  } else if (state.cameraStateStatus ==
-                          CameraStateStatus.loading ||
-                      state.cameraStateStatus == CameraStateStatus.found) {
-                    return Center(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('Camera is not available',
-                          style: Theme.of(context).textTheme.headline1),
-                    );
-                  }
-                },
-              )
+            ? _cameraStream(context, cameraController)
             : Center(
                 child: Container(
                   height: 50,
@@ -252,43 +198,82 @@ class _PicturesListViewState extends State<PicturesListView>
     );
   }
 
-  Widget _cameraStream(BuildContext context, CameraController _controller) {
-    return GestureDetector(
-      onTap: () {
-        push(RoutePaths.cameraView.path, arguments: _controller);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            child: BlocBuilder<CameraCubit, CameraState>(
-              bloc: Get.find<CameraCubit>(),
-              builder: (context, state) {
-                if (state.cameraStateStatus == CameraStateStatus.done) {
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CameraPreview(_controller),
-                      Icon(
-                        Icons.camera_alt_outlined,
-                        size: 40,
-                      )
-                    ],
-                  );
-                } else
-                  return Container(
-                    child: Text(
-                      'Camera is not here lol',
-                      style: Theme.of(context).textTheme.headline1,
-                    ),
-                  );
-              },
-            ),
-          ),
+  Widget _cameraStream(BuildContext context, CameraController? _controller) {
+    final state = Get.find<CameraCubit>().state;
+    if (_controller == null &&
+        state.cameraStateStatus == CameraStateStatus.found) {
+      _prepareCamera(state);
+      return Center(
+        child: Container(
+          height: 50,
+          width: 50,
+          child: CircularProgressIndicator(),
         ),
-      ),
-    );
+      );
+    }
+
+    return _controller == null || !_controller.value.isInitialized
+        ? Container(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  "The camera is not available",
+                  style: Theme.of(context).textTheme.headline1,
+                ),
+              ),
+            ),
+          )
+        : GestureDetector(
+            onTap: () {
+              push(RoutePaths.cameraView.path, arguments: _controller);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Container(
+                  child: BlocBuilder<CameraCubit, CameraState>(
+                    bloc: Get.find<CameraCubit>(),
+                    builder: (context, state) {
+                      if (state.cameraStateStatus == CameraStateStatus.done) {
+                        return Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CameraPreview(_controller),
+                            Icon(
+                              Icons.camera_alt_outlined,
+                              size: 40,
+                            )
+                          ],
+                        );
+                      } else if (state.cameraStateStatus ==
+                          CameraStateStatus.loading) {
+                        return Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      } else
+                        return Container(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                'The camera is not available',
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
+                            ),
+                          ),
+                        );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 
   Widget _assetThumbnail(Uint8List data, int index, BuildContext context) {
@@ -306,10 +291,7 @@ class _PicturesListViewState extends State<PicturesListView>
         padding: const EdgeInsets.all(2.0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: /*Image.memory(
-            data,
-            fit: BoxFit.fill, ),*/
-              Stack(
+          child: Stack(
             fit: StackFit.expand,
             children: [
               Image.memory(
