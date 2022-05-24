@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:camera/camera.dart';
 import 'package:equatable/equatable.dart';
 import 'package:twake/repositories/camera_repository.dart';
+import 'package:twake/utils/utilities.dart';
 
 part 'camera_state.dart';
 
@@ -17,8 +18,15 @@ class CameraCubit extends Cubit<CameraState> {
   }
 
   void getCamera() async {
+    final bool isGranted = await Utilities.checkAndRequestCameraPermission();
+    if (isGranted == false) {
+      emit(CameraState(
+        cameraStateStatus: CameraStateStatus.failed,
+      ));
+      return;
+    }
+
     emit(CameraState(cameraStateStatus: CameraStateStatus.loading));
-    // cameras[0] is front, next one is back
     final cameras = await _repository.getCameras();
     if (cameras.isEmpty) {
       emit(CameraState(
@@ -27,7 +35,36 @@ class CameraCubit extends Cubit<CameraState> {
     } else {
       emit(CameraState(
           cameraStateStatus: CameraStateStatus.found,
-          availableCameras: cameras));
+          availableCameras: cameras,
+          cameraLensModeSwitch: false,
+          flashMode: 0));
     }
+  }
+
+  void cameraFailed() async {
+    emit(
+      CameraState(
+        cameraStateStatus: CameraStateStatus.failed,
+      ),
+    );
+  }
+
+  void cameraDone() async {
+    emit(
+      CameraState(
+          flashMode: state.flashMode,
+          cameraLensModeSwitch: state.cameraLensModeSwitch,
+          cameraStateStatus: CameraStateStatus.done,
+          availableCameras: state.availableCameras),
+    );
+  }
+
+  void cameraLensSwitch() async {
+    emit(state.copyWith(newCameraLensModeSwitch: !state.cameraLensModeSwitch));
+  }
+
+  void nextFlashMode() async {
+    final newMode = state.flashMode == 2 ? 0 : state.flashMode + 1;
+    emit(state.copyWith(newFlashMode: newMode));
   }
 }

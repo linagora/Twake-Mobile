@@ -33,12 +33,10 @@ class _PicturesListViewState extends State<PicturesListView> {
       final camera = state.availableCameras.first;
       _cameraController = CameraController(
         camera,
-        ResolutionPreset.medium,
+        ResolutionPreset.high,
       );
       _cameraController!.initialize();
-      Get.find<CameraCubit>().emit(CameraState(
-        cameraStateStatus: CameraStateStatus.done,
-      ));
+      Get.find<CameraCubit>().cameraDone();
     }
   }
 
@@ -254,9 +252,9 @@ class _PicturesListViewState extends State<PicturesListView> {
 
   Widget _cameraStream(BuildContext context, CameraController _controller) {
     return GestureDetector(
-      onTap: () => push(
-        RoutePaths.cameraView.path,
-      ),
+      onTap: () {
+        push(RoutePaths.cameraView.path, arguments: _controller);
+      },
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: ClipRRect(
