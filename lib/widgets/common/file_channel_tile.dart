@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
@@ -7,17 +8,20 @@ import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
-import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/utils/extensions.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/widgets/common/shimmer_loading.dart';
 
 const _fileTileHeight = 76.0;
+
+typedef OnTap = void Function();
 
 class FileChannelTile extends StatefulWidget {
   final String fileId;
   final String senderName;
+  final OnTap? onTap;
 
-  FileChannelTile({required this.fileId, required this.senderName}) : super(key: ValueKey(fileId));
+  FileChannelTile({required this.fileId, required this.senderName, this.onTap})
+      : super(key: ValueKey(fileId));
 
   @override
   State<FileChannelTile> createState() => _FileTileState();
@@ -26,7 +30,8 @@ class FileChannelTile extends StatefulWidget {
 class _FileTileState extends State<FileChannelTile> {
   @override
   Widget build(BuildContext context) {
-    File? cacheFile = Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
+    File? cacheFile =
+        Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
     return cacheFile == null
         ? FutureBuilder(
             future: Get.find<FileCubit>().getFileData(id: widget.fileId),
@@ -55,15 +60,21 @@ class _FileTileState extends State<FileChannelTile> {
         ),
       );
 
-  _buildFileWidget(File file) => Container(
-        margin: const EdgeInsets.only(bottom: 4.0),
-        child: Row(children: [
-          _buildFileHeader(file),
-          SizedBox(width: 12.0),
-          Expanded(
-            child: _buildFileInfo(file),
-          ),
-        ]),
+  _buildFileWidget(File file) => GestureDetector(
+        onTap: () {
+          widget.onTap?.call();
+        },
+        child: Container(
+          color: Colors.transparent,
+          margin: const EdgeInsets.only(bottom: 4.0),
+          child: Row(children: [
+            _buildFileHeader(file),
+            SizedBox(width: 12.0),
+            Expanded(
+              child: _buildFileInfo(file),
+            ),
+          ]),
+        ),
       );
 
   _buildFileHeader(File file) {

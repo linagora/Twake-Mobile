@@ -1,16 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:twake/models/channel/channel_file.dart';
+import 'package:twake/repositories/file_repository.dart';
 
 part 'company_file_state.dart';
 
 class CompanyFileCubit extends Cubit<CompanyFileState> {
-  CompanyFileCubit()
-      : super(CompanyFileState(companyFileStatus: CompanyFileStatus.init));
+  late final FileRepository _repository;
+
+  CompanyFileCubit({FileRepository? repository})
+      : super(CompanyFileState(
+            companyFileStatus: CompanyFileStatus.init, files: [])) {
+    _repository = repository ?? FileRepository();
+  }
 
   void getCompanyFiles() async {
-    // Add company files when the api is ready
-    emit(CompanyFileState(companyFileStatus: CompanyFileStatus.loading));
-    await Future.delayed(Duration(seconds: 1));
-    emit(CompanyFileState(companyFileStatus: CompanyFileStatus.done));
+    emit(state.copyWith(newCompanyFileStatus: CompanyFileStatus.loading));
+    final files = await _repository.fetchUserFilesFromCompany();
+    emit(state.copyWith(
+        newCompanyFileStatus: CompanyFileStatus.done, newFiles: files));
   }
 }

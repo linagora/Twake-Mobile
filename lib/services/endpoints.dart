@@ -14,11 +14,14 @@ class Endpoint {
   // API Endpoint for getting API version info + auth method
   static const info = '/internal/services/general/v1/server';
   // API Endpoint for working with user's workspaces in all companies
-  static const workspaces = '/internal/services/workspaces/v1/companies/%s/workspaces';
-  static const workspaceInviteEmail = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/invite';
+  static const workspaces =
+      '/internal/services/workspaces/v1/companies/%s/workspaces';
+  static const workspaceInviteEmail =
+      '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/invite';
   // API Endpoint for working with account data
   static const account = '/internal/services/users/v1/users/%s';
-  static const accountPreferences = '/internal/services/users/v1/users/me/preferences';
+  static const accountPreferences =
+      '/internal/services/users/v1/users/me/preferences';
   // API Endpoint for working with user's companies
   static const companies = '/internal/services/users/v1/users/%s/companies';
   // API Endpoint for registering or unregistering device
@@ -51,19 +54,27 @@ class Endpoint {
 
   // API Endpoint for working with file in chat
   static const files = '/internal/services/files/v1/companies/%s/files';
-  static const fileMetadata = '/internal/services/files/v1/companies/%s/files/%s';
+  static const fileMetadata =
+      '/internal/services/files/v1/companies/%s/files/%s';
 
   // API Endpoint for magic links
-  static const magicLinkTokens = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/tokens';
-  static const magicLinkDeleteToken = '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/tokens/%s';
+  static const magicLinkTokens =
+      '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/tokens';
+  static const magicLinkDeleteToken =
+      '/internal/services/workspaces/v1/companies/%s/workspaces/%s/users/tokens/%s';
   static const magicLinkJoin = '/internal/services/workspaces/v1/join';
 
   static const magicLink = '%s?join=%s';
   static const consolePage = 'https://console.%s';
-  static const downloadFile = '%s/internal/services/files/v1/companies/%s/files/%s/download';
-  static const downloadFileThumbnail = '%s/internal/services/files/v1/companies/%s/files/%s/thumbnails/%s';
+  static const downloadFile =
+      '%s/internal/services/files/v1/companies/%s/files/%s/download';
+  static const downloadFileThumbnail =
+      '%s/internal/services/files/v1/companies/%s/files/%s/thumbnails/%s';
   static const httpsScheme = 'https://%s';
 
+  // API Endpoint for company files
+  static const companyFiles =
+      '/internal/services/messages/v1/companies/%s/files';
 
   static const publicMethods = const [info, reservation, signup, emailResend];
 
@@ -85,6 +96,4 @@ class Endpoint {
   static bool inSupportedHosts(String host) {
     return supportedHosts.contains(host);
   }
-
-
 }

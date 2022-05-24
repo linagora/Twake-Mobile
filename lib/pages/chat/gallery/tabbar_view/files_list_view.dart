@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/models/channel/channel_file.dart';
+import 'package:twake/widgets/common/file_channel_tile.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 class FilesListView extends StatefulWidget {
@@ -82,34 +85,26 @@ class _FilesListViewState extends State<FilesListView>
                   bloc: Get.find<CompanyFileCubit>(),
                   builder: (context, state) {
                     if (state.companyFileStatus == CompanyFileStatus.done) {
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          itemCount: 10,
-                          itemBuilder: (context, index) {
-                            return Container(
-                              height: 50,
-                              width: 50,
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.folder,
-                                    size: 40,
-                                    color:
-                                        Theme.of(context).colorScheme.surface,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "Dummy file",
-                                      style:
-                                          Theme.of(context).textTheme.headline4,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          });
+                      return ListView.separated(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shrinkWrap: true,
+                        itemCount: state.files.length,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            Padding(
+                          padding: EdgeInsets.only(
+                              left: Dim.widthPercent(25), top: 6, bottom: 6),
+                          child: Divider(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.3),
+                            height: 1,
+                          ),
+                        ),
+                        itemBuilder: (context, index) {
+                          return _buildChannelFileItem(state.files[index]);
+                        },
+                      );
                     } else {
                       return CircularProgressIndicator();
                     }
@@ -120,6 +115,13 @@ class _FilesListViewState extends State<FilesListView>
           ),
         )
       ],
+    );
+  }
+
+  _buildChannelFileItem(ChannelFile channelFile) {
+    return FileChannelTile(
+      fileId: channelFile.fileId,
+      senderName: channelFile.senderName,
     );
   }
 
