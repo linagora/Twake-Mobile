@@ -84,6 +84,7 @@ class _FilesListViewState extends State<FilesListView>
                     if (state.companyFileStatus == CompanyFileStatus.done) {
                       return ListView.builder(
                           shrinkWrap: true,
+                          physics: ScrollPhysics(),
                           itemCount: 10,
                           itemBuilder: (context, index) {
                             return Container(

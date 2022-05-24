@@ -67,40 +67,35 @@ class _PicturesListViewState extends State<PicturesListView>
     return ListView(
       controller: widget.scrollController,
       children: [
-        Stack(
-          children: [
-            Container(
-              color: Get.isDarkMode
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).primaryColor,
-              child: BlocBuilder<GalleryCubit, GalleryState>(
-                buildWhen: (_, currentState) =>
-                    currentState.galleryStateStatus !=
-                    GalleryStateStatus.newSelect,
-                bloc: Get.find<GalleryCubit>(),
-                builder: (context, state) {
-                  if (state.galleryStateStatus == GalleryStateStatus.done) {
-                    return _galleryDone(
-                        assetsList: state.assetsList,
-                        cameraController: _cameraController,
-                        context: context);
-                  } else if (state.galleryStateStatus ==
-                      GalleryStateStatus.loading) {
-                    return _galleryLoading(cameraController: _cameraController);
-                  } else if (state.galleryStateStatus ==
-                      GalleryStateStatus.newSelect) {
-                    return _galleryDone(
-                        assetsList: state.assetsList,
-                        cameraController: _cameraController,
-                        context: context);
-                  } else {
-                    return _galleryFailed(
-                        cameraController: _cameraController, context: context);
-                  }
-                },
-              ),
-            ),
-          ],
+        Container(
+          color: Get.isDarkMode
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).primaryColor,
+          child: BlocBuilder<GalleryCubit, GalleryState>(
+            buildWhen: (_, currentState) =>
+                currentState.galleryStateStatus != GalleryStateStatus.newSelect,
+            bloc: Get.find<GalleryCubit>(),
+            builder: (context, state) {
+              if (state.galleryStateStatus == GalleryStateStatus.done) {
+                return _galleryDone(
+                    assetsList: state.assetsList,
+                    cameraController: _cameraController,
+                    context: context);
+              } else if (state.galleryStateStatus ==
+                  GalleryStateStatus.loading) {
+                return _galleryLoading(cameraController: _cameraController);
+              } else if (state.galleryStateStatus ==
+                  GalleryStateStatus.newSelect) {
+                return _galleryDone(
+                    assetsList: state.assetsList,
+                    cameraController: _cameraController,
+                    context: context);
+              } else {
+                return _galleryFailed(
+                    cameraController: _cameraController, context: context);
+              }
+            },
+          ),
         )
       ],
     );
