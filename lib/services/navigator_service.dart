@@ -8,6 +8,7 @@ import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/message/message.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_type.dart';
 import 'package:twake/pages/companies/company_selection_widget.dart';
@@ -134,6 +135,7 @@ class NavigatorService {
     required String channelId,
     String? threadId,
     bool reloadThreads: true,
+    Message? pinnedMessage,
   }) async {
     if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
@@ -196,7 +198,7 @@ class NavigatorService {
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
 
-      Get.toNamed(path)?.then((_) {
+      Get.toNamed(path, arguments: [pinnedMessage])?.then((_) {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });

@@ -8,6 +8,7 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class PinnedMessages extends StatefulWidget {
@@ -18,6 +19,9 @@ class PinnedMessages extends StatefulWidget {
 }
 
 class _PinnedMessagesState extends State<PinnedMessages> {
+  final SearchableGroupChatController _controller =
+      SearchableGroupChatController();
+
   @override
   Widget build(BuildContext context) {
     final int pinnedMessages =
@@ -65,15 +69,30 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                     PinnedMessageStatus.finished) {
                   return Expanded(
                       child: SearchableChatView(
+                          searchableChatController: _controller,
                           indexedItemBuilder: (_, message, index) {
-                            return MessageTile<ChannelMessagesCubit>(
-                              isPinned: true,
-                              message: message,
-                              upBubbleSide: true,
-                              downBubbleSide: true,
-                              key: ValueKey(message.hash),
-                              channel: channel,
-                            );
+                            return _controller.highlightMessage != null &&
+                                    _controller.highlightMessage == message
+                                ? HighlightComponent(
+                                    component:
+                                        MessageTile<ChannelMessagesCubit>(
+                                      isPinned: true,
+                                      message: message,
+                                      upBubbleSide: true,
+                                      downBubbleSide: true,
+                                      key: ValueKey(message.hash),
+                                      channel: channel,
+                                    ),
+                                    highlightColor:
+                                        Theme.of(context).highlightColor)
+                                : MessageTile<ChannelMessagesCubit>(
+                                    isPinned: true,
+                                    message: message,
+                                    upBubbleSide: true,
+                                    downBubbleSide: true,
+                                    key: ValueKey(message.hash),
+                                    channel: channel,
+                                  );
                           },
                           messages: state.pinnedMessageList));
                 } else if (state.pinnedMesssageStatus ==
