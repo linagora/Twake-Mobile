@@ -20,6 +20,7 @@ import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/twacode.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
@@ -176,7 +177,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   }
 
   Widget _pinnedMessagesSheet(BuildContext context, Channel channel) {
-    final ItemScrollController itemScrollController = ItemScrollController();
     final ItemPositionsListener itemPositionsListener =
         ItemPositionsListener.create();
     return BlocBuilder<PinnedMessageCubit, PinnedMessageState>(
@@ -214,7 +214,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                             state.selected,
                             state.pinnedMessageList.length,
                             context),
-                        itemScrollController: itemScrollController,
                         itemPositionsListener: itemPositionsListener,
                       )),
                   GestureDetector(
@@ -234,17 +233,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                                 state.pinnedMessageList[state.selected]),
                           ]),
                       onTap: () async {
-                        final bool result = await Get.find<PinnedMessageCubit>()
-                            .selectPinnedMessage();
-                        final selected =
-                            state.pinnedMessageList.length - 1 == state.selected
-                                ? 0
-                                : state.selected + 1;
-                        if (result)
-                          itemScrollController.scrollTo(
-                              index: selected,
-                              duration: Duration(milliseconds: 700),
-                              curve: Curves.linear);
+                        await Get.find<PinnedMessageCubit>().selectPinnedMessage();
                       }),
                   Spacer(),
                   GestureDetector(

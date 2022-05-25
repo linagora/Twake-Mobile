@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/utils/dateformatter.dart';
-import 'package:twake/widgets/common/highlight_message.dart';
 
 class SearchableChatView extends StatefulWidget {
   final List<Message> messages;
@@ -11,13 +10,17 @@ class SearchableChatView extends StatefulWidget {
   final Widget Function(BuildContext context, Message element, int index)
     indexedItemBuilder;
   // use this controller to jumpTo specific message
-  final SearchableGroupChatController? groupChatController;
+  final SearchableGroupChatController? searchableChatController;
+  final ScrollPhysics? physics;
+  final bool shrinkWrap;
 
   SearchableChatView({
     required this.indexedItemBuilder, 
     required this.messages, 
     this.reverse = false,
-    this.groupChatController,
+    this.searchableChatController,
+    this.physics,
+    this.shrinkWrap = false,
   });
 
   State<SearchableChatView> createState() => _SearchableChatViewState();
@@ -30,15 +33,18 @@ class _SearchableChatViewState extends State<SearchableChatView> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.groupChatController ?? SearchableGroupChatController();
+    _controller = widget.searchableChatController ?? SearchableGroupChatController();
     _controller._bind(this, widget.messages.reversed.toList());
   }
 
   @override
   Widget build(BuildContext context) {
     return StickyGroupedListView<Message, DateTime>(
+      initialScrollIndex: 0,// index of first unread message,
       elements: widget.messages,
       key: PageStorageKey<String>('uniqueKey'),
+      physics: widget.physics,
+      shrinkWrap: widget.shrinkWrap,
       groupSeparatorBuilder: (Message msg) {
         return GestureDetector(
           onTap: () {
@@ -74,11 +80,7 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       padding: EdgeInsets.only(bottom: 12.0),
       reverse: widget.reverse,
       indexedItemBuilder: (context, message, index) {
-        return highlightMessage == null || highlightMessage != message 
-          ? widget.indexedItemBuilder(context, message, index)
-          : HighlightComponent(
-            component: widget.indexedItemBuilder(context, message, index)
-            );
+        return widget.indexedItemBuilder(context, message, index);
       },
     );
   }
@@ -93,6 +95,7 @@ class _SearchableChatViewState extends State<SearchableChatView> {
 
 class SearchableGroupChatController extends GroupedItemScrollController {
   _SearchableChatViewState? _state;
+  Message? _highlightMessage;
 
   void jumpMessage(List<Message> messages, Message message) {
     super.scrollTo(
@@ -103,7 +106,10 @@ class SearchableGroupChatController extends GroupedItemScrollController {
     );
     
     _state!.updateHighlightMessage(message);
+    _highlightMessage = message;
   }
+
+  Message? get highlightMessage => _highlightMessage;
 
   void _bind(_SearchableChatViewState state, List<Message> messages) {
     assert(_state == null);

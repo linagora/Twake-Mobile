@@ -71,6 +71,44 @@ class Message extends BaseModel {
         this.reactions.fold(0, (acc, r) => r.count + acc) as int;
   }
 
+  @override
+  int get hashCode {
+    return this.id.hashCode +
+        this.text.hashCode +
+        this.responsesCount +
+        this.reactions.fold(0, (acc, r) => r.name.hashCode + acc) +
+        (this.files != null
+            ? this.files!.fold(0, (prevFile, file) => file.hashCode + prevFile)
+            : 0) +
+        this.delivery.hashCode +
+        this._isRead +
+        this.reactions.fold(0, (acc, r) => r.count + acc) as int;
+  }
+
+  @override
+  bool operator ==(other) {
+    // don't need to compare blocks, files, reactions fields, createAt
+    return (other is Message) &&
+        id == other.id &&
+        threadId == other.threadId &&
+        other.channelId == channelId &&
+        other.userId == userId &&
+        other.responsesCount == responsesCount &&
+        other.subtype == subtype &&
+        other.text == text &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        // other.blocks == blocks &&
+        // other.files == files &&
+        //other.reactions == reactions &&
+        other.username == username &&
+        other.firstName == firstName &&
+        other.lastName == lastName &&
+        other.picture == picture &&
+        other._isRead == _isRead &&
+        other.delivery == delivery;
+  }
+
   String get sender {
     if (this.firstName == null || this.lastName == null) {
       return this.username!;
