@@ -93,7 +93,7 @@ void main() async {
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
-          //DefaultCupertinoLocalizations.delegate
+          DefaultCupertinoLocalizations.delegate
         ],
         supportedLocales: [
           const Locale('en'),
