@@ -13,7 +13,7 @@ import 'package:twake/widgets/common/shimmer_loading.dart';
 
 const _fileTileHeight = 76.0;
 
-typedef OnTap = void Function();
+typedef OnTap = void Function(File file);
 
 class FileChannelTile extends StatefulWidget {
   final String fileId;
@@ -62,7 +62,7 @@ class _FileTileState extends State<FileChannelTile> {
 
   _buildFileWidget(File file) => GestureDetector(
         onTap: () {
-          widget.onTap?.call();
+          widget.onTap?.call(file);
         },
         child: Container(
           color: Colors.transparent,

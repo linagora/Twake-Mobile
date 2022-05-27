@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/widgets/common/file_uploading_tile.dart';
 
@@ -103,6 +103,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
                     return BlocBuilder<GalleryCubit, GalleryState>(
                       bloc: Get.find<GalleryCubit>(),
                       builder: (context, state) {
+                        // TODO: files can be upload not only from gallery
                         return FileUploadingTile(
                             thumbnail: state
                                 .assetsList[state.selectedFilesIndex[index]],

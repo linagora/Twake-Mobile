@@ -98,6 +98,7 @@ class FileRepository {
   }
 
   Future<List<ChannelFile>> fetchUserFilesFromCompany({
+    required String userName,
     String? companyId,
   }) async {
     List<dynamic> remoteResult;
@@ -113,8 +114,7 @@ class FileRepository {
     );
 
     var files = remoteResult
-        .map((entry) => ChannelFile(entry['id'], 'sender',
-            entry['created_at'])) // TODO: how get sender ?
+        .map((entry) => ChannelFile(entry['id'], userName, entry['created_at']))
         .toList();
 
     return files;

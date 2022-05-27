@@ -105,7 +105,7 @@ class HomeBinding implements Bindings {
     final galleryCubit = GalleryCubit();
     Get.put(galleryCubit, permanent: true);
 
-    final companyFileCubit = CompanyFileCubit();
+    final companyFileCubit = CompanyFileCubit(accountCubit: accountCubit);
     Get.put(companyFileCubit, permanent: true);
 
     final fileUploadTransitionCubit = FileUploadTransitionCubit();

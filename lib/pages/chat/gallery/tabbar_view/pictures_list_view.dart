@@ -29,6 +29,9 @@ class _PicturesListViewState extends State<PicturesListView>
   @override
   void initState() {
     super.initState();
+
+    Get.find<GalleryCubit>().tabChange(0);
+
     final state = Get.find<CameraCubit>().state;
     if (state.cameraStateStatus == CameraStateStatus.found ||
         state.cameraStateStatus == CameraStateStatus.done) {
