@@ -80,18 +80,16 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
       listener: (context, state) {
         int selected = state.selected;
         Message jumpMessage = state.pinnedMessageList[selected];
-        if(!jumpMessage.inThread) {
+        if (!jumpMessage.inThread) {
           _controller.jumpMessage(messages, state.pinnedMessageList[selected]);
         } else {
           NavigatorService.instance.navigate(
-                          channelId: jumpMessage.channelId,
-                          threadId: jumpMessage.threadId,
-                          reloadThreads: false,
-                          pinnedMessage: jumpMessage,
-                        );
+            channelId: jumpMessage.channelId,
+            threadId: jumpMessage.threadId,
+            reloadThreads: false,
+            pinnedMessage: jumpMessage,
+          );
         }
-        
-        
       },
       child: SearchableChatView(
           searchableChatController: _controller,
@@ -134,29 +132,23 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
                       },
                       color: Colors.transparent),
                 ],
-                child: _controller.highlightMessage != null &&
-                        _controller.highlightMessage == message
-                    ? HighlightComponent(
-                        highlightColor: Theme.of(context).highlightColor,
-                        component: _buildMessageTile(index, messages,
-                            endOfHistory, message, bubbleSides))
-                    : _buildMessageTile(
-                        index, messages, endOfHistory, message, bubbleSides));
+                child: HighlightComponent(
+                  highlightColor: Theme.of(context).highlightColor,
+                  component: (index == messages.length - 1 && endOfHistory)
+                      ? ChannelFirstMessage(
+                          channel: widget.parentChannel,
+                          icon: message.picture ?? "")
+                      : MessageTile<ChannelMessagesCubit>(
+                          message: message,
+                          upBubbleSide: bubbleSides[0],
+                          downBubbleSide: bubbleSides[1],
+                          key: ValueKey(message.hash),
+                          channel: widget.parentChannel,
+                        ),
+                  highlightWhen: _controller.highlightMessage != null &&
+                      _controller.highlightMessage == message,
+                ));
           }),
     );
-  }
-
-  Widget _buildMessageTile(int index, List<Message> messages, bool endOfHistory,
-      Message message, List<bool> bubbleSides) {
-    return (index == messages.length - 1 && endOfHistory)
-        ? ChannelFirstMessage(
-            channel: widget.parentChannel, icon: message.picture ?? "")
-        : MessageTile<ChannelMessagesCubit>(
-            message: message,
-            upBubbleSide: bubbleSides[0],
-            downBubbleSide: bubbleSides[1],
-            key: ValueKey(message.hash),
-            channel: widget.parentChannel,
-          );
   }
 }
