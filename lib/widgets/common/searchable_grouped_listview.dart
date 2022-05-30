@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/models/message/message.dart';
@@ -8,15 +7,15 @@ class SearchableChatView extends StatefulWidget {
   final List<Message> messages;
   final bool reverse;
   final Widget Function(BuildContext context, Message element, int index)
-    indexedItemBuilder;
+      indexedItemBuilder;
   // use this controller to jumpTo specific message
   final SearchableGroupChatController? searchableChatController;
   final ScrollPhysics? physics;
   final bool shrinkWrap;
 
   SearchableChatView({
-    required this.indexedItemBuilder, 
-    required this.messages, 
+    required this.indexedItemBuilder,
+    required this.messages,
     this.reverse = false,
     this.searchableChatController,
     this.physics,
@@ -33,16 +32,17 @@ class _SearchableChatViewState extends State<SearchableChatView> {
   @override
   void initState() {
     super.initState();
-    _controller = widget.searchableChatController ?? SearchableGroupChatController();
+    _controller =
+        widget.searchableChatController ?? SearchableGroupChatController();
     _controller._bind(this, widget.messages.reversed.toList());
   }
 
   @override
   Widget build(BuildContext context) {
     return StickyGroupedListView<Message, DateTime>(
-      initialScrollIndex: 0,// index of first unread message,
+      initialScrollIndex: 0, // index of first unread message,
       elements: widget.messages,
-      key: PageStorageKey<String>('uniqueKey'),
+      disableHeader: true,
       physics: widget.physics,
       shrinkWrap: widget.shrinkWrap,
       groupSeparatorBuilder: (Message msg) {
@@ -65,18 +65,16 @@ class _SearchableChatViewState extends State<SearchableChatView> {
         );
       },
       groupBy: (Message m) {
-        final DateTime dt =
-            DateTime.fromMillisecondsSinceEpoch(m.createdAt);
+        final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.createdAt);
         return DateTime(dt.year, dt.month, dt.day);
       },
       groupComparator: (DateTime value1, DateTime value2) =>
           value2.compareTo(value1),
       itemComparator: (Message m1, Message m2) =>
-        m2.createdAt.compareTo(m1.createdAt),
+          m2.createdAt.compareTo(m1.createdAt),
       separator: SizedBox(height: 1.0),
       itemScrollController: _controller,
-      stickyHeaderBackgroundColor: 
-        Theme.of(context).scaffoldBackgroundColor,
+      stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
       padding: EdgeInsets.only(bottom: 12.0),
       reverse: widget.reverse,
       indexedItemBuilder: (context, message, index) {
@@ -90,7 +88,6 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       highlightMessage = message;
     });
   }
-
 }
 
 class SearchableGroupChatController extends GroupedItemScrollController {
@@ -99,12 +96,12 @@ class SearchableGroupChatController extends GroupedItemScrollController {
 
   void jumpMessage(List<Message> messages, Message message) {
     super.scrollTo(
-      index: messages.indexOf(message), 
-      duration: Duration(seconds: 1),
+      index: messages.indexOf(message),
+      duration: Duration(milliseconds: 350),
       automaticAlignment: false,
       alignment: 0.5,
     );
-    
+
     _state!.updateHighlightMessage(message);
     _highlightMessage = message;
   }

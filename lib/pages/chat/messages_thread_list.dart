@@ -41,10 +41,11 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     }
 
     Message? pinnedMessage = Get.arguments[0];
-    
+
     if (pinnedMessage != null) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        _highlightIndex =  _messages.length - 1 - _messages.indexOf(pinnedMessage);
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        _highlightIndex =
+            _messages.length - 1 - _messages.indexOf(pinnedMessage);
         // i don't know why scrollTo animation work not correctly, so i use jumpTo
         _controller.jumpTo(
           index: _highlightIndex,
