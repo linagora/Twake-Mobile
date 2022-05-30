@@ -71,28 +71,20 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                       child: SearchableChatView(
                           searchableChatController: _controller,
                           indexedItemBuilder: (_, message, index) {
-                            return _controller.highlightMessage != null &&
-                                    _controller.highlightMessage == message
-                                ? HighlightComponent(
-                                    component:
-                                        MessageTile<ChannelMessagesCubit>(
-                                      isPinned: true,
-                                      message: message,
-                                      upBubbleSide: true,
-                                      downBubbleSide: true,
-                                      key: ValueKey(message.hash),
-                                      channel: channel,
-                                    ),
-                                    highlightColor:
-                                        Theme.of(context).highlightColor)
-                                : MessageTile<ChannelMessagesCubit>(
-                                    isPinned: true,
-                                    message: message,
-                                    upBubbleSide: true,
-                                    downBubbleSide: true,
-                                    key: ValueKey(message.hash),
-                                    channel: channel,
-                                  );
+                            return HighlightComponent(
+                              component: MessageTile<ChannelMessagesCubit>(
+                                isPinned: true,
+                                message: message,
+                                upBubbleSide: true,
+                                downBubbleSide: true,
+                                key: ValueKey(message.hash),
+                                channel: channel,
+                              ),
+                              highlightColor: Theme.of(context).highlightColor,
+                              highlightWhen:
+                                  _controller.highlightMessage != null &&
+                                      _controller.highlightMessage == message,
+                            );
                           },
                           messages: state.pinnedMessageList));
                 } else if (state.pinnedMesssageStatus ==

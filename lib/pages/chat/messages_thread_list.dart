@@ -41,10 +41,11 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     }
 
     Message? pinnedMessage = Get.arguments[0];
-    
+
     if (pinnedMessage != null) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        _highlightIndex =  _messages.length - 1 - _messages.indexOf(pinnedMessage);
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        _highlightIndex =
+            _messages.length - 1 - _messages.indexOf(pinnedMessage);
         // i don't know why scrollTo animation work not correctly, so i use jumpTo
         _controller.jumpTo(
           index: _highlightIndex,
@@ -56,7 +57,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
 
   @override
   Widget build(BuildContext context) {
-    return Flexible(
+    return Expanded(
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, state) {
@@ -64,19 +65,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
             _messages = state.messages;
           }
           return state is MessagesLoadSuccess && _messages.length != 0
-              ? ScrollablePositionedList.builder(
-                  itemCount: _messages.length,
-                  itemScrollController: _controller,
-                  physics: _physics,
-                  reverse: true,
-                  shrinkWrap: false,
-                  itemBuilder: (context, index) {
-                    return HighlightComponent(
-                        component: _buidIndexedMessage(context, index),
-                        highlightColor: Theme.of(context).backgroundColor,
-                        highlightWhen: _highlightIndex == index);
-                  },
-                )
+              ? _buildThredMessages()
               : SingleChildScrollView(
                   child: MessageColumn<T>(
                     message: _messages.first,
@@ -88,14 +77,39 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     );
   }
 
+  Widget _buildThredMessages() {
+    return Column(
+      children: [
+        SingleChildScrollView(
+          child: MessageColumn<T>(
+            message: _messages.first,
+            parentChannel: widget.parentChannel,
+          ),
+        ),
+        Expanded(
+          child: ScrollablePositionedList.builder(
+            itemCount: _messages.length,
+            itemScrollController: _controller,
+            physics: _physics,
+            reverse: true,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return HighlightComponent(
+                  component: _buidIndexedMessage(context, index),
+                  highlightColor: Theme.of(context).backgroundColor,
+                  highlightWhen: _highlightIndex == index);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buidIndexedMessage(BuildContext context, int index) {
     //conditions for determining the shape of the bubble sides
     final List<bool> bubbleSides = bubbleSide(_messages, index, false);
     if (index == _messages.length - 1) {
-      return MessageColumn<T>(
-        message: _messages.first,
-        parentChannel: widget.parentChannel,
-      );
+      return SizedBox.shrink();
     } else if (index == _messages.length - 2) {
       // the top side of the first answer in a thread should always be round
       return MessageTile<ThreadMessagesCubit>(
@@ -186,9 +200,6 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
           thickness: 5.0,
           height: 2.0,
           color: Theme.of(ctx).colorScheme.secondaryContainer,
-        ),
-        SizedBox(
-          height: 12.0,
         ),
       ],
     );
