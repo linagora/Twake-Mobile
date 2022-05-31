@@ -4,8 +4,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
-import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/widgets/common/file_uploading_tile.dart';
 
@@ -100,20 +100,26 @@ class _ChatAttachmentState extends State<ChatAttachment> {
                   itemCount: state.listFileUploading.length,
                   itemBuilder: (context, index) {
                     final fileUploading = state.listFileUploading[index];
-                    return BlocBuilder<GalleryCubit, GalleryState>(
-                      bloc: Get.find<GalleryCubit>(),
-                      builder: (context, state) {
-                        // TODO: files can be upload not only from gallery
-                        return FileUploadingTile(
-                            thumbnail: state
-                                .assetsList[state.selectedFilesIndex[index]],
-                            fileUploading: fileUploading,
-                            onCancel: () {
-                              Get.find<FileUploadCubit>()
-                                  .removeFileUploading(fileUploading);
-                            });
-                      },
-                    );
+
+                    final isRemoteFile = fileUploading.file != null &&
+                        fileUploading.sourceFile == null;
+
+                    final onCancel = () {
+                      Get.find<FileUploadCubit>()
+                          .removeFileUploading(fileUploading);
+                    };
+
+                    if (isRemoteFile) {
+                      return FileUploadingTile(
+                          thumbnailUrl: fileUploading.file!.thumbnailUrl,
+                          fileUploading: fileUploading,
+                          onCancel: onCancel);
+                    }
+
+                    return FileUploadingTile(
+                        thumbnail: fileUploading.sourceFile!.thumbnail!,
+                        fileUploading: fileUploading,
+                        onCancel: onCancel);
                   })
               : SizedBox.shrink();
         });

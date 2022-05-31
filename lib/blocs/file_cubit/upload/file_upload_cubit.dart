@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/models/attachment/attachment.dart';
 import 'package:twake/models/file/file.dart';
@@ -14,7 +15,6 @@ import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/models/file/upload/file_uploading_option.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/repositories/file_repository.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 
 /// This cubit is used for both uploading files in-chat and receive sharing file
 /// There are two file streams here to be easier when listening stream in two scenarios
@@ -101,6 +101,23 @@ class FileUploadCubit extends Cubit<FileUploadState> {
         sourceFileUploading: sourceFileUploading,
       );
     }
+  }
+
+  Future<void> addAlreadyUploadedFile({
+    required File existsFile,
+  }) async {
+    List<FileUploading> listFileUploading = [...state.listFileUploading];
+    final newId = listFileUploading.length;
+
+    final existsFileUploading = FileUploading(
+      id: newId,
+      file: existsFile,
+      uploadStatus: FileItemUploadStatus.uploaded,
+    );
+
+    emit(state.copyWith(
+        fileUploadStatus: FileUploadStatus.inProcessing,
+        listFileUploading: listFileUploading..add(existsFileUploading)));
   }
 
   void retryUpload(

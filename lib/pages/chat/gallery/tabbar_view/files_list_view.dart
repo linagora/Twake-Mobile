@@ -7,7 +7,6 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/file.dart';
-import 'package:twake/models/file/local_file.dart';
 import 'package:twake/widgets/common/file_channel_tile.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
@@ -121,16 +120,9 @@ class _FilesListViewState extends State<FilesListView>
     );
   }
 
-  _handleUploadFile(File file) {
-    final LocalFile localFile = LocalFile(
-        name: file.metadata.name,
-        path: file.downloadUrl,
-        size: file.uploadData.size,
-        updatedAt: DateTime.now().millisecondsSinceEpoch);
-
-    Get.find<FileUploadCubit>().upload(
-      sourceFile: localFile,
-      sourceFileUploading: SourceFileUploading.InChat,
+  _handleSelectFile(File file) {
+    Get.find<FileUploadCubit>().addAlreadyUploadedFile(
+      existsFile: file,
     );
 
     Get.back();
@@ -140,7 +132,7 @@ class _FilesListViewState extends State<FilesListView>
     return FileChannelTile(
       fileId: channelFile.fileId,
       senderName: channelFile.senderName,
-      onTap: (file) => _handleUploadFile(file),
+      onTap: (file) => _handleSelectFile(file),
     );
   }
 

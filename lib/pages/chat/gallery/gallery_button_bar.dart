@@ -13,6 +13,7 @@ class GalleryButtonBar extends StatelessWidget {
       final LocalFile localFile = LocalFile(
           name: state.assetEntity[state.selectedFilesIndex[i]].title!,
           path: state.fileList[state.selectedFilesIndex[i]].path,
+          thumbnail: state.assetsList[state.selectedFilesIndex[i]],
           size: state.fileList[state.selectedFilesIndex[i]].lengthSync(),
           updatedAt: DateTime.now().millisecondsSinceEpoch);
 

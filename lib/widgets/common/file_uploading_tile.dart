@@ -1,17 +1,19 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-
 import 'package:twake/models/file/upload/file_uploading.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FileUploadingTile extends StatefulWidget {
   final FileUploading fileUploading;
-  final Uint8List thumbnail;
+  final Uint8List? thumbnail;
+  final String? thumbnailUrl;
   final Function? onCancel;
 
   FileUploadingTile(
-      {required this.fileUploading, this.onCancel, required this.thumbnail})
+      {required this.fileUploading,
+      this.onCancel,
+      this.thumbnail,
+      this.thumbnailUrl})
       : super();
 
   @override
@@ -19,6 +21,29 @@ class FileUploadingTile extends StatefulWidget {
 }
 
 class _FileUploadingTileState extends State<FileUploadingTile> {
+  Widget _buildImage() {
+    // remote file
+    if (widget.thumbnailUrl != null) {
+      return Image.network(
+        widget.thumbnailUrl!,
+        fit: BoxFit.fill,
+      );
+    }
+
+    // local file
+    return widget.fileUploading.uploadStatus == FileItemUploadStatus.uploading
+        ? Image.memory(
+            widget.thumbnail!,
+            colorBlendMode: BlendMode.multiply,
+            color: Theme.of(context).colorScheme.secondary,
+            fit: BoxFit.fill,
+          )
+        : Image.memory(
+            widget.thumbnail!,
+            fit: BoxFit.fill,
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -33,18 +58,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
               Stack(
                 fit: StackFit.expand,
                 children: [
-                  widget.fileUploading.uploadStatus ==
-                          FileItemUploadStatus.uploading
-                      ? Image.memory(
-                          widget.thumbnail,
-                          colorBlendMode: BlendMode.multiply,
-                          color: Theme.of(context).colorScheme.secondary,
-                          fit: BoxFit.fill,
-                        )
-                      : Image.memory(
-                          widget.thumbnail,
-                          fit: BoxFit.fill,
-                        ),
+                  _buildImage(),
                   Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
