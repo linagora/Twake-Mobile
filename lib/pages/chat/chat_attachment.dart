@@ -117,7 +117,7 @@ class _ChatAttachmentState extends State<ChatAttachment> {
                     }
 
                     return FileUploadingTile(
-                        thumbnail: fileUploading.sourceFile!.thumbnail!,
+                        thumbnail: fileUploading.sourceFile!.thumbnail,
                         fileUploading: fileUploading,
                         onCancel: onCancel);
                   })

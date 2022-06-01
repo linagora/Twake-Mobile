@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -7,6 +8,10 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/local_file.dart';
+import 'package:twake/utils/constants.dart';
+import 'package:twake/utils/extensions.dart';
+import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/file_channel_tile.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
@@ -28,6 +33,34 @@ class _FilesListViewState extends State<FilesListView>
     super.initState();
 
     Get.find<CompanyFileCubit>().getCompanyFiles();
+  }
+
+  void _handlePickLocalFile() async {
+    List<PlatformFile>? platformFiles =
+        await Utilities.pickFiles(context: context, fileType: FileType.any);
+
+    if (!mounted) return;
+    if (platformFiles == null) return;
+
+    final countUploading =
+        Get.find<FileUploadCubit>().state.listFileUploading.length;
+    final remainingAllowFile = MAX_FILE_UPLOADING - countUploading;
+    if (platformFiles.length > remainingAllowFile) {
+      platformFiles = platformFiles.getRange(0, remainingAllowFile).toList();
+    }
+
+    for (var i = 0; i < platformFiles.length; i++) {
+      LocalFile localFile = platformFiles[i].toLocalFile();
+      localFile =
+          localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+
+      Get.find<FileUploadCubit>().upload(
+        sourceFile: localFile,
+        sourceFileUploading: SourceFileUploading.InChat,
+      );
+    }
+
+    Get.back();
   }
 
   @override
@@ -56,22 +89,25 @@ class _FilesListViewState extends State<FilesListView>
                 SizedBox(
                   height: 15,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.add,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        "Add local storage file",
-                        style: Theme.of(context).textTheme.headline4,
+                GestureDetector(
+                  onTap: _handlePickLocalFile,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.add,
+                        size: 32,
+                        color: Theme.of(context).colorScheme.surface,
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          "Add local storage file",
+                          style: Theme.of(context).textTheme.headline4,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 15,
@@ -89,6 +125,7 @@ class _FilesListViewState extends State<FilesListView>
                     if (state.companyFileStatus == CompanyFileStatus.done) {
                       return ListView.separated(
                         padding: const EdgeInsets.symmetric(vertical: 12),
+                        physics: ScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: state.files.length,
                         separatorBuilder: (BuildContext context, int index) =>

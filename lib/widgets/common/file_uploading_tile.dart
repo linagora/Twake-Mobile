@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
+import 'package:twake/utils/extensions.dart';
 
 class FileUploadingTile extends StatefulWidget {
   final FileUploading fileUploading;
@@ -26,6 +27,15 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
     if (widget.thumbnailUrl != null) {
       return Image.network(
         widget.thumbnailUrl!,
+        fit: BoxFit.fill,
+      );
+    }
+
+    // file doesn't have thumb => show his extension icon
+    if (widget.thumbnail == null) {
+      final extension = widget.fileUploading.sourceFile!.extension ?? 'doc';
+      return Image.asset(
+        extension.imageAssetByFileExtension,
         fit: BoxFit.fill,
       );
     }
