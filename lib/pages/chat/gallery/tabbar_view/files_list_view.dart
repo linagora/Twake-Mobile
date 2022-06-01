@@ -88,7 +88,7 @@ class _FilesListViewState extends State<FilesListView>
                 TwakeSearchTextField(
                   height: 40,
                   controller: _searchController,
-                  hintText: AppLocalizations.of(context)!.search,
+                  hintText: AppLocalizations.of(context)!.searchForFiles,
                   backgroundColor:
                       Theme.of(context).colorScheme.secondaryContainer,
                 ),
@@ -108,7 +108,7 @@ class _FilesListViewState extends State<FilesListView>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Text(
-                          "Add local storage file",
+                          AppLocalizations.of(context)!.addLocalStorageFile,
                           style: Theme.of(context).textTheme.headline4,
                         ),
                       ),
@@ -119,7 +119,7 @@ class _FilesListViewState extends State<FilesListView>
                   height: 15,
                 ),
                 Text(
-                  "Twake files",
+                  AppLocalizations.of(context)!.twakeFiles,
                   style: Theme.of(context)
                       .textTheme
                       .headline1!

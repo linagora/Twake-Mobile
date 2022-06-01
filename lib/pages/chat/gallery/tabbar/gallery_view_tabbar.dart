@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/pages/chat/gallery/tabbar/gallery_view_tab.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GalleryViewTabBar extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
@@ -11,7 +12,7 @@ class GalleryViewTabBar extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16),
-          child: Text('Clear',
+          child: Text(AppLocalizations.of(context)!.clear,
               style: Theme.of(context)
                   .textTheme
                   .headline4!
@@ -20,7 +21,7 @@ class GalleryViewTabBar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
-            "Gallery",
+            AppLocalizations.of(context)!.gallery,
             style: Theme.of(context).textTheme.headline1!.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 21,
@@ -68,7 +69,7 @@ class GalleryViewTabBar extends StatelessWidget {
                 children: [
                   GalleryViewTab(
                       tabController: tabController,
-                      title: 'Image',
+                      title: AppLocalizations.of(context)!.image,
                       tabIndex: 0,
                       borderRadiusGeometry: BorderRadius.only(
                         topLeft: Radius.circular(12),
@@ -77,7 +78,7 @@ class GalleryViewTabBar extends StatelessWidget {
                       icon: Icon(Icons.image)),
                   GalleryViewTab(
                       tabController: tabController,
-                      title: 'File',
+                      title: AppLocalizations.of(context)!.file,
                       tabIndex: 1,
                       borderRadiusGeometry: BorderRadius.only(
                         topRight: Radius.circular(12),

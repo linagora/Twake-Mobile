@@ -10,6 +10,7 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({Key? key}) : super(key: key);
@@ -200,7 +201,8 @@ class _CameraViewState extends State<CameraView> {
                         'Error occured during takeing Picture:\n$e');
                     Utilities.showSimpleSnackBar(
                       context: context,
-                      message: 'Error occured during takeing picture',
+                      message: AppLocalizations.of(context)!
+                          .errorOccuredDuringTakeingPicture,
                     );
                   }
                 },
@@ -251,11 +253,12 @@ class _CameraViewState extends State<CameraView> {
       color: Colors.black,
       child: Column(
         children: [
-          Text("Tap for photo, hold for video",
+          /*  TODO add after implimenting editing video file 
+        Text("Tap for photo, hold for video",
               style: Theme.of(context)
                   .textTheme
                   .headline3!
-                  .copyWith(fontSize: 17, fontWeight: FontWeight.w600)),
+                  .copyWith(fontSize: 17, fontWeight: FontWeight.w600)),*/
           SizedBox(
             height: Dim.heightPercent(5),
           )
