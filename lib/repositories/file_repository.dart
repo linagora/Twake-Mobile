@@ -114,7 +114,11 @@ class FileRepository {
     );
 
     var files = remoteResult
-        .map((entry) => ChannelFile(entry['id'], userName, entry['created_at']))
+        .map((entry) => ChannelFile(
+            fileId: entry['id'],
+            senderName: userName,
+            fileName: entry['metadata']['name'],
+            createdAt: entry['created_at']))
         .toList();
 
     return files;

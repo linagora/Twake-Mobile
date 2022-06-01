@@ -27,12 +27,18 @@ class FilesListView extends StatefulWidget {
 class _FilesListViewState extends State<FilesListView>
     with AutomaticKeepAliveClientMixin<FilesListView> {
   final _searchController = TextEditingController();
-
+  String _searchText = "";
   @override
   void initState() {
     super.initState();
 
     Get.find<CompanyFileCubit>().getCompanyFiles();
+
+    _searchController.addListener(() {
+      setState(() {
+        _searchText = _searchController.text.toLowerCase();
+      });
+    });
   }
 
   void _handlePickLocalFile() async {
@@ -123,11 +129,18 @@ class _FilesListViewState extends State<FilesListView>
                   bloc: Get.find<CompanyFileCubit>(),
                   builder: (context, state) {
                     if (state.companyFileStatus == CompanyFileStatus.done) {
+                      final files = _searchText.isEmpty
+                          ? state.files
+                          : state.files.where((file) {
+                              return file.fileName
+                                  .toLowerCase()
+                                  .contains(_searchText);
+                            }).toList();
                       return ListView.separated(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         physics: ScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: state.files.length,
+                        itemCount: files.length,
                         separatorBuilder: (BuildContext context, int index) =>
                             Padding(
                           padding: EdgeInsets.only(
@@ -141,7 +154,7 @@ class _FilesListViewState extends State<FilesListView>
                           ),
                         ),
                         itemBuilder: (context, index) {
-                          return _buildChannelFileItem(state.files[index]);
+                          return _buildChannelFileItem(files[index]);
                         },
                       );
                     } else {
