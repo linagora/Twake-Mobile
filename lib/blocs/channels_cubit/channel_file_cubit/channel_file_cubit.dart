@@ -22,14 +22,16 @@ class ChannelFileCubit extends Cubit<ChannelFileState> {
       workspaceId: channel.isDirect ? 'direct' : null,
     );
     await for (var messages in streamMessages) {
-      if(messages.isNotEmpty) {
+      if (messages.isNotEmpty) {
         List<ChannelFile> listFiles = [];
         messages.reversed.forEach((message) async {
-          if(message.subtype == MessageSubtype.deleted)
-            return;
+          if (message.subtype == MessageSubtype.deleted) return;
 
           // Find all files in main chat
-          final childFileList = getChannelFileList(message.files, message.sender, message.createdAt)
+          final childFileList = getChannelFileList(
+                  files: message.files,
+                  sender: message.sender,
+                  updatedAt: message.createdAt)
               .where((element) => element.fileId.isNotEmpty)
               .toList();
           listFiles.addAll(childFileList);
@@ -42,17 +44,21 @@ class ChannelFileCubit extends Cubit<ChannelFileState> {
             workspaceId: channel.isDirect ? 'direct' : null,
           );
           await for (var threadMessList in streamMessagesInThread) {
-            if(threadMessList.length > 1) {   // Every thread starts/contains [message] in list
+            if (threadMessList.length > 1) {
+              // Every thread starts/contains [message] in list
               List<ChannelFile> listFilesThread = [];
-              threadMessList.getRange(1, threadMessList.length).forEach((messInThread) {
+              threadMessList
+                  .getRange(1, threadMessList.length)
+                  .forEach((messInThread) {
                 final filesInThread = getChannelFileList(
-                  messInThread.files,
-                  messInThread.sender,
-                  messInThread.createdAt,
+                  files: messInThread.files,
+                  sender: messInThread.sender,
+                  updatedAt: messInThread.createdAt,
                 );
                 listFilesThread.addAll(filesInThread.where((tFile) =>
                     tFile.fileId.isNotEmpty &&
-                    listFiles.every((mFile) => (mFile.fileId != tFile.fileId))));
+                    listFiles
+                        .every((mFile) => (mFile.fileId != tFile.fileId))));
               });
               listFiles.addAll(listFilesThread);
             }
@@ -73,14 +79,28 @@ class ChannelFileCubit extends Cubit<ChannelFileState> {
     }
   }
 
-  List<ChannelFile> getChannelFileList(List<dynamic>? files, String sender, int updatedAt) {
+  List<ChannelFile> getChannelFileList(
+      {required List<dynamic>? files,
+      required String sender,
+      String? fileName,
+      required int updatedAt}) {
     return files?.map((element) {
-      if (element is String && element.isNotEmpty) {
-        return ChannelFile(element, sender, updatedAt);
-      } else if (element is Attachment) {
-        return ChannelFile(element.metadata.externalId.id, sender, updatedAt);
-      }
-      return ChannelFile('', '', 0);
-    }).toList() ?? [];
+          if (element is String && element.isNotEmpty) {
+            return ChannelFile(
+                fileId: element,
+                senderName: sender,
+                fileName: fileName ?? "",
+                createdAt: updatedAt);
+          } else if (element is Attachment) {
+            return ChannelFile(
+                fileId: element.metadata.externalId.id,
+                senderName: sender,
+                fileName: fileName ?? "",
+                createdAt: updatedAt);
+          }
+          return ChannelFile(
+              fileId: '', senderName: '', fileName: '', createdAt: 0);
+        }).toList() ??
+        [];
   }
 }
