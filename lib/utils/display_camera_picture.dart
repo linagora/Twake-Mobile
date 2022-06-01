@@ -13,6 +13,7 @@ import 'package:twake/models/file/local_file.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/utils/utilities.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DisplayCameraPictureScreen extends StatefulWidget {
   const DisplayCameraPictureScreen();
@@ -68,7 +69,7 @@ class _DisplayCameraPictureScreenState
           Level.error, 'Error occured during uploading camera picture:\n$e');
       Utilities.showSimpleSnackBar(
         context: context,
-        message: 'Error occured during saving this picture',
+        message: AppLocalizations.of(context)!.errorOccuredDuringSavingPicture,
       );
     }
   }
@@ -132,7 +133,7 @@ class _DisplayCameraPictureScreenState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Text(
-                  "Retake",
+                  AppLocalizations.of(context)!.retake,
                   style: Theme.of(context).textTheme.headline1,
                 ),
               ),
@@ -155,7 +156,7 @@ class _DisplayCameraPictureScreenState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Text(
-                  "Save",
+                  AppLocalizations.of(context)!.save,
                   style: Theme.of(context).textTheme.headline1,
                 ),
               ),
