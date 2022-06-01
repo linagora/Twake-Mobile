@@ -9,6 +9,7 @@ import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/service_bundle.dart';
+import 'package:twake/utils/utilities.dart';
 
 class CameraView extends StatefulWidget {
   const CameraView({Key? key}) : super(key: key);
@@ -193,10 +194,14 @@ class _CameraViewState extends State<CameraView> {
                   try {
                     final XFile file = await _cameraController.takePicture();
                     await push(RoutePaths.cameraPictureView.path,
-                        arguments: file.path);
+                        arguments: file);
                   } catch (e) {
                     Logger().log(Level.error,
                         'Error occured during takeing Picture:\n$e');
+                    Utilities.showSimpleSnackBar(
+                      context: context,
+                      message: 'Error occured during takeing picture',
+                    );
                   }
                 },
                 onLongPress: () async {

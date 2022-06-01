@@ -1,9 +1,18 @@
 // A widget that displays the picture taken by the user.
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/models/file/local_file.dart';
+import 'package:twake/routing/app_router.dart';
+import 'package:twake/routing/route_paths.dart';
+import 'package:twake/utils/utilities.dart';
 
 class DisplayCameraPictureScreen extends StatefulWidget {
   const DisplayCameraPictureScreen();
@@ -15,18 +24,53 @@ class DisplayCameraPictureScreen extends StatefulWidget {
 
 class _DisplayCameraPictureScreenState
     extends State<DisplayCameraPictureScreen> {
-  late String imagePath;
+  late XFile imageXFile;
 
   @override
   void initState() {
     super.initState();
 
-    imagePath = Get.arguments;
+    imageXFile = Get.arguments;
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _uploadPicture() async {
+    try {
+      final lengthXFile = await imageXFile.length();
+      final Uint8List uint8List = await imageXFile.readAsBytes();
+      final LocalFile localFile = LocalFile(
+          name: imageXFile.name,
+          path: imageXFile.path,
+          thumbnail: uint8List,
+          size: lengthXFile,
+          updatedAt: DateTime.now().millisecondsSinceEpoch);
+
+      Get.find<FileUploadCubit>().upload(
+        sourceFile: localFile,
+        sourceFileUploading: SourceFileUploading.InChat,
+      );
+      // For some reason it doesn't work as intended
+      final channel =
+          (Get.find<ChannelsCubit>().state as ChannelsLoadedSuccess).selected;
+      channel == null
+          ? await pushOff(RoutePaths.directMessages.path)
+          : await pushOff(RoutePaths.channelMessages.path);
+      /*  Can do this while fixing this bug 
+      Get.back();
+      Get.back();
+      Get.back();*/
+    } catch (e) {
+      Logger().log(
+          Level.error, 'Error occured during uploading camera picture:\n$e');
+      Utilities.showSimpleSnackBar(
+        context: context,
+        message: 'Error occured during saving this picture',
+      );
+    }
   }
 
   Widget build(BuildContext context) {
@@ -67,7 +111,7 @@ class _DisplayCameraPictureScreenState
 
   Widget _picture() {
     return Image.file(
-      File(imagePath),
+      File(imageXFile.path),
       fit: BoxFit.fill,
     );
   }
@@ -97,7 +141,9 @@ class _DisplayCameraPictureScreenState
         ),
         Spacer(),
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+            _uploadPicture();
+          },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Container(
