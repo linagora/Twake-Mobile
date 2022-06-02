@@ -80,6 +80,10 @@ class GalleryCubit extends Cubit<GalleryState> {
         fileList: state.fileList));
   }
 
+  void clearSelection() {
+    emit(state.copyWith(newSelectedFilesIndex: []));
+  }
+
   void galleryInit() {
     emit(GalleryState(galleryStateStatus: GalleryStateStatus.init));
   }

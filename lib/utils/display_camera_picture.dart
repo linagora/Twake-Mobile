@@ -134,7 +134,10 @@ class _DisplayCameraPictureScreenState
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Text(
                   AppLocalizations.of(context)!.retake,
-                  style: Theme.of(context).textTheme.headline1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(color: Colors.white),
                 ),
               ),
             ),
@@ -157,7 +160,10 @@ class _DisplayCameraPictureScreenState
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Text(
                   AppLocalizations.of(context)!.save,
-                  style: Theme.of(context).textTheme.headline1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(color: Colors.white),
                 ),
               ),
             ),

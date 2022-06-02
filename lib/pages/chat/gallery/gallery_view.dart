@@ -12,7 +12,7 @@ class GalleryView extends StatelessWidget {
       onTap: () => Navigator.pop(context),
       child: DraggableScrollableSheet(
         initialChildSize: 0.4,
-        maxChildSize: 0.8,
+        maxChildSize: 0.85,
         builder: (context, controller) => Container(
           child: DefaultTabController(
             length: 2,
