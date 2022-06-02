@@ -97,30 +97,33 @@ class FileRepository {
         downloadTaskId: downloadTaskId);
   }
 
-  Future<List<ChannelFile>> fetchUserFilesFromCompany({
+  Future<List<ChannelFile>?> fetchUserFilesFromCompany({
     required String userName,
     String? companyId,
   }) async {
-    List<dynamic> remoteResult;
     final queryParameters = <String, dynamic>{
       'type': 'user_upload',
     };
+    try {
+      final List<dynamic> remoteResult = await _api.get(
+        endpoint: sprintf(
+            Endpoint.companyFiles, [companyId ?? Globals.instance.companyId]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      );
 
-    remoteResult = await _api.get(
-      endpoint: sprintf(
-          Endpoint.companyFiles, [companyId ?? Globals.instance.companyId]),
-      queryParameters: queryParameters,
-      key: 'resources',
-    );
+      final List<ChannelFile> files = remoteResult
+          .map((entry) => ChannelFile(
+              fileId: entry['id'],
+              senderName: userName,
+              fileName: entry['metadata']['name'],
+              createdAt: entry['created_at']))
+          .toList();
 
-    var files = remoteResult
-        .map((entry) => ChannelFile(
-            fileId: entry['id'],
-            senderName: userName,
-            fileName: entry['metadata']['name'],
-            createdAt: entry['created_at']))
-        .toList();
-
-    return files;
+      return files;
+    } catch (e) {
+      Logger().e('Error occurred while fetching company files:\n$e');
+      return null;
+    }
   }
 }
