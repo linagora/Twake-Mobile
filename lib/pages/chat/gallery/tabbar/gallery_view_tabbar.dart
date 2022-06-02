@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/pages/chat/gallery/tabbar/gallery_view_tab.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GalleryViewTabBar extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {

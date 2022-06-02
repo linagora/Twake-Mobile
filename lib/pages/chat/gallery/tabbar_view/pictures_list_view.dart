@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/utils/constants.dart';
+import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
 
 class PicturesListView extends StatefulWidget {
@@ -94,8 +97,7 @@ class _PicturesListViewState extends State<PicturesListView>
                     cameraController: _cameraController,
                     context: context);
               } else {
-                return _galleryFailed(
-                    cameraController: _cameraController, context: context);
+                return _galleryFailed(context: context);
               }
             },
           ),
@@ -147,26 +149,36 @@ class _PicturesListViewState extends State<PicturesListView>
     );
   }
 
-  Widget _galleryFailed(
-      {required BuildContext context, CameraController? cameraController}) {
-    return GridView.builder(
-      key: PageStorageKey<String>('galleryFailed'),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        mainAxisSpacing: 2,
-        crossAxisSpacing: 2,
+  Widget _galleryFailed({required BuildContext context}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+      child: Column(
+        children: [
+          Image.asset(imageStop_x2),
+          SizedBox(
+            height: 16,
+          ),
+          Text(AppLocalizations.of(context)!.galleryImagesUnavailable,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 17, fontWeight: FontWeight.w400)),
+          SizedBox(
+            height: 16,
+          ),
+          FractionallySizedBox(
+            widthFactor: 0.6,
+            child: ButtonTextBuilder(Key('button_go_to_settings'),
+                    onButtonClick: () => openAppSettings(),
+                    backgroundColor: Theme.of(context).colorScheme.surface)
+                .setText(AppLocalizations.of(context)!.goToSettings)
+                .setHeight(44)
+                .setBorderRadius(BorderRadius.all(Radius.circular(14)))
+                .build(),
+          )
+        ],
       ),
-      shrinkWrap: true,
-      itemCount: 2,
-      itemBuilder: (_, index) {
-        return index == 0
-            ? _cameraStream(context, cameraController)
-            : Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("Gallety is not available",
-                    style: Theme.of(context).textTheme.headline1),
-              );
-      },
     );
   }
 
