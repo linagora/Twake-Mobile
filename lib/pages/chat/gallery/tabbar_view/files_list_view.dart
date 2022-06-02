@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
@@ -158,7 +159,8 @@ class _FilesListViewState extends State<FilesListView>
                         },
                       );
                     } else {
-                      return CircularProgressIndicator();
+                      return CompanyFilesStatusInformer(
+                          companyFileStatus: state.companyFileStatus);
                     }
                   },
                 ),
@@ -188,4 +190,49 @@ class _FilesListViewState extends State<FilesListView>
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class CompanyFilesStatusInformer extends StatelessWidget {
+  final CompanyFileStatus companyFileStatus;
+
+  const CompanyFilesStatusInformer({Key? key, required this.companyFileStatus})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = companyFileStatus == CompanyFileStatus.loading;
+    final headerText = isLoading
+        ? AppLocalizations.of(context)!.loadingHeaderDuringCompanyFiles
+        : AppLocalizations.of(context)!.errorHeaderDuringCompanyFiles;
+    final messageText = isLoading
+        ? AppLocalizations.of(context)!.loadingMessageDuringCompanyFiles
+        : AppLocalizations.of(context)!.errorMessageDuringCompanyFiles;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+      child: Column(
+        children: [
+          isLoading ? CircularProgressIndicator() : Image.asset(imageError_x2),
+          SizedBox(
+            height: 16,
+          ),
+          Text(headerText,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 20, fontWeight: FontWeight.w600)),
+          SizedBox(
+            height: 8,
+          ),
+          Text(messageText,
+              textAlign: TextAlign.center,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(fontSize: 14)),
+        ],
+      ),
+    );
+  }
 }

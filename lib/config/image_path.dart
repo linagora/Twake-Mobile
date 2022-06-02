@@ -41,6 +41,7 @@ const imageZip = '$_assetPath/ic_zip.png';
 const imageRemove = '$_assetPath/ic_remove.png';
 const imageSendTo = '$_assetPath/ic_sendto.png';
 const imageError = '$_assetPath/ic_error.png';
+const imageError_x2 = '$_assetPath/2.0x/ic_error.png';
 const imageClose = '$_assetPath/ic_close.png';
 const imageTwake = '$_assetPath/3.0x/twake.png';
 const imageCancelDownload = '$_assetPath/ic_cancel_download.png';

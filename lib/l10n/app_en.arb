@@ -378,5 +378,9 @@
     "retake": "Retake",
     "searchForFiles": "Search for files",
     "errorOccuredDuringTakeingPicture": "Error occured during takeing picture",
-    "errorOccuredDuringSavingPicture": "Error occured during saving this picture"
+    "errorOccuredDuringSavingPicture": "Error occured during saving this picture",
+    "errorHeaderDuringCompanyFiles": "Twake files are unavailable",
+    "loadingHeaderDuringCompanyFiles": "Twake files are loading",
+    "errorMessageDuringCompanyFiles": "Sometimes it takes a while to load up heavy files, please be patient",
+    "loadingMessageDuringCompanyFiles": "Sometimes it takes a while to load up heavy files, please be patient"
 }
