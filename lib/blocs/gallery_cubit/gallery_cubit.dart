@@ -70,7 +70,11 @@ class GalleryCubit extends Cubit<GalleryState> {
 
   void addFileIndex(int index) {
     List<int> indexList = [...state.selectedFilesIndex];
-    indexList.contains(index) ? indexList.remove(index) : indexList.add(index);
+    indexList.contains(index)
+        ? indexList.remove(index)
+        : indexList.length < 10
+            ? indexList.add(index)
+            : null;
 
     emit(GalleryState(
         selectedFilesIndex: indexList,
