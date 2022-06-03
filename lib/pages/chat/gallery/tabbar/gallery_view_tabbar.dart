@@ -59,15 +59,6 @@ class GalleryViewTabBar extends StatelessWidget {
     final TabController tabController = DefaultTabController.of(context)!;
 
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          topRight: Radius.circular(20.0),
-        ),
-        color: Get.isDarkMode
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).primaryColor,
-      ),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

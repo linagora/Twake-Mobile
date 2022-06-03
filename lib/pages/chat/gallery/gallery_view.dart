@@ -18,9 +18,15 @@ class GalleryView extends StatelessWidget {
             length: 2,
             initialIndex: 0,
             child: Container(
-              color: Get.isDarkMode
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).primaryColor,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.0),
+                  topRight: Radius.circular(20.0),
+                ),
+                color: Get.isDarkMode
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).primaryColor,
+              ),
               child: Column(
                 children: [
                   ListView(
