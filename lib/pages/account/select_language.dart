@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/lenguage_cubit/language_cubit.dart';
+import 'package:twake/blocs/language_cubit/language_cubit.dart';
 import 'package:twake/repositories/language_repository.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -95,8 +95,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      getLanguageStringInNative(
-                          languageCode: languageCode),
+                      getLanguageStringInNative(languageCode: languageCode),
                       style: Theme.of(context)
                           .textTheme
                           .headline1!
@@ -131,7 +130,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
                     }
                   },
                 )
-              ],    
+              ],
             ),
           ),
         ),
@@ -141,8 +140,7 @@ class _SelectLanguageState extends State<SelectLanguage> {
   }
 }
 
-String getLanguageStringInNative(
-    {required String languageCode}) {
+String getLanguageStringInNative({required String languageCode}) {
   switch (languageCode) {
     case 'es':
       return 'Español';
@@ -162,10 +160,8 @@ String getLanguageStringInNative(
   }
 }
 
-String getLanguageStringInCurrent({
-  required String languageCode, 
-  required BuildContext context 
-}) {
+String getLanguageStringInCurrent(
+    {required String languageCode, required BuildContext context}) {
   switch (languageCode) {
     case 'es':
       return AppLocalizations.of(context)!.spanish;

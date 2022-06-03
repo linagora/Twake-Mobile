@@ -98,6 +98,7 @@ class ApiService {
     CancelToken? cancelToken,
     String? key,
   }) async {
+    print(endpoint);
     final r = await this._dio.get(
           endpoint,
           queryParameters: queryParameters,

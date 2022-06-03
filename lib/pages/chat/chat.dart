@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
@@ -18,7 +18,6 @@ import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
-import 'package:twake/utils/twacode.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
@@ -117,7 +116,10 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _pinnedMessagesSheet(context, channel),
-                    Flexible(child: _buildChatContent(messagesState, channel)),
+                    Flexible(
+                        child:
+                            _buildChatContent(messagesState, channel, context)),
+                    _chatAttachment(channel),
                     _composeBar(messagesState, draft, channel)
                   ],
                 ),
@@ -129,29 +131,60 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     );
   }
 
-  Widget _buildChatContent(messagesState, Channel channel) {
-    return BlocBuilder<FileUploadCubit, FileUploadState>(
-      bloc: Get.find<FileUploadCubit>(),
+  Widget _chatAttachment(Channel channel) {
+    return BlocBuilder<FileUploadTransitionCubit, FileUploadTransitionState>(
+      bloc: Get.find<FileUploadTransitionCubit>(),
       builder: (context, state) {
-        if (state.fileUploadStatus == FileUploadStatus.inProcessing) {
-          return ChatAttachment(senderName: channel.name);
-        } else {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Divider(
-                  thickness: 1.0,
-                  height: 1.0,
-                  color: Get.isDarkMode
-                      ? Theme.of(context).colorScheme.primary
-                      : Color(0xFFEEEEEE)),
-              _buildLoading(messagesState),
-              MessagesGroupedList(parentChannel: channel)
-            ],
-          );
-        }
+        return state.fileUploadTransitionStatus !=
+                FileUploadTransitionStatus.uploadingMessageSent
+            ? BlocBuilder<FileUploadCubit, FileUploadState>(
+                bloc: Get.find<FileUploadCubit>(),
+                builder: (context, state) {
+                  if (state.fileUploadStatus == FileUploadStatus.inProcessing) {
+                    return Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color:
+                              Theme.of(context).colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        height: 100,
+                        width: 285,
+                        child: ChatAttachment());
+                  } else {
+                    return SizedBox.shrink();
+                  }
+                },
+              )
+            : SizedBox.shrink();
       },
     );
+  }
+
+  Widget _buildChatContent(
+      messagesState, Channel channel, BuildContext context) {
+    //return BlocBuilder<FileUploadCubit, FileUploadState>(
+    // bloc: Get.find<FileUploadCubit>(),
+    //   builder: (context, state) {
+    // if (state.fileUploadStatus == FileUploadStatus.inProcessing) {
+    //     return ChatAttachment(senderName: channel.name);
+    //  } else {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Divider(
+            thickness: 1.0,
+            height: 1.0,
+            color: Get.isDarkMode
+                ? Theme.of(context).colorScheme.primary
+                : Color(0xFFEEEEEE)),
+        _buildLoading(messagesState),
+        MessagesGroupedList(parentChannel: channel)
+      ],
+    );
+    //  }
+    //  },
+    // );
   }
 
   Widget _buildLoading(messagesState) {

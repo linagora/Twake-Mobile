@@ -369,5 +369,21 @@
     "userAlreadyInWorkspace": "User is already in workspace",
     "unableInviteUser": "Unable to invite this user to your company",
     "somethingWasWrong": "Something was wrong",
-    "pendingUserExist": "Pending user already exists"
+    "pendingUserExist": "Pending user already exists",
+    "gallery": "Gallery",
+    "clear": "Clear",
+    "image": "Image",
+    "addLocalStorageFile": "Add local storage file",
+    "twakeFiles": "Twake files",
+    "retake": "Retake",
+    "searchForFiles": "Search for files",
+    "errorOccuredDuringTakeingPicture": "Error occured during takeing picture",
+    "errorOccuredDuringSavingPicture": "Error occured during saving this picture",
+    "errorHeaderDuringCompanyFiles": "Twake files are unavailable",
+    "loadingHeaderDuringCompanyFiles": "Twake files are loading",
+    "errorMessageDuringCompanyFiles": "Sometimes it takes a while to load up heavy files, please be patient",
+    "loadingMessageDuringCompanyFiles": "Sometimes it takes a while to load up heavy files, please be patient",
+    "galleryImagesUnavailable": "Photo gallery images are unavailable. Please, allow gallery access in system settings to send images and videos",
+    "goToSettings": "Go to settings",
+    "attach": "Attach"
 }

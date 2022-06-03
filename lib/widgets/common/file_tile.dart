@@ -109,10 +109,10 @@ class _FileTileState extends State<FileTile> {
         /// Read [1] for the detail
         if (file.metadata.mime.isImageMimeType) {
           NavigatorService.instance.navigateToFilePreview(
-            channelId: Globals.instance.channelId!, file: file,
-            enableDownload: true,
-            isImage: true
-          );
+              channelId: Globals.instance.channelId!,
+              file: file,
+              enableDownload: true,
+              isImage: true);
           return;
         }
         if (fileDownloading == null) return;
@@ -194,18 +194,21 @@ class _FileTileState extends State<FileTile> {
 
   _buildFilePreview(String thumbUrl) => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        child: CachedNetworkImage(
-          width: double.maxFinite,
-          height: double.maxFinite,
-          fit: BoxFit.cover,
-          imageUrl: thumbUrl,
-          progressIndicatorBuilder: (context, url, progress) {
-            return ShimmerLoading(
-                isLoading: true,
-                width: double.maxFinite,
-                height: double.maxFinite,
-                child: Container());
-          },
+        child: Container(
+          height: 300,
+          child: CachedNetworkImage(
+            width: double.maxFinite,
+            height: double.maxFinite,
+            fit: BoxFit.cover,
+            imageUrl: thumbUrl,
+            progressIndicatorBuilder: (context, url, progress) {
+              return ShimmerLoading(
+                  isLoading: true,
+                  width: double.maxFinite,
+                  height: double.maxFinite,
+                  child: Container());
+            },
+          ),
         ),
       );
 
