@@ -1,6 +1,6 @@
 part of 'pinned_messsage_cubit.dart';
 
-enum PinnedMessageStatus { init, loading, finished }
+enum PinnedMessageStatus { init, loading, finished, selected }
 
 class PinnedMessageState extends Equatable {
   final PinnedMessageStatus pinnedMesssageStatus;

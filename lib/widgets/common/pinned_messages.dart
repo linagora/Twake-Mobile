@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:grouped_list/grouped_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel.dart';
-import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:twake/widgets/common/highlight_component.dart';
+import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class PinnedMessages extends StatefulWidget {
   const PinnedMessages({Key? key}) : super(key: key);
@@ -20,6 +19,9 @@ class PinnedMessages extends StatefulWidget {
 }
 
 class _PinnedMessagesState extends State<PinnedMessages> {
+  final SearchableGroupChatController _controller =
+      SearchableGroupChatController();
+
   @override
   Widget build(BuildContext context) {
     final int pinnedMessages =
@@ -66,64 +68,25 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                 if (state.pinnedMesssageStatus ==
                     PinnedMessageStatus.finished) {
                   return Expanded(
-                    child: GroupedListView<Message, DateTime>(
-                      // addAutomaticKeepAlives: true,
-                      key: PageStorageKey<String>('uniqueKey'),
-                      order: GroupedListOrder.DESC,
-                      stickyHeaderBackgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      padding: EdgeInsets.only(bottom: 12.0),
-                      reverse: false,
-                      elements: state.pinnedMessageList,
-                      groupBy: (Message m) {
-                        final DateTime dt =
-                            DateTime.fromMillisecondsSinceEpoch(m.createdAt);
-                        return DateTime(dt.year, dt.month, dt.day);
-                      },
-                      groupComparator: (DateTime value1, DateTime value2) =>
-                          value1.compareTo(value2),
-                      itemComparator: (Message m1, Message m2) {
-                        if (m1.createdAt.compareTo(m2.createdAt) == -1) {
-                          return m1.createdAt.compareTo(m2.createdAt);
-                        } else {
-                          return m2.createdAt.compareTo(m1.createdAt);
-                        }
-                      },
-                      separator: SizedBox(height: 1.0),
-                      groupSeparatorBuilder: (DateTime dt) {
-                        return GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus!.unfocus();
+                      child: SearchableChatView(
+                          searchableChatController: _controller,
+                          indexedItemBuilder: (_, message, index) {
+                            return HighlightComponent(
+                              component: MessageTile<ChannelMessagesCubit>(
+                                isPinned: true,
+                                message: message,
+                                upBubbleSide: true,
+                                downBubbleSide: true,
+                                key: ValueKey(message.hash),
+                                channel: channel,
+                              ),
+                              highlightColor: Theme.of(context).highlightColor,
+                              highlightWhen:
+                                  _controller.highlightMessage != null &&
+                                      _controller.highlightMessage == message,
+                            );
                           },
-                          child: Container(
-                            height: 53.0,
-                            alignment: Alignment.center,
-                            child: Text(
-                              DateFormatter.getVerboseDate(
-                                  dt.millisecondsSinceEpoch),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline2!
-                                  .copyWith(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w500),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      },
-                      indexedItemBuilder: (_, message, index) {
-                        return MessageTile<ChannelMessagesCubit>(
-                          isPinned: true,
-                          message: message,
-                          upBubbleSide: true,
-                          downBubbleSide: true,
-                          key: ValueKey(message.hash),
-                          channel: channel,
-                        );
-                      },
-                    ),
-                  );
+                          messages: state.pinnedMessageList));
                 } else if (state.pinnedMesssageStatus ==
                     PinnedMessageStatus.init) {
                   return Column(
@@ -131,8 +94,7 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                       SizedBox(
                         height: 25,
                       ),
-                      Text(AppLocalizations.of(context)!
-                                      .noPinnedMessages,
+                      Text(AppLocalizations.of(context)!.noPinnedMessages,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
                               .textTheme
@@ -172,7 +134,7 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                             Utilities.showSimpleSnackBar(
                                 context: context,
                                 message: AppLocalizations.of(context)!
-                                      .unpinnedNumber(pinnedMessages),
+                                    .unpinnedNumber(pinnedMessages),
                                 duration: Duration(seconds: 2));
                           } else {
                             Utilities.showSimpleSnackBar(

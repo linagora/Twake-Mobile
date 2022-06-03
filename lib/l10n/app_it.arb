@@ -566,5 +566,15 @@
         "example": "5"
       }
     }
-  }
+  },
+  "emailIsNotValid": "Il formato dell'e-mail non è valido",
+  "@emailIsNotValid": {},
+  "somethingWasWrong": "C'era qualcosa che non andava",
+  "@somethingWasWrong": {},
+  "pendingUserExist": "L'utente in attesa esiste già",
+  "@pendingUserExist": {},
+  "userAlreadyInWorkspace": "L'utente è già nello spazio di lavoro",
+  "@userAlreadyInWorkspace": {},
+  "unableInviteUser": "Impossibile invitare questo utente nella tua azienda",
+  "@unableInviteUser": {}
 }

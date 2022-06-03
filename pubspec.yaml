@@ -32,12 +32,6 @@ dependencies:
   camera: ^0.9.4+19
   path: ^1.8.0
   photo_manager: ^2.0.7
-  # sticky_grouped_list: ^2.0.0-nullsafety.1
-  # sticky_grouped_list:
-  #   # path: /home/bobur/work/sticky_grouped_list
-  #   git: https://github.com/bobs4462/sticky_grouped_list.git
-  grouped_list: 
-    git: https://github.com/bobs4462/grouped_list.git
   scrollable_positioned_list: ^0.2.3
   webview_cookie_manager: ^2.0.1
   webview_flutter: ^3.0.0
@@ -49,7 +43,7 @@ dependencies:
   sqflite: ^2.0.0+3
   tuple: 2.0.0
   flutter_segment: ^3.1.0
-  sentry_flutter: ^5.1.0
+  sentry_flutter: ^6.5.1
   firebase_core: ^1.0.2
   firebase_messaging: ^11.2.14
   equatable: ^2.0.2
@@ -104,6 +98,8 @@ dependencies:
   hive_flutter: ^1.1.0
   # Support LocalDB for linux, windows
   sqflite_common_ffi: ^2.1.1
+  sticky_grouped_list: 
+      git: https://github.com/EvGen94/sticky_grouped_list
 
 dev_dependencies:
   flutter_test:

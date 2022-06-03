@@ -67,9 +67,15 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           messages.length - 1 == state.selected ? 0 : state.selected + 1;
 
       emit(state.copyWith(
-          newPinnedMesssageStatus: PinnedMessageStatus.finished,
+          newPinnedMesssageStatus: PinnedMessageStatus.selected,
           newPinnedMessageList: messages,
           newSelected: selected));
+
+      emit(state.copyWith(
+        newPinnedMesssageStatus: PinnedMessageStatus.finished,
+        newPinnedMessageList: messages,
+        newSelected: selected,
+      ));
       return true;
     }
     return false;

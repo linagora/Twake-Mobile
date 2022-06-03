@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/bubble_side.dart';
+import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/reaction.dart';
 
 class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
+  final Message? pinnedMessage;
 
-  const ThreadMessagesList({required this.parentChannel});
+  const ThreadMessagesList({required this.parentChannel, this.pinnedMessage});
 
   @override
   _ThreadMessagesListState createState() => _ThreadMessagesListState<T>();
@@ -24,9 +27,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   double? appBarHeight;
   List<Widget> widgets = [];
   List<Message> _messages = <Message>[];
+  int _highlightIndex = -1;
 
-  var _controller = ScrollController();
-  ScrollPhysics _physics = BouncingScrollPhysics();
+  var _controller = ItemScrollController();
+  ScrollPhysics _physics = ClampingScrollPhysics();
   @override
   void initState() {
     super.initState();
@@ -36,81 +40,96 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       _messages = state.messages;
     }
 
-    _controller.addListener(() {
-      // print(_controller.position.pixels);
-      if (_controller.position.pixels > 100 &&
-          _physics is! ClampingScrollPhysics) {
-        setState(() => _physics = ClampingScrollPhysics());
-      } else if (_physics is! BouncingScrollPhysics) {
-        setState(() => _physics = BouncingScrollPhysics());
-      }
-    });
-  }
+    Message? pinnedMessage = Get.arguments[0];
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    if (pinnedMessage != null) {
+      SchedulerBinding.instance?.addPostFrameCallback((_) {
+        _highlightIndex =
+            _messages.length - 1 - _messages.indexOf(pinnedMessage);
+        // i don't know why scrollTo animation work not correctly, so i use jumpTo
+        _controller.jumpTo(
+          index: _highlightIndex,
+          alignment: 0.5,
+        );
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThreadMessagesCubit, MessagesState>(
-      bloc: Get.find<ThreadMessagesCubit>(),
-      builder: (ctx, state) {
-        if (state is MessagesLoadSuccess) {
-          _messages = state.messages;
-        }
-        return Flexible(
-          child: state is MessagesLoadSuccess && _messages.length != 0
-              ? ListView.builder(
-                  controller: _controller,
-                  physics: _physics,
-                  reverse: true,
-                  shrinkWrap: true,
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    //conditions for determining the shape of the bubble sides
-                    final List<bool> bubbleSides =
-                        bubbleSide(_messages, index, false);
-                    if (index == _messages.length - 1) {
-                      return MessageColumn<T>(
-                        message: _messages.first,
-                        parentChannel: widget.parentChannel,
-                      );
-                    } else if (index == _messages.length - 2) {
-                      // the top side of the first answer in a thread should always be round
-                      return MessageTile<ThreadMessagesCubit>(
-                        message: _messages[_messages.length - 1 - index],
-                        key: ValueKey(
-                            _messages[_messages.length - 1 - index].hash),
-                        channel: widget.parentChannel,
-                        downBubbleSide: bubbleSides[1],
-                        upBubbleSide: true,
-                        isThread: true,
-                      );
-                    } else {
-                      return MessageTile<ThreadMessagesCubit>(
-                        message: _messages[_messages.length - 1 - index],
-                        key: ValueKey(
-                            _messages[_messages.length - 1 - index].hash),
-                        channel: widget.parentChannel,
-                        downBubbleSide: bubbleSides[1],
-                        upBubbleSide: bubbleSides[0],
-                        isThread: true,
-                      );
-                    }
-                  },
-                )
+    return Expanded(
+      child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
+        bloc: Get.find<ThreadMessagesCubit>(),
+        builder: (ctx, state) {
+          if (state is MessagesLoadSuccess) {
+            _messages = state.messages;
+          }
+          return state is MessagesLoadSuccess && _messages.length != 0
+              ? _buildThredMessages()
               : SingleChildScrollView(
                   child: MessageColumn<T>(
                     message: _messages.first,
                     parentChannel: widget.parentChannel,
                   ),
-                ),
-        );
-      },
+                );
+        },
+      ),
     );
+  }
+
+  Widget _buildThredMessages() {
+    return Column(
+      children: [
+        SingleChildScrollView(
+          child: MessageColumn<T>(
+            message: _messages.first,
+            parentChannel: widget.parentChannel,
+          ),
+        ),
+        Expanded(
+          child: ScrollablePositionedList.builder(
+            itemCount: _messages.length,
+            itemScrollController: _controller,
+            physics: _physics,
+            reverse: true,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return HighlightComponent(
+                  component: _buidIndexedMessage(context, index),
+                  highlightColor: Theme.of(context).backgroundColor,
+                  highlightWhen: _highlightIndex == index);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buidIndexedMessage(BuildContext context, int index) {
+    //conditions for determining the shape of the bubble sides
+    final List<bool> bubbleSides = bubbleSide(_messages, index, false);
+    if (index == _messages.length - 1) {
+      return SizedBox.shrink();
+    } else if (index == _messages.length - 2) {
+      // the top side of the first answer in a thread should always be round
+      return MessageTile<ThreadMessagesCubit>(
+        message: _messages[_messages.length - 1 - index],
+        key: ValueKey(_messages[_messages.length - 1 - index].hash),
+        channel: widget.parentChannel,
+        downBubbleSide: bubbleSides[1],
+        upBubbleSide: true,
+        isThread: true,
+      );
+    } else {
+      return MessageTile<ThreadMessagesCubit>(
+        message: _messages[_messages.length - 1 - index],
+        key: ValueKey(_messages[_messages.length - 1 - index].hash),
+        channel: widget.parentChannel,
+        downBubbleSide: bubbleSides[1],
+        upBubbleSide: bubbleSides[0],
+        isThread: true,
+      );
+    }
   }
 }
 
@@ -181,9 +200,6 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
           thickness: 5.0,
           height: 2.0,
           color: Theme.of(ctx).colorScheme.secondaryContainer,
-        ),
-        SizedBox(
-          height: 12.0,
         ),
       ],
     );

@@ -554,5 +554,15 @@
         "example": "5"
       }
     }
-  }
+  },
+  "userAlreadyInWorkspace": "Пользователь уже находится в рабочем пространстве",
+  "@userAlreadyInWorkspace": {},
+  "emailIsNotValid": "Недопустимый формат электронной почты",
+  "@emailIsNotValid": {},
+  "unableInviteUser": "Невозможно пригласить этого пользователя в вашу компанию",
+  "@unableInviteUser": {},
+  "somethingWasWrong": "Что-то пошло не так",
+  "@somethingWasWrong": {},
+  "pendingUserExist": "Пользователь уже существует",
+  "@pendingUserExist": {}
 }
