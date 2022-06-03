@@ -54,16 +54,16 @@ class _DisplayCameraPictureScreenState
         sourceFile: localFile,
         sourceFileUploading: SourceFileUploading.InChat,
       );
-      // For some reason it doesn't work as intended
-      final channel =
+      // TODO For some reason it doesn't work as intended
+      /* final channel =
           (Get.find<ChannelsCubit>().state as ChannelsLoadedSuccess).selected;
       channel == null
           ? await pushOff(RoutePaths.directMessages.path)
-          : await pushOff(RoutePaths.channelMessages.path);
-      /*  Can do this while fixing this bug 
+          : await pushOff(RoutePaths.channelMessages.path);*/
+      //  Can do this while fixing this bug
       Get.back();
       Get.back();
-      Get.back();*/
+      Get.back();
     } catch (e) {
       Logger().log(
           Level.error, 'Error occured during uploading camera picture:\n$e');

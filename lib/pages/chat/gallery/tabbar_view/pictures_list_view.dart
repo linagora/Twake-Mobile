@@ -289,13 +289,12 @@ class _PicturesListViewState extends State<PicturesListView>
   Widget _assetThumbnail(Uint8List data, int index, BuildContext context) {
     return GestureDetector(
       onTap: () async {
+        Get.find<GalleryCubit>().addFileIndex(index);
         final fileLen =
             Get.find<GalleryCubit>().state.selectedFilesIndex.length;
         if (fileLen == MAX_FILE_UPLOADING) {
           displayLimitationAlertDialog(context);
-          return;
         }
-        Get.find<GalleryCubit>().addFileIndex(index); // _handlePickFile(index);
       },
       child: Padding(
         padding: const EdgeInsets.all(2.0),

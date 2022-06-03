@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/models/file/local_file.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GalleryButtonBar extends StatelessWidget {
   _handleUploadFiles() {
@@ -54,16 +55,25 @@ class GalleryButtonBar extends StatelessWidget {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text("Attach",
-                                style: Theme.of(context).textTheme.headline1),
+                            child: Text(AppLocalizations.of(context)!.attach,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(fontSize: 16)),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: CircleAvatar(
-                              radius: 10,
+                              radius: 12,
                               backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              child: Text('${state.selectedFilesIndex.length}'),
+                                  Theme.of(context).iconTheme.color,
+                              child: Text('${state.selectedFilesIndex.length}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline4!
+                                      .copyWith(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600)),
                             ),
                           )
                         ],
