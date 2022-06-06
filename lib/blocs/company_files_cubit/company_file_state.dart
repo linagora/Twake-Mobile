@@ -1,6 +1,6 @@
 part of 'company_file_cubit.dart';
 
-enum CompanyFileStatus { init, loading, done, failed }
+enum CompanyFileStatus { init, loading, done, failed, empty }
 
 class CompanyFileState extends Equatable {
   final CompanyFileStatus companyFileStatus;
