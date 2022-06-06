@@ -1,10 +1,5 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -14,7 +9,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/pages/chat/chat_attachment.dart';
+import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'messages_thread_list.dart';
 
@@ -158,18 +153,9 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              BlocBuilder<FileUploadCubit, FileUploadState>(
-                                  bloc: Get.find<FileUploadCubit>(),
-                                  builder: (context, state) {
-                                    if (state.fileUploadStatus ==
-                                        FileUploadStatus.inProcessing) {
-                                      return Expanded(child: ChatAttachment());
-                                    } else {
-                                      return ThreadMessagesList<
-                                              ThreadMessagesCubit>(
-                                          parentChannel: channel);
-                                    }
-                                  }),
+                              ThreadMessagesList<ThreadMessagesCubit>(
+                                  parentChannel: channel),
+                              ChatThumbnailsUploading(),
                               ComposeBar(
                                   autofocus: autofocus ||
                                       messagesState is MessageEditInProgress,

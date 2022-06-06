@@ -201,6 +201,9 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
           height: 2.0,
           color: Theme.of(ctx).colorScheme.secondaryContainer,
         ),
+        SizedBox(
+          height: 4.0,
+        ),
       ],
     );
   }

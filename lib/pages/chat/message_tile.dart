@@ -571,7 +571,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                           children: [
                             Image.memory(
                               state.assetsList[state.selectedFilesIndex[index]],
-                              fit: BoxFit.fitWidth,
+                              fit: BoxFit.fill,
                             ),
                             Align(
                               alignment: Alignment.topRight,

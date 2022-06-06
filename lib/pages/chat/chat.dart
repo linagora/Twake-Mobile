@@ -14,6 +14,7 @@ import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/chat_attachment.dart';
+import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -119,7 +120,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     Flexible(
                         child:
                             _buildChatContent(messagesState, channel, context)),
-                    _chatAttachment(channel),
+                    ChatThumbnailsUploading(),
                     _composeBar(messagesState, draft, channel)
                   ],
                 ),
@@ -131,44 +132,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     );
   }
 
-  Widget _chatAttachment(Channel channel) {
-    return BlocBuilder<FileUploadTransitionCubit, FileUploadTransitionState>(
-      bloc: Get.find<FileUploadTransitionCubit>(),
-      builder: (context, state) {
-        return state.fileUploadTransitionStatus !=
-                FileUploadTransitionStatus.uploadingMessageSent
-            ? BlocBuilder<FileUploadCubit, FileUploadState>(
-                bloc: Get.find<FileUploadCubit>(),
-                builder: (context, state) {
-                  if (state.fileUploadStatus == FileUploadStatus.inProcessing) {
-                    return Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color:
-                              Theme.of(context).colorScheme.secondaryContainer,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        height: 100,
-                        width: 285,
-                        child: ChatAttachment());
-                  } else {
-                    return SizedBox.shrink();
-                  }
-                },
-              )
-            : SizedBox.shrink();
-      },
-    );
-  }
-
   Widget _buildChatContent(
       messagesState, Channel channel, BuildContext context) {
-    //return BlocBuilder<FileUploadCubit, FileUploadState>(
-    // bloc: Get.find<FileUploadCubit>(),
-    //   builder: (context, state) {
-    // if (state.fileUploadStatus == FileUploadStatus.inProcessing) {
-    //     return ChatAttachment(senderName: channel.name);
-    //  } else {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -182,9 +147,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         MessagesGroupedList(parentChannel: channel)
       ],
     );
-    //  }
-    //  },
-    // );
   }
 
   Widget _buildLoading(messagesState) {
@@ -266,7 +228,8 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                                 state.pinnedMessageList[state.selected]),
                           ]),
                       onTap: () async {
-                        await Get.find<PinnedMessageCubit>().selectPinnedMessage();
+                        await Get.find<PinnedMessageCubit>()
+                            .selectPinnedMessage();
                       }),
                   Spacer(),
                   GestureDetector(
