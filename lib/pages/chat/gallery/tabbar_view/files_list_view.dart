@@ -130,6 +130,12 @@ class _FilesListViewState extends State<FilesListView>
                   bloc: Get.find<CompanyFileCubit>(),
                   builder: (context, state) {
                     if (state.companyFileStatus == CompanyFileStatus.done) {
+                      // user doesn't have any uploaded file
+                      if (state.files.isEmpty) {
+                        return CompanyFilesStatusInformer(
+                            companyFileStatus: CompanyFileStatus.empty);
+                      }
+
                       final files = _searchText.isEmpty
                           ? state.files
                           : state.files.where((file) {
@@ -137,6 +143,7 @@ class _FilesListViewState extends State<FilesListView>
                                   .toLowerCase()
                                   .contains(_searchText);
                             }).toList();
+
                       return ListView.separated(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         physics: ScrollPhysics(),
@@ -200,19 +207,38 @@ class CompanyFilesStatusInformer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = companyFileStatus == CompanyFileStatus.loading;
-    final headerText = isLoading
-        ? AppLocalizations.of(context)!.loadingHeaderDuringCompanyFiles
-        : AppLocalizations.of(context)!.errorHeaderDuringCompanyFiles;
-    final messageText = isLoading
-        ? AppLocalizations.of(context)!.loadingMessageDuringCompanyFiles
-        : AppLocalizations.of(context)!.errorMessageDuringCompanyFiles;
+    Widget? header;
+    String headerText = '';
+    String messageText = '';
+
+    switch (companyFileStatus) {
+      case CompanyFileStatus.empty:
+        header = Image.asset(
+          imageDownload_x2,
+        );
+        headerText =
+            headerText = AppLocalizations.of(context)!.noCompanyFilesHeader;
+        break;
+      case CompanyFileStatus.loading:
+        header = CircularProgressIndicator();
+        headerText =
+            AppLocalizations.of(context)!.loadingHeaderDuringCompanyFiles;
+        messageText =
+            AppLocalizations.of(context)!.loadingMessageDuringCompanyFiles;
+        break;
+      default:
+        header = Image.asset(imageError_x2);
+        headerText =
+            AppLocalizations.of(context)!.errorHeaderDuringCompanyFiles;
+        messageText =
+            AppLocalizations.of(context)!.errorMessageDuringCompanyFiles;
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
       child: Column(
         children: [
-          isLoading ? CircularProgressIndicator() : Image.asset(imageError_x2),
+          header,
           SizedBox(
             height: 16,
           ),

@@ -385,5 +385,6 @@
     "loadingMessageDuringCompanyFiles": "Sometimes it takes a while to load up heavy files, please be patient",
     "galleryImagesUnavailable": "Photo gallery images are unavailable. Please, allow gallery access in system settings to send images and videos",
     "goToSettings": "Go to settings",
-    "attach": "Attach"
+    "attach": "Attach",
+    "noCompanyFilesHeader": "There are no uploaded files yet"
 }
