@@ -34,54 +34,58 @@ class GalleryButtonBar extends StatelessWidget {
                         currentState.galleryStateStatus ==
                         GalleryStateStatus.newSelect,,*/
       builder: (context, state) {
-        return state.selectedFilesIndex.length != 0
-            ? Container(
-                color: Get.isDarkMode
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).primaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 12, right: 12, bottom: 12, top: 12),
-                  child: TextButton(
-                    onPressed: () => _handleUploadFiles(),
-                    child: Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(AppLocalizations.of(context)!.attach,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline1!
-                                    .copyWith(fontSize: 16)),
+        return state.selectedTab == 0
+            ? state.selectedFilesIndex.length != 0
+                ? Container(
+                    color: Get.isDarkMode
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).primaryColor,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 12, right: 12, bottom: 12, top: 12),
+                      child: TextButton(
+                        onPressed: () => _handleUploadFiles(),
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              radius: 12,
-                              backgroundColor:
-                                  Theme.of(context).iconTheme.color,
-                              child: Text('${state.selectedFilesIndex.length}',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headline4!
-                                      .copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600)),
-                            ),
-                          )
-                        ],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                    AppLocalizations.of(context)!.attach,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline1!
+                                        .copyWith(fontSize: 16)),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CircleAvatar(
+                                  radius: 12,
+                                  backgroundColor:
+                                      Theme.of(context).iconTheme.color,
+                                  child: Text(
+                                      '${state.selectedFilesIndex.length}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headline4!
+                                          .copyWith(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600)),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              )
+                  )
+                : SizedBox.shrink()
             : SizedBox.shrink();
       },
     );
