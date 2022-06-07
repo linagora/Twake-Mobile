@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,6 +62,12 @@ class _FilesListViewState extends State<FilesListView>
       LocalFile localFile = platformFiles[i].toLocalFile();
       localFile =
           localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
+
+      if (localFile.isImageFile) {
+        final Uint8List thumbnail = platformFiles[i].bytes!;
+        // if local file have thumbnail then file_tile.dart will display it
+        localFile = localFile.copyWith(thumbnail: thumbnail);
+      }
 
       Get.find<FileUploadCubit>().upload(
         sourceFile: localFile,
