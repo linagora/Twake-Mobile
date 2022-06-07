@@ -16,7 +16,12 @@ class LocalFile extends Equatable {
       this.updatedAt,
       this.thumbnail});
 
-  LocalFile copyWith({String? name, int? size, String? path, int? updatedAt}) {
+  LocalFile copyWith(
+      {String? name,
+      int? size,
+      String? path,
+      int? updatedAt,
+      Uint8List? thumbnail}) {
     return LocalFile(
         name: name ?? this.name,
         size: size ?? this.size,
@@ -26,6 +31,9 @@ class LocalFile extends Equatable {
   }
 
   String? get extension => name.split('.').last;
+
+  get isImageFile =>
+      {'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp'}.contains(extension);
 
   @override
   List<Object?> get props => [name, path, size, updatedAt];
