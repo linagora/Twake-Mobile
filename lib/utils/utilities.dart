@@ -36,12 +36,11 @@ class Utilities {
     await Share.share(appUrl);
   }
 
-  static void showSimpleSnackBar({
-    required BuildContext context,
-    required String message,
-    String? iconPath,
-    Duration? duration
-  }) {
+  static void showSimpleSnackBar(
+      {required BuildContext context,
+      required String message,
+      String? iconPath,
+      Duration? duration}) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -56,9 +55,10 @@ class Utilities {
         messageText: Container(
           margin: const EdgeInsets.only(bottom: 4),
           child: Text(message,
-              style: Theme.of(context).textTheme.headline1?.copyWith(
-                fontWeight: FontWeight.normal
-              )),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1
+                  ?.copyWith(fontWeight: FontWeight.normal)),
         ),
         boxShadows: [
           BoxShadow(
@@ -318,7 +318,7 @@ class Utilities {
     List<PlatformFile>? _paths;
     try {
       _paths = (await FilePicker.platform
-              .pickFiles(type: fileType, allowMultiple: true))
+              .pickFiles(type: fileType, allowMultiple: true, withData: true))
           ?.files;
     } on PlatformException catch (e) {
       print("Unsupported operation" + e.toString());
