@@ -27,7 +27,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
     if (widget.thumbnailUrl != null) {
       return Image.network(
         widget.thumbnailUrl!,
-        fit: BoxFit.fill,
+        fit: BoxFit.cover,
       );
     }
 
@@ -36,7 +36,7 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
       final extension = widget.fileUploading.sourceFile!.extension ?? 'doc';
       return Image.asset(
         extension.imageAssetByFileExtension,
-        fit: BoxFit.fill,
+        fit: BoxFit.cover,
       );
     }
 
@@ -46,11 +46,11 @@ class _FileUploadingTileState extends State<FileUploadingTile> {
             widget.thumbnail!,
             colorBlendMode: BlendMode.multiply,
             color: Theme.of(context).colorScheme.secondary,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
           )
         : Image.memory(
             widget.thumbnail!,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
           );
   }
 
