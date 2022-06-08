@@ -305,7 +305,7 @@ class _PicturesListViewState extends State<PicturesListView>
             children: [
               Image.memory(
                 data,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               ),
               Align(
                 alignment: Alignment.topRight,
