@@ -20,6 +20,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
+import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -110,6 +111,9 @@ class HomeBinding implements Bindings {
 
     final fileUploadTransitionCubit = FileUploadTransitionCubit();
     Get.put(fileUploadTransitionCubit, permanent: true);
+
+    final searchCubit = SearchCubit.initWithRepository();
+    Get.put(searchCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {
       if (Globals.instance.token != null) authenticationCubit.registerDevice();

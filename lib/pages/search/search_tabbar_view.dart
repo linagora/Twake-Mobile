@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:twake/pages/search/search_tabbar_view/search_contacts_view.dart';
 
 class SearchTabBarView extends StatelessWidget {
   final String searchTerm;
@@ -10,11 +11,11 @@ class SearchTabBarView extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabBarView(
       children: [
-        Text('here tab view'),
-        Text('here tab view'),
-        Text('here tab view'),
-        Text('here tab view'),
-        Text('here tab view')
+        Text('in development'),
+        Text('in development'),
+        Text('in development'),
+        Text('in development'),
+        SearchContactsView(),
       ],
     );
   }
