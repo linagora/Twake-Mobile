@@ -230,7 +230,8 @@ final routePages = [
       GetPage(
         name: RoutePaths.search.name,
         page: () => SearchPage(),
-        transition: Transition.native,
+        transition: Transition.noTransition,
+        transitionDuration: Duration.zero,
       ),
     ],
   ),

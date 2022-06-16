@@ -16,7 +16,6 @@ import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
-import 'package:twake/config/image_path.dart';
 import 'package:twake/models/badge/badge.dart';
 import 'package:twake/models/deeplink/join/workspace_join_response.dart';
 import 'package:twake/models/globals/globals.dart';
@@ -29,8 +28,7 @@ import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/utils/receive_sharing_file_manager.dart';
 import 'package:twake/utils/receive_sharing_text_manager.dart';
 import 'package:twake/widgets/common/badges.dart';
-import 'package:twake/widgets/common/image_widget.dart';
-import 'package:twake/widgets/common/rounded_shimmer.dart';
+import 'package:twake/widgets/common/home_header.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 import 'home_channel_list_widget.dart';
@@ -155,7 +153,17 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
             margin: const EdgeInsets.only(top: 10),
             child: Column(
               children: [
-                _buildHeader(),
+                HomeHeader(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: TwakeSearchTextField(
+                    height: 40,
+                    onPress: () => push(RoutePaths.search.path),
+                    hintText: AppLocalizations.of(context)!.search,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                  ),
+                ),
                 _buildTabBar(),
                 Divider(
                   thickness: 1,
@@ -177,176 +185,6 @@ class _HomeWidgetState extends State<HomeWidget> with WidgetsBindingObserver {
       ),
     );
   }
-
-  Widget _buildHeader() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        children: [
-          Container(
-            height: 44,
-            child: Stack(
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                    bloc: Get.find<WorkspacesCubit>(),
-                    builder: (context, workspaceState) {
-                      if (workspaceState is WorkspacesLoadSuccess) {
-                        return GestureDetector(
-                          onTap: () {
-                            Get.find<AccountCubit>().fetch();
-                            Scaffold.of(context).openDrawer();
-                          },
-                          child: Container(
-                            width: 75,
-                            child: Row(
-                              children: [
-                                ImageWidget(
-                                  imageType: ImageType.common,
-                                  imageUrl: workspaceState.selected?.logo ?? '',
-                                  size: 42,
-                                  borderRadius: 10,
-                                  name: workspaceState.selected?.name ?? '',
-                                  backgroundColor: Theme.of(context)
-                                      .colorScheme
-                                      .secondaryContainer,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Icon(
-                                  Icons.keyboard_arrow_down_rounded,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                      .withOpacity(0.9),
-                                  size: 24,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Container(
-                          width: 75,
-                          child: Row(
-                            children: [
-                              RoundedShimmer(size: 42),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primaryContainer
-                                    .withOpacity(0.9),
-                                size: 24,
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Image.asset(
-                    imageTwakeHomeLogo,
-                    width: 63,
-                    height: 15,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primaryContainer
-                        .withOpacity(0.9),
-                  ),
-                ),
-                _buildHeaderActionButtons()
-              ],
-            ),
-          ),
-          SizedBox(height: 12),
-          TwakeSearchTextField(
-            height: 40,
-            onPress: () => push(RoutePaths.search.path),
-            hintText: AppLocalizations.of(context)!.search,
-            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildHeaderActionButtons() => Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            BlocBuilder(
-                bloc: Get.find<CompaniesCubit>(),
-                builder: (ctx, cstate) => (cstate is CompaniesLoadSuccess &&
-                        cstate.selected.canShareMagicLink)
-                    ? Row(
-                        children: [
-                          BlocBuilder<WorkspacesCubit, WorkspacesState>(
-                            bloc: Get.find<WorkspacesCubit>(),
-                            builder: (context, workspaceState) {
-                              return workspaceState is WorkspacesLoadSuccess
-                                  ? GestureDetector(
-                                      onTap: () => push(
-                                          RoutePaths.invitationPeople.path,
-                                          arguments:
-                                              workspaceState.selected?.name ??
-                                                  ''),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: Container(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondaryContainer,
-                                          width: 40,
-                                          height: 40,
-                                          child: Image.asset(
-                                            imageInvitePeople,
-                                            width: 20,
-                                            height: 20,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surface,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : SizedBox.shrink();
-                            },
-                          ),
-                          SizedBox(width: 16),
-                        ],
-                      )
-                    : SizedBox.shrink()),
-            GestureDetector(
-              onTap: () => push(RoutePaths.newDirect.path),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  width: 40,
-                  height: 40,
-                  child: Image.asset(
-                    imageAddChannel,
-                    width: 20,
-                    height: 20,
-                    color: Theme.of(context).colorScheme.surface,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
 
   _buildTabBar() => TabBar(
         tabs: [

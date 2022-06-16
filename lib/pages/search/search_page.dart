@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:get/get.dart';
 import 'package:twake/pages/search/search_settings.dart';
 import 'package:twake/pages/search/search_tabbar/search_tabbar.dart';
 import 'package:twake/pages/search/search_tabbar_view.dart';
+import 'package:twake/widgets/common/home_header.dart';
 import 'package:twake/widgets/common/twake_search_text_field.dart';
 
 class SearchPage extends StatefulWidget {
@@ -10,8 +12,39 @@ class SearchPage extends StatefulWidget {
   _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends State<SearchPage>
+    with SingleTickerProviderStateMixin {
   final _searchController = TextEditingController();
+
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(milliseconds: 250),
+    vsync: this,
+  )..forward();
+
+  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+    begin: const Offset(50, 0.0),
+    end: Offset.zero,
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInCubic,
+  ));
+
+  late final Animation<double> _opacityAnimation = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInCubic,
+  ));
+
+  late final Animation<Offset> _animatedHeightFromTweenAnimation =
+      Tween<Offset>(
+    begin: const Offset(0.0, 0.0),
+    end: const Offset(0.0, -54),
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInCubic,
+  ));
 
   String _searchTerm = '';
 
@@ -26,40 +59,92 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
+  void tapCancel() async {
+    await _controller.reverse();
+    Get.back();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: DefaultTabController(
-          length: searchTabsList.length,
-          child: Container(
-            margin: const EdgeInsets.only(top: 10, left: 16),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: TwakeSearchTextField(
-                    height: 40,
-                    controller: _searchController,
-                    hintText: AppLocalizations.of(context)!.search,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
+    return AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Scaffold(
+            //backgroundColor: Colors.transparent,
+            body: SafeArea(
+              child: DefaultTabController(
+                length: searchTabsList.length,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  child: Stack(
+                    children: [
+                      Transform.translate(
+                          offset: _animatedHeightFromTweenAnimation.value,
+                          child: Opacity(
+                              opacity: _opacityAnimation.value,
+                              child: HomeHeader())),
+                      Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: 54 +
+                                    _animatedHeightFromTweenAnimation.value.dy),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Stack(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(
+                                      right: 50 - _offsetAnimation.value.dx),
+                                  child: TwakeSearchTextField(
+                                    height: 40,
+                                    controller: _searchController,
+                                    hintText:
+                                        AppLocalizations.of(context)!.search,
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryContainer,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Transform.translate(
+                                      offset: _offsetAnimation.value,
+                                      child: GestureDetector(
+                                          onTap: () => tapCancel(),
+                                          child: Container(
+                                              height: 40,
+                                              width: 50,
+                                              color: Colors.transparent,
+                                              child: Center(
+                                                child: Text(
+                                                  'Cancel',
+                                                ),
+                                              )))),
+                                )
+                              ],
+                            ),
+                          ),
+                          SearchTabBar(tabs: searchTabsList),
+                          Divider(
+                            thickness: 1,
+                            height: 4,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondaryContainer,
+                          ),
+                          Expanded(
+                              child: Opacity(
+                                  opacity: 1.0 - _opacityAnimation.value,
+                                  child: SearchTabBarView(
+                                      searchTerm: _searchTerm)))
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                SearchTabBar(tabs: searchTabsList),
-                Divider(
-                  thickness: 1,
-                  height: 4,
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                ),
-                Expanded(
-                  child: SearchTabBarView(searchTerm: _searchTerm),
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 }

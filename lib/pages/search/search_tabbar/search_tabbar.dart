@@ -15,13 +15,13 @@ class SearchTabBar extends StatelessWidget {
       indicatorColor: Theme.of(context).colorScheme.surface,
       unselectedLabelColor: Theme.of(context).colorScheme.secondary,
       unselectedLabelStyle: Theme.of(context).textTheme.headline1!.copyWith(
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
-      labelStyle: Theme.of(context)
-          .textTheme
-          .headline3!
-          .copyWith(fontSize: 16, fontWeight: FontWeight.w500),
+      labelStyle: Theme.of(context).textTheme.headline3!.copyWith(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
     );
   }
 }
