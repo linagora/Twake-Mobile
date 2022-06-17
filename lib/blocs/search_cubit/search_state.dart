@@ -33,6 +33,17 @@ class SearchState extends Equatable {
     );
   }
 
+  List<AppContact> getFilteredContacts() {
+    if (searchTerm.isEmpty) {
+      return contacts;
+    }
+
+    return contacts
+        .where((contact) =>
+            contact.localContact.displayName.toLowerCase().contains(searchTerm))
+        .toList();
+  }
+
   @override
   List<Object?> get props => [
         searchTerm,

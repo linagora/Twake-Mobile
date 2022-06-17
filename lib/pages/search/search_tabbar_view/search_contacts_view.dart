@@ -23,11 +23,13 @@ class _SearchContactsViewState extends State<SearchContactsView> {
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
+        final contacts = state.getFilteredContacts();
+
         return ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 10),
-          itemCount: state.contacts.length,
+          itemCount: contacts.length,
           itemBuilder: (context, index) {
-            final contact = state.contacts[index];
+            final contact = contacts[index];
             return AppContactTile(userId: null, contact: contact);
           },
         );

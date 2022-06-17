@@ -12,3 +12,6 @@ final searchTabsList = [
   SearchTab('Files', 'files'),
   SearchTab('Contacts', 'contacts'),
 ];
+
+const searchDebounceDelay = 150;
+const searchAnimationTransitionDelay = 250;
