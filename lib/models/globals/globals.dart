@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:twake/models/base_model/base_model.dart';
 import 'package:twake/services/service_bundle.dart';
 
@@ -223,6 +224,9 @@ class Globals extends BaseModel {
   void closeStream() async {
     await _connection.close();
   }
+
+  // use when need to prevent concurrent access to asynchronous code
+  final lock = Lock();
 }
 
 enum Connection { connected, disconnected }
