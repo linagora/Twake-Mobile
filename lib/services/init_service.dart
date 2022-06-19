@@ -238,7 +238,7 @@ class InitService {
           remoteResult = await _apiService
               .get(
             endpoint: sprintf(
-              Endpoint.threads,
+              Endpoint.threadsChannel,
               [c.companyId, c.workspaceId, c.id],
             ),
             queryParameters: {

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:synchronized/synchronized.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
 import 'package:twake/models/file/file.dart';
@@ -73,6 +74,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   Future<void> fetchBefore({
     required String channelId,
     String? threadId,
+    required bool isDirect,
   }) async {
     if (this.state is! MessagesLoadSuccess) return;
     if ((this.state as MessagesLoadSuccess).endOfHistory) return;
@@ -84,30 +86,89 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       hash: state.hash,
     ));
 
-    final prevLen = state.messages.length;
+    final oldestMessage = state.messages.last;
 
-    final messages = await _repository.fetchBefore(
+    //last message will be first message
+    var messages = await _repository.fetchBefore(
       channelId: channelId,
       threadId: threadId,
-      beforeMessageId: state.messages.first.id,
+      beforeMessageId: oldestMessage.id,
+      isDirect: isDirect,
     );
+    messages.remove(oldestMessage);
+
     // if user switched channel before the fetchBefore method is complete, abort
     // and just ignore the result
     if (channelId != Globals.instance.channelId) return;
-    final endOfHistory = prevLen == messages.length;
+    final endOfHistory = messages.length <= 1;
 
-    if (endOfHistory) {
-      // insert the dummy message for the endOfHistory widget
-      messages.insert(0, dummy(messages.first.createdAt - 1));
-    }
+    // if (endOfHistory) {
+    //   // insert the dummy message for the endOfHistory widget
+    //   messages.insert(0, dummy(oldestMessage.createdAt - 1));
+    // }
+    state.messages.addAll(messages);
 
     final newState = MessagesLoadSuccess(
-      messages: messages,
+      messages: state.messages,
       hash: messages.fold(0, (acc, m) => acc + m.hash),
       endOfHistory: endOfHistory,
     );
 
     emit(newState);
+  }
+
+  Future<void> fetchAfter({
+    required String channelId,
+    String? threadId,
+    required bool isDirect,
+  }) async {
+    if (this.state is! MessagesLoadSuccess) return;
+    final state = this.state as MessagesLoadSuccess;
+    final lock = Globals.instance.lock;
+
+
+    // wait for previous fetch finish before continue
+    if (!lock.locked) {
+      await lock.synchronized(() async {
+        emit(MessagesBeforeLoadInProgress(
+          messages: state.messages,
+          hash: state.hash,
+        ));
+
+        final lastestMessage = state.messages.first;
+        //first message will be lastest message
+        final messages = await _repository.fetchAfter(
+          channelId: channelId,
+          threadId: threadId,
+          afterMessageId: lastestMessage.id,
+          isDirect: isDirect,
+        );
+
+        if (messages.isEmpty) {
+          return;
+        }
+        if (channelId != Globals.instance.channelId) return;
+
+        state.messages.addAll(messages
+            .where((element) => element.createdAt > lastestMessage.createdAt));
+        final newState = MessagesLoadSuccess(
+          messages: state.messages,
+          hash: messages.fold(0, (acc, m) => acc + m.hash),
+          endOfHistory: false,
+        );
+
+        emit(newState);
+      });
+    }
+  }
+
+  void fetchMessagesAroundPinned({required List<Message> messages}) {
+    if (messages.isNotEmpty) {
+      emit(MessagesLoadSuccess(
+          messages: messages,
+          hash: messages.fold(0, (acc, m) => acc + m.hash),
+          endOfHistory: false));
+    }
   }
 
   Future<void> resend({required Message message, bool isDirect: false}) async {

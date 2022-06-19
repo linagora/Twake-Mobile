@@ -109,7 +109,7 @@ class MessagesRepository {
     }
     if (threadId == null) {
       remoteResult = await _api.get(
-        endpoint: sprintf(Endpoint.threads, [
+        endpoint: sprintf(Endpoint.threadsChannel, [
           companyId ?? Globals.instance.companyId,
           workspaceId ?? Globals.instance.workspaceId,
           channelId
@@ -152,24 +152,26 @@ class MessagesRepository {
     );
   }
 
-  Future<List<Message>> fetchBefore({
+  Future<List<Message>> fetchAroundMessage({
     required String channelId,
     String? threadId,
-    required String beforeMessageId,
+    required String messageId,
+    required String direction,
+    required bool isDirect,
+    int? limit,
   }) async {
     List<dynamic> remoteResult;
     final queryParameters = {
       'include_users': 1,
-      'page_token': beforeMessageId,
-      'direction': 'history',
+      'page_token': messageId,
+      'direction': direction,
+      'limit': limit ?? 20,
     };
     if (threadId == null) {
       remoteResult = await _api.get(
-        endpoint: sprintf(Endpoint.threads, [
-          Globals.instance.companyId,
-          Globals.instance.workspaceId,
-          channelId
-        ]),
+        endpoint: sprintf(
+            isDirect ? Endpoint.threadsDirect : Endpoint.threadsChannel,
+            [Globals.instance.companyId, channelId]),
         queryParameters: queryParameters,
         key: 'resources',
       );
@@ -199,7 +201,33 @@ class MessagesRepository {
 
     await _storage.multiInsert(table: Table.message, data: remoteMessages);
 
-    return await fetchLocal(channelId: channelId, threadId: threadId);
+    return remoteMessages.toList();
+  }
+
+  Future<List<Message>> fetchBefore({
+    required String channelId,
+    String? threadId,
+    required String beforeMessageId,
+    required bool isDirect,
+  }) {
+    return fetchAroundMessage(
+        channelId: channelId,
+        messageId: beforeMessageId,
+        direction: 'history',
+        isDirect: isDirect);
+  }
+
+  Future<List<Message>> fetchAfter({
+    required String channelId,
+    String? threadId,
+    required String afterMessageId,
+    required bool isDirect,
+  }) {
+    return fetchAroundMessage(
+        channelId: channelId,
+        messageId: afterMessageId,
+        direction: 'future',
+        isDirect: isDirect);
   }
 
   Stream<Message> send({
@@ -466,7 +494,7 @@ class MessagesRepository {
     Iterable<Message> remoteMessages = [];
     try {
       remoteResult = await _api.get(
-        endpoint: sprintf(Endpoint.threads, [
+        endpoint: sprintf(Endpoint.threadsChannel, [
           Globals.instance.companyId,
           isDirect == null
               ? Globals.instance.workspaceId

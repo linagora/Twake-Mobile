@@ -81,6 +81,38 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
     return false;
   }
 
+  Future<List<Message>> getMessagesAroundSelectedMessage(
+      {required Message message,
+      String? threadId,
+      required bool isDirect}) async {
+    final messages = await _messageRepository.fetchBefore(
+        channelId: message.channelId,
+        beforeMessageId: message.id,
+        threadId: threadId,
+        isDirect: isDirect);
+    if (messages.isNotEmpty) {
+      messages.removeLast();
+    }
+    messages.addAll(await _messageRepository.fetchAfter(
+        channelId: message.channelId,
+        afterMessageId: message.id,
+        isDirect: isDirect));
+
+    if (messages.isEmpty) {
+      emit(MessagesAroundSelectedMessageFailed(
+          pinnedMessageList: state.pinnedMessageList,
+          pinnedMesssageStatus: PinnedMessageStatus.finished));
+      return [];
+    } else {
+      emit(MessagesAroundSelectecMessageSuccess(
+          pinnedMesssageStatus: PinnedMessageStatus.finished,
+          pinnedMessageList: state.pinnedMessageList,
+          selected: state.selected,
+          messagesAround: messages));
+      return messages;
+    }
+  }
+
   Future<bool> pinMessage({required Message message, bool? isDirect}) async {
     List<Message> messages = [];
 
