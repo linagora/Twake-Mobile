@@ -15,8 +15,9 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   void onSearchTermChanged(String newTerm) {
-    print(newTerm);
     emit(state.copyWith(searchTerm: newTerm));
+
+    fetchUsersBySearchTerm();
   }
 
   void getAllContacts() async {
@@ -38,5 +39,20 @@ class SearchCubit extends Cubit<SearchState> {
     emit(state.copyWith(
         contactsStateStatus: ContactsStateStatus.done,
         contacts: result.contacts));
+  }
+
+  void fetchUsersBySearchTerm() async {
+    emit(state.copyWith(contactsStateStatus: ContactsStateStatus.loading));
+
+    final result =
+        await _searchRepository.fetchUsers(searchTerm: state.searchTerm);
+
+    if (result.hasError) {
+      emit(state.copyWith(contactsStateStatus: ContactsStateStatus.failed));
+      return;
+    }
+
+    emit(state.copyWith(
+        contactsStateStatus: ContactsStateStatus.done, users: result.users));
   }
 }

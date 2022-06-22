@@ -55,6 +55,10 @@ class _SearchPageState extends State<SearchPage>
     final searchCubit = Get.find<SearchCubit>();
     final debouncer = Debouncer(delay: searchDebounceDelay);
 
+    searchCubit.fetchUsersBySearchTerm();
+
+    _searchController.text = searchCubit.state.searchTerm;
+
     _searchController.addListener(() {
       debouncer.run(() {
         searchCubit.onSearchTermChanged(_searchController.text);
