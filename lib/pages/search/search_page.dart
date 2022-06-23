@@ -56,6 +56,7 @@ class _SearchPageState extends State<SearchPage>
     final debouncer = Debouncer(delay: searchDebounceDelay);
 
     searchCubit.fetchUsersBySearchTerm();
+    searchCubit.setTextEditingController(_searchController);
 
     _searchController.text = searchCubit.state.searchTerm;
 
@@ -74,6 +75,7 @@ class _SearchPageState extends State<SearchPage>
   @override
   void dispose() {
     super.dispose();
+
     _animController.dispose();
     _searchController.dispose();
   }
@@ -112,6 +114,7 @@ class _SearchPageState extends State<SearchPage>
                                   child: TwakeSearchTextField(
                                     height: 40,
                                     controller: _searchController,
+                                    autofocus: true,
                                     hintText:
                                         AppLocalizations.of(context)!.search,
                                     backgroundColor: Theme.of(context)
@@ -129,7 +132,9 @@ class _SearchPageState extends State<SearchPage>
                                               height: 40,
                                               width: 50,
                                               color: Colors.transparent,
-                                              child: Center(
+                                              child: Align(
+                                                alignment:
+                                                    Alignment.centerRight,
                                                 child: Text(
                                                   'Cancel',
                                                 ),

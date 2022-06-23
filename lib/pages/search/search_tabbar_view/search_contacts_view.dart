@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
+import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchContactsView extends StatefulWidget {
   @override
@@ -20,14 +21,51 @@ class _SearchContactsViewState extends State<SearchContactsView> {
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          itemCount: state.users.length,
-          itemBuilder: (context, index) {
-            return Text(index.toString());
-          },
-        );
+        if (state.contactsStateStatus == ContactsStateStatus.done &&
+            state.users.length > 0) {
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            itemCount: state.users.length,
+            itemBuilder: (context, index) {
+              return Text(index.toString());
+            },
+          );
+        }
+
+        return ContactsStatusInformer(
+            status: state.contactsStateStatus,
+            searchTerm: state.searchTerm,
+            onResetTap: () => Get.find<SearchCubit>().resetSearch());
       },
     );
+  }
+}
+
+class ContactsStatusInformer extends StatelessWidget {
+  final ContactsStateStatus status;
+  final String searchTerm;
+  final Function onResetTap;
+
+  const ContactsStatusInformer(
+      {Key? key,
+      required this.status,
+      required this.searchTerm,
+      required this.onResetTap})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (status == ContactsStateStatus.loading) {
+      return Center(
+        child: Container(
+          height: 50,
+          width: 50,
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    return NoSearchResultsWidget(
+        searchTerm: searchTerm, onResetTap: onResetTap);
   }
 }

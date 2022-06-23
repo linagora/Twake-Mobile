@@ -13,5 +13,5 @@ final searchTabsList = [
   SearchTab('Contacts', 'contacts'),
 ];
 
-const searchDebounceDelay = 150;
+const searchDebounceDelay = 250;
 const searchAnimationTransitionDelay = 250;

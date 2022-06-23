@@ -8,6 +8,7 @@ class TwakeSearchTextField extends StatefulWidget {
   final bool showPrefixIcon;
   final double borderRadius;
   final Function? onPress;
+  final bool? autofocus;
   late final TextEditingController? controller;
 
   TwakeSearchTextField({
@@ -18,6 +19,7 @@ class TwakeSearchTextField extends StatefulWidget {
     this.showPrefixIcon = true,
     this.borderRadius = 12,
     this.onPress,
+    this.autofocus,
     TextEditingController? controller,
   }) : super() {
     this.controller = controller != null ? controller : TextEditingController();
@@ -48,49 +50,51 @@ class _TwakeSearchTextFieldState extends State<TwakeSearchTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: widget.height,
-      child: TextField(
-        controller: widget.controller,
-        onTap: _onTextFieldTap,
-        cursorColor: Theme.of(context).textSelectionTheme.cursorColor,
-        style: Theme.of(context).textTheme.headline1,
-        decoration: new InputDecoration(
-          contentPadding: EdgeInsets.only(
-              top: 10, bottom: 10, left: widget.showPrefixIcon ? 0 : 30),
-          prefixIcon: widget.showPrefixIcon
-              ? Icon(
-                  Icons.search,
-                  color: Theme.of(context).colorScheme.secondary,
-                )
-              : null,
-          suffixIcon: showClearButton
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 16.0, left: 16),
-                  child: GestureDetector(
-                      onTap: () {
-                        widget.controller?.clear();
-                      },
-                      child: _ClearIcon()),
-                )
-              : SizedBox.shrink(),
-          suffixIconConstraints: BoxConstraints(minHeight: 16, minWidth: 16),
-          border: new OutlineInputBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(widget.borderRadius),
+    return GestureDetector(
+      onTap: _onTextFieldTap,
+      child: Container(
+        height: widget.height,
+        child: TextField(
+          controller: widget.controller,
+          enabled: widget.onPress == null,
+          autofocus: widget.autofocus != null && widget.autofocus!,
+          cursorColor: Theme.of(context).textSelectionTheme.cursorColor,
+          style: Theme.of(context).textTheme.headline1,
+          decoration: new InputDecoration(
+            contentPadding: EdgeInsets.only(
+                top: 10, bottom: 10, left: widget.showPrefixIcon ? 0 : 30),
+            prefixIcon: widget.showPrefixIcon
+                ? Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.secondary,
+                  )
+                : null,
+            suffixIcon: showClearButton
+                ? Padding(
+                    padding: const EdgeInsets.only(right: 16.0, left: 16),
+                    child: GestureDetector(
+                        onTap: () {
+                          widget.controller?.clear();
+                        },
+                        child: _ClearIcon()),
+                  )
+                : SizedBox.shrink(),
+            suffixIconConstraints: BoxConstraints(minHeight: 16, minWidth: 16),
+            border: new OutlineInputBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(widget.borderRadius),
+              ),
+              borderSide: BorderSide(
+                width: 0,
+                style: BorderStyle.none,
+              ),
             ),
-            borderSide: BorderSide(
-              width: 0,
-              style: BorderStyle.none,
-            ),
+            filled: true,
+            hintStyle: Theme.of(context).textTheme.headline2!.copyWith(
+                fontSize: widget.fontSize, fontWeight: FontWeight.w400),
+            hintText: widget.hintText,
+            fillColor: widget.backgroundColor,
           ),
-          filled: true,
-          hintStyle: Theme.of(context)
-              .textTheme
-              .headline2!
-              .copyWith(fontSize: widget.fontSize, fontWeight: FontWeight.w400),
-          hintText: widget.hintText,
-          fillColor: widget.backgroundColor,
         ),
       ),
     );

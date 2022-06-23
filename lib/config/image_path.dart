@@ -56,3 +56,4 @@ const imagePinned = '$_assetPath/2.0x/pinned.png';
 const imageUnpinned = '$_assetPath/2.0x/unpinned.png';
 const imageListPinned = '$_assetPath/2.0x/list_pinned_light.png';
 const imageStop_x2 = '$_assetPath/2.0x/ic_stop.png';
+const imageSearchFace = '$_assetPath/search_face.png';
