@@ -11,6 +11,7 @@ import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/reaction.dart';
+import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
@@ -28,8 +29,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   List<Widget> widgets = [];
   List<Message> _messages = <Message>[];
   int _highlightIndex = -1;
-
-  var _controller = ItemScrollController();
+  bool isJump = false;
+  // Since the ScrollablePositionedList behaves strangely in the case of a jump to a pinned message,
+  // had to change the order of messages, maybe it is needed to dig into the lib one more time in the future
+  SearchableGroupChatController _controller = SearchableGroupChatController();
   ScrollPhysics _physics = ClampingScrollPhysics();
   @override
   void initState() {
@@ -40,9 +43,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       _messages = state.messages;
     }
 
-    Message? pinnedMessage = Get.arguments[0];
+    final Message? pinnedMessage = Get.arguments[0];
 
     if (pinnedMessage != null) {
+      isJump = true;
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         _highlightIndex =
             _messages.length - 1 - _messages.indexOf(pinnedMessage);
@@ -62,7 +66,9 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, state) {
           if (state is MessagesLoadSuccess) {
-            _messages = state.messages;
+            isJump
+                ? _messages = state.messages.reversed.toList()
+                : _messages = state.messages;
           }
           return state is MessagesLoadSuccess && _messages.length != 0
               ? _buildThredMessages()
@@ -82,7 +88,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       children: [
         SingleChildScrollView(
           child: MessageColumn<T>(
-            message: _messages.first,
+            message: isJump ? _messages.last : _messages.first,
             parentChannel: widget.parentChannel,
           ),
         ),
@@ -91,8 +97,8 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
             itemCount: _messages.length,
             itemScrollController: _controller,
             physics: _physics,
-            reverse: true,
-            shrinkWrap: true,
+            reverse: isJump ? false : true,
+            shrinkWrap: isJump ? false : true,
             itemBuilder: (context, index) {
               return HighlightComponent(
                   component: _buidIndexedMessage(context, index),
@@ -108,7 +114,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   Widget _buidIndexedMessage(BuildContext context, int index) {
     //conditions for determining the shape of the bubble sides
     final List<bool> bubbleSides = bubbleSide(_messages, index, false);
-    if (index == _messages.length - 1) {
+    if ((index == 0 && isJump) || (index == _messages.length - 1 && !isJump)) {
       return SizedBox.shrink();
     } else if (index == _messages.length - 2) {
       // the top side of the first answer in a thread should always be round
