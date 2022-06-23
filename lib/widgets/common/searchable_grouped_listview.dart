@@ -39,7 +39,7 @@ class _SearchableChatViewState extends State<SearchableChatView> {
     _controller._bind(this, widget.messages.reversed.toList());
 
     if (widget.initialScrollIndex > 0) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
         _controller.jumpToMessage(widget.messages,
             widget.messages.length - widget.initialScrollIndex - 1);
       });
@@ -51,7 +51,7 @@ class _SearchableChatViewState extends State<SearchableChatView> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialScrollIndex != this.widget.initialScrollIndex) {
       if (widget.initialScrollIndex > 0) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
           _controller.jumpToMessage(widget.messages,
               widget.messages.length - 1 - widget.initialScrollIndex);
         });

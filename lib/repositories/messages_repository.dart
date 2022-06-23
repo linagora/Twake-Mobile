@@ -160,7 +160,7 @@ class MessagesRepository {
     required bool isDirect,
     int? limit,
   }) async {
-    List<dynamic> remoteResult;
+    List<dynamic> remoteResult = [];
     final queryParameters = {
       'include_users': 1,
       'page_token': messageId,
@@ -168,22 +168,39 @@ class MessagesRepository {
       'limit': limit ?? 20,
     };
     if (threadId == null) {
-      remoteResult = await _api.get(
-        endpoint: sprintf(
-            isDirect ? Endpoint.threadsDirect : Endpoint.threadsChannel,
-            [Globals.instance.companyId, channelId]),
-        queryParameters: queryParameters,
-        key: 'resources',
-      );
+      try {
+        remoteResult = await _api.get(
+          endpoint: sprintf(
+              isDirect ? Endpoint.threadsDirect : Endpoint.threadsChannel, [
+            Globals.instance.companyId,
+            Globals.instance.workspaceId,
+            channelId
+          ]),
+          queryParameters: queryParameters,
+          key: 'resources',
+        );
+      } catch (e) {
+        Logger().e('Error occured during fetchAroundMessage:\n$e');
+        return [];
+      }
     } else {
-      remoteResult = await _api.get(
-        endpoint: sprintf(
-          Endpoint.threadMessages,
-          [Globals.instance.companyId, threadId],
-        ),
-        queryParameters: queryParameters,
-        key: 'resources',
-      );
+      try {
+        remoteResult = await _api.get(
+          endpoint: sprintf(
+            Endpoint.threadMessages,
+            [
+              Globals.instance.companyId,
+              Globals.instance.workspaceId,
+              threadId
+            ],
+          ),
+          queryParameters: queryParameters,
+          key: 'resources',
+        );
+      } catch (e) {
+        Logger().e('Error occured during fetchAroundMessage:\n$e');
+        return [];
+      }
     }
 
     var remoteMessages = remoteResult
