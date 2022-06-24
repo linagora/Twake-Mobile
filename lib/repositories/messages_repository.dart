@@ -173,7 +173,7 @@ class MessagesRepository {
           endpoint: sprintf(
               isDirect ? Endpoint.threadsDirect : Endpoint.threadsChannel, [
             Globals.instance.companyId,
-            Globals.instance.workspaceId,
+            isDirect ? 'direct' : Globals.instance.workspaceId,
             channelId
           ]),
           queryParameters: queryParameters,
@@ -190,7 +190,7 @@ class MessagesRepository {
             Endpoint.threadMessages,
             [
               Globals.instance.companyId,
-              Globals.instance.workspaceId,
+              isDirect ? 'direct' : Globals.instance.workspaceId,
               threadId
             ],
           ),
