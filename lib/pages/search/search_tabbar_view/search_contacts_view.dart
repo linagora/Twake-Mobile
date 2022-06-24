@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
+import 'package:twake/pages/search/search_tabbar_view/users/found_user_tile.dart';
 import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchContactsView extends StatefulWidget {
@@ -27,7 +28,14 @@ class _SearchContactsViewState extends State<SearchContactsView> {
             padding: const EdgeInsets.symmetric(vertical: 10),
             itemCount: state.users.length,
             itemBuilder: (context, index) {
-              return Text(index.toString());
+              final user = state.users[index];
+
+              return FoundUserTile(
+                onTileClick: () {},
+                imageUrl: user.picture ?? '',
+                name: '${user.fullName}',
+                userId: user.id,
+              );
             },
           );
         }

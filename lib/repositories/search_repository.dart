@@ -72,11 +72,13 @@ class SearchRepository {
         endpoint: Endpoint.searchUsers,
         queryParameters: queryParameters,
         key: 'resources',
-      );
+      ) as List<dynamic>;
 
-      print(queryResult);
+      final users = queryResult
+          .map((e) => Account.fromJson(json: e, transform: true))
+          .toList();
 
-      return SearchUsersRequest(users: [], hasError: false);
+      return SearchUsersRequest(users: users, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching users:\n$e');
 
