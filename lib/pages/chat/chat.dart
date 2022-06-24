@@ -15,6 +15,7 @@ import 'package:twake/models/file/file.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/chat_attachment.dart';
 import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
+import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -116,7 +117,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 builder: (_, messagesState) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _pinnedMessagesSheet(context, channel),
+                    PinnedMessageSheet(channel: channel),
                     Flexible(
                         child:
                             _buildChatContent(messagesState, channel, context)),
@@ -162,105 +163,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     return SizedBox.shrink();
   }
 
-  _unpinMessage(Message message, context) async {
-    final bool result =
-        await Get.find<PinnedMessageCubit>().unpinMessage(message: message);
-    if (!result)
-      Utilities.showSimpleSnackBar(
-          context: context,
-          message: AppLocalizations.of(context)!.somethingWentWrong);
-  }
-
-  Widget _pinnedMessagesSheet(BuildContext context, Channel channel) {
-    final ItemPositionsListener itemPositionsListener =
-        ItemPositionsListener.create();
-    return BlocBuilder<PinnedMessageCubit, PinnedMessageState>(
-        bloc: Get.find<PinnedMessageCubit>(),
-        builder: (ctx, state) {
-          if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
-            return Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(
-                    width: Get.isDarkMode ? 0 : 0.5,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .secondary
-                        .withOpacity(0.3),
-                  ),
-                ),
-              ),
-              alignment: Alignment.centerLeft,
-              height: 56,
-              width: Dim.widthPercent(99),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Container(
-                      width: 10,
-                      child: ScrollablePositionedList.builder(
-                        shrinkWrap: true,
-                        addAutomaticKeepAlives: true,
-                        key: PageStorageKey("uniq"),
-                        itemCount: state.pinnedMessageList.length,
-                        itemBuilder: (context, index) => _scrollBarTile(
-                            index,
-                            state.selected,
-                            state.pinnedMessageList.length,
-                            context),
-                        itemPositionsListener: itemPositionsListener,
-                      )),
-                  GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4, left: 8),
-                              child: Text(
-                                AppLocalizations.of(context)!.pinnedMessages,
-                                style: Get.theme.textTheme.headline4!.copyWith(
-                                    fontSize: 14, fontWeight: FontWeight.w300),
-                              ),
-                            ),
-                            _pinnedMessagesTile(
-                                state.pinnedMessageList[state.selected]),
-                          ]),
-                      onTap: () async {
-                        await Get.find<PinnedMessageCubit>()
-                            .selectPinnedMessage();
-                      }),
-                  Spacer(),
-                  GestureDetector(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5, right: 2),
-                      child: state.pinnedMessageList.length == 1
-                          ? Icon(
-                              Icons.clear,
-                              color: Theme.of(context).colorScheme.surface,
-                            )
-                          : Image.asset(
-                              imageListPinned,
-                              color: Theme.of(context).colorScheme.surface,
-                              height: 30,
-                              width: 30,
-                            ),
-                    ),
-                    onTap: () => state.pinnedMessageList.length == 1
-                        ? _unpinMessage(
-                            state.pinnedMessageList[state.selected], context)
-                        : push(RoutePaths.channelPinnedMessages.path,
-                            arguments: channel),
-                  )
-                ],
-              ),
-            );
-          }
-          return SizedBox.shrink();
-        });
-  }
-
   Widget _composeBar(messagesState, String? draft, Channel channel) {
     return ComposeBar(
       autofocus: messagesState is MessageEditInProgress,
@@ -295,110 +197,5 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         Get.find<T>().saveDraft(draft: text);
       },
     );
-  }
-
-  Widget _pinnedMessagesTile(Message message) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 2),
-      child: Container(
-        width: Dim.widthPercent(85),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-              child: Container(
-                constraints: BoxConstraints(maxWidth: Dim.widthPercent(85)),
-                child: Text(
-                  '${message.text}',
-                  style: Get.theme.textTheme.headline1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _scrollBarTile(
-      int index, int selected, int length, BuildContext context) {
-    if (length == 1) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: BorderRadius.circular(14.0),
-          ),
-          height: 50,
-          width: 2,
-        ),
-      );
-    } else if (length == 2) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: index == selected
-            ? Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                height: 25,
-                width: 2,
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                height: 25,
-                width: 2,
-              ),
-      );
-    } else if (length == 3) {
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: index == selected
-            ? Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                height: 15,
-                width: 2,
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                height: 15,
-                width: 2,
-              ),
-      );
-    } else
-      return Padding(
-        padding: const EdgeInsets.all(2.0),
-        child: index == selected
-            ? Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                height: 14,
-                width: 2,
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(14.0),
-                ),
-                height: 14,
-                width: 2,
-              ),
-      );
   }
 }

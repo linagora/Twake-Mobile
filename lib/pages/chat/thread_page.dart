@@ -10,6 +10,7 @@ import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
+import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'messages_thread_list.dart';
 
@@ -153,6 +154,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              PinnedMessageSheet(channel: channel),
                               ThreadMessagesList<ThreadMessagesCubit>(
                                   parentChannel: channel),
                               ChatThumbnailsUploading(),
