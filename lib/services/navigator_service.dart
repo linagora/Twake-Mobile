@@ -205,6 +205,16 @@ class NavigatorService {
     }
   }
 
+  void pop<T>({
+    T? result,
+    bool closeOverlays = false,
+    bool canPop = true,
+    int? id,
+  }) {
+    Get.back(
+        result: result, closeOverlays: closeOverlays, canPop: canPop, id: id);
+  }
+
   Future<void> navigateToChannelAfterSharedFile({
     required String companyId,
     required String workspaceId,
