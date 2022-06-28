@@ -7,6 +7,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
+import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
@@ -93,18 +94,25 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
           ),
         ),
         Expanded(
-          child: ScrollablePositionedList.builder(
-            itemCount: _messages.length,
-            itemScrollController: _controller,
-            physics: _physics,
-            reverse: isJump ? false : true,
-            shrinkWrap: isJump ? false : true,
-            itemBuilder: (context, index) {
-              return HighlightComponent(
-                  component: _buidIndexedMessage(context, index),
-                  highlightColor: Theme.of(context).backgroundColor,
-                  highlightWhen: _highlightIndex == index);
-            },
+          child: JumpablePinnedMessages(
+            jumpToMessage: ((messages, jumpedMessage) {
+              _controller.jumpMessage(messages, jumpedMessage);
+            }),
+            messages: _messages,
+            isDirect: widget.parentChannel.isDirect,
+            child: ScrollablePositionedList.builder(
+              itemCount: _messages.length,
+              itemScrollController: _controller,
+              physics: _physics,
+              reverse: isJump ? false : true,
+              shrinkWrap: isJump ? false : true,
+              itemBuilder: (context, index) {
+                return HighlightComponent(
+                    component: _buidIndexedMessage(context, index),
+                    highlightColor: Theme.of(context).backgroundColor,
+                    highlightWhen: _highlightIndex == index);
+              },
+            ),
           ),
         ),
       ],

@@ -126,7 +126,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final state = this.state as MessagesLoadSuccess;
     final lock = Globals.instance.lock;
 
-
     // wait for previous fetch finish before continue
     if (!lock.locked) {
       await lock.synchronized(() async {
@@ -162,10 +161,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
-  void fetchMessagesAroundPinned({required List<Message> messages}) {
+  void fetchMessagesAroundPinned(
+      {required List<Message> messages, required Message pinnedMessage}) {
     if (messages.isNotEmpty) {
-      emit(MessagesLoadSuccess(
+      emit(MessagesAroundPinnedLoadSuccess(
           messages: messages,
+          pinnedMessage: pinnedMessage,
           hash: messages.fold(0, (acc, m) => acc + m.hash),
           endOfHistory: false));
     }

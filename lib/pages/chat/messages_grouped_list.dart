@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/empty_chat_container.dart';
+import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/bubble_side.dart';
@@ -41,6 +41,10 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
             userName: widget.parentChannel.name,
           );
         } else if (state is MessagesLoadSuccess) {
+          if (state is MessagesAroundPinnedLoadSuccess) {
+            startMessage = state.pinnedMessage;
+          }
+
           if (state.messages.isEmpty) {
             return MessagesLoadingAnimation();
           }
@@ -82,45 +86,19 @@ class _MessagesGroupedListState extends State<MessagesGroupedList> {
 
   Widget _buildStickyGroupedListView(BuildContext context,
       List<Message> messages, bool endOfHistory, bool isDirect) {
-    return BlocListener<PinnedMessageCubit, PinnedMessageState>(
-        bloc: Get.find<PinnedMessageCubit>(),
-        listenWhen: (previous, _) =>
-            previous.pinnedMesssageStatus == PinnedMessageStatus.selected,
-        listener: (context, state) async {
-          int selected = state.selected;
-          Message jumpMessage = state.pinnedMessageList[selected];
-          if (!jumpMessage.inThread) {
-            if (messages.contains(jumpMessage)) {
-              _chatViewKey.currentState!._controller
-                  .jumpMessage(messages, jumpMessage);
-            } else {
-              // get messages around selectec pinned message
-              List<Message> messages = await Get.find<PinnedMessageCubit>()
-                  .getMessagesAroundSelectedMessage(
-                      message: jumpMessage, isDirect: isDirect);
-
-              // update the current messages in chat
-              Get.find<ChannelMessagesCubit>()
-                  .fetchMessagesAroundPinned(messages: messages);
-
-              startMessage = jumpMessage;
-            }
-          } else {
-            NavigatorService.instance.navigate(
-              channelId: jumpMessage.channelId,
-              threadId: jumpMessage.threadId,
-              reloadThreads: false,
-              pinnedMessage: jumpMessage,
-            );
-          }
-        },
+    return JumpablePinnedMessages(
         child: _ChatView(
           key: _chatViewKey,
           parentChannel: widget.parentChannel,
           messages: messages,
           endOfHistory: endOfHistory,
           startMessage: startMessage,
-        ));
+        ),
+        messages: messages,
+        jumpToMessage: ((messages, message) {
+          _chatViewKey.currentState!._controller.jumpMessage(messages, message);
+        }),
+        isDirect: isDirect);
   }
 }
 
@@ -168,7 +146,6 @@ class _ChatViewState extends State<_ChatView> {
     if (oldWidget.messages != this.widget.messages) {
       _messages = widget.messages;
     }
-    print(_startMessage == null ? 0 : _messages.indexOf(_startMessage!));
   }
 
   @override
