@@ -78,6 +78,8 @@ class Endpoint {
 
   // API Endpoint for search
   static const search = '/internal/services/channels/v1/companies/%s/search';
+  static const searchRecent =
+      '/internal/services/channels/v1/companies/%s/channels/recent';
   static const searchUsers = '/internal/services/users/v1/users';
 
   static const publicMethods = const [info, reservation, signup, emailResend];

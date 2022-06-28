@@ -10,7 +10,7 @@ final searchTabsList = [
   SearchTab('Chats', 'chat'),
   SearchTab('Media', 'media'),
   SearchTab('Files', 'files'),
-  SearchTab('Contacts', 'contacts'),
+  //SearchTab('Contacts', 'contacts'),
 ];
 
 const searchDebounceDelay = 250;

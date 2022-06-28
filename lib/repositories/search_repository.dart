@@ -11,11 +11,11 @@ enum SearchFilter {
   all,
 }
 
-class SearchUsersRequest {
-  final List<Account> users;
+class SearchRepositoryRequest<T> {
+  final T result;
   final bool hasError;
 
-  SearchUsersRequest({required this.users, required this.hasError});
+  SearchRepositoryRequest({required this.result, required this.hasError});
 }
 
 class SearchRepository {
@@ -58,7 +58,7 @@ class SearchRepository {
         .toList();
   }
 
-  Future<SearchUsersRequest> fetchUsers({
+  Future<SearchRepositoryRequest<List<Account>>> fetchUsers({
     required String searchTerm,
   }) async {
     final queryParameters = <String, dynamic>{
@@ -78,11 +78,37 @@ class SearchRepository {
           .map((e) => Account.fromJson(json: e, transform: true))
           .toList();
 
-      return SearchUsersRequest(users: users, hasError: false);
+      return SearchRepositoryRequest(result: users, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching users:\n$e');
 
-      return SearchUsersRequest(users: [], hasError: true);
+      return SearchRepositoryRequest(result: [], hasError: true);
+    }
+  }
+
+  Future<SearchRepositoryRequest<List<Account>>> fetchRecentChats() async {
+    final queryParameters = <String, dynamic>{
+      'limit': 14,
+    };
+
+    try {
+      final queryResult = await _api.get(
+        endpoint: sprintf(Endpoint.searchRecent, [
+          Globals.instance.companyId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      ) as List<dynamic>;
+
+      final result = queryResult
+          .map((e) => Account.fromJson(json: e, transform: true))
+          .toList();
+
+      return SearchRepositoryRequest(result: result, hasError: false);
+    } catch (e) {
+      Logger().e('Error occurred while fetching recent chats:\n$e');
+
+      return SearchRepositoryRequest(result: [], hasError: true);
     }
   }
 }
