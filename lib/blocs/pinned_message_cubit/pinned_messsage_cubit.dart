@@ -54,7 +54,7 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
-          newSelected: 0));
+          newSelected: state.selected));
     } else
       return;
   }
