@@ -33,8 +33,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   bool isJump = false;
   // Since the ScrollablePositionedList behaves strangely in the case of a jump to a pinned message,
   // had to change the order of messages, maybe it is needed to dig into the lib one more time in the future
-  SearchableGroupChatController _controller = SearchableGroupChatController();
+  //SearchableGroupChatController _controller = SearchableGroupChatController();
+  ItemScrollController _controller = ItemScrollController();
   ScrollPhysics _physics = ClampingScrollPhysics();
+
   @override
   void initState() {
     super.initState();
@@ -52,10 +54,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         _highlightIndex =
             _messages.length - 1 - _messages.indexOf(pinnedMessage);
         // i don't know why scrollTo animation work not correctly, so i use jumpTo
-        _controller.jumpTo(
-          index: _highlightIndex,
-          alignment: 0.5,
-        );
+        _controller.jumpTo(index: _highlightIndex);
       });
     }
   }
@@ -96,7 +95,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         Expanded(
           child: JumpablePinnedMessages(
             jumpToMessage: ((messages, jumpedMessage) {
-              _controller.jumpMessage(messages, jumpedMessage);
+              _controller.jumpTo(index: _highlightIndex);
             }),
             messages: _messages,
             isDirect: widget.parentChannel.isDirect,
