@@ -1,5 +1,6 @@
 import 'package:sprintf/sprintf.dart';
 import 'package:twake/models/account/account.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/api_service.dart';
@@ -86,7 +87,7 @@ class SearchRepository {
     }
   }
 
-  Future<SearchRepositoryRequest<List<Account>>> fetchRecentChats() async {
+  Future<SearchRepositoryRequest<List<Channel>>> fetchRecentChats() async {
     final queryParameters = <String, dynamic>{
       'limit': 14,
     };
@@ -101,7 +102,11 @@ class SearchRepository {
       ) as List<dynamic>;
 
       final result = queryResult
-          .map((e) => Account.fromJson(json: e, transform: true))
+          .map((e) => Channel.fromJson(
+                json: e,
+                jsonify: false,
+                transform: true,
+              ))
           .toList();
 
       return SearchRepositoryRequest(result: result, hasError: false);

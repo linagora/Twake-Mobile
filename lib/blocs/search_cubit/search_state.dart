@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/contacts/app_contact.dart';
 
 enum ContactsStateStatus { init, loading, done, failed, noPermission }
-enum ChatsStateStatus { init, loading, done }
+enum ChatsStateStatus { init, loading, done, failed }
 
 class SearchState extends Equatable {
   final String searchTerm;
@@ -12,7 +13,7 @@ class SearchState extends Equatable {
   final ChatsStateStatus chatsStateStatus;
   final List<AppContact> contacts;
   final List<Account> users;
-  final List<Account> recentChats;
+  final List<Channel> recentChats;
 
   const SearchState(
       {required this.searchTerm,
@@ -37,7 +38,7 @@ class SearchState extends Equatable {
     final ContactsStateStatus? contactsStateStatus,
     final List<AppContact>? contacts,
     final List<Account>? users,
-    final List<Account>? recentChats,
+    final List<Channel>? recentChats,
     final ChatsStateStatus? chatsStateStatus,
   }) {
     return SearchState(
@@ -66,5 +67,8 @@ class SearchState extends Equatable {
         searchTerm,
         contacts,
         contactsStateStatus,
+        chatsStateStatus,
+        users,
+        chatsStateStatus,
       ];
 }

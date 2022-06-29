@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
-import 'package:twake/pages/search/search_tabbar_view/users/found_user_tile.dart';
+import 'package:twake/pages/search/search_tabbar_view/channels/recent_channel_item.dart';
 import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchChatsView extends StatefulWidget {
@@ -22,21 +23,12 @@ class _SearchChatsViewState extends State<SearchChatsView> {
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
-        if (state.contactsStateStatus == ChatsStateStatus.done &&
-            state.users.length > 0) {
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            itemCount: state.users.length,
-            itemBuilder: (context, index) {
-              final user = state.users[index];
-
-              return FoundUserTile(
-                onTileClick: () {},
-                imageUrl: user.picture ?? '',
-                name: '${user.fullName}',
-                userId: user.id,
-              );
-            },
+        print(state.recentChats);
+        if (state.chatsStateStatus == ChatsStateStatus.done) {
+          return SizedBox.expand(
+            child: ListView(children: [
+              RecentSection(recentChats: state.recentChats),
+            ]),
           );
         }
 
@@ -45,6 +37,36 @@ class _SearchChatsViewState extends State<SearchChatsView> {
             searchTerm: state.searchTerm,
             onResetTap: () => Get.find<SearchCubit>().resetSearch());
       },
+    );
+  }
+}
+
+class RecentSection extends StatelessWidget {
+  final List<Channel> recentChats;
+
+  const RecentSection({Key? key, required this.recentChats}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Recent channels and people'),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              scrollDirection: Axis.horizontal,
+              itemCount: recentChats.length,
+              itemBuilder: (context, index) {
+                final channel = recentChats[index];
+                return RecentChannelItemWidget(channel: channel);
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }
