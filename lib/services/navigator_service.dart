@@ -202,7 +202,12 @@ class NavigatorService {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
+
     }
+  }
+
+  bool get isInThread {
+    return Get.currentRoute.endsWith('thread');
   }
 
   void pop<T>({

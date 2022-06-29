@@ -9,10 +9,10 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/reaction.dart';
-import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
