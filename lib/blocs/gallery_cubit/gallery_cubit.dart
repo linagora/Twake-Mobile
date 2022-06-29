@@ -53,6 +53,7 @@ class GalleryCubit extends Cubit<GalleryState> {
         k = 0;
         emit(GalleryState(
             galleryStateStatus: GalleryStateStatus.done,
+            selectedTab: state.selectedTab,
             assetsList: uint8List,
             assetEntity: recentAssets,
             fileList: fileList));

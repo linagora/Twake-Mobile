@@ -30,7 +30,6 @@ class GalleryViewTab extends StatelessWidget {
         child: BlocBuilder<GalleryCubit, GalleryState>(
           bloc: Get.find<GalleryCubit>(),
           builder: (context, state) {
-            int tab = state.selectedTab;
             return AnimatedContainer(
               duration: Duration(milliseconds: 200),
               height: 50,
@@ -39,12 +38,11 @@ class GalleryViewTab extends StatelessWidget {
                   border: Border.all(
                     color: Theme.of(context).colorScheme.surface,
                   ),
-                  color: //tabController.index == 0
-                      tab == tabIndex
-                          ? Theme.of(context).colorScheme.surface
-                          : Get.isDarkMode
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).primaryColor),
+                  color: state.selectedTab == tabIndex
+                      ? Theme.of(context).colorScheme.surface
+                      : Get.isDarkMode
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).primaryColor),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
