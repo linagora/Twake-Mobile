@@ -23,6 +23,7 @@ class JumpablePinnedMessages extends StatefulWidget {
 }
 
 class _JumpablePinnedMessagesState extends State<JumpablePinnedMessages> {
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<PinnedMessageCubit, PinnedMessageState>(
@@ -50,9 +51,8 @@ class _JumpablePinnedMessagesState extends State<JumpablePinnedMessages> {
                 messages: messages, pinnedMessage: jumpMessage);
             return;
           }
-
           // if current messages in thread, exit the current thread
-          if (widget.messages.isNotEmpty && widget.messages[0].inThread) {
+          if (NavigatorService.instance.isInThread) {
             NavigatorService.instance.pop();
           }
           // if message is in different thread, navigate to it
