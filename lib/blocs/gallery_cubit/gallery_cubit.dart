@@ -1,31 +1,28 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:twake/models/message/message.dart';
 
 part 'gallery_state.dart';
 
+const int iterationStep = 7;
+
 class GalleryCubit extends Cubit<GalleryState> {
   GalleryCubit()
       : super(GalleryState(galleryStateStatus: GalleryStateStatus.init));
 
   void getGalleryAssets() async {
-    //emit(GalleryState(galleryStateStatus: GalleryStateStatus.loading));
-    emit(state.copyWith(newGalleryStateStatus: GalleryStateStatus.loading));
+    if (state.loadedAssetsAmount == 0)
+      emit(state.copyWith(newGalleryStateStatus: GalleryStateStatus.loading));
 
-    List<Uint8List> uint8List = [];
-    Uint8List? uint8;
-    List<File> fileList = [];
+    List<Uint8List> uint8List = [...state.assetsList];
+    List<File> fileList = [...state.fileList];
+    List<AssetEntity> recentAssets = [...state.assetEntity];
     File? file;
-
-    /* will need to check permissions move it to Utilities class
-    final PermissionState _permissionState = await PhotoManager.requestPermissionExtend();
-    if (_permissionState.isAuth) {    
-    } else {   
-    }*/
+    Uint8List? uint8;
 
     final albums = await PhotoManager.getAssetPathList(
         hasAll: true,
@@ -36,33 +33,39 @@ class GalleryCubit extends Cubit<GalleryState> {
 
     // we can go through all albums to get all AssetEntity
     final recentAlbum = albums[0];
-    final recentAssets = await recentAlbum.getAssetListRange(
-      start: 0,
-      end: 10000,
+    final recentAsset = await recentAlbum.getAssetListRange(
+      start: state.loadedAssetsAmount,
+      //when opening the gallery for the first time loading 14 assets then iterationStep
+      end: (state.loadedAssetsAmount == 0)
+          ? 17
+          : state.loadedAssetsAmount + iterationStep,
     );
 
-    int k = 0;
+    if (recentAsset.length == 0) {
+      // if all assets already is loaded - return
+      return;
+    }
+    recentAssets.addAll(recentAsset);
+
     // Future.forEach recentAssets
-    // Need to set up emit for the gallery like each 3 to 10 iterations
-    for (var i = 0; i < recentAssets.length; i++) {
+    for (var i = state.loadedAssetsAmount; i < recentAssets.length; i++) {
       uint8 = await recentAssets[i].thumbnailData;
       file = await recentAssets[i].file;
       uint8 != null ? uint8List.add(uint8) : null;
       file != null ? fileList.add(file) : null;
-      if (k == 5) {
-        k = 0;
-        emit(GalleryState(
-            galleryStateStatus: GalleryStateStatus.done,
-            selectedTab: state.selectedTab,
-            assetsList: uint8List,
-            assetEntity: recentAssets,
-            fileList: fileList));
-      }
-      k++;
     }
 
-    if (uint8List.isEmpty)
+    if (uint8List.isEmpty) {
       emit(GalleryState(galleryStateStatus: GalleryStateStatus.failed));
+    } else {
+      emit(GalleryState(
+          galleryStateStatus: GalleryStateStatus.done,
+          selectedTab: state.selectedTab,
+          assetsList: uint8List,
+          assetEntity: recentAssets,
+          fileList: fileList,
+          loadedAssetsAmount: recentAssets.length));
+    }
   }
 
   void tabChange(int tab) {
@@ -82,7 +85,8 @@ class GalleryCubit extends Cubit<GalleryState> {
         galleryStateStatus: GalleryStateStatus.newSelect,
         assetEntity: state.assetEntity,
         assetsList: state.assetsList,
-        fileList: state.fileList));
+        fileList: state.fileList,
+        loadedAssetsAmount: state.loadedAssetsAmount));
   }
 
   void clearSelection() {

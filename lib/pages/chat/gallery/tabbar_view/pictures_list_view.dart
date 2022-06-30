@@ -28,10 +28,19 @@ class PicturesListView extends StatefulWidget {
 class _PicturesListViewState extends State<PicturesListView>
     with AutomaticKeepAliveClientMixin<PicturesListView> {
   CameraController? _cameraController;
+  bool _cameraControllerInitInitialize = false;
 
   @override
   void initState() {
     super.initState();
+
+    widget.scrollController.addListener(() {
+      if (widget.scrollController.positions.last.atEdge) {
+        if (widget.scrollController.positions.last.pixels != 0) {
+          Get.find<GalleryCubit>().getGalleryAssets();
+        }
+      }
+    });
 
     Get.find<GalleryCubit>().tabChange(0);
 
@@ -42,6 +51,7 @@ class _PicturesListViewState extends State<PicturesListView>
         state.availableCameras.first,
         ResolutionPreset.high,
       );
+      _cameraControllerInitInitialize = true;
       _initCamera();
     }
   }
@@ -139,7 +149,8 @@ class _PicturesListViewState extends State<PicturesListView>
                       child: Container(
                         height: 50,
                         width: 50,
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary),
                       ),
                     );
                   }
@@ -201,7 +212,8 @@ class _PicturesListViewState extends State<PicturesListView>
                 child: Container(
                   height: 50,
                   width: 50,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.secondary),
                 ),
               );
       },
@@ -217,73 +229,83 @@ class _PicturesListViewState extends State<PicturesListView>
         child: Container(
           height: 50,
           width: 50,
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
         ),
       );
     }
 
-    return _controller == null || !_controller.value.isInitialized
-        ? Container(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Text(
-                  "The camera is not available",
-                  style: Theme.of(context).textTheme.headline1,
-                ),
+    return BlocListener<CameraCubit, CameraState>(
+      bloc: Get.find<CameraCubit>(),
+      listener: (context, state) {
+        if (state.cameraStateStatus == CameraStateStatus.found &&
+            !_cameraControllerInitInitialize) {
+          _prepareCamera(state);
+        }
+      },
+      child: _controller == null || !_controller.value.isInitialized
+          ? Center(
+              child: Container(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.secondary),
               ),
-            ),
-          )
-        : GestureDetector(
-            onTap: () {
-              push(RoutePaths.cameraView.path, arguments: _controller);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Container(
-                  child: BlocBuilder<CameraCubit, CameraState>(
-                    bloc: Get.find<CameraCubit>(),
-                    builder: (context, state) {
-                      if (state.cameraStateStatus == CameraStateStatus.done) {
-                        return Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CameraPreview(_controller),
-                            Icon(
-                              Icons.camera_alt_outlined,
-                              size: 40,
-                            )
-                          ],
-                        );
-                      } else if (state.cameraStateStatus ==
-                          CameraStateStatus.loading) {
-                        return Center(
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      } else
-                        return Container(
-                          child: Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                'The camera is not available',
-                                style: Theme.of(context).textTheme.headline1,
+            )
+          : GestureDetector(
+              onTap: () {
+                push(RoutePaths.cameraView.path, arguments: _controller);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    child: BlocBuilder<CameraCubit, CameraState>(
+                      bloc: Get.find<CameraCubit>(),
+                      builder: (context, state) {
+                        if (state.cameraStateStatus == CameraStateStatus.done) {
+                          return Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              CameraPreview(_controller),
+                              Icon(
+                                Icons.camera_alt_outlined,
+                                size: 40,
+                              )
+                            ],
+                          );
+                        } else if (state.cameraStateStatus ==
+                            CameraStateStatus.loading) {
+                          return Center(
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              child: CircularProgressIndicator(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          );
+                        } else
+                          return Container(
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Text(
+                                  'The camera is not available',
+                                  style: Theme.of(context).textTheme.headline1,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                    },
+                          );
+                      },
+                    ),
                   ),
                 ),
               ),
             ),
-          );
+    );
   }
 
   Widget _assetThumbnail(Uint8List data, int index, BuildContext context) {

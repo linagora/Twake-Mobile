@@ -25,12 +25,12 @@ class CompanyFileCubit extends Cubit<CompanyFileState> {
     if (accountState is AccountLoadSuccess) {
       userName = accountState.account.fullName;
     }
-
-    final files =
+    emit(state.copyWith(newCompanyFileStatus: CompanyFileStatus.failed));
+    /*  final files =
         await _repository.fetchUserFilesFromCompany(userName: userName);
     files != null
         ? emit(state.copyWith(
             newCompanyFileStatus: CompanyFileStatus.done, newFiles: files))
-        : emit(state.copyWith(newCompanyFileStatus: CompanyFileStatus.failed));
+        : emit(state.copyWith(newCompanyFileStatus: CompanyFileStatus.failed));*/
   }
 }

@@ -57,7 +57,7 @@ class _CameraViewState extends State<CameraView> {
 
   Future<void> _initCamera(CameraDescription description) async {
     _cameraController =
-        CameraController(description, ResolutionPreset.max, enableAudio: true);
+        CameraController(description, ResolutionPreset.high, enableAudio: true);
     try {
       await _cameraController.initialize();
       Get.find<CameraCubit>().cameraLensSwitch();
