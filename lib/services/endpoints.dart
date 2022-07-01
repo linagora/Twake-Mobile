@@ -77,8 +77,9 @@ class Endpoint {
       '/internal/services/messages/v1/companies/%s/files';
 
   // API Endpoint for search
-  static const search = '/internal/services/channels/v1/companies/%s/search';
-  static const searchRecent =
+  static const searchChannels =
+      '/internal/services/channels/v1/companies/%s/search';
+  static const searchRecentChannels =
       '/internal/services/channels/v1/companies/%s/channels/recent';
   static const searchUsers = '/internal/services/users/v1/users';
 

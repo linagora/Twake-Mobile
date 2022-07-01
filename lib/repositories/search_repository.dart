@@ -2,15 +2,9 @@ import 'package:sprintf/sprintf.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/models/message/message.dart';
 import 'package:twake/services/api_service.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/service_bundle.dart';
-import 'package:twake/services/storage_service.dart';
-
-enum SearchFilter {
-  all,
-}
 
 class SearchRepositoryRequest<T> {
   final T result;
@@ -21,42 +15,71 @@ class SearchRepositoryRequest<T> {
 
 class SearchRepository {
   final _api = ApiService.instance;
-  final _storage = StorageService.instance;
 
-  fetchAll({String searchTerm = ''}) {}
-
-  Future<List<Message>> _fetch({
+  Future<SearchRepositoryRequest<List<Channel>>> fetchChats({
     required String searchTerm,
-    required SearchFilter filter,
   }) async {
-    List<dynamic> queryResult;
-
     final queryParameters = <String, dynamic>{
+      'limit': 100,
       'q': searchTerm,
-      'emoji': false,
-      'direction': 'history',
+      'company_id': Globals.instance.companyId,
     };
 
-    queryResult = await _api.get(
-      endpoint: sprintf(Endpoint.search, [
-        Globals.instance.companyId,
-      ]),
-      queryParameters: queryParameters,
-      key: 'search',
-    );
+    try {
+      final queryResult = await _api.get(
+        endpoint: sprintf(Endpoint.searchChannels, [
+          Globals.instance.companyId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      ) as List<dynamic>;
 
-    return queryResult
-        .where((rm) =>
-            rm['type'] == 'message' &&
-            rm['subtype'] != 'system' &&
-            rm['subtype'] != 'application')
-        .map((entry) => Message.fromJson(
-              entry,
-              channelId: '', // TODO: check this
-              jsonify: true,
-              transform: true,
-            ))
-        .toList();
+      final result = queryResult
+          .map((e) => Channel.fromJson(
+                json: e,
+                jsonify: false,
+                transform: true,
+              ))
+          .toList();
+
+      print(result);
+
+      return SearchRepositoryRequest(result: result, hasError: false);
+    } catch (e) {
+      Logger().e('Error occurred while fetching chats:\n$e');
+
+      return SearchRepositoryRequest(result: [], hasError: true);
+    }
+  }
+
+  Future<SearchRepositoryRequest<List<Channel>>> fetchRecentChats() async {
+    final queryParameters = <String, dynamic>{
+      'limit': 14,
+    };
+
+    try {
+      final queryResult = await _api.get(
+        endpoint: sprintf(Endpoint.searchRecentChannels, [
+          Globals.instance.companyId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      ) as List<dynamic>;
+
+      final result = queryResult
+          .map((e) => Channel.fromJson(
+                json: e,
+                jsonify: false,
+                transform: true,
+              ))
+          .toList();
+
+      return SearchRepositoryRequest(result: result, hasError: false);
+    } catch (e) {
+      Logger().e('Error occurred while fetching recent chats:\n$e');
+
+      return SearchRepositoryRequest(result: [], hasError: true);
+    }
   }
 
   Future<SearchRepositoryRequest<List<Account>>> fetchUsers({
@@ -82,36 +105,6 @@ class SearchRepository {
       return SearchRepositoryRequest(result: users, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching users:\n$e');
-
-      return SearchRepositoryRequest(result: [], hasError: true);
-    }
-  }
-
-  Future<SearchRepositoryRequest<List<Channel>>> fetchRecentChats() async {
-    final queryParameters = <String, dynamic>{
-      'limit': 14,
-    };
-
-    try {
-      final queryResult = await _api.get(
-        endpoint: sprintf(Endpoint.searchRecent, [
-          Globals.instance.companyId,
-        ]),
-        queryParameters: queryParameters,
-        key: 'resources',
-      ) as List<dynamic>;
-
-      final result = queryResult
-          .map((e) => Channel.fromJson(
-                json: e,
-                jsonify: false,
-                transform: true,
-              ))
-          .toList();
-
-      return SearchRepositoryRequest(result: result, hasError: false);
-    } catch (e) {
-      Logger().e('Error occurred while fetching recent chats:\n$e');
 
       return SearchRepositoryRequest(result: [], hasError: true);
     }

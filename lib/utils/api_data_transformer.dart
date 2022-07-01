@@ -71,6 +71,8 @@ class ApiDataTransformer {
     json['role'] =
         json['owner'] == Globals.instance.userId ? 'owner' : 'member';
 
+    if (json['last_activity'] == null) json['last_activity'] = 0;
+
     if (json['workspace_id'] == 'direct' && json['users'] != null) {
       final users = json['users'] as List;
 

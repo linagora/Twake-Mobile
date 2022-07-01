@@ -14,6 +14,7 @@ class SearchState extends Equatable {
   final List<AppContact> contacts;
   final List<Account> users;
   final List<Channel> recentChats;
+  final List<Channel> chats;
 
   const SearchState(
       {required this.searchTerm,
@@ -21,6 +22,7 @@ class SearchState extends Equatable {
       required this.recentChats,
       required this.contactsStateStatus,
       required this.chatsStateStatus,
+      required this.chats,
       required this.contacts});
 
   factory SearchState.initial() {
@@ -28,6 +30,7 @@ class SearchState extends Equatable {
         searchTerm: '',
         contactsStateStatus: ContactsStateStatus.init,
         users: [],
+        chats: [],
         recentChats: [],
         chatsStateStatus: ChatsStateStatus.init,
         contacts: []);
@@ -39,6 +42,7 @@ class SearchState extends Equatable {
     final List<AppContact>? contacts,
     final List<Account>? users,
     final List<Channel>? recentChats,
+    final List<Channel>? chats,
     final ChatsStateStatus? chatsStateStatus,
   }) {
     return SearchState(
@@ -47,6 +51,7 @@ class SearchState extends Equatable {
       contacts: contacts ?? this.contacts,
       users: users ?? this.users,
       recentChats: recentChats ?? this.recentChats,
+      chats: chats ?? this.chats,
       chatsStateStatus: chatsStateStatus ?? this.chatsStateStatus,
     );
   }
@@ -70,5 +75,6 @@ class SearchState extends Equatable {
         chatsStateStatus,
         users,
         chatsStateStatus,
+        chats,
       ];
 }
