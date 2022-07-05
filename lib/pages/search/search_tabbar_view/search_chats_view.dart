@@ -59,14 +59,21 @@ class RecentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 150,
+      height: 145,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Recent channels and contacts'),
+          Padding(
+            padding: EdgeInsets.only(left: 15, top: 10),
+            child: Text('Recent channels and contacts',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6!
+                    .copyWith(fontSize: 15.0, fontWeight: FontWeight.w600)),
+          ),
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               scrollDirection: Axis.horizontal,
               itemCount: recentChats.length,
               itemBuilder: (context, index) {
@@ -74,6 +81,11 @@ class RecentSection extends StatelessWidget {
                 return RecentChannelItemWidget(channel: channel);
               },
             ),
+          ),
+          Container(
+            height: 1.0,
+            margin: EdgeInsets.symmetric(horizontal: 15),
+            color: Colors.grey.shade300,
           )
         ],
       ),
@@ -91,9 +103,16 @@ class ChatSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Channels'),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+          child: Text('Channels',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6!
+                  .copyWith(fontSize: 15.0, fontWeight: FontWeight.w600)),
+        ),
         ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           itemCount: chats.length,
           shrinkWrap: true,
           physics: ScrollPhysics(),

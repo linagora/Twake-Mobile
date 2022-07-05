@@ -50,7 +50,6 @@ class RecentChannelItemWidget extends StatelessWidget {
                     .textTheme
                     .headline1!
                     .copyWith(fontSize: 10)),
-            SizedBox(height: 4.0),
           ],
         ),
       ),
