@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
@@ -13,14 +14,19 @@ import 'package:twake/widgets/common/shimmer_loading.dart';
 
 const _fileTileHeight = 76.0;
 
-typedef OnTap = void Function(File file);
+typedef OnTap = void Function(dynamic file);
 
 class FileChannelTile extends StatefulWidget {
   final String fileId;
   final String senderName;
   final OnTap? onTap;
+  final MessageFile? messageFile;
 
-  FileChannelTile({required this.fileId, required this.senderName, this.onTap})
+  FileChannelTile(
+      {required this.fileId,
+      required this.senderName,
+      this.onTap,
+      this.messageFile})
       : super(key: ValueKey(fileId));
 
   @override
@@ -32,22 +38,24 @@ class _FileTileState extends State<FileChannelTile> {
   Widget build(BuildContext context) {
     File? cacheFile =
         Get.find<CacheInChatCubit>().findCachedFile(fileId: widget.fileId);
-    return cacheFile == null
-        ? FutureBuilder(
-            future: Get.find<FileCubit>().getFileData(id: widget.fileId),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.data == null) {
-                  return SizedBox.shrink();
-                }
-                final file = (snapshot.data as File);
-                Get.find<CacheInChatCubit>().cacheFile(file: file);
-                return _buildFileWidget(file);
-              }
-              return _buildLoadingLayout();
-            },
-          )
-        : _buildFileWidget(cacheFile);
+    return widget.messageFile == null
+        ? cacheFile == null
+            ? FutureBuilder(
+                future: Get.find<FileCubit>().getFileData(id: widget.fileId),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.data == null) {
+                      return SizedBox.shrink();
+                    }
+                    final file = (snapshot.data as File);
+                    Get.find<CacheInChatCubit>().cacheFile(file: file);
+                    return _buildFileWidget(file: file);
+                  }
+                  return _buildLoadingLayout();
+                },
+              )
+            : _buildFileWidget(file: cacheFile)
+        : _buildFileWidget(messageFile: widget.messageFile);
   }
 
   _buildLoadingLayout() => ClipRRect(
@@ -60,44 +68,53 @@ class _FileTileState extends State<FileChannelTile> {
         ),
       );
 
-  _buildFileWidget(File file) => GestureDetector(
+  _buildFileWidget({File? file, MessageFile? messageFile}) => GestureDetector(
         onTap: () {
-          widget.onTap?.call(file);
+          messageFile == null
+              ? widget.onTap?.call(file)
+              : widget.onTap?.call(messageFile);
         },
         child: Container(
           color: Colors.transparent,
           margin: const EdgeInsets.only(bottom: 4.0),
           child: Row(children: [
-            _buildFileHeader(file),
+            _buildFileHeader(file: file, messageFile: messageFile),
             SizedBox(width: 12.0),
             Expanded(
-              child: _buildFileInfo(file),
+              child: _buildFileInfo(file: file, messageFile: messageFile),
             ),
           ]),
         ),
       );
 
-  _buildFileHeader(File file) {
+  _buildFileHeader({File? file, MessageFile? messageFile}) {
     return SizedBox(
       width: _fileTileHeight,
       height: _fileTileHeight,
-      child: _buildThumbnail(file),
+      child: _buildThumbnail(file: file, messageFile: messageFile),
     );
   }
 
-  _buildThumbnail(File file) {
+  _buildThumbnail({File? file, MessageFile? messageFile}) {
     return GestureDetector(
       onTap: () {
         NavigatorService.instance.navigateToFilePreview(
           channelId: Globals.instance.channelId!,
           file: file,
+          messageFile: messageFile,
           enableDownload: true,
-          isImage: file.metadata.mime.isImageMimeType,
+          isImage: messageFile == null
+              ? file!.metadata.mime.isImageMimeType
+              : messageFile.metadata.mime.isImageMimeType,
         );
       },
-      child: file.thumbnailUrl.isNotEmpty
-          ? _buildFilePreview(file.thumbnailUrl)
-          : _buildFileTypeIcon(file),
+      child: messageFile == null
+          ? file!.thumbnailUrl.isNotEmpty
+              ? _buildFilePreview(file.thumbnailUrl)
+              : _buildFileTypeIcon(file: file)
+          : messageFile.metadata.thumbnails.isNotEmpty
+              ? _buildFilePreview(messageFile.thumbnailUrl)
+              : _buildFileTypeIcon(messageFile: messageFile),
     );
   }
 
@@ -120,8 +137,10 @@ class _FileTileState extends State<FileChannelTile> {
     );
   }
 
-  _buildFileTypeIcon(File file) {
-    final extension = file.metadata.name.fileExtension;
+  _buildFileTypeIcon({File? file, MessageFile? messageFile}) {
+    final extension = messageFile == null
+        ? file!.metadata.name.fileExtension
+        : messageFile.metadata.name.fileExtension;
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -135,14 +154,16 @@ class _FileTileState extends State<FileChannelTile> {
     );
   }
 
-  _buildFileInfo(File file) {
+  _buildFileInfo({File? file, MessageFile? messageFile}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         RichText(
             text: TextSpan(
-                text: file.metadata.name,
+                text: messageFile == null
+                    ? file!.metadata.name
+                    : messageFile.metadata.name,
                 style: Theme.of(context)
                     .textTheme
                     .headline1!
@@ -160,7 +181,8 @@ class _FileTileState extends State<FileChannelTile> {
               .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
         ),
         Text(
-          DateFormatter.getVerboseDateTime(file.updatedAt),
+          DateFormatter.getVerboseDateTime(
+              messageFile == null ? file!.updatedAt : messageFile.createdAt),
           textAlign: TextAlign.start,
           style: Theme.of(context)
               .textTheme

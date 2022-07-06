@@ -184,4 +184,13 @@ class ApiDataTransformer {
 
     return badgeCollection.values.toList();
   }
+
+  static Map<String, dynamic> messageFile(
+      {required Map<String, dynamic> json}) {
+    json['context']['file_id'] = json['context']['file_id'] == null
+        ? ""
+        : json['context']['file_id']['id'];
+    json['metadata']['external_id'] = json['metadata']['external_id']['id'];
+    return json;
+  }
 }

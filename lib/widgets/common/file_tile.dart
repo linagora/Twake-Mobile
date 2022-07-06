@@ -90,7 +90,10 @@ class _FileTileState extends State<FileTile> {
             FileDownloading? selectedFile;
             if (state.listFileDownloading.isNotEmpty) {
               selectedFile = state.listFileDownloading.firstWhereOrNull(
-                  (fileDownloading) => fileDownloading.file.id == file.id);
+                  (fileDownloading) => fileDownloading.messageFile == null
+                      ? fileDownloading.file!.id == file.id
+                      : fileDownloading.messageFile!.metadata.externalId ==
+                          file.id);
             }
             return Stack(
               alignment: Alignment.center,

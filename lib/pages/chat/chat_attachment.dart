@@ -6,6 +6,7 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/file/upload/file_uploading.dart';
 import 'package:twake/widgets/common/file_uploading_tile.dart';
 
@@ -96,12 +97,12 @@ class _ChatAttachmentState extends State<ChatAttachment> {
           return state.fileUploadStatus != FileUploadStatus.init
               ? ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  // shrinkWrap: true,
                   itemCount: state.listFileUploading.length,
                   itemBuilder: (context, index) {
                     final fileUploading = state.listFileUploading[index];
 
-                    final isRemoteFile = fileUploading.file != null &&
+                    final isRemoteFile = (fileUploading.file != null ||
+                            fileUploading.messageFile != null) &&
                         fileUploading.sourceFile == null;
 
                     final onCancel = () {
@@ -111,7 +112,9 @@ class _ChatAttachmentState extends State<ChatAttachment> {
 
                     if (isRemoteFile) {
                       return FileUploadingTile(
-                          thumbnailUrl: fileUploading.file!.thumbnailUrl,
+                          thumbnailUrl: fileUploading.file == null
+                              ? fileUploading.messageFile!.thumbnailUrl
+                              : fileUploading.file!.thumbnailUrl,
                           fileUploading: fileUploading,
                           onCancel: onCancel);
                     }

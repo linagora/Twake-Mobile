@@ -9,9 +9,9 @@ import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/local_file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
@@ -147,7 +147,7 @@ class _FilesListViewState extends State<FilesListView>
                       final files = _searchText.isEmpty
                           ? state.files
                           : state.files.where((file) {
-                              return file.fileName
+                              return file.metadata.name
                                   .toLowerCase()
                                   .contains(_searchText);
                             }).toList();
@@ -187,19 +187,24 @@ class _FilesListViewState extends State<FilesListView>
     );
   }
 
-  _handleSelectFile(File file) {
-    Get.find<FileUploadCubit>().addAlreadyUploadedFile(
-      existsFile: file,
-    );
+  void _handleSelectFile(dynamic file) {
+    file.runtimeType == MessageFile
+        ? Get.find<FileUploadCubit>().addAlreadyUploadedFile(
+            existsMessageFile: (file as MessageFile),
+          )
+        : Get.find<FileUploadCubit>().addAlreadyUploadedFile(
+            existsFile: (file as File),
+          );
 
     Get.back();
   }
 
-  _buildChannelFileItem(ChannelFile channelFile) {
+  _buildChannelFileItem(MessageFile messageFile) {
     return FileChannelTile(
-      fileId: channelFile.fileId,
-      senderName: channelFile.senderName,
+      fileId: messageFile.id,
+      senderName: messageFile.user.fullName,
       onTap: (file) => _handleSelectFile(file),
+      messageFile: messageFile,
     );
   }
 
