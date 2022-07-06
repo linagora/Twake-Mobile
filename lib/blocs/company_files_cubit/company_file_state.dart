@@ -4,7 +4,7 @@ enum CompanyFileStatus { init, loading, done, failed, empty }
 
 class CompanyFileState extends Equatable {
   final CompanyFileStatus companyFileStatus;
-  final List<ChannelFile> files;
+  final List<MessageFile> files;
 
   const CompanyFileState({
     this.companyFileStatus = CompanyFileStatus.init,
@@ -13,7 +13,7 @@ class CompanyFileState extends Equatable {
 
   CompanyFileState copyWith({
     CompanyFileStatus? newCompanyFileStatus,
-    List<ChannelFile>? newFiles,
+    List<MessageFile>? newFiles,
   }) {
     return CompanyFileState(
         files: newFiles ?? this.files,

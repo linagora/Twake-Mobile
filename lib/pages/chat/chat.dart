@@ -4,29 +4,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
-import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/config/image_path.dart';
+
 import 'package:twake/models/file/file.dart';
-import 'package:twake/models/message/message.dart';
-import 'package:twake/pages/chat/chat_attachment.dart';
+import 'package:twake/models/file/message_file.dart';
+
 import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/routing/app_router.dart';
-import 'package:twake/routing/route_paths.dart';
+
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
-import 'package:twake/utils/utilities.dart';
-import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
 import 'messages_grouped_list.dart';
-import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
   @override
@@ -174,8 +170,11 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         List<dynamic> attachments = const [];
         if (uploadState.listFileUploading.isNotEmpty) {
           attachments = uploadState.listFileUploading
-              .where((fileUploading) => fileUploading.file != null)
-              .map((e) => e.file!.toAttachment())
+              .where((fileUploading) => (fileUploading.file != null ||
+                  fileUploading.messageFile != null))
+              .map((e) => e.messageFile != null
+                  ? e.messageFile!.toAttachment()
+                  : e.file!.toAttachment())
               .toList();
         }
         if (messagesState is MessageEditInProgress) {

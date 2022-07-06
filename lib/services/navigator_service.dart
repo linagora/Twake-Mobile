@@ -7,6 +7,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/file/file.dart';
+import 'package:twake/models/file/message_file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/models/receive_sharing/receive_sharing_file.dart';
@@ -202,7 +203,6 @@ class NavigatorService {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
-
     }
   }
 
@@ -320,20 +320,22 @@ class NavigatorService {
 
   Future<void> navigateToFilePreview({
     required String channelId,
-    required File file,
+    File? file,
+    MessageFile? messageFile,
     bool? enableDownload,
     bool? isImage,
   }) async {
+    if (file == null && messageFile == null) return;
     final channel = await directsCubit.getChannel(channelId: channelId);
     if (channel.isDirect) {
       Get.toNamed(
         RoutePaths.directFilePreview.path,
-        arguments: [file, enableDownload, isImage],
+        arguments: [file == null ? messageFile : file, enableDownload, isImage],
       );
     } else {
       Get.toNamed(
         RoutePaths.channelFilePreview.path,
-        arguments: [file, enableDownload, isImage],
+        arguments: [file == null ? messageFile : file, enableDownload, isImage],
       );
     }
   }

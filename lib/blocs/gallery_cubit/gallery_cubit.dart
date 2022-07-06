@@ -35,7 +35,7 @@ class GalleryCubit extends Cubit<GalleryState> {
     final recentAlbum = albums[0];
     final recentAsset = await recentAlbum.getAssetListRange(
       start: state.loadedAssetsAmount,
-      //when opening the gallery for the first time loading 14 assets then iterationStep
+      //when opening the gallery for the first time loading 17 assets then iterationStep
       end: (state.loadedAssetsAmount == 0)
           ? 17
           : state.loadedAssetsAmount + iterationStep,
