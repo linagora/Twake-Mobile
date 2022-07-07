@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/searchable_grouped_listview.dart';
@@ -35,7 +34,7 @@ class UnreadMessagesWidget extends StatefulWidget {
 class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
   late List<Message> _messages;
   late Message? _startMessage;
-  int unreadCounter = 0;
+  int? unreadCounter;
   List<Message> unreadThreads = [];
   Message? firstUnreadMessage;
   Message? firstUnreadMsgThread;
@@ -88,9 +87,11 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
     if (oldWidget.latestMessage != this.widget.latestMessage) {
       final latestMessage = this.widget.latestMessage;
       if (latestMessage!.isOwnerMessage) {
-        unreadCounter = 0;
+        unreadCounter = null;
       } else {
-        unreadCounter += 1;
+        if(unreadCounter != null) {
+        unreadCounter = unreadCounter! + 1;
+        }
       }
     }
   }
@@ -99,21 +100,21 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: UnreadCounter(
-        counter: unreadCounter,
+        counter: unreadCounter ?? 0,
         itemPositionsListener: widget.itemPositionsListener,
         onPressed: () =>
             widget.jumpController.scrollToMessagesWithIndex(_messages, 0),
       ),
       body: SearchableChatView(
           initialScrollIndex: _startMessage == null
-              ? (unreadCounter > 0 ? unreadCounter - 1 : 0)
+              ? (unreadCounter != null && unreadCounter! > 0 ? unreadCounter! - 1 : 0)
               : _messages.indexOf(_startMessage!),
           itemPositionListener: widget.itemPositionsListener,
           searchableChatController: widget.jumpController,
           reverse: true,
           messages: _messages,
           indexedItemBuilder: (_, message, index) {
-            return unreadCounter > 0 && index == unreadCounter - 1
+            return unreadCounter != null && unreadCounter! > 0 && index == unreadCounter! - 1
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

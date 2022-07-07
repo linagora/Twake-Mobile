@@ -116,8 +116,7 @@ class _ChatViewState extends State<_ChatView> {
               itemPositionsListener: _itemPositionsListener,
               jumpController: _jumpController,
               latestMessage: latestMessage,
-              indexedItemBuilder:
-                  (context, Message message, int index) {
+              indexedItemBuilder: (context, Message message, int index) {
                 return _buildSwipeActionCell(
                     state.messages, message, index, state.endOfHistory);
               },
@@ -181,7 +180,9 @@ class _ChatViewState extends State<_ChatView> {
                   channel: widget.parentChannel,
                 ),
           highlightWhen: _jumpController.highlightMessage != null &&
-              _jumpController.highlightMessage == message,
+              _jumpController.highlightMessage == message &&
+              latestMessage ==
+                  null, // don't need to highlight when have unread messages
         ));
   }
 }

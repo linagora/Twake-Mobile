@@ -36,7 +36,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   SearchableGroupChatController _jumpController =
       SearchableGroupChatController();
   ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
-  int unreadCounter = 0;
+  int? unreadCounter;
   ScrollPhysics _physics = ClampingScrollPhysics();
 
   @override
@@ -51,16 +51,16 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     if (Get.arguments[1] != null) {
       // calculate the index for jump to first unread message
       final userLastAccess = Get.arguments[1] as int;
-      
+
       final repliedMessage = _messages.first;
       unreadCounter = _messages
           .where((message) => message.createdAt > userLastAccess)
           .length;
-      if (repliedMessage.createdAt > userLastAccess) {
-        unreadCounter -= 1;
+      if (repliedMessage.createdAt > userLastAccess && unreadCounter != null) {
+        unreadCounter = unreadCounter! - 1;
       }
     }
-    
+
     if (Get.arguments[0] != null) {
       // jump to selected pinned message
       Message pinnedMessage = Get.arguments[0];
@@ -81,11 +81,13 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, state) {
-          if(state is MessageLatestSuccess) {
-            if(state.latestMessage.isOwnerMessage){
-              unreadCounter = 0;
-            }else{
-              unreadCounter += 1;
+          if (state is MessageLatestSuccess) {
+            if (state.latestMessage.isOwnerMessage) {
+              unreadCounter = null;
+            } else {
+              if (unreadCounter != null) {
+                unreadCounter = unreadCounter! + 1;
+              }
             }
           }
 
@@ -125,7 +127,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
             isDirect: widget.parentChannel.isDirect,
             child: Scaffold(
               floatingActionButton: UnreadCounter(
-                counter: unreadCounter,
+                counter: unreadCounter ?? 0,
                 itemPositionsListener: _itemPositionsListener,
                 onPressed: () =>
                     _jumpController.scrollToMessagesWithIndex(_messages, 0),
@@ -138,7 +140,9 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                 shrinkWrap: isJump ? false : true,
                 itemBuilder: (context, index) {
                   return HighlightComponent(
-                      component: unreadCounter > 0 && index == unreadCounter - 1
+                      component: unreadCounter != null &&
+                              unreadCounter! > 0 &&
+                              index == unreadCounter! - 1
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
