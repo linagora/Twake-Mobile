@@ -286,6 +286,7 @@ class MessagesRepository {
       lastName: currentUser.lastName,
       picture: currentUser.picture,
       reactions: [],
+      lastReplies: [],
     );
 
     message.delivery = Delivery.inProgress;
