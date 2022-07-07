@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/utils/dateformatter.dart';
@@ -13,6 +14,8 @@ class SearchableChatView extends StatefulWidget {
   final ScrollPhysics? physics;
   final bool shrinkWrap;
   final int initialScrollIndex;
+  final ItemPositionsListener? itemPositionListener;
+  final Widget Function(Message)? groupSeparatorBuilder;
 
   SearchableChatView({
     required this.indexedItemBuilder,
@@ -22,6 +25,8 @@ class SearchableChatView extends StatefulWidget {
     this.physics,
     this.shrinkWrap = false,
     this.initialScrollIndex = 0,
+    this.itemPositionListener,
+    this.groupSeparatorBuilder,
   });
 
   State<SearchableChatView> createState() => _SearchableChatViewState();
@@ -37,36 +42,18 @@ class _SearchableChatViewState extends State<SearchableChatView> {
     _controller =
         widget.searchableChatController ?? SearchableGroupChatController();
     _controller._bind(this, widget.messages.reversed.toList());
-
-    if (widget.initialScrollIndex > 0) {
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        _controller.jumpToMessage(widget.messages,
-            widget.messages.length - widget.initialScrollIndex - 1);
-      });
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant SearchableChatView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.initialScrollIndex != this.widget.initialScrollIndex) {
-      if (widget.initialScrollIndex > 0) {
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
-          _controller.jumpToMessage(widget.messages,
-              widget.messages.length - 1 - widget.initialScrollIndex);
-        });
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return StickyGroupedListView<Message, DateTime>(
+      initialScrollIndex: widget.initialScrollIndex,
       elements: widget.messages,
       disableHeader: true,
       physics: widget.physics,
       shrinkWrap: widget.shrinkWrap,
-      groupSeparatorBuilder: (Message msg) {
+      itemPositionsListener: widget.itemPositionListener,
+      groupSeparatorBuilder: widget.groupSeparatorBuilder ?? (Message msg) {
         return GestureDetector(
           onTap: () {
             FocusManager.instance.primaryFocus!.unfocus();
@@ -117,7 +104,7 @@ class SearchableGroupChatController extends GroupedItemScrollController {
   final _animationDuration = Duration(milliseconds: 350);
   final _alignment = 0.5;
 
-  void jumpMessage(List<Message> messages, Message message) {
+  void scrollToMessage(List<Message> messages, Message message) {
     super.scrollTo(
       index: messages.indexOf(message),
       duration: _animationDuration,
@@ -127,6 +114,18 @@ class SearchableGroupChatController extends GroupedItemScrollController {
 
     _state!.updateHighlightMessage(message);
     _highlightMessage = message;
+  }
+
+  void scrollToMessagesWithIndex(List<Message> messages, int index) {
+    super.scrollTo(
+      index: index,
+      duration: _animationDuration,
+      automaticAlignment: false,
+      alignment: _alignment,
+    );
+
+    _state!.updateHighlightMessage(messages[index]);
+    _highlightMessage = messages[index];
   }
 
   void jumpToMessage(List<Message> messages, int index) {
