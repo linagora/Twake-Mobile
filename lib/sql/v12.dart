@@ -1,0 +1,6 @@
+const String ALTER_MESSAGE_ADD_LAST_REPLIES = '''
+ALTER TABLE message ADD COLUMN last_replies TEXT;
+''';
+
+const DB_V12 = 12;
+const MIGRATION_12 = [ALTER_MESSAGE_ADD_LAST_REPLIES];

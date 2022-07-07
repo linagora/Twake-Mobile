@@ -74,7 +74,8 @@ CREATE TABLE message (
     picture TEXT,
     is_read INT DEFAULT 1,
     delivery TEXT DEFAULT "delivered",
-    pinned_info TEXT DEFAULT "[]"
+    pinned_info TEXT DEFAULT "[]",
+    last_replies TEXT DEFAULT "[]"
 );
 ''';
 
