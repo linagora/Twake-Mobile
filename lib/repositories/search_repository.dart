@@ -85,7 +85,7 @@ class SearchRepository {
   }) async {
     final queryParameters = <String, dynamic>{
       'search': searchTerm,
-      'include_companies': 1,
+      //'include_companies': 1,
       'search_company_id': Globals.instance.companyId,
     };
 

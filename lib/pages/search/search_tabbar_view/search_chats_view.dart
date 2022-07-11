@@ -4,8 +4,10 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
+import 'package:twake/models/account/account.dart';
 import 'package:twake/pages/search/search_tabbar_view/channels/channel_item.dart';
 import 'package:twake/pages/search/search_tabbar_view/channels/recent_channel_item.dart';
+import 'package:twake/pages/search/search_tabbar_view/channels/user_item.dart';
 import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchChatsView extends StatefulWidget {
@@ -37,7 +39,11 @@ class _SearchChatsViewState extends State<SearchChatsView> {
             child: ListView(children: [
               if (state.searchTerm.isEmpty)
                 RecentSection(recentChats: state.recentChats),
-              ChatSection(chats: state.chats),
+              ChatSection(
+                chats: state.chats,
+                users: state.users,
+                displayUsers: state.searchTerm.isNotEmpty,
+              ),
             ]),
           );
         }
@@ -95,11 +101,27 @@ class RecentSection extends StatelessWidget {
 
 class ChatSection extends StatelessWidget {
   final List<Channel> chats;
+  final List<Account> users;
+  final bool displayUsers;
 
-  const ChatSection({Key? key, required this.chats}) : super(key: key);
+  const ChatSection(
+      {Key? key,
+      required this.chats,
+      required this.users,
+      required this.displayUsers})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final List<dynamic> list = [];
+
+    if (displayUsers) {
+      list.addAll(users);
+      list.addAll(chats);
+    } else {
+      list.addAll(chats);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -113,12 +135,21 @@ class ChatSection extends StatelessWidget {
         ),
         ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 15),
-          itemCount: chats.length,
+          itemCount: list.length,
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemBuilder: (context, index) {
-            final channel = chats[index];
-            return ChannelItemWidget(channel: channel);
+            final item = list[index];
+
+            if (item is Channel) {
+              return ChannelItemWidget(channel: item);
+            }
+
+            if (item is Account) {
+              return UserItemWidget(account: item);
+            }
+
+            return SizedBox();
           },
         )
       ],
@@ -140,7 +171,7 @@ class ChatsStatusInformer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (status == ChatsStateStatus.loading) {
+    if (status == ChatsStateStatus.loading || status == ChatsStateStatus.init) {
       return Center(
         child: Container(
           height: 50,
