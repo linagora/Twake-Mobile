@@ -9,19 +9,24 @@ class SearchTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TabBar(
-      tabs: tabs.map((e) => SearchTabBarItem(tab: e)).toList(),
-      isScrollable: true,
-      indicatorColor: Theme.of(context).colorScheme.surface,
-      unselectedLabelColor: Theme.of(context).colorScheme.secondary,
-      unselectedLabelStyle: Theme.of(context).textTheme.headline1!.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-      labelStyle: Theme.of(context).textTheme.headline3!.copyWith(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-          ),
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: TabBar(
+        tabs: tabs.map((e) => SearchTabBarItem(tab: e)).toList(),
+        labelPadding: EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.only(left: 16),
+        isScrollable: true,
+        indicatorColor: Theme.of(context).colorScheme.surface,
+        unselectedLabelColor: Theme.of(context).colorScheme.secondary,
+        unselectedLabelStyle: Theme.of(context).textTheme.headline1!.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+        labelStyle: Theme.of(context).textTheme.headline3!.copyWith(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+      ),
     );
   }
 }

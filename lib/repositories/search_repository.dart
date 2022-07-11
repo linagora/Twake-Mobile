@@ -42,8 +42,6 @@ class SearchRepository {
               ))
           .toList();
 
-      print(result);
-
       return SearchRepositoryRequest(result: result, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching chats:\n$e');

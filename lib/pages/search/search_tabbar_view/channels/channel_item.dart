@@ -17,6 +17,8 @@ class ChannelItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final membersCount =
+        channel.isDirect ? channel.members.length : channel.stats?.members ?? 0;
     return GestureDetector(
       onTap: () {
         NavigatorService.instance.navigate(
@@ -66,7 +68,7 @@ class ChannelItemWidget extends StatelessWidget {
                   SizedBox(height: 4.0),
                   Text(
                       AppLocalizations.of(context)
-                              ?.membersPlural(channel.stats?.members ?? 0) ??
+                              ?.membersPlural(membersCount) ??
                           '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

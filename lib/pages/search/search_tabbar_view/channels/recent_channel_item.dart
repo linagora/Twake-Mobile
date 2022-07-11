@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dart';
+import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 
 class RecentChannelItemWidget extends StatelessWidget {
@@ -14,10 +15,15 @@ class RecentChannelItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        NavigatorService.instance.navigate(
+          channelId: channel.id,
+        );
+      },
       child: Container(
         width: 58,
         margin: const EdgeInsets.only(right: 8),
+        color: Colors.transparent,
         child: Column(
           children: [
             Stack(
