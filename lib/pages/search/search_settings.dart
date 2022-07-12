@@ -15,3 +15,5 @@ final searchTabsList = [
 
 const searchDebounceDelay = 250;
 const searchAnimationTransitionDelay = 250;
+
+const displayLimitOfRecentChats = 5;

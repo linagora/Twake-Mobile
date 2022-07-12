@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/models/channel/channel.dart';
-import 'package:twake/pages/receive_sharing_file/receive_sharing_file_widget.dart';
 import 'package:twake/repositories/badges_repository.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/widgets/common/badges.dart';
@@ -55,11 +54,8 @@ class ChannelItemWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                      channel.name.length > maxTextLength
-                          ? channel.name.substring(0, maxTextLength)
-                          : channel.name,
-                      maxLines: 2,
+                  Text(channel.name,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context)
                           .textTheme

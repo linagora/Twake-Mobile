@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
-import 'package:twake/models/account/account.dart';
+import 'package:twake/pages/search/search_settings.dart';
 import 'package:twake/pages/search/search_tabbar_view/channels/channel_item.dart';
 import 'package:twake/pages/search/search_tabbar_view/channels/recent_channel_item.dart';
-import 'package:twake/pages/search/search_tabbar_view/channels/user_item.dart';
+import 'package:twake/utils/translit.dart';
 import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchChatsView extends StatefulWidget {
@@ -39,11 +39,30 @@ class _SearchChatsViewState extends State<SearchChatsView> {
             child: ListView(children: [
               if (state.searchTerm.isEmpty)
                 RecentSection(recentChats: state.recentChats),
-              ChatSection(
-                chats: state.chats,
-                users: state.users,
-                displayUsers: state.searchTerm.isNotEmpty,
-              ),
+              BlocBuilder<DirectsCubit, ChannelsState>(
+                  bloc: Get.find<DirectsCubit>(),
+                  builder: (context, directState) {
+                    List<Channel> direct = [];
+
+                    if (directState is ChannelsLoadedSuccess) {
+                      direct = state.searchTerm.isEmpty
+                          ? directState.channels
+                          : directState.channels.where((channel) {
+                              return channel.name
+                                      .toLowerCase()
+                                      .contains(state.searchTerm) ||
+                                  channel.name.toLowerCase().contains(
+                                      translitCyrillicToLatin(
+                                          state.searchTerm));
+                            }).toList();
+                    }
+
+                    return ChatSection(
+                      chats: state.chats,
+                      direct: direct,
+                      displayUsers: state.searchTerm.isNotEmpty,
+                    );
+                  }),
             ]),
           );
         }
@@ -81,7 +100,7 @@ class RecentSection extends StatelessWidget {
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               scrollDirection: Axis.horizontal,
-              itemCount: recentChats.length,
+              itemCount: displayLimitOfRecentChats,
               itemBuilder: (context, index) {
                 final channel = recentChats[index];
                 return RecentChannelItemWidget(channel: channel);
@@ -101,22 +120,22 @@ class RecentSection extends StatelessWidget {
 
 class ChatSection extends StatelessWidget {
   final List<Channel> chats;
-  final List<Account> users;
+  final List<Channel> direct;
   final bool displayUsers;
 
   const ChatSection(
       {Key? key,
       required this.chats,
-      required this.users,
+      required this.direct,
       required this.displayUsers})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> list = [];
+    final List<Channel> list = [];
 
     if (displayUsers) {
-      list.addAll(users);
+      list.addAll(direct);
       list.addAll(chats);
     } else {
       list.addAll(chats);
@@ -141,15 +160,7 @@ class ChatSection extends StatelessWidget {
           itemBuilder: (context, index) {
             final item = list[index];
 
-            if (item is Channel) {
-              return ChannelItemWidget(channel: item);
-            }
-
-            if (item is Account) {
-              return UserItemWidget(account: item);
-            }
-
-            return SizedBox();
+            return ChannelItemWidget(channel: item);
           },
         )
       ],
