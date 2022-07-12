@@ -1,11 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
-import 'package:synchronized/synchronized.dart';
-import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
-import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/reaction.dart';
+import 'package:twake/repositories/channels_repository.dart';
 import 'package:twake/repositories/messages_repository.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/twacode.dart';
@@ -14,17 +12,24 @@ export 'messages_state.dart';
 
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
+  late final BaseChannelsCubit _channelsCubit;
 
   final _socketIOEventStream = SocketIOService.instance.resourceStream;
 
   int _sendInProgress = 0;
 
-  BaseMessagesCubit({MessagesRepository? repository})
+  BaseMessagesCubit(
+      {MessagesRepository? repository, BaseChannelsCubit? channelCubit})
       : super(MessagesInitial()) {
     if (repository == null) {
       repository = MessagesRepository();
     }
     _repository = repository;
+
+    if (channelCubit == null) {
+      channelCubit = ChannelsCubit();
+    }
+    _channelsCubit = channelCubit;
 
     listenToMessageChanges();
   }
@@ -206,6 +211,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         hash: hash + message.hash,
         endOfHistory: endOfHistory,
       ));
+
+      _channelsCubit.markChannelRead(channelId: message.channelId);
     }
 
     _sendInProgress -= 1;
@@ -245,6 +252,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }) async {
     final prepared = TwacodeParser(originalStr ?? '').message;
     final fakeId = DateTime.now().millisecondsSinceEpoch.toString();
+    Message message;
 
     _sendInProgress += 1;
 
@@ -261,7 +269,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     final state = this.state as MessagesLoadSuccess;
     emit(MessageSendInProgress(messages: state.messages, hash: state.hash));
 
-    await for (final message in sendStream) {
+    await for (message in sendStream) {
       // user might have changed screen, so make sure we are still in
       // messages view screen, and the state is MessagesLoadSuccess
       if (this.state is! MessagesLoadSuccess) return;
@@ -285,7 +293,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         hash: hash + message.hash,
         endOfHistory: endOfHistory,
       ));
+
+      //after message is send successfully mark channel as read
+      _channelsCubit.markChannelRead(channelId: message.channelId);
     }
+    //after message is send successfully mark channel as read
+    
 
     _sendInProgress -= 1;
   }
@@ -498,6 +511,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                 messages: messages,
                 hash: hash + 1, // we only need to update hash in someway
               ));
+              // update channel read
+              _channelsCubit.markChannelRead(channelId: message.channelId);
             } else {
               // new message has been created
               messages.add(message);
@@ -526,8 +541,9 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
   final _socketIOEventStream =
       SynchronizationService.instance.socketIOChannelMessageStream;
 
-  ChannelMessagesCubit({MessagesRepository? repository})
-      : super(repository: repository) {
+  ChannelMessagesCubit(
+      {MessagesRepository? repository, BaseChannelsCubit? channelsCubit})
+      : super(repository: repository, channelCubit: channelsCubit) {
     listenToThreadChanges();
   }
 
@@ -592,8 +608,9 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 }
 
 class ThreadMessagesCubit extends BaseMessagesCubit {
-  ThreadMessagesCubit({MessagesRepository? repository})
-      : super(repository: repository);
+  ThreadMessagesCubit(
+      {MessagesRepository? repository, BaseChannelsCubit? channelCubit})
+      : super(repository: repository, channelCubit: channelCubit);
 
   @override
   final _socketIOEventStream = SynchronizationService

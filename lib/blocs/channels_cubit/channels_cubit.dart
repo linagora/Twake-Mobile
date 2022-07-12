@@ -19,6 +19,8 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
 
   final isDirect;
 
+  Channel? selectedChannel;
+
   BaseChannelsCubit({
     required ChannelsRepository repository,
     this.isDirect: false,
@@ -248,13 +250,13 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     final channels = (state as ChannelsLoadedSuccess).channels;
     final hash = (state as ChannelsLoadedSuccess).hash;
 
-    final selected = channels.firstWhere((c) => c.id == channelId);
+    selectedChannel = channels.firstWhere((c) => c.id == channelId);
 
     Globals.instance.channelIdSet = channelId;
 
     emit(ChannelsLoadedSuccess(
       channels: channels,
-      selected: selected,
+      selected: selectedChannel,
       hash: hash,
     ));
 
@@ -264,8 +266,15 @@ abstract class BaseChannelsCubit extends Cubit<ChannelsState> {
     );
     SynchronizationService.instance
         .cancelNotificationsForChannel(channelId: channelId);
+    if(selectedChannel != null) {
+      _repository.markChannel(channel: selectedChannel!, read: true);
+    }
+  }
 
-    _repository.markChannel(channel: selected, read: true);
+  void markChannelRead({required String channelId}){
+    if(selectedChannel != null) {
+      _repository.markChannel(channel: selectedChannel!, read: true);
+    }
   }
 
   void clearSelection() {
