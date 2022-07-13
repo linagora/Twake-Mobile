@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
@@ -90,7 +91,7 @@ class RecentSection extends StatelessWidget {
         children: [
           Padding(
             padding: EdgeInsets.only(left: 15, top: 10),
-            child: Text('Recent channels and contacts',
+            child: Text(AppLocalizations.of(context)!.searchChatsRecentHeader,
                 style: Theme.of(context)
                     .textTheme
                     .headline6!
@@ -146,7 +147,7 @@ class ChatSection extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Text('Channels',
+          child: Text(AppLocalizations.of(context)!.searchChatsHeader,
               style: Theme.of(context)
                   .textTheme
                   .headline6!

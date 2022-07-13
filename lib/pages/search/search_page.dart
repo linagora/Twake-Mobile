@@ -136,7 +136,8 @@ class _SearchPageState extends State<SearchPage>
                                                 alignment:
                                                     Alignment.centerRight,
                                                 child: Text(
-                                                  'Cancel',
+                                                  AppLocalizations.of(context)!
+                                                      .cancel,
                                                 ),
                                               )))),
                                 )
