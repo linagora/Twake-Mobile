@@ -9,10 +9,12 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/reaction.dart';
+import 'package:twake/widgets/common/searchable_grouped_listview.dart';
+import 'package:twake/widgets/common/unread_border.dart';
+import 'package:twake/widgets/common/unread_counter.dart';
 
 class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
@@ -31,10 +33,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   List<Message> _messages = <Message>[];
   int _highlightIndex = -1;
   bool isJump = false;
-  // Since the ScrollablePositionedList behaves strangely in the case of a jump to a pinned message,
-  // had to change the order of messages, maybe it is needed to dig into the lib one more time in the future
-  //SearchableGroupChatController _controller = SearchableGroupChatController();
-  ItemScrollController _controller = ItemScrollController();
+  SearchableGroupChatController _jumpController =
+      SearchableGroupChatController();
+  ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
+  int? unreadCounter;
   ScrollPhysics _physics = ClampingScrollPhysics();
 
   @override
@@ -46,15 +48,29 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       _messages = state.messages;
     }
 
-    final Message? pinnedMessage = Get.arguments[0];
+    if (Get.arguments[1] != null) {
+      // calculate the index for jump to first unread message
+      final userLastAccess = Get.arguments[1] as int;
 
-    if (pinnedMessage != null) {
+      final repliedMessage = _messages.first;
+      unreadCounter = _messages
+          .where((message) => message.createdAt > userLastAccess)
+          .length;
+      if (repliedMessage.createdAt > userLastAccess && unreadCounter != null) {
+        unreadCounter = unreadCounter! - 1;
+      }
+    }
+
+    if (Get.arguments[0] != null) {
+      // jump to selected pinned message
+      Message pinnedMessage = Get.arguments[0];
+
       isJump = true;
       SchedulerBinding.instance?.addPostFrameCallback((_) {
         _highlightIndex =
             _messages.length - 1 - _messages.indexOf(pinnedMessage);
         // i don't know why scrollTo animation work not correctly, so i use jumpTo
-        _controller.jumpTo(index: _highlightIndex);
+        _jumpController.jumpTo(index: _highlightIndex);
       });
     }
   }
@@ -65,6 +81,16 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, state) {
+          if (state is MessageLatestSuccess) {
+            if (state.latestMessage.isOwnerMessage) {
+              unreadCounter = null;
+            } else {
+              if (unreadCounter != null) {
+                unreadCounter = unreadCounter! + 1;
+              }
+            }
+          }
+
           if (state is MessagesLoadSuccess) {
             isJump
                 ? _messages = state.messages.reversed.toList()
@@ -95,22 +121,40 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
         Expanded(
           child: JumpablePinnedMessages(
             jumpToMessage: ((messages, jumpedMessage) {
-              _controller.jumpTo(index: _highlightIndex);
+              _jumpController.jumpTo(index: _highlightIndex);
             }),
             messages: _messages,
             isDirect: widget.parentChannel.isDirect,
-            child: ScrollablePositionedList.builder(
-              itemCount: _messages.length,
-              itemScrollController: _controller,
-              physics: _physics,
-              reverse: isJump ? false : true,
-              shrinkWrap: isJump ? false : true,
-              itemBuilder: (context, index) {
-                return HighlightComponent(
-                    component: _buidIndexedMessage(context, index),
-                    highlightColor: Theme.of(context).backgroundColor,
-                    highlightWhen: _highlightIndex == index);
-              },
+            child: Scaffold(
+              floatingActionButton: UnreadCounter(
+                counter: unreadCounter ?? 0,
+                itemPositionsListener: _itemPositionsListener,
+                onPressed: () =>
+                    _jumpController.scrollToMessagesWithIndex(_messages, 0),
+              ),
+              body: ScrollablePositionedList.builder(
+                itemCount: _messages.length,
+                itemScrollController: _jumpController,
+                physics: _physics,
+                reverse: isJump ? false : true,
+                shrinkWrap: isJump ? false : true,
+                itemBuilder: (context, index) {
+                  return HighlightComponent(
+                      component: unreadCounter != null &&
+                              unreadCounter! > 0 &&
+                              index == unreadCounter! - 1
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const UnreadBorder(),
+                                _buildIndexedMessage(context, index),
+                              ],
+                            )
+                          : _buildIndexedMessage(context, index),
+                      highlightColor: Theme.of(context).backgroundColor,
+                      highlightWhen: _highlightIndex == index);
+                },
+              ),
             ),
           ),
         ),
@@ -118,7 +162,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     );
   }
 
-  Widget _buidIndexedMessage(BuildContext context, int index) {
+  Widget _buildIndexedMessage(BuildContext context, int index) {
     //conditions for determining the shape of the bubble sides
     final List<bool> bubbleSides = bubbleSide(_messages, index, false);
     if ((index == 0 && isJump) || (index == _messages.length - 1 && !isJump)) {

@@ -22,6 +22,7 @@ class MessagesRepository {
 
   MessagesRepository();
 
+  //fetch both local and remote messages
   Stream<List<Message>> fetch({
     String? companyId,
     String? workspaceId,
@@ -34,7 +35,6 @@ class MessagesRepository {
       threadId: threadId,
       withExistedFiles: withExistedFiles,
     );
-    yield messages;
 
     if (!Globals.instance.isNetworkConnected) return;
 
@@ -47,11 +47,11 @@ class MessagesRepository {
       withExistedFiles: withExistedFiles,
     );
 
-    if (remoteMessages.isEmpty) return;
-
-    remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-
-    yield remoteMessages;
+    if (remoteMessages.isNotEmpty){
+      remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
+      messages.addAll(remoteMessages.where((element) => !messages.contains(element)));
+    }
+    yield messages;
   }
 
   Future<List<Message>> fetchLocal({
@@ -171,7 +171,7 @@ class MessagesRepository {
       try {
         remoteResult = await _api.get(
           endpoint: sprintf(
-              isDirect ? Endpoint.threadsDirect : Endpoint.threadsChannel, [
+              Endpoint.threadsChannel, [
             Globals.instance.companyId,
             isDirect ? 'direct' : Globals.instance.workspaceId,
             channelId
@@ -286,6 +286,7 @@ class MessagesRepository {
       lastName: currentUser.lastName,
       picture: currentUser.picture,
       reactions: [],
+      lastReplies: [],
     );
 
     message.delivery = Delivery.inProgress;

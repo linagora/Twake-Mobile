@@ -280,10 +280,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages[index] = message;
       }
 
-      emit(MessagesLoadSuccess(
+      emit(MessageLatestSuccess(
         messages: messages,
         hash: hash + message.hash,
-        endOfHistory: endOfHistory,
+        latestMessage: messages.last,
       ));
     }
 
@@ -502,9 +502,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
               // new message has been created
               messages.add(message);
               messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-              final newState = MessagesLoadSuccess(
+              final newState = MessageLatestSuccess(
                 messages: messages,
                 hash: hash + message.hash,
+                latestMessage: message,
               );
               emit(newState);
             }

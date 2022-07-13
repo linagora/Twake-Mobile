@@ -137,6 +137,7 @@ class NavigatorService {
     String? threadId,
     bool reloadThreads: true,
     Message? pinnedMessage,
+    int? userLastAccessFromChat, // when user first enter the chat
   }) async {
     if (companyId != null && companyId != Globals.instance.companyId) {
       companiesCubit.selectCompany(companyId: companyId);
@@ -199,7 +200,7 @@ class NavigatorService {
           ? RoutePaths.directMessageThread.path
           : RoutePaths.channelMessageThread.path;
 
-      Get.toNamed(path, arguments: [pinnedMessage])?.then((_) {
+      Get.toNamed(path, arguments: [pinnedMessage, userLastAccessFromChat])?.then((_) {
         channelMessagesCubit.clearSelectedThread();
         threadMessagesCubit.reset();
       });
