@@ -11,8 +11,8 @@ MessageFileMetadata _$MessageFileMetadataFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       mime: json['mime'] as String,
       externalId: json['external_id'] as String,
-      thumbnailsStatus:
-          $enumDecode(_$ThumbnailStatusEnumMap, json['thumbnails_status']),
+      thumbnailsStatus: $enumDecodeNullable(
+          _$ThumbnailStatusEnumMap, json['thumbnails_status']),
       size: json['size'] as int,
       thumbnails: (json['thumbnails'] as List<dynamic>)
           .map((e) => FileThumbnails.fromJson(e as Map<String, dynamic>))

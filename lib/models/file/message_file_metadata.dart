@@ -11,7 +11,7 @@ class MessageFileMetadata extends Equatable {
   final String mime;
   @JsonKey(name: 'external_id')
   final String externalId;
-  final ThumbnailStatus thumbnailsStatus;
+  final ThumbnailStatus? thumbnailsStatus;
   final int size;
   final List<FileThumbnails> thumbnails;
 
@@ -19,7 +19,7 @@ class MessageFileMetadata extends Equatable {
       {required this.name,
       required this.mime,
       required this.externalId,
-      required this.thumbnailsStatus,
+      this.thumbnailsStatus,
       required this.size,
       required this.thumbnails});
 
@@ -31,7 +31,7 @@ class MessageFileMetadata extends Equatable {
 
   @override
   List<Object> get props =>
-      [name, mime, externalId, thumbnailsStatus, size, thumbnails];
+      [name, mime, externalId, size, thumbnails];
 }
 
 extension MessageFileMetadataExtenstion on MessageFileMetadata {
