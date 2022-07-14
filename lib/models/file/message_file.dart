@@ -30,8 +30,7 @@ class MessageFile extends Equatable {
       required this.context});
 
   factory MessageFile.fromJson(Map<String, dynamic> json) {
-    final json2 = ApiDataTransformer.messageFile(json: json);
-    return _$MessageFileFromJson(json2);
+    return _$MessageFileFromJson(ApiDataTransformer.messageFile(json: json));
   }
 
   Map<String, dynamic> toJson() => _$MessageFileToJson(this);
@@ -70,7 +69,8 @@ extension MessageFileExtenstion on MessageFile {
               ExternalId(id: this.metadata.externalId, companyId: companyId),
           name: metadata.name,
           mime: metadata.mime,
-          thumbnailsStatus: metadata.thumbnailsStatus,
+          thumbnailsStatus:
+              metadata.thumbnailsStatus ?? ThumbnailStatus.waiting,
           size: this.metadata.size,
           thumbnails: this.metadata.thumbnails,
         ),

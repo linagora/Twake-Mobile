@@ -102,37 +102,35 @@ class MessagesLoadingAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 50,
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(35),
-              child: SizedBox(
-                height: 150,
-                width: 150,
-                child: Image.asset(
-                  'assets/animations/messages_loading.gif',
-                  colorBlendMode: BlendMode.multiply,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+    return  Center(
+      child: Column(
+        children: [
+          SizedBox(
+            height: 50,
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(35),
+            child: SizedBox(
+              height: 150,
+              width: 150,
+              child: Image.asset(
+                'assets/animations/messages_loading.gif',
+                colorBlendMode: BlendMode.multiply,
+                color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                AppLocalizations.of(context)!.chatLoading,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline1!
-                    .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              AppLocalizations.of(context)!.chatLoading,
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1!
+                  .copyWith(fontSize: 18, fontWeight: FontWeight.w700),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
