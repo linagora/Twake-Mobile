@@ -12,7 +12,9 @@ MessageFile _$MessageFileFromJson(Map<String, dynamic> json) => MessageFile(
       createdAt: json['created_at'] as int,
       metadata: MessageFileMetadata.fromJson(
           json['metadata'] as Map<String, dynamic>),
-      user: User.fromJson(json['user'] as Map<String, dynamic>),
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
       context: Context.fromJson(json['context'] as Map<String, dynamic>),
     );
 

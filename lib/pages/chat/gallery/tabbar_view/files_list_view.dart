@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
+import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
@@ -200,9 +201,15 @@ class _FilesListViewState extends State<FilesListView>
   }
 
   _buildChannelFileItem(MessageFile messageFile) {
+    String fullName = '';
+    final accountCubitState = Get.find<AccountCubit>().state;
+    if (accountCubitState is AccountLoadSuccess) {
+      fullName = accountCubitState.account.fullName;
+    }
     return FileChannelTile(
       fileId: messageFile.id,
-      senderName: messageFile.user.fullName,
+      senderName:
+          messageFile.user == null ? fullName : messageFile.user!.fullName,
       onTap: (file) => _handleSelectFile(file),
       messageFile: messageFile,
     );
