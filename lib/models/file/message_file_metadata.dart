@@ -30,8 +30,8 @@ class MessageFileMetadata extends Equatable {
   Map<String, dynamic> toJson() => _$MessageFileMetadataToJson(this);
 
   @override
-  List<Object> get props =>
-      [name, mime, externalId, size, thumbnails];
+  List<Object?> get props =>
+      [name, mime, externalId, thumbnailsStatus, size, thumbnails];
 }
 
 extension MessageFileMetadataExtenstion on MessageFileMetadata {

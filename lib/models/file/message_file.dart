@@ -18,7 +18,7 @@ class MessageFile extends Equatable {
   final String companyId;
   final int createdAt;
   final MessageFileMetadata metadata;
-  final User user;
+  final User? user;
   final Context context;
 
   MessageFile(
@@ -26,7 +26,7 @@ class MessageFile extends Equatable {
       required this.companyId,
       required this.createdAt,
       required this.metadata,
-      required this.user,
+      this.user,
       required this.context});
 
   factory MessageFile.fromJson(Map<String, dynamic> json) {
