@@ -101,7 +101,9 @@ class RecentSection extends StatelessWidget {
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               scrollDirection: Axis.horizontal,
-              itemCount: displayLimitOfRecentChats,
+              itemCount: recentChats.length < displayLimitOfRecentChats
+                  ? recentChats.length
+                  : displayLimitOfRecentChats,
               itemBuilder: (context, index) {
                 final channel = recentChats[index];
                 return RecentChannelItemWidget(channel: channel);

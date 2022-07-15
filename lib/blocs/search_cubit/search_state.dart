@@ -5,12 +5,14 @@ import 'package:twake/models/contacts/app_contact.dart';
 
 enum ContactsStateStatus { init, loading, done, failed, noPermission }
 enum ChatsStateStatus { init, loading, done, failed }
+enum MessagesStateStatus { init, loading, done, failed }
 
 class SearchState extends Equatable {
   final String searchTerm;
 
   final ContactsStateStatus contactsStateStatus;
   final ChatsStateStatus chatsStateStatus;
+  final MessagesStateStatus messagesStateStatus;
   final List<AppContact> contacts;
   final List<Account> users;
   final List<Channel> recentChats;
@@ -22,6 +24,7 @@ class SearchState extends Equatable {
       required this.recentChats,
       required this.contactsStateStatus,
       required this.chatsStateStatus,
+      required this.messagesStateStatus,
       required this.chats,
       required this.contacts});
 
@@ -33,6 +36,7 @@ class SearchState extends Equatable {
         chats: [],
         recentChats: [],
         chatsStateStatus: ChatsStateStatus.init,
+        messagesStateStatus: MessagesStateStatus.init,
         contacts: []);
   }
 
@@ -44,6 +48,7 @@ class SearchState extends Equatable {
     final List<Channel>? recentChats,
     final List<Channel>? chats,
     final ChatsStateStatus? chatsStateStatus,
+    final MessagesStateStatus? messagesStateStatus,
   }) {
     return SearchState(
       searchTerm: searchTerm ?? this.searchTerm,
@@ -53,6 +58,7 @@ class SearchState extends Equatable {
       recentChats: recentChats ?? this.recentChats,
       chats: chats ?? this.chats,
       chatsStateStatus: chatsStateStatus ?? this.chatsStateStatus,
+      messagesStateStatus: messagesStateStatus ?? this.messagesStateStatus,
     );
   }
 
@@ -76,5 +82,6 @@ class SearchState extends Equatable {
         users,
         chatsStateStatus,
         chats,
+        messagesStateStatus,
       ];
 }

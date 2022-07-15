@@ -8,6 +8,7 @@ class SearchTab {
 final searchTabsList = [
   SearchTab('All', 'all'),
   SearchTab('Chats', 'chat'),
+  SearchTab('Messages', 'messages'),
   SearchTab('Media', 'media'),
   SearchTab('Files', 'files'),
   //SearchTab('Contacts', 'contacts'),
