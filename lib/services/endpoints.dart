@@ -82,6 +82,8 @@ class Endpoint {
   static const searchRecentChannels =
       '/internal/services/channels/v1/companies/%s/channels/recent';
   static const searchUsers = '/internal/services/users/v1/users';
+  static const searchMessages =
+      '/internal/services/messages/v1/companies/%s/search';
 
   static const publicMethods = const [info, reservation, signup, emailResend];
 

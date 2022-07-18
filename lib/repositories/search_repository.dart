@@ -2,6 +2,7 @@ import 'package:sprintf/sprintf.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/models/message/message.dart';
 import 'package:twake/services/api_service.dart';
 import 'package:twake/services/endpoints.dart';
 import 'package:twake/services/service_bundle.dart';
@@ -103,6 +104,46 @@ class SearchRepository {
       return SearchRepositoryRequest(result: users, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching users:\n$e');
+
+      return SearchRepositoryRequest(result: [], hasError: true);
+    }
+  }
+
+  Future<SearchRepositoryRequest<List<Message>>> fetchMessages({
+    required String searchTerm,
+  }) async {
+    final queryParameters = <String, dynamic>{
+      'limit': 100,
+      'q': searchTerm,
+    };
+
+    try {
+      final queryResult = await _api.get(
+        endpoint: sprintf(Endpoint.searchMessages, [
+          Globals.instance.companyId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      ) as List<dynamic>;
+
+      final result = queryResult
+          .where((rm) =>
+              rm['type'] == 'message' &&
+              rm['subtype'] != 'system' &&
+              rm['subtype'] != 'application')
+          .map((entry) => Message.fromJson(
+                entry,
+                jsonify: true,
+                transform: true,
+                channelId: '',
+              ))
+          .toList();
+
+      print(result);
+
+      return SearchRepositoryRequest(result: result, hasError: false);
+    } catch (e) {
+      Logger().e('Error occurred while fetching messages:\n$e');
 
       return SearchRepositoryRequest(result: [], hasError: true);
     }

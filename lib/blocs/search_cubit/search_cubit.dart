@@ -18,9 +18,15 @@ class SearchCubit extends Cubit<SearchState> {
   }
 
   void onSearchTermChanged(String newTerm) {
+    // ignore same terms
+    if (newTerm == state.searchTerm) {
+      return;
+    }
+
     emit(state.copyWith(searchTerm: newTerm));
 
     fetchChatsBySearchTerm();
+    fetchMessagesBySearchTerm();
   }
 
   void getAllContacts() async {
@@ -78,7 +84,7 @@ class SearchCubit extends Cubit<SearchState> {
         await _searchRepository.fetchUsers(searchTerm: state.searchTerm);
 
     if (requestUsers.hasError) {
-      emit(state.copyWith(contactsStateStatus: ContactsStateStatus.failed));
+      emit(state.copyWith(chatsStateStatus: ChatsStateStatus.failed));
       return;
     }
 
@@ -86,6 +92,23 @@ class SearchCubit extends Cubit<SearchState> {
         chatsStateStatus: ChatsStateStatus.done,
         chats: request.result,
         users: requestUsers.result));
+  }
+
+  void fetchMessagesBySearchTerm() async {
+    emit(state.copyWith(messagesStateStatus: MessagesStateStatus.loading));
+
+    final request =
+        await _searchRepository.fetchMessages(searchTerm: state.searchTerm);
+
+    if (request.hasError) {
+      emit(state.copyWith(messagesStateStatus: MessagesStateStatus.failed));
+      return;
+    }
+
+    emit(state.copyWith(
+      messagesStateStatus: MessagesStateStatus.done,
+      messages: request.result,
+    ));
   }
 
   void setTextEditingController(TextEditingController controller) {

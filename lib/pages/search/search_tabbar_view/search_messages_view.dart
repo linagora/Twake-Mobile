@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
+import 'package:twake/models/message/message.dart';
 import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchMessagesView extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SearchMessagesViewState extends State<SearchMessagesView> {
           return SizedBox.expand(
             child: ListView(children: [
               MessagesSection(
-                messages: state.chats,
+                messages: state.messages,
               )
             ]),
           );
@@ -42,7 +42,7 @@ class _SearchMessagesViewState extends State<SearchMessagesView> {
 }
 
 class MessagesSection extends StatelessWidget {
-  final List<Channel> messages;
+  final List<Message> messages;
 
   const MessagesSection({Key? key, required this.messages}) : super(key: key);
 

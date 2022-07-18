@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/models/contacts/app_contact.dart';
+import 'package:twake/models/message/message.dart';
 
 enum ContactsStateStatus { init, loading, done, failed, noPermission }
 enum ChatsStateStatus { init, loading, done, failed }
@@ -10,13 +11,16 @@ enum MessagesStateStatus { init, loading, done, failed }
 class SearchState extends Equatable {
   final String searchTerm;
 
+  // different state will help run queries in concurrent mode
   final ContactsStateStatus contactsStateStatus;
   final ChatsStateStatus chatsStateStatus;
   final MessagesStateStatus messagesStateStatus;
+
   final List<AppContact> contacts;
   final List<Account> users;
   final List<Channel> recentChats;
   final List<Channel> chats;
+  final List<Message> messages;
 
   const SearchState(
       {required this.searchTerm,
@@ -26,6 +30,7 @@ class SearchState extends Equatable {
       required this.chatsStateStatus,
       required this.messagesStateStatus,
       required this.chats,
+      required this.messages,
       required this.contacts});
 
   factory SearchState.initial() {
@@ -34,6 +39,7 @@ class SearchState extends Equatable {
         contactsStateStatus: ContactsStateStatus.init,
         users: [],
         chats: [],
+        messages: [],
         recentChats: [],
         chatsStateStatus: ChatsStateStatus.init,
         messagesStateStatus: MessagesStateStatus.init,
@@ -47,6 +53,7 @@ class SearchState extends Equatable {
     final List<Account>? users,
     final List<Channel>? recentChats,
     final List<Channel>? chats,
+    final List<Message>? messages,
     final ChatsStateStatus? chatsStateStatus,
     final MessagesStateStatus? messagesStateStatus,
   }) {
@@ -59,6 +66,7 @@ class SearchState extends Equatable {
       chats: chats ?? this.chats,
       chatsStateStatus: chatsStateStatus ?? this.chatsStateStatus,
       messagesStateStatus: messagesStateStatus ?? this.messagesStateStatus,
+      messages: messages ?? this.messages,
     );
   }
 
@@ -83,5 +91,6 @@ class SearchState extends Equatable {
         chatsStateStatus,
         chats,
         messagesStateStatus,
+        messages,
       ];
 }
