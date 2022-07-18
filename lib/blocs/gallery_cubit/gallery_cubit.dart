@@ -15,6 +15,15 @@ class GalleryCubit extends Cubit<GalleryState> {
       : super(GalleryState(galleryStateStatus: GalleryStateStatus.init));
 
   void getGalleryAssets() async {
+    final PermissionState _permissionExtend =
+        await PhotoManager.requestPermissionExtend();
+    if (!_permissionExtend.isAuth) {
+      emit(GalleryState(
+        galleryStateStatus: GalleryStateStatus.failed,
+      ));
+      return;
+    }
+
     if (state.loadedAssetsAmount == 0)
       emit(state.copyWith(newGalleryStateStatus: GalleryStateStatus.loading));
 
@@ -95,5 +104,9 @@ class GalleryCubit extends Cubit<GalleryState> {
 
   void galleryInit() {
     emit(GalleryState(galleryStateStatus: GalleryStateStatus.init));
+  }
+
+  void galleryfailed() {
+    emit(GalleryState(galleryStateStatus: GalleryStateStatus.failed));
   }
 }

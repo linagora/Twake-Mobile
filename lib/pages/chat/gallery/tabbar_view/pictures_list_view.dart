@@ -26,7 +26,9 @@ class PicturesListView extends StatefulWidget {
 }
 
 class _PicturesListViewState extends State<PicturesListView>
-    with AutomaticKeepAliveClientMixin<PicturesListView> {
+    with
+        AutomaticKeepAliveClientMixin<PicturesListView>,
+        WidgetsBindingObserver {
   CameraController? _cameraController;
   bool _cameraControllerInitInitialize = false;
 
@@ -48,11 +50,26 @@ class _PicturesListViewState extends State<PicturesListView>
     if (state.cameraStateStatus == CameraStateStatus.found ||
         state.cameraStateStatus == CameraStateStatus.done) {
       _cameraController = CameraController(
-        state.availableCameras.first,
-        ResolutionPreset.high,
-      );
+          state.availableCameras.first, ResolutionPreset.high,
+          enableAudio: false);
       _cameraControllerInitInitialize = true;
       _initCamera();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.inactive) {
+      _cameraController!.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      final cameraCubitState = Get.find<CameraCubit>().state;
+      if (cameraCubitState.cameraStateStatus == CameraStateStatus.found ||
+          cameraCubitState.cameraStateStatus == CameraStateStatus.done) {
+        _cameraController = CameraController(
+            cameraCubitState.availableCameras.first, ResolutionPreset.high,
+            enableAudio: false);
+        _cameraController!.initialize();
+      }
     }
   }
 
@@ -70,9 +87,8 @@ class _PicturesListViewState extends State<PicturesListView>
 
   void _prepareCamera(CameraState state) {
     _cameraController = CameraController(
-      state.availableCameras.first,
-      ResolutionPreset.high,
-    );
+        state.availableCameras.first, ResolutionPreset.high,
+        enableAudio: false);
     _initCamera();
   }
 
@@ -245,12 +261,18 @@ class _PicturesListViewState extends State<PicturesListView>
         }
       },
       child: _controller == null || !_controller.value.isInitialized
-          ? Center(
-              child: Container(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.secondary),
+          ? Container(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'The camera is not available',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 14),
+                  ),
+                ),
               ),
             )
           : GestureDetector(
@@ -291,7 +313,7 @@ class _PicturesListViewState extends State<PicturesListView>
                           return Container(
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   'The camera is not available',
                                   style: Theme.of(context).textTheme.headline1,

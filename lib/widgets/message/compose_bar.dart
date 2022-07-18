@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
@@ -620,13 +621,25 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _handleOpenGallery() {
+  _handleOpenGallery() async {
     final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
     if (fileLen == MAX_FILE_UPLOADING) {
       displayLimitationAlertDialog();
       return;
     }
-    Get.find<CameraCubit>().getCamera();
+
+    final bool isStatusGranted = await Utilities.checkCameraPermission();
+    if (isStatusGranted) {
+      Get.find<CameraCubit>().getCamera();
+    } else {
+      bool isRequestGranted = await Utilities.requestCameraPermission();
+      if (isRequestGranted) {
+        Get.find<CameraCubit>().getCamera();
+      } else {
+        Get.find<CameraCubit>().cameraFailed();
+      }
+    }
+
     Get.find<GalleryCubit>().getGalleryAssets();
     Get.find<FileUploadTransitionCubit>().uploadingMessageNotSent();
 
@@ -733,7 +746,7 @@ class _TextInputState extends State<TextInput> {
 
   void _handleTakePicture() async {
     try {
-      final isGranted = await Utilities.checkAndRequestCameraPermission(
+      final isGranted = await Utilities.requestCameraPermission(
           onPermanentlyDenied: () =>
               Utilities.showOpenSettingsDialog(context: context));
       if (!isGranted) return;
