@@ -8,21 +8,46 @@ import 'package:twake/models/message/message.dart';
 
 part 'gallery_state.dart';
 
-const int iterationStep = 7;
+const int assetsIterationStep = 16;
 
 class GalleryCubit extends Cubit<GalleryState> {
   GalleryCubit()
       : super(GalleryState(galleryStateStatus: GalleryStateStatus.init));
 
-  void getGalleryAssets() async {
-    if (state.loadedAssetsAmount == 0)
-      emit(state.copyWith(newGalleryStateStatus: GalleryStateStatus.loading));
-
+  void getGalleryAssets({bool isGettingNewAssets: false}) async {
     List<Uint8List> uint8List = [...state.assetsList];
     List<File> fileList = [...state.fileList];
     List<AssetEntity> recentAssets = [...state.assetEntity];
     File? file;
     Uint8List? uint8;
+
+    if (isGettingNewAssets) {
+      if (!state.isAddingDummyAssets) {
+       // when we scroll to the end, we load new assets while giving dummy
+        emit(GalleryState(
+            galleryStateStatus: GalleryStateStatus.done,
+            selectedTab: state.selectedTab,
+            assetsList: uint8List,
+            assetEntity: recentAssets,
+            fileList: fileList,
+            selectedFilesIndex: state.selectedFilesIndex,
+            loadedAssetsAmount: recentAssets.length,
+            isAddingDummyAssets: true));
+      } else {
+        return;
+      }
+    }
+    final PermissionState _permissionExtend =
+        await PhotoManager.requestPermissionExtend();
+    if (!_permissionExtend.isAuth) {
+      emit(GalleryState(
+        galleryStateStatus: GalleryStateStatus.failed,
+      ));
+      return;
+    }
+
+    if (state.loadedAssetsAmount == 0)
+      emit(state.copyWith(newGalleryStateStatus: GalleryStateStatus.loading));
 
     final albums = await PhotoManager.getAssetPathList(
         hasAll: true,
@@ -35,10 +60,10 @@ class GalleryCubit extends Cubit<GalleryState> {
     final recentAlbum = albums[0];
     final recentAsset = await recentAlbum.getAssetListRange(
       start: state.loadedAssetsAmount,
-      //when opening the gallery for the first time loading 17 assets then iterationStep
+      //when opening the gallery for the first time loading 17 assets then assetsIterationStep
       end: (state.loadedAssetsAmount == 0)
           ? 17
-          : state.loadedAssetsAmount + iterationStep,
+          : state.loadedAssetsAmount + assetsIterationStep,
     );
 
     if (recentAsset.length == 0) {
@@ -59,13 +84,20 @@ class GalleryCubit extends Cubit<GalleryState> {
       emit(GalleryState(galleryStateStatus: GalleryStateStatus.failed));
     } else {
       emit(GalleryState(
-          galleryStateStatus: GalleryStateStatus.done,
-          selectedTab: state.selectedTab,
-          assetsList: uint8List,
-          assetEntity: recentAssets,
-          fileList: fileList,
-          loadedAssetsAmount: recentAssets.length));
+        galleryStateStatus: GalleryStateStatus.done,
+        selectedTab: state.selectedTab,
+        assetsList: uint8List,
+        assetEntity: recentAssets,
+        fileList: fileList,
+        selectedFilesIndex: state.selectedFilesIndex,
+        loadedAssetsAmount: recentAssets.length,
+        isAddingDummyAssets: false,
+      ));
     }
+  }
+
+  void startFetchingAssets(int tab) {
+    emit(state.copyWith(newSelectedTab: tab));
   }
 
   void tabChange(int tab) {
@@ -81,12 +113,15 @@ class GalleryCubit extends Cubit<GalleryState> {
             : null;
 
     emit(GalleryState(
-        selectedFilesIndex: indexList,
-        galleryStateStatus: GalleryStateStatus.newSelect,
-        assetEntity: state.assetEntity,
-        assetsList: state.assetsList,
-        fileList: state.fileList,
-        loadedAssetsAmount: state.loadedAssetsAmount));
+      galleryStateStatus: GalleryStateStatus.newSelect,
+      selectedFilesIndex: indexList,
+      selectedTab: state.selectedTab,
+      assetEntity: state.assetEntity,
+      assetsList: state.assetsList,
+      fileList: state.fileList,
+      loadedAssetsAmount: state.loadedAssetsAmount,
+      isAddingDummyAssets: state.isAddingDummyAssets,
+    ));
   }
 
   void clearSelection() {
@@ -95,5 +130,9 @@ class GalleryCubit extends Cubit<GalleryState> {
 
   void galleryInit() {
     emit(GalleryState(galleryStateStatus: GalleryStateStatus.init));
+  }
+
+  void galleryfailed() {
+    emit(GalleryState(galleryStateStatus: GalleryStateStatus.failed));
   }
 }

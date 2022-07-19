@@ -26,7 +26,9 @@ class PicturesListView extends StatefulWidget {
 }
 
 class _PicturesListViewState extends State<PicturesListView>
-    with AutomaticKeepAliveClientMixin<PicturesListView> {
+    with
+        AutomaticKeepAliveClientMixin<PicturesListView>,
+        WidgetsBindingObserver {
   CameraController? _cameraController;
   bool _cameraControllerInitInitialize = false;
 
@@ -37,7 +39,7 @@ class _PicturesListViewState extends State<PicturesListView>
     widget.scrollController.addListener(() {
       if (widget.scrollController.positions.last.atEdge) {
         if (widget.scrollController.positions.last.pixels != 0) {
-          Get.find<GalleryCubit>().getGalleryAssets();
+          Get.find<GalleryCubit>().getGalleryAssets(isGettingNewAssets: true);
         }
       }
     });
@@ -48,11 +50,27 @@ class _PicturesListViewState extends State<PicturesListView>
     if (state.cameraStateStatus == CameraStateStatus.found ||
         state.cameraStateStatus == CameraStateStatus.done) {
       _cameraController = CameraController(
-        state.availableCameras.first,
-        ResolutionPreset.high,
-      );
+          state.availableCameras.first, ResolutionPreset.high,
+          enableAudio: false);
       _cameraControllerInitInitialize = true;
       _initCamera();
+    }
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // it is necessary otherwise the controller falls off
+    if (state == AppLifecycleState.inactive) {
+      _cameraController!.dispose();
+    } else if (state == AppLifecycleState.resumed) {
+      final cameraCubitState = Get.find<CameraCubit>().state;
+      if (cameraCubitState.cameraStateStatus == CameraStateStatus.found ||
+          cameraCubitState.cameraStateStatus == CameraStateStatus.done) {
+        _cameraController = CameraController(
+            cameraCubitState.availableCameras.first, ResolutionPreset.high,
+            enableAudio: false);
+        _cameraController!.initialize();
+      }
     }
   }
 
@@ -70,9 +88,8 @@ class _PicturesListViewState extends State<PicturesListView>
 
   void _prepareCamera(CameraState state) {
     _cameraController = CameraController(
-      state.availableCameras.first,
-      ResolutionPreset.high,
-    );
+        state.availableCameras.first, ResolutionPreset.high,
+        enableAudio: false);
     _initCamera();
   }
 
@@ -95,6 +112,7 @@ class _PicturesListViewState extends State<PicturesListView>
               if (state.galleryStateStatus == GalleryStateStatus.done) {
                 return _galleryDone(
                     assetsList: state.assetsList,
+                    isAddingDummyAssets: state.isAddingDummyAssets,
                     cameraController: _cameraController,
                     context: context);
               } else if (state.galleryStateStatus ==
@@ -104,6 +122,7 @@ class _PicturesListViewState extends State<PicturesListView>
                   GalleryStateStatus.newSelect) {
                 return _galleryDone(
                     assetsList: state.assetsList,
+                    isAddingDummyAssets: state.isAddingDummyAssets,
                     cameraController: _cameraController,
                     context: context);
               } else {
@@ -119,6 +138,7 @@ class _PicturesListViewState extends State<PicturesListView>
   Widget _galleryDone(
       {required List<Uint8List> assetsList,
       required BuildContext context,
+      required bool isAddingDummyAssets,
       CameraController? cameraController}) {
     return GridView.builder(
       key: PageStorageKey<String>('galleryDone'),
@@ -129,33 +149,46 @@ class _PicturesListViewState extends State<PicturesListView>
       ),
       shrinkWrap: true,
       physics: ScrollPhysics(),
-      itemCount: assetsList.length + 1,
+      itemCount: isAddingDummyAssets == false
+          ? assetsList.length + 1
+          : assetsList.length + 1 + assetsIterationStep,
       itemBuilder: (_, index) {
         return index == 0
             ? _cameraStream(context, cameraController)
-            : BlocBuilder<GalleryCubit, GalleryState>(
-                bloc: Get.find<GalleryCubit>(),
-                buildWhen: (_, currentState) =>
-                    currentState.galleryStateStatus !=
-                    GalleryStateStatus.newSelect,
-                builder: (context, state) {
-                  if (state.galleryStateStatus == GalleryStateStatus.done ||
-                      state.galleryStateStatus ==
-                          GalleryStateStatus.newSelect) {
-                    return _assetThumbnail(
-                        state.assetsList[index - 1], index - 1, context);
-                  } else {
-                    return Center(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary),
+            : index < (assetsList.length + 1)
+                ? BlocBuilder<GalleryCubit, GalleryState>(
+                    bloc: Get.find<GalleryCubit>(),
+                    buildWhen: (_, currentState) =>
+                        currentState.galleryStateStatus !=
+                        GalleryStateStatus.newSelect,
+                    builder: (context, state) {
+                      if (state.galleryStateStatus == GalleryStateStatus.done ||
+                          state.galleryStateStatus ==
+                              GalleryStateStatus.newSelect) {
+                        return _assetThumbnail(
+                            state.assetsList[index - 1], index - 1, context);
+                      } else {
+                        return Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        );
+                      }
+                    },
+                  )
+                : Center(
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
-                    );
-                  }
-                },
-              );
+                    ),
+                  );
+        ;
       },
     );
   }
@@ -245,12 +278,18 @@ class _PicturesListViewState extends State<PicturesListView>
         }
       },
       child: _controller == null || !_controller.value.isInitialized
-          ? Center(
-              child: Container(
-                height: 50,
-                width: 50,
-                child: CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.secondary),
+          ? Container(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'The camera is not available',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 14),
+                  ),
+                ),
               ),
             )
           : GestureDetector(
@@ -291,7 +330,7 @@ class _PicturesListViewState extends State<PicturesListView>
                           return Container(
                             child: Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Text(
                                   'The camera is not available',
                                   style: Theme.of(context).textTheme.headline1,
