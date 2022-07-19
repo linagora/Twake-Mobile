@@ -303,8 +303,6 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       //after message is send successfully mark channel as read
       _channelsCubit.markChannelRead(channelId: message.channelId);
     }
-    //after message is send successfully mark channel as read
-    
 
     _sendInProgress -= 1;
   }
@@ -640,10 +638,13 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
             messages[i] = message;
 
-            final newState = MessagesLoadSuccess(
+            // mark message as read
+            _channelsCubit.markChannelRead(channelId: message.channelId);
+            final newState = MessageLatestSuccess(
               messages: messages,
               hash:
                   hash + message.hash, // just update the hash to force rerender
+              latestMessage: message,
             );
 
             emit(newState);

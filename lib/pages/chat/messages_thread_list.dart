@@ -33,8 +33,7 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   List<Message> _messages = <Message>[];
   int _highlightIndex = -1;
   bool isJump = false;
-  SearchableGroupChatController _jumpController =
-      SearchableGroupChatController();
+  ItemScrollController _jumpController = ItemScrollController();
   ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   int? unreadCounter;
   ScrollPhysics _physics = ClampingScrollPhysics();
@@ -127,12 +126,20 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
             isDirect: widget.parentChannel.isDirect,
             child: Scaffold(
               floatingActionButton: UnreadCounter(
-                counter: unreadCounter ?? 0,
-                itemPositionsListener: _itemPositionsListener,
-                onPressed: () =>
-                    _jumpController.scrollToMessagesWithIndex(_messages, 0),
-              ),
+                  counter: unreadCounter ?? 0,
+                  itemPositionsListener: _itemPositionsListener,
+                  onPressed: () {
+                    // scroll to latest message
+                    final latestMessage = _messages.reduce((value, element) =>
+                        value.createdAt > element.createdAt ? value : element);
+                    _jumpController.jumpTo(
+                        index: isJump
+                            ? _messages.indexOf(latestMessage)
+                            : _messages.length - 1 -
+                                _messages.indexOf(latestMessage));
+                  }),
               body: ScrollablePositionedList.builder(
+                initialScrollIndex: (unreadCounter ?? 1) - 1,
                 itemCount: _messages.length,
                 itemScrollController: _jumpController,
                 physics: _physics,
