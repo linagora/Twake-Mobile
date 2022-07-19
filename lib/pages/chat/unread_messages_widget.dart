@@ -65,9 +65,10 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
             message.lastReply!.createdAt > userLastAccess)
         .toList();
     if (unreadThreads.isNotEmpty) {
-      if (firstUnreadMessage == null || firstUnreadMessage != null &&
-          unreadThreads.first.lastReply!.createdAt <
-              firstUnreadMessage!.createdAt) {
+      if (firstUnreadMessage == null ||
+          firstUnreadMessage != null &&
+              unreadThreads.first.lastReply!.createdAt <
+                  firstUnreadMessage!.createdAt) {
         firstUnreadMsgThread = unreadThreads.first;
       }
 
@@ -89,8 +90,8 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
       if (latestMessage!.isOwnerMessage) {
         unreadCounter = null;
       } else {
-        if(unreadCounter != null) {
-        unreadCounter = unreadCounter! + 1;
+        if (unreadCounter != null) {
+          unreadCounter = unreadCounter! + 1;
         }
       }
     }
@@ -98,23 +99,31 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
 
   @override
   Widget build(BuildContext context) {
+    bool hasUnreadCounter = unreadCounter != null && unreadCounter! > 0;
     return Scaffold(
       floatingActionButton: UnreadCounter(
-        counter: unreadCounter ?? 0,
-        itemPositionsListener: widget.itemPositionsListener,
-        onPressed: () =>
-            widget.jumpController.scrollToMessagesWithIndex(_messages, 0),
-      ),
+          counter: unreadCounter ?? 0,
+          itemPositionsListener: widget.itemPositionsListener,
+          onPressed: () {
+            // scroll to latest message
+            final latestMessage = _messages.reduce((value, element) =>
+                value.createdAt > element.createdAt ? value : element);
+            widget.jumpController.scrollToMessage(_messages, latestMessage);
+          }),
       body: SearchableChatView(
-          initialScrollIndex: _startMessage == null
-              ? (unreadCounter != null && unreadCounter! > 0 ? unreadCounter! - 1 : 0)
-              : _messages.indexOf(_startMessage!),
           itemPositionListener: widget.itemPositionsListener,
           searchableChatController: widget.jumpController,
-          reverse: true,
           messages: _messages,
+          reverse: true,
+          initialScrollIndex: _startMessage == null
+              ? hasUnreadCounter
+                  ? unreadCounter! - 1
+                  : 0
+              : _messages.indexOf(_startMessage!),
+
           indexedItemBuilder: (_, message, index) {
-            return unreadCounter != null && unreadCounter! > 0 && index == unreadCounter! - 1
+            return hasUnreadCounter &&
+                    index == unreadCounter! - 1
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

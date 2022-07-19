@@ -112,6 +112,7 @@ class _ChatViewState extends State<_ChatView> {
         return JumpablePinnedMessages(
             child: UnreadMessagesWidget(
               messages: state.messages,
+              startMessage: _startMessage,
               userLastAccess: widget.parentChannel.userLastAccess,
               itemPositionsListener: _itemPositionsListener,
               jumpController: _jumpController,
