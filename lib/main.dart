@@ -17,7 +17,6 @@ import 'package:twake/repositories/language_repository.dart';
 import 'package:twake/repositories/theme_repository.dart';
 import 'package:twake/routing/route_pages.dart';
 import 'package:twake/routing/route_paths.dart';
-import 'package:twake/services/init_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/platform_detection.dart';
 import 'package:twake/widgets/common/pull_to_refresh_header.dart';

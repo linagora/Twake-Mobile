@@ -3,7 +3,6 @@ import 'package:twake/blocs/account_cubit/account_cubit.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/channels_cubit/new_direct_cubit/new_direct_state.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
-import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel_role.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';

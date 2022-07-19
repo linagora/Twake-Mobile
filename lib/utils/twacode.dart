@@ -1,11 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
 import 'package:tuple/tuple.dart';
 import 'package:twake/models/attachment/attachment.dart';
-import 'package:twake/services/endpoints.dart';
-import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/file_tile.dart';

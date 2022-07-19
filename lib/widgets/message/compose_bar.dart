@@ -1,12 +1,10 @@
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
@@ -23,9 +21,7 @@ import 'package:twake/pages/chat/gallery/gallery_view.dart';
 import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
-import 'package:twake/widgets/common/button_text_builder.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
-import 'package:twake/widgets/message/attachment_tile_builder.dart';
 
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
@@ -627,7 +623,7 @@ class _TextInputState extends State<TextInput> {
       displayLimitationAlertDialog();
       return;
     }
-
+    Get.find<GalleryCubit>().galleryInit();
     final bool isStatusGranted = await Utilities.checkCameraPermission();
     if (isStatusGranted) {
       Get.find<CameraCubit>().getCamera();

@@ -6,12 +6,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/file/local_file.dart';
-import 'package:twake/routing/app_router.dart';
-import 'package:twake/routing/route_paths.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 

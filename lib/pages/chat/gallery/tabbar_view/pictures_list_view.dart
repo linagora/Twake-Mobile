@@ -188,7 +188,6 @@ class _PicturesListViewState extends State<PicturesListView>
                       ),
                     ),
                   );
-        ;
       },
     );
   }

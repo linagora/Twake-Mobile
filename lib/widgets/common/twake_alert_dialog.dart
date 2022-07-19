@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/config/styles_config.dart';
 import 'package:twake/widgets/common/button_text_builder.dart';
 
 class TwakeAlertDialog extends StatelessWidget {
