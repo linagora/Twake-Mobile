@@ -116,7 +116,6 @@ class Message extends BaseModel {
         threadId == other.threadId &&
         other.channelId == channelId &&
         other.userId == userId &&
-        other.responsesCount == responsesCount &&
         other.subtype == subtype &&
         other.text == text &&
         other.createdAt == createdAt &&

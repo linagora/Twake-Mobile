@@ -47,11 +47,13 @@ class MessagesRepository {
       withExistedFiles: withExistedFiles,
     );
 
-    if (remoteMessages.isNotEmpty){
+    if (remoteMessages.isNotEmpty) {
+      // add old messages to remoteMessages, so that old message which have old response count will be replaced by new message
+      remoteMessages.addAll(
+          messages.where((element) => !remoteMessages.contains(element)));
       remoteMessages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
-      messages.addAll(remoteMessages.where((element) => !messages.contains(element)));
     }
-    yield messages;
+    yield remoteMessages;
   }
 
   Future<List<Message>> fetchLocal({
@@ -170,8 +172,7 @@ class MessagesRepository {
     if (threadId == null) {
       try {
         remoteResult = await _api.get(
-          endpoint: sprintf(
-              Endpoint.threadsChannel, [
+          endpoint: sprintf(Endpoint.threadsChannel, [
             Globals.instance.companyId,
             isDirect ? 'direct' : Globals.instance.workspaceId,
             channelId
