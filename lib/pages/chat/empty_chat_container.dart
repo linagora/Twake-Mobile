@@ -21,77 +21,76 @@ class EmptyChatContainer extends StatelessWidget {
     final message = isDirect
         ? AppLocalizations.of(context)!.noConversationInChat(userName)
         : AppLocalizations.of(context)!.noConversationInChannel;
-    return Flexible(
-      child: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: Column(
-                  children: [
-                    SizedBox(height: 16.0),
-                    Container(
-                      width: Dim.widthPercent(80),
-                      padding: const EdgeInsets.only(top: 16.0, left: 5, right: 5),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(18.0),
-                          topRight: Radius.circular(18.0),
-                        ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                children: [
+                  SizedBox(height: 16.0),
+                  Container(
+                    width: Dim.widthPercent(80),
+                    padding:
+                        const EdgeInsets.only(top: 16.0, left: 5, right: 5),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18.0),
+                        topRight: Radius.circular(18.0),
                       ),
-                      child: Container(
-                        width: 50.0,
-                        height: 50.0,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        alignment: Alignment.center,
-                        child: SizedBox(
-                          height: 32,
-                          width: 32,
-                          child: Image.asset(
-                            imageTwake,
-                            color: Theme.of(context).colorScheme.surface,
-                          ),
+                    ),
+                    child: Container(
+                      width: 50.0,
+                      height: 50.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: 32,
+                        width: 32,
+                        child: Image.asset(
+                          imageTwake,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.only(
-                          top: 12.0, bottom: 16.0, left: 5, right: 5),
-                      width: Dim.widthPercent(80),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(18.0),
-                          bottomRight: Radius.circular(18.0),
-                        ),
-                      ),
-                      child: AutoSizeText(
-                        isError
-                            ? AppLocalizations.of(context)!.messageLoadError
-                            : message,
-                        minFontSize: 12.0,
-                        maxFontSize: 15.0,
-                        maxLines: 15,
-                        textAlign: TextAlign.center,
-                        softWrap: true,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline1!
-                            .copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(
+                        top: 12.0, bottom: 16.0, left: 5, right: 5),
+                    width: Dim.widthPercent(80),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(18.0),
+                        bottomRight: Radius.circular(18.0),
                       ),
                     ),
-                  ],
-                ),
+                    child: AutoSizeText(
+                      isError
+                          ? AppLocalizations.of(context)!.messageLoadError
+                          : message,
+                      minFontSize: 12.0,
+                      maxFontSize: 15.0,
+                      maxLines: 15,
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -102,7 +101,7 @@ class MessagesLoadingAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Center(
+    return Center(
       child: Column(
         children: [
           SizedBox(

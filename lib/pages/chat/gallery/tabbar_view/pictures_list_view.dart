@@ -39,7 +39,7 @@ class _PicturesListViewState extends State<PicturesListView>
     widget.scrollController.addListener(() {
       if (widget.scrollController.positions.last.atEdge) {
         if (widget.scrollController.positions.last.pixels != 0) {
-          Get.find<GalleryCubit>().getGalleryAssets();
+          Get.find<GalleryCubit>().getGalleryAssets(isGettingNewAssets: true);
         }
       }
     });
@@ -59,6 +59,7 @@ class _PicturesListViewState extends State<PicturesListView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // it is necessary otherwise the controller falls off
     if (state == AppLifecycleState.inactive) {
       _cameraController!.dispose();
     } else if (state == AppLifecycleState.resumed) {
@@ -111,6 +112,7 @@ class _PicturesListViewState extends State<PicturesListView>
               if (state.galleryStateStatus == GalleryStateStatus.done) {
                 return _galleryDone(
                     assetsList: state.assetsList,
+                    isAddingDummyAssets: state.isAddingDummyAssets,
                     cameraController: _cameraController,
                     context: context);
               } else if (state.galleryStateStatus ==
@@ -120,6 +122,7 @@ class _PicturesListViewState extends State<PicturesListView>
                   GalleryStateStatus.newSelect) {
                 return _galleryDone(
                     assetsList: state.assetsList,
+                    isAddingDummyAssets: state.isAddingDummyAssets,
                     cameraController: _cameraController,
                     context: context);
               } else {
@@ -135,6 +138,7 @@ class _PicturesListViewState extends State<PicturesListView>
   Widget _galleryDone(
       {required List<Uint8List> assetsList,
       required BuildContext context,
+      required bool isAddingDummyAssets,
       CameraController? cameraController}) {
     return GridView.builder(
       key: PageStorageKey<String>('galleryDone'),
@@ -145,33 +149,46 @@ class _PicturesListViewState extends State<PicturesListView>
       ),
       shrinkWrap: true,
       physics: ScrollPhysics(),
-      itemCount: assetsList.length + 1,
+      itemCount: isAddingDummyAssets == false
+          ? assetsList.length + 1
+          : assetsList.length + 1 + assetsIterationStep,
       itemBuilder: (_, index) {
         return index == 0
             ? _cameraStream(context, cameraController)
-            : BlocBuilder<GalleryCubit, GalleryState>(
-                bloc: Get.find<GalleryCubit>(),
-                buildWhen: (_, currentState) =>
-                    currentState.galleryStateStatus !=
-                    GalleryStateStatus.newSelect,
-                builder: (context, state) {
-                  if (state.galleryStateStatus == GalleryStateStatus.done ||
-                      state.galleryStateStatus ==
-                          GalleryStateStatus.newSelect) {
-                    return _assetThumbnail(
-                        state.assetsList[index - 1], index - 1, context);
-                  } else {
-                    return Center(
-                      child: Container(
-                        height: 50,
-                        width: 50,
-                        child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary),
+            : index < (assetsList.length + 1)
+                ? BlocBuilder<GalleryCubit, GalleryState>(
+                    bloc: Get.find<GalleryCubit>(),
+                    buildWhen: (_, currentState) =>
+                        currentState.galleryStateStatus !=
+                        GalleryStateStatus.newSelect,
+                    builder: (context, state) {
+                      if (state.galleryStateStatus == GalleryStateStatus.done ||
+                          state.galleryStateStatus ==
+                              GalleryStateStatus.newSelect) {
+                        return _assetThumbnail(
+                            state.assetsList[index - 1], index - 1, context);
+                      } else {
+                        return Center(
+                          child: Container(
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        );
+                      }
+                    },
+                  )
+                : Center(
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary,
                       ),
-                    );
-                  }
-                },
-              );
+                    ),
+                  );
+        ;
       },
     );
   }
