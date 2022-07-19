@@ -97,7 +97,7 @@
   "@invitationLimitInfo": {},
   "markAsUnread": "Отметить как непрочитанное",
   "@markAsUnread": {},
-  "markAsUnreadInfo": "Отметить как непрочитанное",
+  "markAsUnreadInfo": "Скрыть факт просмотра сообщения",
   "@markAsUnreadInfo": {},
   "pinInfo": "Закрепить канал",
   "@pinInfo": {},
