@@ -1,7 +1,6 @@
 // Colors to use in CircleAvatar with the user's initials.
 
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 
 const one = Color(0xff6E44FF);

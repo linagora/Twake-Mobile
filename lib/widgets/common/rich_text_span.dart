@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 
 class RichTextSpan extends TextSpan {
   final String text;

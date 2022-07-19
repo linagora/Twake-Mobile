@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //TODO Do refactoring when UserProfile API will be ready, remove get_storage dep
 const List<String> themeList = ["Light", "Dark", "System"];

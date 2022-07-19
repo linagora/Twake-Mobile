@@ -4,9 +4,7 @@ import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/repositories/channels_repository.dart';
-import 'package:twake/services/navigator_service.dart';
 import 'package:twake/services/service_bundle.dart';
-
 export 'package:twake/models/channel/channel.dart';
 export 'package:twake/blocs/channels_cubit/channels_state.dart';
 

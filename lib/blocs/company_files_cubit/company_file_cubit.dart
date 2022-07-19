@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:twake/blocs/account_cubit/account_cubit.dart';
-import 'package:twake/models/channel/channel_file.dart';
 import 'package:twake/models/file/message_file.dart';
 import 'package:twake/repositories/file_repository.dart';
 
