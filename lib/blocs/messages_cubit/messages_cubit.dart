@@ -14,9 +14,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
   late final BaseChannelsCubit _channelsCubit;
 
-  final _socketIOEventStream = SocketIOService.instance.resourceStream;
+  final _socketIOResourceStream = SocketIOService.instance.resourceStream;
+  final _socketIOReconnectionStream =
+      SocketIOService.instance.socketIOReconnectionStream;
 
   int _sendInProgress = 0;
+  bool? isDirect;
 
   BaseMessagesCubit(
       {MessagesRepository? repository, BaseChannelsCubit? channelCubit})
@@ -32,6 +35,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     _channelsCubit = channelCubit;
 
     listenToMessageChanges();
+    listenToReconnectionChange();
   }
 
   Future<void> fetch({
@@ -40,6 +44,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     isDirect: false,
     bool empty: false,
   }) async {
+    this.isDirect = isDirect;
+
     if (empty) {
       emit(NoMessagesFound());
       return;
@@ -98,7 +104,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       channelId: channelId,
       threadId: threadId,
       beforeMessageId: oldestMessage.id,
-      isDirect: isDirect,
+      workspaceId: isDirect ? 'direct' : null,
     );
     messages.remove(oldestMessage);
 
@@ -145,7 +151,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           channelId: channelId,
           threadId: threadId,
           afterMessageId: lastestMessage.id,
-          isDirect: isDirect,
+          workspaceId: isDirect ? 'direct' : null,
         );
 
         if (messages.isEmpty) {
@@ -472,7 +478,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   }
 
   Future<void> listenToMessageChanges() async {
-    await for (final change in _socketIOEventStream) {
+    await for (final change in _socketIOResourceStream) {
       switch (change.action) {
         case ResourceAction.deleted:
           _repository.removeMessageLocal(messageId: change.resource['id']);
@@ -530,6 +536,48 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     }
   }
 
+  Future<void> listenToReconnectionChange() async {
+    // track last message when network down
+    await for (final connect in _socketIOReconnectionStream) {
+      // if user have not entered any chat, ignore connect
+      if (isDirect == null) {
+        continue;
+      }
+      if (state is MessagesLoadSuccess) {
+        final currentState = state as MessagesLoadSuccess;
+        if (connect) {
+          List<Message>? messages;
+          do {
+            if (currentState.messages.isNotEmpty) {
+              Message latestMessage = currentState.messages.reduce(
+                  (value, element) =>
+                      value.createdAt > element.createdAt ? value : element);
+              messages = await _repository.fetchAfter(
+                  channelId: latestMessage.channelId,
+                  afterMessageId: latestMessage.id,
+                  workspaceId:
+                      isDirect! ? 'direct' : Globals.instance.workspaceId);
+
+              Message newLatestMessage = messages.reduce((value, element) =>
+                  value.createdAt > element.createdAt ? value : element);
+              if(newLatestMessage == latestMessage) {
+                continue;
+              }
+
+              // remove lastest messages in current state because it's also in api
+              currentState.messages.remove(latestMessage);
+              currentState.messages.addAll(messages);
+              emit(MessagesLoadSuccess(
+                  messages: currentState.messages,
+                  hash:
+                      currentState.messages.fold(0, (acc, m) => acc + m.hash)));
+            }
+          } while (messages != null);
+        }
+      }
+    }
+  }
+
   void reset() {
     emit(MessagesInitial());
   }
@@ -537,7 +585,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
 
 class ChannelMessagesCubit extends BaseMessagesCubit {
   @override
-  final _socketIOEventStream =
+  final _socketIOResourceStream =
       SynchronizationService.instance.socketIOChannelMessageStream;
 
   ChannelMessagesCubit(
@@ -615,7 +663,7 @@ class ThreadMessagesCubit extends BaseMessagesCubit {
       : super(repository: repository, channelCubit: channelCubit);
 
   @override
-  final _socketIOEventStream = SynchronizationService
+  final _socketIOResourceStream = SynchronizationService
       .instance.socketIOThreadMessageStream
       .where((e) => e.resource['thread_id'] == Globals.instance.threadId);
 }

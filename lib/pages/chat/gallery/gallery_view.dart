@@ -8,21 +8,17 @@ class GalleryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget? galleryWidget;
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => Navigator.pop(context),
-      child: DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.4,
-        maxChildSize: 0.85,
-        builder: (context, controller) {
-          //Need this temporally solution for DraggableScrollableSheet (Flutter DraggableScrollableSheet is rebuilding the screen while dragging #67219) to avoid lagging
-          if (galleryWidget == null) {
-            galleryWidget = GalleryWidget(controller: controller);
-          }
-          return galleryWidget!;
-        },
-      ),
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.4,
+      maxChildSize: 0.85,
+      builder: (context, controller) {
+        //Need this temporally solution for DraggableScrollableSheet (Flutter DraggableScrollableSheet is rebuilding the screen while dragging #67219) to avoid lagging
+        if (galleryWidget == null) {
+          galleryWidget = GalleryWidget(controller: controller);
+        }
+        return galleryWidget!;
+      },
     );
   }
 }

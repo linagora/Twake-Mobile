@@ -89,14 +89,14 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
         channelId: message.channelId,
         beforeMessageId: message.id,
         threadId: threadId,
-        isDirect: isDirect);
+        workspaceId: isDirect ? 'direct' : null);
     if (messages.isNotEmpty) {
       messages.removeLast();
     }
     messages.addAll(await _messageRepository.fetchAfter(
         channelId: message.channelId,
         afterMessageId: message.id,
-        isDirect: isDirect));
+        workspaceId: isDirect ? 'direct' : null));
 
     if (messages.isEmpty) {
       emit(MessagesAroundSelectedMessageFailed(

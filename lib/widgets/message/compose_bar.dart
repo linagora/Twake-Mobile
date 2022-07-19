@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
@@ -620,13 +621,25 @@ class _TextInputState extends State<TextInput> {
     );
   }
 
-  _handleOpenGallery() {
+  _handleOpenGallery() async {
     final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
     if (fileLen == MAX_FILE_UPLOADING) {
       displayLimitationAlertDialog();
       return;
     }
-    Get.find<CameraCubit>().getCamera();
+
+    final bool isStatusGranted = await Utilities.checkCameraPermission();
+    if (isStatusGranted) {
+      Get.find<CameraCubit>().getCamera();
+    } else {
+      bool isRequestGranted = await Utilities.requestCameraPermission();
+      if (isRequestGranted) {
+        Get.find<CameraCubit>().getCamera();
+      } else {
+        Get.find<CameraCubit>().cameraFailed();
+      }
+    }
+
     Get.find<GalleryCubit>().getGalleryAssets();
     Get.find<FileUploadTransitionCubit>().uploadingMessageNotSent();
 
@@ -644,96 +657,9 @@ class _TextInputState extends State<TextInput> {
         });
   }
 
-  _handleOpenFilePicker() {
-    final fileLen = Get.find<FileUploadCubit>().state.listFileUploading.length;
-    if (fileLen == MAX_FILE_UPLOADING) {
-      displayLimitationAlertDialog();
-      return;
-    }
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      enableDrag: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctxModal) {
-        return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.all(Radius.circular(14.0))),
-                child: Column(
-                  children: [
-                    AttachmentTileBuilder(
-                            onClick: () {
-                              _handleTakePicture();
-                              Navigator.of(context).pop();
-                            },
-                            leadingIcon: imageCamera,
-                            title:
-                                AppLocalizations.of(context)?.takePicture ?? '',
-                            subtitle: AppLocalizations.of(context)
-                                    ?.takePictureSubtitle ??
-                                '')
-                        .build(),
-                    Divider(
-                        color:
-                            Theme.of(context).colorScheme.secondaryContainer),
-                    AttachmentTileBuilder(
-                            onClick: () {
-                              _handlePickFile(fileType: FileType.media);
-                              Navigator.of(context).pop();
-                            },
-                            leadingIcon: imagePhoto,
-                            title: AppLocalizations.of(context)?.photoOrVideo ??
-                                '',
-                            subtitle: AppLocalizations.of(context)
-                                    ?.photoOrVideoSubtitle ??
-                                '')
-                        .build(),
-                    Divider(
-                        color:
-                            Theme.of(context).colorScheme.secondaryContainer),
-                    AttachmentTileBuilder(
-                            onClick: () {
-                              _handlePickFile(fileType: FileType.any);
-                              Navigator.of(context).pop();
-                            },
-                            leadingIcon: imageDocument,
-                            title: AppLocalizations.of(context)?.file ?? '',
-                            subtitle:
-                                AppLocalizations.of(context)?.fileSubtitle ??
-                                    '')
-                        .build(),
-                  ],
-                ),
-              ),
-              SizedBox(height: 6.0),
-              ButtonTextBuilder(Key('button_cancel_attachment'),
-                      backgroundColor:
-                          Theme.of(context).colorScheme.secondaryContainer,
-                      onButtonClick: () => Navigator.of(context).pop())
-                  .setWidth(double.maxFinite)
-                  .setTextStyle(Theme.of(context)
-                      .textTheme
-                      .headline4!
-                      .copyWith(fontSize: 20, fontWeight: FontWeight.w500))
-                  .setText(AppLocalizations.of(context)?.cancel ?? '')
-                  .build(),
-              SizedBox(height: 12.0),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   void _handleTakePicture() async {
     try {
-      final isGranted = await Utilities.checkAndRequestCameraPermission(
+      final isGranted = await Utilities.requestCameraPermission(
           onPermanentlyDenied: () =>
               Utilities.showOpenSettingsDialog(context: context));
       if (!isGranted) return;
@@ -751,27 +677,6 @@ class _TextInputState extends State<TextInput> {
       }
     } catch (e) {
       Logger().e('Error occurred during taking picture:\n$e');
-    }
-  }
-
-  void _handlePickFile({required FileType fileType}) async {
-    List<PlatformFile>? _paths =
-        await Utilities.pickFiles(context: context, fileType: fileType);
-    if (!mounted) return;
-    if (_paths == null) return;
-    final len = Get.find<FileUploadCubit>().state.listFileUploading.length;
-    final remainingAllowFile = MAX_FILE_UPLOADING - len;
-    if (_paths.length > remainingAllowFile) {
-      _paths = _paths.getRange(0, remainingAllowFile).toList();
-    }
-    for (var i = 0; i < _paths.length; i++) {
-      LocalFile localFile = _paths[i].toLocalFile();
-      localFile =
-          localFile.copyWith(updatedAt: DateTime.now().millisecondsSinceEpoch);
-      Get.find<FileUploadCubit>().upload(
-        sourceFile: localFile,
-        sourceFileUploading: SourceFileUploading.InChat,
-      );
     }
   }
 

@@ -155,11 +155,11 @@ class MessagesRepository {
   }
 
   Future<List<Message>> fetchAroundMessage({
+    String? workspaceId,
     required String channelId,
     String? threadId,
     required String messageId,
     required String direction,
-    required bool isDirect,
     int? limit,
   }) async {
     List<dynamic> remoteResult = [];
@@ -174,7 +174,7 @@ class MessagesRepository {
         remoteResult = await _api.get(
           endpoint: sprintf(Endpoint.threadsChannel, [
             Globals.instance.companyId,
-            isDirect ? 'direct' : Globals.instance.workspaceId,
+            workspaceId ?? Globals.instance.workspaceId,
             channelId
           ]),
           queryParameters: queryParameters,
@@ -191,7 +191,7 @@ class MessagesRepository {
             Endpoint.threadMessages,
             [
               Globals.instance.companyId,
-              isDirect ? 'direct' : Globals.instance.workspaceId,
+              workspaceId ?? Globals.instance.workspaceId,
               threadId
             ],
           ),
@@ -223,29 +223,29 @@ class MessagesRepository {
   }
 
   Future<List<Message>> fetchBefore({
+    String? workspaceId,
     required String channelId,
     String? threadId,
     required String beforeMessageId,
-    required bool isDirect,
   }) {
     return fetchAroundMessage(
         channelId: channelId,
         messageId: beforeMessageId,
         direction: 'history',
-        isDirect: isDirect);
+        workspaceId: workspaceId);
   }
 
   Future<List<Message>> fetchAfter({
+    String? workspaceId,
     required String channelId,
     String? threadId,
     required String afterMessageId,
-    required bool isDirect,
   }) {
     return fetchAroundMessage(
         channelId: channelId,
         messageId: afterMessageId,
         direction: 'future',
-        isDirect: isDirect);
+        workspaceId: workspaceId);
   }
 
   Stream<Message> send({

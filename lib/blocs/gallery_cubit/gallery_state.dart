@@ -16,6 +16,7 @@ class GalleryState extends Equatable {
   final List<int> selectedFilesIndex;
   final int selectedTab;
   final int loadedAssetsAmount;
+  final bool isAddingDummyAssets;
 
   const GalleryState(
       {this.galleryStateStatus = GalleryStateStatus.init,
@@ -24,7 +25,8 @@ class GalleryState extends Equatable {
       this.fileList = const [],
       this.selectedFilesIndex = const [],
       this.selectedTab = 0,
-      this.loadedAssetsAmount = 0});
+      this.loadedAssetsAmount = 0,
+      this.isAddingDummyAssets = false});
 
   GalleryState copyWith(
       {GalleryStateStatus? newGalleryStateStatus,
@@ -34,7 +36,8 @@ class GalleryState extends Equatable {
       List<int>? newSelectedFilesIndex,
       int? newSelectedTab,
       List<Message>? newMessage,
-      int? newLoadedAssetsAmount}) {
+      int? newLoadedAssetsAmount,
+      bool? newIsAddingDummyAssets}) {
     return GalleryState(
         galleryStateStatus: newGalleryStateStatus ?? this.galleryStateStatus,
         assetsList: newAssetsList ?? this.assetsList,
@@ -42,7 +45,9 @@ class GalleryState extends Equatable {
         fileList: newFileList ?? this.fileList,
         selectedFilesIndex: newSelectedFilesIndex ?? this.selectedFilesIndex,
         selectedTab: newSelectedTab ?? this.selectedTab,
-        loadedAssetsAmount: newLoadedAssetsAmount ?? this.loadedAssetsAmount);
+        loadedAssetsAmount: newLoadedAssetsAmount ?? this.loadedAssetsAmount,
+        isAddingDummyAssets:
+            newIsAddingDummyAssets ?? this.isAddingDummyAssets);
   }
 
   @override
@@ -53,6 +58,7 @@ class GalleryState extends Equatable {
         fileList,
         selectedFilesIndex,
         selectedTab,
-        loadedAssetsAmount
+        loadedAssetsAmount,
+        isAddingDummyAssets
       ];
 }
