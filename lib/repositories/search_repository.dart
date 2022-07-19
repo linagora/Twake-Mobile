@@ -14,6 +14,13 @@ class SearchRepositoryRequest<T> {
   SearchRepositoryRequest({required this.result, required this.hasError});
 }
 
+class SearchMessage {
+  final Message message;
+  final Channel channel;
+
+  SearchMessage(this.message, this.channel);
+}
+
 class SearchRepository {
   final _api = ApiService.instance;
 
@@ -109,7 +116,7 @@ class SearchRepository {
     }
   }
 
-  Future<SearchRepositoryRequest<List<Message>>> fetchMessages({
+  Future<SearchRepositoryRequest<List<SearchMessage>>> fetchMessages({
     required String searchTerm,
   }) async {
     final queryParameters = <String, dynamic>{
@@ -131,15 +138,15 @@ class SearchRepository {
               rm['type'] == 'message' &&
               rm['subtype'] != 'system' &&
               rm['subtype'] != 'application')
-          .map((entry) => Message.fromJson(
+          .map((entry) => SearchMessage(
+              Message.fromJson(
                 entry,
                 jsonify: true,
                 transform: true,
                 channelId: '',
-              ))
+              ),
+              Channel.fromJson(json: entry['channel'], transform: true)))
           .toList();
-
-      print(result);
 
       return SearchRepositoryRequest(result: result, hasError: false);
     } catch (e) {

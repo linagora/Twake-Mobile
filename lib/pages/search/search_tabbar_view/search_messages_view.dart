@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/search_cubit/search_cubit.dart';
 import 'package:twake/blocs/search_cubit/search_state.dart';
-import 'package:twake/models/message/message.dart';
+import 'package:twake/pages/search/search_tabbar_view/messages/message_item.dart';
+import 'package:twake/repositories/search_repository.dart';
 import 'package:twake/widgets/common/no_search_results_widget.dart';
 
 class SearchMessagesView extends StatefulWidget {
@@ -42,7 +43,7 @@ class _SearchMessagesViewState extends State<SearchMessagesView> {
 }
 
 class MessagesSection extends StatelessWidget {
-  final List<Message> messages;
+  final List<SearchMessage> messages;
 
   const MessagesSection({Key? key, required this.messages}) : super(key: key);
 
@@ -65,7 +66,10 @@ class MessagesSection extends StatelessWidget {
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemBuilder: (context, index) {
-            return SizedBox();
+            return MessageItem(
+              message: messages[index].message,
+              channel: messages[index].channel,
+            );
           },
         )
       ],
