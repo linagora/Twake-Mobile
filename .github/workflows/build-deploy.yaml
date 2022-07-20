@@ -57,7 +57,7 @@ jobs:
           echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> .firebase.env
 
       - name: Build the app
-        run: flutter build appbundle -v --release --build-number=$(( 50 + $GITHUB_RUN_NUMBER )) --build-name=$GITHUB_REF_NAME
+        run: flutter build appbundle -v --release --build-number=$(( 320 + $GITHUB_RUN_NUMBER )) --build-name=$GITHUB_REF_NAME
 
       - name: Deploy the app to the Play Store
         uses: r0adkll/upload-google-play@v1
@@ -135,7 +135,7 @@ jobs:
           echo -n "$EXPORT_OPTIONS" > ExportOptions.plist
 
       - name: Build the app
-        run: flutter build ipa -v --export-options-plist=ExportOptions.plist --release --build-number=$(( 50 + $GITHUB_RUN_NUMBER )) --build-name=$GITHUB_REF_NAME
+        run: flutter build ipa -v --export-options-plist=ExportOptions.plist --release --build-number=$(( 320 + $GITHUB_RUN_NUMBER )) --build-name=$GITHUB_REF_NAME
 
       - name: Upload the app to TestFlight
         env:
