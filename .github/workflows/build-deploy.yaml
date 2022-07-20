@@ -65,7 +65,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
           packageName: "com.twake.twake"
           releaseFiles: "build/app/outputs/bundle/release/app-release.aab"
-          track: alpha
+          track: beta
           status: completed
 
   build-and-deploy-ios:
