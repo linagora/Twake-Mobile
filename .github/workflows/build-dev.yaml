@@ -3,6 +3,8 @@ on:
     # Only run the build when there's a pull request to main branch
     branches:
       - main
+    paths-ignore:
+      - "lib/l10n/**"
 
 name: Build app for testing and QA
 
