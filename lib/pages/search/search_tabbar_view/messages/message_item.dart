@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
+import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
+import 'package:twake/config/image_path.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
+import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 
@@ -12,17 +17,32 @@ class MessageItem extends StatelessWidget {
   const MessageItem({Key? key, required this.message, required this.channel})
       : super(key: key);
 
+  String getWorkspaceName() {
+    try {
+      final workspaces =
+          (Get.find<WorkspacesCubit>().state as WorkspacesLoadSuccess)
+              .workspaces;
+
+      final workspace =
+          workspaces.firstWhere((element) => element.id == channel.workspaceId);
+
+      return workspace.name;
+    } catch (e) {
+      Logger().e("error while getting workspace name: $e");
+      return 'Unknown';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         NavigatorService.instance.navigate(
-          channelId: message.channelId,
+          channelId: channel.id,
         );
       },
       child: Container(
-        width: 58,
-        margin: const EdgeInsets.only(right: 8, bottom: 10),
+        margin: const EdgeInsets.only(bottom: 15),
         color: Colors.transparent,
         child: Row(
           children: [
@@ -53,14 +73,36 @@ class MessageItem extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(channel.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headline1!
-                                .copyWith(
-                                    fontSize: 17, fontWeight: FontWeight.w600)),
+                        child: Row(
+                          children: [
+                            Text(getWorkspaceName(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline1!
+                                    .copyWith(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600)),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Image.asset(imageArrowRight,
+                                  width: 13, height: 12),
+                            ),
+                            Expanded(
+                              child: Text(channel.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1!
+                                      .copyWith(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600)),
+                            ),
+                          ],
+                        ),
                       ),
                       Text(DateFormatter.getVerboseTime(message.createdAt),
                           maxLines: 1,
@@ -68,17 +110,17 @@ class MessageItem extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .headline3!
-                              .copyWith(fontSize: 15)),
+                              .copyWith(fontSize: 13)),
                     ],
                   ),
-                  SizedBox(height: 4.0),
                   Text(message.firstName ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context)
                           .textTheme
-                          .headline3!
+                          .headline1!
                           .copyWith(fontSize: 15)),
+                  SizedBox(height: 2.0),
                   Text(message.text,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

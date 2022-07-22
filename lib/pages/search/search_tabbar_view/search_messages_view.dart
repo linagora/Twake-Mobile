@@ -23,7 +23,16 @@ class _SearchMessagesViewState extends State<SearchMessagesView> {
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
-        if (state.messagesStateStatus == MessagesStateStatus.done) {
+        // if no results and on search tern display empty icon
+        if (state.messages.isEmpty && state.searchTerm.isEmpty) {
+          return MessagesStatusInformer(
+              status: MessagesStateStatus.init,
+              searchTerm: state.searchTerm,
+              onResetTap: () => Get.find<SearchCubit>().resetSearch());
+        }
+
+        if (state.messagesStateStatus == MessagesStateStatus.done &&
+            state.messages.isNotEmpty) {
           return SizedBox.expand(
             child: ListView(children: [
               MessagesSection(
@@ -91,8 +100,27 @@ class MessagesStatusInformer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (status == MessagesStateStatus.loading ||
-        status == MessagesStateStatus.init) {
+    if (status == MessagesStateStatus.init) {
+      return Column(
+        children: [
+          SizedBox(height: 40),
+          Text(
+            '🔎',
+            style: Theme.of(context)
+                .textTheme
+                .headline6!
+                .copyWith(fontSize: 64.0, fontWeight: FontWeight.w600),
+          ),
+          Text(
+            'Find messages by entering keywords in the search',
+            style:
+                Theme.of(context).textTheme.headline3!.copyWith(fontSize: 14.0),
+          ),
+        ],
+      );
+    }
+
+    if (status == MessagesStateStatus.loading) {
       return Center(
         child: Container(
           height: 50,
