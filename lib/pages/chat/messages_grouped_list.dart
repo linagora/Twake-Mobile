@@ -11,7 +11,6 @@ import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/pages/chat/unread_messages_widget.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/utils/bubble_side.dart';
 import 'package:flutter_swipe_action_cell/flutter_swipe_action_cell.dart';
 import 'package:twake/widgets/common/channel_first_message.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
@@ -133,7 +132,6 @@ class _ChatViewState extends State<_ChatView> {
 
   Widget _buildSwipeActionCell(
       List<Message> messages, Message message, int index, bool endOfHistory) {
-    final List<bool> bubbleSides = bubbleSide(messages, index, true);
     return SwipeActionCell(
         controller: _swipeActionController,
         key: ObjectKey(messages[index]),
@@ -175,10 +173,8 @@ class _ChatViewState extends State<_ChatView> {
                   channel: widget.parentChannel, icon: message.picture ?? "")
               : MessageTile<ChannelMessagesCubit>(
                   message: message,
-                  upBubbleSide: bubbleSides[0],
-                  downBubbleSide: bubbleSides[1],
+                  isDirect: widget.parentChannel.isDirect,
                   key: ValueKey(message.hash),
-                  channel: widget.parentChannel,
                 ),
           highlightWhen: _jumpController.highlightMessage != null &&
               _jumpController.highlightMessage == message &&

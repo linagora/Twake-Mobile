@@ -9,10 +9,8 @@ import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
 import 'package:twake/widgets/common/reaction.dart';
-import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 import 'package:twake/widgets/common/unread_border.dart';
 import 'package:twake/widgets/common/unread_counter.dart';
 
@@ -135,7 +133,8 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                     _jumpController.jumpTo(
                         index: isJump
                             ? _messages.indexOf(latestMessage)
-                            : _messages.length - 1 -
+                            : _messages.length -
+                                1 -
                                 _messages.indexOf(latestMessage));
                   }),
               body: ScrollablePositionedList.builder(
@@ -157,7 +156,10 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                                 _buildIndexedMessage(context, index),
                               ],
                             )
-                          : _buildIndexedMessage(context, index),
+                          : _buildIndexedMessage(
+                              context,
+                              index,
+                            ),
                       highlightColor: Theme.of(context).backgroundColor,
                       highlightWhen: _highlightIndex == index);
                 },
@@ -170,28 +172,14 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   }
 
   Widget _buildIndexedMessage(BuildContext context, int index) {
-    //conditions for determining the shape of the bubble sides
-    final List<bool> bubbleSides = bubbleSide(_messages, index, false);
     if ((index == 0 && isJump) || (index == _messages.length - 1 && !isJump)) {
       return SizedBox.shrink();
-    } else if (index == _messages.length - 2) {
-      // the top side of the first answer in a thread should always be round
-      return MessageTile<ThreadMessagesCubit>(
-        message: _messages[_messages.length - 1 - index],
-        key: ValueKey(_messages[_messages.length - 1 - index].hash),
-        channel: widget.parentChannel,
-        downBubbleSide: bubbleSides[1],
-        upBubbleSide: true,
-        isThread: true,
-      );
     } else {
       return MessageTile<ThreadMessagesCubit>(
         message: _messages[_messages.length - 1 - index],
         key: ValueKey(_messages[_messages.length - 1 - index].hash),
-        channel: widget.parentChannel,
-        downBubbleSide: bubbleSides[1],
-        upBubbleSide: bubbleSides[0],
         isThread: true,
+        isDirect: widget.parentChannel.isDirect,
       );
     }
   }
@@ -213,12 +201,8 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 12.0),
           child: MessageTile<ThreadMessagesCubit>(
-            channel: parentChannel,
-            downBubbleSide: true,
-            upBubbleSide: true,
             message: message,
-            hideReaction: true,
-            hideShowReplies: true,
+            isDirect: parentChannel.isDirect,
             isThread: true,
             key: ValueKey(message.hash),
           ),
