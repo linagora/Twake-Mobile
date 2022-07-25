@@ -1,6 +1,7 @@
 import 'package:twake/models/message/message.dart';
 import 'dateformatter.dart';
 
+// Used to determine which messages stick to which messages in the chat feed, but this is not used in the new design
 List<bool> bubbleSide(List<Message> messages, int index, bool isNotThread) {
   final List<bool> bubbleSide = List<bool>.filled(2, false, growable: false);
   bool upBubbleSide = false;

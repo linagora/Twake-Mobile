@@ -9,8 +9,8 @@ import 'package:twake/models/message/message.dart';
 
 class MessageModalSheet<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message message;
-  final void Function(Message)? onReply;
-  final void Function()? onDelete;
+  final Function? onReply;
+  final Function? onDelete;
   final Function? onEdit;
   final Function? onCopy;
   final Function? onPinMessage;
@@ -175,9 +175,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                                 fontWeight: FontWeight.w500))
                                   ],
                                 ),
-                                onTap: () {
-                                  widget.onDelete!();
-                                },
+                                onTap: () => widget.onDelete!(),
                               ),
                             ),
                           if (widget.isMe && widget.message.responsesCount == 0)
@@ -294,19 +292,17 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                       )
                                     ],
                                   ),
-                                  onTap: () {
-                                    widget.onCopy!();
-                                  },
+                                  onTap: () => widget.onCopy!(
+                                      context, widget.message.text),
                                 ),
-                          if (!widget.message.inThread &&
-                              !widget.isThread &&
+                          if (!widget.isThread &&
                               widget.message.blocks.isNotEmpty)
                             Flexible(
                               child: SizedBox(
                                 width: 30,
                               ),
                             ),
-                          if (!widget.message.inThread && !widget.isThread)
+                          if (!widget.isThread)
                             GestureDetector(
                               child: Column(
                                 children: [
@@ -404,7 +400,7 @@ class _MessageModalSheetState<T extends BaseMessagesCubit>
                                     )
                                   ],
                                 ),
-                                onTap: widget.onEdit as void Function()?,
+                                onTap: () => widget.onEdit!(widget.message),
                               ),
                             ),
                         ],

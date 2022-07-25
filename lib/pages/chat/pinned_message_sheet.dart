@@ -6,15 +6,27 @@ import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:twake/config/image_path.dart';
-import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/routing/app_router.dart';
 import 'package:twake/routing/route_paths.dart';
 import 'package:twake/utils/utilities.dart';
 
-class PinnedMessageSheet extends StatelessWidget {
-  final Channel channel;
-  const PinnedMessageSheet({Key? key, required this.channel}) : super(key: key);
+class PinnedMessageSheet extends StatefulWidget {
+  const PinnedMessageSheet({Key? key}) : super(key: key);
+
+  @override
+  State<PinnedMessageSheet> createState() => _PinnedMessageSheetState();
+}
+
+class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
+  final ItemScrollController itemScrollController = ItemScrollController();
+  final ItemPositionsListener itemPositionsListener =
+      ItemPositionsListener.create();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   _unpinMessage(Message message, context) async {
     final bool result =
@@ -25,10 +37,21 @@ class PinnedMessageSheet extends StatelessWidget {
           message: AppLocalizations.of(context)!.somethingWentWrong);
   }
 
+  _selectPinnedMessage(PinnedMessageState state) async {
+    final bool result =
+        await Get.find<PinnedMessageCubit>().selectPinnedMessage();
+    final selected = state.pinnedMessageList.length - 1 == state.selected
+        ? 0
+        : state.selected + 1;
+    if (result)
+      itemScrollController.scrollTo(
+          index: selected,
+          duration: Duration(milliseconds: 700),
+          curve: Curves.linear);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final ItemPositionsListener itemPositionsListener =
-        ItemPositionsListener.create();
     return BlocBuilder<PinnedMessageCubit, PinnedMessageState>(
         bloc: Get.find<PinnedMessageCubit>(),
         builder: (ctx, state) {
@@ -53,39 +76,39 @@ class PinnedMessageSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                      width: 10,
-                      child: ScrollablePositionedList.builder(
-                        shrinkWrap: true,
-                        addAutomaticKeepAlives: true,
-                        key: PageStorageKey("uniq"),
-                        itemCount: state.pinnedMessageList.length,
-                        itemBuilder: (context, index) => _scrollBarTile(
-                            index,
-                            state.selected,
-                            state.pinnedMessageList.length,
-                            context),
-                        itemPositionsListener: itemPositionsListener,
-                      )),
+                    width: 10,
+                    child: ScrollablePositionedList.builder(
+                      shrinkWrap: true,
+                      addAutomaticKeepAlives: true,
+                      key: PageStorageKey("uniq"),
+                      itemCount: state.pinnedMessageList.length,
+                      itemBuilder: (context, index) => _scrollBarTile(
+                          index,
+                          state.selected,
+                          state.pinnedMessageList.length,
+                          context),
+                      itemPositionsListener: itemPositionsListener,
+                      itemScrollController: itemScrollController,
+                    ),
+                  ),
                   GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4, left: 8),
-                              child: Text(
-                                AppLocalizations.of(context)!.pinnedMessages,
-                                style: Get.theme.textTheme.headline4!.copyWith(
-                                    fontSize: 14, fontWeight: FontWeight.w300),
-                              ),
+                    behavior: HitTestBehavior.opaque,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4, left: 8),
+                            child: Text(
+                              AppLocalizations.of(context)!.pinnedMessages,
+                              style: Get.theme.textTheme.headline4!.copyWith(
+                                  fontSize: 14, fontWeight: FontWeight.w300),
                             ),
-                            _pinnedMessagesTile(
-                                state.pinnedMessageList[state.selected]),
-                          ]),
-                      onTap: () async {
-                        await Get.find<PinnedMessageCubit>()
-                            .selectPinnedMessage();
-                      }),
+                          ),
+                          _pinnedMessagesTile(
+                              state.pinnedMessageList[state.selected]),
+                        ]),
+                    onTap: () => _selectPinnedMessage(state),
+                  ),
                   Spacer(),
                   GestureDetector(
                     child: Padding(
@@ -105,8 +128,9 @@ class PinnedMessageSheet extends StatelessWidget {
                     onTap: () => state.pinnedMessageList.length == 1
                         ? _unpinMessage(
                             state.pinnedMessageList[state.selected], context)
-                        : push(RoutePaths.channelPinnedMessages.path,
-                            arguments: channel),
+                        : push(
+                            RoutePaths.channelPinnedMessages.path,
+                          ),
                   )
                 ],
               ),

@@ -40,7 +40,8 @@ class Utilities {
       {required BuildContext context,
       required String message,
       String? iconPath,
-      Duration? duration}) {
+      Duration? duration,
+      IconData? iconData}) {
     Get.snackbar('', '',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
@@ -54,11 +55,24 @@ class Utilities {
         titleText: SizedBox.shrink(),
         messageText: Container(
           margin: const EdgeInsets.only(bottom: 4),
-          child: Text(message,
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1
-                  ?.copyWith(fontWeight: FontWeight.normal)),
+          child: Row(
+            children: [
+              iconData == null
+                  ? SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: Icon(
+                        iconData,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+              Text(message,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 14)),
+            ],
+          ),
         ),
         boxShadows: [
           BoxShadow(

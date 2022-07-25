@@ -154,7 +154,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              PinnedMessageSheet(channel: channel),
+                              PinnedMessageSheet(),
                               ThreadMessagesList<ThreadMessagesCubit>(
                                   parentChannel: channel),
                               ChatThumbnailsUploading(),

@@ -113,7 +113,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 builder: (_, messagesState) => Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    PinnedMessageSheet(channel: channel),
+                    PinnedMessageSheet(),
                     Flexible(
                         child:
                             _buildChatContent(messagesState, channel, context)),

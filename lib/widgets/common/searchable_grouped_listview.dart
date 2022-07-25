@@ -53,25 +53,26 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       physics: widget.physics,
       shrinkWrap: widget.shrinkWrap,
       itemPositionsListener: widget.itemPositionListener,
-      groupSeparatorBuilder: widget.groupSeparatorBuilder ?? (Message msg) {
-        return GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus!.unfocus();
+      groupSeparatorBuilder: widget.groupSeparatorBuilder ??
+          (Message msg) {
+            return GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus!.unfocus();
+              },
+              child: Container(
+                height: 53.0,
+                alignment: Alignment.center,
+                child: Text(
+                  DateFormatter.getVerboseDate(msg.createdAt),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2!
+                      .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
           },
-          child: Container(
-            height: 53.0,
-            alignment: Alignment.center,
-            child: Text(
-              DateFormatter.getVerboseDate(msg.createdAt),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline2!
-                  .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        );
-      },
       groupBy: (Message m) {
         final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.createdAt);
         return DateTime(dt.year, dt.month, dt.day);
@@ -83,7 +84,6 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       separator: SizedBox(height: 1.0),
       itemScrollController: _controller,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.only(bottom: 12.0),
       reverse: widget.reverse,
       indexedItemBuilder: (context, message, index) {
         return widget.indexedItemBuilder(context, message, index);
