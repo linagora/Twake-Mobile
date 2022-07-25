@@ -24,7 +24,7 @@ class _SearchPageState extends State<SearchPage>
   )..forward();
 
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: const Offset(50, 0.0),
+    begin: const Offset(55, 0.0),
     end: Offset.zero,
   ).animate(CurvedAnimation(
     parent: _animController,
@@ -110,7 +110,7 @@ class _SearchPageState extends State<SearchPage>
                               children: [
                                 Container(
                                   margin: EdgeInsets.only(
-                                      right: 50 - _offsetAnimation.value.dx),
+                                      right: 55 - _offsetAnimation.value.dx),
                                   child: TwakeSearchTextField(
                                     height: 40,
                                     controller: _searchController,
@@ -130,7 +130,7 @@ class _SearchPageState extends State<SearchPage>
                                           onTap: () => tapCancel(),
                                           child: Container(
                                               height: 40,
-                                              width: 50,
+                                              width: 54,
                                               color: Colors.transparent,
                                               child: Align(
                                                 alignment:
