@@ -21,6 +21,7 @@ import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/blocs/receive_file_cubit/receive_file_cubit.dart';
 import 'package:twake/blocs/registration_cubit/registration_cubit.dart';
 import 'package:twake/blocs/theme_cubit/theme_cubit.dart';
+import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -57,10 +58,22 @@ class HomeBinding implements Bindings {
     final directsCubit = DirectsCubit();
     Get.put(directsCubit, permanent: true);
 
-    final channelMessagesCubit = ChannelMessagesCubit(channelsCubit: channelsCubit);
+    final channelUnreadMessagesCubit =
+        ChannelUnreadMessagesCubit(channelsCubit: channelsCubit);
+    Get.put(channelUnreadMessagesCubit, permanent: true);
+
+    final threadUnreadMessagesCubit = ThreadUnreadMessagesCubit(
+        channelUnreadMessagesCubit: channelUnreadMessagesCubit,
+        channelsCubit: channelsCubit);
+    Get.put(threadUnreadMessagesCubit, permanent: true);
+
+    final channelMessagesCubit = ChannelMessagesCubit(
+        channelsCubit: channelsCubit,
+        unreadMessagesCubit: channelUnreadMessagesCubit);
     Get.put(channelMessagesCubit, permanent: true);
 
-    final threadMessagesCubit = ThreadMessagesCubit(channelCubit: channelsCubit);
+    final threadMessagesCubit =
+        ThreadMessagesCubit(unreadMessageCubit: threadUnreadMessagesCubit);
     Get.put(threadMessagesCubit, permanent: true);
 
     final pinnedMessagesCubit = PinnedMessageCubit();
