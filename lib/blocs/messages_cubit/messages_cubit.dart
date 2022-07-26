@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_state.dart';
+import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/reaction.dart';
 import 'package:twake/repositories/channels_repository.dart';
@@ -13,6 +14,7 @@ export 'messages_state.dart';
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
   late final BaseChannelsCubit _channelsCubit;
+  late final BaseUnreadMessagesCubit _unreadMessagesCubit;
 
   final _socketIOResourceStream = SocketIOService.instance.resourceStream;
   final _socketIOReconnectionStream =
@@ -22,7 +24,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   bool? isDirect;
 
   BaseMessagesCubit(
-      {MessagesRepository? repository, BaseChannelsCubit? channelCubit})
+      {MessagesRepository? repository,
+      BaseChannelsCubit? channelCubit,
+      BaseUnreadMessagesCubit? unreadMessagesCubit})
       : super(MessagesInitial()) {
     if (repository == null) {
       repository = MessagesRepository();
@@ -33,6 +37,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       channelCubit = ChannelsCubit();
     }
     _channelsCubit = channelCubit;
+
+    if (unreadMessagesCubit == null) {
+      unreadMessagesCubit = ChannelUnreadMessagesCubit();
+    }
+    _unreadMessagesCubit = unreadMessagesCubit;
 
     listenToMessageChanges();
     listenToReconnectionChange();
@@ -75,10 +84,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
       ));
-    }
+      _unreadMessagesCubit.fetchUnreadMessages(messages: list);
 
-    if (lastList.isEmpty && threadId == null) {
-      emit(NoMessagesFound());
+      if (lastList.isEmpty && threadId == null) {
+        emit(NoMessagesFound());
+      }
     }
   }
 
@@ -294,6 +304,8 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages[index] = message;
       }
 
+      _unreadMessagesCubit.listenOwnerMessage();
+
       emit(MessageLatestSuccess(
         messages: messages,
         hash: hash + message.hash,
@@ -505,6 +517,10 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
           if (state is MessagesLoadSuccess) {
             final messages = (state as MessagesLoadSuccess).messages;
             final hash = (state as MessagesLoadSuccess).hash;
+
+            // update channel read
+            _channelsCubit.markChannelRead(channelId: message.channelId);
+            
             // message is already present
             if (messages.any((m) => m.id == message.id)) {
               final index = messages.indexWhere((m) => m.id == message.id);
@@ -515,9 +531,9 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                 messages: messages,
                 hash: hash + 1, // we only need to update hash in someway
               ));
-              // update channel read
-              _channelsCubit.markChannelRead(channelId: message.channelId);
             } else {
+              // update unread messages
+              _unreadMessagesCubit.listenNotOwnerMessage();
               // new message has been created
               messages.add(message);
               messages.sort((m1, m2) => m1.createdAt.compareTo(m2.createdAt));
@@ -557,10 +573,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                   afterMessageId: latestMessage.id,
                   workspaceId:
                       isDirect! ? 'direct' : Globals.instance.workspaceId);
-
+              if(messages.isEmpty){
+                continue;
+              }
               Message newLatestMessage = messages.reduce((value, element) =>
                   value.createdAt > element.createdAt ? value : element);
-              if(newLatestMessage == latestMessage) {
+              if (newLatestMessage == latestMessage) {
                 continue;
               }
 
@@ -589,8 +607,13 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
       SynchronizationService.instance.socketIOChannelMessageStream;
 
   ChannelMessagesCubit(
-      {MessagesRepository? repository, BaseChannelsCubit? channelsCubit})
-      : super(repository: repository, channelCubit: channelsCubit) {
+      {MessagesRepository? repository,
+      BaseChannelsCubit? channelsCubit,
+      ChannelUnreadMessagesCubit? unreadMessagesCubit})
+      : super(
+            repository: repository,
+            channelCubit: channelsCubit,
+            unreadMessagesCubit: unreadMessagesCubit) {
     listenToThreadChanges();
   }
 
@@ -659,8 +682,11 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
 
 class ThreadMessagesCubit extends BaseMessagesCubit {
   ThreadMessagesCubit(
-      {MessagesRepository? repository, BaseChannelsCubit? channelCubit})
-      : super(repository: repository, channelCubit: channelCubit);
+      {MessagesRepository? repository,
+      ThreadUnreadMessagesCubit? unreadMessageCubit})
+      : super(
+            repository: repository,
+            unreadMessagesCubit: unreadMessageCubit);
 
   @override
   final _socketIOResourceStream = SynchronizationService
