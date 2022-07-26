@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
@@ -9,6 +8,7 @@ import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_state.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/download/file_downloading.dart';
 import 'package:twake/models/file/file.dart';
@@ -18,8 +18,6 @@ import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/shimmer_loading.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-const _fileTileHeight = 76.0;
 
 /// Note [1]:
 /// This is decided by User Story.
@@ -62,28 +60,21 @@ class _FileTileState extends State<FileTile> {
   _buildLoadingLayout() => ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: ShimmerLoading(
-          width: double.maxFinite,
-          height: _fileTileHeight,
+          width: Dim.widthPercent(75),
+          height: Dim.heightPercent(70),
           isLoading: true,
           child: Container(),
         ),
       );
 
   _buildFileWidget(File file) => Container(
-        margin: const EdgeInsets.only(bottom: 4.0),
-        child: Row(children: [
-          _buildFileHeader(file),
-          SizedBox(width: 12.0),
-          Flexible(
-            child: _buildFileInfo(file),
-          ),
-        ]),
+        child: _buildFileHeader(file),
       );
 
   _buildFileHeader(File file) {
-    return SizedBox(
-      width: _fileTileHeight,
-      height: _fileTileHeight,
+    return Container(
+      constraints: BoxConstraints(
+          maxWidth: Dim.widthPercent(75), maxHeight: Dim.heightPercent(70)),
       child: BlocBuilder<FileDownloadCubit, FileDownloadState>(
           bloc: Get.find<FileDownloadCubit>(),
           builder: (context, state) {
@@ -131,7 +122,7 @@ class _FileTileState extends State<FileTile> {
         }
       },
       child: file.thumbnailUrl.isNotEmpty
-          ? _buildFilePreview(file.thumbnailUrl)
+          ? _buildFilePreview(file)
           : _buildFileTypeIcon(file),
     );
   }
@@ -195,25 +186,31 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildFilePreview(String thumbUrl) => ClipRRect(
+  _buildFilePreview(File file) {
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         child: Container(
-          height: 300,
+          height: Dim.heightPercent(70) * _aspectRatioCoefficient(file),
+          width: Dim.widthPercent(75), // * cWidth,
           child: CachedNetworkImage(
-            width: double.maxFinite,
-            height: double.maxFinite,
+            height: Dim.heightPercent(70) * _aspectRatioCoefficient(file),
+            width: Dim.widthPercent(75), // * cWidth,
             fit: BoxFit.cover,
-            imageUrl: thumbUrl,
+            imageUrl: file.downloadUrl,
             progressIndicatorBuilder: (context, url, progress) {
               return ShimmerLoading(
                   isLoading: true,
-                  width: double.maxFinite,
-                  height: double.maxFinite,
+                  height: Dim.heightPercent(70) * _aspectRatioCoefficient(file),
+                  width: Dim.widthPercent(75), // * cWidth,
                   child: Container());
             },
           ),
         ),
-      );
+      ),
+    );
+  }
 
   _buildFileTypeIcon(File file) {
     final extension = file.metadata.name.fileExtension;
@@ -225,30 +222,14 @@ class _FileTileState extends State<FileTile> {
     );
   }
 
-  _buildFileInfo(File file) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-              text: TextSpan(
-                  text: file.metadata.name,
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      color: widget.isMyMessage ? Colors.white : Colors.black)),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2),
-          Text(
-            filesize(file.uploadData.size),
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: 11.0,
-                fontWeight: FontWeight.w400,
-                fontStyle: FontStyle.italic,
-                color: widget.isMyMessage
-                    ? Color.fromRGBO(255, 255, 255, 0.58)
-                    : Color.fromRGBO(0, 0, 0, 0.58)),
-          ),
-        ],
-      );
+  num _aspectRatioCoefficient(File file) {
+    final num aspectRatio =
+        file.thumbnails.first.width / file.thumbnails.first.height;
+    final num coefficientHeight = aspectRatio > 1 ? 1 / aspectRatio : 1;
+    //coefficientWidth that is not neeede for now
+    // final coefficientWidth= aspectRatio < 1 ? aspectRatio : 1;
+    return coefficientHeight;
+  }
 
   // Open file either by [taskId] or [savedPath]
   _handleOpenFile({String? taskId, String? savedPath}) async {
