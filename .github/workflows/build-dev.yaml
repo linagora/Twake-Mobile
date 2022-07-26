@@ -5,6 +5,7 @@ on:
       - main
     paths-ignore:
       - "lib/l10n/**"
+      - ".github/**"
 
 name: Build app for testing and QA
 
