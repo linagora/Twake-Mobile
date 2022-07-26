@@ -113,10 +113,8 @@ class _ChatViewState extends State<_ChatView> {
             child: UnreadMessagesWidget(
               messages: state.messages,
               startMessage: _startMessage,
-              userLastAccess: widget.parentChannel.userLastAccess,
               itemPositionsListener: _itemPositionsListener,
               jumpController: _jumpController,
-              latestMessage: latestMessage,
               indexedItemBuilder: (context, Message message, int index) {
                 return _buildSwipeActionCell(
                     state.messages, message, index, state.endOfHistory);
