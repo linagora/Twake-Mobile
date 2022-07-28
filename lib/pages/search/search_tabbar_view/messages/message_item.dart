@@ -8,13 +8,19 @@ import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/widgets/common/highlighted_text_widget.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 
 class MessageItem extends StatelessWidget {
   final Message message;
   final Channel channel;
+  final String searchTerm;
 
-  const MessageItem({Key? key, required this.message, required this.channel})
+  const MessageItem(
+      {Key? key,
+      required this.message,
+      required this.channel,
+      required this.searchTerm})
       : super(key: key);
 
   String getWorkspaceName() {
@@ -121,13 +127,21 @@ class MessageItem extends StatelessWidget {
                           .headline1!
                           .copyWith(fontSize: 15)),
                   SizedBox(height: 2.0),
-                  Text(message.text,
+                  HighlightedTextWidget(
+                      text: message.text,
+                      searchTerm: searchTerm,
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context)
+                      textOverflow: TextOverflow.ellipsis,
+                      textStyle: Theme.of(context)
                           .textTheme
                           .headline3!
-                          .copyWith(fontSize: 15)),
+                          .copyWith(fontSize: 15),
+                      highlightStyle: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(
+                              fontSize: 15,
+                              color: Theme.of(context).colorScheme.surface)),
                 ],
               ),
             ),

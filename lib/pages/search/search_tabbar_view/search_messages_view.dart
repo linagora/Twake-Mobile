@@ -36,6 +36,7 @@ class _SearchMessagesViewState extends State<SearchMessagesView> {
           return SizedBox.expand(
             child: ListView(children: [
               MessagesSection(
+                searchTerm: state.searchTerm,
                 messages: state.messages,
               )
             ]),
@@ -53,8 +54,11 @@ class _SearchMessagesViewState extends State<SearchMessagesView> {
 
 class MessagesSection extends StatelessWidget {
   final List<SearchMessage> messages;
+  final String searchTerm;
 
-  const MessagesSection({Key? key, required this.messages}) : super(key: key);
+  const MessagesSection(
+      {Key? key, required this.messages, required this.searchTerm})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +80,7 @@ class MessagesSection extends StatelessWidget {
           physics: ScrollPhysics(),
           itemBuilder: (context, index) {
             return MessageItem(
+              searchTerm: searchTerm,
               message: messages[index].message,
               channel: messages[index].channel,
             );
