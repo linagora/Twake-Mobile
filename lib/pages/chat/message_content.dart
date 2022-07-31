@@ -1,4 +1,3 @@
-
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,7 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/dateformatter.dart';
@@ -25,12 +25,14 @@ class MessageContent<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool isThread;
   final bool isMyMessage;
   final bool isDirect;
+  final bool isSenderHidden;
 
   MessageContent({
     required this.message,
     required this.isThread,
     required this.isDirect,
     required this.isMyMessage,
+    required this.isSenderHidden,
     Key? key,
   }) : super(key: key);
 
@@ -66,11 +68,19 @@ class _MessageContentState<T extends BaseMessagesCubit>
         children: [
           widget.isMyMessage
               ? SizedBox.shrink()
-              : ImageWidget(
-                  imageType: ImageType.common,
-                  imageUrl: widget.message.picture ?? '',
-                  name: widget.message.sender,
-                  size: 28),
+              : widget.isSenderHidden
+                  ? const SizedBox(
+                      width: 36,
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.only(
+                          left: 2, right: 6, bottom: 6, top: 2),
+                      child: ImageWidget(
+                          imageType: ImageType.common,
+                          imageUrl: widget.message.picture ?? '',
+                          name: widget.message.sender,
+                          size: 36),
+                    ),
           Flexible(
               child: _buildMessageBubble(
             _isFileUploading,
@@ -87,29 +97,43 @@ class _MessageContentState<T extends BaseMessagesCubit>
       decoration: BoxDecoration(
           color: Get.isDarkMode
               ? widget.isMyMessage
-                  ? Theme.of(context).colorScheme.surface
-                  : Theme.of(context).colorScheme.secondaryContainer
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).iconTheme.color
               : widget.isMyMessage
-                  ? Theme.of(context).colorScheme.surface
+                  ? Theme.of(context).colorScheme.onSurface
                   : Theme.of(context).iconTheme.color,
           borderRadius: BorderRadius.all(Radius.circular(18))),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.only(top: 12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildUserName(),
-                _buildMessageText(),
-                if (_isFileUploading) _buildFileUploadingTile(),
-                _buildReactions(widget.isMyMessage),
-                if (widget.message.responsesCount > 0 && !widget.isThread)
-                  _buildReplies(),
-              ],
+            _buildUserName(),
+            Container(
+              decoration: BoxDecoration(
+                border: widget.message.responsesCount > 0 ||
+                        widget.message.reactions.length != 0
+                    ? Border(
+                        bottom: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary,
+                          width: 0.5,
+                        ),
+                      )
+                    : Border(),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _buildMessageText(),
+                      _buildStatuses(),
+                    ]),
+              ),
             ),
-            _buildStatuses(),
+            _buildReactions(widget.isMyMessage),
+            if (widget.message.responsesCount > 0 && !widget.isThread)
+              _buildReplies(),
           ],
         ),
       ),
@@ -117,26 +141,44 @@ class _MessageContentState<T extends BaseMessagesCubit>
   }
 
   _buildStatuses() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildPin(),
-        _buildTime(),
-        _buildMessageSentStatus(widget.isMyMessage),
-      ],
+    final double _sizeOfReplyBox = widget.message.text.length.toDouble() < 15
+        ? 80 - widget.message.text.length.toDouble() * 5.5
+        : 5;
+    return Padding(
+      padding: widget.isMyMessage
+          ? EdgeInsets.only(bottom: 0)
+          : EdgeInsets.only(bottom: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: _sizeOfReplyBox,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 3),
+            child: _buildPin(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 3, right: 3),
+            child: _buildTime(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 3),
+            child: _buildMessageSentStatus(widget.isMyMessage),
+          ),
+        ],
+      ),
     );
   }
 
   _buildPin() {
     return widget.message.pinnedInfo != null
         ? Padding(
-            padding: const EdgeInsets.only(right: 4),
+            padding: const EdgeInsets.only(bottom: 1),
             child: Image.asset(
               imagePinned,
-              color: widget.isMyMessage
-                  ? Theme.of(context).iconTheme.color!.withOpacity(0.7)
-                  : Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
               width: 12.0,
               height: 12.0,
             ),
@@ -149,14 +191,14 @@ class _MessageContentState<T extends BaseMessagesCubit>
         ? widget.message.delivery == Delivery.inProgress
             ? Image.asset(
                 imageMessageDeliveryInprogress,
-                height: 20,
-                width: 20,
+                height: 16,
+                width: 16,
               )
             : widget.message.delivery == Delivery.delivered
                 ? Image.asset(
                     imageMessageDeliveryRead,
-                    height: 20,
-                    width: 20,
+                    height: 18,
+                    width: 18,
                   )
                 : widget.message.delivery == Delivery.failed
                     ? GestureDetector(
@@ -176,7 +218,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
                         child: Icon(
                           CupertinoIcons.exclamationmark_circle_fill,
                           color: Theme.of(context).colorScheme.error,
-                          size: 20,
+                          size: 18,
                         ),
                       )
                     : SizedBox.shrink()
@@ -213,45 +255,71 @@ class _MessageContentState<T extends BaseMessagesCubit>
             ? DateFormatter.getVerboseDateTime(widget.message.createdAt)
             : DateFormatter.getVerboseTime(widget.message.createdAt),
         textAlign: TextAlign.end,
-        style: Theme.of(context).textTheme.headline1!);
+        style: Theme.of(context)
+            .textTheme
+            .headline3!
+            .copyWith(fontSize: 12, fontWeight: FontWeight.w400));
   }
 
   _buildReplies() {
-    return Text(
-        '${AppLocalizations.of(context)!.view} ${AppLocalizations.of(context)!.replyPlural(widget.message.responsesCount)}',
-        style: widget.isMyMessage && Get.isDarkMode
-            ? widget.isMyMessage
-                ? Theme.of(context)
-                    .textTheme
-                    .headline1!
-                    .copyWith(fontSize: 13, fontWeight: FontWeight.bold)
-                : Theme.of(context)
-                    .textTheme
-                    .headline4!
-                    .copyWith(fontSize: 13, fontWeight: FontWeight.bold)
-            : widget.isMyMessage
-                ? Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(fontSize: 13, fontWeight: FontWeight.bold)
-                : Theme.of(context)
-                    .textTheme
-                    .headline4!
-                    .copyWith(fontSize: 13, fontWeight: FontWeight.bold));
+    final List<Message>? last3Replies = widget.message.last3Replies;
+    final List<Avatar> avatars = [];
+    if (last3Replies != null) {
+      last3Replies.forEach((message) {
+        message.picture != null || message.username != null
+            ? avatars.add(Avatar(
+                link: message.picture ?? '', name: message.username ?? ''))
+            : null;
+      });
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12, left: 12),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: avatars == []
+                ? ImageWidget(
+                    imageType: ImageType.common,
+                    avatars: avatars,
+                    size: 62,
+                    stackSize: 28,
+                    stackNumLimit: 3,
+                  )
+                : SizedBox.shrink(),
+          ),
+          Text(
+              '${AppLocalizations.of(context)!.replyPlural(widget.message.responsesCount)}',
+              style: Get.isDarkMode
+                  ? Theme.of(context)
+                      .textTheme
+                      .headline1!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.bold)
+                  : Theme.of(context)
+                      .textTheme
+                      .headline4!
+                      .copyWith(fontSize: 17, fontWeight: FontWeight.w400)),
+        ],
+      ),
+    );
   }
 
   _buildUserName() {
     return widget.isMyMessage
         ? SizedBox.shrink()
-        : Text(
-            '${widget.message.sender}',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: HSLColor.fromAHSL(
-                      1, widget.message.username.hashCode % 360, 0.9, 0.3)
-                  .toColor(),
+        : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(
+              '${widget.message.sender}',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: HSLColor.fromAHSL(
+                        1, widget.message.username.hashCode % 360, 0.9, 0.3)
+                    .toColor(),
+              ),
             ),
           );
   }
@@ -329,8 +397,8 @@ class _MessageContentState<T extends BaseMessagesCubit>
   }
 
   _buildReactions(bool _isMyMessage) {
-    return Transform(
-      transform: Matrix4.translationValues(_isMyMessage ? -28 : 16, -4, 0.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
       child: Wrap(
         runSpacing: Dim.heightMultiplier,
         crossAxisAlignment: WrapCrossAlignment.center,

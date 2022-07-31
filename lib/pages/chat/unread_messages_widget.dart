@@ -11,7 +11,8 @@ class UnreadMessagesWidget extends StatefulWidget {
   final Message? startMessage;
   final Message? latestMessage;
   final int userLastAccess;
-  final Widget Function(BuildContext context, Message message, int index)
+  final Widget Function(
+          BuildContext context, Message message, int index, bool isSenderHidden)
       indexedItemBuilder;
   // use only one controller for jump to item
   final SearchableGroupChatController jumpController;
@@ -100,6 +101,7 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
   @override
   Widget build(BuildContext context) {
     bool hasUnreadCounter = unreadCounter != null && unreadCounter! > 0;
+    String id = '';
     return Scaffold(
       floatingActionButton: UnreadCounter(
           counter: unreadCounter ?? 0,
@@ -120,18 +122,25 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
                   ? unreadCounter! - 1
                   : 0
               : _messages.indexOf(_startMessage!),
-
           indexedItemBuilder: (_, message, index) {
-            return hasUnreadCounter &&
-                    index == unreadCounter! - 1
+            bool isSenderHidden = false;
+            (index == 0)
+                ? id = message.userId
+                : id == message.userId
+                    ? isSenderHidden = true
+                    : isSenderHidden = false;
+            id = message.userId;
+            return hasUnreadCounter && index == unreadCounter! - 1
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const UnreadBorder(),
-                      widget.indexedItemBuilder(context, message, index),
+                      widget.indexedItemBuilder(
+                          context, message, index, isSenderHidden),
                     ],
                   )
-                : widget.indexedItemBuilder(context, message, index);
+                : widget.indexedItemBuilder(
+                    context, message, index, isSenderHidden);
           }),
     );
   }

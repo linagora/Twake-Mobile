@@ -70,6 +70,14 @@ class Message extends BaseModel {
   Message? get lastReply => _lastReplies != null && _lastReplies!.isNotEmpty
       ? _lastReplies![_lastReplies!.length - 1]
       : null;
+  List<Message>? get last3Replies =>
+      _lastReplies != null && _lastReplies!.isNotEmpty
+          ? _lastReplies!
+              .getRange(
+                  (_lastReplies!.length - 4) < 0 ? 0 : _lastReplies!.length - 4,
+                  _lastReplies!.length)
+              .toList()
+          : null;
 
   int get hash {
     return this.id.hashCode +

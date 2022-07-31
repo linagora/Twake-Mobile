@@ -138,7 +138,7 @@
             }
         }
     },
-    "replyPlural": "{count, plural, =0{no replies} =1{1 reply} other{{count} replies}}",
+    "replyPlural": "{count, plural, =0{no replies} =1{1 Comment} other{{count} Comments}}",
     "@replyPlural": {
         "description": "A plural form of 'reply' word",
         "placeholders": {
