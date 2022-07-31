@@ -41,14 +41,14 @@ class StylesConfig {
   static const ColorScheme lightThemeColorScheme = ColorScheme(
     primary: Color(0xFFD2D2D2),
     primaryContainer: Colors.black,
-    secondary: Color(0xFF818C99),
+    secondary: Color(0xFF99A2AD),
     secondaryContainer: Color(0xFFF5F5F5),
     surface: Color(0xFF007AFF),
     background: Color(0xFFD2D2D2),
     error: Color(0xFFFF3347),
     onPrimary: Colors.white,
     onSecondary: Colors.white,
-    onSurface: Colors.black,
+    onSurface: Color(0xFFDEEEFF),
     onBackground: Colors.black,
     onError: Colors.white,
     brightness: Brightness.light,
@@ -130,8 +130,8 @@ class StylesConfig {
 
   static final TextStyle _lightHeadline1 = TextStyle(
       color: Colors.black,
-      fontSize: 16.0,
-      fontWeight: FontWeight.normal,
+      fontSize: 17.0,
+      fontWeight: FontWeight.w400,
       fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline2 = TextStyle(
@@ -200,8 +200,8 @@ class StylesConfig {
       borderRadius: BorderRadius.all(Radius.circular(12.0)));
 
   static String fontFamilyByPlatform() {
-    if(kIsWeb)  return 'Roboto';
-    if(Platform.isIOS || Platform.isMacOS)  return 'SFPro';
+    if (kIsWeb) return 'Roboto';
+    if (Platform.isIOS || Platform.isMacOS) return 'SFPro';
     return 'Roboto';
   }
 }

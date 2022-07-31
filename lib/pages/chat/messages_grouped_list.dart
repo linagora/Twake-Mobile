@@ -116,9 +116,10 @@ class _ChatViewState extends State<_ChatView> {
               itemPositionsListener: _itemPositionsListener,
               jumpController: _jumpController,
               latestMessage: latestMessage,
-              indexedItemBuilder: (context, Message message, int index) {
-                return _buildSwipeActionCell(
-                    state.messages, message, index, state.endOfHistory);
+              indexedItemBuilder:
+                  (context, Message message, int index, bool isSenderHidden) {
+                return _buildSwipeActionCell(state.messages, message, index,
+                    state.endOfHistory, isSenderHidden);
               },
             ),
             messages: state.messages,
@@ -130,8 +131,8 @@ class _ChatViewState extends State<_ChatView> {
     );
   }
 
-  Widget _buildSwipeActionCell(
-      List<Message> messages, Message message, int index, bool endOfHistory) {
+  Widget _buildSwipeActionCell(List<Message> messages, Message message,
+      int index, bool endOfHistory, bool isSenderHidden) {
     return SwipeActionCell(
         controller: _swipeActionController,
         key: ObjectKey(messages[index]),
@@ -175,6 +176,7 @@ class _ChatViewState extends State<_ChatView> {
                   message: message,
                   isDirect: widget.parentChannel.isDirect,
                   key: ValueKey(message.hash),
+                  isSenderHidden: isSenderHidden,
                 ),
           highlightWhen: _jumpController.highlightMessage != null &&
               _jumpController.highlightMessage == message &&

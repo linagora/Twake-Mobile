@@ -20,6 +20,7 @@ class ImageWidget extends StatelessWidget {
   final double borderRadius;
   final List<Avatar> avatars;
   final double stackSize;
+  final int stackNumLimit;
   const ImageWidget(
       {Key? key,
       this.size = 0,
@@ -29,7 +30,8 @@ class ImageWidget extends StatelessWidget {
       this.name = "",
       this.borderRadius = 0,
       this.avatars = const [],
-      this.stackSize = 35,
+      this.stackSize = 0,
+      this.stackNumLimit = 2,
       this.backgroundColor = Colors.transparent})
       : super(key: key);
 
@@ -47,7 +49,8 @@ class ImageWidget extends StatelessWidget {
           (avatars.length == 1 || avatars.isEmpty)) {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
       } else if (avatars.length >= 2) {
-        return stackImage(stackSize, avatars, borderRadius, backgroundColor);
+        return stackImage(
+            stackSize, stackNumLimit, avatars, borderRadius, backgroundColor);
       } else
         return namedAvatar(name, size, backgroundColor, borderRadius);
     }
@@ -55,16 +58,16 @@ class ImageWidget extends StatelessWidget {
     return RoundedShimmer(size: size);
   }
 
-  Widget stackImage(double stackSize, List<Avatar> avatars, double borderRadius,
-      Color backgroundColor) {
+  Widget stackImage(double stackSize, int stackNumLimit, List<Avatar> avatars,
+      double borderRadius, Color backgroundColor) {
     List<Widget> imageAvatars = [];
-
-    final len = avatars.length > 2 ? 2 : avatars.length;
+    final len = avatars.length > stackNumLimit ? stackNumLimit : avatars.length;
     for (int i = 0; i < len; i++) {
       if (avatars[i].link != "") {
         imageAvatars.add(
           Positioned(
-            left: i * stackSize / 2,
+            left:
+                stackNumLimit > 2 ? (i * stackSize / 1.7) : (i * stackSize / 2),
             child:
                 roundImage(avatars[i].link, isPrivate, stackSize, borderRadius),
           ),
@@ -72,7 +75,8 @@ class ImageWidget extends StatelessWidget {
       } else {
         imageAvatars.add(
           Positioned(
-            left: i * stackSize / 2,
+            left:
+                stackNumLimit > 2 ? (i * stackSize / 1.7) : (i * stackSize / 2),
             child: namedAvatar(
                 avatars[i].name, stackSize, backgroundColor, borderRadius),
           ),
@@ -82,7 +86,7 @@ class ImageWidget extends StatelessWidget {
 
     return Center(
       child: Container(
-        height: size,
+        height: stackSize,
         width: size,
         child: Stack(
           alignment: Alignment.center,
@@ -197,11 +201,6 @@ class ImageWidget extends StatelessWidget {
                 borderRadius: borderRadius == 0
                     ? BorderRadius.circular(size / 2 - 1)
                     : BorderRadius.circular(borderRadius),
-                border: Border.all(
-                  style: BorderStyle.solid,
-                  width: 2,
-                  color: Colors.grey.shade300,
-                ),
                 gradient: LinearGradient(
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,

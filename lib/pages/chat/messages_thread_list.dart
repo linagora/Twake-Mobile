@@ -223,7 +223,6 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
                           return Reaction<T>(
                             message: message,
                             reaction: r,
-                            isFirstInThread: true,
                           );
                         }),
                       ],
