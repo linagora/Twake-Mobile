@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +7,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
+import 'package:twake/blocs/unread_messages_cubit/unread_messages_state.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
@@ -35,30 +39,11 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   bool isJump = false;
   ItemScrollController _jumpController = ItemScrollController();
   ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
-  int? unreadCounter;
   ScrollPhysics _physics = ClampingScrollPhysics();
 
   @override
   void initState() {
     super.initState();
-
-    final state = Get.find<ThreadMessagesCubit>().state;
-    if (state is MessagesLoadSuccess) {
-      _messages = state.messages;
-    }
-
-    if (Get.arguments[1] != null) {
-      // calculate the index for jump to first unread message
-      final userLastAccess = Get.arguments[1] as int;
-
-      final repliedMessage = _messages.first;
-      unreadCounter = _messages
-          .where((message) => message.createdAt > userLastAccess)
-          .length;
-      if (repliedMessage.createdAt > userLastAccess && unreadCounter != null) {
-        unreadCounter = unreadCounter! - 1;
-      }
-    }
 
     if (Get.arguments[0] != null) {
       // jump to selected pinned message
@@ -80,16 +65,6 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
         bloc: Get.find<ThreadMessagesCubit>(),
         builder: (ctx, state) {
-          if (state is MessageLatestSuccess) {
-            if (state.latestMessage.isOwnerMessage) {
-              unreadCounter = null;
-            } else {
-              if (unreadCounter != null) {
-                unreadCounter = unreadCounter! + 1;
-              }
-            }
-          }
-
           if (state is MessagesLoadSuccess) {
             isJump
                 ? _messages = state.messages.reversed.toList()
@@ -124,44 +99,61 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
             }),
             messages: _messages,
             isDirect: widget.parentChannel.isDirect,
-            child: Scaffold(
-              floatingActionButton: UnreadCounter(
-                  counter: unreadCounter ?? 0,
-                  itemPositionsListener: _itemPositionsListener,
-                  onPressed: () {
-                    // scroll to latest message
-                    final latestMessage = _messages.reduce((value, element) =>
-                        value.createdAt > element.createdAt ? value : element);
-                    _jumpController.jumpTo(
-                        index: isJump
-                            ? _messages.indexOf(latestMessage)
-                            : _messages.length - 1 -
-                                _messages.indexOf(latestMessage));
-                  }),
-              body: ScrollablePositionedList.builder(
-                initialScrollIndex: (unreadCounter ?? 1) - 1,
-                itemCount: _messages.length,
-                itemScrollController: _jumpController,
-                physics: _physics,
-                reverse: isJump ? false : true,
-                shrinkWrap: isJump ? false : true,
-                itemBuilder: (context, index) {
-                  return HighlightComponent(
-                      component: unreadCounter != null &&
-                              unreadCounter! > 0 &&
-                              index == unreadCounter! - 1
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const UnreadBorder(),
-                                _buildIndexedMessage(context, index),
-                              ],
-                            )
-                          : _buildIndexedMessage(context, index),
-                      highlightColor: Theme.of(context).backgroundColor,
-                      highlightWhen: _highlightIndex == index);
-                },
-              ),
+            child: BlocBuilder<ThreadUnreadMessagesCubit, UnreadMessagesState>(
+              bloc: Get.find<ThreadUnreadMessagesCubit>(),
+              builder: (context, state) {
+                int? unreadCounter;
+                if (state is! UnreadMessagesThreadFound) {
+                  unreadCounter = null;
+                } else {
+                  unreadCounter = state.unreadCounter;
+                }
+
+                return Scaffold(
+                  floatingActionButton: UnreadCounter(
+                      counter: unreadCounter ?? 0,
+                      itemPositionsListener: _itemPositionsListener,
+                      onPressed: () {
+                        // scroll to latest message
+                        final latestMessage = _messages.reduce(
+                            (value, element) =>
+                                value.createdAt > element.createdAt
+                                    ? value
+                                    : element);
+                        _jumpController.jumpTo(
+                            index: isJump
+                                ? _messages.indexOf(latestMessage)
+                                : _messages.length -
+                                    1 -
+                                    _messages.indexOf(latestMessage));
+                      }),
+                  body: ScrollablePositionedList.builder(
+                    initialScrollIndex:
+                        unreadCounter != null ? max(0, unreadCounter - 1) : 0,
+                    itemCount: _messages.length,
+                    itemScrollController: _jumpController,
+                    physics: _physics,
+                    reverse: isJump ? false : true,
+                    shrinkWrap: isJump ? false : true,
+                    itemBuilder: (context, index) {
+                      return HighlightComponent(
+                          component: unreadCounter != null &&
+                                  unreadCounter > 0 &&
+                                  index == unreadCounter - 1
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const UnreadBorder(),
+                                    _buildIndexedMessage(context, index),
+                                  ],
+                                )
+                              : _buildIndexedMessage(context, index),
+                          highlightColor: Theme.of(context).backgroundColor,
+                          highlightWhen: _highlightIndex == index);
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ),
