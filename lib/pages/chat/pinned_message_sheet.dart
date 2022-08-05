@@ -59,7 +59,7 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
             return Container(
               decoration: BoxDecoration(
                 border: Border(
-                  bottom: BorderSide(
+                  top: BorderSide(
                     width: Get.isDarkMode ? 0 : 0.5,
                     color: Theme.of(context)
                         .colorScheme
@@ -76,7 +76,7 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Container(
-                    width: 10,
+                    width: 9,
                     child: ScrollablePositionedList.builder(
                       shrinkWrap: true,
                       addAutomaticKeepAlives: true,
@@ -177,7 +177,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
             borderRadius: BorderRadius.circular(14.0),
           ),
           height: 50,
-          width: 2,
         ),
       );
     } else if (length == 2) {
@@ -190,7 +189,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 height: 25,
-                width: 2,
               )
             : Container(
                 decoration: BoxDecoration(
@@ -198,7 +196,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 height: 25,
-                width: 2,
               ),
       );
     } else if (length == 3) {
@@ -211,7 +208,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 height: 15,
-                width: 2,
               )
             : Container(
                 decoration: BoxDecoration(
@@ -219,7 +215,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 height: 15,
-                width: 2,
               ),
       );
     } else
@@ -232,7 +227,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 height: 14,
-                width: 2,
               )
             : Container(
                 decoration: BoxDecoration(
@@ -240,7 +234,6 @@ class _PinnedMessageSheetState extends State<PinnedMessageSheet> {
                   borderRadius: BorderRadius.circular(14.0),
                 ),
                 height: 14,
-                width: 2,
               ),
       );
   }

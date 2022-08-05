@@ -22,6 +22,12 @@ class _PinnedMessagesState extends State<PinnedMessages> {
       SearchableGroupChatController();
 
   @override
+  void initState() {
+    Get.find<PinnedMessageCubit>().unpinAllReset();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final int pinnedMessages =
         Get.find<PinnedMessageCubit>().state.pinnedMessageList.length;
@@ -55,10 +61,6 @@ class _PinnedMessagesState extends State<PinnedMessages> {
                   onTap: () => Get.back(),
                 )
               ],
-            ),
-            Divider(
-              height: 1,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.15),
             ),
             BlocBuilder<PinnedMessageCubit, PinnedMessageState>(
               bloc: Get.find<PinnedMessageCubit>(),

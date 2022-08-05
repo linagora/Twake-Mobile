@@ -48,7 +48,7 @@ class ImageWidget extends StatelessWidget {
           imageUrl != "" &&
           (avatars.length == 1 || avatars.isEmpty)) {
         return roundImage(imageUrl, isPrivate, size, borderRadius);
-      } else if (avatars.length >= 2) {
+      } else if (avatars.length > 1 || stackNumLimit == 3) {
         return stackImage(
             stackSize, stackNumLimit, avatars, borderRadius, backgroundColor);
       } else

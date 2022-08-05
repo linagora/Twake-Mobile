@@ -471,21 +471,13 @@ class _TextInputState extends State<TextInput> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(top: 11.0, bottom: 11.0),
-      decoration: BoxDecoration(
-        border: Border(
-            top: BorderSide(
-                color: Get.isDarkMode
-                    ? Theme.of(context).scaffoldBackgroundColor
-                    : Theme.of(context).colorScheme.secondaryContainer,
-                width: 1.5)),
-        color: Theme.of(context).scaffoldBackgroundColor,
-      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 14.0),
-          _buildAttachment(),
-          SizedBox(width: 14.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: _buildAttachment(),
+          ),
           Expanded(
             child: _buildMessageContent(),
           ),
@@ -502,7 +494,7 @@ class _TextInputState extends State<TextInput> {
         minWidth: 24.0,
       ),
       padding: EdgeInsets.zero,
-      icon: Image.asset(imageAttachmentNew),
+      icon: Image.asset(imageAddFile),
       onPressed: () => _handleOpenGallery(),
       color: Theme.of(context).colorScheme.surface,
     );
@@ -512,7 +504,7 @@ class _TextInputState extends State<TextInput> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(30.0),
         border: Border.all(
           color: Theme.of(context).colorScheme.secondaryContainer,
         ),
@@ -524,9 +516,9 @@ class _TextInputState extends State<TextInput> {
           GestureDetector(
             onTap: widget.toggleEmojiBoard as void Function()?,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(imageEmoji, width: 24, height: 24),
-            ), //Image.asset('assets/images/attach.png'),
+              padding: const EdgeInsets.all(4.0),
+              child: Image.asset(imageEmojiIcon, width: 24, height: 24),
+            ),
           )
         ],
       ),
@@ -560,12 +552,12 @@ class _TextInputState extends State<TextInput> {
       decoration: InputDecoration(
         filled: true,
         fillColor: Theme.of(context).colorScheme.secondaryContainer,
-        contentPadding: const EdgeInsets.fromLTRB(12.0, 9.0, 32.0, 9.0),
+        contentPadding: const EdgeInsets.only(left: 12, right: 24),
         hintText: AppLocalizations.of(context)!.newReply,
         hintStyle: Theme.of(context)
             .textTheme
             .headline2!
-            .copyWith(fontSize: 13, fontWeight: FontWeight.w500),
+            .copyWith(fontSize: 17, fontWeight: FontWeight.w500),
         border: OutlineInputBorder(
           borderSide: BorderSide(
             style: BorderStyle.none,
@@ -588,33 +580,41 @@ class _TextInputState extends State<TextInput> {
 
   _buildSendButton() {
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: widget.canSend
-          ? () async {
-              widget.onMessageSend(
-                await Get.find<MentionsCubit>()
-                    .completeMentions(widget.controller!.text),
-                context,
-              );
-              widget.controller!.clear();
-            }
-          : null,
-      child: widget.canSend
-          ? Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset(
-                'assets/images/send_blue.png',
-                color: Theme.of(context).colorScheme.surface,
-              ),
-            )
-          : Container(
-              padding: EdgeInsets.fromLTRB(17.0, 6.0, 18.0, 6.0),
-              child: Image.asset(
-                'assets/images/send.png',
-                color: Get.isDarkMode ? Colors.grey : Colors.black,
-              ),
-            ),
-    );
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.canSend
+            ? () async {
+                widget.onMessageSend(
+                  await Get.find<MentionsCubit>()
+                      .completeMentions(widget.controller!.text),
+                  context,
+                );
+                widget.controller!.clear();
+              }
+            : null,
+        child: Padding(
+          padding: const EdgeInsets.all(9.0),
+          child: SizedBox(
+            height: 38,
+            width: 38,
+            child: widget.canSend
+                ? Get.isDarkMode
+                    ? Image.asset(
+                        imageSendBlue,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      )
+                    : Image.asset(
+                        imageSendBlue,
+                      )
+                : Get.isDarkMode
+                    ? Image.asset(
+                        imageSend,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                      )
+                    : Image.asset(
+                        imageSend,
+                      ),
+          ),
+        ));
   }
 
   _handleOpenGallery() async {

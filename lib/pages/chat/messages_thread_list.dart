@@ -10,7 +10,6 @@ import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
-import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/common/unread_border.dart';
 import 'package:twake/widgets/common/unread_counter.dart';
 
@@ -195,7 +194,7 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
     final state = Get.find<ThreadMessagesCubit>().state;
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Padding(
@@ -204,29 +203,16 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
             message: message,
             isDirect: parentChannel.isDirect,
             isThread: true,
+            isHeadInThred: true,
             key: ValueKey(message.hash),
           ),
         ),
         if (state is MessagesLoadSuccess)
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
                 width: 15,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...message.reactions.map((r) {
-                          return Reaction<T>(
-                            message: message,
-                            reaction: r,
-                          );
-                        }),
-                      ],
-                    )),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 1),

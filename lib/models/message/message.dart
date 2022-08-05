@@ -70,14 +70,17 @@ class Message extends BaseModel {
   Message? get lastReply => _lastReplies != null && _lastReplies!.isNotEmpty
       ? _lastReplies![_lastReplies!.length - 1]
       : null;
-  List<Message>? get last3Replies =>
-      _lastReplies != null && _lastReplies!.isNotEmpty
-          ? _lastReplies!
-              .getRange(
-                  (_lastReplies!.length - 4) < 0 ? 0 : _lastReplies!.length - 4,
-                  _lastReplies!.length)
-              .toList()
-          : null;
+  List<Message>? get last3Replies {
+    if (_lastReplies != null && _lastReplies!.isNotEmpty) {
+      this.responsesCount < 3 ? _lastReplies!.removeAt(0) : null;
+      return _lastReplies!
+          .getRange(
+              (_lastReplies!.length - 4) < 0 ? 0 : _lastReplies!.length - 4,
+              _lastReplies!.length)
+          .toList();
+    }
+    return null;
+  }
 
   int get hash {
     return this.id.hashCode +
@@ -189,6 +192,8 @@ class Message extends BaseModel {
     if (jsonify) {
       json = jsn.jsonify(json: json, keys: COMPOSITE_FIELDS);
     }
+    //we need to add transform for last_replies filed when we run it from _$MessageFromJson(json);  lastReplies: (json['last_replies']).map((e) => Message.fromJson
+    if (!json.containsKey("last_replies")) transform = true;
     if (transform) {
       json = ApiDataTransformer.message(json: json, channelId: channelId);
     }

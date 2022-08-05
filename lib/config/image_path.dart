@@ -61,3 +61,7 @@ const imageMessageDeliveryInprogress =
 const imageMessageDeliveryDelivered =
     '$_assetPath/message_delivery_delivered.png';
 const imageMessageDeliveryRead = '$_assetPath/message_delivery_read.png';
+const imageAddFile = '$_assetPath/add_file.png';
+const imageEmojiIcon = '$_assetPath/emoji_icon.png';
+const imageSend = '$_assetPath/send.png';
+const imageSendBlue = '$_assetPath/send_blue.png';

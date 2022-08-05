@@ -26,10 +26,12 @@ class MessageContent<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool isMyMessage;
   final bool isDirect;
   final bool isSenderHidden;
+  final bool isHeadInThred;
 
   MessageContent({
     required this.message,
     required this.isThread,
+    required this.isHeadInThred,
     required this.isDirect,
     required this.isMyMessage,
     required this.isSenderHidden,
@@ -61,7 +63,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
 
     return Expanded(
       child: Row(
-        mainAxisAlignment: widget.isMyMessage
+        mainAxisAlignment: widget.isMyMessage || widget.isHeadInThred
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -82,15 +84,16 @@ class _MessageContentState<T extends BaseMessagesCubit>
                           size: 36),
                     ),
           Flexible(
-              child: _buildMessageBubble(
-            _isFileUploading,
-          )),
+            child: _buildMessageBubble(
+              _isFileUploading,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  _buildMessageBubble(
+  Widget _buildMessageBubble(
     bool _isFileUploading,
   ) {
     return Container(
@@ -98,7 +101,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
           color: Get.isDarkMode
               ? widget.isMyMessage
                   ? Theme.of(context).colorScheme.onSurface
-                  : Theme.of(context).iconTheme.color
+                  : Theme.of(context).colorScheme.secondaryContainer
               : widget.isMyMessage
                   ? Theme.of(context).colorScheme.onSurface
                   : Theme.of(context).iconTheme.color,
@@ -111,11 +114,19 @@ class _MessageContentState<T extends BaseMessagesCubit>
             _buildUserName(),
             Container(
               decoration: BoxDecoration(
-                border: widget.message.responsesCount > 0 ||
-                        widget.message.reactions.length != 0
+                border: (widget.message.responsesCount > 0 ||
+                            widget.message.reactions.length != 0) &&
+                        !widget.isThread
                     ? Border(
                         bottom: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Get.isDarkMode
+                              ? widget.isMyMessage
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer
+                                      .withOpacity(0.5)
+                                  : Theme.of(context).colorScheme.secondary
+                              : Theme.of(context).colorScheme.secondary,
                           width: 0.5,
                         ),
                       )
@@ -141,9 +152,6 @@ class _MessageContentState<T extends BaseMessagesCubit>
   }
 
   _buildStatuses() {
-    final double _sizeOfReplyBox = widget.message.text.length.toDouble() < 15
-        ? 80 - widget.message.text.length.toDouble() * 5.5
-        : 5;
     return Padding(
       padding: widget.isMyMessage
           ? EdgeInsets.only(bottom: 0)
@@ -152,9 +160,6 @@ class _MessageContentState<T extends BaseMessagesCubit>
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(
-            width: _sizeOfReplyBox,
-          ),
           Padding(
             padding: const EdgeInsets.only(right: 3),
             child: _buildPin(),
@@ -172,13 +177,17 @@ class _MessageContentState<T extends BaseMessagesCubit>
     );
   }
 
-  _buildPin() {
+  Widget _buildPin() {
     return widget.message.pinnedInfo != null
         ? Padding(
             padding: const EdgeInsets.only(bottom: 1),
             child: Image.asset(
               imagePinned,
-              color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+              color: Get.isDarkMode
+                  ? widget.isMyMessage
+                      ? Colors.white.withOpacity(0.7)
+                      : Colors.white.withOpacity(0.3)
+                  : Theme.of(context).colorScheme.secondary.withOpacity(0.8),
               width: 12.0,
               height: 12.0,
             ),
@@ -186,20 +195,34 @@ class _MessageContentState<T extends BaseMessagesCubit>
         : SizedBox.shrink();
   }
 
-  _buildMessageSentStatus(bool _isMyMessage) {
+  Widget _buildMessageSentStatus(bool _isMyMessage) {
     return _isMyMessage == true
         ? widget.message.delivery == Delivery.inProgress
-            ? Image.asset(
-                imageMessageDeliveryInprogress,
-                height: 16,
-                width: 16,
-              )
-            : widget.message.delivery == Delivery.delivered
+            ? Get.isDarkMode
                 ? Image.asset(
-                    imageMessageDeliveryRead,
+                    imageMessageDeliveryInprogress,
+                    height: 18,
+                    width: 18,
+                    color: Colors.white.withOpacity(0.6),
+                  )
+                : Image.asset(
+                    imageMessageDeliveryInprogress,
                     height: 18,
                     width: 18,
                   )
+            : widget.message.delivery == Delivery.delivered
+                ? Get.isDarkMode
+                    ? Image.asset(
+                        imageMessageDeliveryRead,
+                        height: 18,
+                        width: 18,
+                        color: Colors.white.withOpacity(0.9),
+                      )
+                    : Image.asset(
+                        imageMessageDeliveryRead,
+                        height: 18,
+                        width: 18,
+                      )
                 : widget.message.delivery == Delivery.failed
                     ? GestureDetector(
                         onTap: () async {
@@ -225,7 +248,12 @@ class _MessageContentState<T extends BaseMessagesCubit>
         : SizedBox.shrink();
   }
 
-  _buildMessageText() {
+  Widget _buildMessageText() {
+    final double _sizeOfReplyBox = widget.message.text.length.toDouble() < 20 &&
+            widget.message.files!.isEmpty
+        ? 150 - widget.message.text.length.toDouble() * 7
+        : 5;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -245,23 +273,36 @@ class _MessageContentState<T extends BaseMessagesCubit>
                       isSwipe: false)
                   .message,
         ),
+        SizedBox(
+          width: _sizeOfReplyBox,
+        ),
       ],
     );
   }
 
-  _buildTime() {
+  Widget _buildTime() {
     return Text(
         widget.message.inThread
             ? DateFormatter.getVerboseDateTime(widget.message.createdAt)
             : DateFormatter.getVerboseTime(widget.message.createdAt),
         textAlign: TextAlign.end,
-        style: Theme.of(context)
-            .textTheme
-            .headline3!
-            .copyWith(fontSize: 12, fontWeight: FontWeight.w400));
+        style: Get.isDarkMode
+            ? widget.isMyMessage
+                ? Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 12, fontWeight: FontWeight.w400)
+                : Theme.of(context)
+                    .textTheme
+                    .headline3!
+                    .copyWith(fontSize: 12, fontWeight: FontWeight.w400)
+            : Theme.of(context)
+                .textTheme
+                .headline3!
+                .copyWith(fontSize: 12, fontWeight: FontWeight.w400));
   }
 
-  _buildReplies() {
+  Widget _buildReplies() {
     final List<Message>? last3Replies = widget.message.last3Replies;
     final List<Avatar> avatars = [];
     if (last3Replies != null) {
@@ -273,17 +314,19 @@ class _MessageContentState<T extends BaseMessagesCubit>
       });
     }
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, left: 12),
+      padding: const EdgeInsets.only(bottom: 12, left: 12, right: 6),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 6),
-            child: avatars == []
+            child: avatars != []
                 ? ImageWidget(
                     imageType: ImageType.common,
                     avatars: avatars,
-                    size: 62,
+                    size: avatars.length == 1
+                        ? 28
+                        : (22 * avatars.length).toDouble(),
                     stackSize: 28,
                     stackNumLimit: 3,
                   )
@@ -292,10 +335,15 @@ class _MessageContentState<T extends BaseMessagesCubit>
           Text(
               '${AppLocalizations.of(context)!.replyPlural(widget.message.responsesCount)}',
               style: Get.isDarkMode
-                  ? Theme.of(context)
-                      .textTheme
-                      .headline1!
-                      .copyWith(fontSize: 17, fontWeight: FontWeight.bold)
+                  ? widget.isMyMessage
+                      ? Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w400)
+                      : Theme.of(context)
+                          .textTheme
+                          .headline4!
+                          .copyWith(fontSize: 17, fontWeight: FontWeight.w400)
                   : Theme.of(context)
                       .textTheme
                       .headline4!
@@ -305,11 +353,11 @@ class _MessageContentState<T extends BaseMessagesCubit>
     );
   }
 
-  _buildUserName() {
+  Widget _buildUserName() {
     return widget.isMyMessage
         ? SizedBox.shrink()
         : Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
+            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 2),
             child: Text(
               '${widget.message.sender}',
               textAlign: TextAlign.start,
@@ -317,14 +365,17 @@ class _MessageContentState<T extends BaseMessagesCubit>
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 color: HSLColor.fromAHSL(
-                        1, widget.message.username.hashCode % 360, 0.9, 0.3)
+                        1,
+                        widget.message.username.hashCode % 360,
+                        0.9,
+                        Get.isDarkMode ? 0.4 : 0.3)
                     .toColor(),
               ),
             ),
           );
   }
 
-  _buildFileUploadingTile() {
+  Widget _buildFileUploadingTile() {
     return BlocBuilder<GalleryCubit, GalleryState>(
       bloc: Get.find<GalleryCubit>(),
       builder: (context, state) {
@@ -396,7 +447,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
     );
   }
 
-  _buildReactions(bool _isMyMessage) {
+  Widget _buildReactions(bool _isMyMessage) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
       child: Wrap(
@@ -408,6 +459,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
             return Reaction<T>(
               message: widget.message,
               reaction: r,
+              isMyMessage: widget.isMyMessage,
             );
           }),
         ],

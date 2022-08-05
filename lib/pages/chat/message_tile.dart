@@ -18,13 +18,14 @@ class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final bool isDirect;
   final bool isThread;
   final bool isSenderHidden;
-
+  final bool isHeadInThred;
   MessageTile({
     required this.message,
     this.hideSender = false,
     this.isDirect = false,
     this.isThread = false,
     this.isSenderHidden = false,
+    this.isHeadInThred = false,
     Key? key,
   }) : super(key: key);
 
@@ -140,9 +141,11 @@ class _MessageTileState<T extends BaseMessagesCubit>
           MessageContent(
             message: widget.message,
             isThread: widget.isThread,
+            isHeadInThred: widget.isHeadInThred,
             isDirect: widget.isDirect,
             isMyMessage: _isMyMessage,
             isSenderHidden: widget.isSenderHidden,
+            key: ValueKey(widget.message.hashCode),
           ),
           SizedBox(
             width: _isMyMessage ? Dim.widthPercent(3) : Dim.widthPercent(7),

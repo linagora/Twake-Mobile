@@ -48,12 +48,7 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                 ? AppBar(
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     titleSpacing: 0.0,
-                    shadowColor: Get.isDarkMode
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.3),
+                    shadowColor: Colors.transparent,
                     toolbarHeight: 60.0,
                     leadingWidth: 53.0,
                     leading: GestureDetector(
@@ -134,12 +129,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Divider(
-            thickness: 1.0,
-            height: 1.0,
-            color: Get.isDarkMode
-                ? Theme.of(context).colorScheme.primary
-                : Color(0xFFEEEEEE)),
         _buildLoading(messagesState),
         MessagesGroupedList(parentChannel: channel)
       ],

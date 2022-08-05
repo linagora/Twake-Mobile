@@ -18,7 +18,7 @@ class StylesConfig {
     error: Color(0xFFFF3347),
     onPrimary: Colors.black,
     onSecondary: Colors.black,
-    onSurface: Colors.white,
+    onSurface: Color(0xFF276CFF),
     onBackground: Colors.white,
     onError: Colors.black,
     brightness: Brightness.dark,
@@ -29,7 +29,7 @@ class StylesConfig {
     colorScheme: darkThemeColorScheme,
     fontFamily: fontFamilyByPlatform(),
     textTheme: darkTextTheme,
-    scaffoldBackgroundColor: Color(0xFF19191A),
+    scaffoldBackgroundColor: Color(0xFF19191B),
     iconTheme: IconThemeData(color: Colors.white),
     appBarTheme: AppBarTheme(color: Color(0xFF19191A)),
     brightness: Brightness.dark,
@@ -89,8 +89,8 @@ class StylesConfig {
 
   static final TextStyle _darkHeadline1 = TextStyle(
       color: Colors.white.withOpacity(0.9),
-      fontSize: 15.0,
-      fontWeight: FontWeight.w600,
+      fontSize: 17.0,
+      fontWeight: FontWeight.w400,
       fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline2 = TextStyle(
@@ -100,7 +100,7 @@ class StylesConfig {
       fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline3 = TextStyle(
-      color: Color(0xFF76787A),
+      color: Color(0xFFA0A1A5),
       fontSize: 14.0,
       fontWeight: FontWeight.normal,
       fontFamily: fontFamilyByPlatform());
