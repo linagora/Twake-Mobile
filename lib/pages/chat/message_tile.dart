@@ -99,29 +99,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
           onReply(widget.message);
         }
       },
-      onLongPress: () {
-        if (widget.message.subtype != MessageSubtype.deleted &&
-            widget.message.delivery == Delivery.delivered)
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) {
-              return MessageModalSheet<T>(
-                message: widget.message,
-                ctx: context,
-                isMe: _isMyMessage,
-                isThread: widget.isThread,
-                onReply: onReply,
-                onEdit: onEdit,
-                onDelete: onDelete,
-                onCopy: onCopy,
-                onPinMessage: onPinMessage,
-                onUnpinMessage: onUnpinMessage,
-              );
-            },
-          );
-      },
       child: _messagePadding(_isMyMessage),
     );
   }
