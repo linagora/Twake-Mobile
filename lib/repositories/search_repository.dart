@@ -21,6 +21,12 @@ class SearchMessage {
   SearchMessage(this.message, this.channel);
 }
 
+class SearchFile {
+  final Message message;
+
+  SearchFile(this.message);
+}
+
 class SearchRepository {
   final _api = ApiService.instance;
 
@@ -151,6 +157,45 @@ class SearchRepository {
       return SearchRepositoryRequest(result: result, hasError: false);
     } catch (e) {
       Logger().e('Error occurred while fetching messages:\n$e');
+
+      return SearchRepositoryRequest(result: [], hasError: true);
+    }
+  }
+
+  Future<SearchRepositoryRequest<List<SearchFile>>> fetchFiles({
+    required String searchTerm,
+  }) async {
+    final queryParameters = <String, dynamic>{
+      'limit': 25,
+      'is_file': true,
+      'q': searchTerm,
+    };
+
+    try {
+      final queryResult = await _api.get(
+        endpoint: sprintf(Endpoint.searchFiles, [
+          Globals.instance.companyId,
+        ]),
+        queryParameters: queryParameters,
+        key: 'resources',
+      ) as List<dynamic>;
+
+      final result = queryResult
+          .where((rm) =>
+              rm['type'] == 'message' &&
+              rm['subtype'] != 'system' &&
+              rm['subtype'] != 'application')
+          .map((entry) => SearchFile(Message.fromJson(
+                entry,
+                jsonify: true,
+                transform: true,
+                channelId: '',
+              )))
+          .toList();
+
+      return SearchRepositoryRequest(result: result, hasError: false);
+    } catch (e) {
+      Logger().e('Error occurred while fetching files:\n$e');
 
       return SearchRepositoryRequest(result: [], hasError: true);
     }

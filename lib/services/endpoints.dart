@@ -84,6 +84,8 @@ class Endpoint {
   static const searchUsers = '/internal/services/users/v1/users';
   static const searchMessages =
       '/internal/services/messages/v1/companies/%s/search';
+  static const searchFiles =
+      '/internal/services/messages/v1/companies/%s/files/search';
 
   static const publicMethods = const [info, reservation, signup, emailResend];
 

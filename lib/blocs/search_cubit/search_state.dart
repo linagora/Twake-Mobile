@@ -7,6 +7,7 @@ import 'package:twake/repositories/search_repository.dart';
 enum ContactsStateStatus { init, loading, done, failed, noPermission }
 enum ChatsStateStatus { init, loading, done, failed }
 enum MessagesStateStatus { init, loading, done, failed }
+enum FilesStateStatus { init, loading, done, failed }
 
 class SearchState extends Equatable {
   final String searchTerm;
@@ -15,12 +16,14 @@ class SearchState extends Equatable {
   final ContactsStateStatus contactsStateStatus;
   final ChatsStateStatus chatsStateStatus;
   final MessagesStateStatus messagesStateStatus;
+  final FilesStateStatus filesStateStatus;
 
   final List<AppContact> contacts;
   final List<Account> users;
   final List<Channel> recentChats;
   final List<Channel> chats;
   final List<SearchMessage> messages;
+  final List<SearchFile> files;
 
   const SearchState(
       {required this.searchTerm,
@@ -29,8 +32,10 @@ class SearchState extends Equatable {
       required this.contactsStateStatus,
       required this.chatsStateStatus,
       required this.messagesStateStatus,
+      required this.filesStateStatus,
       required this.chats,
       required this.messages,
+      required this.files,
       required this.contacts});
 
   factory SearchState.initial() {
@@ -41,8 +46,10 @@ class SearchState extends Equatable {
         chats: [],
         messages: [],
         recentChats: [],
+        files: [],
         chatsStateStatus: ChatsStateStatus.init,
         messagesStateStatus: MessagesStateStatus.init,
+        filesStateStatus: FilesStateStatus.init,
         contacts: []);
   }
 
@@ -56,6 +63,8 @@ class SearchState extends Equatable {
     final List<SearchMessage>? messages,
     final ChatsStateStatus? chatsStateStatus,
     final MessagesStateStatus? messagesStateStatus,
+    final FilesStateStatus? filesStateStatus,
+    final List<SearchFile>? files,
   }) {
     return SearchState(
       searchTerm: searchTerm ?? this.searchTerm,
@@ -66,7 +75,9 @@ class SearchState extends Equatable {
       chats: chats ?? this.chats,
       chatsStateStatus: chatsStateStatus ?? this.chatsStateStatus,
       messagesStateStatus: messagesStateStatus ?? this.messagesStateStatus,
+      filesStateStatus: filesStateStatus ?? this.filesStateStatus,
       messages: messages ?? this.messages,
+      files: files ?? this.files,
     );
   }
 
@@ -92,5 +103,7 @@ class SearchState extends Equatable {
         chats,
         messagesStateStatus,
         messages,
+        filesStateStatus,
+        files,
       ];
 }
