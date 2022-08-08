@@ -246,7 +246,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
 
   Widget _buildMessageText() {
     final double _sizeOfReplyBox = widget.message.text.length.toDouble() < 20 &&
-            widget.message.files!.isEmpty
+            (widget.message.files != null && widget.message.files!.isEmpty)
         ? 150 - widget.message.text.length.toDouble() * 7
         : 0;
 

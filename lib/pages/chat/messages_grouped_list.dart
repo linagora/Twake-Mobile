@@ -18,7 +18,10 @@ import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 
 class MessagesGroupedList extends StatefulWidget {
   final Channel parentChannel;
-  const MessagesGroupedList({required this.parentChannel, Key? key,}): super(key: key);
+  const MessagesGroupedList({
+    required this.parentChannel,
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MessagesGroupedListState();
@@ -110,7 +113,6 @@ class _ChatViewState extends State<_ChatView> {
 
         return JumpablePinnedMessages(
             child: UnreadMessagesWidget(
-              isDirect: widget.parentChannel.isDirect,
               messages: state.messages,
               startMessage: _startMessage,
               userLastAccess: widget.parentChannel.userLastAccess,
