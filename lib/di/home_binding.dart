@@ -9,7 +9,7 @@ import 'package:twake/blocs/companies_cubit/companies_cubit.dart';
 import 'package:twake/blocs/company_files_cubit/company_file_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_cubit.dart';
-import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/language_cubit/language_cubit.dart';
@@ -57,10 +57,12 @@ class HomeBinding implements Bindings {
     final directsCubit = DirectsCubit();
     Get.put(directsCubit, permanent: true);
 
-    final channelMessagesCubit = ChannelMessagesCubit(channelsCubit: channelsCubit);
+    final channelMessagesCubit =
+        ChannelMessagesCubit(channelsCubit: channelsCubit);
     Get.put(channelMessagesCubit, permanent: true);
 
-    final threadMessagesCubit = ThreadMessagesCubit(channelCubit: channelsCubit);
+    final threadMessagesCubit =
+        ThreadMessagesCubit(channelCubit: channelsCubit);
     Get.put(threadMessagesCubit, permanent: true);
 
     final pinnedMessagesCubit = PinnedMessageCubit();
@@ -108,7 +110,7 @@ class HomeBinding implements Bindings {
     final companyFileCubit = CompanyFileCubit(accountCubit: accountCubit);
     Get.put(companyFileCubit, permanent: true);
 
-    final fileUploadTransitionCubit = FileUploadTransitionCubit();
+    final fileUploadTransitionCubit = FileTransitionCubit();
     Get.put(fileUploadTransitionCubit, permanent: true);
 
     Future.delayed(Duration(seconds: 5), () {

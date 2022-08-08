@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/file_cubit/file_upload_transition_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
@@ -51,15 +51,15 @@ class _MessageContentState<T extends BaseMessagesCubit>
 
   @override
   Widget build(BuildContext context) {
-    final fileTransitionState = Get.find<FileUploadTransitionCubit>().state;
-    final bool _isFileUploading = Get.find<FileUploadTransitionCubit>()
+    /*final fileTransitionState = Get.find<FileTransitionCubit>().state;
+    final bool _isFileUploading = Get.find<FileTransitionCubit>()
                 .state
-                .fileUploadTransitionStatus ==
-            FileUploadTransitionStatus.uploadingMessageSent
+                .fileTransitionStatus ==
+            FileTransitionStatus.uploadingMessageSent
         ? fileTransitionState.messages.first.id == widget.message.id
             ? true
             : false
-        : false;
+        : false;*/
 
     return Expanded(
       child: Row(
@@ -72,7 +72,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
               ? SizedBox.shrink()
               : widget.isSenderHidden
                   ? const SizedBox(
-                      width: 36,
+                      width: 42,
                     )
                   : Padding(
                       padding: const EdgeInsets.only(
@@ -84,18 +84,14 @@ class _MessageContentState<T extends BaseMessagesCubit>
                           size: 36),
                     ),
           Flexible(
-            child: _buildMessageBubble(
-              _isFileUploading,
-            ),
+            child: _buildMessageBubble(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMessageBubble(
-    bool _isFileUploading,
-  ) {
+  Widget _buildMessageBubble() {
     return Container(
       decoration: BoxDecoration(
           color: Get.isDarkMode
@@ -252,7 +248,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
     final double _sizeOfReplyBox = widget.message.text.length.toDouble() < 20 &&
             widget.message.files!.isEmpty
         ? 150 - widget.message.text.length.toDouble() * 7
-        : 5;
+        : 0;
 
     return Row(
       mainAxisSize: MainAxisSize.min,

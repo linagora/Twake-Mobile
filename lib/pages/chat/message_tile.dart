@@ -136,7 +136,13 @@ class _MessageTileState<T extends BaseMessagesCubit>
             _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
           SizedBox(
-            width: _isMyMessage ? Dim.widthPercent(3) : Dim.widthPercent(2),
+            width: widget.message.files == null
+                ? _isMyMessage
+                    ? Dim.widthPercent(3)
+                    : Dim.widthPercent(2)
+                : _isMyMessage
+                    ? Dim.widthPercent(15)
+                    : Dim.widthPercent(3),
           ),
           MessageContent(
             message: widget.message,

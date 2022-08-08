@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -9,14 +8,10 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
-
-import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/routing/app_router.dart';
-
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
@@ -112,7 +107,6 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
                     Flexible(
                         child:
                             _buildChatContent(messagesState, channel, context)),
-                    ChatThumbnailsUploading(),
                     _composeBar(messagesState, draft, channel)
                   ],
                 ),

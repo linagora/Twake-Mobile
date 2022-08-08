@@ -591,7 +591,8 @@ class TwacodeRenderer {
     double userUniqueColor = 0.0,
     bool isSwipe: false,
   }) {
-    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe, fileIds: this.fileIds);
+    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe,
+        fileIds: this.fileIds);
   }
 
   TextStyle getStyle(
@@ -742,14 +743,10 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render(List<dynamic> twacode,TextStyle parentStyle,
-      double userUniqueColor, bool isSwipe, {List<dynamic>? fileIds}) {
+  List<InlineSpan> render(List<dynamic> twacode, TextStyle parentStyle,
+      double userUniqueColor, bool isSwipe,
+      {List<dynamic>? fileIds}) {
     List<InlineSpan> spans = [];
-
-    if(fileIds != null && fileIds.isNotEmpty) {
-      final listFileTile = appendFile(fileIds, parentStyle);
-      spans.add(WidgetSpan(child: listFileTile));
-    }
 
     for (int i = 0; i < twacode.length; i++) {
       if (twacode[i] is String) {
@@ -1014,12 +1011,14 @@ class TwacodeRenderer {
         } else if (type == TType.Url) {
           final url = Utilities.preprocessString(t['url']);
           final content = Utilities.preprocessString(t['content']);
-          final launchUrl = url.isNotEmpty ? url : (content.isNotEmpty ? content : '');
+          final launchUrl =
+              url.isNotEmpty ? url : (content.isNotEmpty ? content : '');
           spans.add(
             WidgetSpan(
               child: UrlPreview(
                 url: launchUrl,
-                textStyle: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                textStyle:
+                    getStyle(type, parentStyle, userUniqueColor, isSwipe),
               ),
             ),
           );
@@ -1103,12 +1102,17 @@ class TwacodeRenderer {
         }
       }
     }
+    if (fileIds != null && fileIds.isNotEmpty) {
+      final listFileTile = appendFile(fileIds, parentStyle);
+      spans.add(WidgetSpan(child: const Text("         ")));
+      spans.add(WidgetSpan(child: listFileTile));
+    }
     return spans;
   }
 
   Widget appendFile(List<dynamic> fileIds, TextStyle parentStyle) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16.0),
+      margin: const EdgeInsets.only(bottom: 16.0, top: 8),
       child: Column(
         children: fileIds.map((element) {
           // element may be a string when loaded from local DB first time
@@ -1117,7 +1121,7 @@ class TwacodeRenderer {
             return FileTile(
                 fileId: element,
                 isMyMessage: parentStyle.color == Colors.black ? false : true);
-          } else if(element is Attachment) {
+          } else if (element is Attachment) {
             return FileTile(
                 fileId: element.metadata.externalId.id,
                 isMyMessage: parentStyle.color == Colors.black ? false : true);

@@ -9,7 +9,6 @@ import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
-import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'messages_thread_list.dart';
@@ -157,7 +156,6 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                               PinnedMessageSheet(),
                               ThreadMessagesList<ThreadMessagesCubit>(
                                   parentChannel: channel),
-                              ChatThumbnailsUploading(),
                               ComposeBar(
                                   autofocus: autofocus ||
                                       messagesState is MessageEditInProgress,
