@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
@@ -17,7 +20,9 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
   final Message? pinnedMessage;
 
-  const ThreadMessagesList({required this.parentChannel, this.pinnedMessage});
+  const ThreadMessagesList(
+      {required this.parentChannel, this.pinnedMessage, Key? key})
+      : super(key: key);
 
   @override
   _ThreadMessagesListState createState() => _ThreadMessagesListState<T>();
@@ -34,6 +39,8 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   int? unreadCounter;
   ScrollPhysics _physics = ClampingScrollPhysics();
+
+  GlobalKey _threadKey = GlobalKey();
 
   @override
   void initState() {
@@ -137,6 +144,8 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
                                 _messages.indexOf(latestMessage));
                   }),
               body: ScrollablePositionedList.builder(
+                itemPositionsListener: _itemPositionsListener,
+                key: _threadKey,
                 initialScrollIndex: (unreadCounter ?? 1) - 1,
                 itemCount: _messages.length,
                 itemScrollController: _jumpController,
@@ -174,11 +183,18 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
     if ((index == 0 && isJump) || (index == _messages.length - 1 && !isJump)) {
       return SizedBox.shrink();
     } else {
-      return MessageTile<ThreadMessagesCubit>(
-        message: _messages[_messages.length - 1 - index],
-        key: ValueKey(_messages[_messages.length - 1 - index].hash),
-        isThread: true,
-        isDirect: widget.parentChannel.isDirect,
+      return GestureDetector(
+        child: MessageTile<ThreadMessagesCubit>(
+          message: _messages[_messages.length - 1 - index],
+          key: ValueKey(_messages[_messages.length - 1 - index].hash),
+          isThread: true,
+          isDirect: widget.parentChannel.isDirect,
+        ),
+        onLongPress: () => Get.find<MessageAnimationCubit>().startAnimation(
+          longPressMessage: _messages[_messages.length - 1 - index],
+          longPressIndex: max(0, index - 1), // because the replied message
+          itemPositionsListener: _itemPositionsListener,
+        ),
       );
     }
   }
