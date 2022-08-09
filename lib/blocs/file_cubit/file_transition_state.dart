@@ -5,6 +5,7 @@ enum FileTransitionStatus {
   messageEmptyFileLoading,
   messageInprogressFileLoading,
   messageSentFileLoading,
+  noMessageTwakeFile,
   finished,
 }
 

@@ -25,6 +25,11 @@ class FileTransitionCubit extends Cubit<FileTransitionState> {
             FileTransitionStatus.messageInprogressFileLoading));
   }
 
+  void noMessageTwakeFile() async {
+    emit(FileTransitionState(
+        fileTransitionStatus: FileTransitionStatus.noMessageTwakeFile));
+  }
+
   void messageSentFileLoading(List<Message> messages) async {
     emit(FileTransitionState(
         fileTransitionStatus: FileTransitionStatus.messageSentFileLoading,

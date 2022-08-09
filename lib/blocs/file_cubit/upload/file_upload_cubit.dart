@@ -119,7 +119,7 @@ class FileUploadCubit extends Cubit<FileUploadState> {
     );
 
     emit(state.copyWith(
-        fileUploadStatus: FileUploadStatus.inProcessing,
+        fileUploadStatus: FileUploadStatus.finished,
         listFileUploading: listFileUploading..add(existsFileUploading)));
   }
 
