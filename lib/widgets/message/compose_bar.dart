@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
@@ -11,7 +10,6 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/mentions_cubit/mentions_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
@@ -22,6 +20,7 @@ import 'package:twake/utils/constants.dart';
 import 'package:twake/utils/extensions.dart';
 import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/twake_alert_dialog.dart';
+import 'package:twake/widgets/sheets/mention_sheet.dart';
 
 class ComposeBar extends StatefulWidget {
   final bool autofocus;
@@ -42,11 +41,10 @@ class ComposeBar extends StatefulWidget {
 
 class _ComposeBar extends State<ComposeBar> {
   final _userMentionRegex = RegExp(r'(^|\s)@[A-Za-z0-9._-]+$');
-  var _emojiVisible = false;
-  var _mentionsVisible = false;
-  var _forceLooseFocus = false;
-  var _canSend = false;
-  var _canSendFiles = false;
+  bool _emojiVisible = false;
+  bool _forceLooseFocus = false;
+  bool _canSend = false;
+  bool _canSendFiles = false;
 
   final _focusNode = FocusNode();
   final _controller = TextEditingController();
@@ -74,19 +72,12 @@ class _ComposeBar extends State<ComposeBar> {
     _controller.addListener(() {
       if (_controller.selection.base.offset < 0) return;
 
-      var text = _controller.text;
+      String text = _controller.text;
       text = text.substring(0, _controller.selection.base.offset);
       if (_userMentionRegex.hasMatch(text)) {
         Get.find<MentionsCubit>().fetch(
           searchTerm: text.split('@').last.trimRight(),
         );
-        Future.delayed(const Duration(milliseconds: 100), () {
-          mentionsVisible();
-        });
-      } else {
-        setState(() {
-          _mentionsVisible = false;
-        });
       }
       // Update for cache handlers
       widget.onTextUpdated(text, context);
@@ -138,17 +129,7 @@ class _ComposeBar extends State<ComposeBar> {
       final transitionCubitState = Get.find<FileTransitionCubit>().state;
       final hasUploadedFileInStack = state.listFileUploading.every(
           (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
-
-      if (hasUploadedFileInStack &&
-          transitionCubitState.fileTransitionStatus ==
-              FileTransitionStatus.messageSentFileLoading) {
-        Get.find<FileTransitionCubit>().startMessageEditting();
-      }
-
-      if (hasUploadedFileInStack &&
-          transitionCubitState.fileTransitionStatus ==
-              FileTransitionStatus.messageEmptyFileLoading) {
-        // if file sent without a text, wait till it is well loaded and send an empty message with a file
+      sendFile() {
         List<dynamic> attachments = state.listFileUploading
             .where((fileUploading) => (fileUploading.file != null ||
                 fileUploading.messageFile != null))
@@ -172,17 +153,26 @@ class _ComposeBar extends State<ComposeBar> {
         Get.find<FileUploadCubit>().clearFileUploadingState();
         Get.find<FileTransitionCubit>().fileTransitionFinished();
       }
-    });
-  }
 
-  // TODO get rid of _mentionsVisible since can use states of new MentionsCubit
-  void mentionsVisible() async {
-    final MentionState mentionsState = Get.find<MentionsCubit>().state;
-    if (mentionsState is MentionsLoadSuccess) {
-      setState(() {
-        _mentionsVisible = true;
-      });
-    }
+      if (hasUploadedFileInStack &&
+          transitionCubitState.fileTransitionStatus ==
+              FileTransitionStatus.messageSentFileLoading) {
+        // When the file is uploaded => edit message and attach the file
+        Get.find<FileTransitionCubit>().startMessageEditting();
+      }
+
+      if (hasUploadedFileInStack &&
+          transitionCubitState.fileTransitionStatus ==
+              FileTransitionStatus.messageEmptyFileLoading) {
+        // if file sent without a text, wait till it is well loaded and send an empty message with a file
+        sendFile();
+      }
+      if (transitionCubitState.fileTransitionStatus ==
+          FileTransitionStatus.noMessageTwakeFile) {
+        // Twake File from Gallery
+        sendFile();
+      }
+    });
   }
 
   @override
@@ -224,7 +214,7 @@ class _ComposeBar extends State<ComposeBar> {
   }
 
   void mentionReplace(String username) async {
-    var text = _controller.text;
+    String text = _controller.text;
     text = text.substring(0, _controller.selection.base.offset);
     _controller.text = _controller.text.replaceRange(
       text.lastIndexOf('@'),
@@ -261,116 +251,7 @@ class _ComposeBar extends State<ComposeBar> {
         onWillPop: onBackPress,
         child: Column(
           children: [
-            _mentionsVisible
-                ? BlocBuilder<MentionsCubit, MentionState>(
-                    bloc: Get.find<MentionsCubit>(),
-                    builder: (context, state) {
-                      if (state is MentionsLoadSuccess) {
-                        final List<Widget> _listW = [];
-                        _listW.add(Divider(thickness: 1));
-                        for (int i = 0; i < state.accounts.length; i++) {
-                          _listW.add(
-                            InkWell(
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: 40.0,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(width: 15),
-                                    ClipRRect(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(30)),
-                                      child: CircleAvatar(
-                                        child: state.accounts[i].picture! == ""
-                                            ? CircleAvatar(
-                                                child: Icon(Icons.person,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary),
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .secondaryContainer,
-                                              )
-                                            : Image.network(
-                                                state.accounts[i].picture!,
-                                                fit: BoxFit.contain,
-                                                loadingBuilder:
-                                                    (context, child, progress) {
-                                                  if (progress == null) {
-                                                    return child;
-                                                  }
-
-                                                  return CircleAvatar(
-                                                    child: Icon(Icons.person,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .secondary),
-                                                    backgroundColor:
-                                                        Theme.of(context)
-                                                            .colorScheme
-                                                            .secondaryContainer,
-                                                  );
-                                                },
-                                              ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 15),
-                                    Expanded(
-                                      child: Text(
-                                        '${state.accounts[i].fullName} ',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1!
-                                            .copyWith(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w300),
-                                      ),
-                                    ),
-                                    SizedBox(width: 15),
-                                  ],
-                                ),
-                              ),
-                              onTap: () {
-                                Get.find<MentionsCubit>().reset();
-
-                                mentionReplace(state.accounts[i].username);
-                                setState(
-                                  () {
-                                    _mentionsVisible = false;
-                                  },
-                                );
-                              },
-                            ),
-                          );
-                          if (i < state.accounts.length - 1) {
-                            _listW.add(Divider(thickness: 1));
-                          }
-                          _listW.add(const SizedBox(height: 6));
-                        }
-                        return ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight: Dim.heightPercent(30),
-                          ),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: _listW,
-                            ),
-                          ),
-                        );
-                      } else if (state is MentionsInitial) {
-                        return Container();
-                        //Text("Empty");
-                      }
-                      return Container();
-                    },
-                  )
-                : Container(),
+            MentionSheet(onTapMention: mentionReplace),
             TextInput(
               controller: _controller,
               scrollController: _scrollController,
@@ -464,8 +345,6 @@ class TextInput extends StatefulWidget {
 }
 
 class _TextInputState extends State<TextInput> {
-  final _imagePicker = ImagePicker();
-
   @override
   Widget build(BuildContext context) {
     return Container(

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
@@ -260,14 +259,13 @@ class _MessageContentState<T extends BaseMessagesCubit>
                   style: Theme.of(context).textTheme.headline1!,
                 )
               : TwacodeRenderer(
-                      twacode: widget.message.blocks.length == 0
-                          ? [widget.message.text]
-                          : widget.message.blocks,
-                      fileIds: widget.message.files,
-                      parentStyle: Theme.of(context).textTheme.headline1!,
-                      userUniqueColor: widget.message.username.hashCode % 360,
-                      isSwipe: false)
-                  .message,
+                  twacode: widget.message.blocks.length == 0
+                      ? [widget.message.text]
+                      : widget.message.blocks,
+                  fileIds: widget.message.files,
+                  parentStyle: Theme.of(context).textTheme.headline1!,
+                  userUniqueColor: widget.message.username.hashCode % 360,
+                ).message,
         ),
         SizedBox(
           width: _sizeOfReplyBox,

@@ -589,14 +589,13 @@ class TwacodeRenderer {
     required this.fileIds,
     required TextStyle parentStyle,
     double userUniqueColor = 0.0,
-    bool isSwipe: false,
   }) {
-    spans = render(this.twacode, parentStyle, userUniqueColor, isSwipe,
+    spans = render(this.twacode, parentStyle, userUniqueColor,
         fileIds: this.fileIds);
   }
 
   TextStyle getStyle(
-      TType type, TextStyle parentStyle, double userUniqueColor, isSwipe) {
+      TType type, TextStyle parentStyle, double userUniqueColor) {
     TextStyle style;
     switch (type) {
       case TType.InlineCode:
@@ -656,9 +655,7 @@ class TwacodeRenderer {
         style = TextStyle(
           color: parentStyle.color == Colors.black
               ? HSLColor.fromAHSL(1, userUniqueColor, 0.9, 0.3).toColor()
-              : isSwipe
-                  ? Colors.blue
-                  : Colors.white,
+              : HSLColor.fromAHSL(1, userUniqueColor, 1, 0.5).toColor(),
           fontSize: 14,
         );
         break;
@@ -677,15 +674,10 @@ class TwacodeRenderer {
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               )
-            : isSwipe
-                ? TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  )
-                : TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.underline,
-                  );
+            : TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+              );
         break;
 
       case TType.Attachment:
@@ -702,15 +694,10 @@ class TwacodeRenderer {
                 color: Colors.blue,
                 decoration: TextDecoration.underline,
               )
-            : isSwipe
-                ? TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
-                  )
-                : TextStyle(
-                    color: Colors.white,
-                    decoration: TextDecoration.underline,
-                  );
+            : TextStyle(
+                color: Colors.white,
+                decoration: TextDecoration.underline,
+              );
         break;
 
       case TType.Unknown:
@@ -743,8 +730,8 @@ class TwacodeRenderer {
     );
   }
 
-  List<InlineSpan> render(List<dynamic> twacode, TextStyle parentStyle,
-      double userUniqueColor, bool isSwipe,
+  List<InlineSpan> render(
+      List<dynamic> twacode, TextStyle parentStyle, double userUniqueColor,
       {List<dynamic>? fileIds}) {
     List<InlineSpan> spans = [];
 
@@ -755,15 +742,15 @@ class TwacodeRenderer {
             text:
                 spans.isEmpty ? (twacode[i] as String).trimLeft() : twacode[i],
             style: parentStyle.merge(
-              getStyle(TType.Text, parentStyle, userUniqueColor, isSwipe),
+              getStyle(TType.Text, parentStyle, userUniqueColor),
             ),
           ),
         );
       } else if (twacode[i] is List) {
-        spans.addAll(render(twacode[i], parentStyle, userUniqueColor, isSwipe));
+        spans.addAll(render(twacode[i], parentStyle, userUniqueColor));
       } else if (twacode[i] is Map && twacode[i]['type'] == 'twacode') {
         spans.addAll(
-          render(twacode[i]['elements'], parentStyle, userUniqueColor, isSwipe),
+          render(twacode[i]['elements'], parentStyle, userUniqueColor),
         );
       } else if (twacode[i] is Map) {
         final t = twacode[i];
@@ -861,11 +848,10 @@ class TwacodeRenderer {
             spans.add(
               TextSpan(
                 text: '\n',
-                style: getStyle(
-                    TType.LineBreak, parentStyle, userUniqueColor, isSwipe),
+                style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
               ),
             );
-          final style = getStyle(type, parentStyle, userUniqueColor, isSwipe);
+          final style = getStyle(type, parentStyle, userUniqueColor);
           final _scrollController = ScrollController(
             initialScrollOffset: 0.0,
             keepScrollOffset: false,
@@ -906,18 +892,16 @@ class TwacodeRenderer {
           );
         } else if (type == TType.Attachment &&
             (t['content'] as List).isNotEmpty) {
-          final items =
-              render(t['content'], parentStyle, userUniqueColor, isSwipe);
+          final items = render(t['content'], parentStyle, userUniqueColor);
           final text = TextSpan(
             children: items,
             style: parentStyle.merge(
-              getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              getStyle(type, parentStyle, userUniqueColor),
             ),
           );
           spans.add(TextSpan(
               text: '\n',
-              style: getStyle(
-                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe)));
+              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor)));
           spans.add(
             WidgetSpan(
               child: Container(
@@ -942,12 +926,11 @@ class TwacodeRenderer {
           InlineSpan text;
 
           if (t['content'] is List) {
-            final items =
-                render(t['content'], parentStyle, userUniqueColor, isSwipe);
+            final items = render(t['content'], parentStyle, userUniqueColor);
             text = TextSpan(
               children: items,
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             );
           } else {
@@ -955,7 +938,7 @@ class TwacodeRenderer {
             text = TextSpan(
               text: t['content'],
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             );
           }
@@ -984,8 +967,7 @@ class TwacodeRenderer {
           spans.add(
             TextSpan(
               text: Emojis.getByName(t['content']),
-              style: getStyle(
-                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe),
+              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor),
             ),
           );
         } else if (type == TType.Nop) {
@@ -994,13 +976,12 @@ class TwacodeRenderer {
               t['context']
             ]; // I know, I know, it cannot be uglier
           }
-          final items =
-              render(t['content'], parentStyle, userUniqueColor, isSwipe);
+          final items = render(t['content'], parentStyle, userUniqueColor);
           spans.add(
             TextSpan(
               children: items,
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );
@@ -1017,15 +998,14 @@ class TwacodeRenderer {
             WidgetSpan(
               child: UrlPreview(
                 url: launchUrl,
-                textStyle:
-                    getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                textStyle: getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );
         } else if (type == TType.Link) {
           final url = (t['content'] as String).split('(').last;
           spans.add(TextSpan(
-              style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+              style: getStyle(type, parentStyle, userUniqueColor),
               text: (t['content'] as String).split(']').first,
               recognizer: TapGestureRecognizer()
                 ..onTap = () async {
@@ -1039,16 +1019,14 @@ class TwacodeRenderer {
         } else if (type == TType.LineBreak) {
           spans.add(TextSpan(
               text: '\n',
-              style: getStyle(
-                  TType.LineBreak, parentStyle, userUniqueColor, isSwipe)));
+              style: getStyle(TType.LineBreak, parentStyle, userUniqueColor)));
         } else if (t['content'] is List) {
-          final items =
-              render(t['content'], parentStyle, userUniqueColor, isSwipe);
+          final items = render(t['content'], parentStyle, userUniqueColor);
           spans.add(
             TextSpan(
               children: items,
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );
@@ -1057,7 +1035,7 @@ class TwacodeRenderer {
             TextSpan(
               text: t['content'],
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );
@@ -1070,7 +1048,7 @@ class TwacodeRenderer {
               child: UserMention(
                 userId: userId,
                 username: username,
-                style: getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                style: getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );
@@ -1079,7 +1057,7 @@ class TwacodeRenderer {
             TextSpan(
               text: 'not supported',
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );
@@ -1095,7 +1073,7 @@ class TwacodeRenderer {
             TextSpan(
               text: content is String ? content : 'not supported',
               style: parentStyle.merge(
-                getStyle(type, parentStyle, userUniqueColor, isSwipe),
+                getStyle(type, parentStyle, userUniqueColor),
               ),
             ),
           );

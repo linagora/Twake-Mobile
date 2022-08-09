@@ -52,20 +52,19 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
       child: Scaffold(
         body: Stack(
           children: [
-            BlocBuilder<FileUploadCubit, FileUploadState>(
-              bloc: Get.find<FileUploadCubit>(),
-              builder: (context, state) {
-                return Scaffold(
-                  appBar: state.fileUploadStatus !=
-                          FileUploadStatus.inProcessing
-                      ? AppBar(
-                          backgroundColor:
-                              Theme.of(context).scaffoldBackgroundColor,
-                          titleSpacing: 0.0,
-                          shadowColor: Colors.transparent,
-                          toolbarHeight: 60.0,
-                          leadingWidth: 53.0,
-                          leading: GestureDetector(
+            Scaffold(
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                titleSpacing: 0.0,
+                shadowColor: Colors.transparent,
+                toolbarHeight: 60.0,
+                leadingWidth: 53.0,
+                leading: BlocBuilder<FileUploadCubit, FileUploadState>(
+                  bloc: Get.find<FileUploadCubit>(),
+                  builder: (context, state) {
+                    return state.fileUploadStatus !=
+                            FileUploadStatus.inProcessing
+                        ? GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
                               popBack();
@@ -84,58 +83,60 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
                                 color: Theme.of(context).colorScheme.surface,
                               ),
                             ),
-                          ),
-                          title: BlocBuilder<ChannelsCubit, ChannelsState>(
-                              bloc: Get.find<ChannelsCubit>(),
-                              builder: (ctx, channelState) {
-                                final selectedChannel =
-                                    (channelState as ChannelsLoadedSuccess)
-                                            .selected ??
-                                        channel;
-                                isDirect = selectedChannel.isDirect;
-                                return ChatHeader(
-                                    isDirect: selectedChannel.isDirect,
-                                    isPrivate: selectedChannel.isPrivate,
-                                    userId: selectedChannel.members.isNotEmpty
-                                        ? selectedChannel.members.first
-                                        : null,
-                                    name: selectedChannel.name,
-                                    icon: Emojis.getByName(
-                                        selectedChannel.icon ?? ''),
-                                    avatars: selectedChannel.isDirect
-                                        ? selectedChannel.avatars
-                                        : const [],
-                                    membersCount:
-                                        selectedChannel.stats?.members ?? 0,
-                                    onTap: () {
-                                      final cstate = Get.find<CompaniesCubit>()
-                                          .state as CompaniesLoadSuccess;
-                                      if (T == ChannelsCubit &&
-                                          cstate.selected.canUpdateChannel) {
-                                        NavigatorService.instance
-                                            .navigateToChannelDetail();
-                                      }
-                                    });
-                              }),
-                        )
-                      : null,
-                  body: SafeArea(
-                    child: BlocBuilder<ChannelMessagesCubit, MessagesState>(
-                      bloc: Get.find<ChannelMessagesCubit>(),
-                      builder: (_, messagesState) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          PinnedMessageSheet(),
-                          Flexible(
-                              child: _buildChatContent(messagesState, channel,
-                                  context, _messagesListKey)),
-                          _composeBar(messagesState, draft, channel)
-                        ],
-                      ),
-                    ),
+                          )
+                        : SizedBox.shrink();
+                  },
+                ),
+                title: BlocBuilder<ChannelsCubit, ChannelsState>(
+                    bloc: Get.find<ChannelsCubit>(),
+                    builder: (ctx, channelState) {
+                      final selectedChannel =
+                          (channelState as ChannelsLoadedSuccess).selected ??
+                              channel;
+                      isDirect = selectedChannel.isDirect;
+                      return ChatHeader(
+                          isDirect: selectedChannel.isDirect,
+                          isPrivate: selectedChannel.isPrivate,
+                          userId: selectedChannel.members.isNotEmpty
+                              ? selectedChannel.members.first
+                              : null,
+                          name: selectedChannel.name,
+                          icon: Emojis.getByName(selectedChannel.icon ?? ''),
+                          avatars: selectedChannel.isDirect
+                              ? selectedChannel.avatars
+                              : const [],
+                          membersCount: selectedChannel.stats?.members ?? 0,
+                          onTap: () {
+                            final fileUploadCubitState =
+                                Get.find<FileUploadCubit>().state;
+                            if (fileUploadCubitState.fileUploadStatus !=
+                                FileUploadStatus.inProcessing) {
+                              final cstate = Get.find<CompaniesCubit>().state
+                                  as CompaniesLoadSuccess;
+                              if (T == ChannelsCubit &&
+                                  cstate.selected.canUpdateChannel) {
+                                NavigatorService.instance
+                                    .navigateToChannelDetail();
+                              }
+                            }
+                          });
+                    }),
+              ),
+              body: SafeArea(
+                child: BlocBuilder<ChannelMessagesCubit, MessagesState>(
+                  bloc: Get.find<ChannelMessagesCubit>(),
+                  builder: (_, messagesState) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PinnedMessageSheet(),
+                      Flexible(
+                          child: _buildChatContent(messagesState, channel,
+                              context, _messagesListKey)),
+                      _composeBar(messagesState, draft, channel)
+                    ],
                   ),
-                );
-              },
+                ),
+              ),
             ),
             BlocBuilder<MessageAnimationCubit, MessageAnimationState>(
               bloc: Get.find<MessageAnimationCubit>(),
