@@ -47,37 +47,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
     );
   }
 
-  void onEdit(Message message) {
-    message.inThread
-        ? Get.find<ThreadMessagesCubit>().startEdit(message: widget.message)
-        : Get.find<ChannelMessagesCubit>().startEdit(message: widget.message);
-    Navigator.of(context).pop();
-  }
-
-  void onDelete() {
-    widget.isThread
-        ? Get.find<ThreadMessagesCubit>().delete(message: widget.message)
-        : Get.find<ChannelMessagesCubit>().delete(message: widget.message);
-    Navigator.of(context).pop();
-  }
-
-  void onCopy(context, text) {
-    FlutterClipboard.copy(text);
-
-    Utilities.showSimpleSnackBar(
-        message: AppLocalizations.of(context)!.messageCopiedInfo,
-        context: context,
-        iconData: Icons.copy);
-
-    Navigator.of(context).pop();
-  }
-
-  void onPinMessage() async {
-    Get.find<PinnedMessageCubit>()
-        .pinMessage(message: widget.message, isDirect: widget.isDirect);
-    Navigator.of(context).pop();
-  }
-
   void onUnpinMessage() async {
     final bool result = await Get.find<PinnedMessageCubit>()
         .unpinMessage(message: widget.message);

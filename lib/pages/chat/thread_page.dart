@@ -1,4 +1,3 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,17 +5,12 @@ import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
-import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
-import 'package:twake/blocs/message_animation_cubit/message_animation_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
+import 'package:twake/pages/chat/message_animation.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
-import 'package:twake/services/navigator_service.dart';
-import 'package:twake/utils/utilities.dart';
-import 'package:twake/widgets/common/animated_menu_message.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'messages_thread_list.dart';
 
@@ -224,66 +218,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                           ),
                         );
                       }),
-                  BlocBuilder<MessageAnimationCubit, MessageAnimationState>(
-                    bloc: Get.find<MessageAnimationCubit>(),
-                    builder: ((context, state) {
-                      if (state is! MessageAnimationStart) {
-                        return Container();
-                      }
-
-                      // find size of messages list
-                      Size? size;
-                      Offset? messageListTopLeftPoint;
-                      if (_threadKey.currentContext != null &&
-                          _threadKey.currentContext?.findRenderObject() !=
-                              null) {
-                        size = (_threadKey.currentContext?.findRenderObject()
-                                as RenderBox)
-                            .size;
-                        messageListTopLeftPoint = (_threadKey.currentContext
-                                ?.findRenderObject() as RenderBox)
-                            .localToGlobal(Offset.zero);
-                      }
-
-                      return MenuMessageDropDown<ThreadMessagesCubit>(
-                        message: state.longPressMessage,
-                        itemPositionsListener: state.itemPositionListener,
-                        clickedItem: state.longPressIndex,
-                        messagesListSize: size,
-                        messageListPosition: messageListTopLeftPoint,
-                        onReply: () {},
-                        onEdit: () {
-                          Get.find<MessageAnimationCubit>().endAnimation();
-
-                          Get.find<ThreadMessagesCubit>()
-                              .startEdit(message: state.longPressMessage);
-                        },
-                        onCopy: () {
-                          Get.find<MessageAnimationCubit>().endAnimation();
-
-                          FlutterClipboard.copy(state.longPressMessage.text);
-
-                          Utilities.showSimpleSnackBar(
-                              message: AppLocalizations.of(context)!
-                                  .messageCopiedInfo,
-                              context: context,
-                              iconData: Icons.copy);
-                        },
-                        onDelete: () {
-                          Get.find<MessageAnimationCubit>().endAnimation();
-                          Get.find<ThreadMessagesCubit>()
-                              .delete(message: state.longPressMessage);
-                        },
-                        onPinMessage: () {
-                          Get.find<MessageAnimationCubit>().endAnimation();
-
-                          Get.find<PinnedMessageCubit>().pinMessage(
-                              message: state.longPressMessage,
-                              isDirect: isDirect);
-                        },
-                      );
-                    }),
-                  ),
+                  LongPressMessageAnimation<ThreadMessagesCubit>(messagesListKey: _threadKey, isDirect: isDirect),
                 ]),
               );
             } else {

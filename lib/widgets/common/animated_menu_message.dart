@@ -53,10 +53,24 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
 
   bool _emojiVisible = false;
 
+  int numberOfDropDownBar = 0;
+  List<dynamic> dropdownFuncs = [];
+
   @override
   void initState() {
     super.initState();
     clickedItem = widget.clickedItem;
+
+    dropdownFuncs = [
+      widget.onReply,
+      widget.onCopy,
+      widget.onEdit,
+      widget.onDelete,
+      widget.onPinMessage,
+      widget.onUnpinMessage
+    ];
+    numberOfDropDownBar =
+        dropdownFuncs.where((element) => element != null).length;
   }
 
   void didUpdateWidget(covariant MenuMessageDropDown oldWidget) {
@@ -98,21 +112,27 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
         }
 
         double emojiHeight = 50;
-        double dropMenuHeight = 51 * 4;
+        double dropMenuHeight = (DropDownButton.DROPDOWN_HEIGHT +
+                DropDownButton.DROPDOWN_PADDING * 2 +
+                DropDownButton.DROPDOWN_SEPARATOR_HEIGHT) *
+            numberOfDropDownBar.toDouble();
         double messageListHeight = widget.messagesListSize!.height;
-        
+
         double topLeftListY = 0;
-        if(widget.messageListPosition != null) {
+        if (widget.messageListPosition != null) {
           topLeftListY = widget.messageListPosition!.dy;
         }
 
         // calculate size of item
-        double itemHeight = (itemTrailingEdge - itemLeadingEdge) * messageListHeight;
-        double middleItemY = itemHeight / 2 + topLeftListY + itemLeadingEdge * messageListHeight;
+        double itemHeight =
+            (itemTrailingEdge - itemLeadingEdge) * messageListHeight;
+        double middleItemY =
+            itemHeight / 2 + topLeftListY + itemLeadingEdge * messageListHeight;
         double itemHeightMax = screenHeight - emojiHeight - dropMenuHeight;
         double totalHeight = itemHeight + emojiHeight + dropMenuHeight;
         double left = 0;
-        double topOfComponents = itemLeadingEdge * messageListHeight + topLeftListY - emojiHeight;
+        double topOfComponents =
+            itemLeadingEdge * messageListHeight + topLeftListY - emojiHeight;
 
         double itemScale = 1;
         double itemTranslateY = 0;
@@ -122,12 +142,17 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
           itemTranslateY = (emojiHeight + itemHeightMax / 2) - middleItemY;
           topOfComponents -= emojiHeight;
         } else {
-          if (itemLeadingEdge * messageListHeight + topLeftListY < emojiHeight) {
-            itemTranslateY = emojiHeight - itemLeadingEdge * messageListHeight - topLeftListY;
+          if (itemLeadingEdge * messageListHeight + topLeftListY <
+              emojiHeight) {
+            itemTranslateY = emojiHeight -
+                itemLeadingEdge * messageListHeight -
+                topLeftListY;
           } else if (itemTrailingEdge * messageListHeight + topLeftListY >
               screenHeight - dropMenuHeight) {
-            itemTranslateY =
-                screenHeight - dropMenuHeight - itemTrailingEdge * messageListHeight - topLeftListY;
+            itemTranslateY = screenHeight -
+                dropMenuHeight -
+                itemTrailingEdge * messageListHeight -
+                topLeftListY;
           }
         }
         // set how animation should end
@@ -194,30 +219,53 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                                   children: [
                                     if (widget.onReply != null) ...[
                                       DropDownButton(
-                                        text: "Reply",
-                                        icon: Icons.reply,
+                                        text:
+                                            AppLocalizations.of(context)!.reply,
+                                        icon: Icons.reply_outlined,
                                         isTop: true,
                                         onClick: () => widget.onReply!(),
                                       )
                                     ],
                                     if (widget.onEdit != null) ...[
                                       DropDownButton(
-                                        text: "Edit",
-                                        icon: Icons.edit,
+                                        text:
+                                            AppLocalizations.of(context)!.edit,
+                                        icon: Icons.edit_outlined,
                                         onClick: () => widget.onEdit!(),
                                       )
                                     ],
                                     if (widget.onCopy != null) ...[
                                       DropDownButton(
-                                        text: "Copy",
-                                        icon: Icons.copy,
+                                        text:
+                                            AppLocalizations.of(context)!.copy,
+                                        icon: Icons.copy_outlined,
                                         onClick: () => widget.onCopy!(),
                                       )
                                     ],
                                     if (widget.onPinMessage != null) ...[
                                       DropDownButton(
-                                        text: "Delete",
-                                        icon: Icons.delete,
+                                        text: AppLocalizations.of(context)!
+                                            .pinMesssage,
+                                        icon: Icons.push_pin_outlined,
+                                        onClick: () => widget.onPinMessage!(),
+                                      )
+                                    ],
+                                    if (widget.onUnpinMessage != null) ...[
+                                      DropDownButton(
+                                        text: AppLocalizations.of(context)!
+                                            .unpinMesssage,
+                                        isSecondBottom: true,
+                                        onClick: () => widget.onUnpinMessage!(),
+                                      )
+                                    ],
+                                    if (widget.onDelete != null) ...[
+                                      DropDownButton(
+                                        isBottom: true,
+                                        text: AppLocalizations.of(context)!
+                                            .delete,
+                                        icon: Icons.delete_outline,
+                                        textColor: Colors.red,
+                                        iconColor: Colors.red,
                                         onClick: () => widget.onDelete!(),
                                       )
                                     ],
@@ -327,29 +375,48 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
 class DropDownButton extends StatelessWidget {
   final bool isTop;
   final bool isBottom;
+  final bool isSecondBottom;
   final String text;
-  final IconData icon;
-  final Color color;
+  final IconData? icon;
+  final Color backgroundColor;
+  final Color? textColor;
+  final Color? iconColor;
   final Function() onClick;
 
+  static const double DROPDOWN_WIDTH = 254;
+  static const double DROPDOWN_HEIGHT = 44;
+  static const double DROPDOWN_PADDING = 5;
+  static const double DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT = 8;
+  static const double DROPDOWN_SEPARATOR_HEIGHT = 1;
+
   const DropDownButton({
-    this.isBottom = false,
-    this.isTop = false,
     required this.onClick,
     required this.text,
-    required this.icon,
-    this.color = Colors.white,
+    this.isBottom = false,
+    this.isTop = false,
+    this.isSecondBottom = false,
+    this.backgroundColor = Colors.white,
+    this.textColor = Colors.black,
+    this.iconColor = Colors.black,
+    this.icon,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(children: [
+      if (isBottom) ...[
+        Container(
+          height: DROPDOWN_TOP_LAST_ITEM_PADDING_HEIGHT,
+          width: DropDownButton.DROPDOWN_WIDTH,
+          color: Color(0x14141426),
+        )
+      ],
       GestureDetector(
         onTap: () => onClick(),
         child: Container(
           decoration: BoxDecoration(
-              color: color,
+              color: backgroundColor,
               borderRadius: isTop
                   ? const BorderRadius.only(
                       topLeft: Radius.circular(10.0),
@@ -359,24 +426,32 @@ class DropDownButton extends StatelessWidget {
                           bottomLeft: Radius.circular(10.0),
                           bottomRight: Radius.circular(10.0))
                       : null)),
-          width: 200,
-          height: 40,
-          padding: const EdgeInsets.all(5.0),
+          width: DROPDOWN_WIDTH,
+          height: DROPDOWN_HEIGHT,
+          padding: const EdgeInsets.all(DROPDOWN_PADDING),
           child: Row(children: [
             Expanded(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: [Text(text)],
+                children: [
+                  Text(
+                    text,
+                    style: TextStyle(color: textColor),
+                  )
+                ],
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [Icon(icon)],
+              children: [Icon(icon, color: iconColor)],
             ),
           ]),
         ),
       ),
-      Container(color: isBottom ? null : Colors.black, height: 1, width: 200),
+      Container(
+          color: isBottom || isSecondBottom ? null : Colors.black,
+          height: DROPDOWN_SEPARATOR_HEIGHT,
+          width: DROPDOWN_WIDTH),
     ]);
   }
 }
