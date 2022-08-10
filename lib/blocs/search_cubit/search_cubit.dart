@@ -54,6 +54,7 @@ class SearchCubit extends Cubit<SearchState> {
   void fetchInitialResults() {
     fetchRecentChats();
     fetchChatsBySearchTerm();
+    fetchFilesBySearchTerm();
   }
 
   void fetchRecentChats() async {

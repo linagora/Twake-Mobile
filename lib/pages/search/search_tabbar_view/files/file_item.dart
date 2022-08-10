@@ -1,39 +1,55 @@
+import 'package:filesize/filesize.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/workspaces_cubit/workspaces_cubit.dart';
-import 'package:twake/blocs/workspaces_cubit/workspaces_state.dart';
+import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
+import 'package:twake/blocs/file_cubit/file_cubit.dart';
 import 'package:twake/config/image_path.dart';
+import 'package:twake/models/account/account.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/services/service_bundle.dart';
 import 'package:twake/utils/dateformatter.dart';
+import 'package:twake/utils/extensions.dart';
 import 'package:twake/widgets/common/highlighted_text_widget.dart';
-import 'package:twake/widgets/common/image_widget.dart';
 
 class FileItem extends StatelessWidget {
   final Message message;
+  final Account user;
   final String searchTerm;
 
-  const FileItem({Key? key, required this.message, required this.searchTerm})
+  const FileItem(
+      {Key? key,
+      required this.message,
+      required this.user,
+      required this.searchTerm})
       : super(key: key);
-
-  String getWorkspaceName() {
-    try {
-      final workspaces =
-          (Get.find<WorkspacesCubit>().state as WorkspacesLoadSuccess)
-              .workspaces;
-
-      final workspace = workspaces.firstWhere((element) => element.id == '');
-
-      return workspace.name;
-    } catch (e) {
-      Logger().e("error while getting workspace name: $e");
-      return 'Unknown';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    final fileId = message.files![0] as String;
+
+    File? cacheFile =
+        Get.find<CacheInChatCubit>().findCachedFile(fileId: fileId);
+
+    return cacheFile == null
+        ? FutureBuilder(
+            future: Get.find<FileCubit>().getFileData(id: fileId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.data != null) {
+                final file = (snapshot.data as File);
+                Get.find<CacheInChatCubit>().cacheFile(file: file);
+                return _buildView(context, file);
+              }
+
+              return SizedBox();
+            },
+          )
+        : _buildView(context, cacheFile);
+  }
+
+  _buildView(BuildContext context, File file) {
     return GestureDetector(
       onTap: () {
         NavigatorService.instance.navigate(
@@ -45,24 +61,11 @@ class FileItem extends StatelessWidget {
         color: Colors.transparent,
         child: Row(
           children: [
-            Stack(
-              alignment: Alignment.topRight,
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                  ),
-                  child: ImageWidget(
-                    name: message.username ?? '',
-                    imageType: ImageType.common,
-                    size: 56,
-                    imageUrl: message.picture ?? '',
-                  ),
-                ),
-                SizedBox.shrink(),
-              ],
+            Image.asset(
+              file.metadata.name.fileExtension.imageAssetByFileExtension,
+              width: 36.0,
+              height: 36.0,
+              fit: BoxFit.cover,
             ),
             SizedBox(width: 10.0),
             Expanded(
@@ -74,7 +77,7 @@ class FileItem extends StatelessWidget {
                       Expanded(
                         child: Row(
                           children: [
-                            Text(getWorkspaceName(),
+                            Text(user.fullName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context)
@@ -90,7 +93,7 @@ class FileItem extends StatelessWidget {
                                   width: 13, height: 12),
                             ),
                             Expanded(
-                              child: Text('test name',
+                              child: Text(file.metadata.name,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context)
@@ -110,6 +113,13 @@ class FileItem extends StatelessWidget {
                               .textTheme
                               .headline3!
                               .copyWith(fontSize: 13)),
+                      Text(DateFormatter.getVerboseDate(message.createdAt),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3!
+                              .copyWith(fontSize: 13)),
                     ],
                   ),
                   Text(message.firstName ?? '',
@@ -120,6 +130,15 @@ class FileItem extends StatelessWidget {
                           .headline1!
                           .copyWith(fontSize: 15)),
                   SizedBox(height: 2.0),
+                  Text(
+                    filesize(file.uploadData.size),
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        fontSize: 11.0,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.italic,
+                        color: Color.fromRGBO(0, 0, 0, 0.58)),
+                  ),
                   HighlightedTextWidget(
                       text: message.text,
                       searchTerm: searchTerm,

@@ -23,16 +23,8 @@ class _SearchFilesViewState extends State<SearchFilesView> {
     return BlocBuilder<SearchCubit, SearchState>(
       bloc: Get.find<SearchCubit>(),
       builder: (context, state) {
-        // if no results and on search tern display empty icon
-        if (state.messages.isEmpty && state.searchTerm.isEmpty) {
-          return FileStatusInformer(
-              status: FilesStateStatus.init,
-              searchTerm: state.searchTerm,
-              onResetTap: () => Get.find<SearchCubit>().resetSearch());
-        }
-
-        if (state.messagesStateStatus == FilesStateStatus.done &&
-            state.messages.isNotEmpty) {
+        if (state.filesStateStatus == FilesStateStatus.done &&
+            state.files.isNotEmpty) {
           return SizedBox.expand(
             child: ListView(children: [
               FilesSection(
@@ -61,31 +53,19 @@ class FilesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Text('Files',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6!
-                  .copyWith(fontSize: 15.0, fontWeight: FontWeight.w600)),
-        ),
-        ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          itemCount: files.length,
-          shrinkWrap: true,
-          physics: ScrollPhysics(),
-          itemBuilder: (context, index) {
-            return FileItem(
-              searchTerm: searchTerm,
-              message: files[index].message,
-              //channel: files[index].channel,
-            );
-          },
-        )
-      ],
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      itemCount: files.length,
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      itemBuilder: (context, index) {
+        return FileItem(
+          searchTerm: searchTerm,
+          message: files[index].message,
+          user: files[index].user,
+          //channel: files[index].channel,
+        );
+      },
     );
   }
 }

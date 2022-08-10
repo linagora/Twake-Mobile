@@ -23,8 +23,9 @@ class SearchMessage {
 
 class SearchFile {
   final Message message;
+  final Account user;
 
-  SearchFile(this.message);
+  SearchFile(this.message, this.user);
 }
 
 class SearchRepository {
@@ -181,16 +182,14 @@ class SearchRepository {
       ) as List<dynamic>;
 
       final result = queryResult
-          .where((rm) =>
-              rm['type'] == 'message' &&
-              rm['subtype'] != 'system' &&
-              rm['subtype'] != 'application')
-          .map((entry) => SearchFile(Message.fromJson(
-                entry,
+          .map((entry) => SearchFile(
+              Message.fromJson(
+                entry['message'],
                 jsonify: true,
                 transform: true,
                 channelId: '',
-              )))
+              ),
+              Account.fromJson(json: entry['user'], transform: true)))
           .toList();
 
       return SearchRepositoryRequest(result: result, hasError: false);
