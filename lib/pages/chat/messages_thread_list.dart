@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
@@ -212,14 +213,23 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: MessageTile<ThreadMessagesCubit>(
-            message: message,
-            isDirect: parentChannel.isDirect,
-            isThread: true,
-            isHeadInThred: true,
-            key: ValueKey(message.hash),
+        Container(
+          constraints: BoxConstraints(maxHeight: Dim.heightPercent(45)),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: MessageTile<ThreadMessagesCubit>(
+                    message: message,
+                    isDirect: parentChannel.isDirect,
+                    isThread: true,
+                    isHeadInThred: true,
+                    key: ValueKey(message.hash),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         if (state is MessagesLoadSuccess)

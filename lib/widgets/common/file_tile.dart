@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
+import 'package:filesize/filesize.dart';
 import 'package:open_file/open_file.dart';
 import 'package:twake/blocs/cache_in_chat_cubit/cache_in_chat_cubit.dart';
 import 'package:twake/blocs/file_cubit/download/file_download_cubit.dart';
@@ -68,7 +69,18 @@ class _FileTileState extends State<FileTile> {
       );
 
   _buildFileWidget(File file) => Container(
-        child: _buildFileHeader(file),
+        margin: const EdgeInsets.only(bottom: 4.0),
+        child: Row(children: [
+          _buildFileHeader(file),
+          file.thumbnailUrl.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Flexible(
+                    child: _buildFileInfo(file),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ]),
       );
 
   _buildFileHeader(File file) {
@@ -126,6 +138,35 @@ class _FileTileState extends State<FileTile> {
           : _buildFileTypeIcon(file),
     );
   }
+
+  _buildFileInfo(File file) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            constraints: BoxConstraints(maxWidth: Dim.widthPercent(50)),
+            child: RichText(
+                text: TextSpan(
+                    text: file.metadata.name,
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color:
+                            widget.isMyMessage ? Colors.white : Colors.black)),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2),
+          ),
+          Text(
+            filesize(file.uploadData.size),
+            textAlign: TextAlign.start,
+            style: TextStyle(
+                fontSize: 11.0,
+                fontWeight: FontWeight.w400,
+                fontStyle: FontStyle.italic,
+                color: widget.isMyMessage
+                    ? Color.fromRGBO(255, 255, 255, 0.58)
+                    : Color.fromRGBO(0, 0, 0, 0.58)),
+          ),
+        ],
+      );
 
   _buildDownloadIcon(File file, FileDownloading? fileDownloading) {
     /// Read [1] for the detail
@@ -214,19 +255,45 @@ class _FileTileState extends State<FileTile> {
 
   _buildFileTypeIcon(File file) {
     final extension = file.metadata.name.fileExtension;
-    return Image.asset(
-      extension.imageAssetByFileExtension,
-      width: 32.0,
-      height: 32.0,
-      color: widget.isMyMessage ? null : Colors.grey,
+    return Container(
+      width: 75,
+      height: 75,
+      decoration: BoxDecoration(
+        color: Get.isDarkMode
+            ? widget.isMyMessage
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3)
+                : Theme.of(context)
+                    .colorScheme
+                    .secondaryContainer
+                    .withOpacity(0.3)
+            : widget.isMyMessage
+                ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3)
+                : Theme.of(context).iconTheme.color!.withOpacity(0.3),
+        borderRadius: BorderRadius.all(Radius.circular(18)),
+        border: Border.all(
+          color: Get.isDarkMode
+              ? Theme.of(context)
+                  .colorScheme
+                  .secondaryContainer
+                  .withOpacity(0.5)
+              : Theme.of(context).colorScheme.surface.withOpacity(0.3),
+        ),
+      ),
+      child: Image.asset(
+        extension.imageAssetByFileExtension,
+        width: 32.0,
+        height: 32.0,
+        color: widget.isMyMessage ? null : Colors.grey,
+      ),
     );
   }
 
   num _aspectRatioCoefficient(File file) {
-    final num aspectRatio =
-        file.thumbnails.first.width / file.thumbnails.first.height;
+    final num aspectRatio = file.thumbnails.isNotEmpty
+        ? file.thumbnails.first.width / file.thumbnails.first.height
+        : 1;
     final num coefficientHeight = aspectRatio > 1 ? 1 / aspectRatio : 1;
-    //coefficientWidth that is not neeede for now
+    // coefficientWidth that is not neeede for now
     // final coefficientWidth= aspectRatio < 1 ? aspectRatio : 1;
     return coefficientHeight;
   }
