@@ -38,16 +38,16 @@ class GalleryButtonBar extends StatelessWidget {
 
   _handleMessageSend() async {
     if (_controller.text.isNotEmpty) {
-      final channel =
-          (Get.find<ChannelsCubit>().state as ChannelsLoadedSuccess).selected!;
+      final Channel? channel =
+          (Get.find<ChannelsCubit>().state as ChannelsLoadedSuccess).selected;
       Globals.instance.threadId == null
           ? Get.find<ChannelMessagesCubit>().send(
               originalStr: _controller.text,
-              isDirect: channel.isDirect,
+              isDirect: channel == null ? true : channel.isDirect,
             )
           : Get.find<ThreadMessagesCubit>().send(
               originalStr: _controller.text,
-              isDirect: channel.isDirect,
+              isDirect: channel == null ? true : channel.isDirect,
             );
     }
   }

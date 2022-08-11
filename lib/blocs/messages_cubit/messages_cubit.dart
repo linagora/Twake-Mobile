@@ -556,11 +556,12 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                   afterMessageId: latestMessage.id,
                   workspaceId:
                       isDirect! ? 'direct' : Globals.instance.workspaceId);
-
-              Message newLatestMessage = messages.reduce((value, element) =>
-                  value.createdAt > element.createdAt ? value : element);
-              if(newLatestMessage == latestMessage) {
-                continue;
+              if (messages.isNotEmpty) {
+                Message newLatestMessage = messages.reduce((value, element) =>
+                    value.createdAt > element.createdAt ? value : element);
+                if (newLatestMessage == latestMessage) {
+                  continue;
+                }
               }
 
               // remove lastest messages in current state because it's also in api
