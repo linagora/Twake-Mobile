@@ -62,6 +62,7 @@ class FilesSection extends StatelessWidget {
         return FileItem(
           searchTerm: searchTerm,
           message: files[index].message,
+          file: files[index].file,
           user: files[index].user,
           //channel: files[index].channel,
         );

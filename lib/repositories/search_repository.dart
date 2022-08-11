@@ -1,6 +1,7 @@
 import 'package:sprintf/sprintf.dart';
 import 'package:twake/models/account/account.dart';
 import 'package:twake/models/channel/channel.dart';
+import 'package:twake/models/file/file.dart';
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/services/api_service.dart';
@@ -24,8 +25,9 @@ class SearchMessage {
 class SearchFile {
   final Message message;
   final Account user;
+  final File file;
 
-  SearchFile(this.message, this.user);
+  SearchFile(this.message, this.user, this.file);
 }
 
 class SearchRepository {
@@ -182,6 +184,7 @@ class SearchRepository {
       ) as List<dynamic>;
 
       final result = queryResult
+          .where((entry) => entry['metadata']['name'] != null)
           .map((entry) => SearchFile(
               Message.fromJson(
                 entry['message'],
@@ -189,7 +192,18 @@ class SearchRepository {
                 transform: true,
                 channelId: '',
               ),
-              Account.fromJson(json: entry['user'], transform: true)))
+              Account.fromJson(json: entry['user'], transform: true),
+              File.fromJson({
+                ...entry,
+                'user_id': entry['user']['id'],
+                'company_id': entry['cache']['company_id'],
+                'thumbnails': entry['metadata']['thumbnails'],
+                'upload_data': {
+                  'size': entry['metadata']['size'],
+                  'chunks': 1,
+                },
+                'updated_at': entry['created_at']
+              })))
           .toList();
 
       return SearchRepositoryRequest(result: result, hasError: false);
