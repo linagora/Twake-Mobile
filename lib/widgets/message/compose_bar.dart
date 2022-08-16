@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/camera_cubit/camera_cubit.dart';
+import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
 import 'package:twake/blocs/file_cubit/file_transition_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_cubit.dart';
 import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
@@ -130,6 +131,8 @@ class _ComposeBar extends State<ComposeBar> {
       final hasUploadedFileInStack = state.listFileUploading.every(
           (element) => element.uploadStatus == FileItemUploadStatus.uploaded);
       sendFile() {
+        final Channel? channel =
+            (Get.find<ChannelsCubit>().state as ChannelsLoadedSuccess).selected;
         List<dynamic> attachments = state.listFileUploading
             .where((fileUploading) => (fileUploading.file != null ||
                 fileUploading.messageFile != null))
@@ -141,12 +144,12 @@ class _ComposeBar extends State<ComposeBar> {
             ? Get.find<ChannelMessagesCubit>().send(
                 originalStr: "",
                 attachments: attachments,
-                isDirect: false,
+                isDirect: channel == null ? true : channel.isDirect,
               )
             : Get.find<ThreadMessagesCubit>().send(
                 originalStr: "",
                 attachments: attachments,
-                isDirect: false,
+                isDirect: channel == null ? true : channel.isDirect,
               );
         // start clearing
         Get.find<FileUploadCubit>().closeListUploadingStream();

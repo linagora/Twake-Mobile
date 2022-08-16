@@ -50,10 +50,24 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
 
   bool _emojiVisible = false;
 
+  int numberOfDropDownBar = 0;
+  List<dynamic> dropdownFuncs = [];
+
   @override
   void initState() {
     super.initState();
     clickedItem = widget.clickedItem;
+
+    dropdownFuncs = [
+      widget.onReply,
+      widget.onCopy,
+      widget.onEdit,
+      widget.onDelete,
+      widget.onPinMessage,
+      widget.onUnpinMessage
+    ];
+    numberOfDropDownBar =
+        dropdownFuncs.where((element) => element != null).length;
   }
 
   void didUpdateWidget(covariant MenuMessageDropDown oldWidget) {
@@ -99,7 +113,7 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
         double messageListHeight = widget.messagesListSize!.height;
 
         double topLeftListY = 0;
-        if (widget.messageListPosition != null) {
+        if  (widget.messageListPosition != null) {
           topLeftListY = widget.messageListPosition!.dy;
         }
 
@@ -297,6 +311,63 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
     setState(() {
       _emojiVisible = !_emojiVisible;
     });
+  }
+}
+
+class DropDownButton extends StatelessWidget {
+  final bool isTop;
+  final bool isBottom;
+  final String text;
+  final IconData icon;
+  final Color color;
+  final Function() onClick;
+
+  const DropDownButton({
+    this.isBottom = false,
+    this.isTop = false,
+    required this.onClick,
+    required this.text,
+    required this.icon,
+    this.color = Colors.white,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      GestureDetector(
+        onTap: () => onClick(),
+        child: Container(
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: isTop
+                  ? const BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0))
+                  : (isBottom
+                      ? const BorderRadius.only(
+                          bottomLeft: Radius.circular(10.0),
+                          bottomRight: Radius.circular(10.0))
+                      : null)),
+          width: 200,
+          height: 40,
+          padding: const EdgeInsets.all(5.0),
+          child: Row(children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [Text(text)],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [Icon(icon)],
+            ),
+          ]),
+        ),
+      ),
+      Container(color: isBottom ? null : Colors.black, height: 1, width: 200),
+    ]);
   }
 }
 

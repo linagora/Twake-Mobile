@@ -1,20 +1,15 @@
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
-import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/config/image_path.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
-import 'package:twake/services/navigator_service.dart';
+import 'package:twake/pages/chat/message_file_uploading.dart';
 import 'package:twake/utils/dateformatter.dart';
 import 'package:twake/utils/twacode.dart';
-import 'package:twake/utils/utilities.dart';
 import 'package:twake/widgets/common/image_widget.dart';
 import 'package:twake/widgets/common/reaction.dart';
 import 'package:twake/widgets/message/resend_modal_sheet.dart';
@@ -50,16 +45,6 @@ class _MessageContentState<T extends BaseMessagesCubit>
 
   @override
   Widget build(BuildContext context) {
-    /*final fileTransitionState = Get.find<FileTransitionCubit>().state;
-    final bool _isFileUploading = Get.find<FileTransitionCubit>()
-                .state
-                .fileTransitionStatus ==
-            FileTransitionStatus.uploadingMessageSent
-        ? fileTransitionState.messages.first.id == widget.message.id
-            ? true
-            : false
-        : false;*/
-
     return Expanded(
       child: Row(
         mainAxisAlignment: widget.isMyMessage || widget.isHeadInThred
@@ -133,6 +118,9 @@ class _MessageContentState<T extends BaseMessagesCubit>
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       _buildMessageText(),
+                      MessageFileUploading(
+                        message: widget.message,
+                      ),
                       _buildStatuses(),
                     ]),
               ),
@@ -369,78 +357,6 @@ class _MessageContentState<T extends BaseMessagesCubit>
           );
   }
 
-  Widget _buildFileUploadingTile() {
-    return BlocBuilder<GalleryCubit, GalleryState>(
-      bloc: Get.find<GalleryCubit>(),
-      builder: (context, state) {
-        return Container(
-          constraints: BoxConstraints(maxHeight: 350),
-          child: Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemCount: state.selectedFilesIndex.length,
-                itemBuilder: (_, index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: SizedBox(
-                        height: 220,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Image.memory(
-                              state.assetsList[state.selectedFilesIndex[index]],
-                              fit: BoxFit.fill,
-                            ),
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Theme.of(context)
-                                              .iconTheme
-                                              .color!
-                                              .withOpacity(0.8),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                        left: 5,
-                                        bottom: 5,
-                                        child: SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .surface,
-                                          ),
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildReactions(bool _isMyMessage) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
@@ -459,81 +375,5 @@ class _MessageContentState<T extends BaseMessagesCubit>
         ],
       ),
     );
-  }
-
-  void onReply(Message message) {
-    NavigatorService.instance.navigate(
-      channelId: message.channelId,
-      threadId: message.id,
-      reloadThreads: false,
-    );
-  }
-
-  void onEdit(Message message) {
-    widget.isThread
-        ? Get.find<ThreadMessagesCubit>().startEdit(message: widget.message)
-        : Get.find<ChannelMessagesCubit>().startEdit(message: widget.message);
-    Navigator.of(context).pop();
-  }
-
-  void onDelete() {
-    widget.isThread
-        ? Get.find<ThreadMessagesCubit>().delete(message: widget.message)
-        : Get.find<ChannelMessagesCubit>().delete(message: widget.message);
-    Navigator.of(context).pop();
-  }
-
-  void onCopy({required context, required text}) {
-    FlutterClipboard.copy(text);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        margin: EdgeInsets.fromLTRB(
-          15.0,
-          5.0,
-          15.0,
-          65.0,
-          //  Dim.heightPercent(8),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(milliseconds: 1500),
-        content: Row(
-          children: [
-            Icon(
-              Icons.copy,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            SizedBox(
-              width: 20,
-            ),
-            Text(AppLocalizations.of(context)!.messageCopiedInfo,
-                style: Theme.of(context)
-                    .textTheme
-                    .headline1!
-                    .copyWith(fontSize: 14)),
-          ],
-        ),
-      ),
-    );
-    Navigator.of(context).pop();
-  }
-
-  void onPinMessage() async {
-    Get.find<PinnedMessageCubit>()
-        .pinMessage(message: widget.message, isDirect: widget.isDirect);
-    Navigator.of(context).pop();
-  }
-
-  void onUnpinMessage() async {
-    final bool result = await Get.find<PinnedMessageCubit>()
-        .unpinMessage(message: widget.message);
-    Navigator.of(context).pop();
-    if (!result)
-      Utilities.showSimpleSnackBar(
-          context: context,
-          message: AppLocalizations.of(context)!.somethingWentWrong);
   }
 }

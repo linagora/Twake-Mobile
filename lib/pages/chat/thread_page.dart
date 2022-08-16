@@ -77,12 +77,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                   titleSpacing: 0.0,
                                   backgroundColor:
                                       Theme.of(context).scaffoldBackgroundColor,
-                                  shadowColor: Get.isDarkMode
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.3),
+                                  shadowColor: Colors.transparent,
                                   toolbarHeight: Dim.heightPercent(
                                       (kToolbarHeight * 0.15).round()),
                                   leading: GestureDetector(
@@ -218,7 +213,8 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                           ),
                         );
                       }),
-                  LongPressMessageAnimation<ThreadMessagesCubit>(messagesListKey: _threadKey, isDirect: isDirect),
+                  LongPressMessageAnimation<ThreadMessagesCubit>(
+                      messagesListKey: _threadKey, isDirect: isDirect),
                 ]),
               );
             } else {
