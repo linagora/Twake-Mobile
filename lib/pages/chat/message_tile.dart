@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:clipboard/clipboard.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:get/get.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
-import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
 import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_content.dart';
 import 'package:twake/services/navigator_service.dart';
-import 'package:twake/utils/utilities.dart';
 
 class MessageTile<T extends BaseMessagesCubit> extends StatefulWidget {
   final Message message;
@@ -45,47 +40,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
       threadId: message.id,
       reloadThreads: false,
     );
-  }
-
-  void onEdit(Message message) {
-    message.inThread
-        ? Get.find<ThreadMessagesCubit>().startEdit(message: widget.message)
-        : Get.find<ChannelMessagesCubit>().startEdit(message: widget.message);
-    Navigator.of(context).pop();
-  }
-
-  void onDelete() {
-    widget.isThread
-        ? Get.find<ThreadMessagesCubit>().delete(message: widget.message)
-        : Get.find<ChannelMessagesCubit>().delete(message: widget.message);
-    Navigator.of(context).pop();
-  }
-
-  void onCopy(context, text) {
-    FlutterClipboard.copy(text);
-
-    Utilities.showSimpleSnackBar(
-        message: AppLocalizations.of(context)!.messageCopiedInfo,
-        context: context,
-        iconData: Icons.copy);
-
-    Navigator.of(context).pop();
-  }
-
-  void onPinMessage() async {
-    Get.find<PinnedMessageCubit>()
-        .pinMessage(message: widget.message, isDirect: widget.isDirect);
-    Navigator.of(context).pop();
-  }
-
-  void onUnpinMessage() async {
-    final bool result = await Get.find<PinnedMessageCubit>()
-        .unpinMessage(message: widget.message);
-    Navigator.of(context).pop();
-    if (!result)
-      Utilities.showSimpleSnackBar(
-          context: context,
-          message: AppLocalizations.of(context)!.somethingWentWrong);
   }
 
   @override
