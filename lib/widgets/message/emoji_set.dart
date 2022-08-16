@@ -21,6 +21,10 @@ class EmojiLine extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSize = 27.0;
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.0),
+        color: Theme.of(context).primaryColor,
+      ),
       width: Dim.widthPercent(80),
       padding: EdgeInsets.symmetric(
         vertical: Dim.heightMultiplier,

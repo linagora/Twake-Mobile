@@ -99,7 +99,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
                   : Theme.of(context).colorScheme.secondaryContainer
               : widget.isMyMessage
                   ? Theme.of(context).colorScheme.onSurface
-                  : Theme.of(context).iconTheme.color,
+                  : Theme.of(context).cardColor,
           borderRadius: BorderRadius.all(Radius.circular(18))),
       child: Padding(
         padding: const EdgeInsets.only(top: 12),

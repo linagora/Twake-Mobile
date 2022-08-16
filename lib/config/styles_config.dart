@@ -27,6 +27,7 @@ class StylesConfig {
   static final ThemeData darkTheme = ThemeData(
     primaryColor: Colors.black,
     colorScheme: darkThemeColorScheme,
+    cardColor: Colors.white,
     fontFamily: fontFamilyByPlatform(),
     textTheme: darkTextTheme,
     scaffoldBackgroundColor: Color(0xFF19191B),
@@ -55,11 +56,12 @@ class StylesConfig {
   );
   static final ThemeData lightTheme = ThemeData(
     primaryColor: Colors.white,
+    cardColor: Color(0xFFEBEDF0),
     colorScheme: lightThemeColorScheme,
     fontFamily: fontFamilyByPlatform(),
     textTheme: lightTextTheme,
     scaffoldBackgroundColor: Color(0xFFFFFFFF),
-    iconTheme: IconThemeData(color: Color(0xFFEBEDF0)),
+    iconTheme: IconThemeData(color: Colors.black),
     appBarTheme: AppBarTheme(color: Color(0xFFEBEDF0)),
     brightness: Brightness.light,
     textSelectionTheme: TextSelectionThemeData(
