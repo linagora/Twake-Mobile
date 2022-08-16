@@ -16,12 +16,13 @@ class MenuMessageDropDown<T extends BaseMessagesCubit> extends StatefulWidget {
   final Offset? messageListPosition;
   final int clickedItem;
   final bool isReverse;
-  final Function? onReply;
-  final Function? onDelete;
-  final Function? onEdit;
-  final Function? onCopy;
-  final Function? onPinMessage;
-  final Function? onUnpinMessage;
+
+  /// widget which is below message
+  final Widget lowerWidget;
+
+  /// in order to long press animation work, it require the height of widget when it's not even build
+  final double lowerWidgetHeight;
+
   final Message message;
 
   const MenuMessageDropDown({
@@ -29,15 +30,11 @@ class MenuMessageDropDown<T extends BaseMessagesCubit> extends StatefulWidget {
     required this.message,
     required this.itemPositionsListener,
     required this.clickedItem,
+    required this.lowerWidget,
+    required this.lowerWidgetHeight,
     this.messagesListSize,
     this.messageListPosition,
     this.isReverse = true,
-    this.onReply,
-    this.onDelete,
-    this.onEdit,
-    this.onCopy,
-    this.onPinMessage,
-    this.onUnpinMessage,
   }) : super(key: key);
 
   @override
@@ -98,21 +95,24 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
         }
 
         double emojiHeight = 50;
-        double dropMenuHeight = 51 * 4;
+        double dropMenuHeight = widget.lowerWidgetHeight;
         double messageListHeight = widget.messagesListSize!.height;
-        
+
         double topLeftListY = 0;
-        if(widget.messageListPosition != null) {
+        if (widget.messageListPosition != null) {
           topLeftListY = widget.messageListPosition!.dy;
         }
 
         // calculate size of item
-        double itemHeight = (itemTrailingEdge - itemLeadingEdge) * messageListHeight;
-        double middleItemY = itemHeight / 2 + topLeftListY + itemLeadingEdge * messageListHeight;
+        double itemHeight =
+            (itemTrailingEdge - itemLeadingEdge) * messageListHeight;
+        double middleItemY =
+            itemHeight / 2 + topLeftListY + itemLeadingEdge * messageListHeight;
         double itemHeightMax = screenHeight - emojiHeight - dropMenuHeight;
         double totalHeight = itemHeight + emojiHeight + dropMenuHeight;
         double left = 0;
-        double topOfComponents = itemLeadingEdge * messageListHeight + topLeftListY - emojiHeight;
+        double topOfComponents =
+            itemLeadingEdge * messageListHeight + topLeftListY - emojiHeight;
 
         double itemScale = 1;
         double itemTranslateY = 0;
@@ -122,17 +122,22 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
           itemTranslateY = (emojiHeight + itemHeightMax / 2) - middleItemY;
           topOfComponents -= emojiHeight;
         } else {
-          if (itemLeadingEdge * messageListHeight + topLeftListY < emojiHeight) {
-            itemTranslateY = emojiHeight - itemLeadingEdge * messageListHeight - topLeftListY;
+          if (itemLeadingEdge * messageListHeight + topLeftListY <
+              emojiHeight) {
+            itemTranslateY = emojiHeight -
+                itemLeadingEdge * messageListHeight -
+                topLeftListY;
           } else if (itemTrailingEdge * messageListHeight + topLeftListY >
               screenHeight - dropMenuHeight) {
-            itemTranslateY =
-                screenHeight - dropMenuHeight - itemTrailingEdge * messageListHeight - topLeftListY;
+            itemTranslateY = screenHeight -
+                dropMenuHeight -
+                itemTrailingEdge * messageListHeight -
+                topLeftListY;
           }
         }
         // set how animation should end
         end = AnimationConfig(
-            isBlur: 10, translateY: itemTranslateY, scaleFactor: itemScale);
+            blurDegree: 10, translateY: itemTranslateY, scaleFactor: itemScale);
         return IgnorePointer(
             ignoring: false,
             child: TweenAnimationBuilder<AnimationConfig>(
@@ -152,8 +157,8 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                       },
                       child: BackdropFilter(
                           filter: ImageFilter.blur(
-                            sigmaX: animationConfig.isBlur,
-                            sigmaY: animationConfig.isBlur,
+                            sigmaX: animationConfig.blurDegree,
+                            sigmaY: animationConfig.blurDegree,
                           ),
                           child: Container(
                             width: double.maxFinite,
@@ -180,50 +185,21 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
                               Transform.scale(
                                   scale:
                                       animationConfig.scaleDropDown / itemScale,
-                                  alignment: Alignment.bottomLeft,
+                                  alignment: widget.message.isOwnerMessage
+                                      ? Alignment.bottomRight
+                                      : Alignment.bottomLeft,
                                   child: EmojiLine(
                                     onEmojiSelected: onEmojiSelected,
                                     showEmojiBoard: toggleEmojiBoard,
                                   )),
                               MessageTile<T>(message: widget.message),
                               Transform.scale(
-                                alignment: Alignment.topLeft,
-                                scale:
-                                    animationConfig.scaleDropDown / itemScale,
-                                child: Column(
-                                  children: [
-                                    if (widget.onReply != null) ...[
-                                      DropDownButton(
-                                        text: "Reply",
-                                        icon: Icons.reply,
-                                        isTop: true,
-                                        onClick: () => widget.onReply!(),
-                                      )
-                                    ],
-                                    if (widget.onEdit != null) ...[
-                                      DropDownButton(
-                                        text: "Edit",
-                                        icon: Icons.edit,
-                                        onClick: () => widget.onEdit!(),
-                                      )
-                                    ],
-                                    if (widget.onCopy != null) ...[
-                                      DropDownButton(
-                                        text: "Copy",
-                                        icon: Icons.copy,
-                                        onClick: () => widget.onCopy!(),
-                                      )
-                                    ],
-                                    if (widget.onPinMessage != null) ...[
-                                      DropDownButton(
-                                        text: "Delete",
-                                        icon: Icons.delete,
-                                        onClick: () => widget.onDelete!(),
-                                      )
-                                    ],
-                                  ],
-                                ),
-                              ),
+                                  alignment: widget.message.isOwnerMessage
+                                      ? Alignment.topRight
+                                      : Alignment.topLeft,
+                                  scale:
+                                      animationConfig.scaleDropDown / itemScale,
+                                  child: widget.lowerWidget),
                             ],
                           ),
                         ),
@@ -324,71 +300,14 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
   }
 }
 
-class DropDownButton extends StatelessWidget {
-  final bool isTop;
-  final bool isBottom;
-  final String text;
-  final IconData icon;
-  final Color color;
-  final Function() onClick;
-
-  const DropDownButton({
-    this.isBottom = false,
-    this.isTop = false,
-    required this.onClick,
-    required this.text,
-    required this.icon,
-    this.color = Colors.white,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: [
-      GestureDetector(
-        onTap: () => onClick(),
-        child: Container(
-          decoration: BoxDecoration(
-              color: color,
-              borderRadius: isTop
-                  ? const BorderRadius.only(
-                      topLeft: Radius.circular(10.0),
-                      topRight: Radius.circular(10.0))
-                  : (isBottom
-                      ? const BorderRadius.only(
-                          bottomLeft: Radius.circular(10.0),
-                          bottomRight: Radius.circular(10.0))
-                      : null)),
-          width: 200,
-          height: 40,
-          padding: const EdgeInsets.all(5.0),
-          child: Row(children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [Text(text)],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [Icon(icon)],
-            ),
-          ]),
-        ),
-      ),
-      Container(color: isBottom ? null : Colors.black, height: 1, width: 200),
-    ]);
-  }
-}
-
 class AnimationConfig extends Object {
-  double isBlur;
+  double blurDegree;
   double translateY;
   double scaleFactor;
   double scaleDropDown;
 
   AnimationConfig(
-      {this.isBlur = 10,
+      {this.blurDegree = 10,
       this.translateY = 0,
       this.scaleFactor = 1,
       this.scaleDropDown = 1});
@@ -396,14 +315,14 @@ class AnimationConfig extends Object {
   AnimationConfig operator +(Object other) {
     if (other is AnimationConfig) {
       return AnimationConfig(
-          isBlur: isBlur + other.isBlur,
+          blurDegree: blurDegree + other.blurDegree,
           scaleFactor: scaleFactor + other.scaleFactor,
           translateY: translateY + other.translateY,
           scaleDropDown: scaleDropDown + other.scaleDropDown);
     } else if (other is double || other is int) {
       other = other as double;
       return AnimationConfig(
-          isBlur: isBlur + other,
+          blurDegree: blurDegree + other,
           scaleFactor: scaleFactor + other,
           translateY: translateY + other,
           scaleDropDown: scaleDropDown + other);
@@ -414,14 +333,14 @@ class AnimationConfig extends Object {
   AnimationConfig operator -(Object other) {
     if (other is AnimationConfig) {
       return AnimationConfig(
-          isBlur: isBlur - other.isBlur,
+          blurDegree: blurDegree - other.blurDegree,
           scaleFactor: scaleFactor - other.scaleFactor,
           translateY: translateY - other.translateY,
           scaleDropDown: scaleDropDown - other.scaleDropDown);
     } else if (other is double || other is int) {
       other = other as double;
       return AnimationConfig(
-          isBlur: isBlur - other,
+          blurDegree: blurDegree - other,
           scaleFactor: scaleFactor - other,
           translateY: translateY - other,
           scaleDropDown: scaleDropDown - other);
@@ -432,14 +351,14 @@ class AnimationConfig extends Object {
   AnimationConfig operator *(Object other) {
     if (other is AnimationConfig) {
       return AnimationConfig(
-          isBlur: isBlur * other.isBlur,
+          blurDegree: blurDegree * other.blurDegree,
           scaleFactor: scaleFactor * other.scaleFactor,
           translateY: translateY * other.translateY,
           scaleDropDown: scaleDropDown * other.scaleDropDown);
     } else if (other is double || other is int) {
       other = other as double;
       return AnimationConfig(
-          isBlur: isBlur * other,
+          blurDegree: blurDegree * other,
           scaleFactor: scaleFactor * other,
           translateY: translateY * other,
           scaleDropDown: scaleDropDown * other);
@@ -450,14 +369,14 @@ class AnimationConfig extends Object {
   AnimationConfig operator /(Object other) {
     if (other is AnimationConfig) {
       return AnimationConfig(
-          isBlur: isBlur / other.isBlur,
+          blurDegree: blurDegree / other.blurDegree,
           scaleFactor: scaleFactor / other.scaleFactor,
           translateY: translateY / other.translateY,
           scaleDropDown: scaleDropDown / other.scaleDropDown);
     } else if (other is double || other is int) {
       other = other as double;
       return AnimationConfig(
-          isBlur: isBlur / other,
+          blurDegree: blurDegree / other,
           scaleFactor: scaleFactor / other,
           translateY: translateY / other,
           scaleDropDown: scaleDropDown / other);
@@ -468,7 +387,7 @@ class AnimationConfig extends Object {
   @override
   bool operator ==(Object other) {
     if (other is AnimationConfig) {
-      return isBlur == other.isBlur &&
+      return blurDegree == other.blurDegree &&
           scaleFactor == other.scaleFactor &&
           translateY == other.translateY &&
           scaleDropDown == other.scaleDropDown;
@@ -478,7 +397,7 @@ class AnimationConfig extends Object {
 
   @override
   int get hashCode =>
-      isBlur.hashCode +
+      blurDegree.hashCode +
       scaleFactor.hashCode +
       translateY.hashCode +
       scaleDropDown.hashCode;
