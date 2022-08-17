@@ -72,7 +72,7 @@ class _MessageTileState<T extends BaseMessagesCubit>
                     : Dim.widthPercent(2)
                 : _isMyMessage
                     ? Dim.widthPercent(15)
-                    : Dim.widthPercent(3),
+                    : Dim.widthPercent(1),
           ),
           MessageContent(
             message: widget.message,
@@ -84,7 +84,13 @@ class _MessageTileState<T extends BaseMessagesCubit>
             key: ValueKey(widget.message.hashCode),
           ),
           SizedBox(
-            width: _isMyMessage ? Dim.widthPercent(3) : Dim.widthPercent(7),
+            width: widget.message.files == null
+                ? _isMyMessage
+                    ? Dim.widthPercent(3)
+                    : Dim.widthPercent(7)
+                : _isMyMessage
+                    ? Dim.widthPercent(3)
+                    : Dim.widthPercent(5),
           ),
         ],
       ),

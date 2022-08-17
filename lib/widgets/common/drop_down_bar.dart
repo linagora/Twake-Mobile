@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 
 class DropDownButton extends StatelessWidget {
   final bool isTop;
   final bool isBottom;
   final bool isSecondBottom;
   final String text;
-
-  /// if don't have icon, provide imagePath
-  final String? imagePath;
+  final String imagePath;
   final Color? backgroundColor;
   final Color? textColor;
   final Function() onClick;
-  final IconData? icon;
   final Color? iconColor;
 
   static const double DROPDOWN_WIDTH = 254;
@@ -25,13 +22,12 @@ class DropDownButton extends StatelessWidget {
   const DropDownButton({
     required this.onClick,
     required this.text,
-    this.imagePath,
+    required this.imagePath,
     this.isBottom = false,
     this.isTop = false,
     this.isSecondBottom = false,
     this.backgroundColor,
     this.textColor,
-    this.icon,
     this.iconColor,
     Key? key,
   }) : super(key: key);
@@ -50,7 +46,10 @@ class DropDownButton extends StatelessWidget {
         onTap: () => onClick(),
         child: Container(
           decoration: BoxDecoration(
-              color: backgroundColor ?? Theme.of(context).primaryColor,
+              color: backgroundColor ??
+                  (Get.isDarkMode
+                      ? Theme.of(context).primaryColor
+                      : Theme.of(context).cardColor),
               borderRadius: isTop
                   ? const BorderRadius.only(
                       topLeft: Radius.circular(10.0),
@@ -85,24 +84,12 @@ class DropDownButton extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                imagePath == null
-                    ? Icon(
-                        icon,
-                        color: iconColor ?? Theme.of(context).iconTheme.color,
-                      )
-                    : imagePath!.endsWith("png")
-                        ? Image.asset(
-                            imagePath!,
-                            fit: BoxFit.fitHeight,
-                            height: 18,
-                            color: Theme.of(context).iconTheme.color,
-                          )
-                        : SvgPicture.asset(
-                            imagePath!,
-                            fit: BoxFit.fitHeight,
-                            height: 20,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
+                Image.asset(
+                  imagePath,
+                  height: 18,
+                  width: 18,
+                  color: Get.isDarkMode ? Colors.white : null,
+                )
               ],
             ),
           ]),

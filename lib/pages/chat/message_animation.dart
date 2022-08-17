@@ -83,7 +83,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
       children: [
         DropDownButton(
           text: AppLocalizations.of(context)!.reply,
-          icon: Icons.reply_outlined,
+          imagePath: imageComment,
           isTop: true,
           onClick: () async {
             Get.find<MessageAnimationCubit>().endAnimation();
@@ -98,7 +98,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
         if (message.isOwnerMessage) ...[
           DropDownButton(
             text: AppLocalizations.of(context)!.edit,
-            icon: Icons.edit_outlined,
+            imagePath: imageEdit,
             onClick: () {
               Get.find<MessageAnimationCubit>().endAnimation();
 
@@ -108,7 +108,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
         ],
         DropDownButton(
           text: AppLocalizations.of(context)!.copy,
-          icon: Icons.copy_outlined,
+          imagePath: imageCopy,
           onClick: () async {
             Get.find<MessageAnimationCubit>().endAnimation();
 
@@ -122,7 +122,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
         ),
         DropDownButton(
           text: AppLocalizations.of(context)!.pinMesssage,
-          imagePath: imagePinnedOutlined,
+          imagePath: imagePinAction,
           isSecondBottom: !message.isOwnerMessage,
           onClick: () async {
             Get.find<MessageAnimationCubit>().endAnimation();
@@ -134,7 +134,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
         DropDownButton(
           text: AppLocalizations.of(context)!.unpinMesssage,
           isBottom: !message.isOwnerMessage,
-          imagePath: imageUnpinnedOutlined,
+          imagePath: imageUnpinAction,
           isSecondBottom: message.isOwnerMessage,
           onClick: () async {
             Get.find<MessageAnimationCubit>().endAnimation();
@@ -151,7 +151,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
           DropDownButton(
             isBottom: true,
             text: AppLocalizations.of(context)!.delete,
-            icon: Icons.delete_outline,
+            imagePath: imageDeleteAction,
             textColor: Colors.red,
             iconColor: Colors.red,
             onClick: () async {

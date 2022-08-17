@@ -75,9 +75,7 @@ class _FileTileState extends State<FileTile> {
           file.thumbnailUrl.isEmpty
               ? Padding(
                   padding: const EdgeInsets.only(left: 12),
-                  child: Flexible(
-                    child: _buildFileInfo(file),
-                  ),
+                  child: _buildFileInfo(file),
                 )
               : SizedBox.shrink(),
         ]),

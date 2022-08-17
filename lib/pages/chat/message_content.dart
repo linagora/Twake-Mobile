@@ -285,10 +285,9 @@ class _MessageContentState<T extends BaseMessagesCubit>
   }
 
   Widget _buildReplies() {
-    final List<Message>? last3Replies = widget.message.last3Replies;
     final List<Avatar> avatars = [];
-    if (last3Replies != null) {
-      last3Replies.forEach((message) {
+    if (widget.message.last3Replies != null) {
+      widget.message.last3Replies!.forEach((message) {
         message.picture != null || message.username != null
             ? avatars.add(Avatar(
                 link: message.picture ?? '', name: message.username ?? ''))
@@ -302,7 +301,7 @@ class _MessageContentState<T extends BaseMessagesCubit>
         children: [
           Padding(
             padding: const EdgeInsets.only(right: 6),
-            child: avatars != []
+            child: avatars.isNotEmpty
                 ? ImageWidget(
                     imageType: ImageType.common,
                     avatars: avatars,

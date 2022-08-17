@@ -52,9 +52,6 @@ class _ThreadPageState<T extends BaseChannelsCubit>
       },
       child: BlocBuilder<ThreadMessagesCubit, MessagesState>(
           bloc: Get.find<ThreadMessagesCubit>(),
-          buildWhen: (_, state) {
-            return state is MessagesLoadSuccess;
-          },
           builder: (ctx, messagesState) {
             if (messagesState is MessagesLoadSuccess &&
                 messagesState.messages.isNotEmpty) {
@@ -218,7 +215,58 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                 ]),
               );
             } else {
-              return Container();
+              return Scaffold(
+                appBar: AppBar(
+                  titleSpacing: 0.0,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  shadowColor: Colors.transparent,
+                  toolbarHeight:
+                      Dim.heightPercent((kToolbarHeight * 0.15).round()),
+                  leading: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                    ),
+                  ),
+                  title: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Text(
+                        channel.isDirect
+                            ? AppLocalizations.of(context)!.threadReplies
+                            : channel.name,
+                        style: Theme.of(context).textTheme.headline2!.copyWith(
+                            fontSize: 13, fontWeight: FontWeight.w400),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ],
+                  ),
+                ),
+                body: SafeArea(
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        PinnedMessageSheet(),
+                        Spacer(),
+                        ComposeBar(
+                          onMessageSend: (_, conext) => {},
+                          onTextUpdated: (_, conext) => {},
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
             }
           }),
     );
