@@ -5,6 +5,7 @@ on:
       - main
     paths-ignore:
       - "lib/l10n/**"
+      - ".github/**"
 
 name: Build app for testing and QA
 
@@ -142,6 +143,10 @@ jobs:
           echo "APP_ID=${{ secrets.APP_ID }}" >> .firebase.env
           echo "MESSAGE_SENDER_ID=${{ secrets.MESSAGE_SENDER_ID }}" >> .firebase.env
           echo "PROJECT_ID=${{ secrets.PROJECT_ID }}" >> .firebase.env
+
+      - name: Setup NDK path
+        shell: bash
+        run: echo "ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
 
       - name: Build the APKs
         run: |
