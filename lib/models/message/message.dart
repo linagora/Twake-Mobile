@@ -72,11 +72,8 @@ class Message extends BaseModel {
       : null;
   List<Message>? get last3Replies {
     if (_lastReplies != null && _lastReplies!.isNotEmpty) {
-      this.responsesCount < 3 ? _lastReplies!.removeAt(0) : null;
       return _lastReplies!
-          .getRange(
-              (_lastReplies!.length - 4) < 0 ? 0 : _lastReplies!.length - 4,
-              _lastReplies!.length)
+          .getRange(responsesCount < 3 ? 1 : 0, _lastReplies!.length)
           .toList();
     }
     return null;

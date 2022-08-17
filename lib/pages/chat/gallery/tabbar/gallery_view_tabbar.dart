@@ -85,7 +85,7 @@ class GalleryViewTabBar extends StatelessWidget {
                         topLeft: Radius.circular(12),
                         bottomLeft: Radius.circular(12),
                       ),
-                      icon: Icon(Icons.image)),
+                      iconData: Icons.image),
                   GalleryViewTab(
                       tabController: tabController,
                       title: AppLocalizations.of(context)!.file,
@@ -94,7 +94,7 @@ class GalleryViewTabBar extends StatelessWidget {
                         topRight: Radius.circular(12),
                         bottomRight: Radius.circular(12),
                       ),
-                      icon: Icon(CupertinoIcons.doc)),
+                      iconData: CupertinoIcons.doc),
                 ],
               ),
             )

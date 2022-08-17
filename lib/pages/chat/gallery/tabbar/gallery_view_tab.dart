@@ -6,7 +6,7 @@ import 'package:twake/blocs/gallery_cubit/gallery_cubit.dart';
 class GalleryViewTab extends StatelessWidget {
   final TabController tabController;
   final String title;
-  final Icon icon;
+  final IconData iconData;
   final int tabIndex;
   final BorderRadiusGeometry borderRadiusGeometry;
 
@@ -16,7 +16,7 @@ class GalleryViewTab extends StatelessWidget {
       required this.title,
       required this.tabIndex,
       required this.borderRadiusGeometry,
-      required this.icon})
+      required this.iconData})
       : super(key: key);
 
   @override
@@ -48,7 +48,14 @@ class GalleryViewTab extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: icon,
+                    child: Icon(
+                      iconData,
+                      color: Get.isDarkMode
+                          ? null
+                          : state.selectedTab == tabIndex
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.surface,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),

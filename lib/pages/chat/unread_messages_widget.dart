@@ -13,7 +13,8 @@ import 'package:twake/widgets/common/unread_counter.dart';
 class UnreadMessagesWidget extends StatefulWidget {
   final List<Message> messages;
   final Message? startMessage;
-  final Widget Function(BuildContext context, Message message, int index)
+  final Widget Function(
+          BuildContext context, Message message, int index, bool isSenderHidden)
       indexedItemBuilder;
   // use only one controller for jump to item
   final SearchableGroupChatController jumpController;
@@ -56,6 +57,7 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
         bloc: Get.find<ChannelUnreadMessagesCubit>(),
         builder: ((_, state) {
           int? unreadCounter;
+          String? id;
           if (state is UnreadMessagesFound) {
             unreadCounter = state.unreadCounter;
           } else {
@@ -96,10 +98,12 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const UnreadBorder(),
-                            widget.indexedItemBuilder(context, message, index, isSenderHidden),
+                            widget.indexedItemBuilder(
+                                context, message, index, isSenderHidden),
                           ],
                         )
-                      : widget.indexedItemBuilder(context, message, index, isSenderHidden);
+                      : widget.indexedItemBuilder(
+                          context, message, index, isSenderHidden);
                 }),
           );
         }));

@@ -117,10 +117,10 @@ class _ChatViewState extends State<_ChatView> {
               startMessage: _startMessage,
               itemPositionsListener: _itemPositionsListener,
               jumpController: _jumpController,
-              indexedItemBuilder: (context, Message message, int index) {
-                return _buildSwipeActionCell(
-                    state.messages, message, index, state.endOfHistory);
-
+              indexedItemBuilder:
+                  (context, Message message, int index, bool isSenderHidden) {
+                return _buildSwipeActionCell(state.messages, message, index,
+                    state.endOfHistory, isSenderHidden);
               },
             ),
             messages: state.messages,
@@ -157,8 +157,6 @@ class _ChatViewState extends State<_ChatView> {
                 ],
               ),
               onTap: (CompletionHandler handler) async {
-                Get.find<ThreadMessagesCubit>().reset();
-
                 await NavigatorService.instance.navigate(
                   channelId: message.channelId,
                   threadId: message.id,
