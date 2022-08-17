@@ -362,13 +362,10 @@ class ChannelDetailWidget extends StatelessWidget {
   }
 
   _buildPinnedMessagesTile(context) {
-    final state = Get.find<ChannelsCubit>().state;
-    final channel = (state as ChannelsLoadedSuccess).selected;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        if (channel != null)
-          push(RoutePaths.channelPinnedMessages.path, arguments: channel);
+        push(RoutePaths.channelPinnedMessages.path);
       },
       child: Row(
         children: [

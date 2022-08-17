@@ -23,7 +23,7 @@ class GalleryCubit extends Cubit<GalleryState> {
 
     if (isGettingNewAssets) {
       if (!state.isAddingDummyAssets) {
-       // when we scroll to the end, we load new assets while giving dummy
+        // when we scroll to the end, we load new assets while giving dummy
         emit(GalleryState(
             galleryStateStatus: GalleryStateStatus.done,
             selectedTab: state.selectedTab,
@@ -68,6 +68,7 @@ class GalleryCubit extends Cubit<GalleryState> {
 
     if (recentAsset.length == 0) {
       // if all assets already is loaded - return
+      emit(state.copyWith(newIsAddingDummyAssets: false));
       return;
     }
     recentAssets.addAll(recentAsset);

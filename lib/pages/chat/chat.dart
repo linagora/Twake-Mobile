@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:twake/blocs/channels_cubit/channels_cubit.dart';
@@ -9,27 +8,32 @@ import 'package:twake/blocs/file_cubit/upload/file_upload_state.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/blocs/pinned_message_cubit/pinned_messsage_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-
 import 'package:twake/models/file/file.dart';
 import 'package:twake/models/file/message_file.dart';
-
-import 'package:twake/pages/chat/chat_thumbnails_uploading.dart';
+import 'package:twake/pages/chat/message_animation.dart';
 import 'package:twake/pages/chat/pinned_message_sheet.dart';
 import 'package:twake/routing/app_router.dart';
-
 import 'package:twake/services/navigator_service.dart';
 import 'package:twake/utils/emojis.dart';
 import 'package:twake/widgets/message/compose_bar.dart';
 import 'package:twake/pages/chat/messages_grouped_list.dart';
 import 'chat_header.dart';
-import 'messages_grouped_list.dart';
 
-class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
+class Chat<T extends BaseChannelsCubit> extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _ChatState<T>();
+}
+
+class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
+  GlobalKey _messagesListKey = new GlobalKey();
+
   @override
   Widget build(BuildContext context) {
+    bool isDirect = false;
     final draft =
         (Get.find<T>().state as ChannelsLoadedSuccess).selected!.draft;
     final channel = (Get.find<T>().state as ChannelsLoadedSuccess).selected!;
+
     return WillPopScope(
       onWillPop: () async {
         final uploadState = Get.find<FileUploadCubit>().state;
@@ -40,108 +44,109 @@ class Chat<T extends BaseChannelsCubit> extends StatelessWidget {
         }
         return true;
       },
-      child: BlocBuilder<FileUploadCubit, FileUploadState>(
-        bloc: Get.find<FileUploadCubit>(),
-        builder: (context, state) {
-          return Scaffold(
-            appBar: state.fileUploadStatus != FileUploadStatus.inProcessing
-                ? AppBar(
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    titleSpacing: 0.0,
-                    shadowColor: Get.isDarkMode
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.3),
-                    toolbarHeight: 60.0,
-                    leadingWidth: 53.0,
-                    leading: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        popBack();
-                        Get.find<ThreadMessagesCubit>().reset();
-                        Get.find<PinnedMessageCubit>().init();
-                        // TODO: Currently, no need to clean cached files.
-                        // Once there are some related performance bugs occur in the future,
-                        // just un-comment this and test
-                        // Get.find<CacheFileCubit>().cleanCachedFiles();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Icon(
-                          Icons.arrow_back_ios,
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                      ),
-                    ),
-                    title: BlocBuilder<ChannelsCubit, ChannelsState>(
-                        bloc: Get.find<ChannelsCubit>(),
-                        builder: (ctx, channelState) {
-                          final selectedChannel =
-                              (channelState as ChannelsLoadedSuccess)
-                                      .selected ??
-                                  channel;
-                          return ChatHeader(
-                              isDirect: selectedChannel.isDirect,
-                              isPrivate: selectedChannel.isPrivate,
-                              userId: selectedChannel.members.isNotEmpty
-                                  ? selectedChannel.members.first
-                                  : null,
-                              name: selectedChannel.name,
-                              icon:
-                                  Emojis.getByName(selectedChannel.icon ?? ''),
-                              avatars: selectedChannel.isDirect
-                                  ? selectedChannel.avatars
-                                  : const [],
-                              membersCount: selectedChannel.stats?.members ?? 0,
-                              onTap: () {
-                                final cstate = Get.find<CompaniesCubit>().state
-                                    as CompaniesLoadSuccess;
-                                if (T == ChannelsCubit &&
-                                    cstate.selected.canUpdateChannel) {
-                                  NavigatorService.instance
-                                      .navigateToChannelDetail();
-                                }
-                              });
-                        }),
-                  )
-                : null,
-            body: SafeArea(
-              child: BlocBuilder<ChannelMessagesCubit, MessagesState>(
-                bloc: Get.find<ChannelMessagesCubit>(),
-                builder: (_, messagesState) => Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    PinnedMessageSheet(channel: channel),
-                    Flexible(
-                        child:
-                            _buildChatContent(messagesState, channel, context)),
-                    ChatThumbnailsUploading(),
-                    _composeBar(messagesState, draft, channel)
-                  ],
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Scaffold(
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                titleSpacing: 0.0,
+                shadowColor: Colors.transparent,
+                toolbarHeight: 60.0,
+                leadingWidth: 53.0,
+                leading: BlocBuilder<FileUploadCubit, FileUploadState>(
+                  bloc: Get.find<FileUploadCubit>(),
+                  builder: (context, state) {
+                    return state.fileUploadStatus !=
+                            FileUploadStatus.inProcessing
+                        ? GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {
+                              popBack();
+                              Get.find<ThreadMessagesCubit>().reset();
+                              Get.find<PinnedMessageCubit>().init();
+                              // TODO: Currently, no need to clean cached files.
+                              // Once there are some related performance bugs occur in the future,
+                              // just un-comment this and test
+                              // Get.find<CacheFileCubit>().cleanCachedFiles();
+                            },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink();
+                  },
+                ),
+                title: BlocBuilder<ChannelsCubit, ChannelsState>(
+                    bloc: Get.find<ChannelsCubit>(),
+                    builder: (ctx, channelState) {
+                      final selectedChannel =
+                          (channelState as ChannelsLoadedSuccess).selected ??
+                              channel;
+                      isDirect = selectedChannel.isDirect;
+                      return ChatHeader(
+                          isDirect: selectedChannel.isDirect,
+                          isPrivate: selectedChannel.isPrivate,
+                          userId: selectedChannel.members.isNotEmpty
+                              ? selectedChannel.members.first
+                              : null,
+                          name: selectedChannel.name,
+                          icon: Emojis.getByName(selectedChannel.icon ?? ''),
+                          avatars: selectedChannel.isDirect
+                              ? selectedChannel.avatars
+                              : const [],
+                          membersCount: selectedChannel.stats?.members ?? 0,
+                          onTap: () {
+                            final fileUploadCubitState =
+                                Get.find<FileUploadCubit>().state;
+                            if (fileUploadCubitState.fileUploadStatus !=
+                                FileUploadStatus.inProcessing) {
+                              final cstate = Get.find<CompaniesCubit>().state
+                                  as CompaniesLoadSuccess;
+                              if (T == ChannelsCubit &&
+                                  cstate.selected.canUpdateChannel) {
+                                NavigatorService.instance
+                                    .navigateToChannelDetail();
+                              }
+                            }
+                          });
+                    }),
+              ),
+              body: SafeArea(
+                child: BlocBuilder<ChannelMessagesCubit, MessagesState>(
+                  bloc: Get.find<ChannelMessagesCubit>(),
+                  builder: (_, messagesState) => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PinnedMessageSheet(),
+                      Flexible(
+                          child: _buildChatContent(messagesState, channel,
+                              context, _messagesListKey)),
+                      _composeBar(messagesState, draft, channel)
+                    ],
+                  ),
                 ),
               ),
             ),
-          );
-        },
+            LongPressMessageAnimation<ChannelMessagesCubit>(messagesListKey: _messagesListKey, isDirect: isDirect),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildChatContent(
-      messagesState, Channel channel, BuildContext context) {
+      messagesState, Channel channel, BuildContext context, Key? key) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Divider(
-            thickness: 1.0,
-            height: 1.0,
-            color: Get.isDarkMode
-                ? Theme.of(context).colorScheme.primary
-                : Color(0xFFEEEEEE)),
         _buildLoading(messagesState),
-        MessagesGroupedList(parentChannel: channel)
+        MessagesGroupedList(parentChannel: channel, key: key)
       ],
     );
   }

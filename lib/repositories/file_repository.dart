@@ -81,16 +81,16 @@ class FileRepository {
     }
 
     final fileDestinationPath = fileDownloading.file == null
-        ? '$externalStorageDirPath/${fileDownloading.file!.metadata.name}'
-        : '$externalStorageDirPath/${fileDownloading.messageFile!.metadata.name}';
+        ? '$externalStorageDirPath/${fileDownloading.messageFile!.metadata.name}'
+        : '$externalStorageDirPath/${fileDownloading.file!.metadata.name}';
     final taskId = await _fileDownloadManager.downloadFile(
         downloadUrl: fileDownloading.file == null
-            ? fileDownloading.file!.downloadUrl
-            : fileDownloading.messageFile!.downloadUrl,
+            ? fileDownloading.messageFile!.downloadUrl
+            : fileDownloading.file!.downloadUrl,
         savedDir: externalStorageDirPath,
         fileName: fileDownloading.file == null
             ? fileDownloading.messageFile!.metadata.name
-            : fileDownloading.messageFile!.metadata.name);
+            : fileDownloading.file!.metadata.name);
     return Tuple2(taskId, fileDestinationPath);
   }
 

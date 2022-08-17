@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:sticky_grouped_list/sticky_grouped_list.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
+
 import 'package:twake/models/message/message.dart';
 import 'package:twake/utils/dateformatter.dart';
 
@@ -46,6 +49,7 @@ class _SearchableChatViewState extends State<SearchableChatView> {
 
   @override
   Widget build(BuildContext context) {
+
     return StickyGroupedListView<Message, DateTime>(
       initialScrollIndex: widget.initialScrollIndex,
       elements: widget.messages,
@@ -53,25 +57,26 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       physics: widget.physics,
       shrinkWrap: widget.shrinkWrap,
       itemPositionsListener: widget.itemPositionListener,
-      groupSeparatorBuilder: widget.groupSeparatorBuilder ?? (Message msg) {
-        return GestureDetector(
-          onTap: () {
-            FocusManager.instance.primaryFocus!.unfocus();
+      groupSeparatorBuilder: widget.groupSeparatorBuilder ??
+          (Message msg) {
+            return GestureDetector(
+              onTap: () {
+                FocusManager.instance.primaryFocus!.unfocus();
+              },
+              child: Container(
+                height: 53.0,
+                alignment: Alignment.center,
+                child: Text(
+                  DateFormatter.getVerboseDate(msg.createdAt),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline2!
+                      .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
           },
-          child: Container(
-            height: 53.0,
-            alignment: Alignment.center,
-            child: Text(
-              DateFormatter.getVerboseDate(msg.createdAt),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline2!
-                  .copyWith(fontSize: 11, fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        );
-      },
       groupBy: (Message m) {
         final DateTime dt = DateTime.fromMillisecondsSinceEpoch(m.createdAt);
         return DateTime(dt.year, dt.month, dt.day);
@@ -83,10 +88,19 @@ class _SearchableChatViewState extends State<SearchableChatView> {
       separator: SizedBox(height: 1.0),
       itemScrollController: _controller,
       stickyHeaderBackgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      padding: EdgeInsets.only(bottom: 12.0),
       reverse: widget.reverse,
       indexedItemBuilder: (context, message, index) {
-        return widget.indexedItemBuilder(context, message, index);
+        return widget.itemPositionListener != null
+            ? GestureDetector(
+                child: widget.indexedItemBuilder(context, message, index),
+                onLongPress: () {
+                  Get.find<MessageAnimationCubit>().startAnimation(
+                    longPressMessage: message,
+                    longPressIndex: index*2,
+                    itemPositionsListener: widget.itemPositionListener!,
+                  );
+                })
+            : widget.indexedItemBuilder(context, message, index);
       },
     );
   }

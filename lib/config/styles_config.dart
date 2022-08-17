@@ -18,7 +18,7 @@ class StylesConfig {
     error: Color(0xFFFF3347),
     onPrimary: Colors.black,
     onSecondary: Colors.black,
-    onSurface: Colors.white,
+    onSurface: Color(0xFF276CFF),
     onBackground: Colors.white,
     onError: Colors.black,
     brightness: Brightness.dark,
@@ -27,9 +27,10 @@ class StylesConfig {
   static final ThemeData darkTheme = ThemeData(
     primaryColor: Colors.black,
     colorScheme: darkThemeColorScheme,
+    cardColor: Colors.white,
     fontFamily: fontFamilyByPlatform(),
     textTheme: darkTextTheme,
-    scaffoldBackgroundColor: Color(0xFF19191A),
+    scaffoldBackgroundColor: Color(0xFF19191B),
     iconTheme: IconThemeData(color: Colors.white),
     appBarTheme: AppBarTheme(color: Color(0xFF19191A)),
     brightness: Brightness.dark,
@@ -41,25 +42,26 @@ class StylesConfig {
   static const ColorScheme lightThemeColorScheme = ColorScheme(
     primary: Color(0xFFD2D2D2),
     primaryContainer: Colors.black,
-    secondary: Color(0xFF818C99),
+    secondary: Color(0xFF99A2AD),
     secondaryContainer: Color(0xFFF5F5F5),
     surface: Color(0xFF007AFF),
     background: Color(0xFFD2D2D2),
     error: Color(0xFFFF3347),
     onPrimary: Colors.white,
     onSecondary: Colors.white,
-    onSurface: Colors.black,
+    onSurface: Color(0xFFDEEEFF),
     onBackground: Colors.black,
     onError: Colors.white,
     brightness: Brightness.light,
   );
   static final ThemeData lightTheme = ThemeData(
     primaryColor: Colors.white,
+    cardColor: Color(0xFFEBEDF0),
     colorScheme: lightThemeColorScheme,
     fontFamily: fontFamilyByPlatform(),
     textTheme: lightTextTheme,
     scaffoldBackgroundColor: Color(0xFFFFFFFF),
-    iconTheme: IconThemeData(color: Color(0xFFEBEDF0)),
+    iconTheme: IconThemeData(color: Colors.black),
     appBarTheme: AppBarTheme(color: Color(0xFFEBEDF0)),
     brightness: Brightness.light,
     textSelectionTheme: TextSelectionThemeData(
@@ -89,8 +91,8 @@ class StylesConfig {
 
   static final TextStyle _darkHeadline1 = TextStyle(
       color: Colors.white.withOpacity(0.9),
-      fontSize: 15.0,
-      fontWeight: FontWeight.w600,
+      fontSize: 17.0,
+      fontWeight: FontWeight.w400,
       fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline2 = TextStyle(
@@ -100,7 +102,7 @@ class StylesConfig {
       fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _darkHeadline3 = TextStyle(
-      color: Color(0xFF76787A),
+      color: Color(0xFFA0A1A5),
       fontSize: 14.0,
       fontWeight: FontWeight.normal,
       fontFamily: fontFamilyByPlatform());
@@ -130,8 +132,8 @@ class StylesConfig {
 
   static final TextStyle _lightHeadline1 = TextStyle(
       color: Colors.black,
-      fontSize: 16.0,
-      fontWeight: FontWeight.normal,
+      fontSize: 17.0,
+      fontWeight: FontWeight.w400,
       fontFamily: fontFamilyByPlatform());
 
   static final TextStyle _lightHeadline2 = TextStyle(
@@ -200,8 +202,8 @@ class StylesConfig {
       borderRadius: BorderRadius.all(Radius.circular(12.0)));
 
   static String fontFamilyByPlatform() {
-    if(kIsWeb)  return 'Roboto';
-    if(Platform.isIOS || Platform.isMacOS)  return 'SFPro';
+    if (kIsWeb) return 'Roboto';
+    if (Platform.isIOS || Platform.isMacOS) return 'SFPro';
     return 'Roboto';
   }
 }

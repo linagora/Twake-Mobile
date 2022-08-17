@@ -11,15 +11,14 @@ class GalleryViewTabBar extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {},
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Stack(
         children: [
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => Get.find<GalleryCubit>().clearSelection(),
             child: Padding(
               padding:
-                  const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
+                  const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
               child: Text(AppLocalizations.of(context)!.clear,
                   style: Theme.of(context)
                       .textTheme
@@ -27,25 +26,31 @@ class GalleryViewTabBar extends StatelessWidget {
                       .copyWith(fontWeight: FontWeight.w400, fontSize: 17)),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              AppLocalizations.of(context)!.gallery,
-              style: Theme.of(context).textTheme.headline1!.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 21,
-                  ),
+          Align(
+            alignment: Alignment.center,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                AppLocalizations.of(context)!.gallery,
+                style: Theme.of(context).textTheme.headline1!.copyWith(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 21,
+                    ),
+              ),
             ),
           ),
           GestureDetector(
             onTap: () => Get.back(),
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 4),
-              child: Image.asset(
-                imageClose,
-                width: 24.0,
-                height: 24.0,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding:
+                    const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 4),
+                child: Image.asset(
+                  imageClose,
+                  width: 24.0,
+                  height: 24.0,
+                ),
               ),
             ),
           ),

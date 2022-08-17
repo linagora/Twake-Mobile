@@ -1,22 +1,20 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:twake/blocs/message_animation_cubit/message_animation_cubit.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
+import 'package:twake/config/dimensions_config.dart';
 import 'package:twake/blocs/unread_messages_cubit/unread_messages_cubit.dart';
 import 'package:twake/blocs/unread_messages_cubit/unread_messages_state.dart';
 import 'package:twake/models/channel/channel.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/jumpable_pinned_messages.dart';
 import 'package:twake/pages/chat/message_tile.dart';
-import 'package:twake/utils/bubble_side.dart';
 import 'package:twake/widgets/common/highlight_component.dart';
-import 'package:twake/widgets/common/reaction.dart';
-import 'package:twake/widgets/common/searchable_grouped_listview.dart';
 import 'package:twake/widgets/common/unread_border.dart';
 import 'package:twake/widgets/common/unread_counter.dart';
 
@@ -24,7 +22,9 @@ class ThreadMessagesList<T extends BaseMessagesCubit> extends StatefulWidget {
   final Channel parentChannel;
   final Message? pinnedMessage;
 
-  const ThreadMessagesList({required this.parentChannel, this.pinnedMessage});
+  const ThreadMessagesList(
+      {required this.parentChannel, this.pinnedMessage, Key? key})
+      : super(key: key);
 
   @override
   _ThreadMessagesListState createState() => _ThreadMessagesListState<T>();
@@ -40,6 +40,8 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   ItemScrollController _jumpController = ItemScrollController();
   ItemPositionsListener _itemPositionsListener = ItemPositionsListener.create();
   ScrollPhysics _physics = ClampingScrollPhysics();
+
+  GlobalKey _threadKey = GlobalKey();
 
   @override
   void initState() {
@@ -162,28 +164,21 @@ class _ThreadMessagesListState<T extends BaseMessagesCubit>
   }
 
   Widget _buildIndexedMessage(BuildContext context, int index) {
-    //conditions for determining the shape of the bubble sides
-    final List<bool> bubbleSides = bubbleSide(_messages, index, false);
     if ((index == 0 && isJump) || (index == _messages.length - 1 && !isJump)) {
       return SizedBox.shrink();
-    } else if (index == _messages.length - 2) {
-      // the top side of the first answer in a thread should always be round
-      return MessageTile<ThreadMessagesCubit>(
-        message: _messages[_messages.length - 1 - index],
-        key: ValueKey(_messages[_messages.length - 1 - index].hash),
-        channel: widget.parentChannel,
-        downBubbleSide: bubbleSides[1],
-        upBubbleSide: true,
-        isThread: true,
-      );
     } else {
-      return MessageTile<ThreadMessagesCubit>(
-        message: _messages[_messages.length - 1 - index],
-        key: ValueKey(_messages[_messages.length - 1 - index].hash),
-        channel: widget.parentChannel,
-        downBubbleSide: bubbleSides[1],
-        upBubbleSide: bubbleSides[0],
-        isThread: true,
+      return GestureDetector(
+        child: MessageTile<ThreadMessagesCubit>(
+          message: _messages[_messages.length - 1 - index],
+          key: ValueKey(_messages[_messages.length - 1 - index].hash),
+          isThread: true,
+          isDirect: widget.parentChannel.isDirect,
+        ),
+        onLongPress: () => Get.find<MessageAnimationCubit>().startAnimation(
+          longPressMessage: _messages[_messages.length - 1 - index],
+          longPressIndex: max(0, index - 1), // because the replied message
+          itemPositionsListener: _itemPositionsListener,
+        ),
       );
     }
   }
@@ -199,43 +194,34 @@ class MessageColumn<T extends BaseMessagesCubit> extends StatelessWidget {
     final state = Get.find<ThreadMessagesCubit>().state;
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 12.0),
-          child: MessageTile<ThreadMessagesCubit>(
-            channel: parentChannel,
-            downBubbleSide: true,
-            upBubbleSide: true,
-            message: message,
-            hideReaction: true,
-            hideShowReplies: true,
-            isThread: true,
-            key: ValueKey(message.hash),
+        Container(
+          constraints: BoxConstraints(maxHeight: Dim.heightPercent(45)),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: MessageTile<ThreadMessagesCubit>(
+                    message: message,
+                    isDirect: parentChannel.isDirect,
+                    isThread: true,
+                    isHeadInThred: true,
+                    key: ValueKey(message.hash),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         if (state is MessagesLoadSuccess)
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               SizedBox(
                 width: 15,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...message.reactions.map((r) {
-                          return Reaction<T>(
-                            message: message,
-                            reaction: r,
-                            isFirstInThread: true,
-                          );
-                        }),
-                      ],
-                    )),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 1),

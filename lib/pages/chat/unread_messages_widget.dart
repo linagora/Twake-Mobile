@@ -56,7 +56,6 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
         bloc: Get.find<ChannelUnreadMessagesCubit>(),
         builder: ((_, state) {
           int? unreadCounter;
-
           if (state is UnreadMessagesFound) {
             unreadCounter = state.unreadCounter;
           } else {
@@ -85,15 +84,22 @@ class _UnreadMessagesWidgetState extends State<UnreadMessagesWidget> {
                         : 0
                     : _messages.indexOf(_startMessage!),
                 indexedItemBuilder: (_, message, index) {
+                  bool isSenderHidden = false;
+                  (index == 0)
+                      ? id = message.userId
+                      : id == message.userId
+                          ? isSenderHidden = true
+                          : isSenderHidden = false;
+                  id = message.userId;
                   return hasUnreadCounter && index == unreadCounter! - 1
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const UnreadBorder(),
-                            widget.indexedItemBuilder(context, message, index),
+                            widget.indexedItemBuilder(context, message, index, isSenderHidden),
                           ],
                         )
-                      : widget.indexedItemBuilder(context, message, index);
+                      : widget.indexedItemBuilder(context, message, index, isSenderHidden);
                 }),
           );
         }));

@@ -572,6 +572,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
                   afterMessageId: latestMessage.id,
                   workspaceId:
                       isDirect! ? 'direct' : Globals.instance.workspaceId);
+                      
               if(messages.isEmpty){
                 continue;
               }
@@ -580,7 +581,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
               if (newLatestMessage == latestMessage) {
                 continue;
               }
-
+              
               // remove lastest messages in current state because it's also in api
               currentState.messages.remove(latestMessage);
               currentState.messages.addAll(messages);

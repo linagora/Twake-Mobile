@@ -161,13 +161,15 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     return GestureDetector(
       onTap: () => _handleDownloadFile(file, messageFile),
       child: Container(
-        width: 32.0,
-        height: 32.0,
+        width: 46.0,
+        height: 46.0,
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.2),
           shape: BoxShape.circle,
         ),
-        child: Image.asset(imageDownload),
+        child: Image.asset(
+          imageDownload,
+        ),
       ),
     );
   }
@@ -176,8 +178,8 @@ class _FilePreviewState<T extends BaseChannelsCubit>
     return GestureDetector(
       onTap: () => _handleCancelDownloadFile(fileDownloading),
       child: Container(
-        width: 32.0,
-        height: 32.0,
+        width: 46.0,
+        height: 46.0,
         padding: const EdgeInsets.all(2.0),
         decoration: BoxDecoration(
           color: const Color(0xff004dff).withOpacity(0.08),
@@ -222,7 +224,7 @@ class _FilePreviewState<T extends BaseChannelsCubit>
             return false;
           },
           child: AlertDialog(
-            backgroundColor: Colors.black.withOpacity(0.4),
+            backgroundColor: Colors.black.withOpacity(0.7),
             title: Center(
               child: Text(
                 (isImageType == true)

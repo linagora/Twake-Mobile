@@ -53,6 +53,17 @@ const imageImage = '$_assetPath/ic_image.png';
 const imageArrowForward = '$_assetPath/ic_arrow_forward.png';
 const imageDone = '$_assetPath/ic_done.png';
 const imagePinned = '$_assetPath/2.0x/pinned.png';
+const imagePinnedOutlined = '$_assetPath/pin_outlined.svg';
 const imageUnpinned = '$_assetPath/2.0x/unpinned.png';
+const imageUnpinnedOutlined = '$_assetPath/unpin_outlined.svg';
 const imageListPinned = '$_assetPath/2.0x/list_pinned_light.png';
 const imageStop_x2 = '$_assetPath/2.0x/ic_stop.png';
+const imageMessageDeliveryInprogress =
+    '$_assetPath/message_delivery_inprogress.png';
+const imageMessageDeliveryDelivered =
+    '$_assetPath/message_delivery_delivered.png';
+const imageMessageDeliveryRead = '$_assetPath/message_delivery_read.png';
+const imageAddFile = '$_assetPath/add_file.png';
+const imageEmojiIcon = '$_assetPath/emoji_icon.png';
+const imageSend = '$_assetPath/send.png';
+const imageSendBlue = '$_assetPath/send_blue.png';

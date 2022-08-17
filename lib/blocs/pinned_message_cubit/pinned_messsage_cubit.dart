@@ -30,8 +30,9 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
 
   Future<bool> unpinAllMessages() async {
     if (state.pinnedMesssageStatus == PinnedMessageStatus.finished) {
-      emit(
-          state.copyWith(newPinnedMesssageStatus: PinnedMessageStatus.loading));
+      emit(state.copyWith(
+          newPinnedMesssageStatus: PinnedMessageStatus.loading,
+          newIsUnpinAll: true));
       final messages = state.pinnedMessageList;
       bool result;
 
@@ -54,7 +55,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
-          newSelected: state.selected));
+          newSelected: state.selected,
+          newIsUnpinAll: state.isUnpinAll));
     } else
       return;
   }
@@ -69,13 +71,14 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.selected,
           newPinnedMessageList: messages,
-          newSelected: selected));
+          newSelected: selected,
+          newIsUnpinAll: state.isUnpinAll));
 
       emit(state.copyWith(
-        newPinnedMesssageStatus: PinnedMessageStatus.finished,
-        newPinnedMessageList: messages,
-        newSelected: selected,
-      ));
+          newPinnedMesssageStatus: PinnedMessageStatus.finished,
+          newPinnedMessageList: messages,
+          newSelected: selected,
+          newIsUnpinAll: state.isUnpinAll));
       return true;
     }
     return false;
@@ -108,7 +111,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           pinnedMesssageStatus: PinnedMessageStatus.finished,
           pinnedMessageList: state.pinnedMessageList,
           selected: state.selected,
-          messagesAround: messages));
+          messagesAround: messages,
+          isUnpinAll: state.isUnpinAll));
       return messages;
     }
   }
@@ -126,7 +130,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
       emit(state.copyWith(
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList: messages,
-          newSelected: 0));
+          newSelected: 0,
+          newIsUnpinAll: state.isUnpinAll));
 
       final newMessages =
           await _messageRepository.fetchPinnedMesssages(isDirect: isDirect);
@@ -135,7 +140,8 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           newPinnedMesssageStatus: PinnedMessageStatus.finished,
           newPinnedMessageList:
               newMessages.isNotEmpty ? newMessages : state.pinnedMessageList,
-          newSelected: 0));
+          newSelected: 0,
+          newIsUnpinAll: state.isUnpinAll));
       return true;
     } else
       return false;
@@ -163,12 +169,17 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
         emit(state.copyWith(
             newPinnedMesssageStatus: PinnedMessageStatus.finished,
             newPinnedMessageList: messages,
-            newSelected: newSelected));
+            newSelected: newSelected,
+            newIsUnpinAll: state.isUnpinAll));
         return true;
       }
       return false;
     }
     return false;
+  }
+
+  Future<void> unpinAllReset() async {
+    emit(state.copyWith(newIsUnpinAll: false));
   }
 
   Future<void> listenToPinnedMessageChanges() async {
@@ -185,12 +196,15 @@ class PinnedMessageCubit extends Cubit<PinnedMessageState> {
           } else {
             selected = 0;
           }
-          if (messages.isNotEmpty) {
-            emit(state.copyWith(
-                newPinnedMesssageStatus: PinnedMessageStatus.finished,
-                newPinnedMessageList: messages,
-                newSelected: selected));
-          }
+          messages.isNotEmpty && !state.isUnpinAll
+              ? emit(state.copyWith(
+                  newPinnedMesssageStatus: PinnedMessageStatus.finished,
+                  newPinnedMessageList: messages,
+                  newSelected: selected,
+                  newIsUnpinAll: false))
+              : emit(PinnedMessageState(
+                  pinnedMesssageStatus: PinnedMessageStatus.init));
+
           break;
         case ResourceAction.event:
           break;
