@@ -147,71 +147,73 @@ class _MenuMessageDropDownState<T extends BaseMessagesCubit>
               ),
               curve: curveAnimation,
               builder: (context, animationConfig, __) {
-                // solution for hit test not working when child bigger than parent
-                return DeferredPointerHandler(
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Get.find<MessageAnimationCubit>().endAnimation();
-                        },
-                        child: BackdropFilter(
-                            filter: ImageFilter.blur(
-                              sigmaX: animationConfig.blurDegree,
-                              sigmaY: animationConfig.blurDegree,
-                            ),
-                            child: Container(
-                              width: double.maxFinite,
-                              height: double.maxFinite,
-                              color: Colors.transparent,
-                            )),
-                      ),
-                      Positioned(
-                          width: screenWidth,
-                          left: left,
-                          height: totalHeight,
-                          top: topOfComponents,
-                          child: GestureDetector(
-                            onTap: () =>
-                                Get.find<MessageAnimationCubit>().endAnimation(),
-                            child: _buildAnimatedMessage(
-                              isOwnerMessage: widget.message.isOwnerMessage,
-                              curve: curveAnimation,
-                              itemTranslateY: itemTranslateY,
-                              itemScale: itemScale,
-                              duration: durationAnimation,
-                              child: Column(
-                                children: [
-                                  Transform.scale(
-                                      scale:
-                                          animationConfig.scaleDropDown / itemScale,
-                                      alignment: widget.message.isOwnerMessage
-                                          ? Alignment.bottomRight
-                                          : Alignment.bottomLeft,
-                                      child: DeferPointer(
-                                        child: EmojiLine(
-                                          onEmojiSelected: onEmojiSelected,
-                                          showEmojiBoard: toggleEmojiBoard,
-                                        ),
-                                      )),
-                                  MessageTile<T>(message: widget.message),
-                                  Transform.scale(
-                                      alignment: widget.message.isOwnerMessage
-                                          ? Alignment.topRight
-                                          : Alignment.topLeft,
-                                      scale:
-                                          animationConfig.scaleDropDown / itemScale,
-                                      child: DeferPointer(child: widget.lowerWidget)),
-                                ],
+                return SafeArea(
+                // solution for hit test not working when child bigger than parent, use combine with DeferPointer
+                  child: DeferredPointerHandler(
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Get.find<MessageAnimationCubit>().endAnimation();
+                          },
+                          child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: animationConfig.blurDegree,
+                                sigmaY: animationConfig.blurDegree,
+                              ),
+                              child: Container(
+                                width: double.maxFinite,
+                                height: double.maxFinite,
+                                color: Colors.transparent,
+                              )),
+                        ),
+                        Positioned(
+                            width: screenWidth,
+                            left: left,
+                            height: totalHeight,
+                            top: topOfComponents,
+                            child: GestureDetector(
+                              onTap: () =>
+                                  Get.find<MessageAnimationCubit>().endAnimation(),
+                              child: _buildAnimatedMessage(
+                                isOwnerMessage: widget.message.isOwnerMessage,
+                                curve: curveAnimation,
+                                itemTranslateY: itemTranslateY,
+                                itemScale: itemScale,
+                                duration: durationAnimation,
+                                child: Column(
+                                  children: [
+                                    Transform.scale(
+                                        scale:
+                                            animationConfig.scaleDropDown / itemScale,
+                                        alignment: widget.message.isOwnerMessage
+                                            ? Alignment.bottomRight
+                                            : Alignment.bottomLeft,
+                                        child: DeferPointer(
+                                          child: EmojiLine(
+                                            onEmojiSelected: onEmojiSelected,
+                                            showEmojiBoard: toggleEmojiBoard,
+                                          ),
+                                        )),
+                                    MessageTile<T>(message: widget.message),
+                                    Transform.scale(
+                                        alignment: widget.message.isOwnerMessage
+                                            ? Alignment.topRight
+                                            : Alignment.topLeft,
+                                        scale:
+                                            animationConfig.scaleDropDown / itemScale,
+                                        child: DeferPointer(child: widget.lowerWidget)),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      if (_emojiVisible) ...[
-                        buildEmojiBoard(),
-                      ]
-                    ],
+                        if (_emojiVisible) ...[
+                          buildEmojiBoard(),
+                        ]
+                      ],
+                    ),
                   ),
                 );
               },
