@@ -74,7 +74,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                                   titleSpacing: 0.0,
                                   backgroundColor:
                                       Theme.of(context).scaffoldBackgroundColor,
-                                  shadowColor: Colors.transparent,
+                                  elevation: 0,
                                   toolbarHeight: Dim.heightPercent(
                                       (kToolbarHeight * 0.15).round()),
                                   leading: GestureDetector(
@@ -219,7 +219,7 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                 appBar: AppBar(
                   titleSpacing: 0.0,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  shadowColor: Colors.transparent,
+                  elevation: 0,
                   toolbarHeight:
                       Dim.heightPercent((kToolbarHeight * 0.15).round()),
                   leading: GestureDetector(
@@ -234,20 +234,6 @@ class _ThreadPageState<T extends BaseChannelsCubit>
                         color: Theme.of(context).colorScheme.surface,
                       ),
                     ),
-                  ),
-                  title: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Text(
-                        channel.isDirect
-                            ? AppLocalizations.of(context)!.threadReplies
-                            : channel.name,
-                        style: Theme.of(context).textTheme.headline2!.copyWith(
-                            fontSize: 13, fontWeight: FontWeight.w400),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ],
                   ),
                 ),
                 body: SafeArea(
