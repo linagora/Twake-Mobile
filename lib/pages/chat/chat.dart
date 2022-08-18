@@ -51,7 +51,7 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
               appBar: AppBar(
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 titleSpacing: 0.0,
-                shadowColor: Colors.transparent,
+                elevation: 0,
                 toolbarHeight: 60.0,
                 leadingWidth: 53.0,
                 leading: BlocBuilder<FileUploadCubit, FileUploadState>(
@@ -133,7 +133,8 @@ class _ChatState<T extends BaseChannelsCubit> extends State<Chat> {
                 ),
               ),
             ),
-            LongPressMessageAnimation<ChannelMessagesCubit>(messagesListKey: _messagesListKey, isDirect: isDirect),
+            LongPressMessageAnimation<ChannelMessagesCubit>(
+                messagesListKey: _messagesListKey, isDirect: isDirect),
           ],
         ),
       ),
