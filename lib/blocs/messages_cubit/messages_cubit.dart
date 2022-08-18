@@ -12,7 +12,10 @@ export 'messages_state.dart';
 
 abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   late final MessagesRepository _repository;
+
+  late BaseChannelsCubit _baseChannelsCubit;
   late final BaseChannelsCubit _channelsCubit;
+  late final BaseChannelsCubit _directsCubit;
   late final BaseUnreadMessagesCubit _unreadMessagesCubit;
 
   final _socketIOResourceStream = SocketIOService.instance.resourceStream;
@@ -25,6 +28,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
   BaseMessagesCubit(
       {MessagesRepository? repository,
       BaseChannelsCubit? channelCubit,
+      BaseChannelsCubit? directsCubit,
       BaseUnreadMessagesCubit? unreadMessagesCubit})
       : super(MessagesInitial()) {
     if (repository == null) {
@@ -36,6 +40,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       channelCubit = ChannelsCubit();
     }
     _channelsCubit = channelCubit;
+
+    if(directsCubit == null) {
+      directsCubit = DirectsCubit();
+    }
+    _directsCubit = directsCubit;
 
     if (unreadMessagesCubit == null) {
       unreadMessagesCubit = ChannelUnreadMessagesCubit();
@@ -53,6 +62,11 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
     bool empty: false,
   }) async {
     this.isDirect = isDirect;
+    if(isDirect) {
+      _baseChannelsCubit = _directsCubit;
+    }else {
+      _baseChannelsCubit = _channelsCubit;
+    }
 
     if (empty) {
       emit(NoMessagesFound());
@@ -83,12 +97,14 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         messages: list,
         hash: list.fold(0, (acc, m) => acc + m.hash),
       ));
-      _unreadMessagesCubit.fetchUnreadMessages(messages: list);
+      _unreadMessagesCubit.fetchUnreadMessages(messages: list, isDirect: isDirect);
 
       if (lastList.isEmpty && threadId == null) {
         emit(NoMessagesFound());
       }
     }
+
+    _baseChannelsCubit.markChannelRead(channelId: channelId);
   }
 
   Future<void> fetchBefore({
@@ -227,7 +243,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
         endOfHistory: endOfHistory,
       ));
 
-      _channelsCubit.markChannelRead(channelId: message.channelId);
+      _baseChannelsCubit.markChannelRead(channelId: message.channelId);
     }
 
     _sendInProgress -= 1;
@@ -312,7 +328,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
       ));
 
       //after message is send successfully mark channel as read
-      _channelsCubit.markChannelRead(channelId: message.channelId);
+      _baseChannelsCubit.markChannelRead(channelId: message.channelId);
     }
 
     _sendInProgress -= 1;
@@ -518,7 +534,7 @@ abstract class BaseMessagesCubit extends Cubit<MessagesState> {
             final hash = (state as MessagesLoadSuccess).hash;
 
             // update channel read
-            _channelsCubit.markChannelRead(channelId: message.channelId);
+            _baseChannelsCubit.markChannelRead(channelId: message.channelId);
             
             // message is already present
             if (messages.any((m) => m.id == message.id)) {
@@ -608,10 +624,12 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
   ChannelMessagesCubit(
       {MessagesRepository? repository,
       BaseChannelsCubit? channelsCubit,
+      BaseChannelsCubit? directsCubit,
       ChannelUnreadMessagesCubit? unreadMessagesCubit})
       : super(
             repository: repository,
             channelCubit: channelsCubit,
+            directsCubit: directsCubit,
             unreadMessagesCubit: unreadMessagesCubit) {
     listenToThreadChanges();
   }
@@ -661,7 +679,7 @@ class ChannelMessagesCubit extends BaseMessagesCubit {
             messages[i] = message;
 
             // mark message as read
-            _channelsCubit.markChannelRead(channelId: message.channelId);
+            _baseChannelsCubit.markChannelRead(channelId: message.channelId);
             final newState = MessageLatestSuccess(
               messages: messages,
               hash:

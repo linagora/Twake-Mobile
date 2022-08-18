@@ -21,18 +21,29 @@ abstract class BaseUnreadMessagesCubit extends Cubit<UnreadMessagesState> {
     emit(NoUnreadMessages());
   }
 
-  fetchUnreadMessages({required List<Message> messages});
+  fetchUnreadMessages({required List<Message> messages, required bool isDirect});
   listenNotOwnerMessage();
 }
 
 class ChannelUnreadMessagesCubit extends BaseUnreadMessagesCubit {
-  ChannelUnreadMessagesCubit({ChannelsCubit? channelsCubit})
-      : super(channelsCubit: channelsCubit);
+  ChannelUnreadMessagesCubit({ChannelsCubit? channelsCubit, DirectsCubit? directsCubit})
+      : super(channelsCubit: channelsCubit) {
+        this._directsCubit = directsCubit;
+      }
+
+  DirectsCubit? _directsCubit;
 
   void fetchUnreadMessages({
     required List<Message> messages,
+    required bool isDirect,
   }) {
-    final userLastAccess = _channelsCubit.selectedChannel!.userLastAccess;
+    int userLastAccess = 0;
+    if(isDirect) {
+      userLastAccess = _directsCubit!.selectedChannel?.userLastAccess ?? 0;
+    } else {
+      userLastAccess = _channelsCubit.selectedChannel?.userLastAccess ?? 0;
+    }
+    
     messages.sort((a, b) => a.createdAt
         .compareTo(b.createdAt)); // sort message from oldest to latest
 
@@ -41,7 +52,6 @@ class ChannelUnreadMessagesCubit extends BaseUnreadMessagesCubit {
 
     // get number of unread messages
     int unreadCounter = 0;
-    Message? firstUnreadMessage;
 
     unreadCounter = unreadMessages.length;
 
@@ -60,7 +70,6 @@ class ChannelUnreadMessagesCubit extends BaseUnreadMessagesCubit {
     }
     // when there are unread messages in channel
     if (unreadMessages.isNotEmpty) {
-      firstUnreadMessage = unreadMessages.first;
       emit(UnreadMessagesFound(
           unreadCounter: unreadCounter, userLastAccess: userLastAccess));
     }
@@ -122,7 +131,7 @@ class ThreadUnreadMessagesCubit extends BaseUnreadMessagesCubit {
     }
   }
 
-  void fetchUnreadMessages({required List<Message> messages}) async {
+  void fetchUnreadMessages({required List<Message> messages, required bool isDirect}) async {
     if (_channelUnreadMessagesCubit.state is UnreadMessagesThreadFound) {
       final currentState =
           _channelUnreadMessagesCubit.state as UnreadMessagesThreadFound;
