@@ -81,22 +81,24 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        DropDownButton(
-          text: AppLocalizations.of(context)!.reply,
-          imagePath: imageComment,
-          isTop: true,
-          onClick: () async {
-            Get.find<MessageAnimationCubit>().endAnimation();
-
-            await NavigatorService.instance.navigate(
-              channelId: message.channelId,
-              threadId: message.id,
-              reloadThreads: false,
-            );
-          },
-        ),
-        if (message.isOwnerMessage) ...[
+        if (message.subtype != MessageSubtype.deleted && !message.inThread)
           DropDownButton(
+            text: AppLocalizations.of(context)!.reply,
+            imagePath: imageComment,
+            isTop: true,
+            onClick: () async {
+              Get.find<MessageAnimationCubit>().endAnimation();
+
+              await NavigatorService.instance.navigate(
+                channelId: message.channelId,
+                threadId: message.id,
+                reloadThreads: false,
+              );
+            },
+          ),
+        if (message.isOwnerMessage)
+          DropDownButton(
+            isTop: message.inThread,
             text: AppLocalizations.of(context)!.edit,
             imagePath: imageEdit,
             onClick: () {
@@ -104,8 +106,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
 
               Get.find<T>().startEdit(message: message);
             },
-          )
-        ],
+          ),
         DropDownButton(
           text: AppLocalizations.of(context)!.copy,
           imagePath: imageCopy,
@@ -120,46 +121,48 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
                 iconData: Icons.copy);
           },
         ),
-        DropDownButton(
-          text: AppLocalizations.of(context)!.pinMesssage,
-          imagePath: imagePinAction,
-          isSecondBottom: !message.isOwnerMessage,
-          onClick: () async {
-            Get.find<MessageAnimationCubit>().endAnimation();
+        if (message.pinnedInfo == null)
+          DropDownButton(
+            text: AppLocalizations.of(context)!.pinMesssage,
+            isBottom: !message.isOwnerMessage || message.responsesCount != 0,
+            imagePath: imagePinAction,
+            isSecondBottom: !message.isOwnerMessage,
+            onClick: () async {
+              Get.find<MessageAnimationCubit>().endAnimation();
 
-            await Get.find<PinnedMessageCubit>()
-                .pinMessage(message: message, isDirect: isDirect);
-          },
-        ),
-        DropDownButton(
-          text: AppLocalizations.of(context)!.unpinMesssage,
-          isBottom: !message.isOwnerMessage,
-          imagePath: imageUnpinAction,
-          isSecondBottom: message.isOwnerMessage,
-          onClick: () async {
-            Get.find<MessageAnimationCubit>().endAnimation();
+              await Get.find<PinnedMessageCubit>()
+                  .pinMessage(message: message, isDirect: isDirect);
+            },
+          ),
+        if (message.pinnedInfo != null)
+          DropDownButton(
+            text: AppLocalizations.of(context)!.unpinMesssage,
+            isBottom: !message.isOwnerMessage || message.responsesCount != 0,
+            imagePath: imageUnpinAction,
+            isSecondBottom: message.isOwnerMessage,
+            onClick: () async {
+              Get.find<MessageAnimationCubit>().endAnimation();
 
-            final bool result = await Get.find<PinnedMessageCubit>()
-                .unpinMessage(message: message);
-            if (!result)
-              Utilities.showSimpleSnackBar(
-                  context: context,
-                  message: AppLocalizations.of(context)!.somethingWentWrong);
-          },
-        ),
-        if (message.isOwnerMessage) ...[
+              final bool result = await Get.find<PinnedMessageCubit>()
+                  .unpinMessage(message: message);
+              if (!result)
+                Utilities.showSimpleSnackBar(
+                    context: context,
+                    message: AppLocalizations.of(context)!.somethingWentWrong);
+            },
+          ),
+        if (message.isOwnerMessage && message.responsesCount == 0)
           DropDownButton(
             isBottom: true,
             text: AppLocalizations.of(context)!.delete,
             imagePath: imageDeleteAction,
-            textColor: Colors.red,
-            iconColor: Colors.red,
+            textColor: Theme.of(context).colorScheme.error,
+            iconColor: Theme.of(context).colorScheme.error,
             onClick: () async {
               Get.find<MessageAnimationCubit>().endAnimation();
               await Get.find<T>().delete(message: message);
             },
           )
-        ],
       ],
     );
   }

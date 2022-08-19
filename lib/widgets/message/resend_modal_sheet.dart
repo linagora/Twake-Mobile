@@ -59,11 +59,7 @@ class ResendModalSheet extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 10),
                         child: Text(
                           AppLocalizations.of(context)!.tryAgain,
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF004DFF),
-                          ),
+                          style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 20,fontWeight: FontWeight.w500),
                         ),
                       ),
                     ),
@@ -114,18 +110,14 @@ class ResendModalSheet extends StatelessWidget {
           child: GestureDetector(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.secondaryContainer,
                 borderRadius: BorderRadius.circular(22.0),
               ),
               child: Container(
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)!.cancel,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
+                    style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 20,fontWeight: FontWeight.w500),
                   ),
                 ),
                 height: 60,

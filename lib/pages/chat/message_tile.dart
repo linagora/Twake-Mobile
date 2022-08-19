@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_content.dart';
 import 'package:twake/services/navigator_service.dart';
@@ -44,7 +43,6 @@ class _MessageTileState<T extends BaseMessagesCubit>
 
   @override
   Widget build(BuildContext context) {
-    bool _isMyMessage = widget.message.userId == Globals.instance.userId;
     return InkWell(
       onTap: () {
         FocusManager.instance.primaryFocus!.unfocus();
@@ -52,25 +50,26 @@ class _MessageTileState<T extends BaseMessagesCubit>
           onReply(widget.message);
         }
       },
-      child: _messagePadding(_isMyMessage),
+      child: _messagePadding(),
     );
   }
 
-  Widget _messagePadding(bool _isMyMessage) {
+  Widget _messagePadding() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment:
-            _isMyMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: widget.message.isOwnerMessage
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           SizedBox(
             width: widget.message.files == null
-                ? _isMyMessage
+                ? widget.message.isOwnerMessage
                     ? Dim.widthPercent(3)
                     : Dim.widthPercent(2)
-                : _isMyMessage
+                : widget.message.isOwnerMessage
                     ? Dim.widthPercent(15)
                     : Dim.widthPercent(1),
           ),
@@ -79,16 +78,15 @@ class _MessageTileState<T extends BaseMessagesCubit>
             isThread: widget.isThread,
             isHeadInThred: widget.isHeadInThred,
             isDirect: widget.isDirect,
-            isMyMessage: _isMyMessage,
             isSenderHidden: widget.isSenderHidden,
             key: ValueKey(widget.message.hashCode),
           ),
           SizedBox(
             width: widget.message.files == null
-                ? _isMyMessage
+                ? widget.message.isOwnerMessage
                     ? Dim.widthPercent(3)
                     : Dim.widthPercent(7)
-                : _isMyMessage
+                : widget.message.isOwnerMessage
                     ? Dim.widthPercent(3)
                     : Dim.widthPercent(5),
           ),
