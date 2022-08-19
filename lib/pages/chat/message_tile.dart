@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:twake/blocs/messages_cubit/messages_cubit.dart';
 import 'package:twake/config/dimensions_config.dart' show Dim;
-import 'package:twake/models/globals/globals.dart';
 import 'package:twake/models/message/message.dart';
 import 'package:twake/pages/chat/message_content.dart';
 import 'package:twake/services/navigator_service.dart';

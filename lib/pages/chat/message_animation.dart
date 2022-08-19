@@ -81,7 +81,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (message.subtype != MessageSubtype.deleted )
+        if (message.subtype != MessageSubtype.deleted && !message.inThread)
           DropDownButton(
             text: AppLocalizations.of(context)!.reply,
             imagePath: imageComment,
@@ -98,7 +98,7 @@ class LongPressMenuBar<T extends BaseMessagesCubit> extends StatelessWidget {
           ),
         if (message.isOwnerMessage)
           DropDownButton(
-            isTop: message.subtype == MessageSubtype.deleted,
+            isTop: message.inThread,
             text: AppLocalizations.of(context)!.edit,
             imagePath: imageEdit,
             onClick: () {
